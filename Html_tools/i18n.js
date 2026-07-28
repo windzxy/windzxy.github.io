@@ -283,7 +283,51 @@ const I18N={
 "路徑":{"zh-CN":"路径","zh-HK":"路徑","en":"Path"},
 "取值":{"zh-CN":"取值","zh-HK":"取值","en":"Pick value"},
 "日曆天":{"zh-CN":"日历天","zh-HK":"日曆天","en":"Calendar days"},
-"工作天":{"zh-CN":"工作天","zh-HK":"工作天","en":"Workdays"}
+"工作天":{"zh-CN":"工作天","zh-HK":"工作天","en":"Workdays"},
+"天氣":{"zh-CN":"天气","zh-HK":"天氣","en":"Weather"},
+"今日、5天、7天與15天天氣。":{"zh-CN":"今日、5天、7天与15天天气。","zh-HK":"今日、5天、7天與15天天氣。","en":"Today, 5-day, 7-day and 15-day weather."},
+"正在載入天氣…":{"zh-CN":"正在加载天气…","zh-HK":"正在載入天氣…","en":"Loading weather…"},
+"新加坡":{"zh-CN":"新加坡","zh-HK":"新加坡","en":"Singapore"},
+"今天":{"zh-CN":"今天","zh-HK":"今天","en":"Today"},
+"輸入城市":{"zh-CN":"输入城市","zh-HK":"輸入城市","en":"Enter city"},
+"搜尋":{"zh-CN":"搜索","zh-HK":"搜尋","en":"Search"},
+"天氣位置":{"zh-CN":"天气位置","zh-HK":"天氣位置","en":"Weather location"},
+"定位":{"zh-CN":"定位","zh-HK":"定位","en":"Locate"},
+"刷新":{"zh-CN":"刷新","zh-HK":"刷新","en":"Refresh"},
+"體感":{"zh-CN":"体感","zh-HK":"體感","en":"Feels"},
+"濕度":{"zh-CN":"湿度","zh-HK":"濕度","en":"Humidity"},
+"風速":{"zh-CN":"风速","zh-HK":"風速","en":"Wind"},
+"晴朗":{"zh-CN":"晴朗","zh-HK":"晴朗","en":"Clear"},
+"大致晴朗":{"zh-CN":"大致晴朗","zh-HK":"大致晴朗","en":"Mostly clear"},
+"局部多雲":{"zh-CN":"局部多云","zh-HK":"局部多雲","en":"Partly cloudy"},
+"多雲":{"zh-CN":"多云","zh-HK":"多雲","en":"Cloudy"},
+"有霧":{"zh-CN":"有雾","zh-HK":"有霧","en":"Fog"},
+"霧凇":{"zh-CN":"雾凇","zh-HK":"霧凇","en":"Rime fog"},
+"小毛雨":{"zh-CN":"小毛雨","zh-HK":"小毛雨","en":"Light drizzle"},
+"毛雨":{"zh-CN":"毛雨","zh-HK":"毛雨","en":"Drizzle"},
+"大毛雨":{"zh-CN":"大毛雨","zh-HK":"大毛雨","en":"Heavy drizzle"},
+"凍毛雨":{"zh-CN":"冻毛雨","zh-HK":"凍毛雨","en":"Freezing drizzle"},
+"小雨":{"zh-CN":"小雨","zh-HK":"小雨","en":"Light rain"},
+"中雨":{"zh-CN":"中雨","zh-HK":"中雨","en":"Rain"},
+"大雨":{"zh-CN":"大雨","zh-HK":"大雨","en":"Heavy rain"},
+"凍雨":{"zh-CN":"冻雨","zh-HK":"凍雨","en":"Freezing rain"},
+"小雪":{"zh-CN":"小雪","zh-HK":"小雪","en":"Light snow"},
+"中雪":{"zh-CN":"中雪","zh-HK":"中雪","en":"Snow"},
+"大雪":{"zh-CN":"大雪","zh-HK":"大雪","en":"Heavy snow"},
+"雪粒":{"zh-CN":"雪粒","zh-HK":"雪粒","en":"Snow grains"},
+"陣雨":{"zh-CN":"阵雨","zh-HK":"陣雨","en":"Showers"},
+"強陣雨":{"zh-CN":"强阵雨","zh-HK":"強陣雨","en":"Heavy showers"},
+"陣雪":{"zh-CN":"阵雪","zh-HK":"陣雪","en":"Snow showers"},
+"強陣雪":{"zh-CN":"强阵雪","zh-HK":"強陣雪","en":"Heavy snow showers"},
+"雷暴":{"zh-CN":"雷暴","zh-HK":"雷暴","en":"Thunderstorm"},
+"雷暴冰雹":{"zh-CN":"雷暴冰雹","zh-HK":"雷暴冰雹","en":"Thunderstorm with hail"},
+"目前位置":{"zh-CN":"当前位置","zh-HK":"目前位置","en":"Current location"},
+"搜尋中…":{"zh-CN":"搜索中…","zh-HK":"搜尋中…","en":"Searching…"},
+"找不到城市，請換一個名稱。":{"zh-CN":"找不到城市，请换一个名称。","zh-HK":"找不到城市，請換一個名稱。","en":"City not found. Try another name."},
+"瀏覽器不支援定位。":{"zh-CN":"浏览器不支持定位。","zh-HK":"瀏覽器不支援定位。","en":"Geolocation is not supported."},
+"定位中…":{"zh-CN":"定位中…","zh-HK":"定位中…","en":"Locating…"},
+"定位失敗，請手動輸入城市。":{"zh-CN":"定位失败，请手动输入城市。","zh-HK":"定位失敗，請手動輸入城市。","en":"Location failed. Enter a city manually."},
+"天氣載入失敗，稍後重試。":{"zh-CN":"天气加载失败，稍后重试。","zh-HK":"天氣載入失敗，稍後重試。","en":"Weather failed to load. Try again later."}
 };
 const rev={};
 for(const key in I18N){
@@ -405,4 +449,3 @@ window.t=tx;
 window.applyI18n=applyI18n;
 window.WindzxyI18n={t:tx,apply:applyI18n};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",installLang);else installLang();
-
