@@ -264,7 +264,14 @@ const I18N={
 "摺疊":{"zh-CN":"折叠","zh-HK":"摺疊","en":"Collapse"},
 "展開":{"zh-CN":"展开","zh-HK":"展開","en":"Expand"},
 "桌面窗口":{"zh-CN":"桌面窗口","zh-HK":"桌面窗口","en":"Desktop windows"},
-"最小化":{"zh-CN":"最小化","zh-HK":"最小化","en":"Minimize"}
+"最小化":{"zh-CN":"最小化","zh-HK":"最小化","en":"Minimize"},
+"寬度":{"zh-CN":"宽度","zh-HK":"寬度","en":"Width"},
+"高度":{"zh-CN":"高度","zh-HK":"高度","en":"Height"},
+"格式":{"zh-CN":"格式","zh-HK":"格式","en":"Format"},
+"下載":{"zh-CN":"下载","zh-HK":"下載","en":"Download"},
+"此功能正在整理為桌面窗口。":{"zh-CN":"此功能正在整理为桌面窗口。","zh-HK":"此功能正在整理為桌面窗口。","en":"This tool is being arranged as a desktop window."},
+"部分網站不允許嵌入桌面窗口，可複製連結到瀏覽器打開。":{"zh-CN":"部分网站不允许嵌入桌面窗口，可复制链接到浏览器打开。","zh-HK":"部分網站不允許嵌入桌面窗口，可複製連結到瀏覽器打開。","en":"Some sites block embedding. Copy the link to open it in the browser."},
+"天":{"zh-CN":"天","zh-HK":"天","en":"days"}
 };
 const rev={};
 for(const key in I18N){
