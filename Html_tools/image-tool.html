@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>圖片處理</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-i18n1">
-  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-i18n1">
-  <link rel="stylesheet" href="style.css?v=20260728-i18n1">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-ocr-translate1">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-ocr-translate1">
+  <link rel="stylesheet" href="style.css?v=20260728-ocr-translate1">
 </head>
 <body class="tool-page tool-image">
 <header>
@@ -181,6 +181,16 @@
         </div>
       </details>
 
+      <details>
+        <summary>OCR 文字识别</summary>
+        <button id="ocrRun" type="button">识别当前图片文字</button>
+        <textarea id="ocrOutput" class="ocr-output" readonly placeholder="OCR 结果"></textarea>
+        <div class="copy-row">
+          <button id="ocrCopy" class="secondary" type="button">复制 OCR 结果</button>
+        </div>
+        <p class="mini-note">浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。</p>
+      </details>
+
       <details open>
         <summary>輸出</summary>
         <div class="row">
@@ -286,15 +296,15 @@ function load(f) {
   originalFile = f;
   const url = URL.createObjectURL(f);
   img.onload = () => {
-    URL.revokeObjectURL(url);
     ow = img.naturalWidth;
     oh = img.naturalHeight;
     $('width').value = ow;
     $('height').value = oh;
-    preview.src = img.src;
     sampledColor = null;
     updatePickedColor();
     prepareSourceCanvas();
+    preview.src = sourceCanvas.toDataURL('image/png');
+    URL.revokeObjectURL(url);
     $('workspace').classList.remove('hidden');
     $('info').textContent = `原始尺寸：${ow} × ${oh}｜檔案：${formatBytes(f.size)}`;
     setStatus('已載入');
@@ -846,12 +856,41 @@ controls.forEach(id => {
   });
 });
 
+async function runOcr() {
+  if (!sourceCanvas) {
+    alert(t('请先选择图片。'));
+    return;
+  }
+  const out = $('ocrOutput');
+  if (!('TextDetector' in window)) {
+    out.value = t('浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。');
+    return;
+  }
+  out.value = t('识别中…');
+  try {
+    const detector = new TextDetector();
+    const bitmap = await createImageBitmap(sourceCanvas);
+    const lines = await detector.detect(bitmap);
+    out.value = lines.map(x => x.rawValue || '').filter(Boolean).join('\n') || t('未识别到文字。');
+  } catch (error) {
+    out.value = t('浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。');
+  }
+}
+
+$('ocrRun')?.addEventListener('click', runOcr);
+$('ocrCopy')?.addEventListener('click', async () => {
+  const text = $('ocrOutput')?.value || '';
+  if (!text) return;
+  await navigator.clipboard.writeText(text);
+  $('outputInfo').textContent = t('已复制');
+});
+
 $('process').onclick = processImage;
 $('download').onclick = downloadResult;
 $('reset').onclick = resetAll;
 updateLabels();
 </script>
-<script src="theme.js?v=20260728-i18n1"></script>
-<script src="i18n.js?v=20260728-i18n1"></script>
+<script src="theme.js?v=20260728-ocr-translate1"></script>
+<script src="i18n.js?v=20260728-ocr-translate1"></script>
 </body>
 </html>
