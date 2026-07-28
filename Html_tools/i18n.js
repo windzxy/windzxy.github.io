@@ -169,7 +169,9 @@ const I18N={
 "initializing api":{"zh-CN":"正在初始化识别","zh-HK":"正在初始化識別","en":"Initializing recognition"},
 "recognizing text":{"zh-CN":"正在识别文字","zh-HK":"正在識別文字","en":"Recognizing text"},
 "点击识别时才会加载 OCR 引擎；中文识别首次加载会稍慢。":{"zh-CN":"点击识别时才会加载 OCR 引擎；中文识别首次加载会稍慢。","zh-HK":"點擊識別時才會載入 OCR 引擎；中文識別首次載入會稍慢。","en":"The OCR engine loads only when recognition starts; Chinese recognition may be slower on first load."},
-"OCR 引擎未加载。请检查网络后重试。":{"zh-CN":"OCR 引擎未加载。请检查网络后重试。","zh-HK":"OCR 引擎未載入。請檢查網絡後重試。","en":"OCR engine was not loaded. Check the network and retry."}
+"OCR 引擎未加载。请检查网络后重试。":{"zh-CN":"OCR 引擎未加载。请检查网络后重试。","zh-HK":"OCR 引擎未載入。請檢查網絡後重試。","en":"OCR engine was not loaded. Check the network and retry."},
+"首字母大寫":{"zh-CN":"首字母大写","zh-HK":"首字母大寫","en":"Title Case"},
+"浏览器本机翻译不可用；当前内容没有命中内置词库。":{"zh-CN":"浏览器本机翻译不可用；当前内容没有命中内置词库。","zh-HK":"瀏覽器本機翻譯不可用；目前內容沒有命中內置詞庫。","en":"Browser-local translation is unavailable; the current text did not match the built-in glossary."}
 };
 const rev={};
 for(const key in I18N){
