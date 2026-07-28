@@ -1,89 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Page Not Found</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      text-align: center;
-    }
-    .box {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-    }
-    .number {
-      font-size: 80px;
-      color: #666;
-      font-weight: bold;
-    }
-    .text {
-      font-size: 14px;
-      margin: 24px;
-      color: #333;
-    }
-    .btn-container {
-      display: flex;
-      justify-content: center;
-    }
-    .btn {
-      padding: 8px 24px;
-      display: inline-block;
-      text-decoration: none;
-      background: #fff;
-      border: 2px solid #efefef;
-      color: #333;
-      margin: 24px;
-      border-radius: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-    }
-    .footer {
-      padding: 16px;
-      border-top: 1px solid #efefef;
-      color: #777;
-      font-weight: lighter;
-    }
-    .footer a {
-      text-decoration: none;
-      font-weight: bold;
-      color: #000;
-    }
-  </style>
-</head>
-<body>
-  <div class="box">
-    <div class="number">4 0 4</div>
-    <div class="text">
-      Page not found
-    </div>
-    <div class="btn-container">
-      <a class="btn" id="back">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="margin-right: 8px;">
-          <path fill="none" d="M0 0h24v24H0z"/>
-          <path d="M5.828 7l2.536 2.536L6.95 10.95 2 6l4.95-4.95 1.414 1.414L5.828 5H13a8 8 0 1 1 0 16H4v-2h9a6 6 0 1 0 0-12H5.828z"/>
-        </svg>
-        Back
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>404 · Windzxy</title><link rel="icon" href="assets/beex-logo.svg" type="image/svg+xml"><link rel="stylesheet" href="styles/main.css"></head><body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="assets/beex-logo.svg" alt="BeeX">
+        <span><strong>Windzxy</strong><small>BeeX Lab</small></span>
       </a>
+      <nav>
+        <a href="index.html">首頁</a>
+        <a href="Html_tools/index.html">工具箱</a>
+        <a href="archives/index.html">Archive</a>
+        <a href="about/index.html">About</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="切換主題"></button>
     </div>
-  </div>
-  <footer class="footer">
-    Powered by <a href="https://gridea.dev" target="_blank">Gridea</a>
-  </footer>
-  <script>
-    var back = document.getElementById('back')
-    back.onclick = function() { console.log('run...'); history.back() }
-  </script>
-</body>
-</html>
+  </header><main class="wrap page"><section class="content-card"><p class="eyebrow">404</p><h1>頁面不存在</h1><p>可能是舊站路徑或連結已調整。你可以回到首頁，或直接使用 BeeX HTML Tools。</p><div class="actions"><a class="button" href="index.html">回首頁</a><a class="button secondary" href="Html_tools/index.html">打開工具箱</a></div></section></main>
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <p>© 2026 Windzxy · Pure static GitHub Pages site · No generator/CDN dependency.</p>
+      <a href="atom.xml">RSS</a>
+    </div>
+  </footer><script src="scripts/theme.js"></script></body></html>

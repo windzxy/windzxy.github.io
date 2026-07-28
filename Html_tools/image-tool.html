@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>圖片處理</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <img class="brand-logo" src="../assets/beex-logo.svg" alt="BeeX">
+      <div class="brand-copy">
+        <a class="back" href="index.html">← 工具箱</a>
+        <h1>圖片處理</h1>
+        <p>放大、去背、壓縮、格式轉換；檔案不離開你的電腦</p>
+      </div>
+    </div>
+    <button class="theme-toggle" type="button"></button>
+  </div>
+</header>
+
+<main class="wrap image-workbench">
+  <section class="panel hero-panel">
+    <div id="drop" class="drop">
+      <strong>點擊或拖放圖片到這裡</strong>
+      <span>支援 JPG、PNG、WebP、GIF 靜態幀等瀏覽器可讀格式</span>
+      <input id="file" class="hidden" type="file" accept="image/*">
+    </div>
+    <p class="hint tool-note">所有處理均在本機瀏覽器完成。AI 級人像/毛髮去背需要模型服務；此工具提供隱私優先的本機去背，最適合純色背景、商品圖、截圖與 Logo。</p>
+  </section>
+
+  <section id="workspace" class="workspace-grid hidden">
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <h2>預覽</h2>
+          <p id="info" class="hint"></p>
+        </div>
+        <span id="status" class="pill">等待處理</span>
+      </div>
+
+      <div class="compare-grid">
+        <figure class="preview-card">
+          <figcaption>原圖</figcaption>
+          <img id="preview" class="preview" alt="原始圖片預覽">
+        </figure>
+        <figure class="preview-card">
+          <figcaption>處理結果</figcaption>
+          <canvas id="canvas" class="canvas-preview"></canvas>
+        </figure>
+      </div>
+
+      <div class="actions">
+        <button id="process" type="button">更新預覽</button>
+        <button id="download" type="button">下載結果</button>
+        <button id="reset" class="secondary" type="button">重設全部</button>
+      </div>
+      <p id="outputInfo" class="hint"></p>
+    </section>
+
+    <aside class="panel">
+      <h2>處理設定</h2>
+
+      <details open>
+        <summary>尺寸與無損/高保真放大</summary>
+        <div class="row">
+          <div>
+            <label for="width">寬度（px）</label>
+            <input id="width" type="number" min="1">
+          </div>
+          <div>
+            <label for="height">高度（px）</label>
+            <input id="height" type="number" min="1">
+          </div>
+        </div>
+        <label><input id="ratio" type="checkbox" checked class="inline-check"> 保持長寬比例</label>
+        <div class="preset-row" aria-label="快速尺寸">
+          <button class="secondary preset" type="button" data-scale="1">1×</button>
+          <button class="secondary preset" type="button" data-scale="2">2×</button>
+          <button class="secondary preset" type="button" data-scale="3">3×</button>
+          <button class="secondary preset" type="button" data-scale="4">4×</button>
+          <button class="secondary preset" type="button" data-fit="1080">長邊 1080</button>
+          <button class="secondary preset" type="button" data-fit="2048">長邊 2048</button>
+        </div>
+        <label for="scaleMode">放大模式</label>
+        <select id="scaleMode">
+          <option value="smooth">高保真平滑：照片/商品圖</option>
+          <option value="pixel">像素無損：截圖/圖示/像素圖</option>
+        </select>
+        <p class="hint">像素無損會保留原像素硬邊；照片放大只能提升觀感，無法還原原圖沒有的細節。</p>
+      </details>
+
+      <details open>
+        <summary>去除背景</summary>
+        <label for="bgMode">去背模式</label>
+        <select id="bgMode">
+          <option value="none">不去背</option>
+          <option value="auto">自動偵測邊緣背景</option>
+          <option value="pick">點選原圖顏色去背</option>
+          <option value="white">移除白色/淺色背景</option>
+          <option value="black">移除黑色/深色背景</option>
+        </select>
+        <div id="pickedColor" class="picked-color hidden">
+          <span id="colorSwatch"></span>
+          <span id="colorText">尚未取樣</span>
+        </div>
+        <div class="row">
+          <div>
+            <label for="tolerance">容差 <span id="tolv">34</span></label>
+            <input id="tolerance" type="range" min="1" max="180" value="34">
+          </div>
+          <div>
+            <label for="feather">邊緣羽化 <span id="featherv">3</span>px</label>
+            <input id="feather" type="range" min="0" max="18" value="3">
+          </div>
+        </div>
+        <label><input id="cropAlpha" type="checkbox" class="inline-check"> 去背後自動裁掉透明邊緣</label>
+        <p class="hint">選「點選顏色去背」後，直接點左側原圖取樣。容差越大，移除範圍越廣。</p>
+      </details>
+
+      <details>
+        <summary>調整與精修</summary>
+        <div class="row">
+          <div>
+            <label for="sharpen">銳化 <span id="sharpenv">18</span></label>
+            <input id="sharpen" type="range" min="0" max="100" value="18">
+          </div>
+          <div>
+            <label for="brightness">亮度 <span id="brightnessv">0</span></label>
+            <input id="brightness" type="range" min="-80" max="80" value="0">
+          </div>
+          <div>
+            <label for="contrast">對比 <span id="contrastv">0</span></label>
+            <input id="contrast" type="range" min="-80" max="80" value="0">
+          </div>
+          <div>
+            <label for="saturation">飽和 <span id="saturationv">0</span></label>
+            <input id="saturation" type="range" min="-80" max="80" value="0">
+          </div>
+        </div>
+      </details>
+
+      <details open>
+        <summary>輸出</summary>
+        <div class="row">
+          <div>
+            <label for="format">輸出格式</label>
+            <select id="format">
+              <option value="image/png">PNG（透明背景）</option>
+              <option value="image/jpeg">JPG（檔案較小）</option>
+              <option value="image/webp">WebP</option>
+            </select>
+          </div>
+          <div>
+            <label for="quality">品質 <span id="qv">90</span>%</label>
+            <input id="quality" type="range" min="10" max="100" value="90">
+          </div>
+        </div>
+        <label for="matte">背景填色</label>
+        <select id="matte">
+          <option value="transparent">透明</option>
+          <option value="#ffffff">白色</option>
+          <option value="#0d1321">BeeX 深藍黑</option>
+          <option value="#ff8a00">BeeX 橙色</option>
+          <option value="custom">自訂顏色</option>
+        </select>
+        <input id="customMatte" class="hidden" type="color" value="#ffffff" aria-label="自訂背景顏色">
+      </details>
+    </aside>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const drop = $('drop'), file = $('file'), preview = $('preview'), canvas = $('canvas');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const controls = ['width','height','quality','tolerance','feather','sharpen','brightness','contrast','saturation','format','matte','customMatte','scaleMode','bgMode','ratio','cropAlpha'];
+let img = new Image(), originalFile = null, ow = 0, oh = 0, lock = false, sourceCanvas = null, sampledColor = null, lastBlobUrl = null;
+
+drop.onclick = () => file.click();
+['dragenter','dragover'].forEach(type => drop.addEventListener(type, event => {
+  event.preventDefault();
+  drop.classList.add('drag');
+}));
+['dragleave','drop'].forEach(type => drop.addEventListener(type, event => {
+  event.preventDefault();
+  drop.classList.remove('drag');
+}));
+drop.addEventListener('drop', event => load(event.dataTransfer.files[0]));
+file.onchange = () => load(file.files[0]);
+
+function clamp(value, min = 0, max = 255) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function setStatus(text, tone = '') {
+  const status = $('status');
+  status.textContent = text;
+  status.className = tone ? `pill ${tone}` : 'pill';
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function load(f) {
+  if (!f || !f.type.startsWith('image/')) {
+    alert('請選擇圖片檔案');
+    return;
+  }
+  originalFile = f;
+  const url = URL.createObjectURL(f);
+  img.onload = () => {
+    URL.revokeObjectURL(url);
+    ow = img.naturalWidth;
+    oh = img.naturalHeight;
+    $('width').value = ow;
+    $('height').value = oh;
+    preview.src = img.src;
+    sampledColor = null;
+    updatePickedColor();
+    prepareSourceCanvas();
+    $('workspace').classList.remove('hidden');
+    $('info').textContent = `原始尺寸：${ow} × ${oh}｜檔案：${formatBytes(f.size)}`;
+    setStatus('已載入');
+    processImage();
+  };
+  img.onerror = () => alert('圖片讀取失敗，請換一張圖片試試');
+  img.src = url;
+}
+
+function prepareSourceCanvas() {
+  sourceCanvas = document.createElement('canvas');
+  sourceCanvas.width = ow;
+  sourceCanvas.height = oh;
+  sourceCanvas.getContext('2d', { willReadFrequently: true }).drawImage(img, 0, 0);
+}
+
+function syncRatio(source) {
+  if (!$('ratio').checked || !ow || lock) return;
+  lock = true;
+  if (source === 'width') $('height').value = Math.max(1, Math.round(+$('width').value * oh / ow));
+  if (source === 'height') $('width').value = Math.max(1, Math.round(+$('height').value * ow / oh));
+  lock = false;
+}
+
+$('width').oninput = () => syncRatio('width');
+$('height').oninput = () => syncRatio('height');
+
+document.querySelectorAll('.preset').forEach(button => {
+  button.addEventListener('click', () => {
+    if (!ow) return;
+    if (button.dataset.scale) {
+      const scale = +button.dataset.scale;
+      $('width').value = Math.round(ow * scale);
+      $('height').value = Math.round(oh * scale);
+    }
+    if (button.dataset.fit) {
+      const longEdge = +button.dataset.fit;
+      const scale = longEdge / Math.max(ow, oh);
+      $('width').value = Math.round(ow * scale);
+      $('height').value = Math.round(oh * scale);
+    }
+    processImage();
+  });
+});
+
+preview.addEventListener('click', event => {
+  if ($('bgMode').value !== 'pick' || !sourceCanvas) return;
+  const rect = preview.getBoundingClientRect();
+  const x = Math.round((event.clientX - rect.left) * ow / rect.width);
+  const y = Math.round((event.clientY - rect.top) * oh / rect.height);
+  const data = sourceCanvas.getContext('2d', { willReadFrequently: true }).getImageData(clamp(x, 0, ow - 1), clamp(y, 0, oh - 1), 1, 1).data;
+  sampledColor = [data[0], data[1], data[2]];
+  updatePickedColor();
+  processImage();
+});
+
+function updatePickedColor() {
+  const box = $('pickedColor');
+  if ($('bgMode').value !== 'pick') {
+    box.classList.add('hidden');
+    return;
+  }
+  box.classList.remove('hidden');
+  if (!sampledColor) {
+    $('colorSwatch').style.background = 'transparent';
+    $('colorText').textContent = '請點左側原圖取樣背景顏色';
+    return;
+  }
+  const hex = rgbToHex(sampledColor);
+  $('colorSwatch').style.background = hex;
+  $('colorText').textContent = `已取樣 ${hex}`;
+}
+
+function rgbToHex(rgb) {
+  return `#${rgb.map(v => v.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function readNumber(id, fallback = 0) {
+  const value = +$(id).value;
+  return Number.isFinite(value) ? value : fallback;
+}
+
+function colorDistance(data, index, color) {
+  const dr = data[index] - color[0];
+  const dg = data[index + 1] - color[1];
+  const db = data[index + 2] - color[2];
+  return Math.sqrt(dr * dr + dg * dg + db * db);
+}
+
+function getAutoBackgroundColor(imageData) {
+  const data = imageData.data, width = imageData.width, height = imageData.height;
+  const samples = [];
+  const stepX = Math.max(1, Math.floor(width / 60));
+  const stepY = Math.max(1, Math.floor(height / 60));
+  for (let x = 0; x < width; x += stepX) {
+    samples.push((x) * 4, ((height - 1) * width + x) * 4);
+  }
+  for (let y = 0; y < height; y += stepY) {
+    samples.push((y * width) * 4, (y * width + width - 1) * 4);
+  }
+  let r = 0, g = 0, b = 0, count = 0;
+  samples.forEach(i => {
+    if (data[i + 3] > 0) {
+      r += data[i];
+      g += data[i + 1];
+      b += data[i + 2];
+      count++;
+    }
+  });
+  return count ? [Math.round(r / count), Math.round(g / count), Math.round(b / count)] : [255, 255, 255];
+}
+
+function createEdgeMask(imageData, target, tolerance) {
+  const width = imageData.width, height = imageData.height, data = imageData.data;
+  const total = width * height;
+  const mask = new Uint8Array(total);
+  const queue = [];
+  const enqueue = index => {
+    if (index < 0 || index >= total || mask[index]) return;
+    const offset = index * 4;
+    if (data[offset + 3] === 0 || colorDistance(data, offset, target) <= tolerance) {
+      mask[index] = 1;
+      queue.push(index);
+    }
+  };
+  for (let x = 0; x < width; x++) {
+    enqueue(x);
+    enqueue((height - 1) * width + x);
+  }
+  for (let y = 0; y < height; y++) {
+    enqueue(y * width);
+    enqueue(y * width + width - 1);
+  }
+  for (let head = 0; head < queue.length; head++) {
+    const p = queue[head];
+    const x = p % width;
+    if (x > 0) enqueue(p - 1);
+    if (x < width - 1) enqueue(p + 1);
+    if (p >= width) enqueue(p - width);
+    if (p < total - width) enqueue(p + width);
+  }
+  return mask;
+}
+
+function touchesMask(mask, index, width, height, radius) {
+  if (!radius) return false;
+  const x = index % width, y = Math.floor(index / width);
+  const r = Math.min(radius, 2);
+  for (let yy = Math.max(0, y - r); yy <= Math.min(height - 1, y + r); yy++) {
+    for (let xx = Math.max(0, x - r); xx <= Math.min(width - 1, x + r); xx++) {
+      if (mask[yy * width + xx]) return true;
+    }
+  }
+  return false;
+}
+
+function removeBackground(imageData) {
+  const mode = $('bgMode').value;
+  if (mode === 'none') return imageData;
+  if (mode === 'pick' && !sampledColor) return imageData;
+
+  const data = imageData.data, width = imageData.width, height = imageData.height;
+  const tolerance = readNumber('tolerance', 34);
+  const feather = readNumber('feather', 3);
+  let target = [255, 255, 255], mask = null;
+  if (mode === 'auto') target = getAutoBackgroundColor(imageData);
+  if (mode === 'pick') target = sampledColor;
+  if (mode === 'black') target = [0, 0, 0];
+  if (mode === 'white') target = [255, 255, 255];
+  if (mode === 'auto') mask = createEdgeMask(imageData, target, tolerance);
+
+  for (let p = 0; p < width * height; p++) {
+    const i = p * 4;
+    const dist = colorDistance(data, i, target);
+    const directlyMatched = mode === 'auto' ? mask[p] : dist <= tolerance;
+    const nearEdge = mode === 'auto' && feather > 0 && dist <= tolerance + feather * 8 && touchesMask(mask, p, width, height, feather);
+    if (directlyMatched) {
+      data[i + 3] = 0;
+    } else if (nearEdge || (mode !== 'auto' && feather > 0 && dist <= tolerance + feather * 8)) {
+      const softness = clamp((dist - tolerance) / Math.max(1, feather * 8), 0, 1);
+      data[i + 3] = Math.round(data[i + 3] * softness);
+    }
+    if (data[i + 3] < 8) data[i + 3] = 0;
+    if (data[i + 3] > 247) data[i + 3] = 255;
+  }
+  return imageData;
+}
+
+function adjustImage(imageData) {
+  const brightness = readNumber('brightness', 0);
+  const contrast = readNumber('contrast', 0);
+  const saturation = readNumber('saturation', 0);
+  if (!brightness && !contrast && !saturation) return imageData;
+  const data = imageData.data;
+  const c = (259 * (contrast + 255)) / (255 * (259 - contrast));
+  const s = 1 + saturation / 100;
+  for (let i = 0; i < data.length; i += 4) {
+    let r = clamp(c * (data[i] - 128) + 128 + brightness);
+    let g = clamp(c * (data[i + 1] - 128) + 128 + brightness);
+    let b = clamp(c * (data[i + 2] - 128) + 128 + brightness);
+    if (saturation) {
+      const gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      r = clamp(gray + (r - gray) * s);
+      g = clamp(gray + (g - gray) * s);
+      b = clamp(gray + (b - gray) * s);
+    }
+    data[i] = r;
+    data[i + 1] = g;
+    data[i + 2] = b;
+  }
+  return imageData;
+}
+
+function sharpenCanvas(inputCanvas, amount) {
+  if (!amount) return inputCanvas;
+  const width = inputCanvas.width, height = inputCanvas.height;
+  const out = document.createElement('canvas');
+  out.width = width;
+  out.height = height;
+  const inCtx = inputCanvas.getContext('2d', { willReadFrequently: true });
+  const outCtx = out.getContext('2d', { willReadFrequently: true });
+  const src = inCtx.getImageData(0, 0, width, height);
+  const dst = outCtx.createImageData(width, height);
+  const s = amount / 80;
+  const data = src.data, result = dst.data;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4;
+      for (let ch = 0; ch < 3; ch++) {
+        const center = data[i + ch] * (1 + 4 * s);
+        const left = data[(y * width + Math.max(0, x - 1)) * 4 + ch] * s;
+        const right = data[(y * width + Math.min(width - 1, x + 1)) * 4 + ch] * s;
+        const up = data[(Math.max(0, y - 1) * width + x) * 4 + ch] * s;
+        const down = data[(Math.min(height - 1, y + 1) * width + x) * 4 + ch] * s;
+        result[i + ch] = clamp(center - left - right - up - down);
+      }
+      result[i + 3] = data[i + 3];
+    }
+  }
+  outCtx.putImageData(dst, 0, 0);
+  return out;
+}
+
+function resizeCanvas(inputCanvas, width, height) {
+  const mode = $('scaleMode').value;
+  const output = document.createElement('canvas');
+  output.width = width;
+  output.height = height;
+  const outputCtx = output.getContext('2d');
+  outputCtx.imageSmoothingEnabled = mode !== 'pixel';
+  outputCtx.imageSmoothingQuality = 'high';
+
+  if (mode === 'pixel') {
+    outputCtx.drawImage(inputCanvas, 0, 0, width, height);
+    return output;
+  }
+
+  let current = inputCanvas;
+  while (current.width * 1.7 < width || current.height * 1.7 < height) {
+    const step = document.createElement('canvas');
+    step.width = Math.min(width, Math.round(current.width * 1.55));
+    step.height = Math.min(height, Math.round(current.height * 1.55));
+    const stepCtx = step.getContext('2d');
+    stepCtx.imageSmoothingEnabled = true;
+    stepCtx.imageSmoothingQuality = 'high';
+    stepCtx.drawImage(current, 0, 0, step.width, step.height);
+    current = step;
+  }
+  outputCtx.drawImage(current, 0, 0, width, height);
+  return output;
+}
+
+function cropTransparent(inputCanvas) {
+  if (!$('cropAlpha').checked) return inputCanvas;
+  const width = inputCanvas.width, height = inputCanvas.height;
+  const c = inputCanvas.getContext('2d', { willReadFrequently: true });
+  const data = c.getImageData(0, 0, width, height).data;
+  let minX = width, minY = height, maxX = -1, maxY = -1;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (data[(y * width + x) * 4 + 3] > 8) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+  if (maxX < minX || maxY < minY) return inputCanvas;
+  const out = document.createElement('canvas');
+  out.width = maxX - minX + 1;
+  out.height = maxY - minY + 1;
+  out.getContext('2d').drawImage(inputCanvas, minX, minY, out.width, out.height, 0, 0, out.width, out.height);
+  return out;
+}
+
+function selectedMatte() {
+  if ($('matte').value === 'custom') return $('customMatte').value;
+  return $('matte').value;
+}
+
+function applyMatte(inputCanvas, forceWhite = false) {
+  const matte = forceWhite ? '#ffffff' : selectedMatte();
+  if (matte === 'transparent') return inputCanvas;
+  const out = document.createElement('canvas');
+  out.width = inputCanvas.width;
+  out.height = inputCanvas.height;
+  const outCtx = out.getContext('2d');
+  outCtx.fillStyle = matte;
+  outCtx.fillRect(0, 0, out.width, out.height);
+  outCtx.drawImage(inputCanvas, 0, 0);
+  return out;
+}
+
+function processImage() {
+  if (!sourceCanvas) return;
+  const targetWidth = Math.max(1, Math.round(readNumber('width', ow)));
+  const targetHeight = Math.max(1, Math.round(readNumber('height', oh)));
+  if (targetWidth * targetHeight > 36000000) {
+    alert('輸出尺寸過大，請控制在約 3600 萬像素以內，避免瀏覽器記憶體不足。');
+    return;
+  }
+
+  setStatus('處理中…', 'warn');
+  setTimeout(() => {
+    const work = document.createElement('canvas');
+    work.width = ow;
+    work.height = oh;
+    const workCtx = work.getContext('2d', { willReadFrequently: true });
+    workCtx.drawImage(sourceCanvas, 0, 0);
+    let imageData = workCtx.getImageData(0, 0, ow, oh);
+    imageData = removeBackground(imageData);
+    imageData = adjustImage(imageData);
+    workCtx.putImageData(imageData, 0, 0);
+
+    let output = resizeCanvas(work, targetWidth, targetHeight);
+    output = sharpenCanvas(output, readNumber('sharpen', 18));
+    output = cropTransparent(output);
+    output = applyMatte(output, false);
+
+    canvas.width = output.width;
+    canvas.height = output.height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(output, 0, 0);
+    $('outputInfo').textContent = `輸出尺寸：${canvas.width} × ${canvas.height}｜模式：${$('scaleMode').selectedOptions[0].textContent}`;
+    setStatus('預覽完成', 'ok');
+  }, 20);
+}
+
+function downloadResult() {
+  if (!canvas.width) return;
+  const type = $('format').value;
+  const ext = type.split('/')[1].replace('jpeg', 'jpg');
+  const exportCanvas = type === 'image/jpeg' ? applyMatte(canvas, true) : canvas;
+  exportCanvas.toBlob(blob => {
+    if (!blob) {
+      alert('瀏覽器不支援此輸出格式，請改用 PNG。');
+      return;
+    }
+    if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+    lastBlobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = lastBlobUrl;
+    a.download = `beex-image-${exportCanvas.width}x${exportCanvas.height}.${ext}`;
+    a.click();
+    $('outputInfo').textContent = `已產生：${exportCanvas.width} × ${exportCanvas.height}｜${formatBytes(blob.size)}`;
+  }, type, readNumber('quality', 90) / 100);
+}
+
+function resetAll() {
+  if (!ow) return;
+  $('width').value = ow;
+  $('height').value = oh;
+  $('ratio').checked = true;
+  $('scaleMode').value = 'smooth';
+  $('bgMode').value = 'none';
+  $('tolerance').value = 34;
+  $('feather').value = 3;
+  $('cropAlpha').checked = false;
+  $('sharpen').value = 18;
+  $('brightness').value = 0;
+  $('contrast').value = 0;
+  $('saturation').value = 0;
+  $('format').value = 'image/png';
+  $('quality').value = 90;
+  $('matte').value = 'transparent';
+  $('customMatte').classList.add('hidden');
+  sampledColor = null;
+  updateLabels();
+  updatePickedColor();
+  processImage();
+}
+
+function updateLabels() {
+  $('qv').textContent = $('quality').value;
+  $('tolv').textContent = $('tolerance').value;
+  $('featherv').textContent = $('feather').value;
+  $('sharpenv').textContent = $('sharpen').value;
+  $('brightnessv').textContent = $('brightness').value;
+  $('contrastv').textContent = $('contrast').value;
+  $('saturationv').textContent = $('saturation').value;
+}
+
+controls.forEach(id => {
+  const el = $(id);
+  el.addEventListener('input', () => {
+    updateLabels();
+    if (id === 'matte') $('customMatte').classList.toggle('hidden', $('matte').value !== 'custom');
+    if (id === 'bgMode') updatePickedColor();
+  });
+  el.addEventListener('change', () => {
+    updateLabels();
+    if (id === 'matte') $('customMatte').classList.toggle('hidden', $('matte').value !== 'custom');
+    if (id === 'bgMode') updatePickedColor();
+    if (sourceCanvas) processImage();
+  });
+});
+
+$('process').onclick = processImage;
+$('download').onclick = downloadResult;
+$('reset').onclick = resetAll;
+updateLabels();
+</script>
+<script src="theme.js"></script>
+</body>
+</html>

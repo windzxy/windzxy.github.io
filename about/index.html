@@ -1,151 +1,46 @@
-<html>
-  <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>About | Windzxy</title>
-<link rel="shortcut icon" href="https://windzxy.github.io/favicon.ico?v=1615887041888">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://windzxy.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="About | Windzxy - Atom Feed" href="https://windzxy.github.io/atom.xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>About · Windzxy</title>
+  <meta name="description" content="關於 Windzxy BeeX Lab">
+  <link rel="icon" href="../assets/beex-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
 
-
-
-    <meta name="description" content="居然被你發現這個小地方，歡迎哈😝😝😝
-" />
-    <meta name="keywords" content="" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-  </head>
-  <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://windzxy.github.io">
-  <img class="avatar" src="https://windzxy.github.io/images/avatar.png?v=1615887041888" alt="">
-  </a>
-  <h1 class="site-title">
-    Windzxy
-  </h1>
-  <p class="site-description">
-    
-  </p>
-  <div class="menu-container">
-    
-      
-        <a href="/" class="menu">
-          首頁
-        </a>
-      
-    
-      
-        <a href="/tags" class="menu">
-          標簽
-        </a>
-      
-    
-      
-        <a href="https://windzxy.github.io/about" class="menu">
-          About
-        </a>
-      
-    
-  </div>
-  <div class="social-container">
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  </div>
-</div>
-
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              About
-            </h2>
-            <div class="post-info">
-              <span>
-                2021-03-16
-              </span>
-              <span>
-                1 min read
-              </span>
-              
-            </div>
-            
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <p>居然被你發現這個小地方，歡迎哈😝😝😝</p>
-
-              </div>
-              <div class="toc-container">
-                
-              </div>
-            </div>
-          </article>
-        </div>
-
-        
-
-        
-
-        <div class="site-footer">
-  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://windzxy.github.io/atom.xml" target="_blank">
-    <i class="ri-rss-line"></i> RSS
-  </a>
-</div>
-
-      </div>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../index.html">
+        <img class="brand-logo" src="../assets/beex-logo.svg" alt="BeeX">
+        <span><strong>Windzxy</strong><small>BeeX Lab</small></span>
+      </a>
+      <nav>
+        <a href="../index.html">首頁</a>
+        <a href="../Html_tools/index.html">工具箱</a>
+        <a href="../archives/index.html">Archive</a>
+        <a href="../about/index.html">About</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="切換主題"></button>
     </div>
+  </header>
+<main class="wrap page">
+  <article class="content-card">
+    <p class="eyebrow">About</p>
+    <h1>關於這個小地方</h1>
+    <p>居然被你發現這個小地方，歡迎哈😝😝😝</p>
+    <p>這裡現在是 Windzxy 的純靜態 BeeX Lab：不依賴第三方建站平台，主要放一些能直接在瀏覽器使用的日常工具。</p>
+    <p>如果你只是想快速處理圖片，可以直接進入 <a href="../Html_tools/image-tool.html">圖片處理工具</a>。</p>
+  </article>
+</main>
 
-    <script>
-      hljs.initHighlightingOnLoad()
-
-      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
-
-      // This should probably be throttled.
-      // Especially because it triggers during smooth scrolling.
-      // https://lodash.com/docs/4.17.10#throttle
-      // You could do like...
-      // window.addEventListener("scroll", () => {
-      //    _.throttle(doThatStuff, 100);
-      // });
-      // Only not doing it here to keep this Pen dependency-free.
-
-      window.addEventListener("scroll", event => {
-        let fromTop = window.scrollY;
-
-        mainNavLinks.forEach((link, index) => {
-          let section = document.getElementById(decodeURI(link.hash).substring(1));
-          let nextSection = null
-          if (mainNavLinks[index + 1]) {
-            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-          }
-          if (section.offsetTop <= fromTop) {
-            if (nextSection) {
-              if (nextSection.offsetTop > fromTop) {
-                link.classList.add("current");
-              } else {
-                link.classList.remove("current");    
-              }
-            } else {
-              link.classList.add("current");
-            }
-          } else {
-            link.classList.remove("current");
-          }
-        });
-      });
-
-    </script>
-  </body>
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <p>© 2026 Windzxy · Pure static GitHub Pages site · No generator/CDN dependency.</p>
+      <a href="../atom.xml">RSS</a>
+    </div>
+  </footer>
+<script src="../scripts/theme.js"></script>
+</body>
 </html>
