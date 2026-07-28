@@ -62,3 +62,18 @@ body.tool-index .page-actions{visibility:hidden;pointer-events:none}
 .image-workbench .workspace-grid{grid-template-columns:minmax(0,1.35fr) minmax(340px,.65fr);align-items:start}
 @media(max-width:980px){.settings-panel{position:relative;top:auto;max-height:none}.image-workbench .workspace-grid{grid-template-columns:1fr}.settings-tabs{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:560px){.settings-tabs{grid-template-columns:repeat(2,1fr)}}
+
+body{font-weight:450}
+strong,b,h1,h2,h3,.brand-copy h1,.card h2,.tool-card h3,.page-actions a,.return-home,.lang-select,.settings-tab,.button,button{font-weight:650}
+.nav nav a,.title-chip,.card .icon,.app-icon{font-weight:650}
+.card p,.tool-card p,.hint,.mini-note{font-weight:430}
+html[lang="en"] .grid,html[lang="en"] .tool-grid{align-items:stretch}
+html[lang="en"] .card,html[lang="en"] .tool-card{justify-content:flex-start;gap:18px}
+html[lang="en"] .card h2,html[lang="en"] .tool-card h3{min-height:1.25em;margin-top:14px}
+html[lang="en"] .card p,html[lang="en"] .tool-card p{min-height:4.8em;max-width:100%;line-height:1.5}
+html[lang="en"] .tool-card:nth-child(1) p,html[lang="en"] .tool-card:nth-child(2) p{min-height:3.4em}
+.ocr-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.ocr-progress{height:8px;border-radius:999px;background:color-mix(in srgb,var(--panel2) 82%,transparent);overflow:hidden;margin:12px 0}
+.ocr-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .2s ease}
+.ocr-status{font-size:13px;color:var(--muted);min-height:20px}
+@media(max-width:560px){.ocr-controls{grid-template-columns:1fr}}
