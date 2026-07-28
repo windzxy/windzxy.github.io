@@ -102,13 +102,13 @@ const apps=[
   {id:"color",kind:"widget",title:"色板",desc:"挑選並複製顏色。",icon:"◉",tone:"t-color"},
   {id:"link",kind:"widget",title:"快速連結",desc:"保存常用網址。",icon:"↗",tone:"t-link"},
   {id:"memo",kind:"widget",title:"小抄",desc:"保存常用片段。",icon:"⌘",tone:"t-memo"},
-  {id:"weather",kind:"widget",title:"天氣",desc:"今日、5天、7天與15天天氣。",icon:"☁",tone:"t-weather"}
+  {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}
 ];
 const seeds={
-  daily:[["weather",64,72,390,270],["note",490,72,300,210],["todo",826,72,300,230],["clock",64,378,260,140],["image",360,378,310,148],["calc",706,378,260,160]],
-  office:[["weather",64,72,380,250],["text",480,72,300,148],["table",816,72,300,148],["date",64,356,280,148],["todo",380,274,300,220],["memo",716,274,320,220]],
+  daily:[["weather",64,72,430,420],["note",530,72,300,210],["todo",866,72,300,230],["clock",530,378,260,140],["image",826,378,310,148],["calc",64,536,260,160]],
+  office:[["weather",64,72,430,400],["text",530,72,300,148],["table",866,72,300,148],["date",530,256,280,148],["todo",846,256,300,220],["memo",64,508,320,220]],
   imageDesk:[["image",64,72,330,160],["color",430,72,280,160],["note",64,270,330,210]],
-  data:[["weather",64,72,380,250],["table",480,72,310,148],["json",826,72,310,148],["date",64,356,280,148],["calc",380,274,280,170],["memo",696,274,340,210]]
+  data:[["weather",64,72,430,400],["table",530,72,310,148],["json",876,72,310,148],["date",530,256,280,148],["calc",846,256,280,170],["memo",64,508,340,210]]
 };
 const bgFallback=[
   {
@@ -195,7 +195,14 @@ function loadWorkspaces(){
 }
 function normalizeWorkspace(ws){
   if(!Array.isArray(ws.cards)&&Array.isArray(ws.toolIds))ws.cards=ws.toolIds.map((id,i)=>({id:ws.id+"-"+id+"-"+i,appId:id,x:64+(i%3)*316,y:72+Math.floor(i/3)*170,w:300,h:148,collapsed:false,data:{}}));
-  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).map((card,i)=>({id:card.id||"card-"+Date.now()+"-"+i,appId:card.appId||card.toolId||"note",x:card.x||72,y:card.y||72,w:card.w||300,h:card.h||148,collapsed:!!card.collapsed,custom:card.custom,title:card.title,desc:card.desc,href:card.href,icon:card.icon,tone:card.tone,data:card.data||{}}));
+  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).map((card,i)=>{
+    const next={id:card.id||"card-"+Date.now()+"-"+i,appId:card.appId||card.toolId||"note",x:card.x||72,y:card.y||72,w:card.w||300,h:card.h||148,collapsed:!!card.collapsed,custom:card.custom,title:card.title,desc:card.desc,href:card.href,icon:card.icon,tone:card.tone,data:card.data||{}};
+    if(next.appId==="weather"&&next.w<=390&&next.h<=270){
+      next.w=430;
+      next.h=420;
+    }
+    return next;
+  });
   return ws;
 }
 function save(){localStorage.setItem(storeKey,JSON.stringify(workspaces))}
@@ -230,16 +237,25 @@ function bodyHtml(card,info){
 }
 function weatherHtml(card){
   const data=card.data||{};
-  const days=Number(data.weatherDays||5);
+  const days=visibleWeatherDays(card);
   const weather=data.weather||null;
   const status=data.weatherStatus||(!weather?tr("正在載入天氣…"):"");
   const place=tr(data.weatherName||"新加坡");
   const current=weather?.current||null;
   const list=(weather?.days||[]).slice(0,days);
-  const options=[1,5,7,15].map(n=>'<button type="button" class="'+(days===n?'is-active':'')+'" data-weather-days="'+n+'">'+(n===1?tr("今天"):n+" "+tr("天"))+'</button>').join("");
   const currentHtml=current?'<div class="weather-current"><div class="weather-main"><span class="weather-icon">'+weatherIcon(current.code,current.isDay)+'</span><div><strong>'+Math.round(current.temp)+'°</strong><small>'+escapeHtml(weatherText(current.code))+'</small></div></div><div class="weather-meta"><span>'+escapeHtml(tr("體感"))+' '+Math.round(current.feels)+'°</span><span>'+escapeHtml(tr("濕度"))+' '+Math.round(current.humidity)+'%</span><span>'+escapeHtml(tr("風速"))+' '+Math.round(current.wind)+' km/h</span></div></div>':'<div class="weather-empty">'+escapeHtml(status)+'</div>';
-  const daysHtml=list.length?'<div class="weather-days">'+list.map(day=>'<div class="weather-day"><span>'+escapeHtml(formatWeatherDate(day.date,days))+'</span><b>'+weatherIcon(day.code,true)+'</b><strong>'+Math.round(day.max)+'° / '+Math.round(day.min)+'°</strong><small>'+escapeHtml((day.pop ?? 0)+"%")+'</small></div>').join("")+'</div>':'';
-  return '<div class="weather-widget"><form class="weather-search"><input data-field="weatherQuery" value="'+escapeHtml(data.weatherQuery||place)+'" placeholder="'+escapeHtml(tr("輸入城市"))+'"><button type="submit" data-i18n="搜尋">搜尋</button></form><div class="weather-head"><div><span data-i18n="天氣位置">天氣位置</span><strong>'+escapeHtml(place)+'</strong></div><button type="button" data-weather-locate data-i18n="定位">定位</button></div>'+currentHtml+'<div class="weather-range">'+options+'</div>'+daysHtml+'<div class="weather-foot"><span data-weather-status>'+escapeHtml(status||weather?.updated||"")+'</span><button type="button" data-weather-refresh data-i18n="刷新">刷新</button></div></div>';
+  const daysHtml=list.length?'<div class="weather-days" data-visible-days="'+days+'">'+list.map(day=>'<div class="weather-day"><span>'+escapeHtml(formatWeatherDate(day.date))+'</span><b>'+weatherIcon(day.code,true)+'</b><strong>'+Math.round(day.max)+'° / '+Math.round(day.min)+'°</strong><small>'+escapeHtml((day.pop ?? 0)+"%")+'</small></div>').join("")+'</div>':'';
+  const total=weather?.days?.length||15;
+  const countText=weather?tr("顯示")+" "+Math.min(days,total)+"/"+total+" "+tr("天"):"";
+  return '<div class="weather-widget"><form class="weather-search"><input data-field="weatherQuery" value="'+escapeHtml(data.weatherQuery||place)+'" placeholder="'+escapeHtml(tr("輸入城市"))+'"><button type="submit" data-i18n="搜尋">搜尋</button></form><div class="weather-head"><div><span data-i18n="天氣位置">天氣位置</span><strong>'+escapeHtml(place)+'</strong></div><button type="button" data-weather-locate data-i18n="定位">定位</button></div>'+currentHtml+daysHtml+'<div class="weather-foot"><span data-weather-status>'+escapeHtml(status||weather?.updated||"")+'</span><span class="weather-count">'+escapeHtml(countText)+'</span><button type="button" data-weather-refresh data-i18n="刷新">刷新</button></div></div>';
+}
+function visibleWeatherDays(card){
+  const w=Number(card.w)||390;
+  const h=Number(card.h)||270;
+  const rows=Math.max(1,Math.floor((h-190)/42)+1);
+  const columns=w>=900?3:w>=560?2:1;
+  const byWidth=w>=980?15:w>=760?12:w>=560?9:w>=390?7:5;
+  return Math.max(1,Math.min(15,byWidth,rows*columns));
 }
 function weatherText(code){
   const map={0:"晴朗",1:"大致晴朗",2:"局部多雲",3:"多雲",45:"有霧",48:"霧凇",51:"小毛雨",53:"毛雨",55:"大毛雨",56:"凍毛雨",57:"凍毛雨",61:"小雨",63:"中雨",65:"大雨",66:"凍雨",67:"凍雨",71:"小雪",73:"中雪",75:"大雪",77:"雪粒",80:"陣雨",81:"陣雨",82:"強陣雨",85:"陣雪",86:"強陣雪",95:"雷暴",96:"雷暴冰雹",99:"雷暴冰雹"};
@@ -254,9 +270,10 @@ function weatherIcon(code,isDay){
   if(code>=95)return "⚡";
   return "☁";
 }
-function formatWeatherDate(value,range){
+function formatWeatherDate(value){
   const date=new Date(value+"T00:00:00");
-  if(range===1)return tr("今天");
+  const today=new Date();
+  if(date.toDateString()===today.toDateString())return tr("今天");
   return new Intl.DateTimeFormat(undefined,{weekday:"short",month:"numeric",day:"numeric"}).format(date);
 }
 function cardHtml(card){
@@ -281,7 +298,7 @@ function renderDesktop(){
 }
 function addCard(appId){
   const i=activeWorkspace().cards.length;
-  const size=appId==="weather"?{w:390,h:270}:appId==="todo"?{w:310,h:220}:appId==="note"?{w:310,h:210}:{w:280,h:150};
+  const size=appId==="weather"?{w:430,h:420}:appId==="todo"?{w:310,h:220}:appId==="note"?{w:310,h:210}:{w:280,h:150};
   activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),appId,x:72+(i%5)*38,y:78+(i%7)*32,w:size.w,h:size.h,collapsed:false,data:{}});
   save();
   renderAll();
@@ -343,7 +360,6 @@ function bindCard(el){
   if(copy)copy.onclick=()=>navigator.clipboard?.writeText(el.querySelector('[data-field="color"]').value);
   const weatherForm=el.querySelector(".weather-search");
   if(weatherForm)weatherForm.onsubmit=e=>{e.preventDefault();searchWeather(id,weatherForm.querySelector("input").value)};
-  el.querySelectorAll("[data-weather-days]").forEach(btn=>btn.onclick=()=>setWeatherDays(id,+btn.dataset.weatherDays));
   el.querySelectorAll("[data-weather-refresh]").forEach(btn=>btn.onclick=()=>loadWeatherCard(id,{force:true}));
   el.querySelectorAll("[data-weather-locate]").forEach(btn=>btn.onclick=()=>locateWeather(id));
 }
@@ -524,8 +540,11 @@ document.addEventListener("pointermove",e=>{
     drag.el.style.top=drag.item.y+"px";
   }
   if(resize){
-    resize.item.w=Math.max(210,Math.min(720,resize.origW+e.clientX-resize.startX));
-    resize.item.h=Math.max(110,Math.min(520,resize.origH+e.clientY-resize.startY));
+    const isWeather=resize.item.appId==="weather";
+    const maxW=isWeather?1120:720;
+    const maxH=isWeather?760:520;
+    resize.item.w=Math.max(isWeather?320:210,Math.min(maxW,resize.origW+e.clientX-resize.startX));
+    resize.item.h=Math.max(isWeather?260:110,Math.min(maxH,resize.origH+e.clientY-resize.startY));
     resize.el.style.width=resize.item.w+"px";
     resize.el.style.height=resize.item.h+"px";
   }
@@ -534,7 +553,7 @@ document.addEventListener("pointerup",()=>{
   if(windowDrag)windowDrag=null;
   if(windowResize)windowResize=null;
   if(drag){drag.el.classList.remove("is-dragging");drag=null;save()}
-  if(resize){resize.el.classList.remove("is-resizing");resize=null;save()}
+  if(resize){const shouldRender=resize.item.appId==="weather";resize.el.classList.remove("is-resizing");resize=null;save();if(shouldRender)renderDesktop()}
 });
 function updateData(id,field,value){
   const card=activeWorkspace().cards.find(x=>x.id===id);
@@ -571,14 +590,6 @@ function deleteTodo(id,index){
   renderDesktop();
 }
 const weatherLoading=new Set();
-function setWeatherDays(id,days){
-  const card=activeWorkspace().cards.find(x=>x.id===id);
-  if(!card)return;
-  card.data=card.data||{};
-  card.data.weatherDays=days;
-  save();
-  renderDesktop();
-}
 function defaultWeatherData(){
   return {weatherName:"新加坡",weatherQuery:"新加坡",weatherLat:1.3521,weatherLon:103.8198};
 }
