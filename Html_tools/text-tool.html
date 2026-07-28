@@ -1,10 +1,15 @@
 <!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>文字整理</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-return-theme1">
-  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-return-theme1">
-  <link rel="stylesheet" href="style.css?v=20260728-return-theme1"></head><body class="tool-page tool-text"><header>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-i18n1">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-i18n1">
+  <link rel="stylesheet" href="style.css?v=20260728-i18n1"></head><body class="tool-page tool-text"><header>
   <div class="wrap">
-    <a class="return-home" href="../index.html">← 首页</a><div class="brand"><div class="brand-copy"><h1>文字整理</h1><p>快速清理及統計文字</p></div>
-<button class="theme-toggle" type="button" aria-label="切換主題">☾</button></div></header><main class="wrap"><section class="panel"><textarea id="text" placeholder="在此貼上文字…"></textarea><div class="grid" style="margin-top:14px"><div class="stat"><strong id="chars">0</strong>字元</div><div class="stat"><strong id="charsNoSpace">0</strong>不含空白</div><div class="stat"><strong id="words">0</strong>詞數</div><div class="stat"><strong id="lines">0</strong>行數</div></div><div class="actions"><button data-act="trim">清除首尾空白</button><button data-act="blank">移除空行</button><button data-act="dedupe">行去重</button><button data-act="sort">行排序</button><button data-act="upper">英文大寫</button><button data-act="lower">英文小寫</button><button id="copy" class="secondary">複製</button><button id="clear" class="secondary">清空</button></div></section></main><script>
+    <a class="return-home" href="../index.html">← 首页</a>
+    <div class="brand"><div class="brand-copy"><h1>文字整理</h1></div></div>
+    <div class="page-actions"><a href="index.html">工具箱</a></div>
+    <div class="header-actions"><select class="lang-select" aria-label="Language"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select><button class="theme-toggle" type="button" aria-label="切換主題">☾</button></div>
+  </div>
+</header><main class="wrap"><section class="panel"><textarea id="text" placeholder="在此貼上文字…"></textarea><div class="grid" style="margin-top:14px"><div class="stat"><strong id="chars">0</strong>字元</div><div class="stat"><strong id="charsNoSpace">0</strong>不含空白</div><div class="stat"><strong id="words">0</strong>詞數</div><div class="stat"><strong id="lines">0</strong>行數</div></div><div class="actions"><button data-act="trim">清除首尾空白</button><button data-act="blank">移除空行</button><button data-act="dedupe">行去重</button><button data-act="sort">行排序</button><button data-act="upper">英文大寫</button><button data-act="lower">英文小寫</button><button id="copy" class="secondary">複製</button><button id="clear" class="secondary">清空</button></div></section></main><script>
 const t=document.getElementById('text'),$=id=>document.getElementById(id);function stats(){const s=t.value;$('chars').textContent=s.length;$('charsNoSpace').textContent=s.replace(/\s/g,'').length;$('words').textContent=(s.match(/[\p{L}\p{N}]+/gu)||[]).length;$('lines').textContent=s? s.split(/\r?\n/).length:0}t.oninput=stats;
 document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{let s=t.value,l=s.split(/\r?\n/);({trim:()=>s=l.map(x=>x.trim()).join('\n').trim(),blank:()=>s=l.filter(x=>x.trim()).join('\n'),dedupe:()=>s=[...new Set(l)].join('\n'),sort:()=>s=l.sort((a,b)=>a.localeCompare(b,'zh-Hant')).join('\n'),upper:()=>s=s.toUpperCase(),lower:()=>s=s.toLowerCase()})[b.dataset.act]();t.value=s;stats()});$('copy').onclick=async()=>{await navigator.clipboard.writeText(t.value);$('copy').textContent='已複製';setTimeout(()=>$('copy').textContent='複製',1000)};$('clear').onclick=()=>{t.value='';stats()};
-</script><script src="theme.js?v=20260728-return-theme1"></script></body></html>
+</script><script src="theme.js?v=20260728-i18n1"></script><script src="i18n.js?v=20260728-i18n1"></script>
+</body></html>
