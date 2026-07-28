@@ -4,79 +4,68 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Windzxy Tools</title>
-  <meta name="description" content="Windzxy 的純靜態 GitHub Pages 日常工具站。">
-  <link rel="icon" href="images/avatar.png" type="image/svg+xml">
+  <meta name="description" content="Windzxy 的日常辦公工具箱。">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
   <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-
-  <header class="site-header">
-    <div class="wrap nav">
-      <a class="brand" href="index.html">
-        <img class="brand-logo" src="images/avatar.png" alt="Windzxy avatar">
-        <span><strong>Windzxy</strong><small>Tools</small></span>
-      </a>
-      <nav>
-        <a href="index.html">首頁</a>
-        <a href="Html_tools/index.html">工具箱</a>
-        <a href="archives/index.html">Archive</a>
-        <a href="about/index.html">About</a>
-      </nav>
-      <button class="theme-toggle" type="button" aria-label="切換主題"></button>
-    </div>
-  </header>
+<header class="site-header">
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="assets/favicon.svg" alt="Windzxy">
+      <span><strong>Windzxy</strong><small>Tools</small></span>
+    </a>
+    <nav>
+      <a href="index.html">首頁</a>
+      <a href="Html_tools/index.html">工具箱</a>
+      <a href="archives/index.html">Archive</a>
+      <a href="about/index.html">About</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="切換主題"></button>
+  </div>
+</header>
 <main>
   <section class="hero wrap">
-    <div class="hero-copy">
-      <p class="eyebrow">Pure GitHub Pages · Windzxy Tools</p>
-      <h1>Windzxy 日常工具站</h1>
-      <p class="lead">已從第三方平台輸出頁重構為純手寫靜態站。沒有外部 CDN、沒有建站平台 runtime；打開就能用，資料只在瀏覽器本機處理。</p>
+    <div>
+      <p class="eyebrow">Windzxy Tools</p>
+      <h1>日常工具，打開就用。</h1>
+      <p class="lead">圖片處理、文字整理、表格轉換、日期計算與 JSON 格式化。介面簡單，資料留在瀏覽器本機。</p>
       <div class="actions">
-        <a class="button" href="Html_tools/image-tool.html">立即使用圖片工具</a>
-        <a class="button secondary" href="Html_tools/index.html">查看全部工具</a>
+        <a class="button" href="Html_tools/image-tool.html">圖片處理</a>
+        <a class="button secondary" href="Html_tools/index.html">全部工具</a>
       </div>
     </div>
     <div class="hero-card">
-      <img src="images/avatar.png" alt="Windzxy avatar">
-      <h2>Windzxy HTML Tools</h2>
-      <p>圖片放大/去背、文字整理、CSV/TSV、日期與 JSON 工具。</p>
+      <img src="assets/favicon.svg" alt="Windzxy">
+      <h2>HTML Tools</h2>
+      <p>幾個常用小工具，整理在一個頁面裡。</p>
     </div>
   </section>
-
   <section class="wrap grid-section">
     <div class="section-title">
-      <p class="eyebrow">Tools</p>
-      <h2>常用辦公 HTML</h2>
+      <div>
+        <p class="eyebrow">Tools</p>
+        <h2>常用辦公</h2>
+      </div>
     </div>
     <div class="tool-grid">
-      <a class="tool-card highlight" href="Html_tools/image-tool.html"><span>🖼️</span><h3>圖片處理</h3><p>高保真/像素無損放大、本機去背、透明裁切、調色、壓縮與格式轉換。</p></a>
-      <a class="tool-card" href="Html_tools/text-tool.html"><span>✍️</span><h3>文字整理</h3><p>統計、去空行、去重、排序與大小寫轉換。</p></a>
-      <a class="tool-card" href="Html_tools/table-tool.html"><span>📊</span><h3>表格轉換</h3><p>貼上 CSV/TSV，預覽、搜尋、複製與匯出。</p></a>
-      <a class="tool-card" href="Html_tools/date-tool.html"><span>📅</span><h3>日期計算</h3><p>日期間隔、日曆天與工作天推算。</p></a>
-      <a class="tool-card" href="Html_tools/json-tool.html"><span>{ }</span><h3>JSON 工具</h3><p>格式化、壓縮、驗證與複製 JSON。</p></a>
+      <a class="tool-card" href="Html_tools/image-tool.html"><span class="icon">◎</span><div><h3>圖片處理</h3><p>放大、去背、裁切、調色、壓縮與格式轉換。</p></div></a>
+      <a class="tool-card" href="Html_tools/text-tool.html"><span class="icon">Aa</span><div><h3>文字整理</h3><p>統計、去空行、去重、排序與大小寫轉換。</p></div></a>
+      <a class="tool-card" href="Html_tools/table-tool.html"><span class="icon">▦</span><div><h3>表格轉換</h3><p>CSV、TSV、Markdown 與 HTML 快速整理。</p></div></a>
+      <a class="tool-card" href="Html_tools/date-tool.html"><span class="icon">31</span><div><h3>日期計算</h3><p>日期間隔、日曆天與工作天推算。</p></div></a>
+      <a class="tool-card" href="Html_tools/json-tool.html"><span class="icon">{}</span><div><h3>JSON 工具</h3><p>格式化、壓縮、驗證與複製。</p></div></a>
     </div>
-  </section>
-
-  <section class="wrap split-panel">
-    <article>
-      <p class="eyebrow">Refactor</p>
-      <h2>不再依賴第三方建站平台</h2>
-      <p>舊站為外部工具生成的靜態輸出，頁面中含有生成器 footer 與多個外部 CDN。現在首頁、About、Archive、Tags、文章頁與工具頁都改為本地靜態資源。</p>
-    </article>
-    <ul class="check-list">
-      <li>純 HTML/CSS/JavaScript，可由 GitHub Pages 直接服務</li>
-      <li>本地 Windzxy 樣式與 logo，無外部字體、圖示或腳本依賴</li>
-      <li>圖片與文字處理都在使用者瀏覽器內完成</li>
-    </ul>
   </section>
 </main>
-
-  <footer class="site-footer">
-    <div class="wrap footer-grid">
-      <p>© 2026 Windzxy · Pure static GitHub Pages site · No generator/CDN dependency.</p>
-      <a href="atom.xml">RSS</a>
-    </div>
-  </footer>
-<script src="scripts/theme.js"></script>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span>© 2026 Windzxy</span>
+    <a href="atom.xml">RSS</a>
+  </div>
+</footer>
+<script>
+(function(){const root=document.documentElement;const saved=localStorage.getItem("windzxy-theme");if(saved)root.dataset.theme=saved;document.querySelector(".theme-toggle")?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);});})();
+</script>
 </body>
 </html>
