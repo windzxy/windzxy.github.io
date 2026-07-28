@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Windzxy Tools</title>
   <meta name="description" content="Windzxy 的日常辦公工具箱。">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-textfix1">
-  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-textfix1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-textfix1">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-workspace1">
+  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-workspace1">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-workspace1">
 </head>
-<body>
+<body class="workspace-home">
 <header class="site-header">
   <div class="wrap nav">
     <span class="nav-spacer"></span>
@@ -17,25 +17,43 @@
     <div class="header-actions"><select class="lang-select" aria-label="Language"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select><button class="theme-toggle" type="button" aria-label="切換主題"></button></div>
   </div>
 </header>
-<main class="wrap home">
-  <section class="toolbar">
-    <div class="title-chip"><span class="title-dot"></span><span>常用工具</span></div>
-    <div class="quick">
-      <a class="button" href="Html_tools/image-tool.html">圖片處理</a>
-      <a class="button secondary" href="Html_tools/index.html">全部工具</a>
+<main class="wrap desk-shell">
+  <aside class="desk-sidebar">
+    <div class="desk-brand">
+      <span class="desk-dot"></span>
+      <div>
+        <h1>工作區</h1>
+        <p>把常用工具放到自己的桌面。</p>
+      </div>
     </div>
-  </section>
-  <label class="search-card">
-    <span>⌕</span>
-    <input data-search type="search" placeholder="搜尋工具，例如：圖片、JSON、表格">
-    <kbd>/</kbd>
-  </label>
-  <section class="tool-grid" aria-label="工具列表">
-    <a class="tool-card t-image" href="Html_tools/image-tool.html" data-tool="圖片處理 放大、去背、裁切、調色、壓縮與格式轉換。 image picture background upscale"><span class="app-icon">◎</span><div><h3>圖片處理</h3><p>放大、去背、裁切、調色、壓縮與格式轉換。</p></div><span class="arrow">→</span></a>
-    <a class="tool-card t-text" href="Html_tools/text-tool.html" data-tool="文字整理 統計、去空行、去重、排序與大小寫轉換。 text words clean sort"><span class="app-icon">Aa</span><div><h3>文字整理</h3><p>統計、去空行、去重、排序與大小寫轉換。</p></div><span class="arrow">→</span></a>
-    <a class="tool-card t-table" href="Html_tools/table-tool.html" data-tool="表格轉換 CSV、TSV、Markdown 與 HTML 快速整理。 table csv tsv markdown"><span class="app-icon">▦</span><div><h3>表格轉換</h3><p>CSV、TSV、Markdown 與 HTML 快速整理。</p></div><span class="arrow">→</span></a>
-    <a class="tool-card t-date" href="Html_tools/date-tool.html" data-tool="日期計算 日期間隔、日曆天與工作天推算。 date calendar days"><span class="app-icon">31</span><div><h3>日期計算</h3><p>日期間隔、日曆天與工作天推算。</p></div><span class="arrow">→</span></a>
-    <a class="tool-card t-json" href="Html_tools/json-tool.html" data-tool="JSON 工具 格式化、壓縮、驗證與複製。 json format validate"><span class="app-icon">{}</span><div><h3>JSON 工具</h3><p>格式化、壓縮、驗證與複製。</p></div><span class="arrow">→</span></a>
+    <div id="workspaceList" class="workspace-list"></div>
+    <button id="createWorkspace" class="secondary desk-create" type="button">新建工作區</button>
+  </aside>
+  <section class="desk-main">
+    <div class="desk-top">
+      <div>
+        <p class="eyebrow">TOOLS DESK</p>
+        <h2 id="workspaceTitle">日常工作區</h2>
+        <p id="workspaceHint">點開工具格子即可使用；開啟排列後可拖拽排序。</p>
+      </div>
+      <div class="desk-actions">
+        <button id="editLayout" type="button">編輯排列</button>
+        <button id="resetLayout" class="secondary" type="button">重設</button>
+      </div>
+    </div>
+    <label class="search-card desk-search">
+      <span>⌕</span>
+      <input id="deskSearch" type="search" placeholder="搜尋工具，例如：圖片、JSON、表格">
+      <kbd>/</kbd>
+    </label>
+    <section id="toolGrid" class="desk-grid" aria-label="工具格子"></section>
+    <section class="tool-shelf">
+      <div class="shelf-head">
+        <h3>工具庫</h3>
+        <p>可加入目前工作區。</p>
+      </div>
+      <div id="toolShelf" class="shelf-grid"></div>
+    </section>
   </section>
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 Windzxy</div></footer>
@@ -43,8 +61,113 @@
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
 <script>
-(function(){const input=document.querySelector("[data-search]");const cards=[...document.querySelectorAll("[data-tool]")];if(!input)return;input.addEventListener("input",()=>{const q=input.value.trim().toLowerCase();cards.forEach(card=>{card.hidden=q&&!card.dataset.tool.toLowerCase().includes(q);});});document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==input){e.preventDefault();input.focus();}});})();
+const tools=[
+  {id:"image",title:"圖片處理",desc:"放大、去背、裁切、調色、壓縮、OCR。",href:"Html_tools/image-tool.html",icon:"◎",tone:"t-image"},
+  {id:"text",title:"文字整理",desc:"統計、清理、翻譯、首字母大寫與排序。",href:"Html_tools/text-tool.html",icon:"Aa",tone:"t-text"},
+  {id:"table",title:"表格轉換",desc:"CSV、TSV、Markdown 與 HTML 快速整理。",href:"Html_tools/table-tool.html",icon:"▦",tone:"t-table"},
+  {id:"date",title:"日期計算",desc:"日期間隔、日曆天與工作天推算。",href:"Html_tools/date-tool.html",icon:"31",tone:"t-date"},
+  {id:"json",title:"JSON 工具",desc:"格式化、壓縮、驗證與複製。",href:"Html_tools/json-tool.html",icon:"{}",tone:"t-json"}
+];
+const defaults=[
+  {id:"daily",name:"日常工作區",hint:"點開工具格子即可使用；開啟排列後可拖拽排序。",toolIds:["image","text","table","date","json"]},
+  {id:"office",name:"辦公整理",hint:"文字、表格、日期與 JSON 放在一起。",toolIds:["text","table","date","json"]},
+  {id:"imageDesk",name:"圖片工作台",hint:"圖片處理與 OCR 優先。",toolIds:["image","text"]},
+  {id:"data",name:"資料處理",hint:"整理表格、JSON 和日期資料。",toolIds:["table","json","date","text"]}
+];
+const storeKey="windzxy-workspaces";
+const activeKey="windzxy-active-workspace";
+let editMode=false;
+let workspaces=loadWorkspaces();
+let activeId=localStorage.getItem(activeKey)||workspaces[0].id;
+const $=id=>document.getElementById(id);
+function loadWorkspaces(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(storeKey)||"[]");
+    const custom=Array.isArray(saved)?saved.filter(x=>x&&x.id&&x.name&&Array.isArray(x.toolIds)):[];
+    return [...defaults,...custom.filter(x=>!defaults.some(d=>d.id===x.id))];
+  }catch(e){return [...defaults]}
+}
+function saveCustom(){
+  localStorage.setItem(storeKey,JSON.stringify(workspaces.filter(x=>!defaults.some(d=>d.id===x.id))));
+}
+function activeWorkspace(){return workspaces.find(x=>x.id===activeId)||workspaces[0]}
+function toolById(id){return tools.find(t=>t.id===id)}
+function renderWorkspaces(){
+  $("workspaceList").innerHTML=workspaces.map(w=>'<button class="workspace-pill '+(w.id===activeId?'is-active':'')+'" type="button" data-id="'+w.id+'"><span>'+escapeHtml(w.name)+'</span><small>'+w.toolIds.length+'</small></button>').join("");
+  document.querySelectorAll(".workspace-pill").forEach(btn=>btn.onclick=()=>{activeId=btn.dataset.id;localStorage.setItem(activeKey,activeId);renderAll()});
+}
+function renderTools(){
+  const ws=activeWorkspace();
+  $("workspaceTitle").textContent=ws.name;
+  $("workspaceHint").textContent=ws.hint||"點開工具格子即可使用；開啟排列後可拖拽排序。";
+  const q=$("deskSearch").value.trim().toLowerCase();
+  const ids=ws.toolIds.filter(id=>{const t=toolById(id);return t&&(!q||(t.title+t.desc).toLowerCase().includes(q))});
+  $("toolGrid").classList.toggle("is-editing",editMode);
+  $("toolGrid").innerHTML=ids.map(id=>tile(toolById(id),true)).join("")||'<div class="empty-desk">這個工作區還沒有工具，從下方工具庫加入。</div>';
+  document.querySelectorAll(".desk-tile").forEach(bindTile);
+  $("toolShelf").innerHTML=tools.map(t=>'<button class="shelf-item '+t.tone+'" type="button" data-id="'+t.id+'"><span class="app-icon">'+t.icon+'</span><span>'+t.title+'</span><small>＋</small></button>').join("");
+  document.querySelectorAll(".shelf-item").forEach(btn=>btn.onclick=()=>addTool(btn.dataset.id));
+  if(window.applyI18n)window.applyI18n(document.body);
+}
+function tile(t,draggable){
+  if(!t)return "";
+  return '<a class="tool-card desk-tile '+t.tone+'" href="'+t.href+'" draggable="'+(editMode&&draggable)+'" data-id="'+t.id+'" data-tool="'+escapeHtml(t.title+" "+t.desc)+'"><span class="app-icon">'+t.icon+'</span><div><h3>'+t.title+'</h3><p>'+t.desc+'</p></div><span class="arrow">'+(editMode?'↕':'→')+'</span></a>';
+}
+function bindTile(card){
+  card.addEventListener("click",e=>{if(editMode)e.preventDefault()});
+  card.addEventListener("dragstart",e=>{if(!editMode)return;e.dataTransfer.setData("text/plain",card.dataset.id);card.classList.add("dragging")});
+  card.addEventListener("dragend",()=>card.classList.remove("dragging"));
+  card.addEventListener("dragover",e=>{if(editMode)e.preventDefault()});
+  card.addEventListener("drop",e=>{
+    if(!editMode)return;
+    e.preventDefault();
+    const from=e.dataTransfer.getData("text/plain");
+    const to=card.dataset.id;
+    reorder(from,to);
+  });
+}
+function reorder(from,to){
+  if(from===to)return;
+  const ws=activeWorkspace();
+  const next=ws.toolIds.filter(id=>id!==from);
+  const at=next.indexOf(to);
+  next.splice(at<0?next.length:at,0,from);
+  ws.toolIds=next;
+  saveCustom();
+  renderTools();
+}
+function addTool(id){
+  const ws=activeWorkspace();
+  if(!ws.toolIds.includes(id))ws.toolIds.push(id);
+  saveCustom();
+  renderAll();
+}
+function createWorkspace(){
+  const name=prompt("新工作區名稱");
+  if(!name||!name.trim())return;
+  const id="custom-"+Date.now();
+  workspaces.push({id,name:name.trim(),hint:"自訂工作區，可加入工具並拖拽排序。",toolIds:[]});
+  activeId=id;
+  localStorage.setItem(activeKey,activeId);
+  saveCustom();
+  renderAll();
+}
+function resetLayout(){
+  const ws=activeWorkspace();
+  const def=defaults.find(d=>d.id===ws.id);
+  if(def){ws.toolIds=[...def.toolIds]}else{ws.toolIds=[]}
+  saveCustom();
+  renderAll();
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function renderAll(){renderWorkspaces();renderTools()}
+$("createWorkspace").onclick=createWorkspace;
+$("editLayout").onclick=()=>{editMode=!editMode;$("editLayout").textContent=editMode?"完成排列":"編輯排列";renderTools()};
+$("resetLayout").onclick=resetLayout;
+$("deskSearch").addEventListener("input",renderTools);
+document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==$("deskSearch")){e.preventDefault();$("deskSearch").focus()}});
+renderAll();
 </script>
-<script src="Html_tools/i18n.js?v=20260728-textfix1"></script>
+<script src="Html_tools/i18n.js?v=20260728-workspace1"></script>
 </body>
 </html>
