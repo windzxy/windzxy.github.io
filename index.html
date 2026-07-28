@@ -8,7 +8,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="stylesheet" href="styles/main.css?v=20260728-weatherflow1">
-  <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-taskbg10">
+  <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
 <main id="desktopApp" class="web-desktop">
@@ -729,7 +729,7 @@ function tickWidgets(){
   document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(now));
   document.querySelectorAll("[data-date]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now));
 }
-const bgVersion="20260728-taskbg10";
+const bgVersion="20260728-folderbg1";
 let bgApplying=false;
 const bgDataCache={};
 function isEncodedBackground(file){
@@ -768,18 +768,54 @@ function preloadBackgrounds(){
     }).catch(error=>console.error(error));
   });
 }
+const backgroundFilePattern=/\.(webp|avif|png|jpe?g)(?:[?#].*)?$/i;
+function backgroundTitleFromFile(file){
+  const name=String(file||"").split("/").pop().replace(/\.[^.]+$/,"");
+  return name.replace(/^\d{4}-\d{2}-\d{2}-?/,"").replace(/[-_]+/g," ").replace(/\b\w/g,ch=>ch.toUpperCase())||"Background";
+}
+function normalizeBackgroundList(list){
+  const seen=new Set();
+  return (Array.isArray(list)?list:[]).map(item=>{
+    const file=typeof item==="string"?item:item?.file||item?.path||item?.download_url;
+    if(!file||!backgroundFilePattern.test(file)||/\.b64(?:[?#].*)?$/i.test(file))return null;
+    const normalized=/^https?:/.test(file)?file:(file.startsWith("backgrounds/")?file:"backgrounds/"+file.split("/").pop());
+    if(seen.has(normalized))return null;
+    seen.add(normalized);
+    return {
+      id:item?.id||normalized.split("/").pop().replace(/\.[^.]+$/,""),
+      title:item?.title||backgroundTitleFromFile(normalized),
+      file:normalized
+    };
+  }).filter(Boolean).sort((a,b)=>a.file.localeCompare(b.file,undefined,{numeric:true}));
+}
+async function loadBackgroundFolder(){
+  const api="https://api.github.com/repos/windzxy/windzxy.github.io/contents/backgrounds?ref=master";
+  const res=await fetch(api,{cache:"no-store",headers:{Accept:"application/vnd.github+json"}});
+  if(!res.ok)throw new Error("Background folder listing failed");
+  const files=await res.json();
+  return normalizeBackgroundList(files.filter(file=>file&&file.type==="file").map(file=>({file:file.path,title:backgroundTitleFromFile(file.name)})));
+}
+async function loadBackgroundManifest(){
+  const res=await fetch("backgrounds/manifest.json?v="+bgVersion,{cache:"no-store"});
+  if(!res.ok)throw new Error("Background manifest failed");
+  return normalizeBackgroundList(await res.json());
+}
 async function loadBackgrounds(){
   let loaded=false;
   try{
-    const res=await fetch("backgrounds/manifest.json?v="+bgVersion,{cache:"no-store"});
-    if(res.ok){
-      const list=await res.json();
-      if(Array.isArray(list)&&list.length){
-        backgrounds=list.filter(bg=>bg&&bg.file&&bg.title);
-        loaded=backgrounds.length>0;
-      }
+    backgrounds=await loadBackgroundFolder();
+    loaded=backgrounds.length>0;
+  }catch(error){
+    console.warn(error);
+  }
+  if(!loaded){
+    try{
+      backgrounds=await loadBackgroundManifest();
+      loaded=backgrounds.length>0;
+    }catch(error){
+      console.warn(error);
     }
-  }catch(e){}
+  }
   if(!loaded)backgrounds=bgFallback;
   preloadBackgrounds();
   const initial=pickBackground(localStorage.getItem(bgKey));
