@@ -219,7 +219,7 @@
         <div class="copy-row">
           <button id="ocrCopy" class="secondary" type="button">复制 OCR 结果</button>
         </div>
-        <p class="mini-note">浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。</p>
+        <p class="mini-note">点击识别时才会加载 OCR 引擎；中文识别首次加载会稍慢。</p>
       </details>
 
       <details class="settings-section" data-section="export" open>
@@ -887,24 +887,93 @@ controls.forEach(id => {
   });
 });
 
+function prepareOcrCanvas() {
+  const mode = $('ocrMode')?.value || 'auto';
+  const base = document.createElement('canvas');
+  base.width = sourceCanvas.width;
+  base.height = sourceCanvas.height;
+  const bctx = base.getContext('2d', { willReadFrequently: true });
+  bctx.drawImage(sourceCanvas, 0, 0);
+  if (mode === 'none') return base;
+  const imageData = bctx.getImageData(0, 0, base.width, base.height);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const g = Math.round(data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
+    let v = g;
+    if (mode === 'contrast' || mode === 'auto') v = g > 150 ? 255 : g < 95 ? 0 : Math.max(0, Math.min(255, (g - 110) * 1.8 + 128));
+    data[i] = v;
+    data[i + 1] = v;
+    data[i + 2] = v;
+  }
+  bctx.putImageData(imageData, 0, 0);
+  return base;
+}
+
+function setOcrProgress(value, label) {
+  const bar = $('ocrProgress');
+  const status = $('ocrStatus');
+  if (bar) bar.style.width = Math.max(0, Math.min(100, value)) + '%';
+  if (status) status.textContent = label || '';
+}
+
+async function loadScript(src) {
+  await new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+async function loadOcrEngine() {
+  if (window.Tesseract) return { engine: window.Tesseract, local: true };
+  setOcrProgress(8, t('正在加载 OCR 引擎…'));
+  try {
+    await loadScript('ocr/tesseract.min.js');
+    if (window.Tesseract) return { engine: window.Tesseract, local: true };
+  } catch (error) {}
+  await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
+  return { engine: window.Tesseract, local: false };
+}
+
 async function runOcr() {
   if (!sourceCanvas) {
     alert(t('请先选择图片。'));
     return;
   }
   const out = $('ocrOutput');
-  if (!('TextDetector' in window)) {
-    out.value = t('浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。');
-    return;
-  }
-  out.value = t('识别中…');
+  out.value = '';
+  setOcrProgress(2, t('准备图片…'));
   try {
-    const detector = new TextDetector();
-    const bitmap = await createImageBitmap(sourceCanvas);
-    const lines = await detector.detect(bitmap);
-    out.value = lines.map(x => x.rawValue || '').filter(Boolean).join('\n') || t('未识别到文字。');
+    const loaded = await loadOcrEngine();
+    const Tesseract = loaded.engine;
+    const lang = $('ocrLang')?.value || 'eng';
+    const ocrCanvas = prepareOcrCanvas();
+    const paths = loaded.local ? {
+      workerPath: 'ocr/worker.min.js',
+      corePath: 'ocr/tesseract-core-simd-lstm.wasm.js',
+      langPath: 'ocr/lang'
+    } : {
+      workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
+      corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/tesseract-core-simd-lstm.wasm.js',
+      langPath: 'https://tessdata.projectnaptha.com/4.0.0'
+    };
+    setOcrProgress(14, t('正在初始化 OCR…'));
+    const result = await Tesseract.recognize(ocrCanvas, lang, {
+      ...paths,
+      logger: info => {
+        if (!info) return;
+        const progress = Math.round((info.progress || 0) * 100);
+        const phase = info.status ? t(info.status) : t('识别中…');
+        setOcrProgress(progress, phase + (progress ? ' ' + progress + '%' : ''));
+      }
+    });
+    out.value = result?.data?.text?.trim() || t('未识别到文字。');
+    setOcrProgress(100, t('OCR 完成'));
   } catch (error) {
-    out.value = t('浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。');
+    out.value = t('OCR 引擎未加载。请检查网络后重试。');
+    setOcrProgress(0, t('OCR 未完成'));
   }
 }
 
