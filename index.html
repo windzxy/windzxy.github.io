@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Windzxy Tools</title>
   <meta name="description" content="Windzxy 的網頁端桌面工具箱。">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-deskapps2">
-  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-deskapps2">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-deskapps2">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
+  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-fullapps1">
 </head>
 <body class="desktop-home">
 <main id="desktopApp" class="web-desktop">
@@ -108,10 +108,56 @@ const seeds={
   data:[["table",64,72,310,148],["json",410,72,310,148],["date",756,72,280,148],["calc",64,254,280,170],["memo",380,254,340,210]]
 };
 const bgFallback=[
-  {id:"aurora-grid",title:"Aurora Grid",file:"backgrounds/aurora-grid.svg"},
-  {id:"mist-valley",title:"Mist Valley",file:"backgrounds/mist-valley.svg"},
-  {id:"neon-dusk",title:"Neon Dusk",file:"backgrounds/neon-dusk.svg"},
-  {id:"minimal-sand",title:"Minimal Sand",file:"backgrounds/minimal-sand.svg"}
+  {
+    id: "anime-cinematic-sunset-8k",
+    title: "Anime Cinematic Sunset · 8K",
+    file: "backgrounds/anime-cinematic-sunset-8k.webp"
+  },
+  {
+    id: "anime-spring-coast-8k",
+    title: "Anime Spring Coast · 8K",
+    file: "backgrounds/anime-spring-coast-8k.webp"
+  },
+  {
+    id: "anime-cyberpunk-rooftop-8k",
+    title: "Anime Cyberpunk Rooftop · 8K",
+    file: "backgrounds/anime-cyberpunk-rooftop-8k.webp"
+  },
+  {
+    id: "anime-floating-kingdom-8k",
+    title: "Anime Floating Kingdom · 8K",
+    file: "backgrounds/anime-floating-kingdom-8k.webp"
+  },
+  {
+    id: "anime-orbital-garden-8k",
+    title: "Anime Orbital Garden · 8K",
+    file: "backgrounds/anime-orbital-garden-8k.webp"
+  },
+  {
+    id: "anime-moonlit-village-8k",
+    title: "Anime Moonlit Village · 8K",
+    file: "backgrounds/anime-moonlit-village-8k.webp"
+  },
+  {
+    id: "anime-rainy-canal-8k",
+    title: "Anime Rainy Canal · 8K",
+    file: "backgrounds/anime-rainy-canal-8k.webp"
+  },
+  {
+    id: "anime-steampunk-skyport-8k",
+    title: "Anime Steampunk Skyport · 8K",
+    file: "backgrounds/anime-steampunk-skyport-8k.webp"
+  },
+  {
+    id: "anime-watercolor-lake-8k",
+    title: "Anime Watercolor Lake · 8K",
+    file: "backgrounds/anime-watercolor-lake-8k.webp"
+  },
+  {
+    id: "anime-retro-seaside-store-8k",
+    title: "Anime Retro Seaside Store · 8K",
+    file: "backgrounds/anime-retro-seaside-store-8k.webp"
+  }
 ];
 function seedCards(key){return (seeds[key]||[]).map(([appId,x,y,w,h],i)=>({id:key+"-"+appId+"-"+i,appId,x,y,w,h,collapsed:false,data:{}}))}
 const defaults=[
@@ -322,12 +368,59 @@ function createWindow(key,title,w,h){
   bindWindow(win);
   return win;
 }
+function openApp(appId,title,url){
+  if(appId==="external")return openExternalWindow(url,title);
+  const info=appById(appId);
+  if(!info)return;
+  const key="app-"+appId;
+  let win=desktopWindows[key];
+  if(win){
+    win.classList.remove("is-minimized");
+    win.style.zIndex=++topZ;
+    return;
+  }
+  win=createWindow(key,info.title,appId==="image"?1120:980,appId==="image"?760:640);
+  win.querySelector(".desktop-window-body").innerHTML=appContent(appId);
+  bindApp(win,appId);
+  $("desktopDrawer").classList.remove("is-open");
+  if(window.applyI18n)window.applyI18n(win);
+}
+function openExternalWindow(url,title){
+  if(!url)return;
+  const key="url-"+url;
+  let win=desktopWindows[key];
+  if(win){
+    win.classList.remove("is-minimized");
+    win.style.zIndex=++topZ;
+    return;
+  }
+  win=createWindow(key,title||"快速連結",860,560);
+  win.querySelector(".desktop-window-body").innerHTML='<div class="external-box"><p data-i18n="部分網站不允許嵌入桌面窗口，可複製連結到瀏覽器打開。">部分網站不允許嵌入桌面窗口，可複製連結到瀏覽器打開。</p><input readonly value="'+escapeHtml(url)+'"><button type="button" data-copy-external data-i18n="複製">複製</button></div><iframe src="'+escapeHtml(url)+'" title="'+escapeHtml(title||"快速連結")+'"></iframe>';
+  win.querySelector("[data-copy-external]").onclick=()=>navigator.clipboard?.writeText(url);
+  if(window.applyI18n)window.applyI18n(win);
+}
+function createWindow(key,title,w,h){
+  const layer=$("windowLayer");
+  const win=document.createElement("article");
+  win.className="desktop-window";
+  win.style.left=80+Object.keys(desktopWindows).length*28+"px";
+  win.style.top=68+Object.keys(desktopWindows).length*24+"px";
+  win.style.width="min("+w+"px, calc(100vw - 160px))";
+  win.style.height="min("+h+"px, calc(100vh - 150px))";
+  win.style.zIndex=++topZ;
+  win.dataset.key=key;
+  win.innerHTML='<div class="window-bar"><span>'+escapeHtml(tr(title))+'</span><div><button type="button" data-window-min aria-label="'+escapeHtml(tr("最小化"))+'">—</button><button type="button" data-window-close aria-label="'+escapeHtml(tr("關閉"))+'">×</button></div></div><div class="desktop-window-body"></div><span class="window-resize"></span>';
+  layer.appendChild(win);
+  desktopWindows[key]=win;
+  bindWindow(win);
+  return win;
+}
 function appContent(appId){
-  if(appId==="image")return '<div class="desk-app image-app"><section class="app-panel"><h3 data-i18n="圖片工作台">圖片工作台</h3><input id="appImageFile" type="file" accept="image/*"><div class="app-controls"><label><span data-i18n="寬度">寬度</span><input id="appImgW" type="number"></label><label><span data-i18n="高度">高度</span><input id="appImgH" type="number"></label><label><span data-i18n="格式">格式</span><select id="appImgFmt"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label><label><span data-i18n="品質">品質</span><input id="appImgQ" type="range" min=".4" max="1" step=".05" value=".9"></label></div><div class="app-actions"><button id="appImgFit" type="button">2×</button><button id="appImgDownload" type="button" data-i18n="下載">下載</button></div></section><section class="app-panel preview-stage"><canvas id="appImageCanvas"></canvas></section></div>';
-  if(appId==="text")return '<div class="desk-app text-app"><section class="app-panel"><textarea id="appText" placeholder="'+escapeHtml(tr("在此貼上文字…"))+'"></textarea><div class="app-actions"><button data-text-act="trim" data-i18n="清除首尾空白">清除首尾空白</button><button data-text-act="blank" data-i18n="移除空行">移除空行</button><button data-text-act="dedupe" data-i18n="行去重">行去重</button><button data-text-act="sort" data-i18n="行排序">行排序</button><button data-text-act="title" data-i18n="首字母大寫">首字母大寫</button><button data-text-act="copy" data-i18n="複製">複製</button></div></section><section class="app-panel stat-grid"><div><strong id="textChars">0</strong><span data-i18n="字元">字元</span></div><div><strong id="textWords">0</strong><span data-i18n="詞數">詞數</span></div><div><strong id="textLines">0</strong><span data-i18n="行數">行數</span></div></section></div>';
-  if(appId==="table")return '<div class="desk-app table-app"><section class="app-panel"><textarea id="appTableInput" placeholder="name,qty\nApple,3"></textarea><div class="app-actions"><button id="tablePreview" type="button" data-i18n="預覽">預覽</button><button id="tableMarkdown" type="button">Markdown</button><button id="tableCopy" type="button" data-i18n="複製">複製</button></div></section><section class="app-panel"><div id="tableOutput" class="table-output"></div></section></div>';
-  if(appId==="date")return '<div class="desk-app date-app"><section class="app-panel app-controls"><label><span data-i18n="開始日期">開始日期</span><input id="dateStart" type="date"></label><label><span data-i18n="結束日期">結束日期</span><input id="dateEnd" type="date"></label><label><span data-i18n="天數">天數</span><input id="dateDays" type="number" value="7"></label></section><section class="app-panel"><div class="app-actions"><button id="dateDiff" type="button" data-i18n="計算間隔">計算間隔</button><button id="dateAdd" type="button" data-i18n="向後推算">向後推算</button></div><output id="dateResult" class="big-result"></output></section></div>';
-  if(appId==="json")return '<div class="desk-app json-app"><section class="app-panel"><textarea id="jsonInput" placeholder="{\"hello\":true}"></textarea><div class="app-actions"><button id="jsonFormat" type="button" data-i18n="格式化">格式化</button><button id="jsonMin" type="button" data-i18n="壓縮">壓縮</button><button id="jsonCopy" type="button" data-i18n="複製">複製</button></div></section><section class="app-panel"><pre id="jsonOutput"></pre></section></div>';
+  if(appId==="image")return '<div class="desk-app image-full-app"><section class="app-panel app-sidebar"><h3 data-i18n="圖片工作台">圖片工作台</h3><input id="imgFile" type="file" accept="image/*"><div class="tool-tabs"><button data-img-tab="size" class="is-active" type="button" data-i18n="尺寸">尺寸</button><button data-img-tab="crop" type="button" data-i18n="裁切">裁切</button><button data-img-tab="bg" type="button" data-i18n="去背">去背</button><button data-img-tab="adjust" type="button" data-i18n="調色">調色</button><button data-img-tab="export" type="button" data-i18n="輸出">輸出</button><button data-img-tab="ocr" type="button">OCR</button></div><div class="img-section" data-img-section="size"><div class="app-controls two"><label><span data-i18n="寬度">寬度</span><input id="imgW" type="number"></label><label><span data-i18n="高度">高度</span><input id="imgH" type="number"></label></div><label class="check-line"><input id="imgRatio" type="checkbox" checked><span data-i18n="保持長寬比例">保持長寬比例</span></label><div class="app-actions"><button type="button" data-scale="1">1×</button><button type="button" data-scale="2">2×</button><button type="button" data-scale="3">3×</button><button type="button" data-scale="4">4×</button><button type="button" data-long="1080">1080</button><button type="button" data-long="2048">2048</button></div></div><div class="img-section hidden" data-img-section="crop"><div class="app-controls two"><label>X<input id="cropX" type="number" value="0"></label><label>Y<input id="cropY" type="number" value="0"></label><label>W<input id="cropW" type="number"></label><label>H<input id="cropH" type="number"></label></div><label class="check-line"><input id="cropOn" type="checkbox"><span data-i18n="啟用裁切">啟用裁切</span></label></div><div class="img-section hidden" data-img-section="bg"><label><span data-i18n="去背模式">去背模式</span><select id="bgMode"><option value="none" data-i18n="不去背">不去背</option><option value="white" data-i18n="移除白色/淺色背景">移除白色/淺色背景</option><option value="black" data-i18n="移除黑色/深色背景">移除黑色/深色背景</option><option value="corner" data-i18n="按四角背景取樣">按四角背景取樣</option></select></label><label><span data-i18n="容差">容差</span><input id="bgTol" type="range" min="1" max="180" value="34"></label><label><span data-i18n="邊緣羽化">邊緣羽化</span><input id="bgFeather" type="range" min="0" max="8" value="1"></label></div><div class="img-section hidden" data-img-section="adjust"><label><span data-i18n="亮度">亮度</span><input id="bright" type="range" min="-80" max="80" value="0"></label><label><span data-i18n="對比">對比</span><input id="contrast" type="range" min="-80" max="80" value="0"></label><label><span data-i18n="飽和">飽和</span><input id="sat" type="range" min="-80" max="80" value="0"></label><label><span data-i18n="銳化">銳化</span><input id="sharp" type="range" min="0" max="100" value="0"></label><label><span data-i18n="降噪">降噪</span><input id="noise" type="range" min="0" max="4" value="0"></label></div><div class="img-section hidden" data-img-section="export"><label><span data-i18n="格式">格式</span><select id="imgFmt"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label><label><span data-i18n="品質">品質</span><input id="imgQ" type="range" min=".4" max="1" step=".05" value=".9"></label><div class="app-actions"><button id="imgDownload" type="button" data-i18n="下載">下載</button><button id="imgReset" type="button" data-i18n="重設">重設</button></div></div><div class="img-section hidden" data-img-section="ocr"><label><span>OCR</span><select id="ocrLang"><option value="eng">English</option><option value="chi_sim">简中</option><option value="chi_tra">繁中</option></select></label><div class="app-actions"><button id="ocrRun" type="button" data-i18n="識別文字">識別文字</button><button id="ocrCopy" type="button" data-i18n="複製">複製</button></div><textarea id="ocrOut" class="mini-output" readonly></textarea><p id="ocrStatus" class="mini-note"></p></div><div class="app-actions"><button id="imgApply" type="button" data-i18n="更新預覽">更新預覽</button></div><p id="imgInfo" class="mini-note"></p></section><section class="app-panel app-preview-grid"><figure><figcaption data-i18n="原圖">原圖</figcaption><canvas id="imgOriginal"></canvas></figure><figure><figcaption data-i18n="處理結果">處理結果</figcaption><canvas id="imgCanvas"></canvas></figure></section></div>';
+  if(appId==="text")return '<div class="desk-app text-app"><section class="app-panel"><textarea id="appText" placeholder="'+escapeHtml(tr("在此貼上文字…"))+'"></textarea><div class="app-actions"><button data-text-act="trim" data-i18n="清除首尾空白">清除首尾空白</button><button data-text-act="blank" data-i18n="移除空行">移除空行</button><button data-text-act="dedupe" data-i18n="行去重">行去重</button><button data-text-act="sort" data-i18n="行排序">行排序</button><button data-text-act="upper" data-i18n="英文大寫">英文大寫</button><button data-text-act="lower" data-i18n="英文小寫">英文小寫</button><button data-text-act="title" data-i18n="首字母大寫">首字母大寫</button><button data-text-act="copy" data-i18n="複製">複製</button><button data-text-act="clear" data-i18n="清空">清空</button></div></section><section class="app-panel"><div class="stat-grid"><div><strong id="textChars">0</strong><span data-i18n="字元">字元</span></div><div><strong id="textNoSpace">0</strong><span data-i18n="不含空白">不含空白</span></div><div><strong id="textWords">0</strong><span data-i18n="詞數">詞數</span></div><div><strong id="textLines">0</strong><span data-i18n="行數">行數</span></div></div><h3 data-i18n="文字轉換">文字轉換</h3><label><span data-i18n="輸出語言">輸出語言</span><select id="textTarget"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select></label><div class="app-actions"><button id="textConvert" type="button" data-i18n="轉換文字">轉換文字</button><button id="textCopyOut" type="button" data-i18n="複製結果">複製結果</button></div><textarea id="textOut" class="mini-output" readonly></textarea></section></div>';
+  if(appId==="table")return '<div class="desk-app table-app"><section class="app-panel"><textarea id="appTableInput" placeholder="name,qty\\nApple,3"></textarea><div class="app-controls two"><label><span data-i18n="分隔符">分隔符</span><select id="tableDelim"><option value="auto">Auto</option><option value=",">CSV</option><option value="\\t">TSV</option><option value="|">|</option></select></label><label><span data-i18n="搜索">搜索</span><input id="tableSearch"></label></div><div class="app-actions"><button id="tablePreview" type="button" data-i18n="預覽">預覽</button><button id="tableMarkdown" type="button">Markdown</button><button id="tableCsv" type="button">CSV</button><button id="tableTsv" type="button">TSV</button><button id="tableCopy" type="button" data-i18n="複製">複製</button></div></section><section class="app-panel"><div id="tableOutput" class="table-output"></div></section></div>';
+  if(appId==="date")return '<div class="desk-app date-app"><section class="app-panel app-controls"><label><span data-i18n="開始日期">開始日期</span><input id="dateStart" type="date"></label><label><span data-i18n="結束日期">結束日期</span><input id="dateEnd" type="date"></label><label><span data-i18n="天數">天數</span><input id="dateDays" type="number" value="7"></label><label><span data-i18n="計算方式">計算方式</span><select id="dateMode"><option value="calendar" data-i18n="日曆天">日曆天</option><option value="workday" data-i18n="工作天">工作天</option></select></label></section><section class="app-panel"><div class="app-actions"><button id="dateDiff" type="button" data-i18n="計算間隔">計算間隔</button><button id="dateAdd" type="button" data-i18n="向後推算">向後推算</button><button id="dateSub" type="button" data-i18n="向前推算">向前推算</button></div><output id="dateResult" class="big-result"></output><pre id="dateDetail"></pre></section></div>';
+  if(appId==="json")return '<div class="desk-app json-app"><section class="app-panel"><textarea id="jsonInput" placeholder="{\\"hello\\":true}"></textarea><div class="app-controls"><label><span data-i18n="路徑">路徑</span><input id="jsonPath" placeholder="user.name or items.0"></label></div><div class="app-actions"><button id="jsonFormat" type="button" data-i18n="格式化">格式化</button><button id="jsonMin" type="button" data-i18n="壓縮">壓縮</button><button id="jsonValidate" type="button" data-i18n="驗證">驗證</button><button id="jsonPick" type="button" data-i18n="取值">取值</button><button id="jsonCopy" type="button" data-i18n="複製">複製</button></div></section><section class="app-panel"><pre id="jsonOutput"></pre></section></div>';
   return '<div class="desk-app"><section class="app-panel"><p data-i18n="此功能正在整理為桌面窗口。">此功能正在整理為桌面窗口。</p></section></div>';
 }
 function bindApp(win,appId){
@@ -338,42 +431,62 @@ function bindApp(win,appId){
   if(appId==="json")bindJsonApp(win);
 }
 function bindImageApp(win){
-  const file=win.querySelector("#appImageFile"),canvas=win.querySelector("#appImageCanvas"),ctx=canvas.getContext("2d");
-  let img=null;
-  file.onchange=()=>{const f=file.files?.[0];if(!f)return;img=new Image();img.onload=()=>{canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;win.querySelector("#appImgW").value=canvas.width;win.querySelector("#appImgH").value=canvas.height;ctx.drawImage(img,0,0);URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f)};
-  win.querySelector("#appImgFit").onclick=()=>{if(!img)return;win.querySelector("#appImgW").value=img.naturalWidth*2;win.querySelector("#appImgH").value=img.naturalHeight*2;draw()};
-  win.querySelector("#appImgW").oninput=draw;
-  win.querySelector("#appImgH").oninput=draw;
-  function draw(){if(!img)return;canvas.width=Math.max(1,+win.querySelector("#appImgW").value||img.naturalWidth);canvas.height=Math.max(1,+win.querySelector("#appImgH").value||img.naturalHeight);ctx.imageSmoothingQuality="high";ctx.drawImage(img,0,0,canvas.width,canvas.height)}
-  win.querySelector("#appImgDownload").onclick=()=>{const a=document.createElement("a");a.download="image";a.href=canvas.toDataURL(win.querySelector("#appImgFmt").value,+win.querySelector("#appImgQ").value);a.click()};
+  const file=win.querySelector("#imgFile"),src=win.querySelector("#imgOriginal"),canvas=win.querySelector("#imgCanvas"),sctx=src.getContext("2d"),ctx=canvas.getContext("2d",{willReadFrequently:true});
+  let img=null,ow=0,oh=0,lock=false;
+  const ids=id=>win.querySelector("#"+id);
+  file.onchange=()=>{const f=file.files?.[0];if(!f)return;img=new Image();img.onload=()=>{ow=img.naturalWidth;oh=img.naturalHeight;src.width=ow;src.height=oh;sctx.drawImage(img,0,0);ids("imgW").value=ow;ids("imgH").value=oh;ids("cropW").value=ow;ids("cropH").value=oh;ids("imgInfo").textContent=ow+" × "+oh+" | "+Math.round(f.size/1024)+" KB";draw();URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f)};
+  ids("imgW").oninput=()=>sync("w");ids("imgH").oninput=()=>sync("h");
+  function sync(source){if(!img||!ids("imgRatio").checked||lock)return;lock=true;if(source==="w")ids("imgH").value=Math.max(1,Math.round(+ids("imgW").value*oh/ow));if(source==="h")ids("imgW").value=Math.max(1,Math.round(+ids("imgH").value*ow/oh));lock=false}
+  win.querySelectorAll("[data-scale]").forEach(b=>b.onclick=()=>{if(!img)return;const n=+b.dataset.scale;ids("imgW").value=Math.round(ow*n);ids("imgH").value=Math.round(oh*n);draw()});
+  win.querySelectorAll("[data-long]").forEach(b=>b.onclick=()=>{if(!img)return;const m=+b.dataset.long;const r=ow>=oh?m/ow:m/oh;ids("imgW").value=Math.round(ow*r);ids("imgH").value=Math.round(oh*r);draw()});
+  win.querySelectorAll("[data-img-tab]").forEach(btn=>btn.onclick=()=>{win.querySelectorAll("[data-img-tab]").forEach(b=>b.classList.toggle("is-active",b===btn));win.querySelectorAll("[data-img-section]").forEach(p=>p.classList.toggle("hidden",p.dataset.imgSection!==btn.dataset.imgTab))});
+  win.querySelectorAll("input,select").forEach(el=>el.addEventListener("input",()=>{if(el.id!=="imgFile")draw()}));
+  ids("imgApply").onclick=draw;ids("imgReset").onclick=()=>{if(!img)return;ids("imgW").value=ow;ids("imgH").value=oh;ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;["bright","contrast","sat","sharp","noise"].forEach(id=>ids(id).value=0);ids("bgMode").value="none";draw()};
+  ids("imgDownload").onclick=()=>{if(!canvas.width)return;const a=document.createElement("a");a.download="image";a.href=canvas.toDataURL(ids("imgFmt").value,+ids("imgQ").value);a.click()};
+  ids("ocrRun").onclick=()=>runDeskOcr(win,canvas);
+  ids("ocrCopy").onclick=()=>navigator.clipboard?.writeText(ids("ocrOut").value);
+  function draw(){if(!img)return;let sx=0,sy=0,sw=ow,sh=oh;if(ids("cropOn").checked){sx=Math.max(0,+ids("cropX").value||0);sy=Math.max(0,+ids("cropY").value||0);sw=Math.min(ow-sx,+ids("cropW").value||ow);sh=Math.min(oh-sy,+ids("cropH").value||oh)}canvas.width=Math.max(1,+ids("imgW").value||sw);canvas.height=Math.max(1,+ids("imgH").value||sh);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingQuality="high";ctx.drawImage(img,sx,sy,sw,sh,0,0,canvas.width,canvas.height);adjust(ctx,canvas.width,canvas.height);removeBg(ctx,canvas.width,canvas.height);if(+ids("noise").value)denoise(ctx,canvas.width,canvas.height,+ids("noise").value);if(+ids("sharp").value)sharpen(ctx,canvas.width,canvas.height,+ids("sharp").value/100)}
+  function adjust(c,w,h){const data=c.getImageData(0,0,w,h),d=data.data,b=+ids("bright").value,ct=+ids("contrast").value,sat=+ids("sat").value;const cf=(259*(ct+255))/(255*(259-ct));for(let i=0;i<d.length;i+=4){let r=cf*(d[i]-128)+128+b,g=cf*(d[i+1]-128)+128+b,bl=cf*(d[i+2]-128)+128+b;const gray=.299*r+.587*g+.114*bl;r=gray+(r-gray)*(1+sat/100);g=gray+(g-gray)*(1+sat/100);bl=gray+(bl-gray)*(1+sat/100);d[i]=clamp(r);d[i+1]=clamp(g);d[i+2]=clamp(bl)}c.putImageData(data,0,0)}
+  function removeBg(c,w,h){const mode=ids("bgMode").value;if(mode==="none")return;const tol=+ids("bgTol").value,data=c.getImageData(0,0,w,h),d=data.data;let target=[255,255,255];if(mode==="black")target=[0,0,0];if(mode==="corner"){const p=[0,(w-1)*4,(h-1)*w*4,(h*w-1)*4];target=[0,1,2].map(ch=>Math.round(p.reduce((a,i)=>a+d[i+ch],0)/4))}for(let i=0;i<d.length;i+=4){const dist=Math.hypot(d[i]-target[0],d[i+1]-target[1],d[i+2]-target[2]);if(dist<tol)d[i+3]=0}c.putImageData(data,0,0)}
+  function denoise(c,w,h,n){for(let pass=0;pass<n;pass++){const data=c.getImageData(0,0,w,h),d=data.data,copy=new Uint8ClampedArray(d);for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=(y*w+x)*4;for(let ch=0;ch<3;ch++){let sum=0;for(let yy=-1;yy<=1;yy++)for(let xx=-1;xx<=1;xx++)sum+=copy[((y+yy)*w+x+xx)*4+ch];d[i+ch]=sum/9}}c.putImageData(data,0,0)}}
+  function sharpen(c,w,h,a){const data=c.getImageData(0,0,w,h),d=data.data,copy=new Uint8ClampedArray(d);for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=(y*w+x)*4;for(let ch=0;ch<3;ch++){const v=copy[i+ch]*(1+4*a)-copy[(i-4)+ch]*a-copy[(i+4)+ch]*a-copy[(i-w*4)+ch]*a-copy[(i+w*4)+ch]*a;d[i+ch]=clamp(v)}}c.putImageData(data,0,0)}
 }
+function clamp(v){return Math.max(0,Math.min(255,Math.round(v)))}
+async function runDeskOcr(win,canvas){const out=win.querySelector("#ocrOut"),status=win.querySelector("#ocrStatus");if(!canvas.width){out.value=tr("請先選擇圖片。");return}try{status.textContent=tr("正在加载 OCR 引擎…");if(!window.Tesseract){await new Promise((res,rej)=>{const s=document.createElement("script");s.src="ocr/tesseract.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s)})}const result=await Tesseract.recognize(canvas,win.querySelector("#ocrLang").value,{workerPath:"ocr/worker.min.js",corePath:"ocr/tesseract-core-simd-lstm.wasm.js",langPath:"ocr/lang"});out.value=result?.data?.text?.trim()||tr("未识别到文字。");status.textContent=tr("OCR 完成")}catch(e){out.value=tr("OCR 本地檔案未安裝。請把 OCR 引擎與語言包放到 ocr/ 目錄後再重試。");status.textContent=tr("OCR 未完成")}}
 function bindTextApp(win){
-  const input=win.querySelector("#appText");
-  function stats(){const s=input.value;win.querySelector("#textChars").textContent=s.length;win.querySelector("#textWords").textContent=(s.match(/[\p{L}\p{N}]+/gu)||[]).length;win.querySelector("#textLines").textContent=s?s.split(/\r?\n/).length:0}
+  const input=win.querySelector("#appText"),out=win.querySelector("#textOut");
+  function stats(){const s=input.value;win.querySelector("#textChars").textContent=s.length;win.querySelector("#textNoSpace").textContent=s.replace(/\s/g,"").length;win.querySelector("#textWords").textContent=(s.match(/[\p{L}\p{N}]+/gu)||[]).length;win.querySelector("#textLines").textContent=s?s.split(/\r?\n/).length:0}
   input.oninput=stats;
-  win.querySelectorAll("[data-text-act]").forEach(btn=>btn.onclick=()=>{let s=input.value,l=s.split(/\r?\n/);const act=btn.dataset.textAct;if(act==="trim")s=l.map(x=>x.trim()).join("\n").trim();if(act==="blank")s=l.filter(x=>x.trim()).join("\n");if(act==="dedupe")s=[...new Set(l)].join("\n");if(act==="sort")s=l.sort((a,b)=>a.localeCompare(b)).join("\n");if(act==="title")s=s.toLowerCase().replace(/\b([a-z])/g,m=>m.toUpperCase());if(act==="copy")navigator.clipboard?.writeText(s);input.value=s;stats()});
+  win.querySelectorAll("[data-text-act]").forEach(btn=>btn.onclick=()=>{let s=input.value,l=s.split(/\r?\n/),act=btn.dataset.textAct;if(act==="trim")s=l.map(x=>x.trim()).join("\n").trim();if(act==="blank")s=l.filter(x=>x.trim()).join("\n");if(act==="dedupe")s=[...new Set(l)].join("\n");if(act==="sort")s=l.sort((a,b)=>a.localeCompare(b)).join("\n");if(act==="upper")s=s.toUpperCase();if(act==="lower")s=s.toLowerCase();if(act==="title")s=s.toLowerCase().replace(/\b([a-z])/g,m=>m.toUpperCase());if(act==="copy")navigator.clipboard?.writeText(s);if(act==="clear")s="";input.value=s;stats()});
+  win.querySelector("#textConvert").onclick=()=>{out.value=basicTextConvert(input.value,win.querySelector("#textTarget").value)};
+  win.querySelector("#textCopyOut").onclick=()=>navigator.clipboard?.writeText(out.value);
   stats();
 }
+function basicTextConvert(text,target){const pairs=[["圖片","图片","image"],["處理","处理","process"],["文字","文字","text"],["表格","表格","table"],["日期","日期","date"],["工具","工具","tool"],["複製","复制","copy"],["壓縮","压缩","compress"],["預覽","预览","preview"],["識別","识别","recognize"],["翻譯","翻译","translate"],["結果","结果","result"],["格式化","格式化","format"],["驗證","验证","validate"],["排序","排序","sort"],["清空","清空","clear"],["下載","下载","download"]];let out=text;const hkToCn={"這":"这","裡":"里","個":"个","開":"开","啟":"启","後":"后","與":"与","為":"为","檔":"档","圖":"图","預":"预","覽":"览","選":"选","擇":"择","識":"识","別":"别","語":"语","題":"题","輯":"辑","寬":"宽","點":"点","擊":"击","處":"处","壓":"压","縮":"缩","質":"质","長":"长","邊":"边","無":"无","損":"损","關":"关","閉":"闭","強":"强","變":"变","複":"复","製":"制","轉":"转","換":"换","輸":"输","錯":"错","誤":"误","離":"离","線":"线","庫":"库","檢":"检","測":"测"};const cnToHk=Object.fromEntries(Object.entries(hkToCn).map(([k,v])=>[v,k]));if(target==="zh-CN")out=out.replace(/[\s\S]/g,ch=>hkToCn[ch]||ch);if(target==="zh-HK")out=out.replace(/[\s\S]/g,ch=>cnToHk[ch]||ch);for(const [hk,cn,en]of pairs){if(target==="zh-CN")out=out.replaceAll(hk,cn);if(target==="zh-HK")out=out.replaceAll(cn,hk);if(target==="en")out=out.replaceAll(hk,en).replaceAll(cn,en)}if(target==="en")out=out.replace(/\b([a-z])/g,m=>m.toUpperCase());return out}
 function bindTableApp(win){
   const input=win.querySelector("#appTableInput"),out=win.querySelector("#tableOutput");
-  function rows(){return input.value.trim().split(/\r?\n/).filter(Boolean).map(r=>r.split(/\t|,/))}
-  function render(){const rs=rows();out.innerHTML='<table>'+rs.map((r,i)=>'<tr>'+r.map(c=>(i?'<td>':'<th>')+escapeHtml(c)+(i?'</td>':'</th>')).join("")+'</tr>').join("")+'</table>'}
-  function md(){const rs=rows();if(!rs.length)return "";return "| "+rs[0].join(" | ")+" |\n| "+rs[0].map(()=>"---").join(" | ")+" |\n"+rs.slice(1).map(r=>"| "+r.join(" | ")+" |").join("\n")}
-  win.querySelector("#tablePreview").onclick=render;
-  win.querySelector("#tableMarkdown").onclick=()=>{out.innerHTML='<pre>'+escapeHtml(md())+'</pre>'};
-  win.querySelector("#tableCopy").onclick=()=>navigator.clipboard?.writeText(out.innerText);
+  function delim(){const v=win.querySelector("#tableDelim").value;if(v!=="auto")return v;const first=input.value.split(/\r?\n/)[0]||"";return first.includes("\t")?"\t":first.includes("|")?"|":","}
+  function rows(){const d=delim();return input.value.trim().split(/\r?\n/).filter(Boolean).map(r=>r.split(d))}
+  function filtered(){const q=win.querySelector("#tableSearch").value.toLowerCase();return rows().filter((r,i)=>!q||i===0||r.join(" ").toLowerCase().includes(q))}
+  function render(){const rs=filtered();out.innerHTML='<table>'+rs.map((r,i)=>'<tr>'+r.map(c=>(i?'<td>':'<th>')+escapeHtml(c)+(i?'</td>':'</th>')).join("")+'</tr>').join("")+'</table>'}
+  function md(){const rs=filtered();if(!rs.length)return "";return "| "+rs[0].join(" | ")+" |\n| "+rs[0].map(()=>"---").join(" | ")+" |\n"+rs.slice(1).map(r=>"| "+r.join(" | ")+" |").join("\n")}
+  function join(d){return filtered().map(r=>r.map(c=>/[",\n]/.test(c)?'"'+c.replaceAll('"','""')+'"':c).join(d)).join("\n")}
+  win.querySelector("#tablePreview").onclick=render;win.querySelector("#tableMarkdown").onclick=()=>{out.innerHTML='<pre>'+escapeHtml(md())+'</pre>'};win.querySelector("#tableCsv").onclick=()=>{out.innerHTML='<pre>'+escapeHtml(join(","))+'</pre>'};win.querySelector("#tableTsv").onclick=()=>{out.innerHTML='<pre>'+escapeHtml(join("\t"))+'</pre>'};win.querySelector("#tableCopy").onclick=()=>navigator.clipboard?.writeText(out.innerText);win.querySelector("#tableSearch").oninput=render;
 }
 function bindDateApp(win){
-  const today=new Date().toISOString().slice(0,10);
-  win.querySelector("#dateStart").value=today;
-  win.querySelector("#dateEnd").value=today;
-  win.querySelector("#dateDiff").onclick=()=>{const a=new Date(win.querySelector("#dateStart").value),b=new Date(win.querySelector("#dateEnd").value);win.querySelector("#dateResult").textContent=Math.round((b-a)/86400000)+" "+tr("天")};
-  win.querySelector("#dateAdd").onclick=()=>{const a=new Date(win.querySelector("#dateStart").value);a.setDate(a.getDate()+(+win.querySelector("#dateDays").value||0));win.querySelector("#dateResult").textContent=a.toISOString().slice(0,10)};
+  const today=new Date().toISOString().slice(0,10);win.querySelector("#dateStart").value=today;win.querySelector("#dateEnd").value=today;
+  function workdays(a,b){let n=0,step=a<=b?1:-1,d=new Date(a);while((step>0&&d<=b)||(step<0&&d>=b)){const day=d.getDay();if(day!==0&&day!==6)n+=step;d.setDate(d.getDate()+step)}return n}
+  win.querySelector("#dateDiff").onclick=()=>{const a=new Date(win.querySelector("#dateStart").value),b=new Date(win.querySelector("#dateEnd").value),cal=Math.round((b-a)/86400000),wd=workdays(a,b);win.querySelector("#dateResult").textContent=(win.querySelector("#dateMode").value==="workday"?wd:cal)+" "+tr("天");win.querySelector("#dateDetail").textContent=tr("日曆天")+": "+cal+"\n"+tr("工作天")+": "+wd};
+  function add(sign){const a=new Date(win.querySelector("#dateStart").value),days=+win.querySelector("#dateDays").value||0;if(win.querySelector("#dateMode").value==="workday"){let left=days;while(left>0){a.setDate(a.getDate()+sign);const d=a.getDay();if(d!==0&&d!==6)left--}}else a.setDate(a.getDate()+sign*days);win.querySelector("#dateResult").textContent=a.toISOString().slice(0,10)}
+  win.querySelector("#dateAdd").onclick=()=>add(1);win.querySelector("#dateSub").onclick=()=>add(-1);
 }
 function bindJsonApp(win){
   const input=win.querySelector("#jsonInput"),out=win.querySelector("#jsonOutput");
-  win.querySelector("#jsonFormat").onclick=()=>{try{out.textContent=JSON.stringify(JSON.parse(input.value),null,2)}catch(e){out.textContent=e.message}};
-  win.querySelector("#jsonMin").onclick=()=>{try{out.textContent=JSON.stringify(JSON.parse(input.value))}catch(e){out.textContent=e.message}};
+  function parse(){return JSON.parse(input.value)}
+  win.querySelector("#jsonFormat").onclick=()=>{try{out.textContent=JSON.stringify(parse(),null,2)}catch(e){out.textContent=e.message}};
+  win.querySelector("#jsonMin").onclick=()=>{try{out.textContent=JSON.stringify(parse())}catch(e){out.textContent=e.message}};
+  win.querySelector("#jsonValidate").onclick=()=>{try{parse();out.textContent="OK"}catch(e){out.textContent=e.message}};
+  win.querySelector("#jsonPick").onclick=()=>{try{let v=parse();for(const p of win.querySelector("#jsonPath").value.split(".").filter(Boolean))v=v[p];out.textContent=JSON.stringify(v,null,2)}catch(e){out.textContent=e.message}};
   win.querySelector("#jsonCopy").onclick=()=>navigator.clipboard?.writeText(out.textContent);
 }
 
@@ -483,47 +596,74 @@ function tickWidgets(){
   document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(now));
   document.querySelectorAll("[data-date]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now));
 }
+const bgVersion="20260728-fullapps2";
+function backgroundUrl(file){
+  if(!file)return "";
+  if(/^data:|^blob:|^https?:/.test(file))return file;
+  return file+(file.includes("?")?"&":"?")+"v="+bgVersion;
+}
 async function loadBackgrounds(){
+  let loaded=false;
   try{
-    const res=await fetch("backgrounds/manifest.json?v=20260728-anime8k1",{cache:"no-cache"});
-    if(res.ok)backgrounds=await res.json();
+    const res=await fetch("backgrounds/manifest.json?v="+bgVersion,{cache:"no-store"});
+    if(res.ok){
+      const list=await res.json();
+      if(Array.isArray(list)&&list.length){
+        backgrounds=list.filter(bg=>bg&&bg.file&&bg.title);
+        loaded=backgrounds.length>0;
+      }
+    }
   }catch(e){}
+  if(!loaded)backgrounds=bgFallback;
   renderBackgroundList();
   const saved=localStorage.getItem(bgKey);
   const initial=backgrounds.some(bg=>bg.file===saved)?saved:backgrounds[0]?.file;
   applyBackground(initial);
 }
 function renderBackgroundList(){
-  $("backgroundList").innerHTML=backgrounds.map(bg=>'<button class="background-item" type="button" data-file="'+escapeHtml(bg.file)+'"><span></span>'+escapeHtml(bg.title)+'</button>').join("");
-  document.querySelectorAll(".background-item").forEach(btn=>btn.onclick=()=>applyBackground(btn.dataset.file));
+  const list=$("backgroundList");
+  if(!list)return;
+  const current=localStorage.getItem(bgKey);
+  list.innerHTML=backgrounds.map(bg=>'<button class="background-item'+(bg.file===current?' is-active':'')+'" type="button" data-file="'+escapeHtml(bg.file)+'"><span></span>'+escapeHtml(bg.title)+'</button>').join("");
+  list.querySelectorAll(".background-item").forEach(btn=>btn.addEventListener("click",()=>applyBackground(btn.dataset.file)));
 }
 function applyBackground(file){
   if(!file)return;
   localStorage.setItem(bgKey,file);
   const app=$("desktopApp");
-  const light='linear-gradient(rgba(255,255,255,.50),rgba(255,255,255,.50))';
+  if(!app)return;
+  const url=backgroundUrl(file);
+  const light='linear-gradient(rgba(255,255,255,.46),rgba(255,255,255,.46))';
   const dark='linear-gradient(rgba(8,12,20,.56),rgba(8,12,20,.56))';
   const overlay=document.documentElement.dataset.theme==="dark"?dark:light;
-  app.style.backgroundImage=overlay+',url("'+file+'"),linear-gradient(135deg,#f8f5f1,#eaf3ff)';
+  app.style.backgroundImage=overlay+',url("'+url+'"),linear-gradient(135deg,#f8f5f1,#eaf3ff)';
   app.style.backgroundPosition='center,center,center';
   app.style.backgroundRepeat='no-repeat,no-repeat,no-repeat';
   app.style.backgroundSize='cover,cover,cover';
+  app.dataset.background=file;
+  document.querySelectorAll(".background-item").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.file===file));
   const image=new Image();
   image.onload=()=>{
     const imageRatio=image.naturalWidth/image.naturalHeight;
     const screenRatio=window.innerWidth/window.innerHeight;
-    const fit=Math.abs(imageRatio-screenRatio)>.55?'contain':'cover';
+    const fit=Math.abs(imageRatio-screenRatio)>.48?'contain':'cover';
     app.style.backgroundSize='cover,'+fit+',cover';
   };
-  image.src=file;
+  image.onerror=()=>{
+    app.style.backgroundImage=overlay+',linear-gradient(135deg,#f7d9c4,#dbeafe 58%,#f5e7ff)';
+    app.style.backgroundSize='cover';
+  };
+  image.src=url;
 }
 function randomBackground(){
-  if(!backgrounds.length)return;
+  if(!backgrounds.length)backgrounds=bgFallback;
   const current=localStorage.getItem(bgKey);
   const pool=backgrounds.filter(bg=>bg.file!==current);
-  const next=(pool.length?pool:backgrounds)[Math.floor(Math.random()*(pool.length?pool.length:backgrounds.length))];
-  applyBackground(next.file);
+  const list=pool.length?pool:backgrounds;
+  const next=list[Math.floor(Math.random()*list.length)];
+  if(next)applyBackground(next.file);
 }
+window.addEventListener("resize",()=>applyBackground(localStorage.getItem(bgKey)||backgrounds[0]?.file));
 function renderAll(){renderWorkspaces();renderShelf();renderDesktop();renderClock()}
 document.querySelectorAll("[data-dock]").forEach(btn=>btn.onclick=()=>openDrawer(btn.dataset.dock));
 $("closeDrawer").onclick=()=>$("desktopDrawer").classList.remove("is-open");
@@ -540,6 +680,6 @@ renderAll();
 openDrawer("tools");
 loadBackgrounds();
 </script>
-<script src="Html_tools/i18n.js?v=20260728-deskapps2"></script>
+<script src="Html_tools/i18n.js?v=20260728-fullapps1"></script>
 </body>
 </html>
