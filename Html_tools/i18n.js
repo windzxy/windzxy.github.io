@@ -162,7 +162,6 @@ const I18N={
 "准备图片…":{"zh-CN":"准备图片…","zh-HK":"準備圖片…","en":"Preparing image…"},
 "正在初始化 OCR…":{"zh-CN":"正在初始化 OCR…","zh-HK":"正在初始化 OCR…","en":"Initializing OCR…"},
 "OCR 完成":{"zh-CN":"OCR 完成","zh-HK":"OCR 完成","en":"OCR complete"},
-,
 "OCR 未完成":{"zh-CN":"OCR 未完成","zh-HK":"OCR 未完成","en":"OCR not complete"},
 "loading tesseract core":{"zh-CN":"正在加载 OCR 核心","zh-HK":"正在載入 OCR 核心","en":"Loading OCR core"},
 "initializing tesseract":{"zh-CN":"正在初始化 OCR","zh-HK":"正在初始化 OCR","en":"Initializing OCR"},
