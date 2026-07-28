@@ -162,13 +162,15 @@ const I18N={
 "准备图片…":{"zh-CN":"准备图片…","zh-HK":"準備圖片…","en":"Preparing image…"},
 "正在初始化 OCR…":{"zh-CN":"正在初始化 OCR…","zh-HK":"正在初始化 OCR…","en":"Initializing OCR…"},
 "OCR 完成":{"zh-CN":"OCR 完成","zh-HK":"OCR 完成","en":"OCR complete"},
-"OCR 引擎未加载。请检查网络后重试。":{"zh-CN":"OCR 引擎未加载。请检查网络后重试。","zh-HK":"OCR 引擎未載入。請檢查網絡後重試。","en":"OCR engine was not loaded. Check the network and retry."},
+,
 "OCR 未完成":{"zh-CN":"OCR 未完成","zh-HK":"OCR 未完成","en":"OCR not complete"},
 "loading tesseract core":{"zh-CN":"正在加载 OCR 核心","zh-HK":"正在載入 OCR 核心","en":"Loading OCR core"},
 "initializing tesseract":{"zh-CN":"正在初始化 OCR","zh-HK":"正在初始化 OCR","en":"Initializing OCR"},
 "loading language traineddata":{"zh-CN":"正在加载语言包","zh-HK":"正在載入語言包","en":"Loading language data"},
 "initializing api":{"zh-CN":"正在初始化识别","zh-HK":"正在初始化識別","en":"Initializing recognition"},
-"recognizing text":{"zh-CN":"正在识别文字","zh-HK":"正在識別文字","en":"Recognizing text"}
+"recognizing text":{"zh-CN":"正在识别文字","zh-HK":"正在識別文字","en":"Recognizing text"},
+"点击识别时才会加载 OCR 引擎；中文识别首次加载会稍慢。":{"zh-CN":"点击识别时才会加载 OCR 引擎；中文识别首次加载会稍慢。","zh-HK":"點擊識別時才會載入 OCR 引擎；中文識別首次載入會稍慢。","en":"The OCR engine loads only when recognition starts; Chinese recognition may be slower on first load."},
+"OCR 引擎未加载。请检查网络后重试。":{"zh-CN":"OCR 引擎未加载。请检查网络后重试。","zh-HK":"OCR 引擎未載入。請檢查網絡後重試。","en":"OCR engine was not loaded. Check the network and retry."}
 };
 const rev={};
 for(const k in I18N){rev[k]=k;for(const l of ["zh-CN","zh-HK","en"]){if(I18N[k][l])rev[I18N[k][l]]=k}}
