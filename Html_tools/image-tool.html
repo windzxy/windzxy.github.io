@@ -4,22 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>圖片處理</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-return-theme1">
-  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-return-theme1">
-  <link rel="stylesheet" href="style.css?v=20260728-return-theme1">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-ai-image1">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-ai-image1">
+  <link rel="stylesheet" href="style.css?v=20260728-ai-image1">
 </head>
 <body class="tool-page tool-image">
 <header>
   <div class="wrap">
     <a class="return-home" href="../index.html">← 首页</a>
     <div class="brand">
-      
       <div class="brand-copy">
-        
         <h1>圖片處理</h1>
-        
       </div>
-<button class="theme-toggle" type="button" aria-label="切換主題">☾</button>
+    </div>
+    <div class="page-actions">
+      <a href="index.html">工具箱</a>
+    </div>
+    <button class="theme-toggle" type="button" aria-label="切換主題">☾</button>
   </div>
 </header>
 
@@ -28,9 +29,12 @@
     <div id="drop" class="drop">
       <strong>點擊或拖放圖片到這裡</strong>
       <span>支援 JPG、PNG、WebP、GIF 靜態幀等瀏覽器可讀格式</span>
-      <input id="file" class="hidden" type="file" accept="image/*">
+      <input id="file" class="hidden" type="file" accept="image/*" multiple>
     </div>
-    <p class="hint tool-note">所有處理均在本機瀏覽器完成。適合純色背景、商品圖、截圖與 Logo；所有處理都在本機完成。</p>
+    <p class="hint tool-note">本機處理為主：放大、去背、上色、修復、降噪、文字/瑕疵淡化。</p>
+    <div class="feature-pills">
+      <span>Bigjpg 式放大</span><span>老照片上色</span><span>背景移除</span><span>文字淡化</span><span>批量选择</span>
+    </div>
   </section>
 
   <section id="workspace" class="workspace-grid hidden">
@@ -60,6 +64,7 @@
         <button id="reset" class="secondary" type="button">重設全部</button>
       </div>
       <p id="outputInfo" class="hint"></p>
+      <div id="batchList" class="batch-list hidden"></div>
     </section>
 
     <aside class="panel">
@@ -88,7 +93,9 @@
         </div>
         <label for="scaleMode">放大模式</label>
         <select id="scaleMode">
-          <option value="smooth">高保真平滑：照片/商品圖</option>
+          <option value="photo">照片增强放大</option>
+          <option value="art">插画线条放大</option>
+          <option value="smooth">高保真平滑：商品圖/通用</option>
           <option value="pixel">像素無損：截圖/圖示/像素圖</option>
         </select>
         <p class="hint">像素無損會保留原像素硬邊；照片放大只能提升觀感，無法還原原圖沒有的細節。</p>
@@ -120,6 +127,42 @@
         </div>
         <label><input id="cropAlpha" type="checkbox" class="inline-check"> 去背後自動裁掉透明邊緣</label>
         <p class="hint">選「點選顏色去背」後，直接點左側原圖取樣。容差越大，移除範圍越廣。</p>
+      </details>
+
+      <details open>
+        <summary>AI 参考增强</summary>
+        <label for="restoreMode">照片修复</label>
+        <select id="restoreMode">
+          <option value="none">关闭</option>
+          <option value="auto">自动增强：提亮、拉开层次</option>
+          <option value="old-photo">老照片修复：柔和对比与暖色</option>
+          <option value="document">文档增强：提亮白底、加深文字</option>
+        </select>
+        <label for="colorizeMode">黑白/老照片上色</label>
+        <select id="colorizeMode">
+          <option value="none">关闭</option>
+          <option value="warm">自然暖色</option>
+          <option value="portrait">人像肤色倾向</option>
+          <option value="cool">冷调旧照片</option>
+        </select>
+        <div class="row">
+          <div>
+            <label for="colorizeStrength">上色强度 <span id="colorizev">55</span>%</label>
+            <input id="colorizeStrength" type="range" min="0" max="100" value="55">
+          </div>
+          <div>
+            <label for="noiseReduction">降噪 <span id="noisev">0</span></label>
+            <input id="noiseReduction" type="range" min="0" max="5" value="0">
+          </div>
+        </div>
+        <label for="cleanupMode">智能橡皮擦 / 文字淡化</label>
+        <select id="cleanupMode">
+          <option value="none">关闭</option>
+          <option value="light">轻度：淡化小瑕疵</option>
+          <option value="text">文字/水印淡化</option>
+          <option value="strong">强力平滑</option>
+        </select>
+        <p class="hint ai-note">这些是浏览器本机算法，适合快速预处理；真正神经网络级别的上色、抠图或超分需要后端/API。</p>
       </details>
 
       <details>
@@ -178,7 +221,7 @@
 const $ = id => document.getElementById(id);
 const drop = $('drop'), file = $('file'), preview = $('preview'), canvas = $('canvas');
 const ctx = canvas.getContext('2d', { willReadFrequently: true });
-const controls = ['width','height','quality','tolerance','feather','sharpen','brightness','contrast','saturation','format','matte','customMatte','scaleMode','bgMode','ratio','cropAlpha'];
+const controls = ['width','height','quality','tolerance','feather','sharpen','brightness','contrast','saturation','format','matte','customMatte','scaleMode','bgMode','ratio','cropAlpha','restoreMode','colorizeMode','colorizeStrength','noiseReduction','cleanupMode'];
 let img = new Image(), originalFile = null, ow = 0, oh = 0, lock = false, sourceCanvas = null, sampledColor = null, lastBlobUrl = null;
 
 drop.onclick = () => file.click();
@@ -190,8 +233,40 @@ drop.onclick = () => file.click();
   event.preventDefault();
   drop.classList.remove('drag');
 }));
-drop.addEventListener('drop', event => load(event.dataTransfer.files[0]));
-file.onchange = () => load(file.files[0]);
+drop.addEventListener('drop', event => handleFiles(event.dataTransfer.files));
+file.onchange = () => handleFiles(file.files);
+
+function handleFiles(files) {
+  const list = [...files].filter(f => f.type.startsWith('image/'));
+  if (!list.length) {
+    alert('請選擇圖片檔案');
+    return;
+  }
+  renderBatchList(list);
+  load(list[0]);
+}
+
+function renderBatchList(files) {
+  const box = $('batchList');
+  if (!box) return;
+  box.innerHTML = '';
+  if (files.length < 2) {
+    box.classList.add('hidden');
+    return;
+  }
+  files.slice(0, 8).forEach((f, index) => {
+    const row = document.createElement('div');
+    row.innerHTML = '<span>' + (index + 1) + '. ' + f.name + '</span><span>' + formatBytes(f.size) + '</span>';
+    row.onclick = () => load(f);
+    box.appendChild(row);
+  });
+  if (files.length > 8) {
+    const more = document.createElement('div');
+    more.textContent = '另有 ' + (files.length - 8) + ' 張圖片未顯示';
+    box.appendChild(more);
+  }
+  box.classList.remove('hidden');
+}
 
 function clamp(value, min = 0, max = 255) {
   return Math.max(min, Math.min(max, value));
@@ -439,6 +514,128 @@ function adjustImage(imageData) {
   return imageData;
 }
 
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+function luminanceAt(data, i) {
+  return 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+}
+
+function colorizeImageData(imageData) {
+  const mode = $('colorizeMode').value;
+  const strength = readNumber('colorizeStrength', 55) / 100;
+  if (mode === 'none' || strength <= 0) return imageData;
+  const palettes = {
+    warm: [[42, 34, 29], [166, 116, 78], [246, 214, 170]],
+    portrait: [[38, 35, 36], [178, 116, 91], [255, 220, 190]],
+    cool: [[28, 42, 64], [106, 137, 162], [226, 234, 238]]
+  };
+  const palette = palettes[mode] || palettes.warm;
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const y = luminanceAt(data, i) / 255;
+    const left = y < 0.52 ? palette[0] : palette[1];
+    const right = y < 0.52 ? palette[1] : palette[2];
+    const t = y < 0.52 ? y / 0.52 : (y - 0.52) / 0.48;
+    const cr = lerp(left[0], right[0], t);
+    const cg = lerp(left[1], right[1], t);
+    const cb = lerp(left[2], right[2], t);
+    data[i] = clamp(lerp(data[i], cr, strength));
+    data[i + 1] = clamp(lerp(data[i + 1], cg, strength));
+    data[i + 2] = clamp(lerp(data[i + 2], cb, strength));
+  }
+  return imageData;
+}
+
+function restoreImageData(imageData) {
+  const mode = $('restoreMode').value;
+  if (mode === 'none') return imageData;
+  const data = imageData.data;
+  let min = 255, max = 0;
+  for (let i = 0; i < data.length; i += 4) {
+    const y = luminanceAt(data, i);
+    min = Math.min(min, y);
+    max = Math.max(max, y);
+  }
+  const span = Math.max(24, max - min);
+  for (let i = 0; i < data.length; i += 4) {
+    let r = data[i], g = data[i + 1], b = data[i + 2];
+    if (mode === 'document') {
+      const y = luminanceAt(data, i);
+      const v = y > 150 ? clamp(y * 1.22 + 18) : clamp(y * 0.72);
+      data[i] = data[i + 1] = data[i + 2] = v;
+      continue;
+    }
+    const stretch = ch => clamp(((ch - min) / span) * 230 + 12);
+    r = stretch(r); g = stretch(g); b = stretch(b);
+    if (mode === 'old-photo') {
+      r = clamp(r + 10); g = clamp(g + 4); b = clamp(b - 6);
+    }
+    data[i] = r; data[i + 1] = g; data[i + 2] = b;
+  }
+  return imageData;
+}
+
+function reduceNoise(imageData, level) {
+  level = Math.round(+level || 0);
+  if (level <= 0) return imageData;
+  const { width, height, data } = imageData;
+  const src = new Uint8ClampedArray(data);
+  const blend = Math.min(0.75, level * 0.13);
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const i = (y * width + x) * 4;
+      for (let ch = 0; ch < 3; ch++) {
+        const avg = (
+          src[i + ch] +
+          src[i - 4 + ch] + src[i + 4 + ch] +
+          src[i - width * 4 + ch] + src[i + width * 4 + ch]
+        ) / 5;
+        data[i + ch] = clamp(lerp(src[i + ch], avg, blend));
+      }
+    }
+  }
+  return imageData;
+}
+
+function cleanupImageData(imageData) {
+  const mode = $('cleanupMode').value;
+  if (mode === 'none') return imageData;
+  const { width, height, data } = imageData;
+  const src = new Uint8ClampedArray(data);
+  const threshold = mode === 'light' ? 68 : mode === 'text' ? 48 : 32;
+  const blend = mode === 'strong' ? 0.72 : mode === 'text' ? 0.58 : 0.38;
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const i = (y * width + x) * 4;
+      const left = i - 4, right = i + 4, up = i - width * 4, down = i + width * 4;
+      const avgY = (luminanceAt(src,left)+luminanceAt(src,right)+luminanceAt(src,up)+luminanceAt(src,down))/4;
+      const y0 = luminanceAt(src,i);
+      if (Math.abs(y0 - avgY) > threshold || (mode === 'text' && y0 < avgY - 24)) {
+        for (let ch = 0; ch < 3; ch++) {
+          const avg = (src[left+ch]+src[right+ch]+src[up+ch]+src[down+ch])/4;
+          data[i+ch] = clamp(lerp(src[i+ch], avg, blend));
+        }
+      }
+    }
+  }
+  return imageData;
+}
+
+function postUpscaleCanvas(inputCanvas) {
+  const mode = $('scaleMode').value;
+  let output = inputCanvas;
+  const noise = readNumber('noiseReduction', 0);
+  if (noise > 0 && (mode === 'photo' || mode === 'smooth')) {
+    const c = output.getContext('2d', { willReadFrequently: true });
+    const data = c.getImageData(0, 0, output.width, output.height);
+    c.putImageData(reduceNoise(data, Math.max(1, Math.round(noise / 2))), 0, 0);
+  }
+  const bonus = mode === 'art' ? 28 : mode === 'photo' ? 12 : 0;
+  return sharpenCanvas(output, readNumber('sharpen', 18) + bonus);
+}
+
 function sharpenCanvas(inputCanvas, amount) {
   if (!amount) return inputCanvas;
   const width = inputCanvas.width, height = inputCanvas.height;
@@ -558,11 +755,15 @@ function processImage() {
     workCtx.drawImage(sourceCanvas, 0, 0);
     let imageData = workCtx.getImageData(0, 0, ow, oh);
     imageData = removeBackground(imageData);
+    imageData = restoreImageData(imageData);
+    imageData = colorizeImageData(imageData);
+    imageData = reduceNoise(imageData, readNumber('noiseReduction', 0));
+    imageData = cleanupImageData(imageData);
     imageData = adjustImage(imageData);
     workCtx.putImageData(imageData, 0, 0);
 
     let output = resizeCanvas(work, targetWidth, targetHeight);
-    output = sharpenCanvas(output, readNumber('sharpen', 18));
+    output = postUpscaleCanvas(output);
     output = cropTransparent(output);
     output = applyMatte(output, false);
 
@@ -600,7 +801,7 @@ function resetAll() {
   $('width').value = ow;
   $('height').value = oh;
   $('ratio').checked = true;
-  $('scaleMode').value = 'smooth';
+  $('scaleMode').value = 'photo';
   $('bgMode').value = 'none';
   $('tolerance').value = 34;
   $('feather').value = 3;
@@ -609,6 +810,11 @@ function resetAll() {
   $('brightness').value = 0;
   $('contrast').value = 0;
   $('saturation').value = 0;
+  $('restoreMode').value = 'none';
+  $('colorizeMode').value = 'none';
+  $('colorizeStrength').value = 55;
+  $('noiseReduction').value = 0;
+  $('cleanupMode').value = 'none';
   $('format').value = 'image/png';
   $('quality').value = 90;
   $('matte').value = 'transparent';
@@ -627,6 +833,8 @@ function updateLabels() {
   $('brightnessv').textContent = $('brightness').value;
   $('contrastv').textContent = $('contrast').value;
   $('saturationv').textContent = $('saturation').value;
+  $('colorizev').textContent = $('colorizeStrength').value;
+  $('noisev').textContent = $('noiseReduction').value;
 }
 
 controls.forEach(id => {
@@ -649,6 +857,6 @@ $('download').onclick = downloadResult;
 $('reset').onclick = resetAll;
 updateLabels();
 </script>
-<script src="theme.js?v=20260728-return-theme1"></script>
+<script src="theme.js?v=20260728-ai-image1"></script>
 </body>
 </html>
