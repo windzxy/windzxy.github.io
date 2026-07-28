@@ -171,7 +171,30 @@ const I18N={
 "点击识别时才会加载 OCR 引擎；中文识别首次加载会稍慢。":{"zh-CN":"点击识别时才会加载 OCR 引擎；中文识别首次加载会稍慢。","zh-HK":"點擊識別時才會載入 OCR 引擎；中文識別首次載入會稍慢。","en":"The OCR engine loads only when recognition starts; Chinese recognition may be slower on first load."},
 "OCR 引擎未加载。请检查网络后重试。":{"zh-CN":"OCR 引擎未加载。请检查网络后重试。","zh-HK":"OCR 引擎未載入。請檢查網絡後重試。","en":"OCR engine was not loaded. Check the network and retry."},
 "首字母大寫":{"zh-CN":"首字母大写","zh-HK":"首字母大寫","en":"Title Case"},
-"浏览器本机翻译不可用；当前内容没有命中内置词库。":{"zh-CN":"浏览器本机翻译不可用；当前内容没有命中内置词库。","zh-HK":"瀏覽器本機翻譯不可用；目前內容沒有命中內置詞庫。","en":"Browser-local translation is unavailable; the current text did not match the built-in glossary."}
+"浏览器本机翻译不可用；当前内容没有命中内置词库。":{"zh-CN":"浏览器本机翻译不可用；当前内容没有命中内置词库。","zh-HK":"瀏覽器本機翻譯不可用；目前內容沒有命中內置詞庫。","en":"Browser-local translation is unavailable; the current text did not match the built-in glossary."},
+"工作區":{"zh-CN":"工作区","zh-HK":"工作區","en":"Workspace"},
+"把常用工具放到自己的桌面。":{"zh-CN":"把常用工具放到自己的桌面。","zh-HK":"把常用工具放到自己的桌面。","en":"Put common tools on your own desk."},
+"新建工作區":{"zh-CN":"新建工作区","zh-HK":"新建工作區","en":"New workspace"},
+"TOOLS DESK":{"zh-CN":"TOOLS DESK","zh-HK":"TOOLS DESK","en":"TOOLS DESK"},
+"日常工作區":{"zh-CN":"日常工作区","zh-HK":"日常工作區","en":"Daily workspace"},
+"點開工具格子即可使用；開啟排列後可拖拽排序。":{"zh-CN":"点开工具格子即可使用；开启排列后可拖拽排序。","zh-HK":"點開工具格子即可使用；開啟排列後可拖拽排序。","en":"Open a tile to use it; enable layout editing to drag and reorder."},
+"編輯排列":{"zh-CN":"编辑排列","zh-HK":"編輯排列","en":"Edit layout"},
+"完成排列":{"zh-CN":"完成排列","zh-HK":"完成排列","en":"Done"},
+"重設":{"zh-CN":"重置","zh-HK":"重設","en":"Reset"},
+"工具格子":{"zh-CN":"工具格子","zh-HK":"工具格子","en":"Tool tiles"},
+"工具庫":{"zh-CN":"工具库","zh-HK":"工具庫","en":"Tool library"},
+"可加入目前工作區。":{"zh-CN":"可加入当前工作区。","zh-HK":"可加入目前工作區。","en":"Add tools to the current workspace."},
+"辦公整理":{"zh-CN":"办公整理","zh-HK":"辦公整理","en":"Office desk"},
+"文字、表格、日期與 JSON 放在一起。":{"zh-CN":"文字、表格、日期与 JSON 放在一起。","zh-HK":"文字、表格、日期與 JSON 放在一起。","en":"Text, table, date and JSON tools together."},
+"圖片工作台":{"zh-CN":"图片工作台","zh-HK":"圖片工作台","en":"Image desk"},
+"圖片處理與 OCR 優先。":{"zh-CN":"图片处理与 OCR 优先。","zh-HK":"圖片處理與 OCR 優先。","en":"Image processing and OCR first."},
+"資料處理":{"zh-CN":"数据处理","zh-HK":"資料處理","en":"Data desk"},
+"整理表格、JSON 和日期資料。":{"zh-CN":"整理表格、JSON 和日期数据。","zh-HK":"整理表格、JSON 和日期資料。","en":"Arrange table, JSON and date tools."},
+"這個工作區還沒有工具，從下方工具庫加入。":{"zh-CN":"这个工作区还没有工具，从下方工具库加入。","zh-HK":"這個工作區還沒有工具，從下方工具庫加入。","en":"This workspace has no tools yet. Add some from the library below."},
+"新工作區名稱":{"zh-CN":"新工作区名称","zh-HK":"新工作區名稱","en":"New workspace name"},
+"自訂工作區，可加入工具並拖拽排序。":{"zh-CN":"自定义工作区，可加入工具并拖拽排序。","zh-HK":"自訂工作區，可加入工具並拖拽排序。","en":"Custom workspace. Add tools and drag to reorder."},
+"放大、去背、裁切、調色、壓縮、OCR。":{"zh-CN":"放大、去背、裁切、调色、压缩、OCR。","zh-HK":"放大、去背、裁切、調色、壓縮、OCR。","en":"Upscale, cutout, crop, adjust, compress and OCR."},
+"統計、清理、翻譯、首字母大寫與排序。":{"zh-CN":"统计、清理、翻译、首字母大写与排序。","zh-HK":"統計、清理、翻譯、首字母大寫與排序。","en":"Count, clean, translate, title case and sort."}
 };
 const rev={};
 for(const key in I18N){
