@@ -5,25 +5,24 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Windzxy Tools</title>
   <meta name="description" content="Windzxy 的日常辦公工具箱。">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-polish1">
-  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-polish1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-polish1">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-refine-nav1">
+  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-refine-nav1">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-refine-nav1">
 </head>
 <body>
 <header class="site-header">
   <div class="wrap nav">
-    <a class="brand" href="index.html"><span><strong>Windzxy</strong><small>Tools</small></span></a>
-    <nav><a href="index.html">首頁</a><a href="Html_tools/index.html">工具箱</a></nav>
+    <span class="nav-spacer"></span>
+    <nav>
+      <a href="index.html" aria-current="page">首頁</a>
+      <a href="Html_tools/index.html">工具箱</a>
+    </nav>
     <button class="theme-toggle" type="button" aria-label="切換主題"></button>
   </div>
 </header>
 <main class="wrap home">
-  <section class="mast">
-    <div>
-      <p class="eyebrow">Windzxy Tools</p>
-      <h1>今天要處理什麼？</h1>
-      <p class="lead">把幾個常用的小工具收在一起，少一步打開軟體，多一步直接完成。</p>
-    </div>
+  <section class="toolbar">
+    <div class="title-chip"><span class="title-dot"></span><span>常用工具</span></div>
     <div class="quick">
       <a class="button" href="Html_tools/image-tool.html">圖片處理</a>
       <a class="button secondary" href="Html_tools/index.html">全部工具</a>
@@ -47,7 +46,7 @@
 (function(){const root=document.documentElement;const saved=localStorage.getItem("windzxy-theme");if(saved)root.dataset.theme=saved;document.querySelector(".theme-toggle")?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);});})();
 </script>
 <script>
-(function(){const input=document.querySelector("[data-search]");const cards=[...document.querySelectorAll("[data-tool]")];if(!input)return;input.addEventListener("input",()=>{const q=input.value.trim().toLowerCase();cards.forEach(card=>{card.hidden=q&&!card.dataset.tool.toLowerCase().includes(q);});});})();
+(function(){const input=document.querySelector("[data-search]");const cards=[...document.querySelectorAll("[data-tool]")];if(!input)return;input.addEventListener("input",()=>{const q=input.value.trim().toLowerCase();cards.forEach(card=>{card.hidden=q&&!card.dataset.tool.toLowerCase().includes(q);});});document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==input){e.preventDefault();input.focus();}});})();
 </script>
 </body>
 </html>
