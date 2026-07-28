@@ -1,1 +1,7 @@
-(()=>{const root=document.documentElement,key='beex-html-tools-theme',saved=localStorage.getItem(key);root.dataset.theme=saved||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');const button=document.querySelector('.theme-toggle');function paint(){if(button){const dark=root.dataset.theme==='dark';button.textContent=dark?'☀':'☾';button.title=dark?'切換淺色模式':'切換深色模式';button.setAttribute('aria-label',button.title)}}button?.addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem(key,root.dataset.theme);paint()});paint()})();
+const root=document.documentElement;
+const button=document.querySelector(".theme-toggle");
+const saved=localStorage.getItem("windzxy-theme");
+function paint(){if(button)button.textContent=root.dataset.theme==="dark"?"☀︎":"☾";}
+if(saved)root.dataset.theme=saved;
+paint();
+button?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});
