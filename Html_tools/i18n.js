@@ -162,7 +162,7 @@ const I18N={
 "准备图片…":{"zh-CN":"准备图片…","zh-HK":"準備圖片…","en":"Preparing image…"},
 "正在初始化 OCR…":{"zh-CN":"正在初始化 OCR…","zh-HK":"正在初始化 OCR…","en":"Initializing OCR…"},
 "OCR 完成":{"zh-CN":"OCR 完成","zh-HK":"OCR 完成","en":"OCR complete"},
-"OCR 引擎未加载。请确认 ocr 文件夹已发布，或稍后重试。":{"zh-CN":"OCR 引擎未加载。请确认 ocr 文件夹已发布，或稍后重试。","zh-HK":"OCR 引擎未載入。請確認 ocr 資料夾已發布，或稍後重試。","en":"OCR engine was not loaded. Check that the ocr folder is published, or retry later."},
+"OCR 引擎未加载。请检查网络后重试。":{"zh-CN":"OCR 引擎未加载。请检查网络后重试。","zh-HK":"OCR 引擎未載入。請檢查網絡後重試。","en":"OCR engine was not loaded. Check the network and retry."},
 "OCR 未完成":{"zh-CN":"OCR 未完成","zh-HK":"OCR 未完成","en":"OCR not complete"},
 "loading tesseract core":{"zh-CN":"正在加载 OCR 核心","zh-HK":"正在載入 OCR 核心","en":"Loading OCR core"},
 "initializing tesseract":{"zh-CN":"正在初始化 OCR","zh-HK":"正在初始化 OCR","en":"Initializing OCR"},
