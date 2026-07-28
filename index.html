@@ -5,21 +5,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Windzxy Tools</title>
   <meta name="description" content="Windzxy 的網頁端桌面工具箱。">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fulldesk1">
-  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fulldesk1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-fulldesk1">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-webdesk2">
+  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-webdesk2">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-webdesk2">
 </head>
 <body class="desktop-home">
 <main id="desktopApp" class="web-desktop">
   <section id="desktopCanvas" class="desktop-surface" aria-label="桌面區域" data-i18n-aria-label="桌面區域"></section>
-  <div class="desktop-brand">
-    <strong>Windzxy</strong>
-    <span data-i18n="網頁桌面">網頁桌面</span>
-  </div>
   <aside class="desktop-dock" aria-label="桌面工具條" data-i18n-aria-label="桌面工具條">
     <button type="button" data-dock="tools" aria-label="添加功能" data-i18n-aria-label="添加功能">＋</button>
     <button type="button" data-dock="workspaces" aria-label="工作區" data-i18n-aria-label="工作區">▦</button>
     <button type="button" data-dock="settings" aria-label="設定" data-i18n-aria-label="設定">⚙</button>
+    <button id="randomBgDock" type="button" aria-label="隨機背景" data-i18n-aria-label="隨機背景">⇄</button>
     <a href="Html_tools/index.html" aria-label="工具箱" data-i18n-aria-label="工具箱">⌘</a>
   </aside>
   <aside id="desktopDrawer" class="desktop-drawer" aria-label="功能中心" data-i18n-aria-label="功能中心">
@@ -33,11 +30,11 @@
     <div class="drawer-panel" data-panel="tools">
       <label class="drawer-search">
         <span>⌕</span>
-        <input id="deskSearch" type="search" placeholder="搜尋工具，例如：圖片、JSON、表格" data-i18n-placeholder="搜尋工具，例如：圖片、JSON、表格">
+        <input id="deskSearch" type="search" placeholder="搜尋工具或小組件" data-i18n-placeholder="搜尋工具或小組件">
       </label>
       <div class="panel-title">
         <h3 data-i18n="功能庫">功能庫</h3>
-        <p data-i18n="點擊加入桌面。">點擊加入桌面。</p>
+        <p data-i18n="點擊加入桌面，卡片可移動、縮放與摺疊。">點擊加入桌面，卡片可移動、縮放與摺疊。</p>
       </div>
       <div id="toolShelf" class="dock-tool-list"></div>
       <button id="addCustomCard" class="drawer-button" type="button" data-i18n="新增自訂卡片">新增自訂卡片</button>
@@ -54,7 +51,7 @@
     <div class="drawer-panel hidden" data-panel="settings">
       <div class="panel-title">
         <h3 data-i18n="設定">設定</h3>
-        <p data-i18n="調整語言與主題。">調整語言與主題。</p>
+        <p data-i18n="調整語言、主題與背景。">調整語言、主題與背景。</p>
       </div>
       <label class="setting-row">
         <span data-i18n="語言">語言</span>
@@ -68,6 +65,12 @@
         <span data-i18n="主題">主題</span>
         <button class="theme-toggle" type="button" aria-label="切換主題" data-i18n-aria-label="切換主題"></button>
       </label>
+      <div class="panel-title">
+        <h3 data-i18n="背景">背景</h3>
+        <p data-i18n="使用本地背景庫，可隨機切換。">使用本地背景庫，可隨機切換。</p>
+      </div>
+      <div id="backgroundList" class="background-list"></div>
+      <button id="randomBg" class="drawer-button" type="button" data-i18n="Random 背景">Random 背景</button>
       <a class="drawer-link" href="Html_tools/index.html" data-i18n="打開完整工具箱">打開完整工具箱</a>
     </div>
   </aside>
@@ -83,71 +86,99 @@
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
 <script>
-const catalog=[
-  {id:"image",title:"圖片處理",desc:"放大、去背、裁切、調色、壓縮、OCR。",href:"Html_tools/image-tool.html",icon:"◎",tone:"t-image"},
-  {id:"text",title:"文字整理",desc:"統計、清理、翻譯、首字母大寫與排序。",href:"Html_tools/text-tool.html",icon:"Aa",tone:"t-text"},
-  {id:"table",title:"表格轉換",desc:"CSV、TSV、Markdown 與 HTML 快速整理。",href:"Html_tools/table-tool.html",icon:"▦",tone:"t-table"},
-  {id:"date",title:"日期計算",desc:"日期間隔、日曆天與工作天推算。",href:"Html_tools/date-tool.html",icon:"31",tone:"t-date"},
-  {id:"json",title:"JSON 工具",desc:"格式化、壓縮、驗證與複製。",href:"Html_tools/json-tool.html",icon:"{}",tone:"t-json"}
+const apps=[
+  {id:"image",kind:"tool",title:"圖片處理",desc:"放大、去背、裁切、調色、壓縮、OCR。",href:"Html_tools/image-tool.html",icon:"◎",tone:"t-image"},
+  {id:"text",kind:"tool",title:"文字整理",desc:"統計、清理、翻譯、首字母大寫與排序。",href:"Html_tools/text-tool.html",icon:"Aa",tone:"t-text"},
+  {id:"table",kind:"tool",title:"表格轉換",desc:"CSV、TSV、Markdown 與 HTML 快速整理。",href:"Html_tools/table-tool.html",icon:"▦",tone:"t-table"},
+  {id:"date",kind:"tool",title:"日期計算",desc:"日期間隔、日曆天與工作天推算。",href:"Html_tools/date-tool.html",icon:"31",tone:"t-date"},
+  {id:"json",kind:"tool",title:"JSON 工具",desc:"格式化、壓縮、驗證與複製。",href:"Html_tools/json-tool.html",icon:"{}",tone:"t-json"},
+  {id:"note",kind:"widget",title:"便箋",desc:"快速記錄文字。",icon:"✎",tone:"t-note"},
+  {id:"todo",kind:"widget",title:"待辦",desc:"列出今天要完成的事。",icon:"✓",tone:"t-todo"},
+  {id:"clock",kind:"widget",title:"時鐘",desc:"本地日期與時間。",icon:"◷",tone:"t-clock"},
+  {id:"calc",kind:"widget",title:"計算器",desc:"簡單算式快速計算。",icon:"=",tone:"t-calc"},
+  {id:"color",kind:"widget",title:"色板",desc:"挑選並複製顏色。",icon:"◉",tone:"t-color"},
+  {id:"link",kind:"widget",title:"快速連結",desc:"保存常用網址。",icon:"↗",tone:"t-link"},
+  {id:"memo",kind:"widget",title:"小抄",desc:"保存常用片段。",icon:"⌘",tone:"t-memo"}
 ];
 const seeds={
-  daily:[["image",64,74,280,118],["text",380,74,280,118],["table",696,74,280,118],["date",64,232,260,118],["json",360,232,260,118]],
-  office:[["text",64,74,280,118],["table",380,74,280,118],["date",64,232,260,118],["json",360,232,260,118]],
-  imageDesk:[["image",64,74,300,124],["text",404,74,280,118]],
-  data:[["table",64,74,280,118],["json",380,74,280,118],["date",64,232,260,118],["text",360,232,260,118]]
+  daily:[["image",64,72,310,148],["note",410,72,300,210],["todo",746,72,300,230],["clock",64,252,260,140],["text",360,320,300,148],["calc",696,346,260,160]],
+  office:[["text",64,72,300,148],["table",400,72,300,148],["date",736,72,280,148],["todo",64,254,300,220],["memo",400,254,320,220]],
+  imageDesk:[["image",64,72,330,160],["color",430,72,280,160],["note",64,270,330,210]],
+  data:[["table",64,72,310,148],["json",410,72,310,148],["date",756,72,280,148],["calc",64,254,280,170],["memo",380,254,340,210]]
 };
-function seedCards(key){return (seeds[key]||[]).map(([toolId,x,y,w,h],i)=>({id:key+"-"+toolId+"-"+i,toolId,x,y,w,h}))}
+const bgFallback=[
+  {id:"aurora-grid",title:"Aurora Grid",file:"backgrounds/aurora-grid.svg"},
+  {id:"mist-valley",title:"Mist Valley",file:"backgrounds/mist-valley.svg"},
+  {id:"neon-dusk",title:"Neon Dusk",file:"backgrounds/neon-dusk.svg"},
+  {id:"minimal-sand",title:"Minimal Sand",file:"backgrounds/minimal-sand.svg"}
+];
+function seedCards(key){return (seeds[key]||[]).map(([appId,x,y,w,h],i)=>({id:key+"-"+appId+"-"+i,appId,x,y,w,h,collapsed:false,data:{}}))}
 const defaults=[
   {id:"daily",name:"日常工作區",hint:"拖拽卡片可任意擺放；點擊卡片打開工具。",cards:seedCards("daily")},
   {id:"office",name:"辦公整理",hint:"文字、表格、日期與 JSON 放在一起。",cards:seedCards("office")},
   {id:"imageDesk",name:"圖片工作台",hint:"圖片處理與 OCR 優先。",cards:seedCards("imageDesk")},
   {id:"data",name:"資料處理",hint:"整理表格、JSON 和日期資料。",cards:seedCards("data")}
 ];
-const storeKey="windzxy-desktop-workspaces";
-const legacyKey="windzxy-dashboard-workspaces";
+const storeKey="windzxy-web-desktop-workspaces";
+const legacyKeys=["windzxy-desktop-workspaces","windzxy-dashboard-workspaces"];
 const activeKey="windzxy-active-workspace";
+const bgKey="windzxy-desktop-bg";
 let workspaces=loadWorkspaces();
 let activeId=localStorage.getItem(activeKey)||workspaces[0].id;
+let backgrounds=bgFallback;
 let drag=null;
+let resize=null;
 const $=id=>document.getElementById(id);
 function clone(value){return JSON.parse(JSON.stringify(value))}
 function loadWorkspaces(){
   try{
-    const saved=JSON.parse(localStorage.getItem(storeKey)||localStorage.getItem(legacyKey)||"[]");
+    const raw=localStorage.getItem(storeKey)||legacyKeys.map(k=>localStorage.getItem(k)).find(Boolean)||"[]";
+    const saved=JSON.parse(raw);
     if(Array.isArray(saved)&&saved.length)return saved.map(normalizeWorkspace);
   }catch(e){}
   return clone(defaults);
 }
 function normalizeWorkspace(ws){
-  if(!Array.isArray(ws.cards)&&Array.isArray(ws.toolIds))ws.cards=ws.toolIds.map((id,i)=>({id:ws.id+"-"+id+"-"+i,toolId:id,x:64+(i%3)*316,y:74+Math.floor(i/3)*158,w:i<3?280:260,h:118}));
-  ws.cards=Array.isArray(ws.cards)?ws.cards:[];
+  if(!Array.isArray(ws.cards)&&Array.isArray(ws.toolIds))ws.cards=ws.toolIds.map((id,i)=>({id:ws.id+"-"+id+"-"+i,appId:id,x:64+(i%3)*316,y:72+Math.floor(i/3)*170,w:300,h:148,collapsed:false,data:{}}));
+  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).map((card,i)=>({id:card.id||"card-"+Date.now()+"-"+i,appId:card.appId||card.toolId||"note",x:card.x||72,y:card.y||72,w:card.w||300,h:card.h||148,collapsed:!!card.collapsed,custom:card.custom,title:card.title,desc:card.desc,href:card.href,icon:card.icon,tone:card.tone,data:card.data||{}}));
   return ws;
 }
 function save(){localStorage.setItem(storeKey,JSON.stringify(workspaces))}
 function activeWorkspace(){return workspaces.find(x=>x.id===activeId)||workspaces[0]}
-function toolById(id){return catalog.find(t=>t.id===id)}
+function appById(id){return apps.find(t=>t.id===id)}
+function itemInfo(card){return card.custom?card:appById(card.appId)||card}
 function tr(value){return window.t?window.t(value):value}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 function labelHtml(value){return '<span data-i18n="'+escapeHtml(value)+'">'+escapeHtml(tr(value))+'</span>'}
-function info(card){return card.custom?card:toolById(card.toolId)||card}
 function renderWorkspaces(){
   $("workspaceList").innerHTML=workspaces.map(w=>'<button class="workspace-item '+(w.id===activeId?'is-active':'')+'" type="button" data-id="'+escapeHtml(w.id)+'">'+labelHtml(w.name)+'<small>'+w.cards.length+'</small></button>').join("");
   document.querySelectorAll(".workspace-item").forEach(btn=>btn.onclick=()=>{activeId=btn.dataset.id;localStorage.setItem(activeKey,activeId);renderAll()});
 }
 function renderShelf(){
   const q=($("deskSearch")?.value||"").trim().toLowerCase();
-  const list=catalog.filter(t=>!q||[t.title,t.desc,tr(t.title),tr(t.desc)].join(" ").toLowerCase().includes(q));
+  const list=apps.filter(t=>!q||[t.title,t.desc,tr(t.title),tr(t.desc)].join(" ").toLowerCase().includes(q));
   $("toolShelf").innerHTML=list.map(t=>'<button class="dock-tool '+t.tone+'" type="button" data-id="'+t.id+'"><span class="app-icon">'+t.icon+'</span><span>'+labelHtml(t.title)+'</span><small>＋</small></button>').join("");
-  document.querySelectorAll(".dock-tool").forEach(btn=>btn.onclick=()=>addTool(btn.dataset.id));
+  document.querySelectorAll(".dock-tool").forEach(btn=>btn.onclick=()=>addCard(btn.dataset.id));
+}
+function bodyHtml(card,info){
+  if(info.kind==="tool"||card.custom)return '<p class="card-desc">'+escapeHtml(card.custom?card.desc:tr(info.desc))+'</p><a class="open-tool" href="'+escapeHtml(card.href||info.href||"#")+'" data-i18n="打開">打開</a>';
+  const data=card.data||{};
+  if(card.appId==="note")return '<textarea class="widget-input" data-field="note" placeholder="'+escapeHtml(tr("在這裡記錄"))+'">'+escapeHtml(data.note||"")+'</textarea>';
+  if(card.appId==="todo")return '<div class="todo-list">'+(data.items||[]).map((x,i)=>'<label><input type="checkbox" data-todo="'+i+'" '+(x.done?'checked':'')+'><span>'+escapeHtml(x.text)+'</span><button type="button" data-del="'+i+'">×</button></label>').join("")+'</div><form class="todo-form"><input placeholder="'+escapeHtml(tr("新增待辦"))+'"><button type="submit">＋</button></form>';
+  if(card.appId==="clock")return '<div class="clock-widget"><strong data-clock></strong><span data-date></span></div>';
+  if(card.appId==="calc")return '<div class="calc-widget"><input data-field="expr" placeholder="12*(3+4)" value="'+escapeHtml(data.expr||"")+'"><output>'+escapeHtml(calc(data.expr||""))+'</output></div>';
+  if(card.appId==="color")return '<div class="color-widget"><input type="color" data-field="color" value="'+escapeHtml(data.color||"#ff8a00")+'"><code>'+escapeHtml(data.color||"#ff8a00")+'</code><button type="button" data-copy-color data-i18n="複製">複製</button></div>';
+  if(card.appId==="link")return '<div class="link-widget"><input data-field="label" placeholder="'+escapeHtml(tr("名稱"))+'" value="'+escapeHtml(data.label||"GitHub")+'"><input data-field="url" placeholder="https://..." value="'+escapeHtml(data.url||"https://github.com/windzxy")+'"><a href="'+escapeHtml(data.url||"https://github.com/windzxy")+'" target="_blank" rel="noreferrer" data-i18n="打開">打開</a></div>';
+  if(card.appId==="memo")return '<textarea class="widget-input mono" data-field="memo" placeholder="'+escapeHtml(tr("常用文字、命令或片段"))+'">'+escapeHtml(data.memo||"")+'</textarea>';
+  return '<p class="card-desc">'+escapeHtml(tr(info.desc||""))+'</p>';
 }
 function cardHtml(card){
-  const t=info(card);
-  const title=card.custom?t.title:tr(t.title);
-  const desc=card.custom?t.desc:tr(t.desc);
-  const ti=card.custom?"":' data-i18n="'+escapeHtml(t.title)+'"';
-  const di=card.custom?"":' data-i18n="'+escapeHtml(t.desc)+'"';
-  const style='left:'+Math.max(0,card.x||0)+'px;top:'+Math.max(0,card.y||0)+'px;width:'+(card.w||280)+'px;height:'+(card.h||118)+'px';
-  return '<article class="desktop-card '+(t.tone||"t-custom")+'" style="'+style+'" data-card-id="'+escapeHtml(card.id)+'" data-href="'+escapeHtml(t.href||"#")+'" tabindex="0" role="link"><span class="app-icon">'+escapeHtml(t.icon||"↗")+'</span><div><h3'+ti+'>'+escapeHtml(title)+'</h3><p'+di+'>'+escapeHtml(desc)+'</p></div><button class="card-remove" type="button" aria-label="'+escapeHtml(tr("移除"))+'">×</button></article>';
+  const info=itemInfo(card);
+  const title=card.custom?card.title:tr(info.title);
+  const titleAttr=card.custom?"":' data-i18n="'+escapeHtml(info.title)+'"';
+  const h=card.collapsed?46:(card.h||150);
+  const style='left:'+Math.max(0,card.x||0)+'px;top:'+Math.max(0,card.y||0)+'px;width:'+(card.w||300)+'px;height:'+h+'px';
+  return '<article class="desktop-card '+(info.tone||"t-custom")+(card.collapsed?' is-collapsed':'')+'" style="'+style+'" data-card-id="'+escapeHtml(card.id)+'"><div class="card-bar"><span class="app-icon">'+escapeHtml(info.icon||"↗")+'</span><h3'+titleAttr+'>'+escapeHtml(title)+'</h3><button class="card-fold" type="button" aria-label="'+escapeHtml(tr(card.collapsed?"展開":"摺疊"))+'">'+(card.collapsed?"▣":"—")+'</button><button class="card-remove" type="button" aria-label="'+escapeHtml(tr("移除"))+'">×</button></div><div class="card-body">'+bodyHtml(card,info)+'</div><span class="resize-grip"></span></article>';
 }
 function renderDesktop(){
   const ws=activeWorkspace();
@@ -157,14 +188,14 @@ function renderDesktop(){
   $("workspaceHint").textContent=tr(ws.hint);
   $("desktopCanvas").innerHTML=ws.cards.map(cardHtml).join("")||'<div class="empty-desktop" data-i18n="尚無卡片，從右側工具條添加功能。">'+tr("尚無卡片，從右側工具條添加功能。")+'</div>';
   document.querySelectorAll(".desktop-card").forEach(bindCard);
+  tickWidgets();
   if(window.applyI18n)window.applyI18n(document.body);
 }
-function addTool(id){
+function addCard(appId){
   const i=activeWorkspace().cards.length;
-  activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),toolId:id,x:72+(i%4)*42,y:82+(i%6)*34,w:id==="image"?300:280,h:118});
+  activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),appId,x:72+(i%5)*38,y:78+(i%7)*32,w:appId==="note"||appId==="todo"?310:280,h:appId==="todo"?220:appId==="note"?210:150,collapsed:false,data:{}});
   save();
   renderAll();
-  openDrawer("tools");
 }
 function addCustomCard(){
   const title=prompt(tr("卡片名稱"));
@@ -172,13 +203,19 @@ function addCustomCard(){
   const href=prompt(tr("連結或網址"))||"#";
   const desc=prompt(tr("簡短描述"))||tr("自訂卡片");
   const i=activeWorkspace().cards.length;
-  activeWorkspace().cards.push({id:"custom-"+Date.now(),custom:true,title:title.trim(),desc:desc.trim(),href:href.trim(),icon:"↗",tone:"t-custom",x:72+(i%4)*42,y:82+(i%6)*34,w:280,h:118});
+  activeWorkspace().cards.push({id:"custom-"+Date.now(),custom:true,title:title.trim(),desc:desc.trim(),href:href.trim(),icon:"↗",tone:"t-custom",x:72+(i%5)*38,y:78+(i%7)*32,w:300,h:150,collapsed:false,data:{}});
   save();
   renderAll();
 }
 function removeCard(id){
   const ws=activeWorkspace();
   ws.cards=ws.cards.filter(card=>card.id!==id);
+  save();
+  renderAll();
+}
+function toggleFold(id){
+  const card=activeWorkspace().cards.find(x=>x.id===id);
+  if(card)card.collapsed=!card.collapsed;
   save();
   renderAll();
 }
@@ -199,36 +236,94 @@ function createWorkspace(){
   save();
   renderAll();
 }
-function bindCard(card){
-  card.querySelector(".card-remove").onclick=event=>{event.stopPropagation();removeCard(card.dataset.cardId)};
-  card.onclick=event=>{if(card.dataset.moved==="1"){event.preventDefault();card.dataset.moved="0";return}location.href=card.dataset.href};
-  card.onkeydown=event=>{if(event.key==="Enter")location.href=card.dataset.href};
-  card.onpointerdown=event=>{
-    if(event.button!==0||event.target.closest(".card-remove"))return;
-    const item=activeWorkspace().cards.find(x=>x.id===card.dataset.cardId);
-    if(!item)return;
-    drag={card,item,startX:event.clientX,startY:event.clientY,origX:item.x||0,origY:item.y||0,moved:false};
-    card.setPointerCapture(event.pointerId);
-    card.classList.add("is-dragging");
-  };
-  card.onpointermove=event=>{
-    if(!drag||drag.card!==card)return;
-    const dx=event.clientX-drag.startX;
-    const dy=event.clientY-drag.startY;
-    if(Math.abs(dx)+Math.abs(dy)>3)drag.moved=true;
+function bindCard(el){
+  const id=el.dataset.cardId;
+  el.querySelector(".card-remove").onclick=e=>{e.stopPropagation();removeCard(id)};
+  el.querySelector(".card-fold").onclick=e=>{e.stopPropagation();toggleFold(id)};
+  el.querySelector(".card-bar").onpointerdown=e=>startDrag(e,el,id);
+  el.querySelector(".resize-grip").onpointerdown=e=>startResize(e,el,id);
+  el.querySelectorAll("[data-field]").forEach(input=>input.oninput=()=>updateData(id,input.dataset.field,input.value));
+  el.querySelectorAll("[data-todo]").forEach(input=>input.onchange=()=>toggleTodo(id,+input.dataset.todo,input.checked));
+  el.querySelectorAll("[data-del]").forEach(btn=>btn.onclick=()=>deleteTodo(id,+btn.dataset.del));
+  const form=el.querySelector(".todo-form");
+  if(form)form.onsubmit=e=>{e.preventDefault();const input=form.querySelector("input");addTodo(id,input.value);input.value=""};
+  const copy=el.querySelector("[data-copy-color]");
+  if(copy)copy.onclick=()=>navigator.clipboard?.writeText(el.querySelector('[data-field="color"]').value);
+}
+function startDrag(e,el,id){
+  if(e.button!==0)return;
+  const item=activeWorkspace().cards.find(x=>x.id===id);
+  if(!item)return;
+  drag={el,item,startX:e.clientX,startY:e.clientY,origX:item.x||0,origY:item.y||0};
+  el.setPointerCapture(e.pointerId);
+  el.classList.add("is-dragging");
+}
+function startResize(e,el,id){
+  if(e.button!==0)return;
+  e.stopPropagation();
+  const item=activeWorkspace().cards.find(x=>x.id===id);
+  if(!item||item.collapsed)return;
+  resize={el,item,startX:e.clientX,startY:e.clientY,origW:item.w||300,origH:item.h||150};
+  el.setPointerCapture(e.pointerId);
+  el.classList.add("is-resizing");
+}
+document.addEventListener("pointermove",e=>{
+  if(drag){
     const rect=$("desktopCanvas").getBoundingClientRect();
-    drag.item.x=Math.max(0,Math.min(rect.width-(drag.item.w||280)-84,drag.origX+dx));
-    drag.item.y=Math.max(0,Math.min(rect.height-(drag.item.h||118)-64,drag.origY+dy));
-    card.style.left=drag.item.x+"px";
-    card.style.top=drag.item.y+"px";
-  };
-  card.onpointerup=()=>{
-    if(!drag||drag.card!==card)return;
-    card.classList.remove("is-dragging");
-    card.dataset.moved=drag.moved?"1":"0";
-    drag=null;
-    save();
-  };
+    drag.item.x=Math.max(0,Math.min(rect.width-(drag.item.w||300)-82,drag.origX+e.clientX-drag.startX));
+    drag.item.y=Math.max(0,Math.min(rect.height-(drag.item.h||150)-62,drag.origY+e.clientY-drag.startY));
+    drag.el.style.left=drag.item.x+"px";
+    drag.el.style.top=drag.item.y+"px";
+  }
+  if(resize){
+    resize.item.w=Math.max(210,Math.min(720,resize.origW+e.clientX-resize.startX));
+    resize.item.h=Math.max(110,Math.min(520,resize.origH+e.clientY-resize.startY));
+    resize.el.style.width=resize.item.w+"px";
+    resize.el.style.height=resize.item.h+"px";
+  }
+});
+document.addEventListener("pointerup",()=>{
+  if(drag){drag.el.classList.remove("is-dragging");drag=null;save()}
+  if(resize){resize.el.classList.remove("is-resizing");resize=null;save()}
+});
+function updateData(id,field,value){
+  const card=activeWorkspace().cards.find(x=>x.id===id);
+  if(!card)return;
+  card.data=card.data||{};
+  card.data[field]=value;
+  if(field==="expr"){
+    const el=document.querySelector('[data-card-id="'+CSS.escape(id)+'"] output');
+    if(el)el.textContent=calc(value);
+  }
+  if(field==="color"){
+    const el=document.querySelector('[data-card-id="'+CSS.escape(id)+'"] code');
+    if(el)el.textContent=value;
+  }
+  save();
+}
+function addTodo(id,text){
+  if(!text.trim())return;
+  const card=activeWorkspace().cards.find(x=>x.id===id);
+  card.data.items=card.data.items||[];
+  card.data.items.push({text:text.trim(),done:false});
+  save();
+  renderDesktop();
+}
+function toggleTodo(id,index,done){
+  const card=activeWorkspace().cards.find(x=>x.id===id);
+  if(card?.data?.items?.[index])card.data.items[index].done=done;
+  save();
+}
+function deleteTodo(id,index){
+  const card=activeWorkspace().cards.find(x=>x.id===id);
+  if(card?.data?.items)card.data.items.splice(index,1);
+  save();
+  renderDesktop();
+}
+function calc(expr){
+  if(!expr)return "";
+  if(!/^[\d+\-*/().%\s]+$/.test(expr))return "Error";
+  try{return String(Function("return ("+expr+")")())}catch(e){return "Error"}
 }
 function openDrawer(panel){
   document.querySelectorAll(".drawer-panel").forEach(p=>p.classList.toggle("hidden",p.dataset.panel!==panel));
@@ -242,6 +337,35 @@ function openDrawer(panel){
 function renderClock(){
   $("desktopClock").textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",month:"2-digit",day:"2-digit"}).format(new Date());
 }
+function tickWidgets(){
+  const now=new Date();
+  document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(now));
+  document.querySelectorAll("[data-date]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now));
+}
+async function loadBackgrounds(){
+  try{
+    const res=await fetch("backgrounds/manifest.json?v=20260728-webdesk2");
+    if(res.ok)backgrounds=await res.json();
+  }catch(e){}
+  renderBackgroundList();
+  applyBackground(localStorage.getItem(bgKey)||backgrounds[0]?.file);
+}
+function renderBackgroundList(){
+  $("backgroundList").innerHTML=backgrounds.map(bg=>'<button class="background-item" type="button" data-file="'+escapeHtml(bg.file)+'"><span></span>'+escapeHtml(bg.title)+'</button>').join("");
+  document.querySelectorAll(".background-item").forEach(btn=>btn.onclick=()=>applyBackground(btn.dataset.file));
+}
+function applyBackground(file){
+  if(!file)return;
+  localStorage.setItem(bgKey,file);
+  document.documentElement.style.setProperty("--desktop-wallpaper",'url("'+file+'")');
+}
+function randomBackground(){
+  if(!backgrounds.length)return;
+  const current=localStorage.getItem(bgKey);
+  const pool=backgrounds.filter(bg=>bg.file!==current);
+  const next=(pool.length?pool:backgrounds)[Math.floor(Math.random()*(pool.length?pool.length:backgrounds.length))];
+  applyBackground(next.file);
+}
 function renderAll(){renderWorkspaces();renderShelf();renderDesktop();renderClock()}
 document.querySelectorAll("[data-dock]").forEach(btn=>btn.onclick=()=>openDrawer(btn.dataset.dock));
 $("closeDrawer").onclick=()=>$("desktopDrawer").classList.remove("is-open");
@@ -249,10 +373,13 @@ $("createWorkspace").onclick=createWorkspace;
 $("addCustomCard").onclick=addCustomCard;
 $("resetLayout").onclick=resetLayout;
 $("deskSearch").addEventListener("input",renderShelf);
-setInterval(renderClock,30000);
+$("randomBg").onclick=randomBackground;
+$("randomBgDock").onclick=randomBackground;
+setInterval(()=>{renderClock();tickWidgets()},1000);
 renderAll();
 openDrawer("tools");
+loadBackgrounds();
 </script>
-<script src="Html_tools/i18n.js?v=20260728-fulldesk1"></script>
+<script src="Html_tools/i18n.js?v=20260728-webdesk2"></script>
 </body>
 </html>
