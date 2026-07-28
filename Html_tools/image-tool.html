@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>圖片處理</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-i18nfix2">
-  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-i18nfix2">
-  <link rel="stylesheet" href="style.css?v=20260728-i18nfix2">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-imagepanel1">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-imagepanel1">
+  <link rel="stylesheet" href="style.css?v=20260728-imagepanel1">
 </head>
 <body class="tool-page tool-image">
 <header>
@@ -61,10 +61,18 @@
       <div id="batchList" class="batch-list hidden"></div>
     </section>
 
-    <aside class="panel">
+    <aside class="panel settings-panel">
       <h2>處理設定</h2>
+      <div class="settings-tabs" role="tablist" aria-label="圖片工具分類">
+        <button class="settings-tab is-active" type="button" data-section="size">尺寸</button>
+        <button class="settings-tab" type="button" data-section="background">去背</button>
+        <button class="settings-tab" type="button" data-section="enhance">增強</button>
+        <button class="settings-tab" type="button" data-section="adjust">調色</button>
+        <button class="settings-tab" type="button" data-section="export">輸出</button>
+        <button class="settings-tab" type="button" data-section="ocr">OCR</button>
+      </div>
 
-      <details open>
+      <details class="settings-section is-active" data-section="size" open>
         <summary>尺寸與無損/高保真放大</summary>
         <div class="row">
           <div>
@@ -95,7 +103,7 @@
         <p class="hint">像素無損會保留原像素硬邊；照片放大只能提升觀感，無法還原原圖沒有的細節。</p>
       </details>
 
-      <details open>
+      <details class="settings-section" data-section="background" open>
         <summary>去除背景</summary>
         <label for="bgMode">去背模式</label>
         <select id="bgMode">
@@ -123,7 +131,7 @@
         <p class="hint">選「點選顏色去背」後，直接點左側原圖取樣。容差越大，移除範圍越廣。</p>
       </details>
 
-      <details open>
+      <details class="settings-section" data-section="enhance" open>
         <summary>AI 参考增强</summary>
         <label for="restoreMode">照片修复</label>
         <select id="restoreMode">
@@ -159,7 +167,7 @@
         <p class="hint ai-note">这些是浏览器本机算法，适合快速预处理；真正神经网络级别的上色、抠图或超分需要后端/API。</p>
       </details>
 
-      <details>
+      <details class="settings-section" data-section="adjust" open>
         <summary>調整與精修</summary>
         <div class="row">
           <div>
@@ -181,7 +189,7 @@
         </div>
       </details>
 
-      <details>
+      <details class="settings-section" data-section="ocr" open>
         <summary>OCR 文字识别</summary>
         <button id="ocrRun" type="button">识别当前图片文字</button>
         <textarea id="ocrOutput" class="ocr-output" readonly placeholder="OCR 结果"></textarea>
@@ -191,7 +199,7 @@
         <p class="mini-note">浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。</p>
       </details>
 
-      <details open>
+      <details class="settings-section" data-section="export" open>
         <summary>輸出</summary>
         <div class="row">
           <div>
@@ -877,6 +885,21 @@ async function runOcr() {
   }
 }
 
+function activateSettingsSection(section) {
+  document.querySelectorAll('.settings-tab').forEach(btn => {
+    const active = btn.dataset.section === section;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  document.querySelectorAll('.settings-section').forEach(panel => {
+    panel.classList.toggle('is-active', panel.dataset.section === section);
+  });
+}
+document.querySelectorAll('.settings-tab').forEach(btn => {
+  btn.addEventListener('click', () => activateSettingsSection(btn.dataset.section));
+});
+activateSettingsSection('size');
+
 $('ocrRun')?.addEventListener('click', runOcr);
 $('ocrCopy')?.addEventListener('click', async () => {
   const text = $('ocrOutput')?.value || '';
@@ -890,7 +913,7 @@ $('download').onclick = downloadResult;
 $('reset').onclick = resetAll;
 updateLabels();
 </script>
-<script src="theme.js?v=20260728-i18nfix2"></script>
-<script src="i18n.js?v=20260728-i18nfix2"></script>
+<script src="theme.js?v=20260728-imagepanel1"></script>
+<script src="i18n.js?v=20260728-imagepanel1"></script>
 </body>
 </html>
