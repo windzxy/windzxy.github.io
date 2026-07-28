@@ -1,8 +1,9 @@
 <!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JSON 工具</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-gradients1">
-  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-gradients1">
-  <link rel="stylesheet" href="style.css?v=20260728-gradients1"></head><body class="tool-page tool-json"><header><div class="wrap"><div class="brand"><div class="brand-copy"><h1>JSON 工具</h1><p>格式化、壓縮及驗證 JSON</p></div>
-    <div class="page-actions"><a href="../index.html">首頁</a><a href="index.html">工具箱</a></div>
-    <button class="theme-toggle" type="button"></button></div></header><main class="wrap"><section class="panel"><label for="input">JSON 內容</label><textarea id="input" placeholder='{"name":"示例","items":[1,2,3]}'></textarea><div class="actions"><button id="pretty">格式化</button><button id="minify">壓縮</button><button id="copy" class="secondary">複製結果</button><button id="clear" class="secondary">清空</button></div><div id="status" class="result hidden"></div></section></main><script>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-return-theme1">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-return-theme1">
+  <link rel="stylesheet" href="style.css?v=20260728-return-theme1"></head><body class="tool-page tool-json"><header>
+  <div class="wrap">
+    <a class="return-home" href="../index.html">← 首页</a><div class="brand"><div class="brand-copy"><h1>JSON 工具</h1><p>格式化、壓縮及驗證 JSON</p></div>
+<button class="theme-toggle" type="button" aria-label="切換主題">☾</button></div></header><main class="wrap"><section class="panel"><label for="input">JSON 內容</label><textarea id="input" placeholder='{"name":"示例","items":[1,2,3]}'></textarea><div class="actions"><button id="pretty">格式化</button><button id="minify">壓縮</button><button id="copy" class="secondary">複製結果</button><button id="clear" class="secondary">清空</button></div><div id="status" class="result hidden"></div></section></main><script>
 const $=id=>document.getElementById(id),input=$('input');function run(space){try{input.value=JSON.stringify(JSON.parse(input.value),null,space);$('status').textContent='✓ JSON 格式正確';$('status').style.borderColor='#087f5b'}catch(e){$('status').textContent='✗ 格式錯誤：'+e.message;$('status').style.borderColor='#dc2626'}$('status').classList.remove('hidden')}$('pretty').onclick=()=>run(2);$('minify').onclick=()=>run(0);$('copy').onclick=async()=>{await navigator.clipboard.writeText(input.value);$('status').textContent='已複製到剪貼簿';$('status').classList.remove('hidden')};$('clear').onclick=()=>{input.value='';$('status').classList.add('hidden')};
-</script><script src="theme.js?v=20260728-gradients1"></script></body></html>
+</script><script src="theme.js?v=20260728-return-theme1"></script></body></html>
