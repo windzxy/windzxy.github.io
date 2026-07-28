@@ -4,59 +4,81 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Windzxy Tools</title>
-  <meta name="description" content="Windzxy 的日常辦公工具箱。">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-dashboard1">
-  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-dashboard1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-dashboard1">
+  <meta name="description" content="Windzxy 的網頁端桌面工具箱。">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fulldesk1">
+  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fulldesk1">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-fulldesk1">
 </head>
-<body class="workspace-home">
-<header class="site-header">
-  <div class="wrap nav">
-    <span class="nav-spacer"></span>
-    <nav><a href="index.html" aria-current="page">首頁</a><a href="Html_tools/index.html">工具箱</a></nav>
-    <div class="header-actions"><select class="lang-select" aria-label="Language"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select><button class="theme-toggle" type="button" aria-label="切換主題"></button></div>
+<body class="desktop-home">
+<main id="desktopApp" class="web-desktop">
+  <section id="desktopCanvas" class="desktop-surface" aria-label="桌面區域" data-i18n-aria-label="桌面區域"></section>
+  <div class="desktop-brand">
+    <strong>Windzxy</strong>
+    <span data-i18n="網頁桌面">網頁桌面</span>
   </div>
-</header>
-<main class="wrap desk-shell">
-  <aside class="desk-sidebar">
-    <div class="desk-brand">
-      <span class="desk-dot"></span>
-      <div>
-        <h1>網頁桌面</h1>
-        <p>像桌面一樣拖動和擺放功能卡片。</p>
-      </div>
-    </div>
-    <div id="workspaceList" class="workspace-list"></div>
-    <button id="createWorkspace" class="secondary desk-create" type="button">新建工作區</button>
-    <button id="addCustomCard" class="secondary desk-create" type="button">新增卡片</button>
+  <aside class="desktop-dock" aria-label="桌面工具條" data-i18n-aria-label="桌面工具條">
+    <button type="button" data-dock="tools" aria-label="添加功能" data-i18n-aria-label="添加功能">＋</button>
+    <button type="button" data-dock="workspaces" aria-label="工作區" data-i18n-aria-label="工作區">▦</button>
+    <button type="button" data-dock="settings" aria-label="設定" data-i18n-aria-label="設定">⚙</button>
+    <a href="Html_tools/index.html" aria-label="工具箱" data-i18n-aria-label="工具箱">⌘</a>
   </aside>
-  <section class="desk-main">
-    <div class="desk-top">
+  <aside id="desktopDrawer" class="desktop-drawer" aria-label="功能中心" data-i18n-aria-label="功能中心">
+    <div class="drawer-head">
       <div>
-        <p class="eyebrow">Dashboard</p>
-        <h2 id="workspaceTitle">日常工作區</h2>
-        <p id="workspaceHint">拖拽卡片可任意擺放；點擊卡片打開工具。</p>
+        <p id="drawerKicker" data-i18n="功能中心">功能中心</p>
+        <h2 id="drawerTitle" data-i18n="添加功能">添加功能</h2>
       </div>
-      <div class="desk-actions">
-        <button id="resetLayout" class="secondary" type="button">重置桌面</button>
-      </div>
+      <button id="closeDrawer" type="button" aria-label="關閉" data-i18n-aria-label="關閉">×</button>
     </div>
-    <label class="search-card desk-search">
-      <span>⌕</span>
-      <input id="deskSearch" type="search" placeholder="搜尋工具，例如：圖片、JSON、表格" data-i18n-placeholder="搜尋工具，例如：圖片、JSON、表格">
-      <kbd>/</kbd>
-    </label>
-    <section id="desktopCanvas" class="desktop-canvas" aria-label="桌面區域" data-i18n-aria-label="桌面區域"></section>
-    <section class="tool-shelf">
-      <div class="shelf-head">
-        <h3>功能庫</h3>
-        <p>點擊加入桌面。</p>
+    <div class="drawer-panel" data-panel="tools">
+      <label class="drawer-search">
+        <span>⌕</span>
+        <input id="deskSearch" type="search" placeholder="搜尋工具，例如：圖片、JSON、表格" data-i18n-placeholder="搜尋工具，例如：圖片、JSON、表格">
+      </label>
+      <div class="panel-title">
+        <h3 data-i18n="功能庫">功能庫</h3>
+        <p data-i18n="點擊加入桌面。">點擊加入桌面。</p>
       </div>
-      <div id="toolShelf" class="shelf-grid"></div>
-    </section>
-  </section>
+      <div id="toolShelf" class="dock-tool-list"></div>
+      <button id="addCustomCard" class="drawer-button" type="button" data-i18n="新增自訂卡片">新增自訂卡片</button>
+    </div>
+    <div class="drawer-panel hidden" data-panel="workspaces">
+      <div class="panel-title">
+        <h3 data-i18n="工作區">工作區</h3>
+        <p data-i18n="每個工作區都可以保存不同桌面佈局。">每個工作區都可以保存不同桌面佈局。</p>
+      </div>
+      <div id="workspaceList" class="drawer-workspaces"></div>
+      <button id="createWorkspace" class="drawer-button" type="button" data-i18n="新建工作區">新建工作區</button>
+      <button id="resetLayout" class="drawer-button secondary" type="button" data-i18n="重置桌面">重置桌面</button>
+    </div>
+    <div class="drawer-panel hidden" data-panel="settings">
+      <div class="panel-title">
+        <h3 data-i18n="設定">設定</h3>
+        <p data-i18n="調整語言與主題。">調整語言與主題。</p>
+      </div>
+      <label class="setting-row">
+        <span data-i18n="語言">語言</span>
+        <select class="lang-select" aria-label="Language">
+          <option value="zh-CN">简中</option>
+          <option value="zh-HK">繁中(HK)</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+      <label class="setting-row">
+        <span data-i18n="主題">主題</span>
+        <button class="theme-toggle" type="button" aria-label="切換主題" data-i18n-aria-label="切換主題"></button>
+      </label>
+      <a class="drawer-link" href="Html_tools/index.html" data-i18n="打開完整工具箱">打開完整工具箱</a>
+    </div>
+  </aside>
+  <footer class="desktop-taskbar">
+    <div>
+      <strong id="workspaceTitle" data-i18n="日常工作區">日常工作區</strong>
+      <span id="workspaceHint" data-i18n="拖拽卡片可任意擺放；點擊卡片打開工具。">拖拽卡片可任意擺放；點擊卡片打開工具。</span>
+    </div>
+    <time id="desktopClock"></time>
+  </footer>
 </main>
-<footer class="site-footer"><div class="wrap">© 2026 Windzxy</div></footer>
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
@@ -68,137 +90,104 @@ const catalog=[
   {id:"date",title:"日期計算",desc:"日期間隔、日曆天與工作天推算。",href:"Html_tools/date-tool.html",icon:"31",tone:"t-date"},
   {id:"json",title:"JSON 工具",desc:"格式化、壓縮、驗證與複製。",href:"Html_tools/json-tool.html",icon:"{}",tone:"t-json"}
 ];
-const layoutSeeds={
-  daily:[["image",28,28,330,146],["text",386,28,300,146],["table",720,28,300,146],["date",28,210,300,146],["json",360,210,300,146]],
-  office:[["text",28,28,320,146],["table",380,28,320,146],["date",28,210,290,146],["json",350,210,290,146]],
-  imageDesk:[["image",28,28,350,150],["text",410,28,300,146]],
-  data:[["table",28,28,330,146],["json",390,28,330,146],["date",28,210,300,146],["text",360,210,300,146]]
+const seeds={
+  daily:[["image",64,74,280,118],["text",380,74,280,118],["table",696,74,280,118],["date",64,232,260,118],["json",360,232,260,118]],
+  office:[["text",64,74,280,118],["table",380,74,280,118],["date",64,232,260,118],["json",360,232,260,118]],
+  imageDesk:[["image",64,74,300,124],["text",404,74,280,118]],
+  data:[["table",64,74,280,118],["json",380,74,280,118],["date",64,232,260,118],["text",360,232,260,118]]
 };
-function seedCards(key){return (layoutSeeds[key]||[]).map(([toolId,x,y,w,h],i)=>({id:key+"-"+toolId+"-"+i,toolId,x,y,w,h}))}
+function seedCards(key){return (seeds[key]||[]).map(([toolId,x,y,w,h],i)=>({id:key+"-"+toolId+"-"+i,toolId,x,y,w,h}))}
 const defaults=[
   {id:"daily",name:"日常工作區",hint:"拖拽卡片可任意擺放；點擊卡片打開工具。",cards:seedCards("daily")},
   {id:"office",name:"辦公整理",hint:"文字、表格、日期與 JSON 放在一起。",cards:seedCards("office")},
   {id:"imageDesk",name:"圖片工作台",hint:"圖片處理與 OCR 優先。",cards:seedCards("imageDesk")},
   {id:"data",name:"資料處理",hint:"整理表格、JSON 和日期資料。",cards:seedCards("data")}
 ];
-const storeKey="windzxy-dashboard-workspaces";
+const storeKey="windzxy-desktop-workspaces";
+const legacyKey="windzxy-dashboard-workspaces";
 const activeKey="windzxy-active-workspace";
 let workspaces=loadWorkspaces();
 let activeId=localStorage.getItem(activeKey)||workspaces[0].id;
-let dragState=null;
+let drag=null;
 const $=id=>document.getElementById(id);
 function clone(value){return JSON.parse(JSON.stringify(value))}
 function loadWorkspaces(){
   try{
-    const saved=JSON.parse(localStorage.getItem(storeKey)||"[]");
+    const saved=JSON.parse(localStorage.getItem(storeKey)||localStorage.getItem(legacyKey)||"[]");
     if(Array.isArray(saved)&&saved.length)return saved.map(normalizeWorkspace);
   }catch(e){}
   return clone(defaults);
 }
 function normalizeWorkspace(ws){
-  if(!Array.isArray(ws.cards)&&Array.isArray(ws.toolIds))ws.cards=ws.toolIds.map((id,i)=>({id:ws.id+"-"+id+"-"+i,toolId:id,x:28+(i%3)*330,y:28+Math.floor(i/3)*180,w:i<2?320:290,h:146}));
+  if(!Array.isArray(ws.cards)&&Array.isArray(ws.toolIds))ws.cards=ws.toolIds.map((id,i)=>({id:ws.id+"-"+id+"-"+i,toolId:id,x:64+(i%3)*316,y:74+Math.floor(i/3)*158,w:i<3?280:260,h:118}));
   ws.cards=Array.isArray(ws.cards)?ws.cards:[];
   return ws;
 }
-function saveWorkspaces(){localStorage.setItem(storeKey,JSON.stringify(workspaces))}
+function save(){localStorage.setItem(storeKey,JSON.stringify(workspaces))}
 function activeWorkspace(){return workspaces.find(x=>x.id===activeId)||workspaces[0]}
 function toolById(id){return catalog.find(t=>t.id===id)}
 function tr(value){return window.t?window.t(value):value}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 function labelHtml(value){return '<span data-i18n="'+escapeHtml(value)+'">'+escapeHtml(tr(value))+'</span>'}
+function info(card){return card.custom?card:toolById(card.toolId)||card}
 function renderWorkspaces(){
-  $("workspaceList").innerHTML=workspaces.map(w=>'<button class="workspace-pill '+(w.id===activeId?'is-active':'')+'" type="button" data-id="'+escapeHtml(w.id)+'">'+labelHtml(w.name)+'<small>'+w.cards.length+'</small></button>').join("");
-  document.querySelectorAll(".workspace-pill").forEach(btn=>btn.onclick=()=>{activeId=btn.dataset.id;localStorage.setItem(activeKey,activeId);renderAll()});
+  $("workspaceList").innerHTML=workspaces.map(w=>'<button class="workspace-item '+(w.id===activeId?'is-active':'')+'" type="button" data-id="'+escapeHtml(w.id)+'">'+labelHtml(w.name)+'<small>'+w.cards.length+'</small></button>').join("");
+  document.querySelectorAll(".workspace-item").forEach(btn=>btn.onclick=()=>{activeId=btn.dataset.id;localStorage.setItem(activeKey,activeId);renderAll()});
 }
-function cardInfo(card){
-  if(card.custom)return card;
-  return toolById(card.toolId)||card;
+function renderShelf(){
+  const q=($("deskSearch")?.value||"").trim().toLowerCase();
+  const list=catalog.filter(t=>!q||[t.title,t.desc,tr(t.title),tr(t.desc)].join(" ").toLowerCase().includes(q));
+  $("toolShelf").innerHTML=list.map(t=>'<button class="dock-tool '+t.tone+'" type="button" data-id="'+t.id+'"><span class="app-icon">'+t.icon+'</span><span>'+labelHtml(t.title)+'</span><small>＋</small></button>').join("");
+  document.querySelectorAll(".dock-tool").forEach(btn=>btn.onclick=()=>addTool(btn.dataset.id));
 }
 function cardHtml(card){
-  const t=cardInfo(card);
-  const href=escapeHtml(t.href||"#");
-  const title=escapeHtml(card.custom?t.title:tr(t.title));
-  const desc=escapeHtml(card.custom?t.desc:tr(t.desc));
-  const titleAttr=card.custom?"":' data-i18n="'+escapeHtml(t.title)+'"';
-  const descAttr=card.custom?"":' data-i18n="'+escapeHtml(t.desc)+'"';
-  const style='left:'+Math.max(0,card.x||0)+'px;top:'+Math.max(0,card.y||0)+'px;width:'+(card.w||300)+'px;height:'+(card.h||146)+'px';
-  return '<a class="dashboard-tile '+(t.tone||"t-custom")+'" href="'+href+'" style="'+style+'" data-card-id="'+escapeHtml(card.id)+'"><span class="app-icon">'+escapeHtml(t.icon||"↗")+'</span><div><h3'+titleAttr+'>'+title+'</h3><p'+descAttr+'>'+desc+'</p></div><span class="arrow">→</span></a>';
+  const t=info(card);
+  const title=card.custom?t.title:tr(t.title);
+  const desc=card.custom?t.desc:tr(t.desc);
+  const ti=card.custom?"":' data-i18n="'+escapeHtml(t.title)+'"';
+  const di=card.custom?"":' data-i18n="'+escapeHtml(t.desc)+'"';
+  const style='left:'+Math.max(0,card.x||0)+'px;top:'+Math.max(0,card.y||0)+'px;width:'+(card.w||280)+'px;height:'+(card.h||118)+'px';
+  return '<article class="desktop-card '+(t.tone||"t-custom")+'" style="'+style+'" data-card-id="'+escapeHtml(card.id)+'" data-href="'+escapeHtml(t.href||"#")+'" tabindex="0" role="link"><span class="app-icon">'+escapeHtml(t.icon||"↗")+'</span><div><h3'+ti+'>'+escapeHtml(title)+'</h3><p'+di+'>'+escapeHtml(desc)+'</p></div><button class="card-remove" type="button" aria-label="'+escapeHtml(tr("移除"))+'">×</button></article>';
 }
-function renderCanvas(){
+function renderDesktop(){
   const ws=activeWorkspace();
   $("workspaceTitle").dataset.i18n=ws.name;
   $("workspaceTitle").textContent=tr(ws.name);
   $("workspaceHint").dataset.i18n=ws.hint;
   $("workspaceHint").textContent=tr(ws.hint);
-  const q=$("deskSearch").value.trim().toLowerCase();
-  const cards=ws.cards.filter(card=>{const t=cardInfo(card);const hay=[t.title,t.desc,tr(t.title),tr(t.desc)].join(" ").toLowerCase();return !q||hay.includes(q)});
-  $("desktopCanvas").innerHTML=cards.map(cardHtml).join("")||'<div class="empty-desk" data-i18n="尚無卡片，從下方功能庫加入一個工具。">'+tr("尚無卡片，從下方功能庫加入一個工具。")+'</div>';
-  const maxBottom=ws.cards.reduce((m,c)=>Math.max(m,(c.y||0)+(c.h||146)+80),440);
-  $("desktopCanvas").style.minHeight=Math.max(440,maxBottom)+"px";
-  document.querySelectorAll(".dashboard-tile").forEach(bindTile);
+  $("desktopCanvas").innerHTML=ws.cards.map(cardHtml).join("")||'<div class="empty-desktop" data-i18n="尚無卡片，從右側工具條添加功能。">'+tr("尚無卡片，從右側工具條添加功能。")+'</div>';
+  document.querySelectorAll(".desktop-card").forEach(bindCard);
   if(window.applyI18n)window.applyI18n(document.body);
 }
-function renderShelf(){
-  $("toolShelf").innerHTML=catalog.map(t=>'<button class="shelf-item '+t.tone+'" type="button" data-id="'+t.id+'"><span class="app-icon">'+t.icon+'</span>'+labelHtml(t.title)+'<small>＋</small></button>').join("");
-  document.querySelectorAll(".shelf-item").forEach(btn=>btn.onclick=()=>addTool(btn.dataset.id));
-}
-function nextPosition(){
-  const cards=activeWorkspace().cards;
-  const i=cards.length;
-  return {x:28+(i%3)*42,y:28+(i%5)*36};
-}
 function addTool(id){
-  const pos=nextPosition();
-  activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),toolId:id,x:pos.x,y:pos.y,w:id==="image"?330:300,h:146});
-  saveWorkspaces();
+  const i=activeWorkspace().cards.length;
+  activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),toolId:id,x:72+(i%4)*42,y:82+(i%6)*34,w:id==="image"?300:280,h:118});
+  save();
   renderAll();
+  openDrawer("tools");
 }
 function addCustomCard(){
   const title=prompt(tr("卡片名稱"));
   if(!title||!title.trim())return;
   const href=prompt(tr("連結或網址"))||"#";
   const desc=prompt(tr("簡短描述"))||tr("自訂卡片");
-  const pos=nextPosition();
-  activeWorkspace().cards.push({id:"custom-"+Date.now(),custom:true,title:title.trim(),desc:desc.trim(),href:href.trim(),icon:"↗",tone:"t-custom",x:pos.x,y:pos.y,w:300,h:146});
-  saveWorkspaces();
+  const i=activeWorkspace().cards.length;
+  activeWorkspace().cards.push({id:"custom-"+Date.now(),custom:true,title:title.trim(),desc:desc.trim(),href:href.trim(),icon:"↗",tone:"t-custom",x:72+(i%4)*42,y:82+(i%6)*34,w:280,h:118});
+  save();
+  renderAll();
+}
+function removeCard(id){
+  const ws=activeWorkspace();
+  ws.cards=ws.cards.filter(card=>card.id!==id);
+  save();
   renderAll();
 }
 function resetLayout(){
   const ws=activeWorkspace();
-  const def=defaults.find(d=>d.id===ws.id);
+  const def=defaults.find(x=>x.id===ws.id);
   ws.cards=def?clone(def.cards):[];
-  saveWorkspaces();
+  save();
   renderAll();
-}
-function bindTile(tile){
-  tile.addEventListener("click",event=>{if(tile.dataset.moved==="1"){event.preventDefault();tile.dataset.moved="0"}});
-  tile.addEventListener("pointerdown",event=>{
-    if(event.button!==0)return;
-    const card=activeWorkspace().cards.find(c=>c.id===tile.dataset.cardId);
-    if(!card)return;
-    dragState={tile,card,startX:event.clientX,startY:event.clientY,origX:card.x||0,origY:card.y||0,moved:false};
-    tile.setPointerCapture(event.pointerId);
-    tile.classList.add("is-dragging");
-  });
-  tile.addEventListener("pointermove",event=>{
-    if(!dragState||dragState.tile!==tile)return;
-    const dx=event.clientX-dragState.startX;
-    const dy=event.clientY-dragState.startY;
-    if(Math.abs(dx)+Math.abs(dy)>3)dragState.moved=true;
-    const rect=$("desktopCanvas").getBoundingClientRect();
-    dragState.card.x=Math.max(0,Math.min(rect.width-(dragState.card.w||300),dragState.origX+dx));
-    dragState.card.y=Math.max(0,dragState.origY+dy);
-    tile.style.left=dragState.card.x+"px";
-    tile.style.top=dragState.card.y+"px";
-  });
-  tile.addEventListener("pointerup",()=>{
-    if(!dragState||dragState.tile!==tile)return;
-    tile.classList.remove("is-dragging");
-    tile.dataset.moved=dragState.moved?"1":"0";
-    dragState=null;
-    saveWorkspaces();
-    renderCanvas();
-  });
 }
 function createWorkspace(){
   const name=prompt(tr("新工作區名稱"));
@@ -207,17 +196,63 @@ function createWorkspace(){
   workspaces.push({id,name:name.trim(),hint:"自訂工作區，可加入工具並拖拽排序。",cards:[]});
   activeId=id;
   localStorage.setItem(activeKey,activeId);
-  saveWorkspaces();
+  save();
   renderAll();
 }
-function renderAll(){renderWorkspaces();renderShelf();renderCanvas()}
+function bindCard(card){
+  card.querySelector(".card-remove").onclick=event=>{event.stopPropagation();removeCard(card.dataset.cardId)};
+  card.onclick=event=>{if(card.dataset.moved==="1"){event.preventDefault();card.dataset.moved="0";return}location.href=card.dataset.href};
+  card.onkeydown=event=>{if(event.key==="Enter")location.href=card.dataset.href};
+  card.onpointerdown=event=>{
+    if(event.button!==0||event.target.closest(".card-remove"))return;
+    const item=activeWorkspace().cards.find(x=>x.id===card.dataset.cardId);
+    if(!item)return;
+    drag={card,item,startX:event.clientX,startY:event.clientY,origX:item.x||0,origY:item.y||0,moved:false};
+    card.setPointerCapture(event.pointerId);
+    card.classList.add("is-dragging");
+  };
+  card.onpointermove=event=>{
+    if(!drag||drag.card!==card)return;
+    const dx=event.clientX-drag.startX;
+    const dy=event.clientY-drag.startY;
+    if(Math.abs(dx)+Math.abs(dy)>3)drag.moved=true;
+    const rect=$("desktopCanvas").getBoundingClientRect();
+    drag.item.x=Math.max(0,Math.min(rect.width-(drag.item.w||280)-84,drag.origX+dx));
+    drag.item.y=Math.max(0,Math.min(rect.height-(drag.item.h||118)-64,drag.origY+dy));
+    card.style.left=drag.item.x+"px";
+    card.style.top=drag.item.y+"px";
+  };
+  card.onpointerup=()=>{
+    if(!drag||drag.card!==card)return;
+    card.classList.remove("is-dragging");
+    card.dataset.moved=drag.moved?"1":"0";
+    drag=null;
+    save();
+  };
+}
+function openDrawer(panel){
+  document.querySelectorAll(".drawer-panel").forEach(p=>p.classList.toggle("hidden",p.dataset.panel!==panel));
+  document.querySelectorAll("[data-dock]").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.dock===panel));
+  const title={tools:"添加功能",workspaces:"工作區",settings:"設定"}[panel]||"功能中心";
+  $("drawerTitle").dataset.i18n=title;
+  $("drawerTitle").textContent=tr(title);
+  $("desktopDrawer").classList.add("is-open");
+  if(window.applyI18n)window.applyI18n(document.body);
+}
+function renderClock(){
+  $("desktopClock").textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",month:"2-digit",day:"2-digit"}).format(new Date());
+}
+function renderAll(){renderWorkspaces();renderShelf();renderDesktop();renderClock()}
+document.querySelectorAll("[data-dock]").forEach(btn=>btn.onclick=()=>openDrawer(btn.dataset.dock));
+$("closeDrawer").onclick=()=>$("desktopDrawer").classList.remove("is-open");
 $("createWorkspace").onclick=createWorkspace;
 $("addCustomCard").onclick=addCustomCard;
 $("resetLayout").onclick=resetLayout;
-$("deskSearch").addEventListener("input",renderCanvas);
-document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==$("deskSearch")){e.preventDefault();$("deskSearch").focus()}});
+$("deskSearch").addEventListener("input",renderShelf);
+setInterval(renderClock,30000);
 renderAll();
+openDrawer("tools");
 </script>
-<script src="Html_tools/i18n.js?v=20260728-dashboard1"></script>
+<script src="Html_tools/i18n.js?v=20260728-fulldesk1"></script>
 </body>
 </html>
