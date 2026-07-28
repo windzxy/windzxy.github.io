@@ -28,3 +28,13 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-grad
 .content-card,.list a{border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(255,255,255,.60));box-shadow:0 18px 48px rgba(19,22,31,.08)}
 .site-footer{background:color-mix(in srgb,var(--panel) 50%,transparent)}
 @media(max-width:900px){.site-header .wrap.nav{width:calc(100% - 28px);grid-template-columns:auto 1fr auto;height:auto;min-height:64px;padding:10px 0}.nav nav{justify-self:center}.lang-select{min-width:88px;max-width:108px}.theme-toggle{width:56px;min-width:56px}.theme-toggle::before{width:28px;height:28px}.theme-toggle::before{transform:none}:root[data-theme=dark] .theme-toggle::before{transform:translateX(18px)}}
+
+body{font-weight:450}
+strong,b,h1,h2,h3,.brand-copy h1,.card h2,.tool-card h3,.page-actions a,.return-home,.lang-select,.settings-tab,.button,button{font-weight:650}
+.nav nav a,.title-chip,.card .icon,.app-icon{font-weight:650}
+.card p,.tool-card p,.hint,.mini-note{font-weight:430}
+html[lang="en"] .grid,html[lang="en"] .tool-grid{align-items:stretch}
+html[lang="en"] .card,html[lang="en"] .tool-card{justify-content:flex-start;gap:18px}
+html[lang="en"] .card h2,html[lang="en"] .tool-card h3{min-height:1.25em;margin-top:14px}
+html[lang="en"] .card p,html[lang="en"] .tool-card p{min-height:4.8em;max-width:100%;line-height:1.5}
+html[lang="en"] .tool-card:nth-child(1) p,html[lang="en"] .tool-card:nth-child(2) p{min-height:3.4em}
