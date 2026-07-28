@@ -262,7 +262,9 @@ const I18N={
 "名稱":{"zh-CN":"名称","zh-HK":"名稱","en":"Name"},
 "常用文字、命令或片段":{"zh-CN":"常用文字、命令或片段","zh-HK":"常用文字、命令或片段","en":"Reusable text, commands or snippets"},
 "摺疊":{"zh-CN":"折叠","zh-HK":"摺疊","en":"Collapse"},
-"展開":{"zh-CN":"展开","zh-HK":"展開","en":"Expand"}
+"展開":{"zh-CN":"展开","zh-HK":"展開","en":"Expand"},
+"桌面窗口":{"zh-CN":"桌面窗口","zh-HK":"桌面窗口","en":"Desktop windows"},
+"最小化":{"zh-CN":"最小化","zh-HK":"最小化","en":"Minimize"}
 };
 const rev={};
 for(const key in I18N){
