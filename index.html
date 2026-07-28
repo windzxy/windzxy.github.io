@@ -7,8 +7,8 @@
   <meta name="description" content="Windzxy 的網頁端桌面工具箱。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-imgfast1">
-  <link rel="preload" as="image" href="backgrounds/optimized/wallpaper-01.webp?v=20260728-imgfast1">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-imgfast2">
+  <link rel="preload" as="image" href="backgrounds/optimized/wallpaper-01.webp?v=20260728-imgfast2">
 </head>
 <body class="desktop-home">
 <main id="desktopApp" class="web-desktop">
@@ -84,7 +84,7 @@
     <time id="desktopClock"></time>
   </footer>
 </main>
-<script src="Html_tools/i18n.js?v=20260728-imgfast1"></script>
+<script src="Html_tools/i18n.js?v=20260728-imgfast2"></script>
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
@@ -182,7 +182,7 @@ let windowResize=null;
 let topZ=40;
 const desktopWindows={};
 const $=id=>document.getElementById(id);
-function tr(key){return window.WindzxyI18n?.t?window.WindzxyI18n.t(key):key}
+function tr(key){return window.t?window.t(key):key}
 function clone(value){return JSON.parse(JSON.stringify(value))}
 function loadWorkspaces(){
   try{
@@ -365,7 +365,7 @@ function createWindow(key,title,w,h){
   win.style.height="min("+h+"px, calc(100vh - 150px))";
   win.style.zIndex=++topZ;
   win.dataset.key=key;
-  win.innerHTML='<div class="window-bar"><span>'+escapeHtml(tr(title))+'</span><div><button type="button" data-window-min aria-label="'+escapeHtml(tr("最小化"))+'">—</button><button type="button" data-window-close aria-label="'+escapeHtml(tr("關閉"))+'">×</button></div></div><div class="desktop-window-body"></div><span class="window-resize"></span>';
+  win.innerHTML='<div class="window-bar"><span data-i18n="'+escapeHtml(title)+'">'+escapeHtml(tr(title))+'</span><div><button type="button" data-window-min aria-label="'+escapeHtml(tr("最小化"))+'">—</button><button type="button" data-window-close aria-label="'+escapeHtml(tr("關閉"))+'">×</button></div></div><div class="desktop-window-body"></div><span class="window-resize"></span>';
   layer.appendChild(win);
   desktopWindows[key]=win;
   bindWindow(win);
