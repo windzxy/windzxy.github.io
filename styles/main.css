@@ -462,3 +462,29 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 
 .bg-dock-button::after{content:attr(data-current);position:absolute;right:4px;top:3px;min-width:13px;height:13px;border-radius:999px;background:#ff8a00;color:#fff;font-size:9px;line-height:13px;box-shadow:0 2px 8px rgba(255,138,0,.35)}
 .desktop-dock button{position:relative}
+
+/* inlinecards2 */
+.desktop-card .inline-tool{height:100%;min-height:0;overflow:auto}
+.desktop-card .inline-tool .desk-app{height:100%;min-height:0;display:grid;grid-template-columns:1fr;gap:8px;padding:0}
+.desktop-card .inline-tool .image-full-app{grid-template-columns:1fr}
+.desktop-card .inline-tool .app-panel{border-radius:10px;padding:8px}
+.desktop-card .inline-tool .app-preview-grid{grid-template-columns:1fr}
+.desktop-card .inline-tool textarea{min-height:120px}
+.desktop-card .inline-tool .text-app textarea,.desktop-card .inline-tool .table-app textarea,.desktop-card .inline-tool .json-app textarea{min-height:150px}
+.desktop-card .inline-tool .stat-grid{grid-template-columns:repeat(2,1fr)}
+.desktop-card .inline-tool .stat-grid strong{font-size:20px}
+.memo-links{display:grid;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(217,220,225,.72);font-size:12px}
+:root[data-theme=dark] .memo-links{border-color:rgba(255,255,255,.1)}
+.memo-links strong{font-weight:650;color:#6b7280}
+:root[data-theme=dark] .memo-links strong{color:#a7adba}
+.memo-links a{display:block;min-width:0;padding:6px 8px;border-radius:8px;background:rgba(255,138,0,.10);color:#d97706;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:root[data-theme=dark] .memo-links a{background:rgba(255,138,0,.16);color:#fbbf24}
+.memo-link-empty{color:#9ca3af}
+.weather-day.is-weekend{background:rgba(59,130,246,.13);box-shadow:inset 3px 0 0 rgba(59,130,246,.8)}
+.weather-day.is-holiday{background:rgba(239,68,68,.14);box-shadow:inset 3px 0 0 rgba(239,68,68,.85)}
+.weather-day.is-weekend span{color:#2563eb;font-weight:650}
+.weather-day.is-holiday span{color:#dc2626;font-weight:650}
+:root[data-theme=dark] .weather-day.is-weekend{background:rgba(59,130,246,.18)}
+:root[data-theme=dark] .weather-day.is-holiday{background:rgba(239,68,68,.18)}
+:root[data-theme=dark] .weather-day.is-weekend span{color:#93c5fd}
+:root[data-theme=dark] .weather-day.is-holiday span{color:#fca5a5}
