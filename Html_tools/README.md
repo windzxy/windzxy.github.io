@@ -1,6 +1,6 @@
-# BeeX HTML Tools
+# Windzxy HTML Tools
 
-一套採用 BeeX 品牌風格、可直接在瀏覽器開啟的日常辦公工具，無須安裝或啟動伺服器。支援淺色／深色模式，並會記住使用者選擇。
+一套採用 Windzxy 品牌風格、可直接在瀏覽器開啟的日常辦公工具，無須安裝或啟動伺服器。支援淺色／深色模式，並會記住使用者選擇。
 
 ## 使用
 
@@ -13,7 +13,7 @@
 - `https://windzxy.github.io/test/`
 - `https://windzxy.github.io/test/Html_tools/image-tool.html`
 
-如果第一次尚未顯示，請到 GitHub repo 的 `Settings → Pages`，在 `Build and deployment` 的 `Source` 選擇 `GitHub Actions`，再到 `Actions` 執行或等待 `Deploy BeeX HTML Tools`。
+如果第一次尚未顯示，請到 GitHub repo 的 `Settings → Pages`，在 `Build and deployment` 的 `Source` 選擇 `GitHub Actions`，再到 `Actions` 執行或等待 `Deploy Windzxy HTML Tools`。
 
 ## 工具
 
