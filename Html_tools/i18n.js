@@ -172,32 +172,103 @@ const I18N={
 "OCR 引擎未加载。请检查网络后重试。":{"zh-CN":"OCR 引擎未加载。请检查网络后重试。","zh-HK":"OCR 引擎未載入。請檢查網絡後重試。","en":"OCR engine was not loaded. Check the network and retry."}
 };
 const rev={};
-for(const k in I18N){rev[k]=k;for(const l of ["zh-CN","zh-HK","en"]){if(I18N[k][l])rev[I18N[k][l]]=k}}
+for(const key in I18N){
+  rev[key]=key;
+  for(const code of ["zh-CN","zh-HK","en"]){
+    const value=I18N[key]&&I18N[key][code];
+    if(value)rev[String(value).trim()]=key;
+  }
+}
 const textKeys=new WeakMap();
+const attrMap=[
+  ["placeholder","i18nPlaceholder"],
+  ["aria-label","i18nAriaLabel"],
+  ["title","i18nTitle"],
+  ["alt","i18nAlt"]
+];
 function lang(){return localStorage.getItem("windzxy-lang")||"zh-HK"}
-function keyOf(value){const s=String(value||"").trim();return rev[s]||s}
+function keyOf(value){const raw=String(value??"").trim();return rev[raw]||raw}
 function tx(value){const raw=String(value??"");const key=keyOf(raw);const item=I18N[key];return item?(item[lang()]||item["zh-HK"]||key):raw}
-function keepSpace(original,next){const m=String(original).match(/^(\s*)([\s\S]*?)(\s*)$/);return m?m[1]+next+m[3]:next}
-function translateAttr(el,attr,store){const value=el.getAttribute(attr);if(!value)return;if(!el.dataset[store])el.dataset[store]=keyOf(value);const item=I18N[el.dataset[store]];if(item)el.setAttribute(attr,item[lang()]||item["zh-HK"]||el.dataset[store])}
-function translateTextNode(node){const parent=node.parentElement;if(!parent||["SCRIPT","STYLE","TEXTAREA","CODE","PRE"].includes(parent.tagName))return;if(!node.nodeValue.trim())return;if(!textKeys.has(node))textKeys.set(node,keyOf(node.nodeValue));const key=textKeys.get(node);const item=I18N[key];if(item)node.nodeValue=keepSpace(node.nodeValue,item[lang()]||item["zh-HK"]||key)}
-function applyI18n(root=document.body){
-  document.documentElement.lang=lang()==="en"?"en":lang()==="zh-CN"?"zh-Hans":"zh-Hant-HK";
+function spaced(original,next){const m=String(original).match(/^(\s*)([\s\S]*?)(\s*)$/);return m?m[1]+next+m[3]:next}
+function rememberAttr(el,attr,store){
+  const value=el.getAttribute(attr);
+  if(value==null||value==="")return;
+  if(!el.dataset[store])el.dataset[store]=keyOf(value);
+}
+function applyAttr(el,attr,store){
+  rememberAttr(el,attr,store);
+  const key=el.dataset[store];
+  const item=I18N[key];
+  if(item)el.setAttribute(attr,item[lang()]||item["zh-HK"]||key);
+}
+function rememberText(node){
+  if(!node||!node.nodeValue||!node.nodeValue.trim())return;
+  if(!textKeys.has(node))textKeys.set(node,keyOf(node.nodeValue));
+}
+function applyText(node){
+  rememberText(node);
+  const key=textKeys.get(node);
+  const item=I18N[key];
+  if(item)node.nodeValue=spaced(node.nodeValue,item[lang()]||item["zh-HK"]||key);
+}
+function walkText(root,fn){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+    acceptNode(node){
+      const p=node.parentElement;
+      if(!p||["SCRIPT","STYLE","TEXTAREA","CODE","PRE"].includes(p.tagName))return NodeFilter.FILTER_REJECT;
+      return node.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
+    }
+  });
+  const nodes=[];
+  while(walker.nextNode())nodes.push(walker.currentNode);
+  nodes.forEach(fn);
+}
+function rememberAll(root=document.body){
   if(!document.documentElement.dataset.i18nTitle)document.documentElement.dataset.i18nTitle=keyOf(document.title);
-  const titleItem=I18N[document.documentElement.dataset.i18nTitle];
-  if(titleItem)document.title=titleItem[lang()]||titleItem["zh-HK"]||document.documentElement.dataset.i18nTitle;
-  document.querySelectorAll("[placeholder]").forEach(el=>translateAttr(el,"placeholder","i18nPlaceholder"));
-  document.querySelectorAll("[aria-label]").forEach(el=>translateAttr(el,"aria-label","i18nAriaLabel"));
-  document.querySelectorAll("[title]").forEach(el=>translateAttr(el,"title","i18nTitle"));
-  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){const p=n.parentElement;if(!p||["SCRIPT","STYLE","TEXTAREA","CODE","PRE"].includes(p.tagName))return NodeFilter.FILTER_REJECT;return n.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});
-  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
-  nodes.forEach(translateTextNode);
-  document.querySelectorAll(".lang-select").forEach(sel=>{sel.value=lang();if(!sel.dataset.i18nReady){sel.dataset.i18nReady="1";sel.addEventListener("change",()=>{localStorage.setItem("windzxy-lang",sel.value);applyI18n(document.body)})}});
+  document.querySelectorAll("[placeholder],[aria-label],[title],[alt]").forEach(el=>attrMap.forEach(([attr,store])=>applyAttr(el,attr,store)));
+  walkText(root,rememberText);
+}
+function applyI18n(root=document.body){
+  const current=lang();
+  document.documentElement.lang=current==="en"?"en":current==="zh-CN"?"zh-Hans":"zh-Hant-HK";
+  const titleKey=document.documentElement.dataset.i18nTitle||keyOf(document.title);
+  document.documentElement.dataset.i18nTitle=titleKey;
+  if(I18N[titleKey])document.title=I18N[titleKey][current]||I18N[titleKey]["zh-HK"]||titleKey;
+  document.querySelectorAll("[placeholder],[aria-label],[title],[alt]").forEach(el=>attrMap.forEach(([attr,store])=>applyAttr(el,attr,store)));
+  walkText(root,applyText);
+  document.querySelectorAll(".lang-select").forEach(sel=>{sel.value=current});
+}
+function bindLangSelects(){
+  document.querySelectorAll(".lang-select").forEach(sel=>{
+    if(sel.dataset.i18nReady)return;
+    sel.dataset.i18nReady="1";
+    sel.value=lang();
+    sel.addEventListener("change",event=>{
+      const next=event.currentTarget.value;
+      localStorage.setItem("windzxy-lang",next);
+      document.querySelectorAll(".lang-select").forEach(s=>{s.value=next});
+      applyI18n(document.body);
+    });
+  });
 }
 function installLang(){
+  rememberAll(document.body);
+  bindLangSelects();
   applyI18n(document.body);
-  let pending=false;
-  new MutationObserver(ms=>{if(pending)return;if(!ms.some(m=>m.addedNodes.length))return;pending=true;requestAnimationFrame(()=>{pending=false;applyI18n(document.body)})}).observe(document.body,{childList:true,subtree:true});
+  let scheduled=false;
+  new MutationObserver(ms=>{
+    if(!ms.some(m=>m.addedNodes.length))return;
+    if(scheduled)return;
+    scheduled=true;
+    requestAnimationFrame(()=>{
+      scheduled=false;
+      rememberAll(document.body);
+      bindLangSelects();
+      applyI18n(document.body);
+    });
+  }).observe(document.body,{childList:true,subtree:true});
 }
 window.t=tx;
+window.applyI18n=applyI18n;
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",installLang);else installLang();
 
