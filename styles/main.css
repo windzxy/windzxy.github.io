@@ -319,3 +319,23 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 :root[data-theme=dark] .desktop-taskbar span{color:#a7adba}
 .desktop-taskbar time{color:#6b7280;font-variant-numeric:tabular-nums}
 @media(max-width:760px){.desktop-surface{inset:0 62px 52px 0}.desktop-drawer{right:62px;top:10px;bottom:58px}.desktop-card{width:240px!important}.desktop-taskbar{left:10px;right:76px}.desktop-taskbar span{display:none}}
+
+
+.window-layer{position:absolute;inset:0 72px 46px 0;z-index:8;pointer-events:none}
+.desktop-window{position:absolute;display:grid;grid-template-rows:42px minmax(0,1fr);border:1px solid rgba(217,220,225,.92);border-radius:14px;background:rgba(255,255,255,.92);box-shadow:0 24px 70px rgba(13,19,33,.22);overflow:hidden;pointer-events:auto;backdrop-filter:blur(20px)}
+:root[data-theme=dark] .desktop-window{background:rgba(19,24,34,.94);border-color:rgba(255,255,255,.12)}
+.window-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 8px 0 13px;border-bottom:1px solid rgba(217,220,225,.84);cursor:grab;background:rgba(237,239,242,.88)}
+:root[data-theme=dark] .window-bar{background:#202735;border-color:rgba(255,255,255,.1)}
+.window-bar span{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.window-bar div{display:flex;gap:6px}
+.window-bar button{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:inherit;box-shadow:none;cursor:pointer;font-size:16px}
+.window-bar button:hover{background:rgba(13,19,33,.08)}
+:root[data-theme=dark] .window-bar button:hover{background:rgba(255,255,255,.1)}
+.desktop-window iframe{width:100%;height:100%;border:0;background:#fff}
+.desktop-window.is-minimized{height:42px!important}
+.desktop-window.is-minimized iframe,.desktop-window.is-minimized .window-resize{display:none}
+.window-resize{position:absolute;right:0;bottom:0;width:20px;height:20px;cursor:nwse-resize}
+.window-resize::after{content:"";position:absolute;right:5px;bottom:5px;width:9px;height:9px;border-right:2px solid #9ca3af;border-bottom:2px solid #9ca3af}
+.open-tool,.link-widget button{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 12px;border:0;border-radius:8px;background:#ff8a00;color:#fff;text-decoration:none;font-weight:600;box-shadow:none;cursor:pointer}
+
+.bg-dock-button{font-size:12px!important;letter-spacing:.04em;color:#ff8a00!important}.bg-dock-button:hover{color:#fff!important}
