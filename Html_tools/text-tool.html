@@ -9,8 +9,8 @@
     <div class="header-actions"><select class="lang-select" aria-label="Language"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select><button class="theme-toggle" type="button" aria-label="切換主題"></button></div>
   </div>
 </header><main class="wrap"><section class="panel"><textarea id="text" placeholder="在此貼上文字…"></textarea><div class="grid" style="margin-top:14px"><div class="stat"><strong id="chars">0</strong>字元</div><div class="stat"><strong id="charsNoSpace">0</strong>不含空白</div><div class="stat"><strong id="words">0</strong>詞數</div><div class="stat"><strong id="lines">0</strong>行數</div></div><div class="actions"><button data-act="trim">清除首尾空白</button><button data-act="blank">移除空行</button><button data-act="dedupe">行去重</button><button data-act="sort">行排序</button><button data-act="upper">英文大寫</button><button data-act="lower">英文小寫</button><button id="copy" class="secondary">複製</button><button id="clear" class="secondary">清空</button></div></section><section class="panel translate-box"><h2>文字翻译</h2><div class="select-inline"><div><label for="targetLang">目标语言</label><select id="targetLang"><option value="zh-CN">简体中文</option><option value="zh-HK">繁体中文（香港）</option><option value="en">英语</option></select></div></div><button id="translateBtn" type="button" style="margin-top:16px">翻译文字</button><textarea id="translateOutput" class="translate-output" readonly placeholder="翻译结果"></textarea><div class="copy-row"><button id="copyTranslate" class="secondary" type="button">复制译文</button></div><p class="mini-note">使用浏览器本机翻译；不支持时会使用内置常用词转换。</p></section></main><script>
-const t=document.getElementById('text'),$=id=>document.getElementById(id);function stats(){const s=t.value;$('chars').textContent=s.length;$('charsNoSpace').textContent=s.replace(/\s/g,'').length;$('words').textContent=(s.match(/[\p{L}\p{N}]+/gu)||[]).length;$('lines').textContent=s? s.split(/\r?\n/).length:0}t.oninput=stats;
-document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{let s=t.value,l=s.split(/\r?\n/);({trim:()=>s=l.map(x=>x.trim()).join('\n').trim(),blank:()=>s=l.filter(x=>x.trim()).join('\n'),dedupe:()=>s=[...new Set(l)].join('\n'),sort:()=>s=l.sort((a,b)=>a.localeCompare(b,'zh-Hant')).join('\n'),upper:()=>s=s.toUpperCase(),lower:()=>s=s.toLowerCase()})[b.dataset.act]();t.value=s;stats()});$('copy').onclick=async()=>{await navigator.clipboard.writeText(t.value);$('copy').textContent='已複製';setTimeout(()=>$('copy').textContent='複製',1000)};$('clear').onclick=()=>{t.value='';stats()};
+const textInput=document.getElementById('text'),$=id=>document.getElementById(id);function stats(){const s=textInput.value;$('chars').textContent=s.length;$('charsNoSpace').textContent=s.replace(/\s/g,'').length;$('words').textContent=(s.match(/[\p{L}\p{N}]+/gu)||[]).length;$('lines').textContent=s? s.split(/\r?\n/).length:0}textInput.oninput=stats;
+document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{let s=textInput.value,l=s.split(/\r?\n/);({trim:()=>s=l.map(x=>x.trim()).join('\n').trim(),blank:()=>s=l.filter(x=>x.trim()).join('\n'),dedupe:()=>s=[...new Set(l)].join('\n'),sort:()=>s=l.sort((a,b)=>a.localeCompare(b,'zh-Hant')).join('\n'),upper:()=>s=s.toUpperCase(),lower:()=>s=s.toLowerCase()})[b.dataset.act]();textInput.value=s;stats()});$('copy').onclick=async()=>{await navigator.clipboard.writeText(textInput.value);$('copy').textContent='已複製';setTimeout(()=>$('copy').textContent='複製',1000)};$('clear').onclick=()=>{textInput.value='';stats()};
 </script><script>
 function basicTranslate(text,target){
   const pairs=[
@@ -28,7 +28,7 @@ async function translateText(){
   const source=document.getElementById('text').value.trim();
   const target=document.getElementById('targetLang').value;
   const out=document.getElementById('translateOutput');
-  if(!source){out.value=t('未检测到可翻译文字。');return;}
+  if(!source){out.value=window.t('未检测到可翻译文字。');return;}
   try{
     if(window.Translator&&Translator.create){
       const translator=await Translator.create({sourceLanguage:'auto',targetLanguage:target});
@@ -38,7 +38,7 @@ async function translateText(){
   }catch(e){}
   out.value=basicTranslate(source,target);
   const hint=document.querySelector('.translate-box .mini-note');
-  if(hint)hint.textContent=t('浏览器本机翻译不可用，已使用基础词库转换。');
+  if(hint)hint.textContent=window.t('浏览器本机翻译不可用，已使用基础词库转换。');
 }
 document.getElementById('translateBtn')?.addEventListener('click',translateText);
 document.getElementById('copyTranslate')?.addEventListener('click',async()=>{const v=document.getElementById('translateOutput').value;if(v){await navigator.clipboard.writeText(v);}});
