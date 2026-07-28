@@ -598,11 +598,19 @@ function tickWidgets(){
   document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(now));
   document.querySelectorAll("[data-date]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now));
 }
-const bgVersion="20260728-fullapps2";
+const bgVersion="20260728-bgcycle1";
+let bgApplying=false;
 function backgroundUrl(file){
   if(!file)return "";
   if(/^data:|^blob:|^https?:/.test(file))return file;
   return file+(file.includes("?")?"&":"?")+"v="+bgVersion;
+}
+function pickBackground(exclude){
+  const list=(backgrounds.length?backgrounds:bgFallback).filter(bg=>bg&&bg.file);
+  if(!list.length)return null;
+  if(list.length===1)return list[0];
+  const pool=list.filter(bg=>bg.file!==exclude);
+  return pool[Math.floor(Math.random()*pool.length)];
 }
 async function loadBackgrounds(){
   let loaded=false;
@@ -617,10 +625,8 @@ async function loadBackgrounds(){
     }
   }catch(e){}
   if(!loaded)backgrounds=bgFallback;
-  renderBackgroundList();
-  const saved=localStorage.getItem(bgKey);
-  const initial=backgrounds.some(bg=>bg.file===saved)?saved:backgrounds[0]?.file;
-  applyBackground(initial);
+  const initial=pickBackground(localStorage.getItem(bgKey));
+  if(initial)await applyBackground(initial.file);
 }
 function renderBackgroundList(){
   const list=$("backgroundList");
@@ -629,12 +635,9 @@ function renderBackgroundList(){
   list.innerHTML=backgrounds.map(bg=>'<button class="background-item'+(bg.file===current?' is-active':'')+'" type="button" data-file="'+escapeHtml(bg.file)+'"><span></span>'+escapeHtml(bg.title)+'</button>').join("");
   list.querySelectorAll(".background-item").forEach(btn=>btn.addEventListener("click",()=>applyBackground(btn.dataset.file)));
 }
-function applyBackground(file){
-  if(!file)return;
-  localStorage.setItem(bgKey,file);
+function setBackgroundVisual(file,url){
   const app=$("desktopApp");
   if(!app)return;
-  const url=backgroundUrl(file);
   const light='linear-gradient(rgba(255,255,255,.46),rgba(255,255,255,.46))';
   const dark='linear-gradient(rgba(8,12,20,.56),rgba(8,12,20,.56))';
   const overlay=document.documentElement.dataset.theme==="dark"?dark:light;
@@ -643,7 +646,12 @@ function applyBackground(file){
   app.style.backgroundRepeat='no-repeat,no-repeat,no-repeat';
   app.style.backgroundSize='cover,cover,cover';
   app.dataset.background=file;
+  localStorage.setItem(bgKey,file);
   document.querySelectorAll(".background-item").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.file===file));
+}
+function fitBackground(url){
+  const app=$("desktopApp");
+  if(!app)return;
   const image=new Image();
   image.onload=()=>{
     const imageRatio=image.naturalWidth/image.naturalHeight;
@@ -651,21 +659,28 @@ function applyBackground(file){
     const fit=Math.abs(imageRatio-screenRatio)>.48?'contain':'cover';
     app.style.backgroundSize='cover,'+fit+',cover';
   };
-  image.onerror=()=>{
-    app.style.backgroundImage=overlay+',linear-gradient(135deg,#f7d9c4,#dbeafe 58%,#f5e7ff)';
-    app.style.backgroundSize='cover';
-  };
   image.src=url;
 }
-function randomBackground(){
-  if(!backgrounds.length)backgrounds=bgFallback;
-  const current=localStorage.getItem(bgKey);
-  const pool=backgrounds.filter(bg=>bg.file!==current);
-  const list=pool.length?pool:backgrounds;
-  const next=list[Math.floor(Math.random()*list.length)];
-  if(next)applyBackground(next.file);
+async function applyBackground(file){
+  if(!file)return;
+  const url=backgroundUrl(file);
+  setBackgroundVisual(file,url);
+  fitBackground(url);
+  renderBackgroundList();
 }
-window.addEventListener("resize",()=>applyBackground(localStorage.getItem(bgKey)||backgrounds[0]?.file));
+async function randomBackground(){
+  if(bgApplying)return;
+  bgApplying=true;
+  try{
+    if(!backgrounds.length)backgrounds=bgFallback;
+    const current=localStorage.getItem(bgKey)||$("desktopApp")?.dataset.background||"";
+    const next=pickBackground(current);
+    if(next)await applyBackground(next.file);
+  }finally{
+    setTimeout(()=>{bgApplying=false},120);
+  }
+}
+window.addEventListener("resize",()=>fitBackground(backgroundUrl(localStorage.getItem(bgKey)||$("desktopApp")?.dataset.background||backgrounds[0]?.file||"")));
 function renderAll(){renderWorkspaces();renderShelf();renderDesktop();renderClock()}
 document.addEventListener("click",event=>{const dock=event.target.closest("[data-dock]");if(dock)openDrawer(dock.dataset.dock);const bg=event.target.closest("[data-random-bg]");if(bg)randomBackground();});
 document.querySelectorAll("[data-dock]").forEach(btn=>btn.onclick=()=>openDrawer(btn.dataset.dock));
@@ -675,7 +690,7 @@ $("addCustomCard").onclick=addCustomCard;
 $("resetLayout").onclick=resetLayout;
 $("deskSearch").addEventListener("input",renderShelf);
 setInterval(()=>{renderClock();tickWidgets()},1000);
-try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error(error);loadBackgrounds()}
+try{renderAll();openDrawer("tools");loadBackgrounds().then(()=>renderBackgroundList())}catch(error){console.error(error);loadBackgrounds().then(()=>renderBackgroundList())}
 </script>
 </body>
 </html>
