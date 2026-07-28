@@ -6,7 +6,7 @@
     <a class="return-home" href="../index.html">← 首页</a>
     <div class="brand"><div class="brand-copy"><h1>表格轉換</h1></div></div>
     <div class="page-actions"><a href="index.html">工具箱</a></div>
-    <div class="header-actions"><select class="lang-select" aria-label="Language"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select><button class="theme-toggle" type="button" aria-label="切換主題">☾</button></div>
+    <div class="header-actions"><select class="lang-select" aria-label="Language"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select><button class="theme-toggle" type="button" aria-label="切換主題"></button></div>
   </div>
 </header><main class="wrap"><section class="panel"><label for="raw">貼上資料（支援逗號或 Tab 分隔）</label><textarea id="raw" placeholder="姓名,部門,金額&#10;小明,銷售,1200"></textarea><div class="row"><div><label for="delimiter">分隔符</label><select id="delimiter"><option value="auto">自動判斷</option><option value=",">逗號 CSV</option><option value="tab">Tab</option><option value=";">分號</option></select></div><div><label for="search">搜尋表格</label><input id="search" placeholder="輸入關鍵字"></div></div><div class="actions"><button id="build">產生表格</button><button id="download" class="secondary">下載 CSV</button><button id="copy" class="secondary">複製 TSV</button></div><div id="out" class="table-wrap"></div></section></main><script>
 const $=id=>document.getElementById(id);let rows=[];function parseLine(s,d){let a=[],v='',q=false;for(let i=0;i<s.length;i++){let c=s[i];if(c==='"'){if(q&&s[i+1]==='"'){v+='"';i++}else q=!q}else if(c===d&&!q){a.push(v);v=''}else v+=c}a.push(v);return a}
