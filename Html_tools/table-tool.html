@@ -1,7 +1,7 @@
 <!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>表格轉換</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-i18nfix1">
-  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-i18nfix1">
-  <link rel="stylesheet" href="style.css?v=20260728-i18nfix1"></head><body class="tool-page tool-table"><header>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-i18nfix2">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-i18nfix2">
+  <link rel="stylesheet" href="style.css?v=20260728-i18nfix2"></head><body class="tool-page tool-table"><header>
   <div class="wrap">
     <a class="return-home" href="../index.html">← 首页</a>
     <div class="brand"><div class="brand-copy"><h1>表格轉換</h1></div></div>
@@ -13,5 +13,5 @@ const $=id=>document.getElementById(id);let rows=[];function parseLine(s,d){let 
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function render(){let q=$('search').value.toLowerCase(),show=rows.filter((r,i)=>i===0||r.join(' ').toLowerCase().includes(q));$('out').innerHTML=show.length?'<table><thead><tr>'+show[0].map(x=>`<th>${esc(x)}</th>`).join('')+'</tr></thead><tbody>'+show.slice(1).map(r=>'<tr>'+r.map(x=>`<td>${esc(x)}</td>`).join('')+'</tr>').join('')+'</tbody></table>':''}
 $('build').onclick=()=>{let s=$('raw').value.trim();if(!s)return;let d=$('delimiter').value;if(d==='tab')d='\t';if(d==='auto')d=s.split('\n')[0].includes('\t')?'\t':',';rows=s.split(/\r?\n/).map(x=>parseLine(x,d));render()};$('search').oninput=render;
 function csv(){return rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n')}$('download').onclick=()=>{if(!rows.length)return;let b=new Blob(['\ufeff'+csv()],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='table.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('copy').onclick=async()=>{await navigator.clipboard.writeText(rows.map(r=>r.join('\t')).join('\n'));};
-</script><script src="theme.js?v=20260728-i18nfix1"></script><script src="i18n.js?v=20260728-i18nfix1"></script>
+</script><script src="theme.js?v=20260728-i18nfix2"></script><script src="i18n.js?v=20260728-i18nfix2"></script>
 </body></html>
