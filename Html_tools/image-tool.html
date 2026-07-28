@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>圖片處理</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-workspace1">
-  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-workspace1">
-  <link rel="stylesheet" href="style.css?v=20260728-workspace1">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-desk2">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-desk2">
+  <link rel="stylesheet" href="style.css?v=20260728-desk2">
 </head>
 <body class="tool-page tool-image">
 <header>
@@ -257,7 +257,7 @@ const $ = id => document.getElementById(id);
 const drop = $('drop'), file = $('file'), preview = $('preview'), canvas = $('canvas');
 const ctx = canvas.getContext('2d', { willReadFrequently: true });
 const controls = ['width','height','quality','tolerance','feather','sharpen','brightness','contrast','saturation','format','matte','customMatte','scaleMode','bgMode','ratio','cropAlpha','restoreMode','colorizeMode','colorizeStrength','noiseReduction','cleanupMode'];
-let img = new Image(), originalFile = null, ow = 0, oh = 0, lock = false, sourceCanvas = null, sampledColor = null, lastBlobUrl = null;
+let img = new Image(), originalFile = null, ow = 0, oh = 0, lock = false, sourceCanvas = null, sampledColor = null, lastBlobUrl = null, lastPreviewUrl = null;
 
 drop.onclick = () => file.click();
 ['dragenter','dragover'].forEach(type => drop.addEventListener(type, event => {
@@ -325,6 +325,15 @@ function load(f) {
     return;
   }
   originalFile = f;
+  if (lastPreviewUrl) URL.revokeObjectURL(lastPreviewUrl);
+  lastPreviewUrl = URL.createObjectURL(f);
+  preview.onload = () => {
+    if (lastPreviewUrl) {
+      URL.revokeObjectURL(lastPreviewUrl);
+      lastPreviewUrl = null;
+    }
+  };
+  preview.src = lastPreviewUrl;
   const url = URL.createObjectURL(f);
   img.onload = () => {
     ow = img.naturalWidth;
@@ -334,7 +343,6 @@ function load(f) {
     sampledColor = null;
     updatePickedColor();
     prepareSourceCanvas();
-    preview.src = sourceCanvas.toDataURL('image/png');
     URL.revokeObjectURL(url);
     $('workspace').classList.remove('hidden');
     $('info').textContent = `原始尺寸：${ow} × ${oh}｜檔案：${formatBytes(f.size)}`;
@@ -927,14 +935,11 @@ async function loadScript(src) {
 }
 
 async function loadOcrEngine() {
-  if (window.Tesseract) return { engine: window.Tesseract, local: true };
+  if (window.Tesseract) return window.Tesseract;
   setOcrProgress(8, t('正在加载 OCR 引擎…'));
-  try {
-    await loadScript('ocr/tesseract.min.js');
-    if (window.Tesseract) return { engine: window.Tesseract, local: true };
-  } catch (error) {}
-  await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
-  return { engine: window.Tesseract, local: false };
+  await loadScript('ocr/tesseract.min.js');
+  if (!window.Tesseract) throw new Error('LOCAL_OCR_MISSING');
+  return window.Tesseract;
 }
 
 async function runOcr() {
@@ -946,18 +951,13 @@ async function runOcr() {
   out.value = '';
   setOcrProgress(2, t('准备图片…'));
   try {
-    const loaded = await loadOcrEngine();
-    const Tesseract = loaded.engine;
+    const Tesseract = await loadOcrEngine();
     const lang = $('ocrLang')?.value || 'eng';
     const ocrCanvas = prepareOcrCanvas();
-    const paths = loaded.local ? {
+    const paths = {
       workerPath: 'ocr/worker.min.js',
       corePath: 'ocr/tesseract-core-simd-lstm.wasm.js',
       langPath: 'ocr/lang'
-    } : {
-      workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
-      corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/tesseract-core-simd-lstm.wasm.js',
-      langPath: 'https://tessdata.projectnaptha.com/4.0.0'
     };
     setOcrProgress(14, t('正在初始化 OCR…'));
     const result = await Tesseract.recognize(ocrCanvas, lang, {
@@ -972,7 +972,7 @@ async function runOcr() {
     out.value = result?.data?.text?.trim() || t('未识别到文字。');
     setOcrProgress(100, t('OCR 完成'));
   } catch (error) {
-    out.value = t('OCR 引擎未加载。请检查网络后重试。');
+    out.value = t('OCR 本地檔案未安裝。請把 OCR 引擎與語言包放到 ocr/ 目錄後再重試。');
     setOcrProgress(0, t('OCR 未完成'));
   }
 }
@@ -1005,7 +1005,7 @@ $('download').onclick = downloadResult;
 $('reset').onclick = resetAll;
 updateLabels();
 </script>
-<script src="theme.js?v=20260728-workspace1"></script>
-<script src="i18n.js?v=20260728-workspace1"></script>
+<script src="theme.js?v=20260728-desk2"></script>
+<script src="i18n.js?v=20260728-desk2"></script>
 </body>
 </html>
