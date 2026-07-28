@@ -84,7 +84,7 @@
     <time id="desktopClock"></time>
   </footer>
 </main>
-<script src="Html_tools/i18n.js?v=20260728-taskbg1"></script>
+<script src="Html_tools/i18n.js?v=20260728-linkout1"></script>
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
@@ -216,14 +216,14 @@ function renderShelf(){
   document.querySelectorAll(".dock-tool").forEach(btn=>btn.onclick=()=>addCard(btn.dataset.id));
 }
 function bodyHtml(card,info){
-  if(info.kind==="tool"||card.custom)return '<p class="card-desc">'+escapeHtml(card.custom?card.desc:tr(info.desc))+'</p><button class="open-tool" type="button" data-open-app="'+escapeHtml(card.custom?"external":card.appId)+'" data-open-url="'+escapeHtml(card.href||"")+'" data-open-title="'+escapeHtml(card.custom?card.title:info.title)+'" data-i18n="打開">打開</button>';
+  if(info.kind==="tool"||card.custom)return '<p class="card-desc">'+escapeHtml(card.custom?card.desc:tr(info.desc))+'</p><button class="open-tool" type="button" data-open-app="'+escapeHtml(card.custom?"external":card.appId)+'" data-open-url="'+escapeHtml(card.href||"")+'" data-open-title="'+escapeHtml(card.custom?card.title:info.title)+'" data-i18n="'+(card.custom?"新分頁打開":"打開")+'">'+tr(card.custom?"新分頁打開":"打開")+'</button>';
   const data=card.data||{};
   if(card.appId==="note")return '<textarea class="widget-input" data-field="note" placeholder="'+escapeHtml(tr("在這裡記錄"))+'">'+escapeHtml(data.note||"")+'</textarea>';
   if(card.appId==="todo")return '<div class="todo-list">'+(data.items||[]).map((x,i)=>'<label><input type="checkbox" data-todo="'+i+'" '+(x.done?'checked':'')+'><span>'+escapeHtml(x.text)+'</span><button type="button" data-del="'+i+'">×</button></label>').join("")+'</div><form class="todo-form"><input placeholder="'+escapeHtml(tr("新增待辦"))+'"><button type="submit">＋</button></form>';
   if(card.appId==="clock")return '<div class="clock-widget"><strong data-clock></strong><span data-date></span></div>';
   if(card.appId==="calc")return '<div class="calc-widget"><input data-field="expr" placeholder="12*(3+4)" value="'+escapeHtml(data.expr||"")+'"><output>'+escapeHtml(calc(data.expr||""))+'</output></div>';
   if(card.appId==="color")return '<div class="color-widget"><input type="color" data-field="color" value="'+escapeHtml(data.color||"#ff8a00")+'"><code>'+escapeHtml(data.color||"#ff8a00")+'</code><button type="button" data-copy-color data-i18n="複製">複製</button></div>';
-  if(card.appId==="link")return '<div class="link-widget"><input data-field="label" placeholder="'+escapeHtml(tr("名稱"))+'" value="'+escapeHtml(data.label||"GitHub")+'"><input data-field="url" placeholder="https://..." value="'+escapeHtml(data.url||"https://github.com/windzxy")+'"><button type="button" data-open-url="'+escapeHtml(data.url||"https://github.com/windzxy")+'" data-open-title="'+escapeHtml(data.label||"快速連結")+'" data-i18n="打開">打開</button></div>';
+  if(card.appId==="link")return '<div class="link-widget"><input data-field="label" placeholder="'+escapeHtml(tr("名稱"))+'" value="'+escapeHtml(data.label||"GitHub")+'"><input data-field="url" placeholder="https://..." value="'+escapeHtml(data.url||"https://github.com/windzxy")+'"><button type="button" data-open-url="'+escapeHtml(data.url||"https://github.com/windzxy")+'" data-open-title="'+escapeHtml(data.label||"快速連結")+'" data-i18n="新分頁打開">新分頁打開</button></div>';
   if(card.appId==="memo")return '<textarea class="widget-input mono" data-field="memo" placeholder="'+escapeHtml(tr("常用文字、命令或片段"))+'">'+escapeHtml(data.memo||"")+'</textarea>';
   if(card.appId==="weather")return weatherHtml(card);
   return '<p class="card-desc">'+escapeHtml(tr(info.desc||""))+'</p>';
@@ -333,6 +333,7 @@ function bindCard(el){
   el.querySelector(".card-bar").onpointerdown=e=>startDrag(e,el,id);
   el.querySelector(".resize-grip").onpointerdown=e=>startResize(e,el,id);
   el.querySelectorAll("[data-open-app]").forEach(btn=>btn.onclick=e=>{e.preventDefault();e.stopPropagation();openApp(btn.dataset.openApp,btn.dataset.openTitle||"工具",btn.dataset.openUrl||"")});
+  el.querySelectorAll("[data-open-url]:not([data-open-app])").forEach(btn=>btn.onclick=e=>{e.preventDefault();e.stopPropagation();openExternalWindow(btn.dataset.openUrl||"",btn.dataset.openTitle||"快速連結")});
   el.querySelectorAll("[data-field]").forEach(input=>input.oninput=()=>updateData(id,input.dataset.field,input.value));
   el.querySelectorAll("[data-todo]").forEach(input=>input.onchange=()=>toggleTodo(id,+input.dataset.todo,input.checked));
   el.querySelectorAll("[data-del]").forEach(btn=>btn.onclick=()=>deleteTodo(id,+btn.dataset.del));
@@ -375,53 +376,6 @@ function openApp(appId,title,url){
     win.style.zIndex=++topZ;
     return;
   }
-  win=createWindow(key,info.title,960,640);
-  win.querySelector(".desktop-window-body").innerHTML=appContent(appId);
-  bindApp(win,appId);
-  $("desktopDrawer").classList.remove("is-open");
-  if(window.applyI18n)window.applyI18n(win);
-}
-function openExternalWindow(url,title){
-  if(!url)return;
-  const key="url-"+url;
-  let win=desktopWindows[key];
-  if(win){
-    win.classList.remove("is-minimized");
-    win.style.zIndex=++topZ;
-    return;
-  }
-  win=createWindow(key,title||"快速連結",860,560);
-  win.querySelector(".desktop-window-body").innerHTML='<div class="external-box"><p data-i18n="部分網站不允許嵌入桌面窗口，可複製連結到瀏覽器打開。">部分網站不允許嵌入桌面窗口，可複製連結到瀏覽器打開。</p><input readonly value="'+escapeHtml(url)+'"><button type="button" data-copy-external data-i18n="複製">複製</button></div><iframe src="'+escapeHtml(url)+'" title="'+escapeHtml(title||"快速連結")+'"></iframe>';
-  win.querySelector("[data-copy-external]").onclick=()=>navigator.clipboard?.writeText(url);
-  if(window.applyI18n)window.applyI18n(win);
-}
-function createWindow(key,title,w,h){
-  const layer=$("windowLayer");
-  const win=document.createElement("article");
-  win.className="desktop-window";
-  win.style.left=80+Object.keys(desktopWindows).length*28+"px";
-  win.style.top=68+Object.keys(desktopWindows).length*24+"px";
-  win.style.width="min("+w+"px, calc(100vw - 160px))";
-  win.style.height="min("+h+"px, calc(100vh - 150px))";
-  win.style.zIndex=++topZ;
-  win.dataset.key=key;
-  win.innerHTML='<div class="window-bar"><span data-i18n="'+escapeHtml(title)+'">'+escapeHtml(tr(title))+'</span><div><button type="button" data-window-min aria-label="'+escapeHtml(tr("最小化"))+'">—</button><button type="button" data-window-close aria-label="'+escapeHtml(tr("關閉"))+'">×</button></div></div><div class="desktop-window-body"></div><span class="window-resize"></span>';
-  layer.appendChild(win);
-  desktopWindows[key]=win;
-  bindWindow(win);
-  return win;
-}
-function openApp(appId,title,url){
-  if(appId==="external")return openExternalWindow(url,title);
-  const info=appById(appId);
-  if(!info)return;
-  const key="app-"+appId;
-  let win=desktopWindows[key];
-  if(win){
-    win.classList.remove("is-minimized");
-    win.style.zIndex=++topZ;
-    return;
-  }
   win=createWindow(key,info.title,appId==="image"?1120:980,appId==="image"?760:640);
   win.querySelector(".desktop-window-body").innerHTML=appContent(appId);
   bindApp(win,appId);
@@ -430,17 +384,16 @@ function openApp(appId,title,url){
 }
 function openExternalWindow(url,title){
   if(!url)return;
-  const key="url-"+url;
-  let win=desktopWindows[key];
-  if(win){
-    win.classList.remove("is-minimized");
-    win.style.zIndex=++topZ;
-    return;
-  }
-  win=createWindow(key,title||"快速連結",860,560);
-  win.querySelector(".desktop-window-body").innerHTML='<div class="external-box"><p data-i18n="部分網站不允許嵌入桌面窗口，可複製連結到瀏覽器打開。">部分網站不允許嵌入桌面窗口，可複製連結到瀏覽器打開。</p><input readonly value="'+escapeHtml(url)+'"><button type="button" data-copy-external data-i18n="複製">複製</button></div><iframe src="'+escapeHtml(url)+'" title="'+escapeHtml(title||"快速連結")+'"></iframe>';
-  win.querySelector("[data-copy-external]").onclick=()=>navigator.clipboard?.writeText(url);
-  if(window.applyI18n)window.applyI18n(win);
+  const target=normalizeExternalUrl(url);
+  const opened=window.open(target,"_blank","noopener,noreferrer");
+  if(opened)opened.opener=null;
+}
+function normalizeExternalUrl(url){
+  const value=String(url||"").trim();
+  if(!value)return "";
+  if(/^(https?:|mailto:|tel:|#|\/|\.\/|\.\.\/)/i.test(value))return value;
+  if(/^[\w-]+(\.[\w-]+)+(\/.*)?$/i.test(value))return "https://"+value;
+  return value;
 }
 function createWindow(key,title,w,h){
   const layer=$("windowLayer");
