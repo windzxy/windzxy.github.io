@@ -674,10 +674,6 @@ $("createWorkspace").onclick=createWorkspace;
 $("addCustomCard").onclick=addCustomCard;
 $("resetLayout").onclick=resetLayout;
 $("deskSearch").addEventListener("input",renderShelf);
-$("randomBg").onclick=randomBackground;
-$("randomBgDock").onclick=randomBackground;
-$("openToolbox").onclick=()=>openDrawer("tools");
-$("openToolboxDock").onclick=()=>openDrawer("tools");
 setInterval(()=>{renderClock();tickWidgets()},1000);
 try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error(error);loadBackgrounds()}
 </script>
