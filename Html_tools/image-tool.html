@@ -587,7 +587,7 @@ function downloadResult() {
     lastBlobUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = lastBlobUrl;
-    a.download = `beex-image-${exportCanvas.width}x${exportCanvas.height}.${ext}`;
+    a.download = `windzxy-image-${exportCanvas.width}x${exportCanvas.height}.${ext}`;
     a.click();
     $('outputInfo').textContent = `已產生：${exportCanvas.width} × ${exportCanvas.height}｜${formatBytes(blob.size)}`;
   }, type, readNumber('quality', 90) / 100);
