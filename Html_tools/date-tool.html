@@ -1,7 +1,7 @@
 <!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>日期計算</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-textfix1">
-  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-textfix1">
-  <link rel="stylesheet" href="style.css?v=20260728-textfix1"></head><body class="tool-page tool-date"><header>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=20260728-workspace1">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg?v=20260728-workspace1">
+  <link rel="stylesheet" href="style.css?v=20260728-workspace1"></head><body class="tool-page tool-date"><header>
   <div class="wrap">
     <a class="return-home" href="../index.html">← 首页</a>
     <div class="brand"><div class="brand-copy"><h1>日期計算</h1></div></div>
@@ -12,5 +12,5 @@
 const $=id=>document.getElementById(id),today=new Date(),iso=d=>{let x=new Date(d.getTime()-d.getTimezoneOffset()*60000);return x.toISOString().slice(0,10)},fmt=d=>new Intl.DateTimeFormat('zh-Hant',{dateStyle:'full'}).format(d);$('start').value=$('base').value=iso(today);$('end').value=iso(new Date(today.getTime()+86400000));
 $('diff').onclick=()=>{let a=new Date($('start').value+'T00:00:00'),b=new Date($('end').value+'T00:00:00');if(isNaN(a)||isNaN(b))return;let n=Math.round((b-a)/86400000),r=$('diffResult');r.textContent=`相隔 ${Math.abs(n)} 天（${n<0?'結束日期較早':'結束日期較晚或相同'}）`;r.classList.remove('hidden')};
 function calc(sign){let d=new Date($('base').value+'T00:00:00'),n=Math.abs(parseInt($('amount').value)||0),work=$('mode').value==='work',m=0;while(m<n){d.setDate(d.getDate()+sign);if(!work||![0,6].includes(d.getDay()))m++}let r=$('addResult');r.textContent=fmt(d);r.classList.remove('hidden')}$('add').onclick=()=>calc(1);$('subtract').onclick=()=>calc(-1);
-</script><script src="theme.js?v=20260728-textfix1"></script><script src="i18n.js?v=20260728-textfix1"></script>
+</script><script src="theme.js?v=20260728-workspace1"></script><script src="i18n.js?v=20260728-workspace1"></script>
 </body></html>
