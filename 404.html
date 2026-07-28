@@ -1,23 +1,46 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>404 · Windzxy</title><link rel="icon" href="images/avatar.png" type="image/svg+xml"><link rel="stylesheet" href="styles/main.css"></head><body>
-  <header class="site-header">
-    <div class="wrap nav">
-      <a class="brand" href="index.html">
-        <img class="brand-logo" src="images/avatar.png" alt="Windzxy avatar">
-        <span><strong>Windzxy</strong><small>Tools</small></span>
-      </a>
-      <nav>
-        <a href="index.html">首頁</a>
-        <a href="Html_tools/index.html">工具箱</a>
-        <a href="archives/index.html">Archive</a>
-        <a href="about/index.html">About</a>
-      </nav>
-      <button class="theme-toggle" type="button" aria-label="切換主題"></button>
-    </div>
-  </header><main class="wrap page"><section class="content-card"><p class="eyebrow">404</p><h1>頁面不存在</h1><p>可能是舊站路徑或連結已調整。你可以回到首頁，或直接使用 Windzxy HTML Tools。</p><div class="actions"><a class="button" href="index.html">回首頁</a><a class="button secondary" href="Html_tools/index.html">打開工具箱</a></div></section></main>
-  <footer class="site-footer">
-    <div class="wrap footer-grid">
-      <p>© 2026 Windzxy · Pure static GitHub Pages site · No generator/CDN dependency.</p>
-      <a href="atom.xml">RSS</a>
-    </div>
-  </footer><script src="scripts/theme.js"></script></body></html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>404 · Windzxy Tools</title>
+  <meta name="description" content="頁面不存在。">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="assets/favicon.svg" alt="Windzxy">
+      <span><strong>Windzxy</strong><small>Tools</small></span>
+    </a>
+    <nav>
+      <a href="index.html">首頁</a>
+      <a href="Html_tools/index.html">工具箱</a>
+      <a href="archives/index.html">Archive</a>
+      <a href="about/index.html">About</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="切換主題"></button>
+  </div>
+</header>
+<main class="wrap page">
+  <p class="eyebrow">404</p>
+  <h1>找不到頁面。</h1>
+  <section class="content-card">
+    <p>這個連結可能已移動或不存在。</p>
+    <div class="actions"><a class="button" href="index.html">回首頁</a><a class="button secondary" href="Html_tools/index.html">打開工具箱</a></div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span>© 2026 Windzxy</span>
+    <a href="atom.xml">RSS</a>
+  </div>
+</footer>
+<script>
+(function(){const root=document.documentElement;const saved=localStorage.getItem("windzxy-theme");if(saved)root.dataset.theme=saved;document.querySelector(".theme-toggle")?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);});})();
+</script>
+</body>
+</html>
