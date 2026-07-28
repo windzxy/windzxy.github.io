@@ -49,3 +49,16 @@ button.secondary{box-shadow:0 10px 26px rgba(16,18,23,.06)}
 @media(max-width:860px){header .wrap{width:calc(100% - 28px);grid-template-columns:auto minmax(0,1fr) auto;gap:10px;height:auto;min-height:64px;padding:10px 0}.page-actions{display:none}.return-home{padding:0 12px}.brand-copy h1{font-size:17px}.lang-select{min-width:88px;max-width:108px}.theme-toggle{width:56px;min-width:56px}.theme-toggle::before{width:28px;height:28px}.theme-toggle::before{transform:none}:root[data-theme=dark] .theme-toggle::before{transform:translateX(18px)}main.wrap{width:min(100% - 28px,1120px)}}
 
 body.tool-index .page-actions{visibility:hidden;pointer-events:none}
+
+.settings-panel{position:sticky;top:84px;align-self:start;max-height:calc(100vh - 104px);overflow:auto;scrollbar-width:thin}
+.settings-tabs{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 16px;padding:8px;border-radius:24px;background:color-mix(in srgb,var(--panel2) 78%,transparent);border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.settings-tab{min-height:38px;padding:0 10px;border:0;border-radius:16px;background:transparent;color:var(--muted);box-shadow:none;font-size:14px;font-weight:800}
+.settings-tab.is-active{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 12px 28px color-mix(in srgb,var(--accent1) 24%,transparent)}
+.settings-section{display:none;margin-top:0}
+.settings-section.is-active{display:block}
+.settings-section summary{display:flex;align-items:center;justify-content:space-between;margin:-2px 0 16px;padding:0;list-style:none;font-size:18px;font-weight:850;letter-spacing:-.04em;cursor:default}
+.settings-section summary::-webkit-details-marker{display:none}
+.settings-section summary::after{content:"";width:34px;height:4px;border-radius:999px;background:linear-gradient(90deg,var(--accent1),var(--accent2));opacity:.78}
+.image-workbench .workspace-grid{grid-template-columns:minmax(0,1.35fr) minmax(340px,.65fr);align-items:start}
+@media(max-width:980px){.settings-panel{position:relative;top:auto;max-height:none}.image-workbench .workspace-grid{grid-template-columns:1fr}.settings-tabs{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.settings-tabs{grid-template-columns:repeat(2,1fr)}}
