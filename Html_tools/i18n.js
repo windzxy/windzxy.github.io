@@ -151,7 +151,24 @@ const I18N={
 ,"尺寸":{"zh-CN":"尺寸","zh-HK":"尺寸","en":"Size"}
 ,"去背":{"zh-CN":"去背","zh-HK":"去背","en":"Cutout"}
 ,"增強":{"zh-CN":"增强","zh-HK":"增強","en":"Enhance"}
-,"調色":{"zh-CN":"调色","zh-HK":"調色","en":"Adjust"}
+,"調色":{"zh-CN":"调色","zh-HK":"調色","en":"Adjust"},
+"OCR 语言":{"zh-CN":"OCR 语言","zh-HK":"OCR 語言","en":"OCR language"},
+"OCR 预处理":{"zh-CN":"OCR 预处理","zh-HK":"OCR 預處理","en":"OCR preprocessing"},
+"自动增强":{"zh-CN":"自动增强","zh-HK":"自動增強","en":"Auto enhance"},
+"灰阶":{"zh-CN":"灰阶","zh-HK":"灰階","en":"Grayscale"},
+"高对比":{"zh-CN":"高对比","zh-HK":"高對比","en":"High contrast"},
+"原图":{"zh-CN":"原图","zh-HK":"原圖","en":"Original"},
+"正在加载 OCR 引擎…":{"zh-CN":"正在加载 OCR 引擎…","zh-HK":"正在載入 OCR 引擎…","en":"Loading OCR engine…"},
+"准备图片…":{"zh-CN":"准备图片…","zh-HK":"準備圖片…","en":"Preparing image…"},
+"正在初始化 OCR…":{"zh-CN":"正在初始化 OCR…","zh-HK":"正在初始化 OCR…","en":"Initializing OCR…"},
+"OCR 完成":{"zh-CN":"OCR 完成","zh-HK":"OCR 完成","en":"OCR complete"},
+"OCR 引擎未加载。请确认 ocr 文件夹已发布，或稍后重试。":{"zh-CN":"OCR 引擎未加载。请确认 ocr 文件夹已发布，或稍后重试。","zh-HK":"OCR 引擎未載入。請確認 ocr 資料夾已發布，或稍後重試。","en":"OCR engine was not loaded. Check that the ocr folder is published, or retry later."},
+"OCR 未完成":{"zh-CN":"OCR 未完成","zh-HK":"OCR 未完成","en":"OCR not complete"},
+"loading tesseract core":{"zh-CN":"正在加载 OCR 核心","zh-HK":"正在載入 OCR 核心","en":"Loading OCR core"},
+"initializing tesseract":{"zh-CN":"正在初始化 OCR","zh-HK":"正在初始化 OCR","en":"Initializing OCR"},
+"loading language traineddata":{"zh-CN":"正在加载语言包","zh-HK":"正在載入語言包","en":"Loading language data"},
+"initializing api":{"zh-CN":"正在初始化识别","zh-HK":"正在初始化識別","en":"Initializing recognition"},
+"recognizing text":{"zh-CN":"正在识别文字","zh-HK":"正在識別文字","en":"Recognizing text"}
 };
 const rev={};
 for(const k in I18N){rev[k]=k;for(const l of ["zh-CN","zh-HK","en"]){if(I18N[k][l])rev[I18N[k][l]]=k}}
