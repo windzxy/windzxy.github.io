@@ -335,7 +335,10 @@ const I18N={
 "瀏覽器不支援定位。":{"zh-CN":"浏览器不支持定位。","zh-HK":"瀏覽器不支援定位。","en":"Geolocation is not supported."},
 "定位中…":{"zh-CN":"定位中…","zh-HK":"定位中…","en":"Locating…"},
 "定位失敗，請手動輸入城市。":{"zh-CN":"定位失败，请手动输入城市。","zh-HK":"定位失敗，請手動輸入城市。","en":"Location failed. Enter a city manually."},
-"天氣載入失敗，稍後重試。":{"zh-CN":"天气加载失败，稍后重试。","zh-HK":"天氣載入失敗，稍後重試。","en":"Weather failed to load. Try again later."}
+"天氣載入失敗，稍後重試。":{"zh-CN":"天气加载失败，稍后重试。","zh-HK":"天氣載入失敗，稍後重試。","en":"Weather failed to load. Try again later."},
+"識別到的網址":{"zh-CN":"识别到的网址","zh-HK":"識別到的網址","en":"Detected URLs"},
+"未識別到網址":{"zh-CN":"未识别到网址","zh-HK":"未識別到網址","en":"No URLs detected"},
+"只支援數字和運算符":{"zh-CN":"只支持数字和运算符","zh-HK":"只支援數字和運算符","en":"Only numbers and operators are supported"}
 };
 const rev={};
 for(const key in I18N){
