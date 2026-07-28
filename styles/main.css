@@ -329,7 +329,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 :root[data-theme=dark] .weather-main small{color:#a7adba}
 .weather-meta{display:grid;gap:3px;text-align:right;white-space:nowrap}
 .weather-days{min-height:0;overflow:hidden;display:grid;align-content:start;gap:6px}
-.weather-day{display:grid;grid-template-columns:minmax(70px,1fr) 24px auto 40px;align-items:center;gap:6px;min-height:32px;padding:6px 8px;border-radius:9px;background:rgba(255,255,255,.62)}
+.weather-day{display:grid;grid-template-columns:minmax(68px,1fr) 24px auto 38px;align-items:center;gap:5px;min-height:30px;padding:5px 7px;border-radius:9px;background:rgba(255,255,255,.62)}
 :root[data-theme=dark] .weather-day{background:rgba(255,255,255,.06)}
 .weather-day span{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .weather-day b{text-align:center;font-size:16px;font-weight:600}
@@ -352,8 +352,9 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 :root[data-theme=dark] .desktop-taskbar span{color:#a7adba}
 .desktop-taskbar time{color:#6b7280;font-variant-numeric:tabular-nums}
 @media(max-width:760px){.desktop-surface{inset:0 62px 52px 0}.desktop-drawer{right:62px;top:10px;bottom:58px}.desktop-card{width:240px!important}.desktop-taskbar{left:10px;right:76px}.desktop-taskbar span{display:none}}
-@container (min-width:560px){.weather-days{grid-template-columns:repeat(2,minmax(0,1fr))}.weather-day{grid-template-columns:minmax(70px,1fr) 24px auto 38px}}
-@container (min-width:900px){.weather-days{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container (min-width:500px){.weather-days{grid-template-columns:repeat(2,minmax(0,1fr))}.weather-day{grid-template-columns:minmax(68px,1fr) 24px auto 38px}}
+@container (min-width:760px){.weather-days{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container (min-width:1080px){.weather-days{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @container (max-width:300px){.weather-current{grid-template-columns:1fr}.weather-meta{text-align:left;grid-template-columns:repeat(2,1fr)}.weather-day{grid-template-columns:1fr auto}.weather-day strong,.weather-day small{grid-column:1/-1;text-align:left}.weather-main strong{font-size:25px}.weather-foot{grid-template-columns:1fr auto}.weather-count{display:none}}
 
 
