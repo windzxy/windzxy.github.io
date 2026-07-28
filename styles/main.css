@@ -219,9 +219,9 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .desktop-home{margin:0;width:100vw;height:100vh;overflow:hidden;background:#eef3fb;font:14px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;color:#111827;font-weight:430}
 :root[data-theme=dark] .desktop-home{background:#0d1321;color:#f5f5f7}
 .web-desktop{position:fixed;inset:0;overflow:hidden;background:#eef3f8;background-size:cover;background-position:center;isolation:isolate}
-.web-desktop::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(217,220,225,.34) 1px,transparent 1px),linear-gradient(90deg,rgba(217,220,225,.34) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
+.web-desktop::after{display:none}
 :root[data-theme=dark] .web-desktop{background:#0d1321}
-:root[data-theme=dark] .web-desktop::after{background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px)}
+:root[data-theme=dark] .web-desktop::after{display:none}
 .desktop-surface{position:absolute;inset:0 72px 46px 0;z-index:1}
 .desktop-dock{position:absolute;right:14px;top:50%;transform:translateY(-50%);display:grid;gap:10px;padding:8px;border:1px solid rgba(217,220,225,.9);border-radius:18px;background:rgba(255,255,255,.76);backdrop-filter:blur(22px);box-shadow:0 18px 48px rgba(13,19,33,.12);z-index:20}
 :root[data-theme=dark] .desktop-dock{background:rgba(19,24,34,.78);border-color:rgba(255,255,255,.1)}
