@@ -7,7 +7,7 @@
   <meta name="description" content="WebDesk 網頁端桌面。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-weatherflow1">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-inlinecards2">
   <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
@@ -39,7 +39,6 @@
         <p data-i18n="點擊加入桌面，卡片可移動、縮放與摺疊。">點擊加入桌面，卡片可移動、縮放與摺疊。</p>
       </div>
       <div id="toolShelf" class="dock-tool-list"></div>
-      <button id="addCustomCard" class="drawer-button" type="button" data-i18n="新增快捷卡片">新增快捷卡片</button>
     </div>
     <div class="drawer-panel hidden" data-panel="workspaces">
       <div class="panel-title">
@@ -84,7 +83,7 @@
     <time id="desktopClock"></time>
   </footer>
 </main>
-<script src="Html_tools/i18n.js?v=20260728-linkout1"></script>
+<script src="Html_tools/i18n.js?v=20260728-inlinecards2"></script>
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
@@ -162,7 +161,14 @@ const bgFallback=[
     file: "backgrounds/2026-07-28-10-web.webp"
   }
 ];
-function seedCards(key){return (seeds[key]||[]).map(([appId,x,y,w,h],i)=>({id:key+"-"+appId+"-"+i,appId,x,y,w,h,collapsed:false,data:{}}))}
+function preferredCardSize(appId,w,h){
+  const info=appById(appId);
+  if(info?.kind!=="tool")return {w,h};
+  const sizes={image:{w:420,h:330},text:{w:380,h:300},table:{w:380,h:300},date:{w:360,h:260},json:{w:380,h:300}};
+  const size=sizes[appId]||{w:360,h:260};
+  return {w:Math.max(w||0,size.w),h:Math.max(h||0,size.h)};
+}
+function seedCards(key){return (seeds[key]||[]).map(([appId,x,y,w,h],i)=>{const size=preferredCardSize(appId,w,h);return {id:key+"-"+appId+"-"+i,appId,x,y,w:size.w,h:size.h,collapsed:false,data:{}}})}
 const defaults=[
   {id:"daily",name:"日常工作區",hint:"拖拽卡片可任意擺放；點擊卡片打開工具。",cards:seedCards("daily")},
   {id:"office",name:"辦公整理",hint:"文字、表格、日期與 JSON 放在一起。",cards:seedCards("office")},
@@ -195,11 +201,17 @@ function loadWorkspaces(){
 }
 function normalizeWorkspace(ws){
   if(!Array.isArray(ws.cards)&&Array.isArray(ws.toolIds))ws.cards=ws.toolIds.map((id,i)=>({id:ws.id+"-"+id+"-"+i,appId:id,x:64+(i%3)*316,y:72+Math.floor(i/3)*170,w:300,h:148,collapsed:false,data:{}}));
-  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).map((card,i)=>{
+  const allowedApps=new Set(apps.map(app=>app.id));
+  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).filter(card=>!card.custom&&allowedApps.has(card.appId||card.toolId||"note")).map((card,i)=>{
     const next={id:card.id||"card-"+Date.now()+"-"+i,appId:card.appId||card.toolId||"note",x:card.x||72,y:card.y||72,w:card.w||300,h:card.h||148,collapsed:!!card.collapsed,custom:card.custom,title:card.title,desc:card.desc,href:card.href,icon:card.icon,tone:card.tone,data:card.data||{}};
     if(next.appId==="weather"&&next.w<=390&&next.h<=270){
       next.w=430;
       next.h=420;
+    }
+    const preferred=preferredCardSize(next.appId,next.w,next.h);
+    if(appById(next.appId)?.kind==="tool"){
+      next.w=preferred.w;
+      next.h=preferred.h;
     }
     return next;
   });
@@ -212,6 +224,23 @@ function itemInfo(card){return card.custom?card:appById(card.appId)||card}
 function tr(value){return window.t?window.t(value):value}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 function labelHtml(value){return '<span data-i18n="'+escapeHtml(value)+'">'+escapeHtml(tr(value))+'</span>'}
+function extractUrls(text){
+  const matches=String(text||"").match(/((?:https?:\/\/|www\.)[^\s<>"']+|(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?:\/[^\s<>"']*)?)/gi)||[];
+  const seen=new Set();
+  return matches.map(url=>url.replace(/[),.;:!?，。！？）】》]+$/,"")).filter(url=>{
+    if(!url||seen.has(url))return false;
+    seen.add(url);
+    return true;
+  });
+}
+function memoLinksHtml(text){
+  const urls=extractUrls(text);
+  if(!urls.length)return '<div class="memo-link-empty" data-i18n="未識別到網址">'+escapeHtml(tr("未識別到網址"))+'</div>';
+  return '<strong>'+labelHtml("識別到的網址")+'</strong>'+urls.map(url=>{
+    const target=normalizeExternalUrl(url);
+    return '<a href="'+escapeHtml(target)+'" target="_blank" rel="noopener noreferrer" title="'+escapeHtml(target)+'">'+escapeHtml(url)+'</a>';
+  }).join("");
+}
 function renderWorkspaces(){
   $("workspaceList").innerHTML=workspaces.map(w=>'<button class="workspace-item '+(w.id===activeId?'is-active':'')+'" type="button" data-id="'+escapeHtml(w.id)+'">'+labelHtml(w.name)+'<small>'+w.cards.length+'</small></button>').join("");
   document.querySelectorAll(".workspace-item").forEach(btn=>btn.onclick=()=>{activeId=btn.dataset.id;localStorage.setItem(activeKey,activeId);renderAll()});
@@ -223,7 +252,8 @@ function renderShelf(){
   document.querySelectorAll(".dock-tool").forEach(btn=>btn.onclick=()=>addCard(btn.dataset.id));
 }
 function bodyHtml(card,info){
-  if(info.kind==="tool"||card.custom)return '<p class="card-desc">'+escapeHtml(card.custom?card.desc:tr(info.desc))+'</p><button class="open-tool" type="button" data-open-app="'+escapeHtml(card.custom?"external":card.appId)+'" data-open-url="'+escapeHtml(card.href||"")+'" data-open-title="'+escapeHtml(card.custom?card.title:info.title)+'" data-i18n="'+(card.custom?"新分頁打開":"打開")+'">'+tr(card.custom?"新分頁打開":"打開")+'</button>';
+  if(info.kind==="tool")return '<div class="inline-tool" data-inline-app="'+escapeHtml(card.appId)+'">'+appContent(card.appId)+'</div>';
+  if(card.custom)return "";
   const data=card.data||{};
   if(card.appId==="note")return '<textarea class="widget-input" data-field="note" placeholder="'+escapeHtml(tr("在這裡記錄"))+'">'+escapeHtml(data.note||"")+'</textarea>';
   if(card.appId==="todo")return '<div class="todo-list">'+(data.items||[]).map((x,i)=>'<label><input type="checkbox" data-todo="'+i+'" '+(x.done?'checked':'')+'><span>'+escapeHtml(x.text)+'</span><button type="button" data-del="'+i+'">×</button></label>').join("")+'</div><form class="todo-form"><input placeholder="'+escapeHtml(tr("新增待辦"))+'"><button type="submit">＋</button></form>';
@@ -231,7 +261,7 @@ function bodyHtml(card,info){
   if(card.appId==="calc")return '<div class="calc-widget"><input data-field="expr" placeholder="12*(3+4)" value="'+escapeHtml(data.expr||"")+'"><output>'+escapeHtml(calc(data.expr||""))+'</output></div>';
   if(card.appId==="color")return '<div class="color-widget"><input type="color" data-field="color" value="'+escapeHtml(data.color||"#ff8a00")+'"><code>'+escapeHtml(data.color||"#ff8a00")+'</code><button type="button" data-copy-color data-i18n="複製">複製</button></div>';
   if(card.appId==="link")return '<div class="link-widget"><input data-field="label" placeholder="'+escapeHtml(tr("名稱"))+'" value="'+escapeHtml(data.label||"GitHub")+'"><input data-field="url" placeholder="https://..." value="'+escapeHtml(data.url||"https://github.com/windzxy")+'"><button type="button" data-open-url="'+escapeHtml(data.url||"https://github.com/windzxy")+'" data-open-title="'+escapeHtml(data.label||"快速連結")+'" data-i18n="新分頁打開">新分頁打開</button></div>';
-  if(card.appId==="memo")return '<textarea class="widget-input mono" data-field="memo" placeholder="'+escapeHtml(tr("常用文字、命令或片段"))+'">'+escapeHtml(data.memo||"")+'</textarea>';
+  if(card.appId==="memo")return '<textarea class="widget-input mono" data-field="memo" placeholder="'+escapeHtml(tr("常用文字、命令或片段"))+'">'+escapeHtml(data.memo||"")+'</textarea><div class="memo-links" data-memo-links>'+memoLinksHtml(data.memo||"")+'</div>';
   if(card.appId==="weather")return weatherHtml(card);
   return '<p class="card-desc">'+escapeHtml(tr(info.desc||""))+'</p>';
 }
@@ -244,7 +274,7 @@ function weatherHtml(card){
   const current=weather?.current||null;
   const list=(weather?.days||[]).slice(0,days);
   const currentHtml=current?'<div class="weather-current"><div class="weather-main"><span class="weather-icon">'+weatherIcon(current.code,current.isDay)+'</span><div><strong>'+Math.round(current.temp)+'°</strong><small>'+escapeHtml(weatherText(current.code))+'</small></div></div><div class="weather-meta"><span>'+escapeHtml(tr("體感"))+' '+Math.round(current.feels)+'°</span><span>'+escapeHtml(tr("濕度"))+' '+Math.round(current.humidity)+'%</span><span>'+escapeHtml(tr("風速"))+' '+Math.round(current.wind)+' km/h</span></div></div>':'<div class="weather-empty">'+escapeHtml(status)+'</div>';
-  const daysHtml=list.length?'<div class="weather-days" data-visible-days="'+days+'">'+list.map(day=>'<div class="weather-day"><span>'+escapeHtml(formatWeatherDate(day.date))+'</span><b>'+weatherIcon(day.code,true)+'</b><strong>'+Math.round(day.max)+'° / '+Math.round(day.min)+'°</strong><small>'+escapeHtml((day.pop ?? 0)+"%")+'</small></div>').join("")+'</div>':'';
+  const daysHtml=list.length?'<div class="weather-days" data-visible-days="'+days+'">'+list.map(day=>'<div class="weather-day '+weatherDayClass(day.date)+'"><span>'+escapeHtml(formatWeatherDate(day.date))+'</span><b>'+weatherIcon(day.code,true)+'</b><strong>'+Math.round(day.max)+'° / '+Math.round(day.min)+'°</strong><small>'+escapeHtml((day.pop ?? 0)+"%")+'</small></div>').join("")+'</div>':'';
   const total=weather?.days?.length||16;
   const countText=weather?tr("顯示")+" "+Math.min(days,total)+"/"+total+" "+tr("天"):"";
   return '<div class="weather-widget"><form class="weather-search"><input data-field="weatherQuery" value="'+escapeHtml(data.weatherQuery||place)+'" placeholder="'+escapeHtml(tr("輸入城市"))+'"><button type="submit" data-i18n="搜尋">搜尋</button></form><div class="weather-head"><div><span data-i18n="天氣位置">天氣位置</span><strong>'+escapeHtml(place)+'</strong></div><button type="button" data-weather-locate data-i18n="定位">定位</button></div>'+currentHtml+daysHtml+'<div class="weather-foot"><span data-weather-status>'+escapeHtml(status||weather?.updated||"")+'</span><span class="weather-count">'+escapeHtml(countText)+'</span><button type="button" data-weather-refresh data-i18n="刷新">刷新</button></div></div>';
@@ -277,7 +307,22 @@ function formatWeatherDate(value){
   const date=new Date(value+"T00:00:00");
   const today=new Date();
   if(date.toDateString()===today.toDateString())return tr("今天");
-  return new Intl.DateTimeFormat(undefined,{weekday:"short",month:"numeric",day:"numeric"}).format(date);
+  const datePart=new Intl.DateTimeFormat(undefined,{month:"numeric",day:"numeric"}).format(date);
+  const weekday=new Intl.DateTimeFormat(undefined,{weekday:"short"}).format(date);
+  return datePart+" "+weekday;
+}
+function isHolidayDate(value){
+  const date=new Date(value+"T00:00:00");
+  const md=String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
+  return ["01-01","05-01","10-01","10-02","10-03","10-04","10-05","10-06","10-07","12-25"].includes(md);
+}
+function weatherDayClass(value){
+  const date=new Date(value+"T00:00:00");
+  const day=date.getDay();
+  const classes=[];
+  if(day===0||day===6)classes.push("is-weekend");
+  if(isHolidayDate(value))classes.push("is-holiday");
+  return classes.join(" ");
 }
 function cardHtml(card){
   const info=itemInfo(card);
@@ -301,7 +346,8 @@ function renderDesktop(){
 }
 function addCard(appId){
   const i=activeWorkspace().cards.length;
-  const size=appId==="weather"?{w:430,h:420}:appId==="todo"?{w:310,h:220}:appId==="note"?{w:310,h:210}:{w:280,h:150};
+  const base=appId==="weather"?{w:430,h:420}:appId==="todo"?{w:310,h:220}:appId==="note"?{w:310,h:210}:{w:280,h:150};
+  const size=preferredCardSize(appId,base.w,base.h);
   activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),appId,x:72+(i%5)*38,y:78+(i%7)*32,w:size.w,h:size.h,collapsed:false,data:{}});
   save();
   renderAll();
@@ -365,6 +411,8 @@ function bindCard(el){
   if(weatherForm)weatherForm.onsubmit=e=>{e.preventDefault();searchWeather(id,weatherForm.querySelector("input").value)};
   el.querySelectorAll("[data-weather-refresh]").forEach(btn=>btn.onclick=()=>loadWeatherCard(id,{force:true}));
   el.querySelectorAll("[data-weather-locate]").forEach(btn=>btn.onclick=()=>locateWeather(id));
+  const inline=el.querySelector("[data-inline-app]");
+  if(inline)bindApp(el,inline.dataset.inlineApp);
 }
 function startDrag(e,el,id){
   if(e.button!==0)return;
@@ -574,6 +622,19 @@ function updateData(id,field,value){
     const el=document.querySelector('[data-card-id="'+CSS.escape(id)+'"] code');
     if(el)el.textContent=value;
   }
+  if(field==="memo"){
+    const el=document.querySelector('[data-card-id="'+CSS.escape(id)+'"] [data-memo-links]');
+    if(el)el.innerHTML=memoLinksHtml(value);
+  }
+  if(field==="url"||field==="label"){
+    const cardEl=document.querySelector('[data-card-id="'+CSS.escape(id)+'"]');
+    const card=activeWorkspace().cards.find(x=>x.id===id);
+    const btn=cardEl?.querySelector("[data-open-url]");
+    if(btn&&card){
+      btn.dataset.openUrl=card.data.url||"";
+      btn.dataset.openTitle=card.data.label||"快速連結";
+    }
+  }
   save();
 }
 function addTodo(id,text){
@@ -708,9 +769,18 @@ async function loadWeatherCard(id,options={}){
   }
 }
 function calc(expr){
-  if(!expr)return "";
-  if(!/^[\d+\-*/().%\s]+$/.test(expr))return "Error";
-  try{return String(Function("return ("+expr+")")())}catch(e){return "Error"}
+  const value=String(expr||"").trim();
+  if(!value)return "";
+  if(!/^[\d+\-*/().%\s]+$/.test(value))return tr("只支援數字和運算符");
+  const opens=(value.match(/\(/g)||[]).length;
+  const closes=(value.match(/\)/g)||[]).length;
+  if(opens>closes||/[+\-*/%.(]$/.test(value))return "";
+  try{
+    const result=Function("return ("+value+")")();
+    return result===undefined?"":String(result);
+  }catch(e){
+    return "";
+  }
 }
 function openDrawer(panel){
   document.querySelectorAll(".drawer-panel").forEach(p=>p.classList.toggle("hidden",p.dataset.panel!==panel));
@@ -881,7 +951,8 @@ document.addEventListener("click",event=>{const dock=event.target.closest("[data
 document.querySelectorAll("[data-dock]").forEach(btn=>btn.onclick=()=>openDrawer(btn.dataset.dock));
 $("closeDrawer").onclick=()=>$("desktopDrawer").classList.remove("is-open");
 $("createWorkspace").onclick=createWorkspace;
-$("addCustomCard").onclick=addCustomCard;
+const customButton=$("addCustomCard");
+if(customButton)customButton.onclick=addCustomCard;
 $("resetLayout").onclick=resetLayout;
 $("deskSearch").addEventListener("input",renderShelf);
 setInterval(()=>{renderClock();tickWidgets()},1000);
