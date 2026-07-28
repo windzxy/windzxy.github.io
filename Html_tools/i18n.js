@@ -194,7 +194,35 @@ const I18N={
 "新工作區名稱":{"zh-CN":"新工作区名称","zh-HK":"新工作區名稱","en":"New workspace name"},
 "自訂工作區，可加入工具並拖拽排序。":{"zh-CN":"自定义工作区，可加入工具并拖拽排序。","zh-HK":"自訂工作區，可加入工具並拖拽排序。","en":"Custom workspace. Add tools and drag to reorder."},
 "放大、去背、裁切、調色、壓縮、OCR。":{"zh-CN":"放大、去背、裁切、调色、压缩、OCR。","zh-HK":"放大、去背、裁切、調色、壓縮、OCR。","en":"Upscale, cutout, crop, adjust, compress and OCR."},
-"統計、清理、翻譯、首字母大寫與排序。":{"zh-CN":"统计、清理、翻译、首字母大写与排序。","zh-HK":"統計、清理、翻譯、首字母大寫與排序。","en":"Count, clean, translate, title case and sort."}
+"統計、清理、翻譯、首字母大寫與排序。":{"zh-CN":"统计、清理、翻译、首字母大写与排序。","zh-HK":"統計、清理、翻譯、首字母大寫與排序。","en":"Count, clean, translate, title case and sort."},
+"Workspace Tools":{"zh-CN":"工作区工具","zh-HK":"工作區工具","en":"Workspace Tools"},
+"選擇工作區會顯示對應工具；開啟排列後可拖拽排序。":{"zh-CN":"选择工作区会显示对应工具；开启排列后可拖拽排序。","zh-HK":"選擇工作區會顯示對應工具；開啟排列後可拖拽排序。","en":"Choose a workspace to show its tools. Turn on layout mode to drag and reorder."},
+"排列工具":{"zh-CN":"排列工具","zh-HK":"排列工具","en":"Arrange"},
+"還原":{"zh-CN":"还原","zh-HK":"還原","en":"Restore"},
+"文字轉換":{"zh-CN":"文字转换","zh-HK":"文字轉換","en":"Text conversion"},
+"輸出語言":{"zh-CN":"输出语言","zh-HK":"輸出語言","en":"Output language"},
+"轉換文字":{"zh-CN":"转换文字","zh-HK":"轉換文字","en":"Convert text"},
+"轉換結果":{"zh-CN":"转换结果","zh-HK":"轉換結果","en":"Converted result"},
+"複製結果":{"zh-CN":"复制结果","zh-HK":"複製結果","en":"Copy result"},
+"離線模式：支援簡繁互轉、常用辦公詞中英轉換與英文首字母大寫。":{"zh-CN":"离线模式：支持简繁互转、常用办公词中英转换与英文首字母大写。","zh-HK":"離線模式：支援簡繁互轉、常用辦公詞中英轉換與英文首字母大寫。","en":"Offline mode: Simplified/Traditional conversion, common office glossary and English title case."},
+"未檢測到可轉換文字。":{"zh-CN":"未检测到可转换文字。","zh-HK":"未檢測到可轉換文字。","en":"No text to convert."},
+"離線詞庫沒有命中；已保留原文。":{"zh-CN":"离线词库没有命中；已保留原文。","zh-HK":"離線詞庫沒有命中；已保留原文。","en":"No offline glossary match; original text was kept."},
+"已使用離線詞庫轉換。":{"zh-CN":"已使用离线词库转换。","zh-HK":"已使用離線詞庫轉換。","en":"Converted with the offline glossary."},
+"OCR 本地檔案未安裝。請把 OCR 引擎與語言包放到 ocr/ 目錄後再重試。":{"zh-CN":"OCR 本地文件未安装。请把 OCR 引擎与语言包放到 ocr/ 目录后再重试。","zh-HK":"OCR 本地檔案未安裝。請把 OCR 引擎與語言包放到 ocr/ 目錄後再重試。","en":"Local OCR files are not installed. Put the OCR engine and language data in the ocr/ folder and retry."},
+"網頁桌面":{"zh-CN":"网页桌面","zh-HK":"網頁桌面","en":"Web desktop"},
+"像桌面一樣拖動和擺放功能卡片。":{"zh-CN":"像桌面一样拖动和摆放功能卡片。","zh-HK":"像桌面一樣拖動和擺放功能卡片。","en":"Drag and place tool cards like a desktop."},
+"Dashboard":{"zh-CN":"Dashboard","zh-HK":"Dashboard","en":"Dashboard"},
+"拖拽卡片可任意擺放；點擊卡片打開工具。":{"zh-CN":"拖拽卡片可任意摆放；点击卡片打开工具。","zh-HK":"拖拽卡片可任意擺放；點擊卡片打開工具。","en":"Drag cards anywhere. Click a card to open its tool."},
+"新增卡片":{"zh-CN":"新增卡片","zh-HK":"新增卡片","en":"Add card"},
+"重置桌面":{"zh-CN":"重置桌面","zh-HK":"重置桌面","en":"Reset desktop"},
+"桌面區域":{"zh-CN":"桌面区域","zh-HK":"桌面區域","en":"Desktop area"},
+"功能庫":{"zh-CN":"功能库","zh-HK":"功能庫","en":"Tool library"},
+"點擊加入桌面。":{"zh-CN":"点击加入桌面。","zh-HK":"點擊加入桌面。","en":"Click to add to the desktop."},
+"尚無卡片，從下方功能庫加入一個工具。":{"zh-CN":"尚无卡片，从下方功能库加入一个工具。","zh-HK":"尚無卡片，從下方功能庫加入一個工具。","en":"No cards yet. Add a tool from the library below."},
+"卡片名稱":{"zh-CN":"卡片名称","zh-HK":"卡片名稱","en":"Card name"},
+"連結或網址":{"zh-CN":"链接或网址","zh-HK":"連結或網址","en":"Link or URL"},
+"簡短描述":{"zh-CN":"简短描述","zh-HK":"簡短描述","en":"Short description"},
+"自訂卡片":{"zh-CN":"自定义卡片","zh-HK":"自訂卡片","en":"Custom card"}
 };
 const rev={};
 for(const key in I18N){
@@ -253,12 +281,30 @@ function rememberAll(root=document.body){
   document.querySelectorAll("[placeholder],[aria-label],[title],[alt]").forEach(el=>attrMap.forEach(([attr,store])=>applyAttr(el,attr,store)));
   walkText(root,rememberText);
 }
+function applyDataI18n(root=document.body){
+  root.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key=el.dataset.i18n;
+    const item=I18N[key];
+    if(item)el.textContent=item[lang()]||item["zh-HK"]||key;
+  });
+  root.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+    const key=el.dataset.i18nPlaceholder;
+    const item=I18N[key];
+    if(item)el.setAttribute("placeholder",item[lang()]||item["zh-HK"]||key);
+  });
+  root.querySelectorAll("[data-i18n-aria-label]").forEach(el=>{
+    const key=el.dataset.i18nAriaLabel;
+    const item=I18N[key];
+    if(item)el.setAttribute("aria-label",item[lang()]||item["zh-HK"]||key);
+  });
+}
 function applyI18n(root=document.body){
   const current=lang();
   document.documentElement.lang=current==="en"?"en":current==="zh-CN"?"zh-Hans":"zh-Hant-HK";
   const titleKey=document.documentElement.dataset.i18nTitle||keyOf(document.title);
   document.documentElement.dataset.i18nTitle=titleKey;
   if(I18N[titleKey])document.title=I18N[titleKey][current]||I18N[titleKey]["zh-HK"]||titleKey;
+  applyDataI18n(root);
   document.querySelectorAll("[placeholder],[aria-label],[title],[alt]").forEach(el=>attrMap.forEach(([attr,store])=>applyAttr(el,attr,store)));
   walkText(root,applyText);
   document.querySelectorAll(".lang-select").forEach(sel=>{sel.value=current});
