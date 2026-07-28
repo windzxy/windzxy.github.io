@@ -222,7 +222,20 @@ const I18N={
 "卡片名稱":{"zh-CN":"卡片名称","zh-HK":"卡片名稱","en":"Card name"},
 "連結或網址":{"zh-CN":"链接或网址","zh-HK":"連結或網址","en":"Link or URL"},
 "簡短描述":{"zh-CN":"简短描述","zh-HK":"簡短描述","en":"Short description"},
-"自訂卡片":{"zh-CN":"自定义卡片","zh-HK":"自訂卡片","en":"Custom card"}
+"自訂卡片":{"zh-CN":"自定义卡片","zh-HK":"自訂卡片","en":"Custom card"},
+"桌面工具條":{"zh-CN":"桌面工具条","zh-HK":"桌面工具條","en":"Desktop dock"},
+"添加功能":{"zh-CN":"添加功能","zh-HK":"添加功能","en":"Add tools"},
+"設定":{"zh-CN":"设置","zh-HK":"設定","en":"Settings"},
+"功能中心":{"zh-CN":"功能中心","zh-HK":"功能中心","en":"Control center"},
+"關閉":{"zh-CN":"关闭","zh-HK":"關閉","en":"Close"},
+"新增自訂卡片":{"zh-CN":"新增自定义卡片","zh-HK":"新增自訂卡片","en":"Add custom card"},
+"每個工作區都可以保存不同桌面佈局。":{"zh-CN":"每个工作区都可以保存不同桌面布局。","zh-HK":"每個工作區都可以保存不同桌面佈局。","en":"Each workspace can save a different desktop layout."},
+"調整語言與主題。":{"zh-CN":"调整语言与主题。","zh-HK":"調整語言與主題。","en":"Adjust language and theme."},
+"語言":{"zh-CN":"语言","zh-HK":"語言","en":"Language"},
+"主題":{"zh-CN":"主题","zh-HK":"主題","en":"Theme"},
+"打開完整工具箱":{"zh-CN":"打开完整工具箱","zh-HK":"打開完整工具箱","en":"Open full toolbox"},
+"移除":{"zh-CN":"移除","zh-HK":"移除","en":"Remove"},
+"尚無卡片，從右側工具條添加功能。":{"zh-CN":"尚无卡片，从右侧工具条添加功能。","zh-HK":"尚無卡片，從右側工具條添加功能。","en":"No cards yet. Add tools from the right dock."}
 };
 const rev={};
 for(const key in I18N){
