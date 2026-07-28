@@ -417,3 +417,6 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .external-box button{border:0;border-radius:9px;background:#ff8a00;color:#fff;font-weight:600;padding:0 12px}
 .link-widget button{height:34px;display:grid;place-items:center;border:0;border-radius:8px;background:#ff8a00;color:#fff;text-decoration:none;padding:0 10px;cursor:pointer}
 @media(max-width:760px){.desk-app,.image-full-app{grid-template-columns:1fr}.app-preview-grid{grid-template-columns:1fr}}
+
+.background-item.is-active{border-color:#ff8a00;background:rgba(255,138,0,.10);color:#111827}
+:root[data-theme=dark] .background-item.is-active{background:rgba(255,138,0,.18);color:#fff}
