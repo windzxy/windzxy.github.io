@@ -420,3 +420,5 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 
 .background-item.is-active{border-color:#ff8a00;background:rgba(255,138,0,.10);color:#111827}
 :root[data-theme=dark] .background-item.is-active{background:rgba(255,138,0,.18);color:#fff}
+
+.bg-dock-button{font-size:11px;letter-spacing:.02em}
