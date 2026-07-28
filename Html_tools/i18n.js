@@ -380,6 +380,7 @@ function bindLangSelects(){
       localStorage.setItem("windzxy-lang",next);
       document.querySelectorAll(".lang-select").forEach(s=>{s.value=next});
       applyI18n(document.body);
+      if(window.renderAll){window.renderAll();applyI18n(document.body)}
     });
   });
 }
@@ -402,5 +403,6 @@ function installLang(){
 }
 window.t=tx;
 window.applyI18n=applyI18n;
+window.WindzxyI18n={t:tx,apply:applyI18n};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",installLang);else installLang();
 
