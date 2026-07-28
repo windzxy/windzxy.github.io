@@ -7,8 +7,8 @@
   <meta name="description" content="Windzxy 的網頁端桌面工具箱。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-imgfast2">
-  <link rel="preload" as="image" href="backgrounds/optimized/wallpaper-01.webp?v=20260728-imgfast2">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-nogrid1">
+  <link rel="preload" as="fetch" href="backgrounds/2026-07-28-01-web.webp.b64?v=20260728-taskbg10" type="text/plain">
 </head>
 <body class="desktop-home">
 <main id="desktopApp" class="web-desktop">
@@ -18,7 +18,7 @@
     <button type="button" data-dock="tools" aria-label="添加功能" data-i18n-aria-label="添加功能">＋</button>
     <button type="button" data-dock="workspaces" aria-label="工作區" data-i18n-aria-label="工作區">▦</button>
     <button type="button" data-dock="settings" aria-label="設定" data-i18n-aria-label="設定">⚙</button>
-    <button id="randomBgDock" class="bg-dock-button" type="button" data-random-bg="1" onclick="window.randomBackground&&window.randomBackground()" aria-label="隨機背景" data-i18n-aria-label="隨機背景">BG</button>
+    <button id="randomBgDock" class="bg-dock-button" type="button" data-random-bg="1" aria-label="隨機背景" data-i18n-aria-label="隨機背景">BG</button>
     <button id="openToolboxDock" type="button" data-dock="tools" aria-label="工具箱" data-i18n-aria-label="工具箱">⌘</button>
   </aside>
   <aside id="desktopDrawer" class="desktop-drawer" aria-label="功能中心" data-i18n-aria-label="功能中心">
@@ -72,7 +72,7 @@
         <p data-i18n="使用本地背景庫，可隨機切換。">使用本地背景庫，可隨機切換。</p>
       </div>
       <div id="backgroundList" class="background-list"></div>
-      <button id="randomBg" class="drawer-button" type="button" data-random-bg="1" onclick="window.randomBackground&&window.randomBackground()" data-i18n="Random 背景">Random 背景</button>
+      <button id="randomBg" class="drawer-button" type="button" data-random-bg="1" data-i18n="Random 背景">Random 背景</button>
       <button id="openToolbox" class="drawer-button" type="button" data-dock="tools" data-i18n="打開完整工具箱">打開完整工具箱</button>
     </div>
   </aside>
@@ -84,7 +84,7 @@
     <time id="desktopClock"></time>
   </footer>
 </main>
-<script src="Html_tools/i18n.js?v=20260728-imgfast2"></script>
+<script src="Html_tools/i18n.js?v=20260728-taskbg1"></script>
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
@@ -111,54 +111,54 @@ const seeds={
 };
 const bgFallback=[
   {
-    id: "wallpaper-01",
-    title: "Sunset Coast",
-    file: "backgrounds/optimized/wallpaper-01.webp"
+    id: "2026-07-28-01-web",
+    title: "Cinematic Sunset Coast",
+    file: "backgrounds/2026-07-28-01-web.webp.b64"
   },
   {
-    id: "wallpaper-02",
-    title: "Aurora Night",
-    file: "backgrounds/optimized/wallpaper-02.webp"
+    id: "2026-07-28-02-web",
+    title: "Aurora Mountain Valley",
+    file: "backgrounds/2026-07-28-02-web.webp.b64"
   },
   {
-    id: "wallpaper-03",
-    title: "Sakura Morning",
-    file: "backgrounds/optimized/wallpaper-03.webp"
+    id: "2026-07-28-03-web",
+    title: "Moonlit Forest Stream",
+    file: "backgrounds/2026-07-28-03-web.webp.b64"
   },
   {
-    id: "wallpaper-04",
-    title: "Cyber Rooftop",
-    file: "backgrounds/optimized/wallpaper-04.webp"
+    id: "2026-07-28-04-web",
+    title: "Rainy Cyberpunk Rooftop",
+    file: "backgrounds/2026-07-28-04-web.webp.b64"
   },
   {
-    id: "wallpaper-05",
-    title: "Forest Mist",
-    file: "backgrounds/optimized/wallpaper-05.webp"
+    id: "2026-07-28-05-web",
+    title: "Floating Island Garden",
+    file: "backgrounds/2026-07-28-05-web.webp.b64"
   },
   {
-    id: "wallpaper-06",
-    title: "Desert Glass",
-    file: "backgrounds/optimized/wallpaper-06.webp"
+    id: "2026-07-28-06-web",
+    title: "Twilight Alpine Lake",
+    file: "backgrounds/2026-07-28-06-web.webp.b64"
   },
   {
-    id: "wallpaper-07",
-    title: "Moon Village",
-    file: "backgrounds/optimized/wallpaper-07.webp"
+    id: "2026-07-28-07-web",
+    title: "Ringed Planet Station",
+    file: "backgrounds/2026-07-28-07-web.webp.b64"
   },
   {
-    id: "wallpaper-08",
-    title: "Rain Canal",
-    file: "backgrounds/optimized/wallpaper-08.webp"
+    id: "2026-07-28-08-web",
+    title: "Desert Research Outpost",
+    file: "backgrounds/2026-07-28-08-web.webp.b64"
   },
   {
-    id: "wallpaper-09",
-    title: "Sky Garden",
-    file: "backgrounds/optimized/wallpaper-09.webp"
+    id: "2026-07-28-09-web",
+    title: "Spring Lakeside Village",
+    file: "backgrounds/2026-07-28-09-web.webp.b64"
   },
   {
-    id: "wallpaper-10",
-    title: "Retro Seaside",
-    file: "backgrounds/optimized/wallpaper-10.webp"
+    id: "2026-07-28-10-web",
+    title: "Abstract Glass Geometry",
+    file: "backgrounds/2026-07-28-10-web.webp.b64"
   }
 ];
 function seedCards(key){return (seeds[key]||[]).map(([appId,x,y,w,h],i)=>({id:key+"-"+appId+"-"+i,appId,x,y,w,h,collapsed:false,data:{}}))}
@@ -461,95 +461,11 @@ function bindTextApp(win){
   function stats(){const s=input.value;win.querySelector("#textChars").textContent=s.length;win.querySelector("#textNoSpace").textContent=s.replace(/\s/g,"").length;win.querySelector("#textWords").textContent=(s.match(/[\p{L}\p{N}]+/gu)||[]).length;win.querySelector("#textLines").textContent=s?s.split(/\r?\n/).length:0}
   input.oninput=stats;
   win.querySelectorAll("[data-text-act]").forEach(btn=>btn.onclick=()=>{let s=input.value,l=s.split(/\r?\n/),act=btn.dataset.textAct;if(act==="trim")s=l.map(x=>x.trim()).join("\n").trim();if(act==="blank")s=l.filter(x=>x.trim()).join("\n");if(act==="dedupe")s=[...new Set(l)].join("\n");if(act==="sort")s=l.sort((a,b)=>a.localeCompare(b)).join("\n");if(act==="upper")s=s.toUpperCase();if(act==="lower")s=s.toLowerCase();if(act==="title")s=s.toLowerCase().replace(/\b([a-z])/g,m=>m.toUpperCase());if(act==="copy")navigator.clipboard?.writeText(s);if(act==="clear")s="";input.value=s;stats()});
-  const convertButton=win.querySelector("#textConvert");
-  convertButton.onclick=async()=>{
-    const text=input.value,target=win.querySelector("#textTarget").value;
-    if(!text.trim()){out.value="";return}
-    const originalLabel=convertButton.textContent;
-    convertButton.disabled=true;
-    convertButton.textContent=target==="en"?"翻譯中…":"轉換中…";
-    out.value="";
-    try{
-      out.value=await convertText(text,target);
-    }catch(error){
-      console.error("Text translation failed:",error);
-      out.value="翻譯失敗，請檢查網絡後重試。";
-    }finally{
-      convertButton.disabled=false;
-      convertButton.textContent=originalLabel;
-    }
-  };
+  win.querySelector("#textConvert").onclick=()=>{out.value=basicTextConvert(input.value,win.querySelector("#textTarget").value)};
   win.querySelector("#textCopyOut").onclick=()=>navigator.clipboard?.writeText(out.value);
   stats();
 }
 function basicTextConvert(text,target){const pairs=[["圖片","图片","image"],["處理","处理","process"],["文字","文字","text"],["表格","表格","table"],["日期","日期","date"],["工具","工具","tool"],["複製","复制","copy"],["壓縮","压缩","compress"],["預覽","预览","preview"],["識別","识别","recognize"],["翻譯","翻译","translate"],["結果","结果","result"],["格式化","格式化","format"],["驗證","验证","validate"],["排序","排序","sort"],["清空","清空","clear"],["下載","下载","download"]];let out=text;const hkToCn={"這":"这","裡":"里","個":"个","開":"开","啟":"启","後":"后","與":"与","為":"为","檔":"档","圖":"图","預":"预","覽":"览","選":"选","擇":"择","識":"识","別":"别","語":"语","題":"题","輯":"辑","寬":"宽","點":"点","擊":"击","處":"处","壓":"压","縮":"缩","質":"质","長":"长","邊":"边","無":"无","損":"损","關":"关","閉":"闭","強":"强","變":"变","複":"复","製":"制","轉":"转","換":"换","輸":"输","錯":"错","誤":"误","離":"离","線":"线","庫":"库","檢":"检","測":"测"};const cnToHk=Object.fromEntries(Object.entries(hkToCn).map(([k,v])=>[v,k]));if(target==="zh-CN")out=out.replace(/[\s\S]/g,ch=>hkToCn[ch]||ch);if(target==="zh-HK")out=out.replace(/[\s\S]/g,ch=>cnToHk[ch]||ch);for(const [hk,cn,en]of pairs){if(target==="zh-CN")out=out.replaceAll(hk,cn);if(target==="zh-HK")out=out.replaceAll(cn,hk);if(target==="en")out=out.replaceAll(hk,en).replaceAll(cn,en)}if(target==="en")out=out.replace(/\b([a-z])/g,m=>m.toUpperCase());return out}
-async function convertText(text,target){
-  if(target!=="en")return basicTextConvert(text,target);
-  return translateToEnglish(text);
-}
-function splitTranslationText(text,maxLength){
-  const chunks=[];
-  let rest=text;
-  while(rest.length>maxLength){
-    const candidates=[
-      rest.lastIndexOf("\n",maxLength)+1,
-      rest.lastIndexOf("。",maxLength)+1,
-      rest.lastIndexOf("！",maxLength)+1,
-      rest.lastIndexOf("？",maxLength)+1,
-      rest.lastIndexOf("；",maxLength)+1,
-      rest.lastIndexOf(". ",maxLength)+2,
-      rest.lastIndexOf("! ",maxLength)+2,
-      rest.lastIndexOf("? ",maxLength)+2
-    ];
-    let cut=Math.max(...candidates);
-    if(cut<Math.floor(maxLength*.35))cut=maxLength;
-    chunks.push(rest.slice(0,cut));
-    rest=rest.slice(cut);
-  }
-  if(rest)chunks.push(rest);
-  return chunks;
-}
-async function fetchJsonWithTimeout(url,timeoutMs=12000){
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),timeoutMs);
-  try{
-    const response=await fetch(url,{signal:controller.signal,cache:"no-store"});
-    if(!response.ok)throw new Error("Translation service returned HTTP "+response.status);
-    return await response.json();
-  }finally{
-    clearTimeout(timer);
-  }
-}
-async function translateWithGoogle(text){
-  const url="https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q="+encodeURIComponent(text);
-  const data=await fetchJsonWithTimeout(url);
-  const translated=(data?.[0]||[]).map(part=>part?.[0]||"").join("");
-  if(!translated)throw new Error("Google translation returned an empty result");
-  return translated;
-}
-async function translateWithMyMemory(text){
-  const url="https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair=zh-CN%7Cen";
-  const data=await fetchJsonWithTimeout(url);
-  const translated=data?.responseData?.translatedText;
-  if(!translated||data?.responseStatus&&data.responseStatus!==200)throw new Error(data?.responseDetails||"MyMemory translation failed");
-  return translated;
-}
-async function translateToEnglish(text){
-  const chunks=splitTranslationText(text,1500);
-  const translated=await Promise.all(chunks.map(async chunk=>{
-    if(!chunk.trim())return chunk;
-    try{
-      return await translateWithGoogle(chunk);
-    }catch(primaryError){
-      console.warn("Primary translation service failed; using fallback.",primaryError);
-      const fallbackChunks=splitTranslationText(chunk,450);
-      const fallback=[];
-      for(const part of fallbackChunks)fallback.push(part.trim()?await translateWithMyMemory(part):part);
-      return fallback.join("");
-    }
-  }));
-  return translated.join("");
-}
 function bindTableApp(win){
   const input=win.querySelector("#appTableInput"),out=win.querySelector("#tableOutput");
   function delim(){const v=win.querySelector("#tableDelim").value;if(v!=="auto")return v;const first=input.value.split(/\r?\n/)[0]||"";return first.includes("\t")?"\t":first.includes("|")?"|":","}
@@ -683,12 +599,28 @@ function tickWidgets(){
   document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(now));
   document.querySelectorAll("[data-date]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now));
 }
-const bgVersion="20260728-imgfast1";
+const bgVersion="20260728-taskbg10";
 let bgApplying=false;
+const bgDataCache={};
+function isEncodedBackground(file){
+  return /\.b64(?:[?#].*)?$/.test(file||"");
+}
 function backgroundUrl(file){
   if(!file)return "";
   if(/^data:|^blob:|^https?:/.test(file))return file;
   return file+(file.includes("?")?"&":"?")+"v="+bgVersion;
+}
+async function resolveBackgroundSource(file){
+  if(!file)return "";
+  if(!isEncodedBackground(file))return backgroundUrl(file);
+  if(bgDataCache[file])return bgDataCache[file];
+  const res=await fetch(backgroundUrl(file),{cache:"force-cache"});
+  if(!res.ok)throw new Error("Background data failed: "+file);
+  const b64=(await res.text()).replace(/\s+/g,"");
+  if(!b64)throw new Error("Background data empty: "+file);
+  const src="data:image/webp;base64,"+b64;
+  bgDataCache[file]=src;
+  return src;
 }
 function pickBackground(exclude){
   const list=(backgrounds.length?backgrounds:bgFallback).filter(bg=>bg&&bg.file);
@@ -699,9 +631,11 @@ function pickBackground(exclude){
 }
 function preloadBackgrounds(){
   (backgrounds.length?backgrounds:bgFallback).slice(0,4).forEach(bg=>{
-    const img=new Image();
-    img.decoding="async";
-    img.src=backgroundUrl(bg.file);
+    resolveBackgroundSource(bg.file).then(src=>{
+      const img=new Image();
+      img.decoding="async";
+      img.src=src;
+    }).catch(error=>console.error(error));
   });
 }
 async function loadBackgrounds(){
@@ -726,14 +660,19 @@ function renderBackgroundList(){
   const list=$("backgroundList");
   if(!list)return;
   const current=localStorage.getItem(bgKey);
-  list.innerHTML=backgrounds.map(bg=>'<button class="background-item'+(bg.file===current?' is-active':'')+'" type="button" data-file="'+escapeHtml(bg.file)+'"><span style="background-image:url('+escapeHtml(backgroundUrl(bg.file))+')"></span>'+escapeHtml(bg.title)+'</button>').join("");
+  list.innerHTML=backgrounds.map(bg=>'<button class="background-item'+(bg.file===current?' is-active':'')+'" type="button" data-file="'+escapeHtml(bg.file)+'"><span></span>'+escapeHtml(bg.title)+'</button>').join("");
   list.querySelectorAll(".background-item").forEach(btn=>btn.addEventListener("click",()=>applyBackground(btn.dataset.file)));
+  list.querySelectorAll(".background-item").forEach(btn=>{
+    resolveBackgroundSource(btn.dataset.file).then(src=>{
+      const thumb=btn.querySelector("span");
+      if(thumb)thumb.style.backgroundImage='url("'+src+'")';
+    }).catch(error=>console.error(error));
+  });
 }
-function setBackgroundImage(file){
+function setBackgroundImage(file,src){
   const app=$("desktopApp");
   if(!app)return;
-  const url=backgroundUrl(file);
-  app.style.backgroundImage='url("'+url+'")';
+  app.style.backgroundImage='url("'+src+'")';
   app.style.backgroundPosition='center';
   app.style.backgroundRepeat='no-repeat';
   app.style.backgroundSize='cover';
@@ -746,12 +685,16 @@ function setBackgroundImage(file){
 }
 async function applyBackground(file){
   if(!file)return;
-  const url=backgroundUrl(file);
-  const image=new Image();
-  image.decoding="async";
-  image.onload=()=>setBackgroundImage(file);
-  image.onerror=()=>console.error("Background image failed:",url);
-  image.src=url;
+  try{
+    const src=await resolveBackgroundSource(file);
+    const image=new Image();
+    image.decoding="async";
+    image.onload=()=>setBackgroundImage(file,src);
+    image.onerror=()=>console.error("Background image failed:",file);
+    image.src=src;
+  }catch(error){
+    console.error(error);
+  }
 }
 async function randomBackground(){
   if(bgApplying)return;
