@@ -1,52 +1,7 @@
 [
   {
-    "id": "wallpaper-01",
-    "title": "Sunset Coast",
-    "file": "backgrounds/optimized/wallpaper-01.webp"
-  },
-  {
-    "id": "wallpaper-02",
-    "title": "Aurora Night",
-    "file": "backgrounds/optimized/wallpaper-02.webp"
-  },
-  {
-    "id": "wallpaper-03",
-    "title": "Sakura Morning",
-    "file": "backgrounds/optimized/wallpaper-03.webp"
-  },
-  {
-    "id": "wallpaper-04",
-    "title": "Cyber Rooftop",
-    "file": "backgrounds/optimized/wallpaper-04.webp"
-  },
-  {
-    "id": "wallpaper-05",
-    "title": "Forest Mist",
-    "file": "backgrounds/optimized/wallpaper-05.webp"
-  },
-  {
-    "id": "wallpaper-06",
-    "title": "Desert Glass",
-    "file": "backgrounds/optimized/wallpaper-06.webp"
-  },
-  {
-    "id": "wallpaper-07",
-    "title": "Moon Village",
-    "file": "backgrounds/optimized/wallpaper-07.webp"
-  },
-  {
-    "id": "wallpaper-08",
-    "title": "Rain Canal",
-    "file": "backgrounds/optimized/wallpaper-08.webp"
-  },
-  {
-    "id": "wallpaper-09",
-    "title": "Sky Garden",
-    "file": "backgrounds/optimized/wallpaper-09.webp"
-  },
-  {
-    "id": "wallpaper-10",
-    "title": "Retro Seaside",
-    "file": "backgrounds/optimized/wallpaper-10.webp"
+    "id": "anime-watercolor-lake-8k",
+    "title": "Anime Watercolor Lake",
+    "file": "backgrounds/anime-watercolor-lake-8k.webp"
   }
 ]
