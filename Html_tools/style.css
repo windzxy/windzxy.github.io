@@ -77,3 +77,42 @@ html[lang="en"] .tool-card:nth-child(1) p,html[lang="en"] .tool-card:nth-child(2
 .ocr-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .2s ease}
 .ocr-status{font-size:13px;color:var(--muted);min-height:20px}
 @media(max-width:560px){.ocr-controls{grid-template-columns:1fr}}
+
+
+body{font-weight:430}
+strong,b,h1,h2,h3,.brand-copy h1,.card h2,.card .icon,.return-home,.lang-select,.settings-tab,.button,button,label{font-weight:600}
+.card p,.hint,.mini-note,.preview-card figcaption{font-weight:430}
+header .wrap{width:calc(100% - 56px);max-width:none;height:58px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px}
+.brand{justify-self:center}
+.brand-copy h1{font-size:17px;font-weight:650;letter-spacing:-.025em;text-align:center}
+.page-actions{display:none}
+.header-actions{justify-self:end;display:flex;align-items:center;gap:8px}
+.return-home{height:34px;border-radius:7px;padding:0 12px;background:var(--panel);border:1px solid var(--line);box-shadow:0 1px 2px rgba(16,18,23,.05);font-weight:600}
+.lang-select{height:34px;min-width:112px;border-radius:7px;background:var(--panel);border:1px solid var(--line);box-shadow:0 1px 2px rgba(16,18,23,.05);font-size:13px;font-weight:500;padding:0 10px}
+.theme-toggle{position:relative;width:50px;min-width:50px;height:28px;padding:0;border-radius:999px;background:color-mix(in srgb,var(--panel2) 88%,transparent);border:1px solid var(--line);box-shadow:none;font-size:0;overflow:hidden}
+.theme-toggle::before{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(16,18,23,.18);transition:transform .18s ease,background .18s ease}
+.theme-toggle::after{display:none}
+:root[data-theme=dark] .theme-toggle::before{transform:translateX(22px);background:var(--accent1)}
+.grid{align-items:stretch}
+.card{display:grid;grid-template-rows:64px auto;gap:12px;min-height:184px;padding:20px}
+.card h2{margin:0 0 7px;font-size:22px;font-weight:600;min-height:1.2em}
+.card p{line-height:1.5}
+html[lang=en] .card{grid-template-rows:64px auto}
+html[lang=en] .card h2{min-height:2.4em;margin:0 0 7px}
+html[lang=en] .card p{min-height:4.5em}
+.image-workbench .workspace-grid{grid-template-columns:minmax(0,1.45fr) minmax(300px,.55fr);gap:14px}
+.settings-panel{padding:16px;border-radius:18px}
+.settings-panel h2{font-size:18px;margin:0 0 8px}
+.settings-tabs{grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 12px;padding:6px;border-radius:12px}
+.settings-tab{min-height:32px;border-radius:8px;font-size:13px;font-weight:600}
+.settings-section summary{font-size:16px;font-weight:600;margin-bottom:12px}
+.settings-section .row{gap:10px}
+.settings-section label{font-size:13px;margin:10px 0 5px}
+.settings-section input,.settings-section select{min-height:36px;padding:8px 10px;border-radius:8px}
+.panel{border-radius:18px;padding:18px}
+.preview-card{border-radius:14px;padding:10px}
+.compare-grid{gap:10px}
+.actions{gap:8px}
+button,.button{min-height:38px;border-radius:7px;font-weight:600}
+button.secondary,.button.secondary{border:1px solid var(--line)}
+@media(max-width:860px){header .wrap{width:calc(100% - 28px);grid-template-columns:auto minmax(0,1fr) auto}.lang-select{min-width:92px;max-width:108px}.theme-toggle{width:48px;min-width:48px}.image-workbench .workspace-grid{grid-template-columns:1fr}}
