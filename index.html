@@ -17,7 +17,7 @@
     <button type="button" data-dock="tools" aria-label="添加功能" data-i18n-aria-label="添加功能">＋</button>
     <button type="button" data-dock="workspaces" aria-label="工作區" data-i18n-aria-label="工作區">▦</button>
     <button type="button" data-dock="settings" aria-label="設定" data-i18n-aria-label="設定">⚙</button>
-    <button id="randomBgDock" class="bg-dock-button" type="button" data-random-bg="1" aria-label="隨機背景" data-i18n-aria-label="隨機背景">BG</button>
+    <button id="randomBgDock" class="bg-dock-button" type="button" data-random-bg="1" onclick="window.randomBackground&&window.randomBackground()" aria-label="隨機背景" data-i18n-aria-label="隨機背景">BG</button>
     <button id="openToolboxDock" type="button" data-dock="tools" aria-label="工具箱" data-i18n-aria-label="工具箱">⌘</button>
   </aside>
   <aside id="desktopDrawer" class="desktop-drawer" aria-label="功能中心" data-i18n-aria-label="功能中心">
@@ -38,7 +38,7 @@
         <p data-i18n="點擊加入桌面，卡片可移動、縮放與摺疊。">點擊加入桌面，卡片可移動、縮放與摺疊。</p>
       </div>
       <div id="toolShelf" class="dock-tool-list"></div>
-      <button id="addCustomCard" class="drawer-button" type="button" data-i18n="新增自訂卡片">新增自訂卡片</button>
+      <button id="addCustomCard" class="drawer-button" type="button" data-i18n="新增快捷卡片">新增快捷卡片</button>
     </div>
     <div class="drawer-panel hidden" data-panel="workspaces">
       <div class="panel-title">
@@ -71,7 +71,7 @@
         <p data-i18n="使用本地背景庫，可隨機切換。">使用本地背景庫，可隨機切換。</p>
       </div>
       <div id="backgroundList" class="background-list"></div>
-      <button id="randomBg" class="drawer-button" type="button" data-random-bg="1" data-i18n="Random 背景">Random 背景</button>
+      <button id="randomBg" class="drawer-button" type="button" data-random-bg="1" onclick="window.randomBackground&&window.randomBackground()" data-i18n="Random 背景">Random 背景</button>
       <button id="openToolbox" class="drawer-button" type="button" data-dock="tools" data-i18n="打開完整工具箱">打開完整工具箱</button>
     </div>
   </aside>
@@ -251,10 +251,10 @@ function addCard(appId){
   renderAll();
 }
 function addCustomCard(){
-  const title=prompt(tr("卡片名稱"));
+  const title=prompt(tr("快捷卡片名稱"));
   if(!title||!title.trim())return;
-  const href=prompt(tr("連結或網址"))||"#";
-  const desc=prompt(tr("簡短描述"))||tr("自訂卡片");
+  const href=prompt(tr("要打開的網址或路徑"))||"#";
+  const desc=prompt(tr("簡短描述"))||tr("快捷入口");
   const i=activeWorkspace().cards.length;
   activeWorkspace().cards.push({id:"custom-"+Date.now(),custom:true,title:title.trim(),desc:desc.trim(),href:href.trim(),icon:"↗",tone:"t-custom",x:72+(i%5)*38,y:78+(i%7)*32,w:300,h:150,collapsed:false,data:{}});
   save();
@@ -598,12 +598,32 @@ function tickWidgets(){
   document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(now));
   document.querySelectorAll("[data-date]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now));
 }
-const bgVersion="20260728-bgcycle1";
+const bgVersion="20260728-bgvisible1";
 let bgApplying=false;
+const bgLooks=[
+  "radial-gradient(circle at 18% 18%,rgba(255,183,94,.72),transparent 34%),radial-gradient(circle at 82% 22%,rgba(113,201,255,.70),transparent 36%),linear-gradient(135deg,#fff7ed,#eef7ff 56%,#f7edff)",
+  "radial-gradient(circle at 20% 24%,rgba(255,118,117,.68),transparent 35%),radial-gradient(circle at 80% 18%,rgba(129,236,236,.68),transparent 38%),linear-gradient(135deg,#fff1f2,#ecfeff 58%,#eef2ff)",
+  "radial-gradient(circle at 18% 72%,rgba(52,211,153,.62),transparent 34%),radial-gradient(circle at 82% 18%,rgba(167,139,250,.64),transparent 38%),linear-gradient(135deg,#f0fdf4,#f5f3ff 58%,#fff7ed)",
+  "radial-gradient(circle at 25% 20%,rgba(251,191,36,.65),transparent 34%),radial-gradient(circle at 72% 68%,rgba(96,165,250,.64),transparent 36%),linear-gradient(135deg,#fffbeb,#eff6ff 58%,#fdf2f8)",
+  "radial-gradient(circle at 16% 20%,rgba(244,114,182,.60),transparent 36%),radial-gradient(circle at 84% 26%,rgba(45,212,191,.66),transparent 38%),linear-gradient(135deg,#fdf2f8,#f0fdfa 58%,#f8fafc)",
+  "radial-gradient(circle at 18% 18%,rgba(56,189,248,.64),transparent 34%),radial-gradient(circle at 80% 72%,rgba(251,146,60,.62),transparent 36%),linear-gradient(135deg,#f0f9ff,#fff7ed 58%,#faf5ff)",
+  "radial-gradient(circle at 24% 74%,rgba(134,239,172,.62),transparent 36%),radial-gradient(circle at 82% 22%,rgba(251,113,133,.60),transparent 38%),linear-gradient(135deg,#f0fdf4,#fff1f2 58%,#eff6ff)",
+  "radial-gradient(circle at 18% 22%,rgba(192,132,252,.62),transparent 36%),radial-gradient(circle at 78% 68%,rgba(34,211,238,.64),transparent 38%),linear-gradient(135deg,#faf5ff,#ecfeff 58%,#fff7ed)",
+  "radial-gradient(circle at 22% 22%,rgba(253,186,116,.66),transparent 34%),radial-gradient(circle at 76% 70%,rgba(147,197,253,.64),transparent 38%),linear-gradient(135deg,#fff7ed,#eff6ff 58%,#f0fdfa)",
+  "radial-gradient(circle at 18% 70%,rgba(250,204,21,.62),transparent 34%),radial-gradient(circle at 80% 18%,rgba(99,102,241,.58),transparent 38%),linear-gradient(135deg,#fefce8,#eef2ff 58%,#fff1f2)"
+];
 function backgroundUrl(file){
   if(!file)return "";
   if(/^data:|^blob:|^https?:/.test(file))return file;
   return file+(file.includes("?")?"&":"?")+"v="+bgVersion;
+}
+function bgIndex(file){
+  const list=backgrounds.length?backgrounds:bgFallback;
+  const found=list.findIndex(bg=>bg.file===file);
+  return found<0?0:found%bgLooks.length;
+}
+function bgGradient(file){
+  return bgLooks[bgIndex(file)];
 }
 function pickBackground(exclude){
   const list=(backgrounds.length?backgrounds:bgFallback).filter(bg=>bg&&bg.file);
@@ -632,22 +652,24 @@ function renderBackgroundList(){
   const list=$("backgroundList");
   if(!list)return;
   const current=localStorage.getItem(bgKey);
-  list.innerHTML=backgrounds.map(bg=>'<button class="background-item'+(bg.file===current?' is-active':'')+'" type="button" data-file="'+escapeHtml(bg.file)+'"><span></span>'+escapeHtml(bg.title)+'</button>').join("");
+  list.innerHTML=backgrounds.map(bg=>'<button class="background-item'+(bg.file===current?' is-active':'')+'" type="button" data-file="'+escapeHtml(bg.file)+'"><span style="background:'+escapeHtml(bgGradient(bg.file))+'"></span>'+escapeHtml(bg.title)+'</button>').join("");
   list.querySelectorAll(".background-item").forEach(btn=>btn.addEventListener("click",()=>applyBackground(btn.dataset.file)));
 }
-function setBackgroundVisual(file,url){
+function setBackgroundVisual(file,url,withImage){
   const app=$("desktopApp");
   if(!app)return;
-  const light='linear-gradient(rgba(255,255,255,.46),rgba(255,255,255,.46))';
-  const dark='linear-gradient(rgba(8,12,20,.56),rgba(8,12,20,.56))';
-  const overlay=document.documentElement.dataset.theme==="dark"?dark:light;
-  app.style.backgroundImage=overlay+',url("'+url+'"),linear-gradient(135deg,#f8f5f1,#eaf3ff)';
-  app.style.backgroundPosition='center,center,center';
+  const tint=document.documentElement.dataset.theme==="dark"?'linear-gradient(rgba(8,12,20,.30),rgba(8,12,20,.30))':'linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.10))';
+  const gradient=bgGradient(file);
+  app.style.backgroundImage=withImage?tint+',url("'+url+'"),'+gradient:tint+','+gradient;
+  app.style.backgroundPosition=withImage?'center,center,center':'center,center';
   app.style.backgroundRepeat='no-repeat,no-repeat,no-repeat';
-  app.style.backgroundSize='cover,cover,cover';
+  app.style.backgroundSize=withImage?'cover,cover,cover':'cover,cover';
   app.dataset.background=file;
   localStorage.setItem(bgKey,file);
+  const title=(backgrounds.find(bg=>bg.file===file)||{}).title||"BG";
+  app.dataset.backgroundTitle=title;
   document.querySelectorAll(".background-item").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.file===file));
+  document.querySelectorAll("[data-random-bg]").forEach(btn=>btn.dataset.current=String(bgIndex(file)+1));
 }
 function fitBackground(url){
   const app=$("desktopApp");
@@ -664,8 +686,11 @@ function fitBackground(url){
 async function applyBackground(file){
   if(!file)return;
   const url=backgroundUrl(file);
-  setBackgroundVisual(file,url);
-  fitBackground(url);
+  setBackgroundVisual(file,url,false);
+  const image=new Image();
+  image.onload=()=>{setBackgroundVisual(file,url,true);fitBackground(url)};
+  image.onerror=()=>setBackgroundVisual(file,url,false);
+  image.src=url;
   renderBackgroundList();
 }
 async function randomBackground(){
@@ -680,6 +705,7 @@ async function randomBackground(){
     setTimeout(()=>{bgApplying=false},120);
   }
 }
+window.randomBackground=randomBackground;
 window.addEventListener("resize",()=>fitBackground(backgroundUrl(localStorage.getItem(bgKey)||$("desktopApp")?.dataset.background||backgrounds[0]?.file||"")));
 function renderAll(){renderWorkspaces();renderShelf();renderDesktop();renderClock()}
 document.addEventListener("click",event=>{const dock=event.target.closest("[data-dock]");if(dock)openDrawer(dock.dataset.dock);const bg=event.target.closest("[data-random-bg]");if(bg)randomBackground();});
