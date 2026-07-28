@@ -38,3 +38,41 @@ html[lang="en"] .card,html[lang="en"] .tool-card{justify-content:flex-start;gap:
 html[lang="en"] .card h2,html[lang="en"] .tool-card h3{min-height:1.25em;margin-top:14px}
 html[lang="en"] .card p,html[lang="en"] .tool-card p{min-height:4.8em;max-width:100%;line-height:1.5}
 html[lang="en"] .tool-card:nth-child(1) p,html[lang="en"] .tool-card:nth-child(2) p{min-height:3.4em}
+
+.workspace-home .site-footer{margin-top:0}
+.desk-shell{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px;padding:34px 0 72px}
+.desk-sidebar,.desk-main{background:linear-gradient(145deg,rgba(255,255,255,.74),rgba(255,255,255,.46));border:1px solid var(--line);box-shadow:var(--shadow);border-radius:34px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.desk-sidebar{position:sticky;top:86px;align-self:start;padding:20px;min-height:calc(100vh - 150px)}
+.desk-brand{display:flex;gap:13px;align-items:flex-start;margin-bottom:18px}
+.desk-dot{width:13px;height:13px;border-radius:50%;margin-top:8px;background:linear-gradient(135deg,var(--blue1),var(--blue2));box-shadow:0 0 0 8px color-mix(in srgb,var(--blue1) 14%,transparent)}
+.desk-brand h1{font-size:24px;margin:0 0 4px;letter-spacing:-.05em;font-weight:650}
+.desk-brand p,.shelf-head p{margin:0;color:var(--muted);font-size:14px}
+.workspace-list{display:grid;gap:10px}
+.workspace-pill{width:100%;min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;border-radius:20px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 76%,transparent);color:var(--ink);box-shadow:none;text-align:left}
+.workspace-pill span{font-weight:650}
+.workspace-pill small{display:grid;place-items:center;min-width:26px;height:26px;border-radius:999px;background:var(--panel2);color:var(--muted)}
+.workspace-pill.is-active{background:linear-gradient(135deg,#29323c,#485563);color:#fff}
+.workspace-pill.is-active small{background:rgba(255,255,255,.18);color:#fff}
+.desk-create{width:100%;margin-top:14px}
+.desk-main{padding:22px}
+.desk-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;margin-bottom:16px}
+.desk-top h2{font-size:clamp(32px,4vw,54px);line-height:.98;margin:0 0 9px;font-weight:650;letter-spacing:-.065em}
+.desk-top p:not(.eyebrow){color:var(--muted);margin:0}
+.desk-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.desk-search{margin-bottom:18px}
+.desk-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;min-height:230px}
+.desk-grid .tool-card{grid-column:span 4}
+.desk-grid .tool-card:nth-child(1),.desk-grid .tool-card:nth-child(2){grid-column:span 6}
+.desk-grid.is-editing .desk-tile{cursor:grab;outline:1px dashed color-mix(in srgb,var(--ink) 24%,transparent);outline-offset:-8px}
+.desk-grid.is-editing .desk-tile:active{cursor:grabbing}
+.desk-tile.dragging{opacity:.48;transform:scale(.98)}
+.empty-desk{grid-column:1/-1;display:grid;place-items:center;min-height:220px;border:1px dashed var(--line);border-radius:30px;color:var(--muted);background:color-mix(in srgb,var(--panel) 58%,transparent)}
+.tool-shelf{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.shelf-head{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:12px}
+.shelf-head h3{margin:0;font-size:20px;font-weight:650}
+.shelf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.shelf-item{display:flex;align-items:center;gap:10px;justify-content:flex-start;min-height:58px;padding:8px 10px;border:1px solid var(--line);border-radius:22px;background:color-mix(in srgb,var(--panel) 78%,transparent);box-shadow:var(--soft);color:var(--ink)}
+.shelf-item .app-icon{width:38px;height:38px;border-radius:14px;font-size:14px}
+.shelf-item span:nth-child(2){font-weight:650;min-width:0;flex:1;text-align:left}
+.shelf-item small{color:var(--muted);font-size:18px}
+@media(max-width:980px){.desk-shell{grid-template-columns:1fr}.desk-sidebar{position:relative;top:auto;min-height:0}.workspace-list{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}.desk-top{grid-template-columns:1fr}.desk-actions{justify-content:flex-start}.desk-grid .tool-card,.desk-grid .tool-card:nth-child(1),.desk-grid .tool-card:nth-child(2){grid-column:span 12}}
