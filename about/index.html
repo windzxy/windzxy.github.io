@@ -3,44 +3,50 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>About · Windzxy</title>
-  <meta name="description" content="關於 Windzxy Tools">
-  <link rel="icon" href="../images/avatar.png" type="image/svg+xml">
+  <title>About · Windzxy Tools</title>
+  <meta name="description" content="Windzxy Tools 簡介。">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="apple-touch-icon" href="../assets/favicon.svg">
   <link rel="stylesheet" href="../styles/main.css">
 </head>
 <body>
-
-  <header class="site-header">
-    <div class="wrap nav">
-      <a class="brand" href="../index.html">
-        <img class="brand-logo" src="../images/avatar.png" alt="Windzxy avatar">
-        <span><strong>Windzxy</strong><small>Tools</small></span>
-      </a>
-      <nav>
-        <a href="../index.html">首頁</a>
-        <a href="../Html_tools/index.html">工具箱</a>
-        <a href="../archives/index.html">Archive</a>
-        <a href="../about/index.html">About</a>
-      </nav>
-      <button class="theme-toggle" type="button" aria-label="切換主題"></button>
-    </div>
-  </header>
+<header class="site-header">
+  <div class="wrap nav">
+    <a class="brand" href="../index.html">
+      <img class="brand-logo" src="../assets/favicon.svg" alt="Windzxy">
+      <span><strong>Windzxy</strong><small>Tools</small></span>
+    </a>
+    <nav>
+      <a href="../index.html">首頁</a>
+      <a href="../Html_tools/index.html">工具箱</a>
+      <a href="../archives/index.html">Archive</a>
+      <a href="../about/index.html">About</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="切換主題"></button>
+  </div>
+</header>
 <main class="wrap page">
-  <article class="content-card">
-    <p class="eyebrow">About</p>
-    <h1>關於這個小地方</h1>
-    <p>居然被你發現這個小地方，歡迎哈😝😝😝</p>
-    <p>這裡現在是 Windzxy 的純靜態 Tools：不依賴第三方建站平台，主要放一些能直接在瀏覽器使用的日常工具。</p>
-    <p>如果你只是想快速處理圖片，可以直接進入 <a href="../Html_tools/image-tool.html">圖片處理工具</a>。</p>
-  </article>
-</main>
-
-  <footer class="site-footer">
-    <div class="wrap footer-grid">
-      <p>© 2026 Windzxy · Pure static GitHub Pages site · No generator/CDN dependency.</p>
-      <a href="../atom.xml">RSS</a>
+  <p class="eyebrow">About</p>
+  <h1>簡單、乾淨、常用。</h1>
+  <section class="content-card split-card">
+    <div>
+      <h2>這是什麼</h2>
+      <p>Windzxy Tools 是一組放在 GitHub Pages 上的靜態辦公工具。適合臨時處理圖片、文字、表格、日期與 JSON。</p>
     </div>
-  </footer>
-<script src="../scripts/theme.js"></script>
+    <div>
+      <h2>怎麼使用</h2>
+      <p>直接打開工具頁即可。大部分處理都在瀏覽器本機完成，不需要安裝軟體。</p>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span>© 2026 Windzxy</span>
+    <a href="../atom.xml">RSS</a>
+  </div>
+</footer>
+<script>
+(function(){const root=document.documentElement;const saved=localStorage.getItem("windzxy-theme");if(saved)root.dataset.theme=saved;document.querySelector(".theme-toggle")?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);});})();
+</script>
 </body>
 </html>
