@@ -1,0 +1,22 @@
+[
+  {
+    "id": "aurora-grid",
+    "title": "Aurora Grid",
+    "file": "backgrounds/aurora-grid.svg"
+  },
+  {
+    "id": "mist-valley",
+    "title": "Mist Valley",
+    "file": "backgrounds/mist-valley.svg"
+  },
+  {
+    "id": "neon-dusk",
+    "title": "Neon Dusk",
+    "file": "backgrounds/neon-dusk.svg"
+  },
+  {
+    "id": "minimal-sand",
+    "title": "Minimal Sand",
+    "file": "backgrounds/minimal-sand.svg"
+  }
+]
