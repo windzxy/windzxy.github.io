@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Windzxy Tools</title>
-  <link rel="stylesheet" href="../styles/main.css?v=20260728-uipro1">
+  <link rel="stylesheet" href="../styles/main.css?v=20260728-i18nfix1">
 </head>
 <body>
 <header class="site-header">
@@ -26,6 +26,6 @@
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
-<script src="i18n.js?v=20260728-uipro1"></script>
+<script src="i18n.js?v=20260728-i18nfix1"></script>
 </body>
 </html>
