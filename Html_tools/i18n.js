@@ -149,24 +149,32 @@ const I18N={
 "文字翻译":{"zh-CN":"文字翻译","zh-HK":"文字翻譯","en":"Text translation"},"翻译文字":{"zh-CN":"翻译文字","zh-HK":"翻譯文字","en":"Translate text"},"目标语言":{"zh-CN":"目标语言","zh-HK":"目標語言","en":"Target language"},"简体中文":{"zh-CN":"简体中文","zh-HK":"簡體中文","en":"Simplified Chinese"},"繁体中文（香港）":{"zh-CN":"繁体中文（香港）","zh-HK":"繁體中文（香港）","en":"Traditional Chinese (HK)"},"英语":{"zh-CN":"英语","zh-HK":"英語","en":"English"},"翻译结果":{"zh-CN":"翻译结果","zh-HK":"翻譯結果","en":"Translation result"},"复制译文":{"zh-CN":"复制译文","zh-HK":"複製譯文","en":"Copy translation"},"使用浏览器本机翻译；不支持时会使用内置常用词转换。":{"zh-CN":"使用浏览器本机翻译；不支持时会使用内置常用词转换。","zh-HK":"使用瀏覽器本機翻譯；不支援時會使用內置常用詞轉換。","en":"Uses browser-local translation when available; otherwise falls back to built-in common-term conversion."},"未检测到可翻译文字。":{"zh-CN":"未检测到可翻译文字。","zh-HK":"未偵測到可翻譯文字。","en":"No translatable text detected."},"浏览器本机翻译不可用，已使用基础词库转换。":{"zh-CN":"浏览器本机翻译不可用，已使用基础词库转换。","zh-HK":"瀏覽器本機翻譯不可用，已使用基礎詞庫轉換。","en":"Browser-local translation is unavailable; basic glossary conversion was used."},"OCR 文字识别":{"zh-CN":"OCR 文字识别","zh-HK":"OCR 文字識別","en":"OCR text recognition"},"识别当前图片文字":{"zh-CN":"识别当前图片文字","zh-HK":"識別目前圖片文字","en":"Recognize text in current image"},"OCR 结果":{"zh-CN":"OCR 结果","zh-HK":"OCR 結果","en":"OCR result"},"复制 OCR 结果":{"zh-CN":"复制 OCR 结果","zh-HK":"複製 OCR 結果","en":"Copy OCR result"},"浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。":{"zh-CN":"浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。","zh-HK":"瀏覽器不支援本機 OCR。可以先用系統截圖/相簿文字識別，或接入後端 OCR API。","en":"This browser does not support local OCR. Use system screenshot/photo OCR first, or connect a backend OCR API."},"未识别到文字。":{"zh-CN":"未识别到文字。","zh-HK":"未識別到文字。","en":"No text recognized."},"识别中…":{"zh-CN":"识别中…","zh-HK":"識別中…","en":"Recognizing…"},"请先选择图片。":{"zh-CN":"请先选择图片。","zh-HK":"請先選擇圖片。","en":"Please choose an image first."},"已复制":{"zh-CN":"已复制","zh-HK":"已複製","en":"Copied"}
 };
 const rev={};
-for(const k in I18N){rev[k]=k;for(const l of ["zh-CN","zh-HK","en"])rev[I18N[k][l]]=k}
+for(const k in I18N){rev[k]=k;for(const l of ["zh-CN","zh-HK","en"]){if(I18N[k][l])rev[I18N[k][l]]=k}}
+const textKeys=new WeakMap();
 function lang(){return localStorage.getItem("windzxy-lang")||"zh-HK"}
-function tx(s){const key=rev[String(s).trim()];return key?(I18N[key][lang()]||key):s}
+function keyOf(value){const s=String(value||"").trim();return rev[s]||s}
+function tx(value){const raw=String(value??"");const key=keyOf(raw);const item=I18N[key];return item?(item[lang()]||item["zh-HK"]||key):raw}
 function keepSpace(original,next){const m=String(original).match(/^(\s*)([\s\S]*?)(\s*)$/);return m?m[1]+next+m[3]:next}
+function translateAttr(el,attr,store){const value=el.getAttribute(attr);if(!value)return;if(!el.dataset[store])el.dataset[store]=keyOf(value);const item=I18N[el.dataset[store]];if(item)el.setAttribute(attr,item[lang()]||item["zh-HK"]||el.dataset[store])}
+function translateTextNode(node){const parent=node.parentElement;if(!parent||["SCRIPT","STYLE","TEXTAREA","CODE","PRE"].includes(parent.tagName))return;if(!node.nodeValue.trim())return;if(!textKeys.has(node))textKeys.set(node,keyOf(node.nodeValue));const key=textKeys.get(node);const item=I18N[key];if(item)node.nodeValue=keepSpace(node.nodeValue,item[lang()]||item["zh-HK"]||key)}
 function applyI18n(root=document.body){
   document.documentElement.lang=lang()==="en"?"en":lang()==="zh-CN"?"zh-Hans":"zh-Hant-HK";
-  document.title=tx(document.title);
-  document.querySelectorAll("[placeholder]").forEach(el=>{el.placeholder=tx(el.placeholder.replace(/&#10;/g,"\n"))});
-  document.querySelectorAll("[aria-label]").forEach(el=>{el.setAttribute("aria-label",tx(el.getAttribute("aria-label")))});
-  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){const p=n.parentElement;if(!p||["SCRIPT","STYLE","TEXTAREA"].includes(p.tagName))return NodeFilter.FILTER_REJECT;return n.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});
+  if(!document.documentElement.dataset.i18nTitle)document.documentElement.dataset.i18nTitle=keyOf(document.title);
+  const titleItem=I18N[document.documentElement.dataset.i18nTitle];
+  if(titleItem)document.title=titleItem[lang()]||titleItem["zh-HK"]||document.documentElement.dataset.i18nTitle;
+  document.querySelectorAll("[placeholder]").forEach(el=>translateAttr(el,"placeholder","i18nPlaceholder"));
+  document.querySelectorAll("[aria-label]").forEach(el=>translateAttr(el,"aria-label","i18nAriaLabel"));
+  document.querySelectorAll("[title]").forEach(el=>translateAttr(el,"title","i18nTitle"));
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){const p=n.parentElement;if(!p||["SCRIPT","STYLE","TEXTAREA","CODE","PRE"].includes(p.tagName))return NodeFilter.FILTER_REJECT;return n.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});
   const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
-  nodes.forEach(n=>{const next=tx(n.nodeValue);if(next!==n.nodeValue)n.nodeValue=keepSpace(n.nodeValue,next)});
-  document.querySelectorAll(".lang-select").forEach(s=>s.value=lang());
+  nodes.forEach(translateTextNode);
+  document.querySelectorAll(".lang-select").forEach(sel=>{sel.value=lang();if(!sel.dataset.i18nReady){sel.dataset.i18nReady="1";sel.addEventListener("change",()=>{localStorage.setItem("windzxy-lang",sel.value);applyI18n(document.body)})}});
 }
 function installLang(){
-  document.querySelectorAll(".lang-select").forEach(sel=>sel.addEventListener("change",()=>{localStorage.setItem("windzxy-lang",sel.value);applyI18n(document.body)}));
   applyI18n(document.body);
-  new MutationObserver(ms=>{if(ms.some(m=>m.addedNodes.length||m.type==="characterData"))applyI18n(document.body)}).observe(document.body,{childList:true,subtree:true,characterData:true});
+  let pending=false;
+  new MutationObserver(ms=>{if(pending)return;if(!ms.some(m=>m.addedNodes.length))return;pending=true;requestAnimationFrame(()=>{pending=false;applyI18n(document.body)})}).observe(document.body,{childList:true,subtree:true});
 }
 window.t=tx;
-document.addEventListener("DOMContentLoaded",installLang);
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",installLang);else installLang();
+
