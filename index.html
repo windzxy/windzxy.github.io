@@ -7,7 +7,8 @@
   <meta name="description" content="Windzxy 的網頁端桌面工具箱。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-fullapps1">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-imgfast1">
+  <link rel="preload" as="image" href="backgrounds/optimized/wallpaper-01.webp?v=20260728-imgfast1">
 </head>
 <body class="desktop-home">
 <main id="desktopApp" class="web-desktop">
@@ -83,7 +84,7 @@
     <time id="desktopClock"></time>
   </footer>
 </main>
-<script src="Html_tools/i18n.js?v=20260728-fullapps3"></script>
+<script src="Html_tools/i18n.js?v=20260728-imgfast1"></script>
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
@@ -110,54 +111,54 @@ const seeds={
 };
 const bgFallback=[
   {
-    id: "anime-cinematic-sunset-8k",
-    title: "Anime Cinematic Sunset · 8K",
-    file: "backgrounds/anime-cinematic-sunset-8k.webp"
+    id: "wallpaper-01",
+    title: "Sunset Coast",
+    file: "backgrounds/optimized/wallpaper-01.webp"
   },
   {
-    id: "anime-spring-coast-8k",
-    title: "Anime Spring Coast · 8K",
-    file: "backgrounds/anime-spring-coast-8k.webp"
+    id: "wallpaper-02",
+    title: "Aurora Night",
+    file: "backgrounds/optimized/wallpaper-02.webp"
   },
   {
-    id: "anime-cyberpunk-rooftop-8k",
-    title: "Anime Cyberpunk Rooftop · 8K",
-    file: "backgrounds/anime-cyberpunk-rooftop-8k.webp"
+    id: "wallpaper-03",
+    title: "Sakura Morning",
+    file: "backgrounds/optimized/wallpaper-03.webp"
   },
   {
-    id: "anime-floating-kingdom-8k",
-    title: "Anime Floating Kingdom · 8K",
-    file: "backgrounds/anime-floating-kingdom-8k.webp"
+    id: "wallpaper-04",
+    title: "Cyber Rooftop",
+    file: "backgrounds/optimized/wallpaper-04.webp"
   },
   {
-    id: "anime-orbital-garden-8k",
-    title: "Anime Orbital Garden · 8K",
-    file: "backgrounds/anime-orbital-garden-8k.webp"
+    id: "wallpaper-05",
+    title: "Forest Mist",
+    file: "backgrounds/optimized/wallpaper-05.webp"
   },
   {
-    id: "anime-moonlit-village-8k",
-    title: "Anime Moonlit Village · 8K",
-    file: "backgrounds/anime-moonlit-village-8k.webp"
+    id: "wallpaper-06",
+    title: "Desert Glass",
+    file: "backgrounds/optimized/wallpaper-06.webp"
   },
   {
-    id: "anime-rainy-canal-8k",
-    title: "Anime Rainy Canal · 8K",
-    file: "backgrounds/anime-rainy-canal-8k.webp"
+    id: "wallpaper-07",
+    title: "Moon Village",
+    file: "backgrounds/optimized/wallpaper-07.webp"
   },
   {
-    id: "anime-steampunk-skyport-8k",
-    title: "Anime Steampunk Skyport · 8K",
-    file: "backgrounds/anime-steampunk-skyport-8k.webp"
+    id: "wallpaper-08",
+    title: "Rain Canal",
+    file: "backgrounds/optimized/wallpaper-08.webp"
   },
   {
-    id: "anime-watercolor-lake-8k",
-    title: "Anime Watercolor Lake · 8K",
-    file: "backgrounds/anime-watercolor-lake-8k.webp"
+    id: "wallpaper-09",
+    title: "Sky Garden",
+    file: "backgrounds/optimized/wallpaper-09.webp"
   },
   {
-    id: "anime-retro-seaside-store-8k",
-    title: "Anime Retro Seaside Store · 8K",
-    file: "backgrounds/anime-retro-seaside-store-8k.webp"
+    id: "wallpaper-10",
+    title: "Retro Seaside",
+    file: "backgrounds/optimized/wallpaper-10.webp"
   }
 ];
 function seedCards(key){return (seeds[key]||[]).map(([appId,x,y,w,h],i)=>({id:key+"-"+appId+"-"+i,appId,x,y,w,h,collapsed:false,data:{}}))}
@@ -598,32 +599,12 @@ function tickWidgets(){
   document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(now));
   document.querySelectorAll("[data-date]").forEach(el=>el.textContent=new Intl.DateTimeFormat(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now));
 }
-const bgVersion="20260728-bgvisible1";
+const bgVersion="20260728-imgfast1";
 let bgApplying=false;
-const bgLooks=[
-  "radial-gradient(circle at 18% 18%,rgba(255,183,94,.72),transparent 34%),radial-gradient(circle at 82% 22%,rgba(113,201,255,.70),transparent 36%),linear-gradient(135deg,#fff7ed,#eef7ff 56%,#f7edff)",
-  "radial-gradient(circle at 20% 24%,rgba(255,118,117,.68),transparent 35%),radial-gradient(circle at 80% 18%,rgba(129,236,236,.68),transparent 38%),linear-gradient(135deg,#fff1f2,#ecfeff 58%,#eef2ff)",
-  "radial-gradient(circle at 18% 72%,rgba(52,211,153,.62),transparent 34%),radial-gradient(circle at 82% 18%,rgba(167,139,250,.64),transparent 38%),linear-gradient(135deg,#f0fdf4,#f5f3ff 58%,#fff7ed)",
-  "radial-gradient(circle at 25% 20%,rgba(251,191,36,.65),transparent 34%),radial-gradient(circle at 72% 68%,rgba(96,165,250,.64),transparent 36%),linear-gradient(135deg,#fffbeb,#eff6ff 58%,#fdf2f8)",
-  "radial-gradient(circle at 16% 20%,rgba(244,114,182,.60),transparent 36%),radial-gradient(circle at 84% 26%,rgba(45,212,191,.66),transparent 38%),linear-gradient(135deg,#fdf2f8,#f0fdfa 58%,#f8fafc)",
-  "radial-gradient(circle at 18% 18%,rgba(56,189,248,.64),transparent 34%),radial-gradient(circle at 80% 72%,rgba(251,146,60,.62),transparent 36%),linear-gradient(135deg,#f0f9ff,#fff7ed 58%,#faf5ff)",
-  "radial-gradient(circle at 24% 74%,rgba(134,239,172,.62),transparent 36%),radial-gradient(circle at 82% 22%,rgba(251,113,133,.60),transparent 38%),linear-gradient(135deg,#f0fdf4,#fff1f2 58%,#eff6ff)",
-  "radial-gradient(circle at 18% 22%,rgba(192,132,252,.62),transparent 36%),radial-gradient(circle at 78% 68%,rgba(34,211,238,.64),transparent 38%),linear-gradient(135deg,#faf5ff,#ecfeff 58%,#fff7ed)",
-  "radial-gradient(circle at 22% 22%,rgba(253,186,116,.66),transparent 34%),radial-gradient(circle at 76% 70%,rgba(147,197,253,.64),transparent 38%),linear-gradient(135deg,#fff7ed,#eff6ff 58%,#f0fdfa)",
-  "radial-gradient(circle at 18% 70%,rgba(250,204,21,.62),transparent 34%),radial-gradient(circle at 80% 18%,rgba(99,102,241,.58),transparent 38%),linear-gradient(135deg,#fefce8,#eef2ff 58%,#fff1f2)"
-];
 function backgroundUrl(file){
   if(!file)return "";
   if(/^data:|^blob:|^https?:/.test(file))return file;
   return file+(file.includes("?")?"&":"?")+"v="+bgVersion;
-}
-function bgIndex(file){
-  const list=backgrounds.length?backgrounds:bgFallback;
-  const found=list.findIndex(bg=>bg.file===file);
-  return found<0?0:found%bgLooks.length;
-}
-function bgGradient(file){
-  return bgLooks[bgIndex(file)];
 }
 function pickBackground(exclude){
   const list=(backgrounds.length?backgrounds:bgFallback).filter(bg=>bg&&bg.file);
@@ -631,6 +612,13 @@ function pickBackground(exclude){
   if(list.length===1)return list[0];
   const pool=list.filter(bg=>bg.file!==exclude);
   return pool[Math.floor(Math.random()*pool.length)];
+}
+function preloadBackgrounds(){
+  (backgrounds.length?backgrounds:bgFallback).slice(0,4).forEach(bg=>{
+    const img=new Image();
+    img.decoding="async";
+    img.src=backgroundUrl(bg.file);
+  });
 }
 async function loadBackgrounds(){
   let loaded=false;
@@ -645,53 +633,41 @@ async function loadBackgrounds(){
     }
   }catch(e){}
   if(!loaded)backgrounds=bgFallback;
+  preloadBackgrounds();
   const initial=pickBackground(localStorage.getItem(bgKey));
   if(initial)await applyBackground(initial.file);
+  renderBackgroundList();
 }
 function renderBackgroundList(){
   const list=$("backgroundList");
   if(!list)return;
   const current=localStorage.getItem(bgKey);
-  list.innerHTML=backgrounds.map(bg=>'<button class="background-item'+(bg.file===current?' is-active':'')+'" type="button" data-file="'+escapeHtml(bg.file)+'"><span style="background:'+escapeHtml(bgGradient(bg.file))+'"></span>'+escapeHtml(bg.title)+'</button>').join("");
+  list.innerHTML=backgrounds.map(bg=>'<button class="background-item'+(bg.file===current?' is-active':'')+'" type="button" data-file="'+escapeHtml(bg.file)+'"><span style="background-image:url('+escapeHtml(backgroundUrl(bg.file))+')"></span>'+escapeHtml(bg.title)+'</button>').join("");
   list.querySelectorAll(".background-item").forEach(btn=>btn.addEventListener("click",()=>applyBackground(btn.dataset.file)));
 }
-function setBackgroundVisual(file,url,withImage){
+function setBackgroundImage(file){
   const app=$("desktopApp");
   if(!app)return;
-  const tint=document.documentElement.dataset.theme==="dark"?'linear-gradient(rgba(8,12,20,.30),rgba(8,12,20,.30))':'linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.10))';
-  const gradient=bgGradient(file);
-  app.style.backgroundImage=withImage?tint+',url("'+url+'"),'+gradient:tint+','+gradient;
-  app.style.backgroundPosition=withImage?'center,center,center':'center,center';
-  app.style.backgroundRepeat='no-repeat,no-repeat,no-repeat';
-  app.style.backgroundSize=withImage?'cover,cover,cover':'cover,cover';
+  const url=backgroundUrl(file);
+  app.style.backgroundImage='url("'+url+'")';
+  app.style.backgroundPosition='center';
+  app.style.backgroundRepeat='no-repeat';
+  app.style.backgroundSize='cover';
   app.dataset.background=file;
   localStorage.setItem(bgKey,file);
   const title=(backgrounds.find(bg=>bg.file===file)||{}).title||"BG";
   app.dataset.backgroundTitle=title;
   document.querySelectorAll(".background-item").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.file===file));
-  document.querySelectorAll("[data-random-bg]").forEach(btn=>btn.dataset.current=String(bgIndex(file)+1));
-}
-function fitBackground(url){
-  const app=$("desktopApp");
-  if(!app)return;
-  const image=new Image();
-  image.onload=()=>{
-    const imageRatio=image.naturalWidth/image.naturalHeight;
-    const screenRatio=window.innerWidth/window.innerHeight;
-    const fit=Math.abs(imageRatio-screenRatio)>.48?'contain':'cover';
-    app.style.backgroundSize='cover,'+fit+',cover';
-  };
-  image.src=url;
+  document.querySelectorAll("[data-random-bg]").forEach(btn=>btn.dataset.current=String((backgrounds.findIndex(bg=>bg.file===file)+1)||1));
 }
 async function applyBackground(file){
   if(!file)return;
   const url=backgroundUrl(file);
-  setBackgroundVisual(file,url,false);
   const image=new Image();
-  image.onload=()=>{setBackgroundVisual(file,url,true);fitBackground(url)};
-  image.onerror=()=>setBackgroundVisual(file,url,false);
+  image.decoding="async";
+  image.onload=()=>setBackgroundImage(file);
+  image.onerror=()=>console.error("Background image failed:",url);
   image.src=url;
-  renderBackgroundList();
 }
 async function randomBackground(){
   if(bgApplying)return;
@@ -706,8 +682,8 @@ async function randomBackground(){
   }
 }
 window.randomBackground=randomBackground;
-window.addEventListener("resize",()=>fitBackground(backgroundUrl(localStorage.getItem(bgKey)||$("desktopApp")?.dataset.background||backgrounds[0]?.file||"")));
 function renderAll(){renderWorkspaces();renderShelf();renderDesktop();renderClock()}
+window.renderAll=renderAll;
 document.addEventListener("click",event=>{const dock=event.target.closest("[data-dock]");if(dock)openDrawer(dock.dataset.dock);const bg=event.target.closest("[data-random-bg]");if(bg)randomBackground();});
 document.querySelectorAll("[data-dock]").forEach(btn=>btn.onclick=()=>openDrawer(btn.dataset.dock));
 $("closeDrawer").onclick=()=>$("desktopDrawer").classList.remove("is-open");
@@ -716,7 +692,7 @@ $("addCustomCard").onclick=addCustomCard;
 $("resetLayout").onclick=resetLayout;
 $("deskSearch").addEventListener("input",renderShelf);
 setInterval(()=>{renderClock();tickWidgets()},1000);
-try{renderAll();openDrawer("tools");loadBackgrounds().then(()=>renderBackgroundList())}catch(error){console.error(error);loadBackgrounds().then(()=>renderBackgroundList())}
+try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error(error);loadBackgrounds()}
 </script>
 </body>
 </html>
