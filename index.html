@@ -485,11 +485,13 @@ function tickWidgets(){
 }
 async function loadBackgrounds(){
   try{
-    const res=await fetch("backgrounds/manifest.json?v=20260728-deskapps2");
+    const res=await fetch("backgrounds/manifest.json?v=20260728-anime8k1",{cache:"no-cache"});
     if(res.ok)backgrounds=await res.json();
   }catch(e){}
   renderBackgroundList();
-  applyBackground(localStorage.getItem(bgKey)||backgrounds[0]?.file);
+  const saved=localStorage.getItem(bgKey);
+  const initial=backgrounds.some(bg=>bg.file===saved)?saved:backgrounds[0]?.file;
+  applyBackground(initial);
 }
 function renderBackgroundList(){
   $("backgroundList").innerHTML=backgrounds.map(bg=>'<button class="background-item" type="button" data-file="'+escapeHtml(bg.file)+'"><span></span>'+escapeHtml(bg.title)+'</button>').join("");
