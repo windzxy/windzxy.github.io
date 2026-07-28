@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Windzxy Tools</title>
   <meta name="description" content="Windzxy 的日常辦公工具箱。">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-clean2">
-  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-clean2">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-clean2">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-polish1">
+  <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-polish1">
+  <link rel="stylesheet" href="styles/main.css?v=20260728-polish1">
 </head>
 <body>
 <header class="site-header">
@@ -18,28 +18,36 @@
   </div>
 </header>
 <main class="wrap home">
-  <section class="intro">
+  <section class="mast">
     <div>
-      <p class="eyebrow">Tools</p>
-      <h1>工具箱</h1>
-      <p class="lead">圖片、文字、表格、日期與 JSON。常用功能放一起，打開就用。</p>
+      <p class="eyebrow">Windzxy Tools</p>
+      <h1>今天要處理什麼？</h1>
+      <p class="lead">把幾個常用的小工具收在一起，少一步打開軟體，多一步直接完成。</p>
     </div>
     <div class="quick">
       <a class="button" href="Html_tools/image-tool.html">圖片處理</a>
       <a class="button secondary" href="Html_tools/index.html">全部工具</a>
     </div>
   </section>
+  <label class="search-card">
+    <span>⌕</span>
+    <input data-search type="search" placeholder="搜尋工具，例如：圖片、JSON、表格">
+    <kbd>/</kbd>
+  </label>
   <section class="tool-grid" aria-label="工具列表">
-    <a class="tool-card" href="Html_tools/image-tool.html"><span class="icon">◎</span><div><h3>圖片處理</h3><p>放大、去背、裁切、調色、壓縮與格式轉換。</p></div></a>
-    <a class="tool-card" href="Html_tools/text-tool.html"><span class="icon">Aa</span><div><h3>文字整理</h3><p>統計、去空行、去重、排序與大小寫轉換。</p></div></a>
-    <a class="tool-card" href="Html_tools/table-tool.html"><span class="icon">▦</span><div><h3>表格轉換</h3><p>CSV、TSV、Markdown 與 HTML 快速整理。</p></div></a>
-    <a class="tool-card" href="Html_tools/date-tool.html"><span class="icon">31</span><div><h3>日期計算</h3><p>日期間隔、日曆天與工作天推算。</p></div></a>
-    <a class="tool-card" href="Html_tools/json-tool.html"><span class="icon">{}</span><div><h3>JSON 工具</h3><p>格式化、壓縮、驗證與複製。</p></div></a>
+    <a class="tool-card t-image" href="Html_tools/image-tool.html" data-tool="圖片處理 放大、去背、裁切、調色、壓縮與格式轉換。 image picture background upscale"><span class="app-icon">◎</span><div><h3>圖片處理</h3><p>放大、去背、裁切、調色、壓縮與格式轉換。</p></div><span class="arrow">→</span></a>
+    <a class="tool-card t-text" href="Html_tools/text-tool.html" data-tool="文字整理 統計、去空行、去重、排序與大小寫轉換。 text words clean sort"><span class="app-icon">Aa</span><div><h3>文字整理</h3><p>統計、去空行、去重、排序與大小寫轉換。</p></div><span class="arrow">→</span></a>
+    <a class="tool-card t-table" href="Html_tools/table-tool.html" data-tool="表格轉換 CSV、TSV、Markdown 與 HTML 快速整理。 table csv tsv markdown"><span class="app-icon">▦</span><div><h3>表格轉換</h3><p>CSV、TSV、Markdown 與 HTML 快速整理。</p></div><span class="arrow">→</span></a>
+    <a class="tool-card t-date" href="Html_tools/date-tool.html" data-tool="日期計算 日期間隔、日曆天與工作天推算。 date calendar days"><span class="app-icon">31</span><div><h3>日期計算</h3><p>日期間隔、日曆天與工作天推算。</p></div><span class="arrow">→</span></a>
+    <a class="tool-card t-json" href="Html_tools/json-tool.html" data-tool="JSON 工具 格式化、壓縮、驗證與複製。 json format validate"><span class="app-icon">{}</span><div><h3>JSON 工具</h3><p>格式化、壓縮、驗證與複製。</p></div><span class="arrow">→</span></a>
   </section>
 </main>
-<footer class="site-footer"><div class="wrap footer-inner"><span>© 2026 Windzxy</span></div></footer>
+<footer class="site-footer"><div class="wrap">© 2026 Windzxy</div></footer>
 <script>
 (function(){const root=document.documentElement;const saved=localStorage.getItem("windzxy-theme");if(saved)root.dataset.theme=saved;document.querySelector(".theme-toggle")?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);});})();
+</script>
+<script>
+(function(){const input=document.querySelector("[data-search]");const cards=[...document.querySelectorAll("[data-tool]")];if(!input)return;input.addEventListener("input",()=>{const q=input.value.trim().toLowerCase();cards.forEach(card=>{card.hidden=q&&!card.dataset.tool.toLowerCase().includes(q);});});})();
 </script>
 </body>
 </html>
