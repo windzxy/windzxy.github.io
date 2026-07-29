@@ -208,10 +208,9 @@ function normalizeWorkspace(ws){
       next.w=430;
       next.h=420;
     }
-    const preferred=preferredCardSize(next.appId,next.w,next.h);
     if(appById(next.appId)?.kind==="tool"){
-      next.w=Math.max(280,Math.min(next.w,preferred.w));
-      next.h=Math.max(220,Math.min(next.h,preferred.h));
+      next.w=Math.max(280,next.w);
+      next.h=Math.max(220,next.h);
     }
     return next;
   });
