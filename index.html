@@ -7,7 +7,7 @@
   <meta name="description" content="WebDesk 網頁端桌面。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench4">
+  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench5">
   <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
@@ -599,20 +599,32 @@ function appContent(appId){
         </div>
         <p class="image-live-note" data-i18n="已啟用即時預覽，不需要手動刷新。">已啟用即時預覽，不需要手動刷新。</p>
       </section>
-      <section class="app-panel image-preview-stage" data-preview-mode="result">
+      <section class="app-panel image-preview-stage">
         <div class="image-preview-head">
           <div>
-            <strong data-i18n="主預覽">主預覽</strong>
-            <span><span data-i18n="原圖">原圖</span> <small id="imgOriginalSize">-</small> · <span data-i18n="裁切">裁切</span> <small id="imgCropSize">-</small> · <span data-i18n="輸出">輸出</span> <small id="imgOutputSize">-</small></span>
-          </div>
-          <div class="image-preview-switch" aria-label="預覽模式" data-i18n-aria-label="預覽模式">
-            <button type="button" class="is-active" data-preview-tab="result" data-i18n="結果">結果</button>
-            <button type="button" data-preview-tab="source" data-i18n="原圖">原圖</button>
+            <strong data-i18n="左右對照">左右對照</strong>
+            <span data-i18n="左側原圖，右側顯示修改後的即時預覽。">左側原圖，右側顯示修改後的即時預覽。</span>
           </div>
         </div>
-        <div class="image-stage-canvas checker" data-image-drop data-empty="選擇圖片後即時預覽">
-          <canvas id="imgCanvas" data-stage-canvas="result"></canvas>
-          <canvas id="imgOriginal" data-stage-canvas="source"></canvas>
+        <div class="image-compare-stage">
+          <div class="image-stage-card image-source-card">
+            <div class="image-stage-title">
+              <strong data-i18n="原圖">原圖</strong>
+              <small id="imgOriginalSize">-</small>
+            </div>
+            <div class="image-stage-canvas checker" data-image-drop data-empty="選擇圖片後顯示原圖">
+              <canvas id="imgOriginal" data-stage-canvas="source"></canvas>
+            </div>
+          </div>
+          <div class="image-stage-card image-result-card">
+            <div class="image-stage-title">
+              <strong data-i18n="修改後預覽">修改後預覽</strong>
+              <small><span data-i18n="裁切">裁切</span> <span id="imgCropSize">-</span> · <span data-i18n="輸出">輸出</span> <span id="imgOutputSize">-</span></small>
+            </div>
+            <div class="image-stage-canvas checker" data-image-drop data-empty="選擇圖片後即時預覽">
+              <canvas id="imgCanvas" data-stage-canvas="result"></canvas>
+            </div>
+          </div>
         </div>
         <div class="image-stage-actions">
           <button id="imgDownload" class="image-action-requires-image" type="button" data-i18n="下載結果">下載結果</button>
@@ -759,10 +771,6 @@ function bindImageApp(win){
   ids("cropY").addEventListener("input",()=>{if(!img||lock)return;ids("cropOn").checked=true;ids("cropAnchor").value="custom";normalizeCrop(false);scheduleDraw()});
   ids("cropOn").addEventListener("change",()=>{if(!img)return;if(ids("cropOn").checked)normalizeCrop(true);else{ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("imgW").value=ow;ids("imgH").value=oh}updateCropReadout();scheduleDraw()});
   win.querySelectorAll("[data-img-tab]").forEach(btn=>btn.onclick=()=>{win.querySelectorAll("[data-img-tab]").forEach(b=>b.classList.toggle("is-active",b===btn));win.querySelectorAll("[data-img-section]").forEach(p=>p.classList.toggle("hidden",p.dataset.imgSection!==btn.dataset.imgTab))});
-  win.querySelectorAll("[data-preview-tab]").forEach(btn=>btn.onclick=()=>{
-    win.querySelectorAll("[data-preview-tab]").forEach(b=>b.classList.toggle("is-active",b===btn));
-    win.querySelector(".image-preview-stage")?.setAttribute("data-preview-mode",btn.dataset.previewTab);
-  });
   win.querySelectorAll("input,select").forEach(el=>["input","change"].forEach(type=>el.addEventListener(type,()=>{if(el.id==="imgFile"||lock||/^crop/.test(el.id))return;scheduleDraw()})));
   ids("imgReset").onclick=()=>{if(!img)return;ids("imgW").value=ow;ids("imgH").value=oh;ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("cropAspect").value="free";ids("cropAnchor").value="center";ids("cropOn").checked=false;["bright","contrast","sat","sharp","noise"].forEach(id=>ids(id).value=0);ids("bgMode").value="none";ids("bgTol").value=34;ids("bgFeather").value=1;ids("ocrOut").value="";ids("ocrStatus").textContent="";updateCropReadout();scheduleDraw()};
   const downloadImage=()=>{if(!canvas.width)return;const fmt=ids("imgFmt").value,ext=fmt==="image/jpeg"?"jpg":fmt.split("/")[1]||"png";const a=document.createElement("a");a.download=currentName+"-edited."+ext;a.href=canvas.toDataURL(fmt,+ids("imgQ").value);a.click()};
