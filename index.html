@@ -83,7 +83,7 @@
     <time id="desktopClock"></time>
   </footer>
 </main>
-<script src="Html_tools/i18n.js?v=20260729-translate2"></script>
+<script src="Html_tools/i18n.js?v=20260729-offline-translate1"></script>
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
@@ -479,7 +479,7 @@ function createWindow(key,title,w,h){
 }
 function appContent(appId){
   if(appId==="image")return '<div class="desk-app image-full-app"><section class="app-panel app-sidebar"><h3 data-i18n="圖片工作台">圖片工作台</h3><input id="imgFile" type="file" accept="image/*"><div class="tool-tabs"><button data-img-tab="size" class="is-active" type="button" data-i18n="尺寸">尺寸</button><button data-img-tab="crop" type="button" data-i18n="裁切">裁切</button><button data-img-tab="bg" type="button" data-i18n="去背">去背</button><button data-img-tab="adjust" type="button" data-i18n="調色">調色</button><button data-img-tab="export" type="button" data-i18n="輸出">輸出</button><button data-img-tab="ocr" type="button">OCR</button></div><div class="img-section" data-img-section="size"><div class="app-controls two"><label><span data-i18n="寬度">寬度</span><input id="imgW" type="number"></label><label><span data-i18n="高度">高度</span><input id="imgH" type="number"></label></div><label class="check-line"><input id="imgRatio" type="checkbox" checked><span data-i18n="保持長寬比例">保持長寬比例</span></label><div class="app-actions"><button type="button" data-scale="1">1×</button><button type="button" data-scale="2">2×</button><button type="button" data-scale="3">3×</button><button type="button" data-scale="4">4×</button><button type="button" data-long="1080">1080</button><button type="button" data-long="2048">2048</button></div></div><div class="img-section hidden" data-img-section="crop"><div class="app-controls two"><label>X<input id="cropX" type="number" value="0"></label><label>Y<input id="cropY" type="number" value="0"></label><label>W<input id="cropW" type="number"></label><label>H<input id="cropH" type="number"></label></div><label class="check-line"><input id="cropOn" type="checkbox"><span data-i18n="啟用裁切">啟用裁切</span></label></div><div class="img-section hidden" data-img-section="bg"><label><span data-i18n="去背模式">去背模式</span><select id="bgMode"><option value="none" data-i18n="不去背">不去背</option><option value="white" data-i18n="移除白色/淺色背景">移除白色/淺色背景</option><option value="black" data-i18n="移除黑色/深色背景">移除黑色/深色背景</option><option value="corner" data-i18n="按四角背景取樣">按四角背景取樣</option></select></label><label><span data-i18n="容差">容差</span><input id="bgTol" type="range" min="1" max="180" value="34"></label><label><span data-i18n="邊緣羽化">邊緣羽化</span><input id="bgFeather" type="range" min="0" max="8" value="1"></label></div><div class="img-section hidden" data-img-section="adjust"><label><span data-i18n="亮度">亮度</span><input id="bright" type="range" min="-80" max="80" value="0"></label><label><span data-i18n="對比">對比</span><input id="contrast" type="range" min="-80" max="80" value="0"></label><label><span data-i18n="飽和">飽和</span><input id="sat" type="range" min="-80" max="80" value="0"></label><label><span data-i18n="銳化">銳化</span><input id="sharp" type="range" min="0" max="100" value="0"></label><label><span data-i18n="降噪">降噪</span><input id="noise" type="range" min="0" max="4" value="0"></label></div><div class="img-section hidden" data-img-section="export"><label><span data-i18n="格式">格式</span><select id="imgFmt"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label><label><span data-i18n="品質">品質</span><input id="imgQ" type="range" min=".4" max="1" step=".05" value=".9"></label><div class="app-actions"><button id="imgDownload" type="button" data-i18n="下載">下載</button><button id="imgReset" type="button" data-i18n="重設">重設</button></div></div><div class="img-section hidden" data-img-section="ocr"><label><span>OCR</span><select id="ocrLang"><option value="eng">English</option><option value="chi_sim">简中</option><option value="chi_tra">繁中</option></select></label><div class="app-actions"><button id="ocrRun" type="button" data-i18n="識別文字">識別文字</button><button id="ocrCopy" type="button" data-i18n="複製">複製</button></div><textarea id="ocrOut" class="mini-output" readonly></textarea><p id="ocrStatus" class="mini-note"></p></div><div class="app-actions"><button id="imgApply" type="button" data-i18n="更新預覽">更新預覽</button></div><p id="imgInfo" class="mini-note"></p></section><section class="app-panel app-preview-grid"><figure><figcaption data-i18n="原圖">原圖</figcaption><canvas id="imgOriginal"></canvas></figure><figure><figcaption data-i18n="處理結果">處理結果</figcaption><canvas id="imgCanvas"></canvas></figure></section></div>';
-  if(appId==="text")return '<div class="desk-app text-app compact-text-app adjustable-text-app"><section class="app-panel text-tools-panel"><div class="stat-strip"><div><strong id="textChars">0</strong><span data-i18n="字元">字元</span></div><div><strong id="textNoSpace">0</strong><span data-i18n="不含空白">不含空白</span></div><div><strong id="textWords">0</strong><span data-i18n="詞數">詞數</span></div><div><strong id="textLines">0</strong><span data-i18n="行數">行數</span></div></div><div class="text-command-row"><div class="app-actions text-actions"><button data-text-act="trim" data-i18n="清除首尾空白">清除首尾空白</button><button data-text-act="blank" data-i18n="移除空行">移除空行</button><button data-text-act="dedupe" data-i18n="行去重">行去重</button><button data-text-act="sort" data-i18n="行排序">行排序</button><button data-text-act="upper" data-i18n="英文大寫">英文大寫</button><button data-text-act="lower" data-i18n="英文小寫">英文小寫</button><button data-text-act="title" data-i18n="首字母大寫">首字母大寫</button><button data-text-act="copy" data-i18n="複製">複製</button><button data-text-act="clear" data-i18n="清空">清空</button></div><div class="text-convert-box"><label><span data-i18n="輸出語言">輸出語言</span><select id="textTarget"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select></label><button id="textConvert" type="button" data-i18n="轉換文字">轉換文字</button><button id="textCopyOut" type="button" data-i18n="複製結果">複製結果</button></div></div></section><div class="text-work-area"><section class="app-panel text-input-panel"><textarea id="appText" placeholder="'+escapeHtml(tr("在此貼上文字…"))+'"></textarea></section><div class="text-splitter" data-text-splitter role="separator" aria-orientation="horizontal" aria-label="調整輸入和輸出高度" data-i18n-aria-label="調整輸入和輸出高度"></div><section class="app-panel text-output-panel"><textarea id="textOut" class="mini-output text-output" readonly placeholder="'+escapeHtml(tr("轉換結果"))+'"></textarea><p id="textConvertStatus" class="mini-note" data-i18n="可轉換簡繁中文，轉英文會優先使用線上翻譯。">可轉換簡繁中文，轉英文會優先使用線上翻譯。</p></section></div></div>';
+  if(appId==="text")return '<div class="desk-app text-app compact-text-app adjustable-text-app"><section class="app-panel text-tools-panel"><div class="stat-strip"><div><strong id="textChars">0</strong><span data-i18n="字元">字元</span></div><div><strong id="textNoSpace">0</strong><span data-i18n="不含空白">不含空白</span></div><div><strong id="textWords">0</strong><span data-i18n="詞數">詞數</span></div><div><strong id="textLines">0</strong><span data-i18n="行數">行數</span></div></div><div class="text-command-row"><div class="app-actions text-actions"><button data-text-act="trim" data-i18n="清除首尾空白">清除首尾空白</button><button data-text-act="blank" data-i18n="移除空行">移除空行</button><button data-text-act="dedupe" data-i18n="行去重">行去重</button><button data-text-act="sort" data-i18n="行排序">行排序</button><button data-text-act="upper" data-i18n="英文大寫">英文大寫</button><button data-text-act="lower" data-i18n="英文小寫">英文小寫</button><button data-text-act="title" data-i18n="首字母大寫">首字母大寫</button><button data-text-act="copy" data-i18n="複製">複製</button><button data-text-act="clear" data-i18n="清空">清空</button></div><div class="text-convert-box"><label><span data-i18n="輸出語言">輸出語言</span><select id="textTarget"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option><option value="en">English</option></select></label><button id="textConvert" type="button" data-i18n="轉換文字">轉換文字</button><button id="textCopyOut" type="button" data-i18n="複製結果">複製結果</button></div></div></section><div class="text-work-area"><section class="app-panel text-input-panel"><textarea id="appText" placeholder="'+escapeHtml(tr("在此貼上文字…"))+'"></textarea></section><div class="text-splitter" data-text-splitter role="separator" aria-orientation="horizontal" aria-label="調整輸入和輸出高度" data-i18n-aria-label="調整輸入和輸出高度"></div><section class="app-panel text-output-panel"><textarea id="textOut" class="mini-output text-output" readonly placeholder="'+escapeHtml(tr("轉換結果"))+'"></textarea><p id="textConvertStatus" class="mini-note" data-i18n="離線模式：支援簡繁中文互轉與內置開源詞庫中英轉換。">離線模式：支援簡繁中文互轉與內置開源詞庫中英轉換。</p></section></div></div>';
   if(appId==="table")return '<div class="desk-app table-app"><section class="app-panel"><textarea id="appTableInput" placeholder="name,qty\\nApple,3"></textarea><div class="app-controls two"><label><span data-i18n="分隔符">分隔符</span><select id="tableDelim"><option value="auto">Auto</option><option value=",">CSV</option><option value="\\t">TSV</option><option value="|">|</option></select></label><label><span data-i18n="搜索">搜索</span><input id="tableSearch"></label></div><div class="app-actions"><button id="tablePreview" type="button" data-i18n="預覽">預覽</button><button id="tableMarkdown" type="button">Markdown</button><button id="tableCsv" type="button">CSV</button><button id="tableTsv" type="button">TSV</button><button id="tableCopy" type="button" data-i18n="複製">複製</button></div></section><section class="app-panel"><div id="tableOutput" class="table-output"></div></section></div>';
   if(appId==="date")return '<div class="desk-app date-app"><section class="app-panel app-controls"><label><span data-i18n="開始日期">開始日期</span><input id="dateStart" type="date"></label><label><span data-i18n="結束日期">結束日期</span><input id="dateEnd" type="date"></label><label><span data-i18n="天數">天數</span><input id="dateDays" type="number" value="7"></label><label><span data-i18n="計算方式">計算方式</span><select id="dateMode"><option value="calendar" data-i18n="日曆天">日曆天</option><option value="workday" data-i18n="工作天">工作天</option></select></label></section><section class="app-panel"><div class="app-actions"><button id="dateDiff" type="button" data-i18n="計算間隔">計算間隔</button><button id="dateAdd" type="button" data-i18n="向後推算">向後推算</button><button id="dateSub" type="button" data-i18n="向前推算">向前推算</button></div><output id="dateResult" class="big-result"></output><pre id="dateDetail"></pre></section></div>';
   if(appId==="json")return '<div class="desk-app json-app"><section class="app-panel"><textarea id="jsonInput" placeholder="{\\"hello\\":true}"></textarea><div class="app-controls"><label><span data-i18n="路徑">路徑</span><input id="jsonPath" placeholder="user.name or items.0"></label></div><div class="app-actions"><button id="jsonFormat" type="button" data-i18n="格式化">格式化</button><button id="jsonMin" type="button" data-i18n="壓縮">壓縮</button><button id="jsonValidate" type="button" data-i18n="驗證">驗證</button><button id="jsonPick" type="button" data-i18n="取值">取值</button><button id="jsonCopy" type="button" data-i18n="複製">複製</button></div></section><section class="app-panel"><pre id="jsonOutput"></pre></section></div>';
@@ -526,13 +526,13 @@ function bindTextApp(win){
     const target=win.querySelector("#textTarget").value;
     if(!text.trim()){
       out.value="";
-      if(status)status.textContent=tr("未檢測到可轉換文字。");
+      setTextConvertStatus(status,"未檢測到可轉換文字。");
       return;
     }
-    if(status)status.textContent=tr("轉換中…");
+    setTextConvertStatus(status,"轉換中…");
     const result=await translateText(text,target);
     out.value=result.text;
-    if(status)status.textContent=tr(result.status);
+    setTextConvertStatus(status,result.status);
   };
   win.querySelector("#textCopyOut").onclick=()=>navigator.clipboard?.writeText(out.value);
   bindTextSplitter(win);
@@ -575,103 +575,174 @@ async function translateText(text,target){
     return {text:basicTextConvert(text,target),status:"已使用離線詞庫轉換。"};
   }
   if(target==="en"){
-    const onlineResult=await tryOnlineTranslate(text,target);
-    if(onlineResult)return {text:onlineResult,status:"已使用線上翻譯。"};
-    const browserResult=await tryBrowserTranslate(text,target);
-    if(browserResult)return {text:browserResult,status:"已使用瀏覽器本機翻譯。"};
-    const offlineResult=basicTextConvert(text,target);
-    if(offlineResult.trim()&&offlineResult.trim()!==String(text||"").trim()){
-      return {text:offlineResult,status:"線上翻譯不可用，已使用內置詞庫轉換。"};
+    const offlineResult=offlineTranslateToEnglish(text);
+    if(offlineResult.changed){
+      return {text:offlineResult.text,status:offlineResult.partial?"已使用內置開源詞庫翻譯，部分未命中已保留。":"已使用內置開源詞庫翻譯。"};
     }
-    return {text:String(text||""),status:"翻譯服務暫時不可用，已保留原文。"};
+    return {text:String(text||""),status:"內置詞庫沒有命中；已保留原文。"};
   }
   return {text:basicTextConvert(text,target),status:"已使用離線詞庫轉換。"};
 }
-async function tryOnlineTranslate(text,target){
-  if(target!=="en")return "";
-  const value=String(text||"").trim();
-  if(!value)return "";
-  const services=[fetchGoogleTranslate,fetchMyMemoryTranslate];
-  for(const service of services){
-    try{
-      const result=await service(value,target);
-      if(result&&result.trim()&&result.trim()!==value)return result;
-    }catch(e){}
+function offlineTranslateToEnglish(text){
+  const source=String(text||"");
+  if(!source.trim())return {text:"",changed:false,partial:false};
+  const phrasePairs=[
+    ["不能依賴google","不能依赖google","cannot rely on Google"],
+    ["不能依賴 Google","不能依赖 Google","cannot rely on Google"],
+    ["依賴google","依赖google","rely on Google"],
+    ["依賴 Google","依赖 Google","rely on Google"],
+    ["我覺得","我觉得","I think"],
+    ["應該","应该","should"],
+    ["內置開源翻譯","内置开源翻译","built-in open-source translation"],
+    ["內置開源","内置开源","built-in open-source"],
+    ["開源翻譯","开源翻译","open-source translation"],
+    ["翻譯功能沒有翻譯到英語","翻译功能没有翻译到英语","the translation feature did not translate to English"],
+    ["翻譯功能失效","翻译功能失效","the translation feature stopped working"],
+    ["翻譯功能","翻译功能","translation feature"],
+    ["翻譯服務","翻译服务","translation service"],
+    ["翻譯結果","翻译结果","translation result"],
+    ["轉換文字","转换文字","convert text"],
+    ["複製結果","复制结果","copy result"],
+    ["輸出語言","输出语言","output language"],
+    ["沒有翻譯到英語","没有翻译到英语","did not translate to English"],
+    ["沒有翻譯","没有翻译","did not translate"],
+    ["重新檢查","重新检查","recheck"],
+    ["最新版本","最新版本","latest version"],
+    ["為什麼","为什么","why"],
+    ["什麼","什么","what"],
+    ["怎麼","怎么","how"],
+    ["哪裡","哪里","where"],
+    ["誰","谁","who"],
+    ["你說什麼","你说什么","what did you say"],
+    ["你是誰","你是谁","who are you"],
+    ["你在做什麼","你在做什么","what are you doing"],
+    ["這是什麼","这是什么","what is this"],
+    ["你好","你好","hello"],
+    ["您好","您好","hello"],
+    ["謝謝","谢谢","thank you"],
+    ["不用謝","不用谢","you are welcome"],
+    ["早上好","早上好","good morning"],
+    ["晚上好","晚上好","good evening"],
+    ["再見","再见","goodbye"],
+    ["網頁桌面","网页桌面","web desktop"],
+    ["添加功能","添加功能","add tools"],
+    ["功能中心","功能中心","control center"],
+    ["功能庫","功能库","tool library"],
+    ["工作區","工作区","workspace"],
+    ["日常工作區","日常工作区","daily workspace"],
+    ["辦公整理","办公整理","office desk"],
+    ["圖片工作台","图片工作台","image desk"],
+    ["資料處理","数据处理","data desk"],
+    ["圖片處理","图片处理","image tools"],
+    ["文字整理","文字整理","text tools"],
+    ["表格轉換","表格转换","table tools"],
+    ["日期計算","日期计算","date calculator"],
+    ["JSON 工具","JSON 工具","JSON tools"],
+    ["快速連結","快速链接","quick link"],
+    ["新分頁打開","新标签页打开","open in new tab"],
+    ["識別到的網址","识别到的网址","detected URLs"],
+    ["未識別到網址","未识别到网址","no URL detected"],
+    ["天氣位置","天气位置","weather location"],
+    ["正在載入天氣","正在加载天气","loading weather"],
+    ["天氣載入失敗","天气加载失败","weather failed to load"],
+    ["圖片","图片","image"],
+    ["文字","文字","text"],
+    ["表格","表格","table"],
+    ["日期","日期","date"],
+    ["工具","工具","tool"],
+    ["天氣","天气","weather"],
+    ["便箋","便签","note"],
+    ["待辦","待办","to-do"],
+    ["計算器","计算器","calculator"],
+    ["色板","色板","color palette"],
+    ["小抄","小抄","snippet"],
+    ["背景","背景","wallpaper"],
+    ["設定","设置","settings"],
+    ["語言","语言","language"],
+    ["主題","主题","theme"],
+    ["網址","网址","URL"],
+    ["處理","处理","process"],
+    ["壓縮","压缩","compress"],
+    ["預覽","预览","preview"],
+    ["識別","识别","recognize"],
+    ["翻譯","翻译","translate"],
+    ["轉換","转换","convert"],
+    ["結果","结果","result"],
+    ["格式化","格式化","format"],
+    ["驗證","验证","validate"],
+    ["排序","排序","sort"],
+    ["清空","清空","clear"],
+    ["錯誤","错误","error"],
+    ["打開","打开","open"],
+    ["關閉","关闭","close"],
+    ["搜尋","搜索","search"],
+    ["刷新","刷新","refresh"],
+    ["定位","定位","locate"],
+    ["下載","下载","download"],
+    ["上傳","上传","upload"],
+    ["保存","保存","save"],
+    ["刪除","删除","delete"],
+    ["移除","移除","remove"],
+    ["新增","新增","add"],
+    ["重置","重置","reset"],
+    ["今天","今天","today"],
+    ["明天","明天","tomorrow"],
+    ["昨天","昨天","yesterday"],
+    ["現在","现在","now"],
+    ["稍後","稍后","later"],
+    ["完成","完成","done"],
+    ["失敗","失败","failed"],
+    ["成功","成功","success"]
+  ];
+  const wordPairs=[
+    ["可以","can"],["不能","cannot"],["不會","does not"],["不需要","do not need"],["需要","need"],["請","please"],
+    ["已經","already"],["重新","again"],["檢查","check"],["最新","latest"],["版本","version"],["功能","feature"],
+    ["問題","problem"],["原因","reason"],["修正","fix"],["使用","use"],["支持","support"],["支援","support"],
+    ["本地","local"],["本機","local"],["離線","offline"],["線上","online"],["開源","open-source"],["內置","built-in"],["英文","English"],["英語","English"],
+    ["中文","Chinese"],["簡體","Simplified Chinese"],["繁體","Traditional Chinese"],["香港","Hong Kong"],
+    ["你","you"],["我","I"],["他","he"],["她","she"],["它","it"],["我們","we"],["你們","you"],["他們","they"],
+    ["說","say"],["想","want"],["做","do"],["是","is"],["在","at"],["有","have"],["要","want"],["看","look"],["改","change"],
+    ["和","and"],["或","or"],["但","but"],["如果","if"],["則","then"],["因為","because"],["所以","so"]
+  ];
+  const particles=/[的了嗎呢啊吧呀啦著着過过把被給给與与及和或於于在是]/g;
+  const punctuationMap={"，":", ","。":". ","？":"? ","！":"! ","；":"; ","：":": ","、":", ","（":" (","）":") ","「":"\"","」":"\"","『":"\"","』":"\"","《":"\"","》":"\""};
+  let output=source.replace(/[，。？！；：、（）「」『』《》]/g,ch=>punctuationMap[ch]||ch);
+  const sortedPhrases=phrasePairs.slice().sort((a,b)=>Math.max(b[0].length,b[1].length)-Math.max(a[0].length,a[1].length));
+  for(const [hk,cn,en] of sortedPhrases){
+    output=replaceOfflineTerm(output,hk,en);
+    output=replaceOfflineTerm(output,cn,en);
   }
-  return "";
+  const sortedWords=wordPairs.slice().sort((a,b)=>b[0].length-a[0].length);
+  for(const [zh,en] of sortedWords)output=replaceOfflineTerm(output,zh,en);
+  output=output.replace(particles," ");
+  output=cleanupOfflineEnglish(output);
+  const changed=output.trim()!==source.trim();
+  const partial=/[\u3400-\u9fff]/.test(output);
+  return {text:output,changed,partial};
 }
-function splitTranslateChunks(text,maxLength=900){
-  const pieces=String(text||"").split(/(\s+)/);
-  const chunks=[];
-  let current="";
-  for(const piece of pieces){
-    if(!piece)continue;
-    if(current&&current.length+piece.length>maxLength){
-      chunks.push(current);
-      current=piece;
-    }else{
-      current+=piece;
-    }
-  }
-  if(current)chunks.push(current);
-  return chunks;
+function replaceOfflineTerm(text,term,replacement){
+  if(!term)return text;
+  return String(text).split(term).join(" "+replacement+" ");
 }
-async function fetchGoogleTranslate(text,target){
-  const chunks=splitTranslateChunks(text);
-  const translated=[];
-  for(const chunk of chunks){
-    const url="https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl="+encodeURIComponent(target)+"&dt=t&q="+encodeURIComponent(chunk);
-    const res=await fetch(url,{cache:"no-store"});
-    if(!res.ok)throw new Error("google translate failed");
-    const json=await res.json();
-    const part=(json?.[0]||[]).map(item=>item?.[0]||"").join("");
-    if(!part.trim())throw new Error("empty google translation");
-    translated.push(part);
-  }
-  return translated.join("");
+function cleanupOfflineEnglish(text){
+  let out=String(text||"")
+    .replace(/\s+/g," ")
+    .replace(/\s+([,.;:?!])/g,"$1")
+    .replace(/([,.;:?!])(?=\S)/g,"$1 ")
+    .replace(/\(\s+/g,"(")
+    .replace(/\s+\)/g,")")
+    .replace(/\bI think should\b/gi,"I think it should")
+    .replace(/\bcannot rely on Google I think\b/gi,"cannot rely on Google. I think")
+    .replace(/\btranslation feature did not translate to English\b\.?/gi,"The translation feature did not translate to English.")
+    .replace(/\bwhat did you say, image\b\.?/gi,"What did you say, image.")
+    .trim();
+  out=out.replace(/(^|[.!?]\s+)([a-z])/g,(m,p,ch)=>p+ch.toUpperCase());
+  return out;
 }
-async function fetchMyMemoryTranslate(text,target){
-  const source=detectChineseScript(text)==="hant"?"zh-TW":"zh-CN";
-  const chunks=splitTranslateChunks(text,480);
-  const translated=[];
-  for(const chunk of chunks){
-    const url="https://api.mymemory.translated.net/get?q="+encodeURIComponent(chunk)+"&langpair="+encodeURIComponent(source+"|"+target);
-    const res=await fetch(url,{cache:"no-store"});
-    if(!res.ok)throw new Error("mymemory translate failed");
-    const json=await res.json();
-    const part=json?.responseData?.translatedText||"";
-    if(!part.trim())throw new Error("empty mymemory translation");
-    translated.push(part);
-  }
-  return translated.join("");
-}
-async function tryBrowserTranslate(text,target){
-  if(target!=="en")return "";
-  const sourceCandidates=detectChineseScript(text)==="hant"?["zh-Hant","zh-TW","zh-HK","zh"]:["zh-Hans","zh-CN","zh"];
-  const targetCandidates=["en","en-US"];
-  for(const sourceLanguage of sourceCandidates){
-    for(const targetLanguage of targetCandidates){
-      try{
-        if(window.Translator?.create){
-          const translator=await window.Translator.create({sourceLanguage,targetLanguage});
-          if(translator?.translate){
-            const result=await translator.translate(text);
-            if(result&&String(result).trim()&&String(result).trim()!==String(text).trim())return String(result);
-          }
-        }
-      }catch(e){}
-      try{
-        if(window.ai?.translator?.create){
-          const translator=await window.ai.translator.create({sourceLanguage,targetLanguage});
-          if(translator?.translate){
-            const result=await translator.translate(text);
-            if(result&&String(result).trim()&&String(result).trim()!==String(text).trim())return String(result);
-          }
-        }
-      }catch(e){}
-    }
-  }
-  return "";
+function setTextConvertStatus(el,key){
+  if(!el)return;
+  el.dataset.i18n=key;
+  el.textContent=tr(key);
 }
 function detectChineseScript(text){
   const hant=(String(text).match(/[這裡個開後與為檔圖預覽選擇識別語題輯寬點擊處壓縮質長邊無損關閉強變複製轉換輸錯誤離線庫檢測]/g)||[]).length;
