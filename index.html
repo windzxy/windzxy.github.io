@@ -592,6 +592,8 @@ function offlineTranslateToEnglish(text){
     ["依賴google","依赖google","rely on Google"],
     ["依賴 Google","依赖 Google","rely on Google"],
     ["我覺得","我觉得","I think"],
+    ["應該內置開源翻譯","应该内置开源翻译","should include built-in open-source translation"],
+    ["應該內置","应该内置","should include built-in"],
     ["應該","应该","should"],
     ["內置開源翻譯","内置开源翻译","built-in open-source translation"],
     ["內置開源","内置开源","built-in open-source"],
@@ -732,6 +734,7 @@ function cleanupOfflineEnglish(text){
     .replace(/\(\s+/g,"(")
     .replace(/\s+\)/g,")")
     .replace(/\bI think should\b/gi,"I think it should")
+    .replace(/\bI think it should built-in\b/gi,"I think it should use built-in")
     .replace(/\bcannot rely on Google I think\b/gi,"cannot rely on Google. I think")
     .replace(/\btranslation feature did not translate to English\b\.?/gi,"The translation feature did not translate to English.")
     .replace(/\bwhat did you say, image\b\.?/gi,"What did you say, image.")
