@@ -494,7 +494,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .window-resize,.resize-grip{touch-action:none}
 @media(max-width:760px){.desktop-card{width:auto!important;max-width:calc(100% - 72px)}}
 
-/* imageworkbench5: side-by-side source and edited preview stage */
+/* imageworkbench6: fixed side-by-side source and edited preview stage */
 .image-workbench{
   grid-template-columns:minmax(320px,380px) minmax(0,1fr);
   grid-template-rows:auto auto minmax(0,1fr);
@@ -704,8 +704,9 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .image-compare-stage{
   min-height:0;
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-columns:repeat(2,minmax(180px,1fr));
   gap:10px;
+  overflow:auto;
 }
 .image-stage-card{
   min-width:0;
@@ -801,7 +802,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   grid-template-areas:"tabs" "toolbar" "controls" "preview";
 }
 .desktop-card .inline-tool .image-preview-stage{min-height:180px}
-.desktop-card .inline-tool .image-compare-stage{grid-template-columns:1fr}
+.desktop-card .inline-tool .image-compare-stage{grid-template-columns:repeat(2,minmax(160px,1fr))}
 @media(max-width:920px){
   .image-workbench{
     grid-template-columns:1fr;
@@ -810,9 +811,6 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   }
   .app-controls.four{grid-template-columns:repeat(2,minmax(0,1fr))}
   .image-crop-presets{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:760px){
-  .image-compare-stage{grid-template-columns:1fr}
 }
 @media(max-width:520px){
   .image-workspace-tabs button{flex-basis:94px}
