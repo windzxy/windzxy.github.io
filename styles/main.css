@@ -499,16 +499,60 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .window-resize,.resize-grip{touch-action:none}
 @media(max-width:760px){.desktop-card{width:auto!important;max-width:calc(100% - 72px)}}
 
-/* imageworkbench1: image tool rebuilt around upload, controls and live preview */
+/* imageworkbench2: tabs are real image workspaces, with readable actions */
 .image-workbench{
   grid-template-columns:300px minmax(0,1fr);
-  grid-template-rows:auto minmax(0,1fr);
-  grid-template-areas:"toolbar preview" "controls preview";
+  grid-template-rows:auto auto minmax(0,1fr);
+  grid-template-areas:
+    "tabs tabs"
+    "toolbar preview"
+    "controls preview";
   gap:10px;
   min-height:0;
 }
+.image-workspace-tabs{
+  grid-area:tabs;
+  display:flex;
+  gap:6px;
+  min-width:0;
+  padding:6px;
+  overflow-x:auto;
+  border:1px solid rgba(217,220,225,.92);
+  border-radius:12px;
+  background:rgba(255,255,255,.72);
+}
+:root[data-theme=dark] .image-workspace-tabs{
+  border-color:rgba(255,255,255,.12);
+  background:rgba(16,22,34,.82);
+}
+.image-workspace-tabs button{
+  flex:1 0 82px;
+  min-height:38px;
+  border:1px solid transparent;
+  border-radius:9px;
+  background:transparent;
+  color:#374151;
+  font-weight:700;
+  cursor:pointer;
+  white-space:nowrap;
+}
+:root[data-theme=dark] .image-workspace-tabs button{color:#d1d5db}
+.image-workspace-tabs button:hover{
+  background:rgba(255,138,0,.10);
+  color:#b45309;
+}
+:root[data-theme=dark] .image-workspace-tabs button:hover{
+  background:rgba(255,138,0,.16);
+  color:#fbbf24;
+}
+.image-workspace-tabs button.is-active{
+  border-color:rgba(255,138,0,.55);
+  background:#ff8a00;
+  color:#fff;
+  box-shadow:0 8px 18px rgba(255,138,0,.22);
+}
 .image-toolbar{grid-area:toolbar;display:grid;gap:9px;padding:10px;overflow:visible}
-.image-controls{grid-area:controls;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:9px;padding:10px}
+.image-controls{grid-area:controls;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:9px;padding:10px}
 .image-preview-grid{grid-area:preview;min-height:0}
 .image-dropzone{
   min-height:86px;
@@ -532,15 +576,38 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   background:rgba(255,138,0,.14);
 }
 .image-file-meta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
-.image-main-actions{margin:0;gap:6px}
-.image-main-actions button,.image-ocr-actions button,.image-refresh,.image-preset-row button{
+.image-main-actions{display:none;margin:0;gap:6px}
+.image-workbench.has-image .image-main-actions{display:flex}
+.image-main-actions button,.image-ocr-actions button,.image-export-actions button,.image-preset-row button{
   min-height:30px;
   border-radius:8px;
   font-size:13px;
 }
-.image-tabs{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0}
-.image-tabs button{min-height:31px;font-size:13px}
-.image-controls .img-section{min-height:0;overflow:auto}
+.image-controls .img-section{
+  min-height:0;
+  overflow:auto;
+  display:grid;
+  align-content:start;
+  gap:10px;
+}
+.image-controls .img-section.hidden{display:none}
+.image-section-head{
+  display:grid;
+  gap:3px;
+  margin-bottom:2px;
+}
+.image-section-head strong{
+  font-size:15px;
+  color:#111827;
+}
+:root[data-theme=dark] .image-section-head strong{color:#f3f4f6}
+.image-section-head span,.image-live-note{
+  margin:0;
+  color:#6b7280;
+  font-size:12px;
+  line-height:1.45;
+}
+:root[data-theme=dark] .image-section-head span,:root[data-theme=dark] .image-live-note{color:#a7adba}
 .image-controls .app-controls{gap:8px}
 .app-controls.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 .image-controls label{font-size:13px}
@@ -554,20 +621,15 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   font-weight:650;
   cursor:pointer;
 }
-.image-refresh{
-  justify-self:start;
-  border:0;
-  background:rgba(255,138,0,.12);
-  color:#d97706;
-  font-weight:650;
-  padding:0 11px;
-  cursor:pointer;
-}
-:root[data-theme=dark] .image-refresh{background:rgba(255,138,0,.18);color:#fbbf24}
 .image-workbench button:disabled,.image-workbench input:disabled,.image-workbench select:disabled{
-  opacity:.48;
+  opacity:.72;
   cursor:not-allowed;
 }
+.image-preset-row button:disabled,.image-action-requires-image:disabled{
+  background:#6b7280;
+  color:#f9fafb;
+}
+.image-export-actions{margin-top:2px}
 .image-preview-grid{
   grid-template-columns:1fr;
   gap:10px;
@@ -624,19 +686,20 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .image-workbench.has-image .image-canvas-box canvas{display:block}
 .desktop-card .inline-tool .image-workbench{
   grid-template-columns:1fr;
-  grid-template-rows:auto auto minmax(140px,1fr);
-  grid-template-areas:"toolbar" "controls" "preview";
+  grid-template-rows:auto auto auto minmax(140px,1fr);
+  grid-template-areas:"tabs" "toolbar" "controls" "preview";
 }
 .desktop-card .inline-tool .image-preview-grid{min-height:140px}
 @media(max-width:920px){
   .image-workbench{
     grid-template-columns:1fr;
-    grid-template-rows:auto auto minmax(280px,1fr);
-    grid-template-areas:"toolbar" "controls" "preview";
+    grid-template-rows:auto auto auto minmax(280px,1fr);
+    grid-template-areas:"tabs" "toolbar" "controls" "preview";
   }
   .app-controls.four{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:520px){
+  .image-workspace-tabs button{flex-basis:74px}
   .image-file-meta{grid-template-columns:1fr}
   .image-main-actions{justify-content:flex-start}
   .image-preset-row{grid-template-columns:repeat(2,minmax(0,1fr))}
