@@ -338,7 +338,16 @@ const I18N={
 "天氣載入失敗，稍後重試。":{"zh-CN":"天气加载失败，稍后重试。","zh-HK":"天氣載入失敗，稍後重試。","en":"Weather failed to load. Try again later."},
 "識別到的網址":{"zh-CN":"识别到的网址","zh-HK":"識別到的網址","en":"Detected URLs"},
 "未識別到網址":{"zh-CN":"未识别到网址","zh-HK":"未識別到網址","en":"No URLs detected"},
-"只支援數字和運算符":{"zh-CN":"只支持数字和运算符","zh-HK":"只支援數字和運算符","en":"Only numbers and operators are supported"}
+"只支援數字和運算符":{"zh-CN":"只支持数字和运算符","zh-HK":"只支援數字和運算符","en":"Only numbers and operators are supported"},
+"轉換中…":{"zh-CN":"转换中…","zh-HK":"轉換中…","en":"Converting…"},
+"已使用瀏覽器本機翻譯。":{"zh-CN":"已使用浏览器本机翻译。","zh-HK":"已使用瀏覽器本機翻譯。","en":"Translated with the browser translator."},
+"瀏覽器本機翻譯不可用，已使用內置詞庫轉換。":{"zh-CN":"浏览器本机翻译不可用，已使用内置词库转换。","zh-HK":"瀏覽器本機翻譯不可用，已使用內置詞庫轉換。","en":"Browser translation is unavailable; the built-in glossary was used."},
+"可轉換簡繁中文，也會優先使用瀏覽器本機翻譯成英文。":{"zh-CN":"可转换简繁中文，也会优先使用浏览器本机翻译成英文。","zh-HK":"可轉換簡繁中文，也會優先使用瀏覽器本機翻譯成英文。","en":"Converts Simplified/Traditional Chinese and uses browser translation for English first."},
+"行排序":{"zh-CN":"行排序","zh-HK":"行排序","en":"Sort lines"},
+"英文大寫":{"zh-CN":"英文大写","zh-HK":"英文大寫","en":"Uppercase"},
+"英文小寫":{"zh-CN":"英文小写","zh-HK":"英文小寫","en":"Lowercase"},
+"搜索":{"zh-CN":"搜索","zh-HK":"搜尋","en":"Search"},
+"計算方式":{"zh-CN":"计算方式","zh-HK":"計算方式","en":"Calculation mode"}
 };
 const rev={};
 for(const key in I18N){
