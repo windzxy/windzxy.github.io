@@ -434,10 +434,6 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .check-line{display:flex!important;grid-template-columns:none!important;align-items:center;gap:8px}
 .check-line input{width:auto}
 .img-section.hidden{display:none}
-.app-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.app-preview-grid figure{min-width:0;margin:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px}
-.app-preview-grid figcaption{color:#6b7280;font-weight:600}
-.app-preview-grid canvas{max-width:100%;max-height:100%;border-radius:10px;background:#fff;object-fit:contain}
 .text-app textarea,.table-app textarea,.json-app textarea{width:100%;height:100%;min-height:310px;resize:none;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
 .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-content:start;margin-bottom:12px}
 .stat-grid div{border-radius:10px;background:rgba(13,19,33,.05);padding:12px}
@@ -453,7 +449,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .external-box input{min-width:0;border:1px solid rgba(217,220,225,.92);border-radius:9px;padding:8px}
 .external-box button{border:0;border-radius:9px;background:#ff8a00;color:#fff;font-weight:600;padding:0 12px}
 .link-widget button{height:34px;display:grid;place-items:center;border:0;border-radius:8px;background:#ff8a00;color:#fff;text-decoration:none;padding:0 10px;cursor:pointer}
-@media(max-width:760px){.desk-app,.image-full-app{grid-template-columns:1fr}.app-preview-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.desk-app,.image-full-app{grid-template-columns:1fr}}
 
 .background-item.is-active{border-color:#ff8a00;background:rgba(255,138,0,.10);color:#111827}
 :root[data-theme=dark] .background-item.is-active{background:rgba(255,138,0,.18);color:#fff}
@@ -468,7 +464,6 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .desktop-card .inline-tool .desk-app{height:100%;min-height:0;display:grid;grid-template-columns:1fr;gap:8px;padding:0}
 .desktop-card .inline-tool .image-full-app{grid-template-columns:1fr}
 .desktop-card .inline-tool .app-panel{border-radius:10px;padding:8px}
-.desktop-card .inline-tool .app-preview-grid{grid-template-columns:1fr}
 .desktop-card .inline-tool textarea{min-height:120px}
 .desktop-card .inline-tool .text-app textarea,.desktop-card .inline-tool .table-app textarea,.desktop-card .inline-tool .json-app textarea{min-height:150px}
 .desktop-card .inline-tool .stat-grid{grid-template-columns:repeat(2,1fr)}
@@ -499,9 +494,9 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .window-resize,.resize-grip{touch-action:none}
 @media(max-width:760px){.desktop-card{width:auto!important;max-width:calc(100% - 72px)}}
 
-/* imageworkbench3: workspace tabs, numeric crop controls, and one primary preview stage */
+/* imageworkbench4: clearer crop workflow and a single primary preview stage */
 .image-workbench{
-  grid-template-columns:minmax(270px,320px) minmax(0,1fr);
+  grid-template-columns:minmax(320px,380px) minmax(0,1fr);
   grid-template-rows:auto auto minmax(0,1fr);
   grid-template-areas:
     "tabs tabs"
@@ -526,7 +521,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   background:#111827;
 }
 .image-workspace-tabs button{
-  flex:1 0 88px;
+  flex:1 0 96px;
   min-height:36px;
   border:1px solid transparent;
   border-radius:7px;
@@ -553,7 +548,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 }
 .image-toolbar{grid-area:toolbar;display:grid;gap:8px;padding:10px;overflow:visible}
 .image-controls{grid-area:controls;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:8px;padding:10px}
-.image-preview-stage{grid-area:preview;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:10px}
+.image-preview-stage{grid-area:preview;position:relative;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;padding:10px}
 .image-dropzone{
   min-height:82px;
   display:grid!important;
@@ -611,7 +606,73 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .image-controls input,.image-controls select{padding:7px 8px}
 .image-sliders{grid-template-columns:1fr}
 .image-preset-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px}
-.image-crop-presets{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:0}
+.image-crop-toggle{
+  min-height:34px;
+  border-radius:8px;
+  background:rgba(255,138,0,.08);
+  padding:8px 10px;
+}
+:root[data-theme=dark] .image-crop-toggle{background:rgba(255,138,0,.12)}
+.image-crop-card{
+  display:grid;
+  gap:9px;
+  border:1px solid rgba(217,220,225,.92);
+  border-radius:8px;
+  background:rgba(248,250,252,.82);
+  padding:10px;
+}
+:root[data-theme=dark] .image-crop-card{
+  border-color:rgba(255,255,255,.10);
+  background:rgba(15,23,42,.42);
+}
+.image-crop-presets{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:0}
+.image-crop-size{margin-top:0}
+.image-crop-readout{
+  margin:0;
+  border-radius:7px;
+  background:rgba(15,23,42,.06);
+  color:#374151;
+  font-size:12px;
+  font-weight:650;
+  line-height:1.45;
+  padding:7px 8px;
+}
+:root[data-theme=dark] .image-crop-readout{
+  background:rgba(255,255,255,.07);
+  color:#d1d5db;
+}
+.image-advanced-crop{
+  border:1px solid rgba(217,220,225,.72);
+  border-radius:8px;
+  background:rgba(255,255,255,.46);
+  padding:0;
+}
+:root[data-theme=dark] .image-advanced-crop{
+  border-color:rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+}
+.image-advanced-crop summary{
+  cursor:pointer;
+  color:#374151;
+  font-size:13px;
+  font-weight:750;
+  list-style:none;
+  padding:9px 10px;
+}
+.image-advanced-crop summary::-webkit-details-marker{display:none}
+.image-advanced-crop summary::after{
+  content:"+";
+  float:right;
+  color:#ff8a00;
+  font-weight:900;
+}
+.image-advanced-crop[open] summary::after{content:"-"}
+:root[data-theme=dark] .image-advanced-crop summary{color:#e5e7eb}
+.image-advanced-crop .app-controls{
+  border-top:1px solid rgba(217,220,225,.72);
+  padding:10px;
+}
+:root[data-theme=dark] .image-advanced-crop .app-controls{border-color:rgba(255,255,255,.10)}
 .image-preset-row button{
   border:0;
   background:#ff8a00;
@@ -634,6 +695,8 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   align-items:center;
   justify-content:space-between;
   gap:8px;
+  border-bottom:1px solid rgba(217,220,225,.72);
+  padding-bottom:8px;
 }
 .image-preview-head>div:first-child{display:grid;gap:2px;min-width:0}
 .image-preview-head strong{font-size:15px;color:#111827}
@@ -692,7 +755,13 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .image-workbench.has-image .image-preview-stage[data-preview-mode=result] canvas[data-stage-canvas=result]{display:block}
 .image-workbench.has-image .image-preview-stage[data-preview-mode=source] canvas[data-stage-canvas=source]{display:block}
 .image-stage-actions{display:none;justify-content:flex-end;gap:8px;margin:0}
-.image-workbench.has-image .image-stage-actions{display:flex}
+.image-workbench.has-image .image-stage-actions{
+  display:flex;
+  position:absolute;
+  right:10px;
+  bottom:10px;
+  z-index:2;
+}
 .image-stage-actions button{
   min-width:88px;
   border:0;
@@ -716,6 +785,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
     grid-template-areas:"tabs" "toolbar" "controls" "preview";
   }
   .app-controls.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .image-crop-presets{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:520px){
   .image-workspace-tabs button{flex-basis:94px}
