@@ -684,7 +684,7 @@ function basicTextConvert(text,target){
     ["圖片處理","图片处理","image tools"],["文字整理","文字整理","text tools"],["表格轉換","表格转换","table tools"],["日期計算","日期计算","date calculator"],["JSON 工具","JSON 工具","JSON tools"],["天氣","天气","weather"],
     ["便箋","便签","note"],["待辦","待办","to-do"],["計算器","计算器","calculator"],["色板","色板","color palette"],["小抄","小抄","snippet"],["快速連結","快速链接","quick link"],
     ["複製結果","复制结果","copy result"],["轉換文字","转换文字","convert text"],["輸出語言","输出语言","output language"],["未檢測到可轉換文字","未检测到可转换文字","no text to convert"],
-    ["你好","你好","hello"],["您好","您好","hello"],["謝謝","谢谢","thank you"],["不用謝","不用谢","you are welcome"],["早上好","早上好","good morning"],["晚上好","晚上好","good evening"],["再見","再见","goodbye"],
+    ["你好","你好","hello"],["您好","您好","hello"],["你說什麼","你说什么","what did you say"],["你是誰","你是谁","who are you"],["你在做什麼","你在做什么","what are you doing"],["這是什麼","这是什么","what is this"],["為什麼","为什么","why"],["怎麼","怎么","how"],["哪裡","哪里","where"],["什麼","什么","what"],["誰","谁","who"],["謝謝","谢谢","thank you"],["不用謝","不用谢","you are welcome"],["早上好","早上好","good morning"],["晚上好","晚上好","good evening"],["再見","再见","goodbye"],
     ["今天","今天","today"],["明天","明天","tomorrow"],["昨天","昨天","yesterday"],["現在","现在","now"],["稍後","稍后","later"],["完成","完成","done"],["失敗","失败","failed"],["成功","成功","success"],
     ["打開","打开","open"],["關閉","关闭","close"],["搜尋","搜索","search"],["刷新","刷新","refresh"],["定位","定位","locate"],["下載","下载","download"],["上傳","上传","upload"],["保存","保存","save"],["刪除","删除","delete"],["移除","移除","remove"],
     ["新增","新增","add"],["重置","重置","reset"],["設定","设置","settings"],["背景","背景","wallpaper"],["語言","语言","language"],["主題","主题","theme"],["網址","网址","URL"],["新分頁","新标签页","new tab"],
@@ -702,6 +702,12 @@ function basicTextConvert(text,target){
   }
   if(target==="en"){
     out=out
+      .replace(/你/g,"you ")
+      .replace(/我/g,"I ")
+      .replace(/說/g,"say ")
+      .replace(/是/g,"is ")
+      .replace(/在/g,"at ")
+      .replace(/做/g,"do ")
       .replace(/我是/g,"I am ")
       .replace(/我想/g,"I want to ")
       .replace(/我需要/g,"I need to ")
