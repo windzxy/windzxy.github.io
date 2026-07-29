@@ -741,6 +741,10 @@ function offlineTranslateToEnglish(text){
     ["有什麼任務嗎","有什么任务吗","do you have any tasks"],
     ["你在幹嘛","你在干嘛","what are you doing"],
     ["幹嘛","干嘛","what are you doing"],
+    ["你好, 你在幹嘛, 你今天有什么任務嗎","你好, 你在干嘛, 你今天有什么任务吗","hello, what are you doing? Do you have any tasks today?"],
+    ["你好, 你在幹嘛, 你今天有什麼任務嗎","你好, 你在干嘛, 你今天有什么任务吗","hello, what are you doing? Do you have any tasks today?"],
+    ["你今天有什么任務嗎","你今天有什么任务吗","do you have any tasks today"],
+    ["有什么任務嗎","有什么任务吗","do you have any tasks"],
     ["任務","任务","task"],
     ["不能依賴google","不能依赖google","cannot rely on Google"],
     ["不能依賴 Google","不能依赖 Google","cannot rely on Google"],
@@ -893,6 +897,8 @@ function cleanupOfflineEnglish(text){
     .replace(/\bcannot rely on Google I think\b/gi,"cannot rely on Google. I think")
     .replace(/\b(?:the\s+)?translation feature did not translate to English\b\.?/gi,"The translation feature did not translate to English.")
     .replace(/\bwhat did you say, image\b\.?/gi,"What did you say, image.")
+    .replace(/\bhello, what are you doing, do you have any tasks today\b\??/gi,"Hello, what are you doing? Do you have any tasks today?")
+    .replace(/\bhello, what are you doing, you today have what task\b\??/gi,"Hello, what are you doing? Do you have any tasks today?")
     .trim();
   out=out.replace(/(^|[.!?]\s+)([a-z])/g,(m,p,ch)=>p+ch.toUpperCase());
   return out;
