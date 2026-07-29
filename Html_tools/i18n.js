@@ -9,7 +9,7 @@ const I18N={
 "表格轉換":{"zh-CN":"表格转换","zh-HK":"表格轉換","en":"Table tools"},
 "日期計算":{"zh-CN":"日期计算","zh-HK":"日期計算","en":"Date tools"},
 "JSON 工具":{"zh-CN":"JSON 工具","zh-HK":"JSON 工具","en":"JSON tools"},
-"放大、去背、裁切、調色、壓縮與格式轉換。":{"zh-CN":"放大、去背、裁切、调色、压缩与格式转换。","zh-HK":"放大、去背、裁切、調色、壓縮與格式轉換。","en":"Upscale, remove background, crop, adjust color, compress and convert formats."},
+"尺寸、裁切、去背景/底色、調色、壓縮與格式轉換。":{"zh-CN":"尺寸、裁切、去背景/底色、调色、压缩与格式转换。","zh-HK":"尺寸、裁切、去背景/底色、調色、壓縮與格式轉換。","en":"Resize, crop, remove background/color, adjust, compress and convert formats."},
 "統計、去空行、去重、排序與大小寫轉換。":{"zh-CN":"统计、去空行、去重、排序与大小写转换。","zh-HK":"統計、去空行、去重、排序與大小寫轉換。","en":"Count, trim blank lines, deduplicate, sort and change case."},
 "統計、清理、簡繁轉換、大小寫與排序。":{"zh-CN":"统计、清理、简繁转换、大小写与排序。","zh-HK":"統計、清理、簡繁轉換、大小寫與排序。","en":"Count, clean, Simplified/Traditional conversion, case changes and sort."},
 "CSV、TSV、Markdown 與 HTML 快速整理。":{"zh-CN":"CSV、TSV、Markdown 与 HTML 快速整理。","zh-HK":"CSV、TSV、Markdown 與 HTML 快速整理。","en":"Clean up CSV, TSV, Markdown and HTML tables."},
@@ -19,7 +19,7 @@ const I18N={
 "切換主題":{"zh-CN":"切换主题","zh-HK":"切換主題","en":"Toggle theme"},
 "點擊或拖放圖片到這裡":{"zh-CN":"点击或拖放图片到这里","zh-HK":"點擊或拖放圖片到這裡","en":"Click or drop images here"},
 "支援 JPG、PNG、WebP、GIF 靜態幀等瀏覽器可讀格式":{"zh-CN":"支持 JPG、PNG、WebP、GIF 静态帧等浏览器可读格式","zh-HK":"支援 JPG、PNG、WebP、GIF 靜態幀等瀏覽器可讀格式","en":"Supports JPG, PNG, WebP and browser-readable still GIF frames"},
-"本機處理為主：放大、去背、上色、修復、降噪、文字/瑕疵淡化。":{"zh-CN":"以本机处理为主：放大、去背、上色、修复、降噪、文字/瑕疵淡化。","zh-HK":"以本機處理為主：放大、去背、上色、修復、降噪、文字/瑕疵淡化。","en":"Local-first processing: upscale, background removal, colorization, restoration, denoise and text/blemish fading."},
+"本機處理為主：尺寸、去背景/底色、上色、修復、降噪、文字/瑕疵淡化。":{"zh-CN":"以本机处理为主：尺寸、去背景/底色、上色、修复、降噪、文字/瑕疵淡化。","zh-HK":"以本機處理為主：尺寸、去背景/底色、上色、修復、降噪、文字/瑕疵淡化。","en":"Local-first processing: resize, background/color removal, colorization, restoration, denoise and text/blemish fading."},
 "高质量放大":{"zh-CN":"高质量放大","zh-HK":"高質量放大","en":"Quality upscale"},
 "老照片上色":{"zh-CN":"老照片上色","zh-HK":"舊照片上色","en":"Photo colorize"},
 "背景移除":{"zh-CN":"背景移除","zh-HK":"背景移除","en":"Background removal"},
@@ -46,17 +46,17 @@ const I18N={
 "像素無損：截圖/圖示/像素圖":{"zh-CN":"像素无损：截图/图标/像素图","zh-HK":"像素無損：截圖/圖示/像素圖","en":"Pixel-perfect: screenshots/icons/pixel art"},
 "像素無損會保留原像素硬邊；照片放大只能提升觀感，無法還原原圖沒有的細節。":{"zh-CN":"像素无损会保留原像素硬边；照片放大只能提升观感，无法还原原图没有的细节。","zh-HK":"像素無損會保留原像素硬邊；照片放大只能提升觀感，無法還原原圖沒有的細節。","en":"Pixel mode keeps hard edges; photo upscale improves appearance but cannot recover details not in the source."},
 "去除背景":{"zh-CN":"去除背景","zh-HK":"去除背景","en":"Remove background"},
-"去背模式":{"zh-CN":"去背模式","zh-HK":"去背模式","en":"Background mode"},
-"不去背":{"zh-CN":"不去背","zh-HK":"不去背","en":"Off"},
+"去背景/底色模式":{"zh-CN":"去背景/底色模式","zh-HK":"去背景/底色模式","en":"Background/color removal mode"},
+"保留背景/底色":{"zh-CN":"保留背景/底色","zh-HK":"保留背景/底色","en":"Keep background/color"},
 "自動偵測邊緣背景":{"zh-CN":"自动检测边缘背景","zh-HK":"自動偵測邊緣背景","en":"Auto edge background"},
-"點選原圖顏色去背":{"zh-CN":"点选原图颜色去背","zh-HK":"點選原圖顏色去背","en":"Pick source color"},
+"點原圖取樣去底色":{"zh-CN":"点原图取样去底色","zh-HK":"點原圖取樣去底色","en":"Sample source color"},
 "移除白色/淺色背景":{"zh-CN":"移除白色/浅色背景","zh-HK":"移除白色/淺色背景","en":"Remove white/light background"},
 "移除黑色/深色背景":{"zh-CN":"移除黑色/深色背景","zh-HK":"移除黑色/深色背景","en":"Remove black/dark background"},
 "尚未取樣":{"zh-CN":"尚未取样","zh-HK":"尚未取樣","en":"No sample yet"},
 "容差":{"zh-CN":"容差","zh-HK":"容差","en":"Tolerance"},
 "邊緣羽化":{"zh-CN":"边缘羽化","zh-HK":"邊緣羽化","en":"Feather"},
-"去背後自動裁掉透明邊緣":{"zh-CN":"去背后自动裁掉透明边缘","zh-HK":"去背後自動裁走透明邊緣","en":"Auto-crop transparent edges after background removal"},
-"選「點選顏色去背」後，直接點左側原圖取樣。容差越大，移除範圍越廣。":{"zh-CN":"选择“点选颜色去背”后，直接点左侧原图取样。容差越大，移除范围越广。","zh-HK":"選擇「點選顏色去背」後，直接點左側原圖取樣。容差越大，移除範圍越廣。","en":"Choose pick color, then click the original image to sample. Higher tolerance removes more."},
+"去底色後自動裁掉透明邊緣":{"zh-CN":"去底色后自动裁掉透明边缘","zh-HK":"去底色後自動裁走透明邊緣","en":"Auto-crop transparent edges after color removal"},
+"選「點原圖取樣去底色」後，直接點左側原圖取樣。容差越大，移除範圍越廣。":{"zh-CN":"选择“点原图取样去底色”后，直接点左侧原图取样。容差越大，移除范围越广。","zh-HK":"選擇「點原圖取樣去底色」後，直接點左側原圖取樣。容差越大，移除範圍越廣。","en":"Choose sample from original, then click the source image. Higher tolerance removes more."},
 "AI 参考增强":{"zh-CN":"智能增强","zh-HK":"智能增強","en":"Smart enhancement"},
 "照片修复":{"zh-CN":"照片修复","zh-HK":"照片修復","en":"Photo restoration"},
 "关闭":{"zh-CN":"关闭","zh-HK":"關閉","en":"Off"},
@@ -139,6 +139,9 @@ const I18N={
 "完成":{"zh-CN":"完成","zh-HK":"完成","en":"Done"},
 "JSON 錯誤：":{"zh-CN":"JSON 错误：","zh-HK":"JSON 錯誤：","en":"JSON error: "},
 "已複製":{"zh-CN":"已复制","zh-HK":"已複製","en":"Copied"},
+"複製":{"zh-CN":"复制","zh-HK":"複製","en":"Copy"},
+"自動增強":{"zh-CN":"自动增强","zh-HK":"自動增強","en":"Auto enhance"},
+"驗證":{"zh-CN":"验证","zh-HK":"驗證","en":"Validate"},
 "請先選擇兩個日期。":{"zh-CN":"请先选择两个日期。","zh-HK":"請先選擇兩個日期。","en":"Please select two dates first."},
 "相隔":{"zh-CN":"相隔","zh-HK":"相隔","en":"Difference"},
 "天；約":{"zh-CN":"天；约","zh-HK":"天；約","en":" days; about "},
@@ -152,9 +155,83 @@ const I18N={
 "圖片讀取失敗，請換一張圖片試試":{"zh-CN":"图片读取失败，请换一张图片试试","zh-HK":"圖片讀取失敗，請換一張圖片試試","en":"Image failed to load. Try another image."},
 "瀏覽器不支援此輸出格式，請改用 PNG。":{"zh-CN":"浏览器不支持此输出格式，请改用 PNG。","zh-HK":"瀏覽器不支援此輸出格式，請改用 PNG。","en":"This output format is not supported. Use PNG instead."},
 "文字翻译":{"zh-CN":"文字翻译","zh-HK":"文字翻譯","en":"Text translation"},"翻译文字":{"zh-CN":"翻译文字","zh-HK":"翻譯文字","en":"Translate text"},"目标语言":{"zh-CN":"目标语言","zh-HK":"目標語言","en":"Target language"},"简体中文":{"zh-CN":"简体中文","zh-HK":"簡體中文","en":"Simplified Chinese"},"繁体中文（香港）":{"zh-CN":"繁体中文（香港）","zh-HK":"繁體中文（香港）","en":"Traditional Chinese (HK)"},"英语":{"zh-CN":"英语","zh-HK":"英語","en":"English"},"翻译结果":{"zh-CN":"翻译结果","zh-HK":"翻譯結果","en":"Translation result"},"复制译文":{"zh-CN":"复制译文","zh-HK":"複製譯文","en":"Copy translation"},"使用浏览器本机翻译；不支持时会使用内置常用词转换。":{"zh-CN":"使用浏览器本机翻译；不支持时会使用内置常用词转换。","zh-HK":"使用瀏覽器本機翻譯；不支援時會使用內置常用詞轉換。","en":"Uses browser-local translation when available; otherwise falls back to built-in common-term conversion."},"未检测到可翻译文字。":{"zh-CN":"未检测到可翻译文字。","zh-HK":"未偵測到可翻譯文字。","en":"No translatable text detected."},"浏览器本机翻译不可用，已使用基础词库转换。":{"zh-CN":"浏览器本机翻译不可用，已使用基础词库转换。","zh-HK":"瀏覽器本機翻譯不可用，已使用基礎詞庫轉換。","en":"Browser-local translation is unavailable; basic glossary conversion was used."},"OCR 文字识别":{"zh-CN":"OCR 文字识别","zh-HK":"OCR 文字識別","en":"OCR text recognition"},"识别当前图片文字":{"zh-CN":"识别当前图片文字","zh-HK":"識別目前圖片文字","en":"Recognize text in current image"},"OCR 结果":{"zh-CN":"OCR 结果","zh-HK":"OCR 結果","en":"OCR result"},"复制 OCR 结果":{"zh-CN":"复制 OCR 结果","zh-HK":"複製 OCR 結果","en":"Copy OCR result"},"浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。":{"zh-CN":"浏览器不支持本机 OCR。可以先用系统截图/相册文字识别，或接入后端 OCR API。","zh-HK":"瀏覽器不支援本機 OCR。可以先用系統截圖/相簿文字識別，或接入後端 OCR API。","en":"This browser does not support local OCR. Use system screenshot/photo OCR first, or connect a backend OCR API."},"未识别到文字。":{"zh-CN":"未识别到文字。","zh-HK":"未識別到文字。","en":"No text recognized."},"识别中…":{"zh-CN":"识别中…","zh-HK":"識別中…","en":"Recognizing…"},"请先选择图片。":{"zh-CN":"请先选择图片。","zh-HK":"請先選擇圖片。","en":"Please choose an image first."},"已复制":{"zh-CN":"已复制","zh-HK":"已複製","en":"Copied"}
+,"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。":{"zh-CN":"尺寸、裁切、去背景/底色、调色修复、输出、OCR。","zh-HK":"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。","en":"Resize, crop, remove background/color, retouch, export and OCR."}
+,"圖片工作區":{"zh-CN":"图片工作区","zh-HK":"圖片工作區","en":"Image workspace"}
+,"尺寸/放大":{"zh-CN":"尺寸/放大","zh-HK":"尺寸/放大","en":"Size/upscale"}
+,"去背景/底色":{"zh-CN":"去背景/底色","zh-HK":"去背景/底色","en":"Remove background/color"}
+,"調色/修復":{"zh-CN":"调色/修复","zh-HK":"調色/修復","en":"Adjust/retouch"}
+,"選擇圖片或拖放到這裡":{"zh-CN":"选择图片或拖放到这里","zh-HK":"選擇圖片或拖放到這裡","en":"Choose an image or drop it here"}
+,"也可以直接 Ctrl+V 貼上截圖":{"zh-CN":"也可以直接 Ctrl+V 粘贴截图","zh-HK":"也可以直接 Ctrl+V 貼上截圖","en":"You can also paste a screenshot with Ctrl+V"}
+,"尚未選擇圖片":{"zh-CN":"尚未选择图片","zh-HK":"尚未選擇圖片","en":"No image selected"}
+,"尺寸工作區":{"zh-CN":"尺寸工作区","zh-HK":"尺寸工作區","en":"Size workspace"}
+,"調整輸出寬高，預覽會即時更新。":{"zh-CN":"调整输出宽高，预览会即时更新。","zh-HK":"調整輸出寬高，預覽會即時更新。","en":"Adjust output width and height; preview updates live."}
+,"裁切工作區":{"zh-CN":"裁切工作区","zh-HK":"裁切工作區","en":"Crop workspace"}
+,"先選常用比例，再選保留位置；需要精確時再輸入尺寸。":{"zh-CN":"先选常用比例，再选保留位置；需要精确时再输入尺寸。","zh-HK":"先選常用比例，再選保留位置；需要精確時再輸入尺寸。","en":"Choose a common ratio, then where to keep; enter exact size when needed."}
+,"裁切圖片":{"zh-CN":"裁切图片","zh-HK":"裁切圖片","en":"Crop image"}
+,"常用裁切":{"zh-CN":"常用裁切","zh-HK":"常用裁切","en":"Common crops"}
+,"保留整張":{"zh-CN":"保留整张","zh-HK":"保留整張","en":"Keep full image"}
+,"回到原圖比例":{"zh-CN":"回到原图比例","zh-HK":"回到原圖比例","en":"Return to original ratio"}
+,"正方形":{"zh-CN":"正方形","zh-HK":"正方形","en":"Square"}
+,"寬屏":{"zh-CN":"宽屏","zh-HK":"寬屏","en":"Widescreen"}
+,"常用比例":{"zh-CN":"常用比例","zh-HK":"常用比例","en":"Common ratio"}
+,"直式":{"zh-CN":"竖版","zh-HK":"直式","en":"Portrait"}
+,"手機直屏":{"zh-CN":"手机竖屏","zh-HK":"手機直屏","en":"Phone portrait"}
+,"裁切比例":{"zh-CN":"裁切比例","zh-HK":"裁切比例","en":"Crop ratio"}
+,"自由比例":{"zh-CN":"自由比例","zh-HK":"自由比例","en":"Free ratio"}
+,"保留位置":{"zh-CN":"保留位置","zh-HK":"保留位置","en":"Keep position"}
+,"置中":{"zh-CN":"居中","zh-HK":"置中","en":"Center"}
+,"左上":{"zh-CN":"左上","zh-HK":"左上","en":"Top left"}
+,"上方置中":{"zh-CN":"上方居中","zh-HK":"上方置中","en":"Top center"}
+,"右上":{"zh-CN":"右上","zh-HK":"右上","en":"Top right"}
+,"左側置中":{"zh-CN":"左侧居中","zh-HK":"左側置中","en":"Middle left"}
+,"右側置中":{"zh-CN":"右侧居中","zh-HK":"右側置中","en":"Middle right"}
+,"左下":{"zh-CN":"左下","zh-HK":"左下","en":"Bottom left"}
+,"下方置中":{"zh-CN":"下方居中","zh-HK":"下方置中","en":"Bottom center"}
+,"右下":{"zh-CN":"右下","zh-HK":"右下","en":"Bottom right"}
+,"手動位置":{"zh-CN":"手动位置","zh-HK":"手動位置","en":"Manual position"}
+,"保留寬度":{"zh-CN":"保留宽度","zh-HK":"保留寬度","en":"Kept width"}
+,"保留高度":{"zh-CN":"保留高度","zh-HK":"保留高度","en":"Kept height"}
+,"交換寬高":{"zh-CN":"交换宽高","zh-HK":"交換寬高","en":"Swap width/height"}
+,"套用輸出尺寸":{"zh-CN":"套用输出尺寸","zh-HK":"套用輸出尺寸","en":"Use output size"}
+,"選擇圖片後可裁切。":{"zh-CN":"选择图片后可裁切。","zh-HK":"選擇圖片後可裁切。","en":"Choose an image to crop."}
+,"進階位置":{"zh-CN":"高级位置","zh-HK":"進階位置","en":"Advanced position"}
+,"左側距離 X":{"zh-CN":"左侧距离 X","zh-HK":"左側距離 X","en":"Left offset X"}
+,"上方距離 Y":{"zh-CN":"上方距离 Y","zh-HK":"上方距離 Y","en":"Top offset Y"}
+,"去背景/底色工作區":{"zh-CN":"去背景/底色工作区","zh-HK":"去背景/底色工作區","en":"Background/color removal workspace"}
+,"適合移除白底、黑底或接近純色的圖片底色，也可以點原圖取樣。":{"zh-CN":"适合移除白底、黑底或接近纯色的图片底色，也可以点原图取样。","zh-HK":"適合移除白底、黑底或接近純色的圖片底色，也可以點原圖取樣。","en":"Good for white, black, or near-solid backgrounds; you can also sample from the original."}
+,"移除背景/底色":{"zh-CN":"移除背景/底色","zh-HK":"移除背景/底色","en":"Remove background/color"}
+,"保留背景":{"zh-CN":"保留背景","zh-HK":"保留背景","en":"Keep background"}
+,"移除白色/淺色底色":{"zh-CN":"移除白色/浅色底色","zh-HK":"移除白色/淺色底色","en":"Remove white/light color"}
+,"移除黑色/深色底色":{"zh-CN":"移除黑色/深色底色","zh-HK":"移除黑色/深色底色","en":"Remove black/dark color"}
+,"按四角底色取樣":{"zh-CN":"按四角底色取样","zh-HK":"按四角底色取樣","en":"Sample corner color"}
+,"點原圖取樣去底色":{"zh-CN":"点原图取样去底色","zh-HK":"點原圖取樣去底色","en":"Sample original color"}
+,"尚未取樣，選擇點原圖取樣後點左側原圖。":{"zh-CN":"尚未取样，选择点原图取样后点左侧原图。","zh-HK":"尚未取樣，選擇點原圖取樣後點左側原圖。","en":"No sample yet. Choose sample mode, then click the left original image."}
+,"已取樣":{"zh-CN":"已取样","zh-HK":"已取樣","en":"Sampled"}
+,"去底色後自動裁掉透明邊緣":{"zh-CN":"去底色后自动裁掉透明边缘","zh-HK":"去底色後自動裁掉透明邊緣","en":"Auto-crop transparent edges after color removal"}
+,"調色/修復工作區":{"zh-CN":"调色/修复工作区","zh-HK":"調色/修復工作區","en":"Adjust/retouch workspace"}
+,"先用一鍵預設快速修圖，再用滑桿微調。":{"zh-CN":"先用一键预设快速修图，再用滑杆微调。","zh-HK":"先用一鍵預設快速修圖，再用滑桿微調。","en":"Start with a quick preset, then fine-tune with sliders."}
+,"還原調色":{"zh-CN":"还原调色","zh-HK":"還原調色","en":"Reset adjustments"}
+,"文檔清晰":{"zh-CN":"文档清晰","zh-HK":"文檔清晰","en":"Clear document"}
+,"柔和照片":{"zh-CN":"柔和照片","zh-HK":"柔和照片","en":"Soft photo"}
+,"冷調清爽":{"zh-CN":"冷调清爽","zh-HK":"冷調清爽","en":"Cool clean"}
+,"輸出工作區":{"zh-CN":"输出工作区","zh-HK":"輸出工作區","en":"Export workspace"}
+,"選擇格式、品質和透明背景的填色方式。":{"zh-CN":"选择格式、品质和透明背景的填色方式。","zh-HK":"選擇格式、品質和透明背景的填色方式。","en":"Choose format, quality, and how transparent areas are filled."}
+,"格式":{"zh-CN":"格式","zh-HK":"格式","en":"Format"}
+,"透明背景填色":{"zh-CN":"透明背景填色","zh-HK":"透明背景填色","en":"Transparent fill"}
+,"保持透明":{"zh-CN":"保持透明","zh-HK":"保持透明","en":"Keep transparent"}
+,"黑色":{"zh-CN":"黑色","zh-HK":"黑色","en":"Black"}
+,"下載圖片":{"zh-CN":"下载图片","zh-HK":"下載圖片","en":"Download image"}
+,"OCR 工作區":{"zh-CN":"OCR 工作区","zh-HK":"OCR 工作區","en":"OCR workspace"}
+,"從當前處理結果識別文字。":{"zh-CN":"从当前处理结果识别文字。","zh-HK":"從當前處理結果識別文字。","en":"Recognize text from the current edited result."}
+,"已啟用即時預覽，不需要手動刷新。":{"zh-CN":"已启用即时预览，不需要手动刷新。","zh-HK":"已啟用即時預覽，不需要手動刷新。","en":"Live preview is enabled; no manual refresh needed."}
+,"左右對照":{"zh-CN":"左右对照","zh-HK":"左右對照","en":"Side-by-side compare"}
+,"左側原圖，右側顯示修改後的即時預覽。":{"zh-CN":"左侧原图，右侧显示修改后的即时预览。","zh-HK":"左側原圖，右側顯示修改後的即時預覽。","en":"Original on the left, live edited preview on the right."}
+,"修改後預覽":{"zh-CN":"修改后预览","zh-HK":"修改後預覽","en":"Edited preview"}
+,"目前保留":{"zh-CN":"当前保留","zh-HK":"目前保留","en":"Keeping"}
+,"目前保留整張圖片":{"zh-CN":"当前保留整张图片","zh-HK":"目前保留整張圖片","en":"Keeping the full image"}
 ,"圖片工具分類":{"zh-CN":"图片工具分类","zh-HK":"圖片工具分類","en":"Image tool categories"}
 ,"尺寸":{"zh-CN":"尺寸","zh-HK":"尺寸","en":"Size"}
-,"去背":{"zh-CN":"去背","zh-HK":"去背","en":"Cutout"}
+,"去背景/底色":{"zh-CN":"去背景/底色","zh-HK":"去背景/底色","en":"Remove background/color"}
 ,"增強":{"zh-CN":"增强","zh-HK":"增強","en":"Enhance"}
 ,"調色":{"zh-CN":"调色","zh-HK":"調色","en":"Adjust"},
 "OCR 语言":{"zh-CN":"OCR 语言","zh-HK":"OCR 語言","en":"OCR language"},
@@ -198,7 +275,7 @@ const I18N={
 "這個工作區還沒有工具，從下方工具庫加入。":{"zh-CN":"这个工作区还没有工具，从下方工具库加入。","zh-HK":"這個工作區還沒有工具，從下方工具庫加入。","en":"This workspace has no tools yet. Add some from the library below."},
 "新工作區名稱":{"zh-CN":"新工作区名称","zh-HK":"新工作區名稱","en":"New workspace name"},
 "自訂工作區，可加入工具並拖拽排序。":{"zh-CN":"自定义工作区，可加入工具并拖拽排序。","zh-HK":"自訂工作區，可加入工具並拖拽排序。","en":"Custom workspace. Add tools and drag to reorder."},
-"放大、去背、裁切、調色、壓縮、OCR。":{"zh-CN":"放大、去背、裁切、调色、压缩、OCR。","zh-HK":"放大、去背、裁切、調色、壓縮、OCR。","en":"Upscale, cutout, crop, adjust, compress and OCR."},
+"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。":{"zh-CN":"尺寸、裁切、去背景/底色、调色修复、输出、OCR。","zh-HK":"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。","en":"Resize, crop, remove background/color, retouch, export and OCR."},
 "統計、清理、翻譯、首字母大寫與排序。":{"zh-CN":"统计、清理、翻译、首字母大写与排序。","zh-HK":"統計、清理、翻譯、首字母大寫與排序。","en":"Count, clean, translate, title case and sort."},
 "Workspace Tools":{"zh-CN":"工作区工具","zh-HK":"工作區工具","en":"Workspace Tools"},
 "選擇工作區會顯示對應工具；開啟排列後可拖拽排序。":{"zh-CN":"选择工作区会显示对应工具；开启排列后可拖拽排序。","zh-HK":"選擇工作區會顯示對應工具；開啟排列後可拖拽排序。","en":"Choose a workspace to show its tools. Turn on layout mode to drag and reorder."},
@@ -285,7 +362,7 @@ const I18N={
 "天":{"zh-CN":"天","zh-HK":"天","en":"days"},
 "尺寸":{"zh-CN":"尺寸","zh-HK":"尺寸","en":"Size"},
 "裁切":{"zh-CN":"裁切","zh-HK":"裁切","en":"Crop"},
-"去背":{"zh-CN":"去背","zh-HK":"去背","en":"Cutout"},
+"去背景/底色":{"zh-CN":"去背景/底色","zh-HK":"去背景/底色","en":"Remove background/color"},
 "調色":{"zh-CN":"调色","zh-HK":"調色","en":"Adjust"},
 "啟用裁切":{"zh-CN":"启用裁切","zh-HK":"啟用裁切","en":"Enable crop"},
 "按四角背景取樣":{"zh-CN":"按四角背景取样","zh-HK":"按四角背景取樣","en":"Sample corners"},
