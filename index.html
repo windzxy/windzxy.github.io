@@ -7,7 +7,7 @@
   <meta name="description" content="WebDesk 網頁端桌面。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench6">
+  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench7">
   <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
@@ -90,7 +90,7 @@
 </script>
 <script>
 const apps=[
-  {id:"image",kind:"tool",title:"圖片處理",desc:"放大、去背景/底色、裁切、調色、壓縮、OCR。",icon:"◎",tone:"t-image"},
+  {id:"image",kind:"tool",title:"圖片處理",desc:"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。",icon:"◎",tone:"t-image"},
   {id:"text",kind:"tool",title:"文字整理",desc:"統計、清理、簡繁轉換、大小寫與排序。",icon:"Aa",tone:"t-text"},
   {id:"table",kind:"tool",title:"表格轉換",desc:"CSV、TSV、Markdown 與 HTML 快速整理。",icon:"▦",tone:"t-table"},
   {id:"date",kind:"tool",title:"日期計算",desc:"日期間隔、日曆天與工作天推算。",icon:"31",tone:"t-date"},
@@ -482,10 +482,10 @@ function appContent(appId){
   if(appId==="image")return `
     <div class="desk-app image-full-app image-workbench">
       <section class="image-workspace-tabs" aria-label="圖片工作區" data-i18n-aria-label="圖片工作區">
-        <button data-img-tab="size" class="is-active" type="button" data-i18n="尺寸">尺寸</button>
+        <button data-img-tab="size" class="is-active" type="button" data-i18n="尺寸/放大">尺寸/放大</button>
         <button data-img-tab="crop" type="button" data-i18n="裁切">裁切</button>
         <button data-img-tab="bg" type="button" data-i18n="去背景/底色">去背景/底色</button>
-        <button data-img-tab="adjust" type="button" data-i18n="調色">調色</button>
+        <button data-img-tab="adjust" type="button" data-i18n="調色/修復">調色/修復</button>
         <button data-img-tab="export" type="button" data-i18n="輸出">輸出</button>
         <button data-img-tab="ocr" type="button">OCR</button>
       </section>
@@ -513,30 +513,49 @@ function appContent(appId){
             <button type="button" data-scale="2">2x</button>
             <button type="button" data-scale="3">3x</button>
             <button type="button" data-scale="4">4x</button>
-            <button type="button" data-long="1080">長邊 1080</button>
-            <button type="button" data-long="2048">長邊 2048</button>
+            <button type="button" data-long="1080" data-i18n="長邊 1080">長邊 1080</button>
+            <button type="button" data-long="2048" data-i18n="長邊 2048">長邊 2048</button>
           </div>
         </div>
         <div class="img-section hidden" data-img-section="crop">
           <div class="image-section-head">
             <strong data-i18n="裁切工作區">裁切工作區</strong>
-            <span data-i18n="先選比例或保留範圍，位置可置中，也可進階微調。">先選比例或保留範圍，位置可置中，也可進階微調。</span>
+            <span data-i18n="先選常用比例，再選保留位置；需要精確時再輸入尺寸。">先選常用比例，再選保留位置；需要精確時再輸入尺寸。</span>
           </div>
           <label class="check-line image-crop-toggle"><input id="cropOn" type="checkbox"><span data-i18n="裁切圖片">裁切圖片</span></label>
           <div class="image-crop-card">
+            <div class="image-tool-caption" data-i18n="常用裁切">常用裁切</div>
+            <div class="image-crop-mode-grid">
+              <button type="button" data-crop-preset="full"><strong data-i18n="保留整張">保留整張</strong><span data-i18n="回到原圖比例">回到原圖比例</span></button>
+              <button type="button" data-crop-preset="square"><strong data-i18n="正方形">正方形</strong><span>1:1</span></button>
+              <button type="button" data-crop-preset="16:9"><strong data-i18n="寬屏">寬屏</strong><span>16:9</span></button>
+              <button type="button" data-crop-preset="4:3"><strong data-i18n="常用比例">常用比例</strong><span>4:3</span></button>
+              <button type="button" data-crop-preset="3:4"><strong data-i18n="直式">直式</strong><span>3:4</span></button>
+              <button type="button" data-crop-preset="9:16"><strong data-i18n="手機直屏">手機直屏</strong><span>9:16</span></button>
+            </div>
             <div class="app-controls two">
               <label><span data-i18n="裁切比例">裁切比例</span><select id="cropAspect"><option value="free" data-i18n="自由比例">自由比例</option><option value="1:1">1:1 正方形</option><option value="16:9">16:9 寬屏</option><option value="4:3">4:3 常用</option><option value="3:4">3:4 直式</option><option value="9:16">9:16 手機</option></select></label>
-              <label><span data-i18n="保留位置">保留位置</span><select id="cropAnchor"><option value="center" data-i18n="置中">置中</option><option value="top-left" data-i18n="左上">左上</option><option value="top" data-i18n="上方置中">上方置中</option><option value="bottom" data-i18n="下方置中">下方置中</option><option value="custom" data-i18n="手動位置">手動位置</option></select></label>
+              <label class="image-hidden-field"><span data-i18n="保留位置">保留位置</span><select id="cropAnchor"><option value="center" data-i18n="置中">置中</option><option value="top-left" data-i18n="左上">左上</option><option value="top" data-i18n="上方置中">上方置中</option><option value="top-right" data-i18n="右上">右上</option><option value="left" data-i18n="左側置中">左側置中</option><option value="right" data-i18n="右側置中">右側置中</option><option value="bottom-left" data-i18n="左下">左下</option><option value="bottom" data-i18n="下方置中">下方置中</option><option value="bottom-right" data-i18n="右下">右下</option><option value="custom" data-i18n="手動位置">手動位置</option></select></label>
             </div>
-            <div class="image-preset-row image-crop-presets">
-              <button type="button" data-crop-preset="full" data-i18n="保留整張">保留整張</button>
-              <button type="button" data-crop-preset="square" data-i18n="正方形">正方形</button>
-              <button type="button" data-crop-preset="16:9">16:9</button>
-              <button type="button" data-crop-preset="4:3">4:3</button>
+            <div class="image-tool-caption" data-i18n="保留位置">保留位置</div>
+            <div class="image-anchor-pad" role="group" aria-label="保留位置" data-i18n-aria-label="保留位置">
+              <button type="button" data-crop-anchor="top-left" aria-label="左上" data-i18n-aria-label="左上"></button>
+              <button type="button" data-crop-anchor="top" aria-label="上方置中" data-i18n-aria-label="上方置中"></button>
+              <button type="button" data-crop-anchor="top-right" aria-label="右上" data-i18n-aria-label="右上"></button>
+              <button type="button" data-crop-anchor="left" aria-label="左側置中" data-i18n-aria-label="左側置中"></button>
+              <button type="button" data-crop-anchor="center" class="is-active" aria-label="置中" data-i18n-aria-label="置中"></button>
+              <button type="button" data-crop-anchor="right" aria-label="右側置中" data-i18n-aria-label="右側置中"></button>
+              <button type="button" data-crop-anchor="bottom-left" aria-label="左下" data-i18n-aria-label="左下"></button>
+              <button type="button" data-crop-anchor="bottom" aria-label="下方置中" data-i18n-aria-label="下方置中"></button>
+              <button type="button" data-crop-anchor="bottom-right" aria-label="右下" data-i18n-aria-label="右下"></button>
             </div>
             <div class="app-controls two image-crop-size">
               <label><span data-i18n="保留寬度">保留寬度</span><input id="cropW" type="number" min="1" inputmode="numeric"></label>
               <label><span data-i18n="保留高度">保留高度</span><input id="cropH" type="number" min="1" inputmode="numeric"></label>
+            </div>
+            <div class="app-actions image-crop-actions">
+              <button id="cropSwap" type="button" data-i18n="交換寬高">交換寬高</button>
+              <button id="cropFromOutput" type="button" data-i18n="套用輸出尺寸">套用輸出尺寸</button>
             </div>
             <p id="cropReadout" class="image-crop-readout" data-i18n="選擇圖片後可裁切。">選擇圖片後可裁切。</p>
           </div>
@@ -551,18 +570,30 @@ function appContent(appId){
         <div class="img-section hidden" data-img-section="bg">
           <div class="image-section-head">
             <strong data-i18n="去背景/底色工作區">去背景/底色工作區</strong>
-            <span data-i18n="適合移除白底、黑底或接近純色的圖片底色。">適合移除白底、黑底或接近純色的圖片底色。</span>
+            <span data-i18n="適合移除白底、黑底或接近純色的圖片底色，也可以點原圖取樣。">適合移除白底、黑底或接近純色的圖片底色，也可以點原圖取樣。</span>
           </div>
           <div class="app-controls">
-            <label><span data-i18n="移除背景/底色">移除背景/底色</span><select id="bgMode"><option value="none" data-i18n="保留背景">保留背景</option><option value="white" data-i18n="移除白色/淺色底色">移除白色/淺色底色</option><option value="black" data-i18n="移除黑色/深色底色">移除黑色/深色底色</option><option value="corner" data-i18n="按四角底色取樣">按四角底色取樣</option></select></label>
+            <label><span data-i18n="移除背景/底色">移除背景/底色</span><select id="bgMode"><option value="none" data-i18n="保留背景">保留背景</option><option value="white" data-i18n="移除白色/淺色底色">移除白色/淺色底色</option><option value="black" data-i18n="移除黑色/深色底色">移除黑色/深色底色</option><option value="corner" data-i18n="按四角底色取樣">按四角底色取樣</option><option value="pick" data-i18n="點原圖取樣去底色">點原圖取樣去底色</option></select></label>
             <label><span data-i18n="容差">容差</span><input id="bgTol" type="range" min="1" max="180" value="34"></label>
             <label><span data-i18n="邊緣羽化">邊緣羽化</span><input id="bgFeather" type="range" min="0" max="8" value="1"></label>
           </div>
+          <div class="image-sample-row">
+            <span id="bgSampleSwatch" class="image-sample-swatch"></span>
+            <span id="bgSampleText" data-i18n="尚未取樣，選擇點原圖取樣後點左側原圖。">尚未取樣，選擇點原圖取樣後點左側原圖。</span>
+          </div>
+          <label class="check-line"><input id="bgTrim" type="checkbox"><span data-i18n="去底色後自動裁掉透明邊緣">去底色後自動裁掉透明邊緣</span></label>
         </div>
         <div class="img-section hidden" data-img-section="adjust">
           <div class="image-section-head">
-            <strong data-i18n="調色工作區">調色工作區</strong>
-            <span data-i18n="亮度、對比、飽和、銳化和降噪。">亮度、對比、飽和、銳化和降噪。</span>
+            <strong data-i18n="調色/修復工作區">調色/修復工作區</strong>
+            <span data-i18n="先用一鍵預設快速修圖，再用滑桿微調。">先用一鍵預設快速修圖，再用滑桿微調。</span>
+          </div>
+          <div class="image-adjust-presets">
+            <button type="button" data-adjust-preset="none" data-i18n="還原調色">還原調色</button>
+            <button type="button" data-adjust-preset="auto" data-i18n="自動增強">自動增強</button>
+            <button type="button" data-adjust-preset="document" data-i18n="文檔清晰">文檔清晰</button>
+            <button type="button" data-adjust-preset="soft" data-i18n="柔和照片">柔和照片</button>
+            <button type="button" data-adjust-preset="cool" data-i18n="冷調清爽">冷調清爽</button>
           </div>
           <div class="app-controls image-sliders">
             <label><span data-i18n="亮度">亮度</span><input id="bright" type="range" min="-80" max="80" value="0"></label>
@@ -575,11 +606,13 @@ function appContent(appId){
         <div class="img-section hidden" data-img-section="export">
           <div class="image-section-head">
             <strong data-i18n="輸出工作區">輸出工作區</strong>
-            <span data-i18n="選擇格式和品質後直接下載。">選擇格式和品質後直接下載。</span>
+            <span data-i18n="選擇格式、品質和透明背景的填色方式。">選擇格式、品質和透明背景的填色方式。</span>
           </div>
           <div class="app-controls two">
             <label><span data-i18n="格式">格式</span><select id="imgFmt"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label>
             <label><span data-i18n="品質">品質</span><input id="imgQ" type="range" min=".4" max="1" step=".05" value=".9"></label>
+            <label><span data-i18n="透明背景填色">透明背景填色</span><select id="imgFill"><option value="transparent" data-i18n="保持透明">保持透明</option><option value="white" data-i18n="白色">白色</option><option value="black" data-i18n="黑色">黑色</option><option value="custom" data-i18n="自訂顏色">自訂顏色</option></select></label>
+            <label><span data-i18n="自訂顏色">自訂顏色</span><input id="imgFillColor" type="color" value="#ffffff"></label>
           </div>
           <div class="app-actions image-export-actions">
             <button id="imgExportDownload" class="image-action-requires-image" type="button" data-i18n="下載圖片">下載圖片</button>
@@ -647,7 +680,7 @@ function bindApp(win,appId){
 }
 function bindImageApp(win){
   const file=win.querySelector("#imgFile"),src=win.querySelector("#imgOriginal"),canvas=win.querySelector("#imgCanvas"),sctx=src.getContext("2d"),ctx=canvas.getContext("2d",{willReadFrequently:true});
-  let img=null,ow=0,oh=0,lock=false,drawQueued=false,currentName="image";
+  let img=null,ow=0,oh=0,lock=false,drawQueued=false,currentName="image",pickedBg=null;
   const ids=id=>win.querySelector("#"+id);
   setImageReady(false);
   file.onchange=()=>loadImageFile(file.files?.[0]);
@@ -661,6 +694,16 @@ function bindImageApp(win){
     const pasted=[...(e.clipboardData?.items||[])].find(item=>item.type.startsWith("image/"));
     if(pasted)loadImageFile(pasted.getAsFile());
   });
+  src.addEventListener("click",e=>{
+    if(!img||ids("bgMode").value!=="pick")return;
+    const rect=src.getBoundingClientRect();
+    const x=Math.max(0,Math.min(ow-1,Math.floor((e.clientX-rect.left)*ow/rect.width)));
+    const y=Math.max(0,Math.min(oh-1,Math.floor((e.clientY-rect.top)*oh/rect.height)));
+    const d=sctx.getImageData(x,y,1,1).data;
+    pickedBg=[d[0],d[1],d[2]];
+    updateBgSample();
+    scheduleDraw();
+  });
   ids("imgW").oninput=()=>sync("w");ids("imgH").oninput=()=>sync("h");
   function loadImageFile(f){
     if(!f||!f.type?.startsWith("image/"))return;
@@ -670,11 +713,14 @@ function bindImageApp(win){
     next.onload=()=>{
       img=next;ow=img.naturalWidth;oh=img.naturalHeight;
       src.width=ow;src.height=oh;sctx.clearRect(0,0,ow,oh);sctx.drawImage(img,0,0);
+      pickedBg=null;
       ids("imgW").value=ow;ids("imgH").value=oh;ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("cropAspect").value="free";ids("cropAnchor").value="center";
       ids("imgInfo").textContent=currentName+" · "+ow+" × "+oh+" · "+Math.max(1,Math.round(f.size/1024))+" KB";
       ids("imgOriginalSize").textContent=ow+" × "+oh;
       ids("imgCropSize").textContent=ow+" × "+oh;
       updateCropReadout();
+      updateBgSample();
+      syncAnchorButtons();
       setImageReady(true);
       scheduleDraw();
       URL.revokeObjectURL(url);
@@ -684,7 +730,7 @@ function bindImageApp(win){
   }
   function setImageReady(ready){
     win.querySelector(".image-workbench")?.classList.toggle("has-image",ready);
-    win.querySelectorAll(".image-controls input,.image-controls select,.image-preset-row button,.image-action-requires-image").forEach(el=>{el.disabled=!ready});
+    win.querySelectorAll(".image-controls input,.image-controls select,.image-controls button,.image-action-requires-image").forEach(el=>{el.disabled=!ready});
     file.disabled=false;
   }
   function sync(source){if(!img||!ids("imgRatio").checked||lock)return;lock=true;if(source==="w")ids("imgH").value=Math.max(1,Math.round(+ids("imgW").value*oh/ow));if(source==="h")ids("imgW").value=Math.max(1,Math.round(+ids("imgH").value*ow/oh));lock=false;scheduleDraw()}
@@ -703,8 +749,12 @@ function bindImageApp(win){
     }
     ids("cropOn").checked=type!=="full";
     syncOutputToCrop();
+    syncCropPresetButtons(type);
     updateCropReadout();
     scheduleDraw();
+  }
+  function syncCropPresetButtons(type){
+    win.querySelectorAll("[data-crop-preset]").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.cropPreset===type));
   }
   function parseAspect(value){
     if(!value||value==="free")return null;
@@ -736,6 +786,7 @@ function bindImageApp(win){
   function applyCropAnchor(){
     if(!img)return;
     normalizeCrop(true);
+    syncAnchorButtons();
   }
   function normalizeCrop(applyAnchor){
     let w=Math.max(1,Math.min(ow,+ids("cropW").value||ow));
@@ -747,10 +798,19 @@ function bindImageApp(win){
       if(anchor==="center"){x=Math.round((ow-w)/2);y=Math.round((oh-h)/2)}
       if(anchor==="top-left"){x=0;y=0}
       if(anchor==="top"){x=Math.round((ow-w)/2);y=0}
+      if(anchor==="top-right"){x=ow-w;y=0}
+      if(anchor==="left"){x=0;y=Math.round((oh-h)/2)}
+      if(anchor==="right"){x=ow-w;y=Math.round((oh-h)/2)}
+      if(anchor==="bottom-left"){x=0;y=oh-h}
       if(anchor==="bottom"){x=Math.round((ow-w)/2);y=oh-h}
+      if(anchor==="bottom-right"){x=ow-w;y=oh-h}
     }
     ids("cropW").value=w;ids("cropH").value=h;ids("cropX").value=x;ids("cropY").value=y;
     updateCropReadout();
+  }
+  function syncAnchorButtons(){
+    const value=ids("cropAnchor")?.value||"center";
+    win.querySelectorAll("[data-crop-anchor]").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.cropAnchor===value));
   }
   function syncOutputToCrop(){
     if(!ids("cropOn").checked)return;
@@ -765,23 +825,48 @@ function bindImageApp(win){
   }
   ids("cropAspect").addEventListener("change",()=>{if(!img)return;ids("cropOn").checked=true;if(ids("cropAspect").value==="free")normalizeCrop(true);else fitCropToAspect(ids("cropAspect").value);syncOutputToCrop();updateCropReadout();scheduleDraw()});
   ids("cropAnchor").addEventListener("change",()=>{if(!img)return;ids("cropOn").checked=true;applyCropAnchor();syncOutputToCrop();scheduleDraw()});
+  win.querySelectorAll("[data-crop-anchor]").forEach(btn=>btn.addEventListener("click",()=>{if(!img)return;ids("cropOn").checked=true;ids("cropAnchor").value=btn.dataset.cropAnchor;applyCropAnchor();syncOutputToCrop();scheduleDraw()}));
   ids("cropW").addEventListener("input",()=>syncCropSize("w"));
   ids("cropH").addEventListener("input",()=>syncCropSize("h"));
-  ids("cropX").addEventListener("input",()=>{if(!img||lock)return;ids("cropOn").checked=true;ids("cropAnchor").value="custom";normalizeCrop(false);scheduleDraw()});
-  ids("cropY").addEventListener("input",()=>{if(!img||lock)return;ids("cropOn").checked=true;ids("cropAnchor").value="custom";normalizeCrop(false);scheduleDraw()});
-  ids("cropOn").addEventListener("change",()=>{if(!img)return;if(ids("cropOn").checked)normalizeCrop(true);else{ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("imgW").value=ow;ids("imgH").value=oh}updateCropReadout();scheduleDraw()});
+  ids("cropX").addEventListener("input",()=>{if(!img||lock)return;ids("cropOn").checked=true;ids("cropAnchor").value="custom";syncAnchorButtons();normalizeCrop(false);scheduleDraw()});
+  ids("cropY").addEventListener("input",()=>{if(!img||lock)return;ids("cropOn").checked=true;ids("cropAnchor").value="custom";syncAnchorButtons();normalizeCrop(false);scheduleDraw()});
+  ids("cropOn").addEventListener("change",()=>{if(!img)return;if(ids("cropOn").checked)normalizeCrop(true);else{ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("imgW").value=ow;ids("imgH").value=oh;syncCropPresetButtons("full")}updateCropReadout();scheduleDraw()});
+  ids("cropSwap").addEventListener("click",()=>{if(!img)return;ids("cropOn").checked=true;const w=+ids("cropW").value||ow,h=+ids("cropH").value||oh;ids("cropW").value=h;ids("cropH").value=w;const aspect=ids("cropAspect").value;if(/^\d+:\d+$/.test(aspect)){ids("cropAspect").value=aspect.split(":").reverse().join(":")}normalizeCrop(true);syncOutputToCrop();scheduleDraw()});
+  ids("cropFromOutput").addEventListener("click",()=>{if(!img)return;ids("cropOn").checked=true;ids("cropAspect").value="free";ids("cropW").value=Math.max(1,+ids("imgW").value||ow);ids("cropH").value=Math.max(1,+ids("imgH").value||oh);normalizeCrop(true);syncOutputToCrop();scheduleDraw()});
+  win.querySelectorAll("[data-adjust-preset]").forEach(btn=>btn.addEventListener("click",()=>setAdjustPreset(btn.dataset.adjustPreset)));
+  function setAdjustPreset(type){
+    const presets={none:[0,0,0,0,0],auto:[10,18,8,18,1],document:[22,34,-18,24,1],soft:[8,-8,6,6,1],cool:[4,12,-6,12,1]};
+    const values=presets[type]||presets.none;
+    ["bright","contrast","sat","sharp","noise"].forEach((id,i)=>ids(id).value=values[i]);
+    scheduleDraw();
+  }
+  ids("bgMode").addEventListener("change",()=>{updateBgSample();scheduleDraw()});
+  function updateBgSample(){
+    const swatch=ids("bgSampleSwatch"),textEl=ids("bgSampleText");
+    if(!swatch||!textEl)return;
+    if(pickedBg){
+      const color="rgb("+pickedBg.join(", ")+")";
+      swatch.style.background=color;
+      textEl.textContent=tr("已取樣")+" "+color;
+    }else{
+      swatch.style.background="linear-gradient(135deg,#fff,#111)";
+      textEl.textContent=tr("尚未取樣，選擇點原圖取樣後點左側原圖。");
+    }
+  }
   win.querySelectorAll("[data-img-tab]").forEach(btn=>btn.onclick=()=>{win.querySelectorAll("[data-img-tab]").forEach(b=>b.classList.toggle("is-active",b===btn));win.querySelectorAll("[data-img-section]").forEach(p=>p.classList.toggle("hidden",p.dataset.imgSection!==btn.dataset.imgTab))});
   win.querySelectorAll("input,select").forEach(el=>["input","change"].forEach(type=>el.addEventListener(type,()=>{if(el.id==="imgFile"||lock||/^crop/.test(el.id))return;scheduleDraw()})));
-  ids("imgReset").onclick=()=>{if(!img)return;ids("imgW").value=ow;ids("imgH").value=oh;ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("cropAspect").value="free";ids("cropAnchor").value="center";ids("cropOn").checked=false;["bright","contrast","sat","sharp","noise"].forEach(id=>ids(id).value=0);ids("bgMode").value="none";ids("bgTol").value=34;ids("bgFeather").value=1;ids("ocrOut").value="";ids("ocrStatus").textContent="";updateCropReadout();scheduleDraw()};
-  const downloadImage=()=>{if(!canvas.width)return;const fmt=ids("imgFmt").value,ext=fmt==="image/jpeg"?"jpg":fmt.split("/")[1]||"png";const a=document.createElement("a");a.download=currentName+"-edited."+ext;a.href=canvas.toDataURL(fmt,+ids("imgQ").value);a.click()};
+  ids("imgReset").onclick=()=>{if(!img)return;ids("imgW").value=ow;ids("imgH").value=oh;ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("cropAspect").value="free";ids("cropAnchor").value="center";ids("cropOn").checked=false;["bright","contrast","sat","sharp","noise"].forEach(id=>ids(id).value=0);pickedBg=null;ids("bgMode").value="none";ids("bgTol").value=34;ids("bgFeather").value=1;ids("bgTrim").checked=false;ids("imgFill").value="transparent";ids("imgFillColor").value="#ffffff";ids("ocrOut").value="";ids("ocrStatus").textContent="";syncAnchorButtons();syncCropPresetButtons("full");updateBgSample();updateCropReadout();scheduleDraw()};
+  const downloadImage=()=>{if(!canvas.width)return;const fmt=ids("imgFmt").value,ext=fmt==="image/jpeg"?"jpg":fmt.split("/")[1]||"png",outCanvas=makeExportCanvas(fmt);const a=document.createElement("a");a.download=currentName+"-edited."+ext;a.href=outCanvas.toDataURL(fmt,+ids("imgQ").value);a.click()};
   ids("imgDownload").onclick=downloadImage;
   ids("imgExportDownload").onclick=downloadImage;
   ids("ocrRun").onclick=()=>runDeskOcr(win,canvas);
   ids("ocrCopy").onclick=()=>navigator.clipboard?.writeText(ids("ocrOut").value);
   function scheduleDraw(){if(drawQueued)return;drawQueued=true;requestAnimationFrame(()=>{drawQueued=false;draw()})}
-  function draw(){if(!img)return;normalizeCrop(false);let sx=0,sy=0,sw=ow,sh=oh;if(ids("cropOn").checked){sx=Math.min(Math.max(0,+ids("cropX").value||0),Math.max(0,ow-1));sy=Math.min(Math.max(0,+ids("cropY").value||0),Math.max(0,oh-1));sw=Math.max(1,Math.min(ow-sx,+ids("cropW").value||ow));sh=Math.max(1,Math.min(oh-sy,+ids("cropH").value||oh))}canvas.width=Math.max(1,+ids("imgW").value||sw);canvas.height=Math.max(1,+ids("imgH").value||sh);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingQuality="high";ctx.drawImage(img,sx,sy,sw,sh,0,0,canvas.width,canvas.height);adjust(ctx,canvas.width,canvas.height);removeBg(ctx,canvas.width,canvas.height);if(+ids("noise").value)denoise(ctx,canvas.width,canvas.height,+ids("noise").value);if(+ids("sharp").value)sharpen(ctx,canvas.width,canvas.height,+ids("sharp").value/100);ids("imgOutputSize").textContent=canvas.width+" × "+canvas.height;updateCropReadout()}
+  function draw(){if(!img)return;normalizeCrop(false);let sx=0,sy=0,sw=ow,sh=oh;if(ids("cropOn").checked){sx=Math.min(Math.max(0,+ids("cropX").value||0),Math.max(0,ow-1));sy=Math.min(Math.max(0,+ids("cropY").value||0),Math.max(0,oh-1));sw=Math.max(1,Math.min(ow-sx,+ids("cropW").value||ow));sh=Math.max(1,Math.min(oh-sy,+ids("cropH").value||oh))}canvas.width=Math.max(1,+ids("imgW").value||sw);canvas.height=Math.max(1,+ids("imgH").value||sh);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingQuality="high";ctx.drawImage(img,sx,sy,sw,sh,0,0,canvas.width,canvas.height);adjust(ctx,canvas.width,canvas.height);removeBg(ctx,canvas.width,canvas.height);if(+ids("noise").value)denoise(ctx,canvas.width,canvas.height,+ids("noise").value);if(+ids("sharp").value)sharpen(ctx,canvas.width,canvas.height,+ids("sharp").value/100);if(ids("bgTrim").checked&&ids("bgMode").value!=="none")trimTransparent(ctx);ids("imgOutputSize").textContent=canvas.width+" × "+canvas.height;updateCropReadout()}
   function adjust(c,w,h){const data=c.getImageData(0,0,w,h),d=data.data,b=+ids("bright").value,ct=+ids("contrast").value,sat=+ids("sat").value;const cf=(259*(ct+255))/(255*(259-ct));for(let i=0;i<d.length;i+=4){let r=cf*(d[i]-128)+128+b,g=cf*(d[i+1]-128)+128+b,bl=cf*(d[i+2]-128)+128+b;const gray=.299*r+.587*g+.114*bl;r=gray+(r-gray)*(1+sat/100);g=gray+(g-gray)*(1+sat/100);bl=gray+(bl-gray)*(1+sat/100);d[i]=clamp(r);d[i+1]=clamp(g);d[i+2]=clamp(bl)}c.putImageData(data,0,0)}
-  function removeBg(c,w,h){const mode=ids("bgMode").value;if(mode==="none")return;const tol=+ids("bgTol").value,feather=(+ids("bgFeather").value||0)*12,data=c.getImageData(0,0,w,h),d=data.data;let target=[255,255,255];if(mode==="black")target=[0,0,0];if(mode==="corner"){const p=[0,(w-1)*4,(h-1)*w*4,(h*w-1)*4];target=[0,1,2].map(ch=>Math.round(p.reduce((a,i)=>a+d[i+ch],0)/4))}for(let i=0;i<d.length;i+=4){const dist=Math.hypot(d[i]-target[0],d[i+1]-target[1],d[i+2]-target[2]);if(dist<tol)d[i+3]=0;else if(feather&&dist<tol+feather)d[i+3]=Math.round(d[i+3]*(dist-tol)/feather)}c.putImageData(data,0,0)}
+  function removeBg(c,w,h){const mode=ids("bgMode").value;if(mode==="none")return;const tol=+ids("bgTol").value,feather=(+ids("bgFeather").value||0)*12,data=c.getImageData(0,0,w,h),d=data.data;let target=[255,255,255];if(mode==="black")target=[0,0,0];if(mode==="pick"){if(!pickedBg)return;target=pickedBg}if(mode==="corner"){const p=[0,(w-1)*4,(h-1)*w*4,(h*w-1)*4];target=[0,1,2].map(ch=>Math.round(p.reduce((a,i)=>a+d[i+ch],0)/4))}for(let i=0;i<d.length;i+=4){const dist=Math.hypot(d[i]-target[0],d[i+1]-target[1],d[i+2]-target[2]);if(dist<tol)d[i+3]=0;else if(feather&&dist<tol+feather)d[i+3]=Math.round(d[i+3]*(dist-tol)/feather)}c.putImageData(data,0,0)}
+  function trimTransparent(c){const w=canvas.width,h=canvas.height,data=c.getImageData(0,0,w,h),d=data.data;let minX=w,minY=h,maxX=-1,maxY=-1;for(let y=0;y<h;y++)for(let x=0;x<w;x++){if(d[(y*w+x)*4+3]>4){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}}if(maxX<minX||maxY<minY)return;const nw=maxX-minX+1,nh=maxY-minY+1;if(nw===w&&nh===h)return;const cropped=c.getImageData(minX,minY,nw,nh);canvas.width=nw;canvas.height=nh;c.putImageData(cropped,0,0)}
+  function makeExportCanvas(fmt){let fill=ids("imgFill").value;if(fmt==="image/jpeg"&&fill==="transparent")fill="white";if(fill==="transparent")return canvas;const out=document.createElement("canvas"),o=out.getContext("2d");out.width=canvas.width;out.height=canvas.height;o.fillStyle=fill==="custom"?ids("imgFillColor").value:(fill==="black"?"#111827":"#ffffff");o.fillRect(0,0,out.width,out.height);o.drawImage(canvas,0,0);return out}
   function denoise(c,w,h,n){for(let pass=0;pass<n;pass++){const data=c.getImageData(0,0,w,h),d=data.data,copy=new Uint8ClampedArray(d);for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=(y*w+x)*4;for(let ch=0;ch<3;ch++){let sum=0;for(let yy=-1;yy<=1;yy++)for(let xx=-1;xx<=1;xx++)sum+=copy[((y+yy)*w+x+xx)*4+ch];d[i+ch]=sum/9}}c.putImageData(data,0,0)}}
   function sharpen(c,w,h,a){const data=c.getImageData(0,0,w,h),d=data.data,copy=new Uint8ClampedArray(d);for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=(y*w+x)*4;for(let ch=0;ch<3;ch++){const v=copy[i+ch]*(1+4*a)-copy[(i-4)+ch]*a-copy[(i+4)+ch]*a-copy[(i-w*4)+ch]*a-copy[(i+w*4)+ch]*a;d[i+ch]=clamp(v)}}c.putImageData(data,0,0)}
 }
