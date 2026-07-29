@@ -736,7 +736,7 @@ function cleanupOfflineEnglish(text){
     .replace(/\bI think should\b/gi,"I think it should")
     .replace(/\bI think it should built-in\b/gi,"I think it should use built-in")
     .replace(/\bcannot rely on Google I think\b/gi,"cannot rely on Google. I think")
-    .replace(/\btranslation feature did not translate to English\b\.?/gi,"The translation feature did not translate to English.")
+    .replace(/\b(?:the\s+)?translation feature did not translate to English\b\.?/gi,"The translation feature did not translate to English.")
     .replace(/\bwhat did you say, image\b\.?/gi,"What did you say, image.")
     .trim();
   out=out.replace(/(^|[.!?]\s+)([a-z])/g,(m,p,ch)=>p+ch.toUpperCase());
