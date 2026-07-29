@@ -348,7 +348,11 @@ const I18N={
 "英文小寫":{"zh-CN":"英文小写","zh-HK":"英文小寫","en":"Lowercase"},
 "搜索":{"zh-CN":"搜索","zh-HK":"搜尋","en":"Search"},
 "計算方式":{"zh-CN":"计算方式","zh-HK":"計算方式","en":"Calculation mode"},
-"調整輸入和輸出高度":{"zh-CN":"调整输入和输出高度","zh-HK":"調整輸入和輸出高度","en":"Resize input and output height"}
+"調整輸入和輸出高度":{"zh-CN":"调整输入和输出高度","zh-HK":"調整輸入和輸出高度","en":"Resize input and output height"},
+"已使用線上翻譯。":{"zh-CN":"已使用线上翻译。","zh-HK":"已使用線上翻譯。","en":"Translated online."},
+"線上翻譯不可用，已使用內置詞庫轉換。":{"zh-CN":"线上翻译不可用，已使用内置词库转换。","zh-HK":"線上翻譯不可用，已使用內置詞庫轉換。","en":"Online translation is unavailable. Used the built-in glossary."},
+"翻譯服務暫時不可用，已保留原文。":{"zh-CN":"翻译服务暂时不可用，已保留原文。","zh-HK":"翻譯服務暫時不可用，已保留原文。","en":"Translation service is temporarily unavailable. Original text was kept."},
+"可轉換簡繁中文，轉英文會優先使用線上翻譯。":{"zh-CN":"可转换简繁中文，转英文会优先使用线上翻译。","zh-HK":"可轉換簡繁中文，轉英文會優先使用線上翻譯。","en":"Converts Simplified/Traditional Chinese. English conversion uses online translation first."}
 };
 const rev={};
 for(const key in I18N){
