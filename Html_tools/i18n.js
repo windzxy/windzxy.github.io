@@ -347,7 +347,8 @@ const I18N={
 "英文大寫":{"zh-CN":"英文大写","zh-HK":"英文大寫","en":"Uppercase"},
 "英文小寫":{"zh-CN":"英文小写","zh-HK":"英文小寫","en":"Lowercase"},
 "搜索":{"zh-CN":"搜索","zh-HK":"搜尋","en":"Search"},
-"計算方式":{"zh-CN":"计算方式","zh-HK":"計算方式","en":"Calculation mode"}
+"計算方式":{"zh-CN":"计算方式","zh-HK":"計算方式","en":"Calculation mode"},
+"調整輸入和輸出高度":{"zh-CN":"调整输入和输出高度","zh-HK":"調整輸入和輸出高度","en":"Resize input and output height"}
 };
 const rev={};
 for(const key in I18N){
