@@ -7,7 +7,7 @@
   <meta name="description" content="WebDesk 網頁端桌面。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench2">
+  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench3">
   <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
@@ -90,7 +90,7 @@
 </script>
 <script>
 const apps=[
-  {id:"image",kind:"tool",title:"圖片處理",desc:"放大、去背、裁切、調色、壓縮、OCR。",icon:"◎",tone:"t-image"},
+  {id:"image",kind:"tool",title:"圖片處理",desc:"放大、去背景/底色、裁切、調色、壓縮、OCR。",icon:"◎",tone:"t-image"},
   {id:"text",kind:"tool",title:"文字整理",desc:"統計、清理、簡繁轉換、大小寫與排序。",icon:"Aa",tone:"t-text"},
   {id:"table",kind:"tool",title:"表格轉換",desc:"CSV、TSV、Markdown 與 HTML 快速整理。",icon:"▦",tone:"t-table"},
   {id:"date",kind:"tool",title:"日期計算",desc:"日期間隔、日曆天與工作天推算。",icon:"31",tone:"t-date"},
@@ -484,7 +484,7 @@ function appContent(appId){
       <section class="image-workspace-tabs" aria-label="圖片工作區" data-i18n-aria-label="圖片工作區">
         <button data-img-tab="size" class="is-active" type="button" data-i18n="尺寸">尺寸</button>
         <button data-img-tab="crop" type="button" data-i18n="裁切">裁切</button>
-        <button data-img-tab="bg" type="button" data-i18n="去背">去背</button>
+        <button data-img-tab="bg" type="button" data-i18n="去背景/底色">去背景/底色</button>
         <button data-img-tab="adjust" type="button" data-i18n="調色">調色</button>
         <button data-img-tab="export" type="button" data-i18n="輸出">輸出</button>
         <button data-img-tab="ocr" type="button">OCR</button>
@@ -495,13 +495,7 @@ function appContent(appId){
           <strong data-i18n="選擇圖片或拖放到這裡">選擇圖片或拖放到這裡</strong>
           <span data-i18n="也可以直接 Ctrl+V 貼上截圖">也可以直接 Ctrl+V 貼上截圖</span>
         </label>
-        <div class="image-file-meta">
-          <span id="imgInfo" class="mini-note" data-i18n="尚未選擇圖片">尚未選擇圖片</span>
-          <div class="app-actions image-main-actions">
-            <button id="imgDownload" class="image-action-requires-image" type="button" data-i18n="下載">下載</button>
-            <button id="imgReset" class="image-action-requires-image" type="button" data-i18n="重設">重設</button>
-          </div>
-        </div>
+        <span id="imgInfo" class="mini-note" data-i18n="尚未選擇圖片">尚未選擇圖片</span>
       </section>
       <section class="app-panel image-controls" aria-live="polite">
         <div class="img-section" data-img-section="size">
@@ -529,6 +523,12 @@ function appContent(appId){
             <span data-i18n="輸入裁切範圍，X/Y 從左上角開始。">輸入裁切範圍，X/Y 從左上角開始。</span>
           </div>
           <label class="check-line"><input id="cropOn" type="checkbox"><span data-i18n="啟用裁切">啟用裁切</span></label>
+          <div class="image-preset-row image-crop-presets">
+            <button type="button" data-crop-preset="full" data-i18n="整張">整張</button>
+            <button type="button" data-crop-preset="square" data-i18n="置中正方形">置中正方形</button>
+            <button type="button" data-crop-preset="16:9">16:9</button>
+            <button type="button" data-crop-preset="4:3">4:3</button>
+          </div>
           <div class="app-controls four">
             <label>X<input id="cropX" type="number" value="0" min="0"></label>
             <label>Y<input id="cropY" type="number" value="0" min="0"></label>
@@ -538,11 +538,11 @@ function appContent(appId){
         </div>
         <div class="img-section hidden" data-img-section="bg">
           <div class="image-section-head">
-            <strong data-i18n="去背工作區">去背工作區</strong>
-            <span data-i18n="適合純色或接近純色背景。">適合純色或接近純色背景。</span>
+            <strong data-i18n="去背景/底色工作區">去背景/底色工作區</strong>
+            <span data-i18n="適合移除白底、黑底或接近純色的圖片底色。">適合移除白底、黑底或接近純色的圖片底色。</span>
           </div>
           <div class="app-controls">
-            <label><span data-i18n="去背模式">去背模式</span><select id="bgMode"><option value="none" data-i18n="不去背">不去背</option><option value="white" data-i18n="移除白色/淺色背景">移除白色/淺色背景</option><option value="black" data-i18n="移除黑色/深色背景">移除黑色/深色背景</option><option value="corner" data-i18n="按四角背景取樣">按四角背景取樣</option></select></label>
+            <label><span data-i18n="移除背景/底色">移除背景/底色</span><select id="bgMode"><option value="none" data-i18n="保留背景">保留背景</option><option value="white" data-i18n="移除白色/淺色底色">移除白色/淺色底色</option><option value="black" data-i18n="移除黑色/深色底色">移除黑色/深色底色</option><option value="corner" data-i18n="按四角底色取樣">按四角底色取樣</option></select></label>
             <label><span data-i18n="容差">容差</span><input id="bgTol" type="range" min="1" max="180" value="34"></label>
             <label><span data-i18n="邊緣羽化">邊緣羽化</span><input id="bgFeather" type="range" min="0" max="8" value="1"></label>
           </div>
@@ -587,15 +587,25 @@ function appContent(appId){
         </div>
         <p class="image-live-note" data-i18n="已啟用即時預覽，不需要手動刷新。">已啟用即時預覽，不需要手動刷新。</p>
       </section>
-      <section class="app-panel app-preview-grid image-preview-grid">
-        <figure>
-          <figcaption><span data-i18n="原圖">原圖</span><small id="imgOriginalSize"></small></figcaption>
-          <div class="image-canvas-box" data-image-drop data-empty="等待圖片"><canvas id="imgOriginal"></canvas></div>
-        </figure>
-        <figure>
-          <figcaption><span data-i18n="處理結果">處理結果</span><small id="imgOutputSize"></small></figcaption>
-          <div class="image-canvas-box checker" data-image-drop data-empty="即時預覽"><canvas id="imgCanvas"></canvas></div>
-        </figure>
+      <section class="app-panel image-preview-stage" data-preview-mode="result">
+        <div class="image-preview-head">
+          <div>
+            <strong data-i18n="圖片預覽">圖片預覽</strong>
+            <span><span data-i18n="原圖">原圖</span> <small id="imgOriginalSize">-</small> · <span data-i18n="結果">結果</span> <small id="imgOutputSize">-</small></span>
+          </div>
+          <div class="image-preview-switch" aria-label="預覽模式" data-i18n-aria-label="預覽模式">
+            <button type="button" class="is-active" data-preview-tab="result" data-i18n="結果">結果</button>
+            <button type="button" data-preview-tab="source" data-i18n="原圖">原圖</button>
+          </div>
+        </div>
+        <div class="image-stage-canvas checker" data-image-drop data-empty="選擇圖片後即時預覽">
+          <canvas id="imgCanvas" data-stage-canvas="result"></canvas>
+          <canvas id="imgOriginal" data-stage-canvas="source"></canvas>
+        </div>
+        <div class="image-stage-actions">
+          <button id="imgDownload" class="image-action-requires-image" type="button" data-i18n="下載結果">下載結果</button>
+          <button id="imgReset" class="image-action-requires-image secondary" type="button" data-i18n="重設">重設</button>
+        </div>
       </section>
     </div>`;
   if(appId==="text")return '<div class="desk-app text-app compact-text-app adjustable-text-app"><section class="app-panel text-tools-panel"><div class="stat-strip"><div><strong id="textChars">0</strong><span data-i18n="字元">字元</span></div><div><strong id="textNoSpace">0</strong><span data-i18n="不含空白">不含空白</span></div><div><strong id="textWords">0</strong><span data-i18n="詞數">詞數</span></div><div><strong id="textLines">0</strong><span data-i18n="行數">行數</span></div></div><div class="text-command-row"><div class="app-actions text-actions"><button data-text-act="trim" data-i18n="清除首尾空白">清除首尾空白</button><button data-text-act="blank" data-i18n="移除空行">移除空行</button><button data-text-act="dedupe" data-i18n="行去重">行去重</button><button data-text-act="sort" data-i18n="行排序">行排序</button><button data-text-act="upper" data-i18n="英文大寫">英文大寫</button><button data-text-act="lower" data-i18n="英文小寫">英文小寫</button><button data-text-act="title" data-i18n="首字母大寫">首字母大寫</button><button data-text-act="copy" data-i18n="複製">複製</button><button data-text-act="clear" data-i18n="清空">清空</button></div><div class="text-convert-box"><label><span data-i18n="輸出文字">輸出文字</span><select id="textTarget"><option value="zh-CN">简中</option><option value="zh-HK">繁中(HK)</option></select></label><button id="textCopyOut" type="button" data-i18n="複製結果">複製結果</button></div></div></section><div class="text-work-area"><section class="app-panel text-input-panel"><textarea id="appText" placeholder="'+escapeHtml(tr("在此貼上文字…"))+'"></textarea></section><div class="text-splitter" data-text-splitter role="separator" aria-orientation="horizontal" aria-label="調整輸入和輸出高度" data-i18n-aria-label="調整輸入和輸出高度"></div><section class="app-panel text-output-panel"><textarea id="textOut" class="mini-output text-output" readonly placeholder="'+escapeHtml(tr("轉換結果"))+'"></textarea><p id="textConvertStatus" class="mini-note" data-i18n="即時模式：只保留簡體 / 繁體轉換。">即時模式：只保留簡體 / 繁體轉換。</p></section></div></div>';
@@ -655,7 +665,25 @@ function bindImageApp(win){
   win.querySelectorAll("[data-scale]").forEach(b=>b.onclick=()=>{if(!img)return;const n=+b.dataset.scale;setOutputSize(Math.round(ow*n),Math.round(oh*n))});
   win.querySelectorAll("[data-long]").forEach(b=>b.onclick=()=>{if(!img)return;const m=+b.dataset.long;const r=ow>=oh?m/ow:m/oh;setOutputSize(Math.round(ow*r),Math.round(oh*r))});
   function setOutputSize(w,h){ids("imgW").value=w;ids("imgH").value=h;scheduleDraw()}
+  win.querySelectorAll("[data-crop-preset]").forEach(b=>b.onclick=()=>{if(!img)return;setCropPreset(b.dataset.cropPreset)});
+  function setCropPreset(type){
+    let x=0,y=0,w=ow,h=oh;
+    if(type==="square"){
+      w=h=Math.min(ow,oh);x=Math.round((ow-w)/2);y=Math.round((oh-h)/2);
+    }else if(type==="16:9"||type==="4:3"){
+      const [rw,rh]=type.split(":").map(Number),ratio=rw/rh;
+      if(ow/oh>ratio){h=oh;w=Math.round(h*ratio);x=Math.round((ow-w)/2)}
+      else{w=ow;h=Math.round(w/ratio);y=Math.round((oh-h)/2)}
+    }
+    ids("cropX").value=x;ids("cropY").value=y;ids("cropW").value=w;ids("cropH").value=h;
+    ids("cropOn").checked=type!=="full";
+    scheduleDraw();
+  }
   win.querySelectorAll("[data-img-tab]").forEach(btn=>btn.onclick=()=>{win.querySelectorAll("[data-img-tab]").forEach(b=>b.classList.toggle("is-active",b===btn));win.querySelectorAll("[data-img-section]").forEach(p=>p.classList.toggle("hidden",p.dataset.imgSection!==btn.dataset.imgTab))});
+  win.querySelectorAll("[data-preview-tab]").forEach(btn=>btn.onclick=()=>{
+    win.querySelectorAll("[data-preview-tab]").forEach(b=>b.classList.toggle("is-active",b===btn));
+    win.querySelector(".image-preview-stage")?.setAttribute("data-preview-mode",btn.dataset.previewTab);
+  });
   win.querySelectorAll("input,select").forEach(el=>["input","change"].forEach(type=>el.addEventListener(type,()=>{if(el.id==="imgFile"||lock)return;if(/^crop[XYWH]$/.test(el.id))ids("cropOn").checked=true;scheduleDraw()})));
   ids("imgReset").onclick=()=>{if(!img)return;ids("imgW").value=ow;ids("imgH").value=oh;ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("cropOn").checked=false;["bright","contrast","sat","sharp","noise"].forEach(id=>ids(id).value=0);ids("bgMode").value="none";ids("bgTol").value=34;ids("bgFeather").value=1;ids("ocrOut").value="";ids("ocrStatus").textContent="";scheduleDraw()};
   const downloadImage=()=>{if(!canvas.width)return;const fmt=ids("imgFmt").value,ext=fmt==="image/jpeg"?"jpg":fmt.split("/")[1]||"png";const a=document.createElement("a");a.download=currentName+"-edited."+ext;a.href=canvas.toDataURL(fmt,+ids("imgQ").value);a.click()};
@@ -664,7 +692,7 @@ function bindImageApp(win){
   ids("ocrRun").onclick=()=>runDeskOcr(win,canvas);
   ids("ocrCopy").onclick=()=>navigator.clipboard?.writeText(ids("ocrOut").value);
   function scheduleDraw(){if(drawQueued)return;drawQueued=true;requestAnimationFrame(()=>{drawQueued=false;draw()})}
-  function draw(){if(!img)return;let sx=0,sy=0,sw=ow,sh=oh;if(ids("cropOn").checked){sx=Math.max(0,+ids("cropX").value||0);sy=Math.max(0,+ids("cropY").value||0);sw=Math.min(ow-sx,+ids("cropW").value||ow);sh=Math.min(oh-sy,+ids("cropH").value||oh)}canvas.width=Math.max(1,+ids("imgW").value||sw);canvas.height=Math.max(1,+ids("imgH").value||sh);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingQuality="high";ctx.drawImage(img,sx,sy,sw,sh,0,0,canvas.width,canvas.height);adjust(ctx,canvas.width,canvas.height);removeBg(ctx,canvas.width,canvas.height);if(+ids("noise").value)denoise(ctx,canvas.width,canvas.height,+ids("noise").value);if(+ids("sharp").value)sharpen(ctx,canvas.width,canvas.height,+ids("sharp").value/100);ids("imgOutputSize").textContent=canvas.width+" × "+canvas.height}
+  function draw(){if(!img)return;let sx=0,sy=0,sw=ow,sh=oh;if(ids("cropOn").checked){sx=Math.min(Math.max(0,+ids("cropX").value||0),Math.max(0,ow-1));sy=Math.min(Math.max(0,+ids("cropY").value||0),Math.max(0,oh-1));sw=Math.max(1,Math.min(ow-sx,+ids("cropW").value||ow));sh=Math.max(1,Math.min(oh-sy,+ids("cropH").value||oh))}canvas.width=Math.max(1,+ids("imgW").value||sw);canvas.height=Math.max(1,+ids("imgH").value||sh);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingQuality="high";ctx.drawImage(img,sx,sy,sw,sh,0,0,canvas.width,canvas.height);adjust(ctx,canvas.width,canvas.height);removeBg(ctx,canvas.width,canvas.height);if(+ids("noise").value)denoise(ctx,canvas.width,canvas.height,+ids("noise").value);if(+ids("sharp").value)sharpen(ctx,canvas.width,canvas.height,+ids("sharp").value/100);ids("imgOutputSize").textContent=canvas.width+" × "+canvas.height}
   function adjust(c,w,h){const data=c.getImageData(0,0,w,h),d=data.data,b=+ids("bright").value,ct=+ids("contrast").value,sat=+ids("sat").value;const cf=(259*(ct+255))/(255*(259-ct));for(let i=0;i<d.length;i+=4){let r=cf*(d[i]-128)+128+b,g=cf*(d[i+1]-128)+128+b,bl=cf*(d[i+2]-128)+128+b;const gray=.299*r+.587*g+.114*bl;r=gray+(r-gray)*(1+sat/100);g=gray+(g-gray)*(1+sat/100);bl=gray+(bl-gray)*(1+sat/100);d[i]=clamp(r);d[i+1]=clamp(g);d[i+2]=clamp(bl)}c.putImageData(data,0,0)}
   function removeBg(c,w,h){const mode=ids("bgMode").value;if(mode==="none")return;const tol=+ids("bgTol").value,feather=(+ids("bgFeather").value||0)*12,data=c.getImageData(0,0,w,h),d=data.data;let target=[255,255,255];if(mode==="black")target=[0,0,0];if(mode==="corner"){const p=[0,(w-1)*4,(h-1)*w*4,(h*w-1)*4];target=[0,1,2].map(ch=>Math.round(p.reduce((a,i)=>a+d[i+ch],0)/4))}for(let i=0;i<d.length;i+=4){const dist=Math.hypot(d[i]-target[0],d[i+1]-target[1],d[i+2]-target[2]);if(dist<tol)d[i+3]=0;else if(feather&&dist<tol+feather)d[i+3]=Math.round(d[i+3]*(dist-tol)/feather)}c.putImageData(data,0,0)}
   function denoise(c,w,h,n){for(let pass=0;pass<n;pass++){const data=c.getImageData(0,0,w,h),d=data.data,copy=new Uint8ClampedArray(d);for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=(y*w+x)*4;for(let ch=0;ch<3;ch++){let sum=0;for(let yy=-1;yy<=1;yy++)for(let xx=-1;xx<=1;xx++)sum+=copy[((y+yy)*w+x+xx)*4+ch];d[i+ch]=sum/9}}c.putImageData(data,0,0)}}
