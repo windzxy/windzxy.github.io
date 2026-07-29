@@ -7,7 +7,7 @@
   <meta name="description" content="WebDesk 網頁端桌面。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260728-inlinecards2">
+  <link rel="stylesheet" href="styles/main.css?v=20260729-resize1">
   <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
@@ -210,8 +210,8 @@ function normalizeWorkspace(ws){
     }
     const preferred=preferredCardSize(next.appId,next.w,next.h);
     if(appById(next.appId)?.kind==="tool"){
-      next.w=preferred.w;
-      next.h=preferred.h;
+      next.w=Math.max(280,Math.min(next.w,preferred.w));
+      next.h=Math.max(220,Math.min(next.h,preferred.h));
     }
     return next;
   });
@@ -675,8 +675,16 @@ document.addEventListener("pointermove",e=>{
     windowDrag.win.style.top=Math.max(0,Math.min(rect.height-windowDrag.win.offsetHeight-62,windowDrag.origY+e.clientY-windowDrag.startY))+"px";
   }
   if(windowResize){
-    windowResize.win.style.width=Math.max(320,Math.min(window.innerWidth-120,windowResize.origW+e.clientX-windowResize.startX))+"px";
-    windowResize.win.style.height=Math.max(220,Math.min(window.innerHeight-110,windowResize.origH+e.clientY-windowResize.startY))+"px";
+    const layer=$("windowLayer")||document.body;
+    const rect=layer.getBoundingClientRect();
+    const left=windowResize.win.offsetLeft||0;
+    const top=windowResize.win.offsetTop||0;
+    const minW=320;
+    const minH=220;
+    const maxW=Math.max(minW,rect.width-left-10);
+    const maxH=Math.max(minH,rect.height-top-10);
+    windowResize.win.style.width=Math.max(minW,Math.min(maxW,windowResize.origW+e.clientX-windowResize.startX))+"px";
+    windowResize.win.style.height=Math.max(minH,Math.min(maxH,windowResize.origH+e.clientY-windowResize.startY))+"px";
   }
   if(drag){
     const rect=$("desktopCanvas").getBoundingClientRect();
@@ -687,13 +695,16 @@ document.addEventListener("pointermove",e=>{
   }
   if(resize){
     const isWeather=resize.item.appId==="weather";
+    const isTool=appById(resize.item.appId)?.kind==="tool";
     const rect=$("desktopCanvas").getBoundingClientRect();
     const left=resize.item.x||resize.el.offsetLeft||0;
     const top=resize.item.y||resize.el.offsetTop||0;
-    const maxW=isWeather?Math.max(320,rect.width-left-12):720;
-    const maxH=isWeather?Math.max(260,rect.height-top-12):520;
-    resize.item.w=Math.max(isWeather?320:210,Math.min(maxW,resize.origW+e.clientX-resize.startX));
-    resize.item.h=Math.max(isWeather?260:110,Math.min(maxH,resize.origH+e.clientY-resize.startY));
+    const minW=isWeather?320:(isTool?280:210);
+    const minH=isWeather?260:(isTool?220:110);
+    const maxW=Math.max(minW,rect.width-left-12);
+    const maxH=Math.max(minH,rect.height-top-12);
+    resize.item.w=Math.max(minW,Math.min(maxW,resize.origW+e.clientX-resize.startX));
+    resize.item.h=Math.max(minH,Math.min(maxH,resize.origH+e.clientY-resize.startY));
     resize.el.style.width=resize.item.w+"px";
     resize.el.style.height=resize.item.h+"px";
   }
