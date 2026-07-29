@@ -7,7 +7,7 @@
   <meta name="description" content="WebDesk 網頁端桌面。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench1">
+  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench2">
   <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
@@ -481,6 +481,14 @@ function createWindow(key,title,w,h){
 function appContent(appId){
   if(appId==="image")return `
     <div class="desk-app image-full-app image-workbench">
+      <section class="image-workspace-tabs" aria-label="圖片工作區" data-i18n-aria-label="圖片工作區">
+        <button data-img-tab="size" class="is-active" type="button" data-i18n="尺寸">尺寸</button>
+        <button data-img-tab="crop" type="button" data-i18n="裁切">裁切</button>
+        <button data-img-tab="bg" type="button" data-i18n="去背">去背</button>
+        <button data-img-tab="adjust" type="button" data-i18n="調色">調色</button>
+        <button data-img-tab="export" type="button" data-i18n="輸出">輸出</button>
+        <button data-img-tab="ocr" type="button">OCR</button>
+      </section>
       <section class="app-panel image-toolbar">
         <label class="image-dropzone" for="imgFile" data-image-drop>
           <input id="imgFile" type="file" accept="image/*">
@@ -490,21 +498,17 @@ function appContent(appId){
         <div class="image-file-meta">
           <span id="imgInfo" class="mini-note" data-i18n="尚未選擇圖片">尚未選擇圖片</span>
           <div class="app-actions image-main-actions">
-            <button id="imgDownload" type="button" data-i18n="下載">下載</button>
-            <button id="imgReset" type="button" data-i18n="重設">重設</button>
+            <button id="imgDownload" class="image-action-requires-image" type="button" data-i18n="下載">下載</button>
+            <button id="imgReset" class="image-action-requires-image" type="button" data-i18n="重設">重設</button>
           </div>
         </div>
       </section>
-      <section class="app-panel image-controls">
-        <div class="tool-tabs image-tabs">
-          <button data-img-tab="size" class="is-active" type="button" data-i18n="尺寸">尺寸</button>
-          <button data-img-tab="crop" type="button" data-i18n="裁切">裁切</button>
-          <button data-img-tab="bg" type="button" data-i18n="去背">去背</button>
-          <button data-img-tab="adjust" type="button" data-i18n="調色">調色</button>
-          <button data-img-tab="export" type="button" data-i18n="輸出">輸出</button>
-          <button data-img-tab="ocr" type="button">OCR</button>
-        </div>
+      <section class="app-panel image-controls" aria-live="polite">
         <div class="img-section" data-img-section="size">
+          <div class="image-section-head">
+            <strong data-i18n="尺寸工作區">尺寸工作區</strong>
+            <span data-i18n="調整輸出寬高，預覽會即時更新。">調整輸出寬高，預覽會即時更新。</span>
+          </div>
           <div class="app-controls two">
             <label><span data-i18n="寬度">寬度</span><input id="imgW" type="number" min="1" inputmode="numeric"></label>
             <label><span data-i18n="高度">高度</span><input id="imgH" type="number" min="1" inputmode="numeric"></label>
@@ -520,6 +524,10 @@ function appContent(appId){
           </div>
         </div>
         <div class="img-section hidden" data-img-section="crop">
+          <div class="image-section-head">
+            <strong data-i18n="裁切工作區">裁切工作區</strong>
+            <span data-i18n="輸入裁切範圍，X/Y 從左上角開始。">輸入裁切範圍，X/Y 從左上角開始。</span>
+          </div>
           <label class="check-line"><input id="cropOn" type="checkbox"><span data-i18n="啟用裁切">啟用裁切</span></label>
           <div class="app-controls four">
             <label>X<input id="cropX" type="number" value="0" min="0"></label>
@@ -529,6 +537,10 @@ function appContent(appId){
           </div>
         </div>
         <div class="img-section hidden" data-img-section="bg">
+          <div class="image-section-head">
+            <strong data-i18n="去背工作區">去背工作區</strong>
+            <span data-i18n="適合純色或接近純色背景。">適合純色或接近純色背景。</span>
+          </div>
           <div class="app-controls">
             <label><span data-i18n="去背模式">去背模式</span><select id="bgMode"><option value="none" data-i18n="不去背">不去背</option><option value="white" data-i18n="移除白色/淺色背景">移除白色/淺色背景</option><option value="black" data-i18n="移除黑色/深色背景">移除黑色/深色背景</option><option value="corner" data-i18n="按四角背景取樣">按四角背景取樣</option></select></label>
             <label><span data-i18n="容差">容差</span><input id="bgTol" type="range" min="1" max="180" value="34"></label>
@@ -536,6 +548,10 @@ function appContent(appId){
           </div>
         </div>
         <div class="img-section hidden" data-img-section="adjust">
+          <div class="image-section-head">
+            <strong data-i18n="調色工作區">調色工作區</strong>
+            <span data-i18n="亮度、對比、飽和、銳化和降噪。">亮度、對比、飽和、銳化和降噪。</span>
+          </div>
           <div class="app-controls image-sliders">
             <label><span data-i18n="亮度">亮度</span><input id="bright" type="range" min="-80" max="80" value="0"></label>
             <label><span data-i18n="對比">對比</span><input id="contrast" type="range" min="-80" max="80" value="0"></label>
@@ -545,20 +561,31 @@ function appContent(appId){
           </div>
         </div>
         <div class="img-section hidden" data-img-section="export">
+          <div class="image-section-head">
+            <strong data-i18n="輸出工作區">輸出工作區</strong>
+            <span data-i18n="選擇格式和品質後直接下載。">選擇格式和品質後直接下載。</span>
+          </div>
           <div class="app-controls two">
             <label><span data-i18n="格式">格式</span><select id="imgFmt"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label>
             <label><span data-i18n="品質">品質</span><input id="imgQ" type="range" min=".4" max="1" step=".05" value=".9"></label>
           </div>
+          <div class="app-actions image-export-actions">
+            <button id="imgExportDownload" class="image-action-requires-image" type="button" data-i18n="下載圖片">下載圖片</button>
+          </div>
         </div>
         <div class="img-section hidden" data-img-section="ocr">
+          <div class="image-section-head">
+            <strong data-i18n="OCR 工作區">OCR 工作區</strong>
+            <span data-i18n="從當前處理結果識別文字。">從當前處理結果識別文字。</span>
+          </div>
           <div class="app-controls two">
             <label><span>OCR</span><select id="ocrLang"><option value="eng">English</option><option value="chi_sim">简中</option><option value="chi_tra">繁中</option></select></label>
-            <div class="app-actions image-ocr-actions"><button id="ocrRun" type="button" data-i18n="識別文字">識別文字</button><button id="ocrCopy" type="button" data-i18n="複製">複製</button></div>
+            <div class="app-actions image-ocr-actions"><button id="ocrRun" class="image-action-requires-image" type="button" data-i18n="識別文字">識別文字</button><button id="ocrCopy" class="image-action-requires-image" type="button" data-i18n="複製">複製</button></div>
           </div>
           <textarea id="ocrOut" class="mini-output" readonly></textarea>
           <p id="ocrStatus" class="mini-note"></p>
         </div>
-        <button id="imgApply" class="image-refresh" type="button" data-i18n="刷新預覽">刷新預覽</button>
+        <p class="image-live-note" data-i18n="已啟用即時預覽，不需要手動刷新。">已啟用即時預覽，不需要手動刷新。</p>
       </section>
       <section class="app-panel app-preview-grid image-preview-grid">
         <figure>
@@ -621,7 +648,7 @@ function bindImageApp(win){
   }
   function setImageReady(ready){
     win.querySelector(".image-workbench")?.classList.toggle("has-image",ready);
-    win.querySelectorAll(".image-controls input,.image-controls select,.image-controls button,.image-main-actions button").forEach(el=>{el.disabled=!ready});
+    win.querySelectorAll(".image-controls input,.image-controls select,.image-preset-row button,.image-action-requires-image").forEach(el=>{el.disabled=!ready});
     file.disabled=false;
   }
   function sync(source){if(!img||!ids("imgRatio").checked||lock)return;lock=true;if(source==="w")ids("imgH").value=Math.max(1,Math.round(+ids("imgW").value*oh/ow));if(source==="h")ids("imgW").value=Math.max(1,Math.round(+ids("imgH").value*ow/oh));lock=false;scheduleDraw()}
@@ -630,8 +657,10 @@ function bindImageApp(win){
   function setOutputSize(w,h){ids("imgW").value=w;ids("imgH").value=h;scheduleDraw()}
   win.querySelectorAll("[data-img-tab]").forEach(btn=>btn.onclick=()=>{win.querySelectorAll("[data-img-tab]").forEach(b=>b.classList.toggle("is-active",b===btn));win.querySelectorAll("[data-img-section]").forEach(p=>p.classList.toggle("hidden",p.dataset.imgSection!==btn.dataset.imgTab))});
   win.querySelectorAll("input,select").forEach(el=>["input","change"].forEach(type=>el.addEventListener(type,()=>{if(el.id==="imgFile"||lock)return;if(/^crop[XYWH]$/.test(el.id))ids("cropOn").checked=true;scheduleDraw()})));
-  ids("imgApply").onclick=scheduleDraw;ids("imgReset").onclick=()=>{if(!img)return;ids("imgW").value=ow;ids("imgH").value=oh;ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("cropOn").checked=false;["bright","contrast","sat","sharp","noise"].forEach(id=>ids(id).value=0);ids("bgMode").value="none";ids("bgTol").value=34;ids("bgFeather").value=1;ids("ocrOut").value="";ids("ocrStatus").textContent="";scheduleDraw()};
-  ids("imgDownload").onclick=()=>{if(!canvas.width)return;const fmt=ids("imgFmt").value,ext=fmt==="image/jpeg"?"jpg":fmt.split("/")[1]||"png";const a=document.createElement("a");a.download=currentName+"-edited."+ext;a.href=canvas.toDataURL(fmt,+ids("imgQ").value);a.click()};
+  ids("imgReset").onclick=()=>{if(!img)return;ids("imgW").value=ow;ids("imgH").value=oh;ids("cropX").value=0;ids("cropY").value=0;ids("cropW").value=ow;ids("cropH").value=oh;ids("cropOn").checked=false;["bright","contrast","sat","sharp","noise"].forEach(id=>ids(id).value=0);ids("bgMode").value="none";ids("bgTol").value=34;ids("bgFeather").value=1;ids("ocrOut").value="";ids("ocrStatus").textContent="";scheduleDraw()};
+  const downloadImage=()=>{if(!canvas.width)return;const fmt=ids("imgFmt").value,ext=fmt==="image/jpeg"?"jpg":fmt.split("/")[1]||"png";const a=document.createElement("a");a.download=currentName+"-edited."+ext;a.href=canvas.toDataURL(fmt,+ids("imgQ").value);a.click()};
+  ids("imgDownload").onclick=downloadImage;
+  ids("imgExportDownload").onclick=downloadImage;
   ids("ocrRun").onclick=()=>runDeskOcr(win,canvas);
   ids("ocrCopy").onclick=()=>navigator.clipboard?.writeText(ids("ocrOut").value);
   function scheduleDraw(){if(drawQueued)return;drawQueued=true;requestAnimationFrame(()=>{drawQueued=false;draw()})}
