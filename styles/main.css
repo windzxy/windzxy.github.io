@@ -494,7 +494,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .window-resize,.resize-grip{touch-action:none}
 @media(max-width:760px){.desktop-card{width:auto!important;max-width:calc(100% - 72px)}}
 
-/* imageworkbench4: clearer crop workflow and a single primary preview stage */
+/* imageworkbench5: side-by-side source and edited preview stage */
 .image-workbench{
   grid-template-columns:minmax(320px,380px) minmax(0,1fr);
   grid-template-rows:auto auto minmax(0,1fr);
@@ -548,7 +548,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 }
 .image-toolbar{grid-area:toolbar;display:grid;gap:8px;padding:10px;overflow:visible}
 .image-controls{grid-area:controls;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:8px;padding:10px}
-.image-preview-stage{grid-area:preview;position:relative;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;padding:10px}
+.image-preview-stage{grid-area:preview;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:10px}
 .image-dropzone{
   min-height:82px;
   display:grid!important;
@@ -570,7 +570,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   border-color:#ff8a00;
   background:rgba(255,138,0,.14);
 }
-.image-ocr-actions button,.image-export-actions button,.image-preset-row button,.image-stage-actions button,.image-preview-switch button{
+.image-ocr-actions button,.image-export-actions button,.image-preset-row button,.image-stage-actions button{
   min-height:30px;
   border-radius:7px;
   font-size:13px;
@@ -701,19 +701,47 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .image-preview-head>div:first-child{display:grid;gap:2px;min-width:0}
 .image-preview-head strong{font-size:15px;color:#111827}
 :root[data-theme=dark] .image-preview-head strong{color:#f3f4f6}
-.image-preview-switch{display:flex;gap:4px;padding:3px;border-radius:8px;background:#eef2f7}
-:root[data-theme=dark] .image-preview-switch{background:#0f172a}
-.image-preview-switch button{
-  border:0;
-  padding:0 10px;
-  color:#374151;
-  background:transparent;
-  font-weight:700;
-  cursor:pointer;
+.image-compare-stage{
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
 }
-:root[data-theme=dark] .image-preview-switch button{color:#d1d5db}
-.image-preview-switch button.is-active{background:#fff;color:#111827;box-shadow:0 1px 3px rgba(15,23,42,.12)}
-:root[data-theme=dark] .image-preview-switch button.is-active{background:#253044;color:#fff}
+.image-stage-card{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:7px;
+}
+.image-stage-title{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  border-radius:8px;
+  background:rgba(15,23,42,.05);
+  padding:7px 9px;
+}
+:root[data-theme=dark] .image-stage-title{background:rgba(255,255,255,.06)}
+.image-stage-title strong{
+  color:#111827;
+  font-size:13px;
+  white-space:nowrap;
+}
+:root[data-theme=dark] .image-stage-title strong{color:#f3f4f6}
+.image-stage-title small{
+  min-width:0;
+  color:#6b7280;
+  font-size:12px;
+  font-weight:650;
+  overflow:hidden;
+  text-align:right;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+:root[data-theme=dark] .image-stage-title small{color:#a7adba}
 .image-stage-canvas{
   position:relative;
   min-height:0;
@@ -752,15 +780,10 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   border-radius:0;
   background:transparent;
 }
-.image-workbench.has-image .image-preview-stage[data-preview-mode=result] canvas[data-stage-canvas=result]{display:block}
-.image-workbench.has-image .image-preview-stage[data-preview-mode=source] canvas[data-stage-canvas=source]{display:block}
+.image-workbench.has-image .image-stage-canvas canvas{display:block}
 .image-stage-actions{display:none;justify-content:flex-end;gap:8px;margin:0}
 .image-workbench.has-image .image-stage-actions{
   display:flex;
-  position:absolute;
-  right:10px;
-  bottom:10px;
-  z-index:2;
 }
 .image-stage-actions button{
   min-width:88px;
@@ -777,7 +800,8 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   grid-template-rows:auto auto auto minmax(140px,1fr);
   grid-template-areas:"tabs" "toolbar" "controls" "preview";
 }
-.desktop-card .inline-tool .image-preview-stage{min-height:140px}
+.desktop-card .inline-tool .image-preview-stage{min-height:180px}
+.desktop-card .inline-tool .image-compare-stage{grid-template-columns:1fr}
 @media(max-width:920px){
   .image-workbench{
     grid-template-columns:1fr;
@@ -786,6 +810,9 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   }
   .app-controls.four{grid-template-columns:repeat(2,minmax(0,1fr))}
   .image-crop-presets{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .image-compare-stage{grid-template-columns:1fr}
 }
 @media(max-width:520px){
   .image-workspace-tabs button{flex-basis:94px}
