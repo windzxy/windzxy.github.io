@@ -530,7 +530,7 @@ function bindTextApp(win){
       return;
     }
     setTextConvertStatus(status,"轉換中…");
-    const result=await translateText(text,target);
+    const result=await translateText(text,target,message=>setTextConvertStatus(status,message));
     out.value=result.text;
     setTextConvertStatus(status,result.status);
   };
@@ -570,23 +570,178 @@ function bindTextSplitter(win){
     window.addEventListener("pointerup",up,{once:true});
   });
 }
-async function translateText(text,target){
+const argosTranslateConfig={
+  defaultEndpoint:"https://translate.argosopentech.com/translate",
+  storageKey:"windzxy-argos-translate-url",
+  timeoutMs:18000
+};
+const openSourceTranslationConfig={
+  moduleUrl:"https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2",
+  wasmUrl:"https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/",
+  model:"Xenova/opus-mt-zh-en",
+  timeoutMs:60000
+};
+let openSourceTranslatorPromise=null;
+function hasChineseText(text){
+  return /[\u3400-\u9fff]/.test(String(text||""));
+}
+async function translateText(text,target,onStatus){
   if(target==="zh-CN"||target==="zh-HK"){
     return {text:basicTextConvert(text,target),status:"已使用離線詞庫轉換。"};
   }
   if(target==="en"){
+    if(hasChineseText(text)){
+      try{
+        onStatus?.("正在使用 Argos / LibreTranslate 開源翻譯…");
+        const argosText=await translateWithArgosCompatibleApi(text,"zh","en");
+        if(argosText&&argosText.trim()&&!hasChineseText(argosText)){
+          return {text:normalizeModelEnglish(argosText),status:"已使用 Argos / LibreTranslate 開源翻譯。"};
+        }
+      }catch(error){
+        console.warn("Argos-compatible translation failed:",error);
+      }
+      try{
+        onStatus?.("Argos 暫不可用，正在載入瀏覽器開源模型…");
+        const modelText=await translateToEnglishWithOpenModel(text);
+        if(modelText&&modelText.trim()&&!hasChineseText(modelText)){
+          return {text:modelText,status:"已使用瀏覽器開源 OPUS-MT 模型翻譯。"};
+        }
+      }catch(error){
+        console.warn("Browser open-source translation failed:",error);
+      }
+    }
     const offlineResult=offlineTranslateToEnglish(text);
     if(offlineResult.changed){
-      return {text:offlineResult.text,status:offlineResult.partial?"已使用內置開源詞庫翻譯，部分未命中已保留。":"已使用內置開源詞庫翻譯。"};
+      return {text:offlineResult.text,status:offlineResult.partial?"開源翻譯暫不可用；已使用內置備援詞庫，部分未命中已保留。":"開源翻譯暫不可用；已使用內置備援詞庫。"};
     }
-    return {text:String(text||""),status:"內置詞庫沒有命中；已保留原文。"};
+    return {text:String(text||""),status:"開源翻譯暫不可用，備援詞庫也沒有命中；已保留原文。"};
   }
   return {text:basicTextConvert(text,target),status:"已使用離線詞庫轉換。"};
+}
+function getArgosTranslateEndpoints(){
+  const configured=(window.WINDZXY_ARGOS_TRANSLATE_URL||localStorage.getItem(argosTranslateConfig.storageKey)||"").trim();
+  return [configured,argosTranslateConfig.defaultEndpoint].filter(Boolean).filter((url,index,list)=>list.indexOf(url)===index);
+}
+async function translateWithArgosCompatibleApi(text,source,target){
+  let lastError=null;
+  for(const endpoint of getArgosTranslateEndpoints()){
+    try{
+      const result=await postArgosTranslate(endpoint,{q:String(text||""),source,target,format:"text"});
+      const translated=result?.translatedText||result?.translated_text||result?.translation||"";
+      if(translated.trim())return translated;
+      lastError=new Error("Empty Argos response");
+    }catch(error){
+      lastError=error;
+    }
+  }
+  throw lastError||new Error("No Argos endpoint available");
+}
+async function postArgosTranslate(endpoint,payload){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),argosTranslateConfig.timeoutMs);
+  try{
+    const res=await fetch(endpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify(payload),
+      cache:"no-store",
+      credentials:"omit",
+      signal:controller.signal
+    });
+    if(!res.ok)throw new Error("Argos HTTP "+res.status);
+    return await res.json();
+  }finally{
+    clearTimeout(timer);
+  }
+}
+function loadOpenSourceTranslator(){
+  if(!openSourceTranslatorPromise){
+    openSourceTranslatorPromise=(async()=>{
+      const mod=await import(openSourceTranslationConfig.moduleUrl);
+      if(mod.env?.backends?.onnx?.wasm)mod.env.backends.onnx.wasm.wasmPaths=openSourceTranslationConfig.wasmUrl;
+      if(mod.env){
+        mod.env.allowLocalModels=false;
+        mod.env.useBrowserCache=true;
+      }
+      return mod.pipeline("translation",openSourceTranslationConfig.model,{quantized:true});
+    })();
+  }
+  return openSourceTranslatorPromise;
+}
+function withTimeout(promise,ms,label){
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+" timeout")),ms))
+  ]);
+}
+function splitTranslationInput(text){
+  const parts=String(text||"").split(/(\n+)/);
+  const chunks=[];
+  let current="";
+  for(const part of parts){
+    if(!part)continue;
+    if((current+part).length<=480){
+      current+=part;
+      continue;
+    }
+    if(current.trim())chunks.push(current);
+    current=part;
+    while(current.length>520){
+      const cut=Math.max(
+        current.lastIndexOf("。",480),
+        current.lastIndexOf("！",480),
+        current.lastIndexOf("？",480),
+        current.lastIndexOf("，",480),
+        current.lastIndexOf(",",480),
+        current.lastIndexOf(" ",480)
+      );
+      const index=cut>160?cut+1:480;
+      chunks.push(current.slice(0,index));
+      current=current.slice(index);
+    }
+  }
+  if(current.trim())chunks.push(current);
+  return chunks.length?chunks:[String(text||"")];
+}
+async function translateToEnglishWithOpenModel(text){
+  const translator=await withTimeout(loadOpenSourceTranslator(),openSourceTranslationConfig.timeoutMs,"open-source model load");
+  const chunks=splitTranslationInput(text);
+  const translated=[];
+  for(const chunk of chunks){
+    if(!chunk.trim()){
+      translated.push(chunk);
+      continue;
+    }
+    const result=await withTimeout(translator(chunk),openSourceTranslationConfig.timeoutMs,"open-source translation");
+    translated.push(extractModelTranslation(result));
+  }
+  return normalizeModelEnglish(translated.join(" "));
+}
+function extractModelTranslation(result){
+  if(Array.isArray(result))return result.map(item=>item?.translation_text||item?.generated_text||item?.text||"").join(" ");
+  return result?.translation_text||result?.generated_text||result?.text||String(result||"");
+}
+function normalizeModelEnglish(text){
+  return String(text||"")
+    .replace(/\s+/g," ")
+    .replace(/\s+([,.;:?!])/g,"$1")
+    .replace(/([,.;:?!])(?=\S)/g,"$1 ")
+    .replace(/(^|[.!?]\s+)([a-z])/g,(m,p,ch)=>p+ch.toUpperCase())
+    .trim();
 }
 function offlineTranslateToEnglish(text){
   const source=String(text||"");
   if(!source.trim())return {text:"",changed:false,partial:false};
   const phrasePairs=[
+    ["你好，你在幹嘛，你今天有什麼任務嗎","你好，你在干嘛，你今天有什么任务吗","hello, what are you doing? Do you have any tasks today"],
+    ["你好,你在幹嘛,你今天有什麼任務嗎","你好,你在干嘛,你今天有什么任务吗","hello, what are you doing? Do you have any tasks today"],
+    ["你好，你在幹嘛，你今天有什么任務嗎","你好，你在干嘛，你今天有什么任务吗","hello, what are you doing? Do you have any tasks today"],
+    ["你好,你在幹嘛,你今天有什么任務嗎","你好,你在干嘛,你今天有什么任务吗","hello, what are you doing? Do you have any tasks today"],
+    ["你今天有什麼任務嗎","你今天有什么任务吗","do you have any tasks today"],
+    ["有什麼任務嗎","有什么任务吗","do you have any tasks"],
+    ["你在幹嘛","你在干嘛","what are you doing"],
+    ["幹嘛","干嘛","what are you doing"],
+    ["任務","任务","task"],
     ["不能依賴google","不能依赖google","cannot rely on Google"],
     ["不能依賴 Google","不能依赖 Google","cannot rely on Google"],
     ["依賴google","依赖google","rely on Google"],
@@ -706,7 +861,7 @@ function offlineTranslateToEnglish(text){
     ["說","say"],["想","want"],["做","do"],["是","is"],["在","at"],["有","have"],["要","want"],["看","look"],["改","change"],
     ["和","and"],["或","or"],["但","but"],["如果","if"],["則","then"],["因為","because"],["所以","so"]
   ];
-  const particles=/[的了嗎呢啊吧呀啦著着過过把被給给與与及和或於于在是]/g;
+  const particles=/[的了嗎呢啊吧呀啦著着過过把被給给與与及和或於于]/g;
   const punctuationMap={"，":", ","。":". ","？":"? ","！":"! ","；":"; ","：":": ","、":", ","（":" (","）":") ","「":"\"","」":"\"","『":"\"","』":"\"","《":"\"","》":"\""};
   let output=source.replace(/[，。？！；：、（）「」『』《》]/g,ch=>punctuationMap[ch]||ch);
   const sortedPhrases=phrasePairs.slice().sort((a,b)=>Math.max(b[0].length,b[1].length)-Math.max(a[0].length,a[1].length));
@@ -758,7 +913,7 @@ function basicTextConvert(text,target){
     ["圖片處理","图片处理","image tools"],["文字整理","文字整理","text tools"],["表格轉換","表格转换","table tools"],["日期計算","日期计算","date calculator"],["JSON 工具","JSON 工具","JSON tools"],["天氣","天气","weather"],
     ["便箋","便签","note"],["待辦","待办","to-do"],["計算器","计算器","calculator"],["色板","色板","color palette"],["小抄","小抄","snippet"],["快速連結","快速链接","quick link"],
     ["複製結果","复制结果","copy result"],["轉換文字","转换文字","convert text"],["輸出語言","输出语言","output language"],["未檢測到可轉換文字","未检测到可转换文字","no text to convert"],
-    ["你好","你好","hello"],["您好","您好","hello"],["你說什麼","你说什么","what did you say"],["你是誰","你是谁","who are you"],["你在做什麼","你在做什么","what are you doing"],["這是什麼","这是什么","what is this"],["為什麼","为什么","why"],["怎麼","怎么","how"],["哪裡","哪里","where"],["什麼","什么","what"],["誰","谁","who"],["謝謝","谢谢","thank you"],["不用謝","不用谢","you are welcome"],["早上好","早上好","good morning"],["晚上好","晚上好","good evening"],["再見","再见","goodbye"],
+    ["你好，你在幹嘛，你今天有什麼任務嗎","你好，你在干嘛，你今天有什么任务吗","hello, what are you doing? Do you have any tasks today"],["你好,你在幹嘛,你今天有什麼任務嗎","你好,你在干嘛,你今天有什么任务吗","hello, what are you doing? Do you have any tasks today"],["你好，你在幹嘛，你今天有什么任務嗎","你好，你在干嘛，你今天有什么任务吗","hello, what are you doing? Do you have any tasks today"],["你好,你在幹嘛,你今天有什么任務嗎","你好,你在干嘛,你今天有什么任务吗","hello, what are you doing? Do you have any tasks today"],["你今天有什麼任務嗎","你今天有什么任务吗","do you have any tasks today"],["你在幹嘛","你在干嘛","what are you doing"],["你好","你好","hello"],["您好","您好","hello"],["你說什麼","你说什么","what did you say"],["你是誰","你是谁","who are you"],["你在做什麼","你在做什么","what are you doing"],["這是什麼","这是什么","what is this"],["為什麼","为什么","why"],["怎麼","怎么","how"],["哪裡","哪里","where"],["什麼","什么","what"],["誰","谁","who"],["謝謝","谢谢","thank you"],["不用謝","不用谢","you are welcome"],["早上好","早上好","good morning"],["晚上好","晚上好","good evening"],["再見","再见","goodbye"],
     ["今天","今天","today"],["明天","明天","tomorrow"],["昨天","昨天","yesterday"],["現在","现在","now"],["稍後","稍后","later"],["完成","完成","done"],["失敗","失败","failed"],["成功","成功","success"],
     ["打開","打开","open"],["關閉","关闭","close"],["搜尋","搜索","search"],["刷新","刷新","refresh"],["定位","定位","locate"],["下載","下载","download"],["上傳","上传","upload"],["保存","保存","save"],["刪除","删除","delete"],["移除","移除","remove"],
     ["新增","新增","add"],["重置","重置","reset"],["設定","设置","settings"],["背景","背景","wallpaper"],["語言","语言","language"],["主題","主题","theme"],["網址","网址","URL"],["新分頁","新标签页","new tab"],
@@ -775,28 +930,7 @@ function basicTextConvert(text,target){
     if(target==="en")out=out.replaceAll(hk,en).replaceAll(cn,en);
   }
   if(target==="en"){
-    out=out
-      .replace(/你/g,"you ")
-      .replace(/我/g,"I ")
-      .replace(/說/g,"say ")
-      .replace(/是/g,"is ")
-      .replace(/在/g,"at ")
-      .replace(/做/g,"do ")
-      .replace(/我是/g,"I am ")
-      .replace(/我想/g,"I want to ")
-      .replace(/我需要/g,"I need to ")
-      .replace(/請/g,"please ")
-      .replace(/可以/g,"can ")
-      .replace(/不能/g,"cannot ")
-      .replace(/不會/g,"does not ")
-      .replace(/已經/g,"already ")
-      .replace(/和/g," and ")
-      .replace(/或/g," or ")
-      .replace(/的/g," ")
-      .replace(/了/g,"")
-      .replace(/\s+/g," ")
-      .trim();
-    out=out.replace(/\b([a-z])/g,m=>m.toUpperCase());
+    return offlineTranslateToEnglish(out).text;
   }
   return out;
 }
