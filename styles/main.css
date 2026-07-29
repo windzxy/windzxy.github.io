@@ -494,7 +494,7 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .window-resize,.resize-grip{touch-action:none}
 @media(max-width:760px){.desktop-card{width:auto!important;max-width:calc(100% - 72px)}}
 
-/* imageworkbench6: fixed side-by-side source and edited preview stage */
+/* imageworkbench7: workflow-first image editor with side-by-side preview */
 .image-workbench{
   grid-template-columns:minmax(320px,380px) minmax(0,1fr);
   grid-template-rows:auto auto minmax(0,1fr);
@@ -606,6 +606,12 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .image-controls input,.image-controls select{padding:7px 8px}
 .image-sliders{grid-template-columns:1fr}
 .image-preset-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px}
+.image-tool-caption{
+  color:#4b5563;
+  font-size:12px;
+  font-weight:750;
+}
+:root[data-theme=dark] .image-tool-caption{color:#cbd5e1}
 .image-crop-toggle{
   min-height:34px;
   border-radius:8px;
@@ -624,6 +630,97 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 :root[data-theme=dark] .image-crop-card{
   border-color:rgba(255,255,255,.10);
   background:rgba(15,23,42,.42);
+}
+.image-hidden-field{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  overflow:hidden!important;
+  clip:rect(0 0 0 0)!important;
+  white-space:nowrap!important;
+}
+.image-crop-mode-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+.image-crop-mode-grid button{
+  min-height:58px;
+  display:grid;
+  align-content:center;
+  gap:2px;
+  border:1px solid rgba(217,220,225,.92);
+  border-radius:8px;
+  background:#fff;
+  color:#111827;
+  cursor:pointer;
+  text-align:left;
+  padding:8px;
+}
+.image-crop-mode-grid button strong{font-size:13px}
+.image-crop-mode-grid button span{color:#6b7280;font-size:11px}
+.image-crop-mode-grid button:hover,.image-crop-mode-grid button.is-active{
+  border-color:#ff8a00;
+  background:rgba(255,138,0,.10);
+  color:#92400e;
+}
+:root[data-theme=dark] .image-crop-mode-grid button{
+  border-color:rgba(255,255,255,.12);
+  background:rgba(17,24,39,.88);
+  color:#f3f4f6;
+}
+:root[data-theme=dark] .image-crop-mode-grid button span{color:#a7adba}
+:root[data-theme=dark] .image-crop-mode-grid button:hover,:root[data-theme=dark] .image-crop-mode-grid button.is-active{
+  border-color:#ff8a00;
+  background:rgba(255,138,0,.16);
+  color:#fbbf24;
+}
+.image-anchor-pad{
+  display:grid;
+  grid-template-columns:repeat(3,28px);
+  gap:6px;
+  width:max-content;
+  border:1px solid rgba(217,220,225,.92);
+  border-radius:10px;
+  background:rgba(255,255,255,.68);
+  padding:8px;
+}
+:root[data-theme=dark] .image-anchor-pad{border-color:rgba(255,255,255,.12);background:rgba(17,24,39,.72)}
+.image-anchor-pad button{
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:7px;
+  background:#e5e7eb;
+  cursor:pointer;
+  position:relative;
+}
+.image-anchor-pad button::before{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border-radius:50%;
+  background:#6b7280;
+}
+.image-anchor-pad button:hover,.image-anchor-pad button.is-active{
+  background:#ff8a00;
+}
+.image-anchor-pad button:hover::before,.image-anchor-pad button.is-active::before{background:#fff}
+:root[data-theme=dark] .image-anchor-pad button{background:#374151}
+.image-crop-actions{gap:7px;margin:0}
+.image-crop-actions button{
+  min-height:30px;
+  border:1px solid rgba(217,220,225,.92);
+  border-radius:7px;
+  background:#fff;
+  color:#111827;
+  font-weight:650;
+  cursor:pointer;
+}
+:root[data-theme=dark] .image-crop-actions button{
+  border-color:rgba(255,255,255,.12);
+  background:#111827;
+  color:#e5e7eb;
 }
 .image-crop-presets{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:0}
 .image-crop-size{margin-top:0}
@@ -680,15 +777,65 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   font-weight:650;
   cursor:pointer;
 }
+.image-sample-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border-radius:8px;
+  background:rgba(15,23,42,.05);
+  color:#4b5563;
+  font-size:12px;
+  font-weight:650;
+  padding:8px;
+}
+:root[data-theme=dark] .image-sample-row{background:rgba(255,255,255,.06);color:#cbd5e1}
+.image-sample-swatch{
+  flex:0 0 22px;
+  width:22px;
+  height:22px;
+  border:1px solid rgba(17,24,39,.18);
+  border-radius:6px;
+  background:linear-gradient(135deg,#fff,#111);
+}
+:root[data-theme=dark] .image-sample-swatch{border-color:rgba(255,255,255,.22)}
+.image-adjust-presets{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:7px;
+}
+.image-adjust-presets button{
+  min-height:34px;
+  border:1px solid rgba(217,220,225,.92);
+  border-radius:8px;
+  background:#fff;
+  color:#111827;
+  font-weight:650;
+  cursor:pointer;
+}
+.image-adjust-presets button:hover{
+  border-color:#ff8a00;
+  background:rgba(255,138,0,.10);
+  color:#92400e;
+}
+:root[data-theme=dark] .image-adjust-presets button{
+  border-color:rgba(255,255,255,.12);
+  background:#111827;
+  color:#e5e7eb;
+}
+:root[data-theme=dark] .image-adjust-presets button:hover{
+  border-color:#ff8a00;
+  background:rgba(255,138,0,.16);
+  color:#fbbf24;
+}
 .image-workbench button:disabled,.image-workbench input:disabled,.image-workbench select:disabled{
   opacity:.86;
   cursor:not-allowed;
 }
-.image-preset-row button:disabled,.image-action-requires-image:disabled{
+.image-preset-row button:disabled,.image-action-requires-image:disabled,.image-crop-mode-grid button:disabled,.image-anchor-pad button:disabled,.image-crop-actions button:disabled,.image-adjust-presets button:disabled{
   background:#e5e7eb;
   color:#4b5563;
 }
-:root[data-theme=dark] .image-preset-row button:disabled,:root[data-theme=dark] .image-action-requires-image:disabled{background:#374151;color:#d1d5db}
+:root[data-theme=dark] .image-preset-row button:disabled,:root[data-theme=dark] .image-action-requires-image:disabled,:root[data-theme=dark] .image-crop-mode-grid button:disabled,:root[data-theme=dark] .image-anchor-pad button:disabled,:root[data-theme=dark] .image-crop-actions button:disabled,:root[data-theme=dark] .image-adjust-presets button:disabled{background:#374151;color:#d1d5db}
 .image-export-actions{margin-top:2px}
 .image-preview-head{
   display:flex;
@@ -811,10 +958,12 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   }
   .app-controls.four{grid-template-columns:repeat(2,minmax(0,1fr))}
   .image-crop-presets{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .image-adjust-presets{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:520px){
   .image-workspace-tabs button{flex-basis:94px}
   .image-preset-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .image-crop-mode-grid,.image-adjust-presets{grid-template-columns:repeat(2,minmax(0,1fr))}
   .image-preview-head{align-items:stretch;flex-direction:column}
   .image-stage-actions{justify-content:stretch}
   .image-stage-actions button{flex:1}
