@@ -488,3 +488,13 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 :root[data-theme=dark] .weather-day.is-holiday{background:rgba(239,68,68,.18)}
 :root[data-theme=dark] .weather-day.is-weekend span{color:#93c5fd}
 :root[data-theme=dark] .weather-day.is-holiday span{color:#fca5a5}
+
+/* resize1: all cards and full windows can grow vertically to the available desktop area */
+.desktop-card{min-width:210px;min-height:110px}
+.desktop-card .card-body{height:100%}
+.desktop-card .inline-tool,.desktop-card .inline-tool .desk-app{height:100%;min-height:0}
+.desktop-window{min-width:320px;min-height:220px;max-width:calc(100vw - 90px);max-height:calc(100vh - 64px)}
+.desktop-window-body{height:100%;min-height:0;overflow:auto}
+.desktop-window iframe{height:100%}
+.window-resize,.resize-grip{touch-action:none}
+@media(max-width:760px){.desktop-card{width:auto!important;max-width:calc(100% - 72px)}}
