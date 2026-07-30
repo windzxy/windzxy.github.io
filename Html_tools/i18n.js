@@ -56,7 +56,7 @@ const I18N={
 "容差":{"zh-CN":"容差","zh-HK":"容差","en":"Tolerance"},
 "邊緣羽化":{"zh-CN":"边缘羽化","zh-HK":"邊緣羽化","en":"Feather"},
 "去底色後自動裁掉透明邊緣":{"zh-CN":"去底色后自动裁掉透明边缘","zh-HK":"去底色後自動裁走透明邊緣","en":"Auto-crop transparent edges after color removal"},
-"選「點原圖取樣去底色」後，直接點左側原圖取樣。容差越大，移除範圍越廣。":{"zh-CN":"选择“点原图取样去底色”后，直接点左侧原图取样。容差越大，移除范围越广。","zh-HK":"選擇「點原圖取樣去底色」後，直接點左側原圖取樣。容差越大，移除範圍越廣。","en":"Choose sample from original, then click the source image. Higher tolerance removes more."},
+"選「點原圖取樣去底色」後，直接點右側原圖取樣。容差越大，移除範圍越廣。":{"zh-CN":"选择“点原图取样去底色”后，直接点右侧原图取样。容差越大，移除范围越广。","zh-HK":"選擇「點原圖取樣去底色」後，直接點右側原圖取樣。容差越大，移除範圍越廣。","en":"Choose sample from original, then click the source image on the right. Higher tolerance removes more."},
 "AI 参考增强":{"zh-CN":"智能增强","zh-HK":"智能增強","en":"Smart enhancement"},
 "照片修复":{"zh-CN":"照片修复","zh-HK":"照片修復","en":"Photo restoration"},
 "关闭":{"zh-CN":"关闭","zh-HK":"關閉","en":"Off"},
@@ -205,7 +205,7 @@ const I18N={
 ,"移除黑色/深色底色":{"zh-CN":"移除黑色/深色底色","zh-HK":"移除黑色/深色底色","en":"Remove black/dark color"}
 ,"按四角底色取樣":{"zh-CN":"按四角底色取样","zh-HK":"按四角底色取樣","en":"Sample corner color"}
 ,"點原圖取樣去底色":{"zh-CN":"点原图取样去底色","zh-HK":"點原圖取樣去底色","en":"Sample original color"}
-,"尚未取樣，選擇點原圖取樣後點左側原圖。":{"zh-CN":"尚未取样，选择点原图取样后点左侧原图。","zh-HK":"尚未取樣，選擇點原圖取樣後點左側原圖。","en":"No sample yet. Choose sample mode, then click the left original image."}
+,"尚未取樣，選擇點原圖取樣後點右側原圖。":{"zh-CN":"尚未取样，选择点原图取样后点右侧原图。","zh-HK":"尚未取樣，選擇點原圖取樣後點右側原圖。","en":"No sample yet. Choose sample mode, then click the right-side original image."}
 ,"已取樣":{"zh-CN":"已取样","zh-HK":"已取樣","en":"Sampled"}
 ,"去底色後自動裁掉透明邊緣":{"zh-CN":"去底色后自动裁掉透明边缘","zh-HK":"去底色後自動裁掉透明邊緣","en":"Auto-crop transparent edges after color removal"}
 ,"調色/修復工作區":{"zh-CN":"调色/修复工作区","zh-HK":"調色/修復工作區","en":"Adjust/retouch workspace"}
@@ -224,8 +224,10 @@ const I18N={
 ,"OCR 工作區":{"zh-CN":"OCR 工作区","zh-HK":"OCR 工作區","en":"OCR workspace"}
 ,"從當前處理結果識別文字。":{"zh-CN":"从当前处理结果识别文字。","zh-HK":"從當前處理結果識別文字。","en":"Recognize text from the current edited result."}
 ,"已啟用即時預覽，不需要手動刷新。":{"zh-CN":"已启用即时预览，不需要手动刷新。","zh-HK":"已啟用即時預覽，不需要手動刷新。","en":"Live preview is enabled; no manual refresh needed."}
-,"左右對照":{"zh-CN":"左右对照","zh-HK":"左右對照","en":"Side-by-side compare"}
-,"左側原圖，右側顯示修改後的即時預覽。":{"zh-CN":"左侧原图，右侧显示修改后的即时预览。","zh-HK":"左側原圖，右側顯示修改後的即時預覽。","en":"Original on the left, live edited preview on the right."}
+,"右側圖片區":{"zh-CN":"右侧图片区","zh-HK":"右側圖片區","en":"Right image area"}
+,"右側上方顯示原圖，下方顯示修改後預覽。":{"zh-CN":"右侧上方显示原图，下方显示修改后预览。","zh-HK":"右側上方顯示原圖，下方顯示修改後預覽。","en":"The right side shows the original above and the edited preview below."}
+,"選擇圖片後顯示原圖":{"zh-CN":"选择图片后显示原图","zh-HK":"選擇圖片後顯示原圖","en":"Choose an image to show the original"}
+,"選擇圖片後即時預覽":{"zh-CN":"选择图片后即时预览","zh-HK":"選擇圖片後即時預覽","en":"Choose an image for live preview"}
 ,"修改後預覽":{"zh-CN":"修改后预览","zh-HK":"修改後預覽","en":"Edited preview"}
 ,"目前保留":{"zh-CN":"当前保留","zh-HK":"目前保留","en":"Keeping"}
 ,"目前保留整張圖片":{"zh-CN":"当前保留整张图片","zh-HK":"目前保留整張圖片","en":"Keeping the full image"}
@@ -508,6 +510,11 @@ function applyDataI18n(root=document.body){
     const key=el.dataset.i18nAriaLabel;
     const item=I18N[key];
     if(item)el.setAttribute("aria-label",item[lang()]||item["zh-HK"]||key);
+  });
+  root.querySelectorAll("[data-i18n-data-empty]").forEach(el=>{
+    const key=el.dataset.i18nDataEmpty;
+    const item=I18N[key];
+    if(item)el.dataset.empty=item[lang()]||item["zh-HK"]||key;
   });
 }
 function applyI18n(root=document.body){
