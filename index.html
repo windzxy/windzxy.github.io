@@ -7,7 +7,7 @@
   <meta name="description" content="WebDesk 網頁端桌面。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260730-imageworkbench8">
+  <link rel="stylesheet" href="styles/main.css?v=20260730-imageworkbench9">
   <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
@@ -443,7 +443,7 @@ function openApp(appId,title,url){
     win.style.zIndex=++topZ;
     return;
   }
-  win=createWindow(key,info.title,appId==="image"?1360:980,appId==="image"?860:640);
+  win=createWindow(key,info.title,appId==="image"?1440:980,appId==="image"?920:640);
   win.querySelector(".desktop-window-body").innerHTML=appContent(appId);
   bindApp(win,appId);
   $("desktopDrawer").classList.remove("is-open");
@@ -468,9 +468,9 @@ function createWindow(key,title,w,h){
   const isImageWindow=key==="app-image";
   win.className="desktop-window"+(isImageWindow?" desktop-window-image":"");
   win.style.left=(isImageWindow?12:80+Object.keys(desktopWindows).length*28)+"px";
-  win.style.top=(isImageWindow?12:68+Object.keys(desktopWindows).length*24)+"px";
-  win.style.width=isImageWindow?"min("+w+"px, calc(100vw - 96px))":"min("+w+"px, calc(100vw - 160px))";
-  win.style.height=isImageWindow?"min("+h+"px, calc(100vh - 72px))":"min("+h+"px, calc(100vh - 150px))";
+  win.style.top=(isImageWindow?8:68+Object.keys(desktopWindows).length*24)+"px";
+  win.style.width=isImageWindow?"min("+w+"px, calc(100vw - 24px))":"min("+w+"px, calc(100vw - 160px))";
+  win.style.height=isImageWindow?"min("+h+"px, calc(100vh - 24px))":"min("+h+"px, calc(100vh - 150px))";
   win.style.zIndex=++topZ;
   win.dataset.key=key;
   win.innerHTML='<div class="window-bar"><span>'+escapeHtml(tr(title))+'</span><div><button type="button" data-window-min aria-label="'+escapeHtml(tr("最小化"))+'">—</button><button type="button" data-window-close aria-label="'+escapeHtml(tr("關閉"))+'">×</button></div></div><div class="desktop-window-body"></div><span class="window-resize"></span>';
@@ -580,7 +580,7 @@ function appContent(appId){
           </div>
           <div class="image-sample-row">
             <span id="bgSampleSwatch" class="image-sample-swatch"></span>
-            <span id="bgSampleText" data-i18n="尚未取樣，選擇點原圖取樣後點左側原圖。">尚未取樣，選擇點原圖取樣後點左側原圖。</span>
+            <span id="bgSampleText" data-i18n="尚未取樣，選擇點原圖取樣後點右側原圖。">尚未取樣，選擇點原圖取樣後點右側原圖。</span>
           </div>
           <label class="check-line"><input id="bgTrim" type="checkbox"><span data-i18n="去底色後自動裁掉透明邊緣">去底色後自動裁掉透明邊緣</span></label>
         </div>
@@ -636,8 +636,8 @@ function appContent(appId){
       <section class="app-panel image-preview-stage">
         <div class="image-preview-head">
           <div>
-            <strong data-i18n="左右對照">左右對照</strong>
-            <span data-i18n="左側原圖，右側顯示修改後的即時預覽。">左側原圖，右側顯示修改後的即時預覽。</span>
+            <strong data-i18n="右側圖片區">右側圖片區</strong>
+            <span data-i18n="右側上方顯示原圖，下方顯示修改後預覽。">右側上方顯示原圖，下方顯示修改後預覽。</span>
           </div>
         </div>
         <div class="image-compare-stage">
@@ -646,7 +646,7 @@ function appContent(appId){
               <strong data-i18n="原圖">原圖</strong>
               <small id="imgOriginalSize">-</small>
             </div>
-            <div class="image-stage-canvas checker" data-image-drop data-empty="選擇圖片後顯示原圖">
+            <div class="image-stage-canvas checker" data-image-drop data-empty="選擇圖片後顯示原圖" data-i18n-data-empty="選擇圖片後顯示原圖">
               <canvas id="imgOriginal" data-stage-canvas="source"></canvas>
             </div>
           </div>
@@ -655,7 +655,7 @@ function appContent(appId){
               <strong data-i18n="修改後預覽">修改後預覽</strong>
               <small><span data-i18n="裁切">裁切</span> <span id="imgCropSize">-</span> · <span data-i18n="輸出">輸出</span> <span id="imgOutputSize">-</span></small>
             </div>
-            <div class="image-stage-canvas checker" data-image-drop data-empty="選擇圖片後即時預覽">
+            <div class="image-stage-canvas checker" data-image-drop data-empty="選擇圖片後即時預覽" data-i18n-data-empty="選擇圖片後即時預覽">
               <canvas id="imgCanvas" data-stage-canvas="result"></canvas>
             </div>
           </div>
@@ -851,7 +851,7 @@ function bindImageApp(win){
       textEl.textContent=tr("已取樣")+" "+color;
     }else{
       swatch.style.background="linear-gradient(135deg,#fff,#111)";
-      textEl.textContent=tr("尚未取樣，選擇點原圖取樣後點左側原圖。");
+      textEl.textContent=tr("尚未取樣，選擇點原圖取樣後點右側原圖。");
     }
   }
   win.querySelectorAll("[data-img-tab]").forEach(btn=>btn.onclick=()=>{win.querySelectorAll("[data-img-tab]").forEach(b=>b.classList.toggle("is-active",b===btn));win.querySelectorAll("[data-img-section]").forEach(p=>p.classList.toggle("hidden",p.dataset.imgSection!==btn.dataset.imgTab))});
