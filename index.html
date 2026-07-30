@@ -7,7 +7,7 @@
   <meta name="description" content="WebDesk 網頁端桌面。">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20260728-fullapps1">
   <link rel="apple-touch-icon" href="assets/favicon.svg?v=20260728-fullapps1">
-  <link rel="stylesheet" href="styles/main.css?v=20260729-imageworkbench7">
+  <link rel="stylesheet" href="styles/main.css?v=20260730-imageworkbench8">
   <link rel="preload" as="image" href="backgrounds/2026-07-28-01-web.webp?v=20260728-folderbg1">
 </head>
 <body class="desktop-home">
@@ -443,7 +443,7 @@ function openApp(appId,title,url){
     win.style.zIndex=++topZ;
     return;
   }
-  win=createWindow(key,info.title,appId==="image"?1120:980,appId==="image"?760:640);
+  win=createWindow(key,info.title,appId==="image"?1360:980,appId==="image"?860:640);
   win.querySelector(".desktop-window-body").innerHTML=appContent(appId);
   bindApp(win,appId);
   $("desktopDrawer").classList.remove("is-open");
@@ -465,11 +465,12 @@ function normalizeExternalUrl(url){
 function createWindow(key,title,w,h){
   const layer=$("windowLayer");
   const win=document.createElement("article");
-  win.className="desktop-window";
-  win.style.left=80+Object.keys(desktopWindows).length*28+"px";
-  win.style.top=68+Object.keys(desktopWindows).length*24+"px";
-  win.style.width="min("+w+"px, calc(100vw - 160px))";
-  win.style.height="min("+h+"px, calc(100vh - 150px))";
+  const isImageWindow=key==="app-image";
+  win.className="desktop-window"+(isImageWindow?" desktop-window-image":"");
+  win.style.left=(isImageWindow?12:80+Object.keys(desktopWindows).length*28)+"px";
+  win.style.top=(isImageWindow?12:68+Object.keys(desktopWindows).length*24)+"px";
+  win.style.width=isImageWindow?"min("+w+"px, calc(100vw - 96px))":"min("+w+"px, calc(100vw - 160px))";
+  win.style.height=isImageWindow?"min("+h+"px, calc(100vh - 72px))":"min("+h+"px, calc(100vh - 150px))";
   win.style.zIndex=++topZ;
   win.dataset.key=key;
   win.innerHTML='<div class="window-bar"><span>'+escapeHtml(tr(title))+'</span><div><button type="button" data-window-min aria-label="'+escapeHtml(tr("最小化"))+'">—</button><button type="button" data-window-close aria-label="'+escapeHtml(tr("關閉"))+'">×</button></div></div><div class="desktop-window-body"></div><span class="window-resize"></span>';
@@ -996,8 +997,9 @@ document.addEventListener("pointermove",e=>{
     const rect=layer.getBoundingClientRect();
     const left=windowResize.win.offsetLeft||0;
     const top=windowResize.win.offsetTop||0;
-    const minW=320;
-    const minH=220;
+    const isImageWindow=windowResize.win.classList.contains("desktop-window-image");
+    const minW=isImageWindow?Math.min(760,Math.max(320,rect.width-left-10)):320;
+    const minH=isImageWindow?Math.min(560,Math.max(220,rect.height-top-10)):220;
     const maxW=Math.max(minW,rect.width-left-10);
     const maxH=Math.max(minH,rect.height-top-10);
     windowResize.win.style.width=Math.max(minW,Math.min(maxW,windowResize.origW+e.clientX-windowResize.startX))+"px";
