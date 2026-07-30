@@ -494,24 +494,26 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .window-resize,.resize-grip{touch-action:none}
 @media(max-width:760px){.desktop-card{width:auto!important;max-width:calc(100% - 72px)}}
 
-/* imageworkbench8: larger image editor window with persistent side preview */
+/* imageworkbench9: large image editor with controls left and image stack right */
 .desktop-window-image{
-  min-width:min(760px,calc(100vw - 96px));
-  min-height:min(560px,calc(100vh - 72px));
+  min-width:min(880px,calc(100vw - 24px));
+  min-height:min(680px,calc(100vh - 24px));
+  max-width:calc(100vw - 24px);
+  max-height:calc(100vh - 24px);
 }
 .desktop-window-image .desktop-window-body{
   overflow:hidden;
 }
 .image-workbench{
-  grid-template-columns:minmax(240px,320px) minmax(360px,1fr);
+  grid-template-columns:minmax(280px,380px) minmax(360px,1fr);
   grid-template-rows:auto auto minmax(0,1fr);
   grid-template-areas:
-    "tabs tabs"
+    "tabs preview"
     "toolbar preview"
     "controls preview";
   gap:10px;
   min-height:0;
-  min-width:620px;
+  min-width:720px;
   overflow:auto;
 }
 .image-workspace-tabs{
@@ -860,8 +862,8 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
 .image-compare-stage{
   min-height:0;
   display:grid;
-  grid-template-columns:repeat(2,minmax(170px,1fr));
-  grid-auto-rows:minmax(0,1fr);
+  grid-template-columns:1fr;
+  grid-template-rows:minmax(180px,1fr) minmax(220px,1.18fr);
   gap:10px;
   overflow:auto;
 }
@@ -959,13 +961,16 @@ html[lang=en] .workspace-home .dashboard-tile h3{min-height:44px;white-space:nor
   grid-template-areas:"tabs" "toolbar" "controls" "preview";
 }
 .desktop-card .inline-tool .image-preview-stage{min-height:180px}
-.desktop-card .inline-tool .image-compare-stage{grid-template-columns:repeat(2,minmax(160px,1fr))}
+.desktop-card .inline-tool .image-compare-stage{
+  grid-template-columns:1fr;
+  grid-template-rows:minmax(160px,1fr) minmax(180px,1fr);
+}
 @media(max-width:920px){
   .image-workbench{
-    grid-template-columns:minmax(230px,280px) minmax(340px,1fr);
+    grid-template-columns:minmax(250px,320px) minmax(320px,1fr);
     grid-template-rows:auto auto minmax(0,1fr);
     grid-template-areas:
-      "tabs tabs"
+      "tabs preview"
       "toolbar preview"
       "controls preview";
   }
