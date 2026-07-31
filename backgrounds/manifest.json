@@ -198,5 +198,55 @@
     "id": "2026-07-30-clay-coast",
     "title": "Clay Coast",
     "file": "backgrounds/2026-07-30-10-web.webp"
+  },
+  {
+    "id": "2026-07-31-savanna-storm",
+    "title": "Savanna Storm",
+    "file": "backgrounds/2026-07-31-01-web.webp"
+  },
+  {
+    "id": "2026-07-31-brutalist-water-court",
+    "title": "Brutalist Water Court",
+    "file": "backgrounds/2026-07-31-02-web.webp"
+  },
+  {
+    "id": "2026-07-31-winter-crane-marsh",
+    "title": "Winter Crane Marsh",
+    "file": "backgrounds/2026-07-31-03-web.webp"
+  },
+  {
+    "id": "2026-07-31-solarpunk-cloud-city",
+    "title": "Solarpunk Cloud City",
+    "file": "backgrounds/2026-07-31-04-web.webp"
+  },
+  {
+    "id": "2026-07-31-rainlit-ginkgo",
+    "title": "Rainlit Ginkgo",
+    "file": "backgrounds/2026-07-31-05-web.webp"
+  },
+  {
+    "id": "2026-07-31-stained-glass-cosmos",
+    "title": "Stained Glass Cosmos",
+    "file": "backgrounds/2026-07-31-06-web.webp"
+  },
+  {
+    "id": "2026-07-31-pastel-salt-lake",
+    "title": "Pastel Salt Lake",
+    "file": "backgrounds/2026-07-31-07-web.webp"
+  },
+  {
+    "id": "2026-07-31-cloud-sea-airship",
+    "title": "Cloud Sea Airship",
+    "file": "backgrounds/2026-07-31-08-web.webp"
+  },
+  {
+    "id": "2026-07-31-blue-hour-moon",
+    "title": "Blue Hour Moon",
+    "file": "backgrounds/2026-07-31-09-web.webp"
+  },
+  {
+    "id": "2026-07-31-memphis-gallery",
+    "title": "Memphis Gallery",
+    "file": "backgrounds/2026-07-31-10-web.webp"
   }
 ]
