@@ -248,5 +248,55 @@
     "id": "2026-07-31-memphis-gallery",
     "title": "Memphis Gallery",
     "file": "backgrounds/2026-07-31-10-web.webp"
+  },
+  {
+    "id": "2026-08-01-redwood-mist",
+    "title": "Redwood Mist",
+    "file": "backgrounds/2026-08-01-01-web.webp"
+  },
+  {
+    "id": "2026-08-01-coastal-platform",
+    "title": "Coastal Platform",
+    "file": "backgrounds/2026-08-01-02-web.webp"
+  },
+  {
+    "id": "2026-08-01-desert-river",
+    "title": "Desert River",
+    "file": "backgrounds/2026-08-01-03-web.webp"
+  },
+  {
+    "id": "2026-08-01-blue-mosaic-court",
+    "title": "Blue Mosaic Court",
+    "file": "backgrounds/2026-08-01-04-web.webp"
+  },
+  {
+    "id": "2026-08-01-alpine-impasto",
+    "title": "Alpine Impasto",
+    "file": "backgrounds/2026-08-01-05-web.webp"
+  },
+  {
+    "id": "2026-08-01-woven-topography",
+    "title": "Woven Topography",
+    "file": "backgrounds/2026-08-01-06-web.webp"
+  },
+  {
+    "id": "2026-08-01-tidal-city",
+    "title": "Tidal City",
+    "file": "backgrounds/2026-08-01-07-web.webp"
+  },
+  {
+    "id": "2026-08-01-obsidian-river",
+    "title": "Obsidian River",
+    "file": "backgrounds/2026-08-01-08-web.webp"
+  },
+  {
+    "id": "2026-08-01-glass-salt-plain",
+    "title": "Glass Salt Plain",
+    "file": "backgrounds/2026-08-01-09-web.webp"
+  },
+  {
+    "id": "2026-08-01-maple-river",
+    "title": "Maple River",
+    "file": "backgrounds/2026-08-01-10-web.webp"
   }
 ]
