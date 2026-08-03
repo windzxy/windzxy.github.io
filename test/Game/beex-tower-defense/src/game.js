@@ -53,6 +53,14 @@
     lotus: "assets/icons/tower-lotus.svg",
     drum: "assets/icons/tower-drum.svg"
   };
+  const actionIcons = {
+    start: "assets/icons/action-start.svg",
+    pause: "assets/icons/action-pause.svg",
+    speed: "assets/icons/action-speed.svg",
+    restart: "assets/icons/action-restart.svg",
+    upgrade: "assets/icons/action-upgrade.svg",
+    sell: "assets/icons/action-sell.svg"
+  };
   const icons = Object.fromEntries(Object.entries(iconFiles).map(([key, src]) => {
     const img = new Image();
     img.src = src;
@@ -234,16 +242,17 @@
     localStorage.setItem("beexTdPlayer", state.playerName);
     if (!state.ended || state.score <= 0 || state.scoreSubmittedFor === scoreKey()) return;
     const body = [
-      "game: beex-tower-defense",
-      `player: ${state.playerName}`,
-      `score: ${state.score}`,
-      `wave: ${Math.min(state.waveIndex + 1, wavePlan.length)}`,
-      `lives: ${Math.max(0, state.lives)}`,
-      `energy: ${state.energy}`,
-      `time: ${new Date().toISOString()}`
+      "遊戲: 蜂巢古城守衛",
+      "代碼: beex-tower-defense",
+      `玩家: ${state.playerName}`,
+      `戰功: ${state.score}`,
+      `波次: ${Math.min(state.waveIndex + 1, wavePlan.length)}`,
+      `城防: ${Math.max(0, state.lives)}`,
+      `糧草: ${state.energy}`,
+      `時間: ${new Date().toISOString()}`
     ].join("\n");
     const params = new URLSearchParams({
-      title: `[BeeX Score] ${state.playerName} - ${state.score}`,
+      title: `[古城戰功] ${state.playerName} - ${state.score}`,
       body
     });
     state.scoreSubmittedFor = scoreKey();
@@ -361,6 +370,10 @@
     });
   }
 
+  function setActionButton(button, icon, text) {
+    button.innerHTML = `<img src="${actionIcons[icon]}" alt="">${text}`;
+  }
+
   function updateUi() {
     ui.energy.textContent = state.energy;
     ui.lives.textContent = state.lives;
@@ -368,8 +381,10 @@
     ui.score.textContent = state.score;
     ui.bestScore.textContent = state.best;
     ui.startBtn.disabled = state.waveActive || state.ended || state.waveIndex >= wavePlan.length;
-    ui.pauseBtn.textContent = state.paused ? "繼續" : "暫停";
-    ui.speedBtn.textContent = `${state.speed}x 速度`;
+    setActionButton(ui.startBtn, "start", "迎敵");
+    setActionButton(ui.pauseBtn, "pause", state.paused ? "繼續" : "暫停");
+    setActionButton(ui.speedBtn, "speed", `${state.speed === 1 ? "一" : state.speed === 2 ? "二" : "三"}倍速度`);
+    setActionButton(ui.restartBtn, "restart", "重開");
     ui.submitScoreBtn.disabled = !state.ended || state.score <= 0 || scoreKey() === state.scoreSubmittedFor;
     if (state.selectedTower) {
       const t = state.selectedTower;
@@ -377,14 +392,16 @@
       const cost = upgradeCost(t);
       ui.selectedText.textContent = `${def.name} ${t.level}級｜攻擊 ${towerStats(t).damage}｜拆除返還 ${sellValue(t)}`;
       ui.upgradeBtn.disabled = t.level >= 4 || state.energy < cost;
-      ui.upgradeBtn.textContent = t.level >= 4 ? "滿級" : `升級 ${cost}`;
+      setActionButton(ui.upgradeBtn, "upgrade", t.level >= 4 ? "滿級" : `升級 ${cost}`);
       ui.sellBtn.disabled = false;
+      setActionButton(ui.sellBtn, "sell", "拆除");
     } else {
       const def = towers[state.selectedBuild];
       ui.selectedText.textContent = `準備建造 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。`;
       ui.upgradeBtn.disabled = true;
-      ui.upgradeBtn.textContent = "升級";
+      setActionButton(ui.upgradeBtn, "upgrade", "升級");
       ui.sellBtn.disabled = true;
+      setActionButton(ui.sellBtn, "sell", "拆除");
     }
     renderTowerButtons();
   }
@@ -615,21 +632,89 @@
   function drawGrid() {
     ctx.save();
     ctx.translate(state.shake > 0 ? Math.sin(performance.now() / 22) * 3 : 0, 0);
-    const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, "#32624a");
-    bg.addColorStop(0.52, "#536a34");
-    bg.addColorStop(1, "#7b4d22");
-    ctx.fillStyle = bg;
+
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "#86c4d3");
+    sky.addColorStop(0.2, "#d7e6c6");
+    sky.addColorStop(0.42, "#8eba70");
+    sky.addColorStop(1, "#7b9d55");
+    ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, H);
 
-    ctx.fillStyle = "rgba(255, 241, 186, 0.08)";
-    for (let i = 0; i < 18; i++) {
-      const x = (i * 127) % W;
-      const y = 66 + ((i * 83) % (H - 120));
+    ctx.fillStyle = "rgba(255, 230, 156, 0.48)";
+    ctx.beginPath();
+    ctx.arc(88, 82, 44, 0, Math.PI * 2);
+    ctx.fill();
+
+    const far = ctx.createLinearGradient(0, 70, 0, 230);
+    far.addColorStop(0, "#6d8d7d");
+    far.addColorStop(1, "#405f4b");
+    ctx.fillStyle = far;
+    ctx.beginPath();
+    ctx.moveTo(0, 190);
+    [[82, 118], [150, 166], [236, 94], [326, 176], [420, 128], [522, 186], [618, 112], [724, 178], [838, 108], [948, 168], [1100, 118]].forEach(([x, y]) => ctx.lineTo(x, y));
+    ctx.lineTo(W, 260);
+    ctx.lineTo(0, 260);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(238, 244, 218, 0.62)";
+    [[236, 94, 44], [618, 112, 36], [838, 108, 40]].forEach(([x, y, w]) => {
       ctx.beginPath();
-      ctx.ellipse(x, y, 46 + (i % 3) * 18, 16 + (i % 2) * 8, (i % 5) * 0.4, 0, Math.PI * 2);
+      ctx.moveTo(x - w, y + 42);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x + w, y + 42);
+      ctx.lineTo(x + 12, y + 28);
+      ctx.lineTo(x, y + 38);
+      ctx.lineTo(x - 12, y + 28);
+      ctx.closePath();
       ctx.fill();
-    }
+    });
+
+    ctx.fillStyle = "#91b866";
+    ctx.beginPath();
+    ctx.moveTo(0, 218);
+    ctx.bezierCurveTo(180, 188, 326, 236, 516, 214);
+    ctx.bezierCurveTo(738, 190, 910, 224, W, 198);
+    ctx.lineTo(W, H);
+    ctx.lineTo(0, H);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(224, 199, 118, 0.36)";
+    [
+      [92, 310, 140, 46, -0.12],
+      [360, 598, 190, 58, 0.08],
+      [812, 420, 160, 48, -0.18],
+      [958, 626, 136, 36, 0.14]
+    ].forEach(([x, y, rx, ry, rot]) => {
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.strokeStyle = "rgba(56, 115, 142, 0.82)";
+    ctx.lineWidth = 48;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(1085, 268);
+    ctx.bezierCurveTo(940, 324, 832, 260, 726, 326);
+    ctx.bezierCurveTo(594, 408, 474, 384, 346, 462);
+    ctx.bezierCurveTo(214, 544, 118, 520, 18, 604);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(166, 225, 232, 0.88)";
+    ctx.lineWidth = 34;
+    ctx.beginPath();
+    ctx.moveTo(1085, 268);
+    ctx.bezierCurveTo(940, 324, 832, 260, 726, 326);
+    ctx.bezierCurveTo(594, 408, 474, 384, 346, 462);
+    ctx.bezierCurveTo(214, 544, 118, 520, 18, 604);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([18, 22]);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
@@ -638,40 +723,66 @@
         const py = offset.y + y * tile;
         if (pathSet.has(key)) continue;
         if (blockedSet.has(key)) {
-          ctx.fillStyle = "rgba(63, 43, 24, 0.36)";
+          ctx.fillStyle = "rgba(69, 65, 42, 0.72)";
           ctx.beginPath();
-          ctx.moveTo(px + 10, py + 34);
-          ctx.lineTo(px + 22, py + 10);
-          ctx.lineTo(px + 36, py + 34);
+          ctx.moveTo(px + 4, py + 38);
+          ctx.lineTo(px + 20, py + 10);
+          ctx.lineTo(px + 39, py + 38);
           ctx.closePath();
           ctx.fill();
-          ctx.fillStyle = "rgba(111, 149, 77, 0.72)";
-          ctx.fillRect(px + 7, py + 30, 30, 6);
+          ctx.fillStyle = "rgba(47, 103, 58, 0.86)";
+          ctx.fillRect(px + 7, py + 33, 30, 7);
+          ctx.fillStyle = "rgba(38, 91, 52, 0.78)";
+          for (let i = 0; i < 3; i++) {
+            ctx.beginPath();
+            ctx.moveTo(px + 12 + i * 9, py + 34);
+            ctx.lineTo(px + 14 + i * 8, py + 19);
+            ctx.lineTo(px + 20 + i * 6, py + 34);
+            ctx.closePath();
+            ctx.fill();
+          }
         } else {
-          ctx.fillStyle = "rgba(255,255,255,0.025)";
-          ctx.fillRect(px + 4, py + 4, tile - 8, tile - 8);
+          ctx.fillStyle = "rgba(255, 247, 198, 0.07)";
+          ctx.beginPath();
+          ctx.ellipse(px + tile / 2, py + tile / 2, 13, 7, ((x + y) % 5) * 0.28, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
     }
 
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.strokeStyle = "rgba(73, 38, 16, 0.48)";
-    ctx.lineWidth = 40;
+    ctx.strokeStyle = "rgba(65, 39, 19, 0.56)";
+    ctx.lineWidth = 54;
     ctx.beginPath();
     path.forEach((p, i) => {
       if (i === 0) ctx.moveTo(p.x, p.y);
       else ctx.lineTo(p.x, p.y);
     });
     ctx.stroke();
-    ctx.strokeStyle = "#c99250";
-    ctx.lineWidth = 30;
+    ctx.strokeStyle = "#b47a3a";
+    ctx.lineWidth = 42;
     ctx.stroke();
-    ctx.setLineDash([10, 16]);
-    ctx.strokeStyle = "rgba(255, 238, 186, 0.25)";
+    ctx.strokeStyle = "#d1a55f";
+    ctx.lineWidth = 32;
+    ctx.stroke();
+    ctx.setLineDash([14, 18]);
+    ctx.strokeStyle = "rgba(94, 54, 23, 0.34)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.setLineDash([18, 18]);
+    ctx.strokeStyle = "rgba(255, 236, 178, 0.28)";
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.setLineDash([]);
+
+    ctx.fillStyle = "rgba(77, 43, 19, 0.55)";
+    path.forEach((p, i) => {
+      if (i % 4 !== 0) return;
+      ctx.beginPath();
+      ctx.ellipse(p.x + ((i % 2) ? 9 : -9), p.y + 10, 8, 3, 0.25, 0, Math.PI * 2);
+      ctx.fill();
+    });
 
     ctx.fillStyle = "#7e2b1a";
     ctx.strokeStyle = "#2b1208";
@@ -706,6 +817,19 @@
     ctx.fill();
     ctx.fillStyle = "#3a1a0d";
     ctx.fillRect(gateX + 24, gateY + 30, 22, 28);
+
+    ctx.fillStyle = "rgba(36, 82, 44, 0.72)";
+    for (let i = 0; i < 42; i++) {
+      const x = (i * 83) % W;
+      const y = 230 + ((i * 57) % 430);
+      if (pathSet.has(`${Math.floor((x - offset.x) / tile)},${Math.floor((y - offset.y) / tile)}`)) continue;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 4, y - 16);
+      ctx.lineTo(x + 9, y);
+      ctx.closePath();
+      ctx.fill();
+    }
     ctx.restore();
   }
 
@@ -875,7 +999,7 @@
     ctx.textAlign = "left";
     ctx.fillText("敵營", 12, 26);
     ctx.textAlign = "right";
-    ctx.fillText("BeeX 城門", W - 12, 26);
+    ctx.fillText("蜂巢城門", W - 12, 26);
     if (!state.waveActive && !state.ended) {
       ctx.textAlign = "center";
       ctx.fillStyle = "rgba(255,243,216,0.72)";
@@ -1000,7 +1124,7 @@
   updateUi();
   renderLeaderboard();
   loadRemoteLeaderboard();
-  showBanner("布防守城，護住 BeeX 城門");
+  showBanner("布防守城，護住蜂巢城門");
   state.last = performance.now();
   requestAnimationFrame(loop);
 })();
