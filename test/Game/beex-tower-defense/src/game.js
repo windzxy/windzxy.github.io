@@ -15,6 +15,7 @@
     startBtn: document.getElementById("startBtn"),
     pauseBtn: document.getElementById("pauseBtn"),
     speedBtn: document.getElementById("speedBtn"),
+    soundBtn: document.getElementById("soundBtn"),
     restartBtn: document.getElementById("restartBtn"),
     playerName: document.getElementById("playerName"),
     submitScoreBtn: document.getElementById("submitScoreBtn"),
@@ -31,22 +32,11 @@
   const cols = 25;
   const rows = 15;
   const offset = { x: 0, y: 30 };
-  const pathCells = [
-    [0, 7], [1, 7], [2, 7], [3, 7], [4, 7],
-    [4, 6], [4, 5], [4, 4], [5, 4], [6, 4], [7, 4], [8, 4],
-    [8, 5], [8, 6], [8, 7], [9, 7], [10, 7], [11, 7], [12, 7],
-    [12, 8], [12, 9], [12, 10], [13, 10], [14, 10], [15, 10], [16, 10],
-    [16, 9], [16, 8], [16, 7], [17, 7], [18, 7], [19, 7], [20, 7],
-    [20, 6], [20, 5], [21, 5], [22, 5], [23, 5], [24, 5]
-  ];
-  const path = pathCells.map(([x, y]) => ({
-    x: offset.x + x * tile + tile / 2,
-    y: offset.y + y * tile + tile / 2
-  }));
-  const pathSet = new Set(pathCells.map(([x, y]) => `${x},${y}`));
-  const blockedSet = new Set([
-    "2,2", "3,2", "6,11", "7,11", "18,3", "19,3", "22,10", "23,10"
-  ]);
+  let pathCells = [];
+  let path = [];
+  let pathSet = new Set();
+  let blockedSet = new Set();
+  let battlefield = null;
   const leaderboardUrl = "leaderboard.json";
   const issueUrl = "https://github.com/windzxy/windzxy.github.io/issues/new";
   const iconFiles = {
@@ -58,6 +48,7 @@
     start: "assets/icons/action-start.svg",
     pause: "assets/icons/action-pause.svg",
     speed: "assets/icons/action-speed.svg",
+    sound: "assets/icons/action-sound.svg",
     restart: "assets/icons/action-restart.svg",
     upgrade: "assets/icons/action-upgrade.svg",
     sell: "assets/icons/action-sell.svg"
@@ -71,6 +62,105 @@
     beeCrossbow: "assets/icons/weapon-bee-crossbow.svg"
   };
 
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function expandAnchors(anchors) {
+    const cells = [];
+    const seen = new Set();
+    function push(x, y) {
+      const key = `${x},${y}`;
+      if (!seen.has(key)) {
+        cells.push([x, y]);
+        seen.add(key);
+      }
+    }
+    for (let i = 0; i < anchors.length - 1; i++) {
+      const [x1, y1] = anchors[i];
+      const [x2, y2] = anchors[i + 1];
+      if (x1 !== x2) {
+        const step = x2 > x1 ? 1 : -1;
+        for (let x = x1; x !== x2 + step; x += step) push(x, y1);
+      } else {
+        const step = y2 > y1 ? 1 : -1;
+        for (let y = y1; y !== y2 + step; y += step) push(x1, y);
+      }
+    }
+    return cells;
+  }
+
+  function createRoute() {
+    const anchors = [];
+    let x = 0;
+    let y = randInt(5, 9);
+    anchors.push([x, y]);
+    while (x < cols - 1) {
+      x = Math.min(cols - 1, x + randInt(3, 5));
+      anchors.push([x, y]);
+      if (x >= cols - 1) break;
+      const bend = (Math.random() < 0.5 ? -1 : 1) * randInt(2, 4);
+      const nextY = clamp(y + bend, 3, rows - 3);
+      if (nextY !== y) {
+        y = nextY;
+        anchors.push([x, y]);
+      }
+    }
+    return expandAnchors(anchors);
+  }
+
+  function createBlockedCells(nextPathSet) {
+    const cells = new Set();
+    const clusters = randInt(5, 7);
+    for (let i = 0; i < clusters; i++) {
+      const cx = randInt(1, cols - 3);
+      const cy = randInt(2, rows - 3);
+      const shape = Math.random() < 0.5 ? [[0, 0], [1, 0], [0, 1]] : [[0, 0], [1, 0], [1, 1]];
+      for (const [dx, dy] of shape) {
+        const x = cx + dx;
+        const y = cy + dy;
+        const key = `${x},${y}`;
+        if (!nextPathSet.has(key)) cells.add(key);
+      }
+    }
+    return cells;
+  }
+
+  function createBattlefield() {
+    const themes = [
+      { sky: ["#8fc9d8", "#dce9c4", "#91bd68", "#789b52"], far: ["#6e8f7f", "#3f5d49"], field: "#91b866", road: ["#5f391b", "#b47a3a", "#d1a55f"], river: ["#39748e", "#a8e2ea"] },
+      { sky: ["#d8b47f", "#f0d1a4", "#a4aa62", "#87724a"], far: ["#8b7253", "#5a4a37"], field: "#a9a665", road: ["#6f451f", "#bd8540", "#dec072"], river: ["#4e8693", "#b5e7e8"] },
+      { sky: ["#8fb5de", "#d7e5ef", "#77a16e", "#526f4d"], far: ["#627990", "#40505d"], field: "#7ea266", road: ["#533820", "#9f7442", "#c6a061"], river: ["#315f95", "#91c7ee"] }
+    ];
+    const nextPathCells = createRoute();
+    const nextPathSet = new Set(nextPathCells.map(([x, y]) => `${x},${y}`));
+    return {
+      theme: themes[randInt(0, themes.length - 1)],
+      pathCells: nextPathCells,
+      pathSet: nextPathSet,
+      blockedSet: createBlockedCells(nextPathSet),
+      mountainShift: randInt(-34, 34),
+      riverShift: randInt(-28, 28),
+      fieldMarks: Array.from({ length: 5 }, () => [randInt(80, 980), randInt(285, 650), randInt(110, 210), randInt(30, 62), (Math.random() - 0.5) * 0.34]),
+      trees: Array.from({ length: 46 }, (_, i) => [(i * randInt(61, 91)) % W, 228 + ((i * randInt(43, 69)) % 430)])
+    };
+  }
+
+  function resetBattlefield() {
+    battlefield = createBattlefield();
+    pathCells = battlefield.pathCells;
+    pathSet = battlefield.pathSet;
+    blockedSet = battlefield.blockedSet;
+    path = pathCells.map(([x, y]) => ({
+      x: offset.x + x * tile + tile / 2,
+      y: offset.y + y * tile + tile / 2
+    }));
+  }
+
   function loadImages(files) {
     return Object.fromEntries(Object.entries(files).map(([key, src]) => {
       const img = new Image();
@@ -83,16 +173,108 @@
   const icons = loadImages(iconFiles);
   const enemySprites = loadImages(enemyFiles);
   const powerIcons = loadImages(powerFiles);
+  resetBattlefield();
+  const audio = {
+    ctx: null,
+    muted: localStorage.getItem("beexTdMuted") === "1",
+    unlocked: false,
+    last: Object.create(null)
+  };
+
+  function unlockAudio() {
+    if (audio.muted) return;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    if (!audio.ctx) audio.ctx = new AudioContext();
+    if (audio.ctx.state === "suspended") audio.ctx.resume();
+    audio.unlocked = true;
+  }
+
+  function playTone(freq, duration = 0.08, type = "sine", gain = 0.05, delay = 0) {
+    if (audio.muted || !audio.ctx || !audio.unlocked) return;
+    const now = audio.ctx.currentTime + delay;
+    const osc = audio.ctx.createOscillator();
+    const volume = audio.ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    volume.gain.setValueAtTime(0.0001, now);
+    volume.gain.exponentialRampToValueAtTime(gain, now + 0.012);
+    volume.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc.connect(volume);
+    volume.connect(audio.ctx.destination);
+    osc.start(now);
+    osc.stop(now + duration + 0.02);
+  }
+
+  function playNoise(duration = 0.12, gain = 0.04) {
+    if (audio.muted || !audio.ctx || !audio.unlocked) return;
+    const sampleRate = audio.ctx.sampleRate;
+    const length = Math.max(1, Math.floor(sampleRate * duration));
+    const buffer = audio.ctx.createBuffer(1, length, sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 1.8);
+    }
+    const source = audio.ctx.createBufferSource();
+    const volume = audio.ctx.createGain();
+    volume.gain.value = gain;
+    source.buffer = buffer;
+    source.connect(volume);
+    volume.connect(audio.ctx.destination);
+    source.start();
+  }
+
+  function playSound(name) {
+    const now = performance.now();
+    const gap = name === "shot" ? 75 : name === "hit" ? 90 : 25;
+    if ((audio.last[name] || 0) + gap > now) return;
+    audio.last[name] = now;
+    if (name === "build") {
+      playTone(260, 0.07, "triangle", 0.055);
+      playTone(392, 0.08, "triangle", 0.05, 0.06);
+    } else if (name === "upgrade") {
+      playTone(330, 0.08, "triangle", 0.055);
+      playTone(494, 0.09, "triangle", 0.05, 0.07);
+      playTone(660, 0.1, "triangle", 0.045, 0.14);
+    } else if (name === "shot") {
+      playTone(720, 0.045, "square", 0.025);
+    } else if (name === "kill") {
+      playTone(210, 0.07, "sawtooth", 0.04);
+      playNoise(0.08, 0.025);
+    } else if (name === "drop") {
+      playTone(540, 0.08, "sine", 0.05);
+      playTone(810, 0.14, "sine", 0.045, 0.08);
+    } else if (name === "power") {
+      playTone(330, 0.1, "triangle", 0.06);
+      playTone(660, 0.16, "triangle", 0.055, 0.09);
+      playTone(990, 0.22, "triangle", 0.045, 0.18);
+      playNoise(0.2, 0.035);
+    } else if (name === "leak") {
+      playTone(150, 0.18, "sawtooth", 0.055);
+      playNoise(0.16, 0.035);
+    } else if (name === "start") {
+      playTone(196, 0.1, "triangle", 0.055);
+      playTone(262, 0.12, "triangle", 0.05, 0.09);
+    } else if (name === "win") {
+      [392, 494, 587, 784].forEach((freq, i) => playTone(freq, 0.12, "triangle", 0.05, i * 0.08));
+    } else if (name === "lose") {
+      [260, 220, 174].forEach((freq, i) => playTone(freq, 0.16, "sawtooth", 0.05, i * 0.11));
+    } else if (name === "deny") {
+      playTone(120, 0.08, "square", 0.035);
+    } else if (name === "click") {
+      playTone(440, 0.045, "triangle", 0.025);
+    }
+  }
 
   const towers = {
     pulse: {
       id: "pulse",
       name: "神機弩",
       icon: "crossbow",
-      cost: 55,
+      cost: 50,
       color: "#ffd878",
       range: 128,
-      damage: 21,
+      damage: 24,
       cooldown: 0.52,
       effect: "遠距離單體輸出"
     },
@@ -100,10 +282,10 @@
       id: "frost",
       name: "寒玉蓮",
       icon: "lotus",
-      cost: 75,
+      cost: 68,
       color: "#9fe8ff",
       range: 116,
-      damage: 8,
+      damage: 10,
       cooldown: 0.8,
       slow: 0.5,
       slowTime: 1.45,
@@ -113,10 +295,10 @@
       id: "arc",
       name: "雷鼓臺",
       icon: "drum",
-      cost: 105,
+      cost: 94,
       color: "#ffcf5d",
       range: 142,
-      damage: 15,
+      damage: 18,
       cooldown: 0.96,
       chain: 3,
       effect: "雷擊連鎖傷害"
@@ -124,17 +306,17 @@
   };
 
   const wavePlan = Array.from({ length: 12 }, (_, i) => ({
-    count: 9 + i * 3,
-    hp: 58 + i * 22 + Math.max(0, i - 5) * 18,
-    speed: 52 + i * 4,
-    reward: 9 + Math.floor(i / 3),
-    spawnGap: Math.max(0.38, 0.82 - i * 0.035),
-    swarm: i > 6 ? 2 : 1
+    count: 8 + i * 2,
+    hp: 50 + i * 17 + Math.max(0, i - 6) * 12,
+    speed: 48 + i * 3,
+    reward: 13 + Math.floor(i / 2),
+    spawnGap: Math.max(0.48, 0.9 - i * 0.025),
+    swarm: i > 7 ? 2 : 1
   }));
 
   const state = {
-    energy: 180,
-    lives: 20,
+    energy: 240,
+    lives: 24,
     waveIndex: 0,
     score: 0,
     best: Number(localStorage.getItem("beexTdBest") || 0),
@@ -157,6 +339,7 @@
     speed: 1,
     ended: false,
     powerUses: 0,
+    dropsThisWave: 0,
     last: 0,
     dpr: 1,
     shake: 0
@@ -323,8 +506,8 @@
     const plan = wavePlan[state.waveIndex];
     const elite = state.waveIndex >= 5 && index % 7 === 0;
     const runner = state.waveIndex >= 3 && index % 5 === 2;
-    const hp = plan.hp * (elite ? 1.8 : 1) * (runner ? 0.72 : 1);
-    const speed = plan.speed * (runner ? 1.45 : 1) * (elite ? 0.75 : 1);
+    const hp = plan.hp * (elite ? 1.65 : 1) * (runner ? 0.7 : 1);
+    const speed = plan.speed * (runner ? 1.35 : 1) * (elite ? 0.75 : 1);
     const first = path[0];
     return {
       x: first.x - 28,
@@ -332,9 +515,10 @@
       hp,
       maxHp: hp,
       speed,
-      reward: plan.reward + (elite ? 6 : 0),
+      reward: plan.reward + (elite ? 10 : runner ? 3 : 0),
       node: 0,
       radius: elite ? 16 : runner ? 10 : 13,
+      facing: -1,
       slow: 1,
       slowTimer: 0,
       type: elite ? "elite" : runner ? "runner" : "drone",
@@ -344,9 +528,12 @@
   }
 
   function maybeDropPower(enemy) {
-    const baseChance = enemy.type === "elite" ? 0.38 : enemy.type === "runner" ? 0.12 : 0.08;
-    const waveBoost = Math.min(0.08, state.waveIndex * 0.008);
+    const maxDrops = state.waveIndex >= 8 ? 2 : 1;
+    if (state.dropsThisWave >= maxDrops) return;
+    const baseChance = enemy.type === "elite" ? 0.12 : enemy.type === "runner" ? 0.035 : 0.02;
+    const waveBoost = Math.min(0.035, state.waveIndex * 0.0035);
     if (Math.random() > baseChance + waveBoost) return;
+    state.dropsThisWave += 1;
     state.drops.push({
       id: self.crypto && self.crypto.randomUUID ? self.crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
       type: "beeCrossbow",
@@ -357,6 +544,7 @@
       ttl: 8,
       radius: 26
     });
+    playSound("drop");
     showBanner("驚喜掉落：蜂鳴神弩！");
   }
 
@@ -380,6 +568,7 @@
     });
     state.score += 30 + living.length * 8;
     state.sparks.push({ x: drop.x, y: drop.y, r: 34, life: 0.55, color: "#fff1a6" });
+    playSound("power");
     showBanner(`蜂鳴神弩發動，全場齊射 ${living.length} 名敵軍`);
     updateUi();
   }
@@ -444,12 +633,13 @@
     ui.score.textContent = state.score;
     ui.bestScore.textContent = state.best;
     ui.powerStatus.textContent = state.powerUses > 0
-      ? `已發動 ${state.powerUses} 次。新掉落會在官道上閃光，記得點擊拾取。`
-      : "擊敗敵軍時可能掉落，點擊即可全場齊射。";
+      ? `已發動 ${state.powerUses} 次。本波掉落 ${state.dropsThisWave} 次，看到金光要手動點擊。`
+      : "低概率驚喜掉落，點擊即可全場齊射。";
     ui.startBtn.disabled = state.waveActive || state.ended || state.waveIndex >= wavePlan.length;
     setActionButton(ui.startBtn, "start", "迎敵");
     setActionButton(ui.pauseBtn, "pause", state.paused ? "繼續" : "暫停");
     setActionButton(ui.speedBtn, "speed", `${state.speed === 1 ? "一" : state.speed === 2 ? "二" : "三"}倍速度`);
+    setActionButton(ui.soundBtn, "sound", audio.muted ? "靜音" : "音效");
     setActionButton(ui.restartBtn, "restart", "重開");
     ui.submitScoreBtn.disabled = !state.ended || state.score <= 0 || scoreKey() === state.scoreSubmittedFor;
     if (state.selectedTower) {
@@ -485,6 +675,7 @@
     const def = towers[state.selectedBuild];
     if (!canBuild(cell)) {
       state.shake = 0.18;
+      playSound("deny");
       return;
     }
     const pos = gridToWorld(cell.cx, cell.cy);
@@ -500,6 +691,7 @@
       cooldown: 0
     });
     state.selectedTower = state.towers[state.towers.length - 1];
+    playSound("build");
     updateUi();
   }
 
@@ -513,15 +705,18 @@
     state.waveActive = true;
     state.spawned = 0;
     state.spawnTimer = 0;
+    state.dropsThisWave = 0;
     ui.banner.classList.add("hidden");
+    playSound("start");
     showBanner(`第 ${state.waveIndex + 1} 波敵軍來襲`);
     updateUi();
   }
 
   function restart() {
+    resetBattlefield();
     Object.assign(state, {
-      energy: 180,
-      lives: 20,
+      energy: 240,
+      lives: 24,
       waveIndex: 0,
       score: 0,
       selectedBuild: "pulse",
@@ -539,11 +734,13 @@
       speed: 1,
       ended: false,
       powerUses: 0,
+      dropsThisWave: 0,
       last: performance.now(),
       scoreSubmittedFor: "",
       shake: 0
     });
     ui.banner.classList.add("hidden");
+    playSound("click");
     updateUi();
   }
 
@@ -561,6 +758,7 @@
       state.energy += enemy.reward;
       state.score += enemy.reward * 12 + (state.waveIndex + 1) * 4;
       state.sparks.push({ x: enemy.x, y: enemy.y, r: 18, life: 0.36, color: "#66f2c2" });
+      playSound("kill");
       if (allowDrop) maybeDropPower(enemy);
     }
   }
@@ -592,6 +790,7 @@
         state.shots.push({ x1: from.x, y1: from.y, x2: enemy.x, y2: enemy.y, life: 0.16, color: def.color, width: 4 - index * 0.6 });
         from = enemy;
       });
+      playSound("shot");
       return;
     }
     damageEnemy(target, stats.damage);
@@ -600,6 +799,7 @@
       target.slowTimer = stats.slowTime;
     }
     state.shots.push({ x1: tower.x, y1: tower.y, x2: target.x, y2: target.y, life: 0.2, color: def.color, width: tower.type === "frost" ? 5 : 3 });
+    playSound("shot");
   }
 
   function update(dt) {
@@ -630,6 +830,7 @@
       const dy = target.y - enemy.y;
       const dist = Math.hypot(dx, dy);
       const move = enemy.speed * enemy.slow * dt;
+      if (Math.abs(dx) > 0.5) enemy.facing = dx > 0 ? -1 : 1;
       if (dist <= move) {
         enemy.x = target.x;
         enemy.y = target.y;
@@ -640,6 +841,7 @@
           state.lives -= enemy.type === "elite" ? 2 : 1;
           state.shake = 0.24;
           state.sparks.push({ x: enemy.x, y: enemy.y, r: 22, life: 0.35, color: "#ff657d" });
+          playSound("leak");
         }
       } else if (dist > 0) {
         enemy.x += (dx / dist) * move;
@@ -678,7 +880,7 @@
     if (state.waveActive && state.spawned >= wavePlan[state.waveIndex].count && state.enemies.length === 0) {
       state.waveActive = false;
       state.waveIndex += 1;
-      state.energy += 28 + state.waveIndex * 4;
+      state.energy += 42 + state.waveIndex * 7;
       if (state.waveIndex >= wavePlan.length) {
         endGame(true);
       } else {
@@ -696,6 +898,7 @@
     state.best = Math.max(state.best, state.score);
     localStorage.setItem("beexTdBest", String(state.best));
     saveLocalScore();
+    playSound(win ? "win" : "lose");
     showBanner(win ? `守城大捷！戰功 ${state.score}` : `城門失守。戰功 ${state.score}`, true);
     updateUi();
   }
@@ -703,12 +906,13 @@
   function drawGrid() {
     ctx.save();
     ctx.translate(state.shake > 0 ? Math.sin(performance.now() / 22) * 3 : 0, 0);
+    const theme = battlefield.theme;
 
     const sky = ctx.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, "#86c4d3");
-    sky.addColorStop(0.2, "#d7e6c6");
-    sky.addColorStop(0.42, "#8eba70");
-    sky.addColorStop(1, "#7b9d55");
+    sky.addColorStop(0, theme.sky[0]);
+    sky.addColorStop(0.2, theme.sky[1]);
+    sky.addColorStop(0.42, theme.sky[2]);
+    sky.addColorStop(1, theme.sky[3]);
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, H);
 
@@ -718,12 +922,13 @@
     ctx.fill();
 
     const far = ctx.createLinearGradient(0, 70, 0, 230);
-    far.addColorStop(0, "#6d8d7d");
-    far.addColorStop(1, "#405f4b");
+    far.addColorStop(0, theme.far[0]);
+    far.addColorStop(1, theme.far[1]);
     ctx.fillStyle = far;
     ctx.beginPath();
     ctx.moveTo(0, 190);
-    [[82, 118], [150, 166], [236, 94], [326, 176], [420, 128], [522, 186], [618, 112], [724, 178], [838, 108], [948, 168], [1100, 118]].forEach(([x, y]) => ctx.lineTo(x, y));
+    [[82, 118], [150, 166], [236, 94], [326, 176], [420, 128], [522, 186], [618, 112], [724, 178], [838, 108], [948, 168], [1100, 118]]
+      .forEach(([x, y]) => ctx.lineTo(x, y + battlefield.mountainShift));
     ctx.lineTo(W, 260);
     ctx.lineTo(0, 260);
     ctx.closePath();
@@ -742,7 +947,7 @@
       ctx.fill();
     });
 
-    ctx.fillStyle = "#91b866";
+    ctx.fillStyle = theme.field;
     ctx.beginPath();
     ctx.moveTo(0, 218);
     ctx.bezierCurveTo(180, 188, 326, 236, 516, 214);
@@ -753,33 +958,28 @@
     ctx.fill();
 
     ctx.fillStyle = "rgba(224, 199, 118, 0.36)";
-    [
-      [92, 310, 140, 46, -0.12],
-      [360, 598, 190, 58, 0.08],
-      [812, 420, 160, 48, -0.18],
-      [958, 626, 136, 36, 0.14]
-    ].forEach(([x, y, rx, ry, rot]) => {
+    battlefield.fieldMarks.forEach(([x, y, rx, ry, rot]) => {
       ctx.beginPath();
       ctx.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2);
       ctx.fill();
     });
 
-    ctx.strokeStyle = "rgba(56, 115, 142, 0.82)";
+    ctx.strokeStyle = theme.river[0];
     ctx.lineWidth = 48;
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo(1085, 268);
-    ctx.bezierCurveTo(940, 324, 832, 260, 726, 326);
-    ctx.bezierCurveTo(594, 408, 474, 384, 346, 462);
-    ctx.bezierCurveTo(214, 544, 118, 520, 18, 604);
+    ctx.moveTo(1085, 268 + battlefield.riverShift);
+    ctx.bezierCurveTo(940, 324 + battlefield.riverShift, 832, 260 + battlefield.riverShift, 726, 326 + battlefield.riverShift);
+    ctx.bezierCurveTo(594, 408 + battlefield.riverShift, 474, 384 + battlefield.riverShift, 346, 462 + battlefield.riverShift);
+    ctx.bezierCurveTo(214, 544 + battlefield.riverShift, 118, 520 + battlefield.riverShift, 18, 604 + battlefield.riverShift);
     ctx.stroke();
-    ctx.strokeStyle = "rgba(166, 225, 232, 0.88)";
+    ctx.strokeStyle = theme.river[1];
     ctx.lineWidth = 34;
     ctx.beginPath();
-    ctx.moveTo(1085, 268);
-    ctx.bezierCurveTo(940, 324, 832, 260, 726, 326);
-    ctx.bezierCurveTo(594, 408, 474, 384, 346, 462);
-    ctx.bezierCurveTo(214, 544, 118, 520, 18, 604);
+    ctx.moveTo(1085, 268 + battlefield.riverShift);
+    ctx.bezierCurveTo(940, 324 + battlefield.riverShift, 832, 260 + battlefield.riverShift, 726, 326 + battlefield.riverShift);
+    ctx.bezierCurveTo(594, 408 + battlefield.riverShift, 474, 384 + battlefield.riverShift, 346, 462 + battlefield.riverShift);
+    ctx.bezierCurveTo(214, 544 + battlefield.riverShift, 118, 520 + battlefield.riverShift, 18, 604 + battlefield.riverShift);
     ctx.stroke();
     ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
     ctx.lineWidth = 3;
@@ -831,10 +1031,10 @@
       else ctx.lineTo(p.x, p.y);
     });
     ctx.stroke();
-    ctx.strokeStyle = "#b47a3a";
+    ctx.strokeStyle = theme.road[1];
     ctx.lineWidth = 42;
     ctx.stroke();
-    ctx.strokeStyle = "#d1a55f";
+    ctx.strokeStyle = theme.road[2];
     ctx.lineWidth = 32;
     ctx.stroke();
     ctx.setLineDash([14, 18]);
@@ -890,17 +1090,15 @@
     ctx.fillRect(gateX + 24, gateY + 30, 22, 28);
 
     ctx.fillStyle = "rgba(36, 82, 44, 0.72)";
-    for (let i = 0; i < 42; i++) {
-      const x = (i * 83) % W;
-      const y = 230 + ((i * 57) % 430);
-      if (pathSet.has(`${Math.floor((x - offset.x) / tile)},${Math.floor((y - offset.y) / tile)}`)) continue;
+    battlefield.trees.forEach(([x, y]) => {
+      if (pathSet.has(`${Math.floor((x - offset.x) / tile)},${Math.floor((y - offset.y) / tile)}`)) return;
       ctx.beginPath();
       ctx.moveTo(x, y);
       ctx.lineTo(x + 4, y - 16);
       ctx.lineTo(x + 9, y);
       ctx.closePath();
       ctx.fill();
-    }
+    });
     ctx.restore();
   }
 
@@ -997,7 +1195,10 @@
       const sprite = enemySprites[enemy.type];
       const size = enemy.type === "runner" ? 62 : enemy.type === "elite" ? 68 : 54;
       if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+        ctx.save();
+        ctx.scale(enemy.facing || 1, 1);
         ctx.drawImage(sprite, -size / 2, -size + 14, size, size);
+        ctx.restore();
         if (enemy.slow < 1) {
           ctx.strokeStyle = "rgba(159, 232, 255, 0.8)";
           ctx.lineWidth = 3;
@@ -1142,6 +1343,7 @@
   });
 
   canvas.addEventListener("pointerdown", event => {
+    unlockAudio();
     const point = pointerToWorld(event);
     const drop = pickDrop(point);
     if (drop) {
@@ -1167,6 +1369,7 @@
     state.energy -= cost;
     t.level += 1;
     state.sparks.push({ x: t.x, y: t.y, r: 18, life: 0.4, color: towers[t.type].color });
+    playSound("upgrade");
     updateUi();
   });
 
@@ -1176,18 +1379,36 @@
     state.energy += sellValue(t);
     state.towers = state.towers.filter(item => item !== t);
     state.selectedTower = null;
+    playSound("click");
     updateUi();
   });
 
-  ui.startBtn.addEventListener("click", startWave);
+  window.addEventListener("pointerdown", unlockAudio, { once: false, passive: true });
+  ui.startBtn.addEventListener("click", () => {
+    unlockAudio();
+    startWave();
+  });
   ui.pauseBtn.addEventListener("click", () => {
+    unlockAudio();
     if (state.ended) return;
     state.paused = !state.paused;
+    playSound("click");
     showBanner(state.paused ? "已暫停" : "繼續迎敵");
     updateUi();
   });
   ui.speedBtn.addEventListener("click", () => {
+    unlockAudio();
     state.speed = state.speed === 1 ? 2 : state.speed === 2 ? 3 : 1;
+    playSound("click");
+    updateUi();
+  });
+  ui.soundBtn.addEventListener("click", () => {
+    audio.muted = !audio.muted;
+    localStorage.setItem("beexTdMuted", audio.muted ? "1" : "0");
+    if (!audio.muted) {
+      unlockAudio();
+      playSound("click");
+    }
     updateUi();
   });
   ui.restartBtn.addEventListener("click", restart);
