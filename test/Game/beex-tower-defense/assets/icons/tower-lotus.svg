@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="jade lotus tower icon">
+  <defs>
+    <radialGradient id="ice" cx="38%" cy="26%" r="72%">
+      <stop stop-color="#ffffff"/>
+      <stop offset=".45" stop-color="#b6f7ff"/>
+      <stop offset="1" stop-color="#2b8fc5"/>
+    </radialGradient>
+    <linearGradient id="base" x1="24" y1="26" x2="73" y2="85" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#75d9c3"/>
+      <stop offset="1" stop-color="#135f5d"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="43" fill="#123138"/>
+  <circle cx="48" cy="48" r="38" fill="#1d5f68"/>
+  <path d="M25 70h46l-7 13H32z" fill="#0d3d41"/>
+  <path d="M48 14c11 13 12 27 0 41-12-14-11-28 0-41z" fill="url(#ice)" stroke="#e7ffff" stroke-width="3"/>
+  <path d="M22 34c17 3 29 15 30 33-18-4-29-15-30-33z" fill="url(#ice)" stroke="#d9ffff" stroke-width="3"/>
+  <path d="M74 34c-17 3-29 15-30 33 18-4 29-15 30-33z" fill="url(#ice)" stroke="#d9ffff" stroke-width="3"/>
+  <path d="M30 56c12-9 24-9 36 0l-6 19H36z" fill="url(#base)" stroke="#082f31" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="48" cy="54" r="10" fill="#eefcff" stroke="#176f78" stroke-width="4"/>
+</svg>
