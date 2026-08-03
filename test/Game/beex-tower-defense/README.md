@@ -1,5 +1,27 @@
-# BeeX Tower Defense
+# BeeX 古城守衛
 
-A standalone BeeX-style HTML5 Canvas tower defense game.
+BeeX 古城守衛是一個純前端、無第三方依賴的 HTML5 Canvas 塔防遊戲。畫面採用原創中國古代城防風格，塔與狀態圖標使用獨立 SVG 文件，不使用字母佔位。
 
-Open: https://windzxy.github.io/test/Game/beex-tower-defense/
+## 玩法
+
+- 在格子上建造不同類型的防禦塔，阻止敵人攻破 BeeX 城門。
+- 擊敗敵人可獲得糧草，用來建造、升級或拆除防禦塔。
+- 每局共有 12 波敵人，後期會出現更快、更厚、更密集的敵人。
+- 支援玩家名字、本地排行榜、GitHub Issue 提交和 GitHub Action 寫入雲端排行榜。
+- 支援暫停、倍速、重開、選中塔升級/拆除。
+
+## 防禦塔
+
+| 塔 | 特點 |
+| --- | --- |
+| 神機弩 | 遠距離單體輸出，適合前期鋪場 |
+| 寒玉蓮 | 寒氣減速控制，適合彎道附近 |
+| 雷鼓臺 | 雷擊連鎖傷害，適合密集敵群 |
+
+## 文件
+
+- `index.html` - 遊戲入口
+- `styles.css` - 響應式界面與古代城防視覺
+- `src/game.js` - 遊戲邏輯、繪製、交互
+- `assets/icons/` - 塔、資源、城門、波次 SVG 圖標
+- `leaderboard.json` - GitHub Action 更新的排行榜資料
