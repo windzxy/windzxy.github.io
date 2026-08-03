@@ -1,0 +1,98 @@
+name: BeeX Scoreboard
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  update-scoreboard:
+    if: startsWith(github.event.issue.title, '[BeeX Score]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update leaderboard
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          const path = "test/Game/beex-tower-defense/leaderboard.json";
+          const body = process.env.ISSUE_BODY || "";
+          const data = Object.fromEntries(body.split(/\r?\n/).map(line => {
+            const match = line.match(/^([a-z]+):\s*(.*)$/i);
+            return match ? [match[1].toLowerCase(), match[2].trim()] : null;
+          }).filter(Boolean));
+
+          if (data.game !== "beex-tower-defense") {
+            throw new Error("Unsupported game");
+          }
+
+          const name = String(data.player || "無名俠客")
+            .replace(/[<>`{}\[\]\\]/g, "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 18) || "無名俠客";
+          const score = Number.parseInt(data.score, 10);
+          const wave = Number.parseInt(data.wave, 10) || 0;
+          const lives = Number.parseInt(data.lives, 10) || 0;
+          const energy = Number.parseInt(data.energy, 10) || 0;
+          const time = /^\d{4}-\d{2}-\d{2}T/.test(data.time || "") ? data.time : new Date().toISOString();
+
+          if (!Number.isFinite(score) || score < 1 || score > 9999999) {
+            throw new Error("Invalid score");
+          }
+
+          const issue = Number.parseInt(process.env.ISSUE_NUMBER, 10);
+          const entry = {
+            issue,
+            name,
+            score,
+            wave: Math.max(0, Math.min(99, wave)),
+            lives: Math.max(0, Math.min(999, lives)),
+            energy: Math.max(0, Math.min(999999, energy)),
+            time,
+            url: process.env.ISSUE_URL
+          };
+
+          let board = [];
+          if (fs.existsSync(path)) {
+            board = JSON.parse(fs.readFileSync(path, "utf8"));
+            if (!Array.isArray(board)) board = [];
+          }
+          board = [entry, ...board.filter(item => item.issue !== issue)]
+            .sort((a, b) => b.score - a.score || String(a.time).localeCompare(String(b.time)))
+            .slice(0, 50);
+          fs.writeFileSync(path, `${JSON.stringify(board, null, 2)}\n`);
+          NODE
+
+      - name: Commit leaderboard
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add test/Game/beex-tower-defense/leaderboard.json
+          git commit -m "Update BeeX leaderboard" || exit 0
+          git push
+
+      - name: Close score issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: "Score received. The leaderboard will refresh after GitHub Pages updates."
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: "closed"
+            });
