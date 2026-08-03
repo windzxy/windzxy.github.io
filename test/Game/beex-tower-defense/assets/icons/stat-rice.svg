@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="rice supply icon">
+  <circle cx="32" cy="32" r="29" fill="#5a351b"/>
+  <path d="M18 42h28l-4 12H22z" fill="#8b4b20"/>
+  <path d="M22 21c10-9 20-9 30 0-7 5-7 15-15 20-6 4-15 1-19-5 7-1 12-4 17-10-6 3-11 3-16 1 0-2 1-4 3-6z" fill="#ffe9b0" stroke="#62320f" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M24 20c2 10 8 18 17 23" stroke="#be7d29" stroke-width="3" stroke-linecap="round"/>
+</svg>
