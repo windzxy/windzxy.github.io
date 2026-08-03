@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="暫停圖標">
+  <circle cx="32" cy="32" r="29" fill="#263c2b"/>
+  <path d="M22 18h8v28h-8zM34 18h8v28h-8z" fill="#ffe6a8" stroke="#4a2411" stroke-width="4" stroke-linejoin="round"/>
+</svg>
