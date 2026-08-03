@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="排行榜圖標">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="戰功榜圖標">
   <circle cx="32" cy="32" r="29" fill="#3d2114"/>
-  <path d="M18 46h8V29h-8zM29 46h8V18h-8zM40 46h8V25h-8z" fill="#ffd66e" stroke="#4a2411" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M18 14h28c4 0 7 3 7 7v26c0 4-3 7-7 7H18z" fill="#f3d08b" stroke="#4a2411" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M18 14c-5 0-8 3-8 7s3 7 8 7zM18 40c-5 0-8 3-8 7s3 7 8 7z" fill="#b96b2b" stroke="#4a2411" stroke-width="3"/>
+  <path d="M27 25h17M27 34h17M27 43h12" stroke="#6a3415" stroke-width="4" stroke-linecap="round"/>
+  <path d="M20 23l3 3 5-7" fill="none" stroke="#c8422a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

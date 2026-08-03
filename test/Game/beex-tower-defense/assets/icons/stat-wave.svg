@@ -1,6 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="敵襲圖標">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="敵軍波次圖標">
   <circle cx="32" cy="32" r="29" fill="#332019"/>
-  <path d="M18 47c9-4 19-4 28 0" stroke="#ffda78" stroke-width="6" stroke-linecap="round"/>
-  <path d="M23 40V18l19 8-19 8" fill="#c9462b" stroke="#4b160d" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M23 18v31" stroke="#ffe0a0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M15 47c9-7 25-7 34 0" fill="#7c3320" stroke="#2a1008" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="25" cy="31" r="9" fill="#d8c08a" stroke="#2a1008" stroke-width="3"/>
+  <circle cx="39" cy="31" r="9" fill="#d8c08a" stroke="#2a1008" stroke-width="3"/>
+  <path d="M16 28l9-13 9 13M30 28l9-13 9 13" fill="#cf4a2c" stroke="#2a1008" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M18 50h28" stroke="#ffda78" stroke-width="5" stroke-linecap="round"/>
 </svg>

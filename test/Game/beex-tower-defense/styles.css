@@ -157,11 +157,22 @@ p {
 }
 
 h1 {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 0;
   color: #fff5d4;
   font-size: clamp(25px, 3vw, 43px);
   line-height: 1.05;
   text-shadow: 0 3px 0 rgba(58, 20, 7, 0.72), 0 8px 20px rgba(0, 0, 0, 0.36);
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.32);
 }
 
 h2 {
@@ -322,6 +333,39 @@ canvas {
   height: 42px;
   display: block;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.32));
+}
+
+.power-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.power-card p {
+  margin: 0;
+}
+
+.power-card strong,
+.power-card small {
+  display: block;
+}
+
+.power-card strong {
+  color: #fff6dc;
+  font: 900 15px ui-sans-serif, system-ui, sans-serif;
+}
+
+.power-card small {
+  margin-top: 4px;
+  color: #e7c98f;
+  font: 800 12px/1.4 ui-sans-serif, system-ui, sans-serif;
+}
+
+.power-icon {
+  background:
+    radial-gradient(circle at 38% 24%, #fff6b8, #d78b2d 48%, #341509 76%),
+    #6b3116;
 }
 
 .tower-meta strong,

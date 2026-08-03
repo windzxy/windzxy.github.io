@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="迎敵圖標">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="戰鼓迎敵圖標">
   <circle cx="32" cy="32" r="29" fill="#4d2715"/>
-  <path d="M17 47c10-5 20-5 30 0" stroke="#ffe3a4" stroke-width="6" stroke-linecap="round"/>
-  <path d="M24 42V15l24 10-24 10" fill="#d94d2c" stroke="#3b160c" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M24 15v34" stroke="#ffe0a0" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="31" cy="35" r="17" fill="#d94d2c" stroke="#3b160c" stroke-width="5"/>
+  <circle cx="31" cy="35" r="10" fill="#ffe0a0" stroke="#7a2f12" stroke-width="4"/>
+  <path d="M45 18v30M45 18l12 5-12 6" fill="#cf3f29" stroke="#3b160c" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M15 51h34M15 19l10 9M49 19l-10 9" stroke="#ffe3a4" stroke-width="5" stroke-linecap="round"/>
 </svg>

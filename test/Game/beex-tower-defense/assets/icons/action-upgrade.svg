@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="升級圖標">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="塔台升級圖標">
   <circle cx="32" cy="32" r="29" fill="#263c2b"/>
-  <path d="M17 40l15-20 15 20h-9v10H26V40z" fill="#ffe6a8" stroke="#4a2411" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M18 45h28l-4 9H22z" fill="#6d3518" stroke="#361608" stroke-width="3"/>
+  <path d="M23 31h20l4 14H19z" fill="#d79942" stroke="#361608" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M18 31l15-10 15 10z" fill="#c94b2e" stroke="#361608" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M47 13l10 10h-7v16h-6V23h-7z" fill="#fff0a8" stroke="#4a2411" stroke-width="3" stroke-linejoin="round"/>
 </svg>

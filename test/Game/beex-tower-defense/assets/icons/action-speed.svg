@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="倍速圖標">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="快馬倍速圖標">
   <circle cx="32" cy="32" r="29" fill="#1d4650"/>
-  <path d="M14 39c8-16 21-24 38-24-6 7-9 15-9 25" fill="none" stroke="#d9fff1" stroke-width="6" stroke-linecap="round"/>
-  <path d="M42 15l11 1-5 10" fill="none" stroke="#ffd66e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M20 43h27" stroke="#ffd66e" stroke-width="5" stroke-linecap="round"/>
+  <path d="M14 42c5-12 14-19 29-22l10 8-5 13H35l-6 9h-8l5-9z" fill="#c77735" stroke="#2d1409" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M42 20l6-8 7 13" fill="#a45327" stroke="#2d1409" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="47" cy="27" r="2.2" fill="#1d0c05"/>
+  <path d="M19 49h10M39 49h11M10 28h14M7 36h12" stroke="#ffe2a0" stroke-width="4" stroke-linecap="round"/>
 </svg>

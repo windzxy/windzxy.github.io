@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="重開圖標">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="重整城防圖標">
   <circle cx="32" cy="32" r="29" fill="#3d2114"/>
-  <path d="M44 22c-8-8-22-4-25 7-3 12 7 23 19 20 6-1 11-5 13-11" fill="none" stroke="#ffe3a4" stroke-width="6" stroke-linecap="round"/>
-  <path d="M45 11v15H30" fill="none" stroke="#e65332" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M17 43h26v10H17z" fill="#8c4b20" stroke="#321408" stroke-width="3"/>
+  <path d="M20 29h20l5 14H15z" fill="#d69a43" stroke="#321408" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M15 29l15-10 15 10z" fill="#c8472b" stroke="#321408" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M48 18c7 8 6 21-2 28-4 4-9 6-15 6" fill="none" stroke="#ffe3a4" stroke-width="5" stroke-linecap="round"/>
+  <path d="M49 10v12H37" fill="none" stroke="#70d4a4" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

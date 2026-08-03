@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="拆除圖標">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="拆除塔台圖標">
   <circle cx="32" cy="32" r="29" fill="#4d2715"/>
-  <path d="M20 46l24-24" stroke="#ffe3a4" stroke-width="7" stroke-linecap="round"/>
-  <path d="M22 21l21 21" stroke="#e65332" stroke-width="7" stroke-linecap="round"/>
+  <path d="M17 47h30l-4 8H21z" fill="#7a3b1a" stroke="#2d1207" stroke-width="3"/>
+  <path d="M22 28h22l5 19H17z" fill="#d79a44" stroke="#2d1207" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M16 28l18-11 18 11z" fill="#c94b2e" stroke="#2d1207" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M39 14l10 10M50 13l-12 12" stroke="#ffe3a4" stroke-width="6" stroke-linecap="round"/>
+  <path d="M19 18l27 27" stroke="#e65332" stroke-width="5" stroke-linecap="round"/>
 </svg>

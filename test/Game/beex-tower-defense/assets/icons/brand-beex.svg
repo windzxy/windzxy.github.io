@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="BeeX 圖標">
+  <defs>
+    <linearGradient id="brandBg" x1="16" y1="12" x2="80" y2="84" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f4fbff"/>
+      <stop offset=".45" stop-color="#d8e6ef"/>
+      <stop offset="1" stop-color="#aebfcc"/>
+    </linearGradient>
+    <linearGradient id="brandInk" x1="18" y1="18" x2="78" y2="78" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#122032"/>
+      <stop offset="1" stop-color="#243b5a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="42" fill="url(#brandBg)" stroke="#1d2f46" stroke-width="5"/>
+  <path d="M28 58c7 10 24 13 36 3 11-9 10-27-1-34-9-6-23-4-30 5" fill="none" stroke="url(#brandInk)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M63 27c-10 2-19 9-25 21 9-3 18-3 27 1" fill="none" stroke="url(#brandInk)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M30 38h24L42 52h22" fill="none" stroke="#0e1724" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="31" cy="38" r="4" fill="#0e1724"/>
+</svg>

@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="暫停圖標">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="暫停令牌圖標">
   <circle cx="32" cy="32" r="29" fill="#263c2b"/>
-  <path d="M22 18h8v28h-8zM34 18h8v28h-8z" fill="#ffe6a8" stroke="#4a2411" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M18 18h28l-4 33H22z" fill="#d59a43" stroke="#4a2411" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M24 24h6v21h-6zM34 24h6v21h-6z" fill="#fff0b0" stroke="#4a2411" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M18 18l8-7h28l-8 7z" fill="#ffe0a0" stroke="#4a2411" stroke-width="3" stroke-linejoin="round"/>
 </svg>

@@ -21,6 +21,7 @@
     refreshBoardBtn: document.getElementById("refreshBoardBtn"),
     leaderboardList: document.getElementById("leaderboardList"),
     leaderboardHint: document.getElementById("leaderboardHint"),
+    powerStatus: document.getElementById("powerStatus"),
     banner: document.getElementById("banner")
   };
 
@@ -61,12 +62,27 @@
     upgrade: "assets/icons/action-upgrade.svg",
     sell: "assets/icons/action-sell.svg"
   };
-  const icons = Object.fromEntries(Object.entries(iconFiles).map(([key, src]) => {
-    const img = new Image();
-    img.src = src;
-    img.addEventListener("load", () => draw());
-    return [key, img];
-  }));
+  const enemyFiles = {
+    drone: "assets/enemies/enemy-footman.png",
+    runner: "assets/enemies/enemy-rider.png",
+    elite: "assets/enemies/enemy-armor.png"
+  };
+  const powerFiles = {
+    beeCrossbow: "assets/icons/weapon-bee-crossbow.svg"
+  };
+
+  function loadImages(files) {
+    return Object.fromEntries(Object.entries(files).map(([key, src]) => {
+      const img = new Image();
+      img.src = src;
+      img.addEventListener("load", () => draw());
+      return [key, img];
+    }));
+  }
+
+  const icons = loadImages(iconFiles);
+  const enemySprites = loadImages(enemyFiles);
+  const powerIcons = loadImages(powerFiles);
 
   const towers = {
     pulse: {
@@ -131,6 +147,7 @@
     hoverCell: null,
     towers: [],
     enemies: [],
+    drops: [],
     shots: [],
     sparks: [],
     spawnTimer: 0,
@@ -139,6 +156,7 @@
     paused: false,
     speed: 1,
     ended: false,
+    powerUses: 0,
     last: 0,
     dpr: 1,
     shake: 0
@@ -325,6 +343,51 @@
     };
   }
 
+  function maybeDropPower(enemy) {
+    const baseChance = enemy.type === "elite" ? 0.38 : enemy.type === "runner" ? 0.12 : 0.08;
+    const waveBoost = Math.min(0.08, state.waveIndex * 0.008);
+    if (Math.random() > baseChance + waveBoost) return;
+    state.drops.push({
+      id: self.crypto && self.crypto.randomUUID ? self.crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+      type: "beeCrossbow",
+      name: "蜂鳴神弩",
+      x: enemy.x,
+      y: enemy.y,
+      age: 0,
+      ttl: 8,
+      radius: 26
+    });
+    showBanner("驚喜掉落：蜂鳴神弩！");
+  }
+
+  function collectDrop(drop) {
+    if (!drop) return;
+    state.drops = state.drops.filter(item => item !== drop);
+    state.powerUses += 1;
+    const damage = 72 + state.waveIndex * 14;
+    const living = state.enemies.filter(enemy => enemy.alive);
+    living.forEach(enemy => {
+      state.shots.push({
+        x1: drop.x,
+        y1: drop.y,
+        x2: enemy.x,
+        y2: enemy.y,
+        life: 0.24,
+        color: "#fff1a6",
+        width: 5
+      });
+      damageEnemy(enemy, damage, false);
+    });
+    state.score += 30 + living.length * 8;
+    state.sparks.push({ x: drop.x, y: drop.y, r: 34, life: 0.55, color: "#fff1a6" });
+    showBanner(`蜂鳴神弩發動，全場齊射 ${living.length} 名敵軍`);
+    updateUi();
+  }
+
+  function pickDrop(point) {
+    return state.drops.find(drop => Math.hypot(drop.x - point.x, drop.y - point.y) <= drop.radius + 8) || null;
+  }
+
   function towerStats(t) {
     const base = towers[t.type];
     const level = t.level;
@@ -380,6 +443,9 @@
     ui.wave.textContent = `${Math.min(state.waveIndex + 1, wavePlan.length)}/${wavePlan.length}`;
     ui.score.textContent = state.score;
     ui.bestScore.textContent = state.best;
+    ui.powerStatus.textContent = state.powerUses > 0
+      ? `已發動 ${state.powerUses} 次。新掉落會在官道上閃光，記得點擊拾取。`
+      : "擊敗敵軍時可能掉落，點擊即可全場齊射。";
     ui.startBtn.disabled = state.waveActive || state.ended || state.waveIndex >= wavePlan.length;
     setActionButton(ui.startBtn, "start", "迎敵");
     setActionButton(ui.pauseBtn, "pause", state.paused ? "繼續" : "暫停");
@@ -463,6 +529,7 @@
       hoverCell: null,
       towers: [],
       enemies: [],
+      drops: [],
       shots: [],
       sparks: [],
       spawnTimer: 0,
@@ -471,6 +538,7 @@
       paused: false,
       speed: 1,
       ended: false,
+      powerUses: 0,
       last: performance.now(),
       scoreSubmittedFor: "",
       shake: 0
@@ -479,7 +547,7 @@
     updateUi();
   }
 
-  function damageEnemy(enemy, amount) {
+  function damageEnemy(enemy, amount, allowDrop = true) {
     enemy.hp -= amount;
     state.sparks.push({
       x: enemy.x,
@@ -493,6 +561,7 @@
       state.energy += enemy.reward;
       state.score += enemy.reward * 12 + (state.waveIndex + 1) * 4;
       state.sparks.push({ x: enemy.x, y: enemy.y, r: 18, life: 0.36, color: "#66f2c2" });
+      if (allowDrop) maybeDropPower(enemy);
     }
   }
 
@@ -591,6 +660,8 @@
     }
 
     state.enemies = state.enemies.filter(e => e.alive);
+    state.drops.forEach(drop => drop.age += dt);
+    state.drops = state.drops.filter(drop => drop.age < drop.ttl);
     state.shots.forEach(s => s.life -= dt);
     state.shots = state.shots.filter(s => s.life > 0);
     state.sparks.forEach(s => {
@@ -920,22 +991,25 @@
       ctx.translate(enemy.x, enemy.y);
       ctx.fillStyle = "rgba(0,0,0,0.34)";
       ctx.beginPath();
-      ctx.ellipse(0, enemy.radius + 5, enemy.radius, 5, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, enemy.radius + 5, enemy.radius + 8, 5, 0, 0, Math.PI * 2);
       ctx.fill();
-      const color = enemy.type === "elite" ? "#d6a24a" : enemy.type === "runner" ? "#c85a3a" : "#405a37";
-      ctx.fillStyle = enemy.slow < 1 ? "#9fe8ff" : color;
-      ctx.strokeStyle = "rgba(39,17,8,0.88)";
-      ctx.lineWidth = 3;
-      if (enemy.type === "runner") {
-        ctx.beginPath();
-        ctx.ellipse(0, 3, enemy.radius + 8, enemy.radius - 1, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillStyle = "#f0d19a";
-        ctx.beginPath();
-        ctx.arc(-6, -7, 6, 0, Math.PI * 2);
-        ctx.fill();
+
+      const sprite = enemySprites[enemy.type];
+      const size = enemy.type === "runner" ? 62 : enemy.type === "elite" ? 68 : 54;
+      if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+        ctx.drawImage(sprite, -size / 2, -size + 14, size, size);
+        if (enemy.slow < 1) {
+          ctx.strokeStyle = "rgba(159, 232, 255, 0.8)";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(0, -16, size * 0.38, 0, Math.PI * 2);
+          ctx.stroke();
+        }
       } else {
+        const color = enemy.type === "elite" ? "#d6a24a" : enemy.type === "runner" ? "#c85a3a" : "#405a37";
+        ctx.fillStyle = enemy.slow < 1 ? "#9fe8ff" : color;
+        ctx.strokeStyle = "rgba(39,17,8,0.88)";
+        ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.roundRect(-enemy.radius, -enemy.radius + 3, enemy.radius * 2, enemy.radius * 1.8, 5);
         ctx.fill();
@@ -945,19 +1019,49 @@
         ctx.arc(0, -enemy.radius + 1, enemy.radius * 0.62, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+        ctx.fillStyle = enemy.type === "elite" ? "#ffd878" : "#251007";
+        ctx.beginPath();
+        ctx.moveTo(-enemy.radius - 2, -enemy.radius + 1);
+        ctx.lineTo(0, -enemy.radius - 10);
+        ctx.lineTo(enemy.radius + 2, -enemy.radius + 1);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
       }
-      ctx.fillStyle = enemy.type === "elite" ? "#ffd878" : "#251007";
-      ctx.beginPath();
-      ctx.moveTo(-enemy.radius - 2, -enemy.radius + 1);
-      ctx.lineTo(0, -enemy.radius - 10);
-      ctx.lineTo(enemy.radius + 2, -enemy.radius + 1);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
       ctx.fillStyle = "rgba(39,17,8,0.92)";
-      ctx.fillRect(-18, -enemy.radius - 13, 36, 5);
+      ctx.fillRect(-20, -enemy.radius - 30, 40, 5);
       ctx.fillStyle = hp > 0.5 ? "#70d4a4" : hp > 0.24 ? "#ffd878" : "#e55236";
-      ctx.fillRect(-18, -enemy.radius - 13, 36 * hp, 5);
+      ctx.fillRect(-20, -enemy.radius - 30, 40 * hp, 5);
+      ctx.restore();
+    }
+  }
+
+  function drawDrops() {
+    const icon = powerIcons.beeCrossbow;
+    for (const drop of state.drops) {
+      const pulse = 1 + Math.sin((performance.now() / 180) + drop.x) * 0.08;
+      ctx.save();
+      ctx.translate(drop.x, drop.y - 18);
+      ctx.scale(pulse, pulse);
+      ctx.globalAlpha = Math.max(0.35, 1 - Math.max(0, drop.age - 5) / 3);
+      ctx.shadowColor = "#fff1a6";
+      ctx.shadowBlur = 22;
+      ctx.fillStyle = "rgba(255, 225, 105, 0.28)";
+      ctx.beginPath();
+      ctx.arc(0, 0, 31, 0, Math.PI * 2);
+      ctx.fill();
+      if (icon && icon.complete && icon.naturalWidth > 0) {
+        ctx.drawImage(icon, -28, -28, 56, 56);
+      } else {
+        ctx.fillStyle = "#ffe388";
+        ctx.beginPath();
+        ctx.moveTo(-22, -4);
+        ctx.lineTo(20, -18);
+        ctx.lineTo(8, 4);
+        ctx.lineTo(22, 20);
+        ctx.closePath();
+        ctx.fill();
+      }
       ctx.restore();
     }
   }
@@ -1013,6 +1117,7 @@
     ctx.clearRect(0, 0, W, H);
     drawGrid();
     drawHover();
+    drawDrops();
     drawTowers();
     drawEnemies();
     drawShots();
@@ -1038,6 +1143,11 @@
 
   canvas.addEventListener("pointerdown", event => {
     const point = pointerToWorld(event);
+    const drop = pickDrop(point);
+    if (drop) {
+      collectDrop(drop);
+      return;
+    }
     const cell = worldToCell(point.x, point.y);
     const tower = pickTower(cell);
     if (tower) {
