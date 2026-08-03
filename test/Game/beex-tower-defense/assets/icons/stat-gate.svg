@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="city gate icon">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="城門圖標">
   <circle cx="32" cy="32" r="29" fill="#263c2b"/>
   <path d="M13 25h38l-4 8H17z" fill="#d9a149" stroke="#4d2611" stroke-width="3"/>
   <path d="M17 32h30v20H17z" fill="#91501f" stroke="#37190b" stroke-width="3"/>
