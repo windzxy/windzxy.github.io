@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="音效圖標">
+  <defs>
+    <linearGradient id="wood" x1="22" x2="70" y1="24" y2="76" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe6a0"/>
+      <stop offset=".45" stop-color="#d98a31"/>
+      <stop offset="1" stop-color="#6b2d13"/>
+    </linearGradient>
+    <linearGradient id="horn" x1="20" x2="78" y1="46" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff5c8"/>
+      <stop offset=".45" stop-color="#e2aa4c"/>
+      <stop offset="1" stop-color="#8f3e1a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="44" fill="#3b180b"/>
+  <circle cx="48" cy="48" r="39" fill="url(#wood)" stroke="#fff0b8" stroke-width="3"/>
+  <path fill="#51200d" d="M22 58h14l17 13V25L36 38H22z" stroke="#2a1006" stroke-width="4" stroke-linejoin="round"/>
+  <path fill="url(#horn)" d="M50 35c12 2 20 10 21 22 6-3 10-9 10-17 0-10-7-18-17-20-4 7-8 11-14 15Z" stroke="#2a1006" stroke-width="4" stroke-linejoin="round"/>
+  <path fill="none" stroke="#fff4c0" stroke-linecap="round" stroke-width="5" d="M65 43c5 3 7 8 6 14M73 34c9 8 12 20 7 31"/>
+  <path fill="#fff0a6" d="M34 42h7v12h-7z"/>
+</svg>
