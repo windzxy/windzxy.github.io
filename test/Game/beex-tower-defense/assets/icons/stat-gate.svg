@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="city gate icon">
+  <circle cx="32" cy="32" r="29" fill="#263c2b"/>
+  <path d="M13 25h38l-4 8H17z" fill="#d9a149" stroke="#4d2611" stroke-width="3"/>
+  <path d="M17 32h30v20H17z" fill="#91501f" stroke="#37190b" stroke-width="3"/>
+  <path d="M24 52V39c0-5 4-8 8-8s8 3 8 8v13z" fill="#3f2413"/>
+  <path d="M11 23l21-12 21 12z" fill="#c64728" stroke="#481b0e" stroke-width="3" stroke-linejoin="round"/>
+</svg>
