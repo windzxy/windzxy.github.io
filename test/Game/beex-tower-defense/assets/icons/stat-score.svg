@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="戰功圖標">
+  <defs>
+    <linearGradient id="coin" x1="16" y1="10" x2="50" y2="54" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff1a8"/>
+      <stop offset=".5" stop-color="#e5a734"/>
+      <stop offset="1" stop-color="#a45a16"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="29" fill="#3d2114"/>
+  <circle cx="32" cy="32" r="22" fill="url(#coin)" stroke="#5b2b10" stroke-width="4"/>
+  <path d="M32 14l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#fff4c6" stroke="#7a3e13" stroke-width="3" stroke-linejoin="round"/>
+</svg>
