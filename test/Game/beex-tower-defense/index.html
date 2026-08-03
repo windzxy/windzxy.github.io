@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BeeX Tower Defense</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="game-card" aria-label="BeeX Tower Defense">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">BeeX Game Lab</p>
+          <h1>BeeX Tower Defense</h1>
+        </div>
+        <div class="stats" aria-label="Game stats">
+          <span><b id="energy">180</b><small>Energy</small></span>
+          <span><b id="lives">20</b><small>Core</small></span>
+          <span><b id="wave">1/12</b><small>Wave</small></span>
+          <span><b id="score">0</b><small>Score</small></span>
+        </div>
+      </header>
+
+      <div class="play-layout">
+        <div class="stage-wrap">
+          <canvas id="game" width="1100" height="720" aria-label="Tower defense game board"></canvas>
+          <div id="banner" class="banner hidden" role="status"></div>
+        </div>
+
+        <aside class="panel" aria-label="Control panel">
+          <section class="panel-section">
+            <h2>Build</h2>
+            <div class="tower-list" id="towerList"></div>
+          </section>
+
+          <section class="panel-section selected-box" id="selectedBox">
+            <h2>Selected</h2>
+            <p id="selectedText">選擇一座塔或空地。</p>
+            <div class="button-row">
+              <button id="upgradeBtn" type="button">Upgrade</button>
+              <button id="sellBtn" type="button">Sell</button>
+            </div>
+          </section>
+
+          <section class="panel-section">
+            <h2>Wave Control</h2>
+            <div class="button-grid">
+              <button id="startBtn" type="button">Start Wave</button>
+              <button id="pauseBtn" type="button">Pause</button>
+              <button id="speedBtn" type="button">1x Speed</button>
+              <button id="restartBtn" type="button">Restart</button>
+            </div>
+          </section>
+
+          <section class="panel-section compact">
+            <h2>How to Play</h2>
+            <p>點擊右側塔卡片，再點擊地圖空地建造。選中已有塔可以升級或出售。</p>
+            <p class="record">Best Score: <b id="bestScore">0</b></p>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <script src="src/game.js"></script>
+</body>
+</html>
