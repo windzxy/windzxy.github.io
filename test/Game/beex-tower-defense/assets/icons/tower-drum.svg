@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="thunder drum tower icon">
+  <defs>
+    <linearGradient id="gold" x1="21" y1="15" x2="78" y2="81" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff2a6"/>
+      <stop offset=".42" stop-color="#f3b533"/>
+      <stop offset="1" stop-color="#a35a13"/>
+    </linearGradient>
+    <radialGradient id="red" cx="35%" cy="26%" r="65%">
+      <stop stop-color="#ffd1a2"/>
+      <stop offset=".55" stop-color="#d54428"/>
+      <stop offset="1" stop-color="#681d16"/>
+    </radialGradient>
+  </defs>
+  <circle cx="48" cy="48" r="43" fill="#2f150e"/>
+  <circle cx="48" cy="48" r="38" fill="#76311c"/>
+  <path d="M23 71h50l-8 13H31z" fill="#41170d"/>
+  <circle cx="48" cy="46" r="27" fill="url(#gold)" stroke="#351508" stroke-width="5"/>
+  <circle cx="48" cy="46" r="19" fill="url(#red)" stroke="#ffdd78" stroke-width="4"/>
+  <path d="M31 30l-10-9M65 30l10-9M31 62l-10 9M65 62l10 9" stroke="#f8d77b" stroke-width="6" stroke-linecap="round"/>
+  <path d="M51 21l-11 23h13l-8 27 17-34H49z" fill="#fff0a6" stroke="#5f260d" stroke-width="3" stroke-linejoin="round"/>
+</svg>
