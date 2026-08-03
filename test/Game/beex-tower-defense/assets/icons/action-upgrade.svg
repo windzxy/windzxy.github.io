@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="升級圖標">
+  <circle cx="32" cy="32" r="29" fill="#263c2b"/>
+  <path d="M17 40l15-20 15 20h-9v10H26V40z" fill="#ffe6a8" stroke="#4a2411" stroke-width="4" stroke-linejoin="round"/>
+</svg>
