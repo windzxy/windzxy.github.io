@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="倍速圖標">
+  <circle cx="32" cy="32" r="29" fill="#1d4650"/>
+  <path d="M14 39c8-16 21-24 38-24-6 7-9 15-9 25" fill="none" stroke="#d9fff1" stroke-width="6" stroke-linecap="round"/>
+  <path d="M42 15l11 1-5 10" fill="none" stroke="#ffd66e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 43h27" stroke="#ffd66e" stroke-width="5" stroke-linecap="round"/>
+</svg>
