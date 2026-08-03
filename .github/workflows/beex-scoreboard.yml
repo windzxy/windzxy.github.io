@@ -1,4 +1,4 @@
-name: BeeX Scoreboard
+name: 古城排行榜
 
 on:
   issues:
@@ -10,12 +10,12 @@ permissions:
 
 jobs:
   update-scoreboard:
-    if: startsWith(github.event.issue.title, '[BeeX Score]')
+    if: startsWith(github.event.issue.title, '[古城戰功]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Update leaderboard
+      - name: 更新排行榜
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
@@ -25,9 +25,27 @@ jobs:
           const fs = require("fs");
           const path = "test/Game/beex-tower-defense/leaderboard.json";
           const body = process.env.ISSUE_BODY || "";
+          const fieldMap = {
+            game: "game",
+            player: "player",
+            score: "score",
+            wave: "wave",
+            lives: "lives",
+            energy: "energy",
+            time: "time",
+            "代碼": "game",
+            "玩家": "player",
+            "戰功": "score",
+            "波次": "wave",
+            "城防": "lives",
+            "糧草": "energy",
+            "時間": "time"
+          };
           const data = Object.fromEntries(body.split(/\r?\n/).map(line => {
-            const match = line.match(/^([a-z]+):\s*(.*)$/i);
-            return match ? [match[1].toLowerCase(), match[2].trim()] : null;
+            const match = line.match(/^([^:：]+)[:：]\s*(.*)$/);
+            if (!match) return null;
+            const key = fieldMap[match[1].trim().toLowerCase()] || fieldMap[match[1].trim()];
+            return key ? [key, match[2].trim()] : null;
           }).filter(Boolean));
 
           if (data.game !== "beex-tower-defense") {
@@ -72,15 +90,15 @@ jobs:
           fs.writeFileSync(path, `${JSON.stringify(board, null, 2)}\n`);
           NODE
 
-      - name: Commit leaderboard
+      - name: 提交排行榜
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add test/Game/beex-tower-defense/leaderboard.json
-          git commit -m "Update BeeX leaderboard" || exit 0
+          git commit -m "更新古城排行榜" || exit 0
           git push
 
-      - name: Close score issue
+      - name: 關閉分數記錄
         uses: actions/github-script@v7
         with:
           script: |
@@ -88,7 +106,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "Score received. The leaderboard will refresh after GitHub Pages updates."
+              body: "戰功已收到。GitHub Pages 更新後，排行榜會自動刷新。"
             });
             await github.rest.issues.update({
               owner: context.repo.owner,
