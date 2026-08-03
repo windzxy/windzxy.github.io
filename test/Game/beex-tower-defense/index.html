@@ -3,58 +3,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BeeX 古城守衛</title>
+  <title>蜂巢古城守衛</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="shell">
-    <section class="game-card" aria-label="BeeX 古城守衛">
+    <section class="game-card" aria-label="蜂巢古城守衛">
       <header class="topbar">
         <div>
-          <p class="eyebrow">BeeX Game Lab</p>
-          <h1>BeeX 古城守衛</h1>
+          <p class="eyebrow">蜂巢遊戲工坊</p>
+          <h1>蜂巢古城守衛</h1>
         </div>
-        <div class="stats" aria-label="Game stats">
+        <div class="stats" aria-label="戰局狀態">
           <span><img src="assets/icons/stat-rice.svg" alt=""><b id="energy">180</b><small>糧草</small></span>
           <span><img src="assets/icons/stat-gate.svg" alt=""><b id="lives">20</b><small>城防</small></span>
           <span><img src="assets/icons/stat-wave.svg" alt=""><b id="wave">1/12</b><small>敵襲</small></span>
-          <span><img src="assets/icons/stat-rice.svg" alt=""><b id="score">0</b><small>戰功</small></span>
+          <span><img src="assets/icons/stat-score.svg" alt=""><b id="score">0</b><small>戰功</small></span>
         </div>
       </header>
 
       <div class="play-layout">
         <div class="stage-wrap">
-          <canvas id="game" width="1100" height="720" aria-label="Tower defense game board"></canvas>
+          <canvas id="game" width="1100" height="720" aria-label="古城守衛戰場"></canvas>
           <div id="banner" class="banner hidden" role="status"></div>
         </div>
 
-        <aside class="panel" aria-label="Control panel">
+        <aside class="panel" aria-label="戰場面板">
           <section class="panel-section">
-            <h2>建造</h2>
+            <h2><img src="assets/icons/panel-build.svg" alt="">建造</h2>
             <div class="tower-list" id="towerList"></div>
           </section>
 
           <section class="panel-section selected-box" id="selectedBox">
-            <h2>選中</h2>
+            <h2><img src="assets/icons/panel-build.svg" alt="">選中</h2>
             <p id="selectedText">選擇一座塔或空地。</p>
             <div class="button-row">
-              <button id="upgradeBtn" type="button">升級</button>
-              <button id="sellBtn" type="button">拆除</button>
+              <button id="upgradeBtn" type="button"><img src="assets/icons/action-upgrade.svg" alt="">升級</button>
+              <button id="sellBtn" type="button"><img src="assets/icons/action-sell.svg" alt="">拆除</button>
             </div>
           </section>
 
           <section class="panel-section">
-            <h2>戰令</h2>
+            <h2><img src="assets/icons/stat-wave.svg" alt="">戰令</h2>
             <div class="button-grid">
-              <button id="startBtn" type="button">迎敵</button>
-              <button id="pauseBtn" type="button">暫停</button>
-              <button id="speedBtn" type="button">1x 速度</button>
-              <button id="restartBtn" type="button">重開</button>
+              <button id="startBtn" type="button"><img src="assets/icons/action-start.svg" alt="">迎敵</button>
+              <button id="pauseBtn" type="button"><img src="assets/icons/action-pause.svg" alt="">暫停</button>
+              <button id="speedBtn" type="button"><img src="assets/icons/action-speed.svg" alt="">一倍速度</button>
+              <button id="restartBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">重開</button>
             </div>
           </section>
 
           <section class="panel-section leaderboard">
-            <h2>排行榜</h2>
+            <h2><img src="assets/icons/panel-rank.svg" alt="">排行榜</h2>
             <label class="player-field">
               <span>玩家名字</span>
               <input id="playerName" maxlength="18" autocomplete="nickname" placeholder="輸入你的名字">
@@ -68,8 +68,8 @@
           </section>
 
           <section class="panel-section compact">
-            <h2>軍師提示</h2>
-            <p>彎道放寒玉蓮，直線放神機弩，敵人密集時補雷鼓臺。城防歸零則失守。</p>
+            <h2><img src="assets/icons/stat-score.svg" alt="">軍師提示</h2>
+            <p>馬車官道兩側優先布防：彎道放寒玉蓮，直線放神機弩，敵人密集時補雷鼓臺。城防歸零則失守。</p>
             <p class="record">最高戰功：<span id="bestScore">0</span></p>
           </section>
         </aside>
