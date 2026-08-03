@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="crossbow tower icon">
+  <defs>
+    <linearGradient id="wood" x1="20" y1="10" x2="82" y2="88" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe1a6"/>
+      <stop offset=".45" stop-color="#bd6f2c"/>
+      <stop offset="1" stop-color="#6e351f"/>
+    </linearGradient>
+    <linearGradient id="jade" x1="18" y1="18" x2="72" y2="74" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#b8ffe3"/>
+      <stop offset="1" stop-color="#0e9f7a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="43" fill="#2b150d"/>
+  <circle cx="48" cy="48" r="38" fill="#7d3f22"/>
+  <path d="M20 64h56l-7 17H27z" fill="#522716"/>
+  <path d="M30 34h36l7 30H23z" fill="url(#wood)" stroke="#301609" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M18 34c12-13 48-13 60 0" fill="none" stroke="#f7c367" stroke-width="7" stroke-linecap="round"/>
+  <path d="M24 36h48" stroke="#39190c" stroke-width="4" stroke-linecap="round"/>
+  <path d="M48 20v38" stroke="#2b1309" stroke-width="6" stroke-linecap="round"/>
+  <path d="M48 22l8 28h-16z" fill="url(#jade)" stroke="#11372e" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M48 16l7 8-7 8-7-8z" fill="#ffe9a8" stroke="#5a2b12" stroke-width="3"/>
+</svg>
