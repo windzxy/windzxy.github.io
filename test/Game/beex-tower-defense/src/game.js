@@ -33,11 +33,11 @@
   };
 
   const W = 1100;
-  const H = 720;
+  const H = 820;
   const tile = 44;
   const cols = 25;
-  const rows = 15;
-  const offset = { x: 0, y: 30 };
+  const rows = 18;
+  const offset = { x: 0, y: 24 };
   let pathCells = [];
   let path = [];
   let pathSet = new Set();
@@ -191,6 +191,14 @@
     return `${x},${y}`;
   }
 
+  function riverSegments() {
+    return [
+      [[1085, 294], [936, 352], [826, 282], [712, 366]],
+      [[712, 366], [580, 462], [472, 426], [346, 526]],
+      [[346, 526], [226, 622], [132, 612], [18, 704]]
+    ];
+  }
+
   function cubicPoint(points, t) {
     const u = 1 - t;
     const [p0, p1, p2, p3] = points;
@@ -201,13 +209,8 @@
   }
 
   function riverYAtX(x, shift) {
-    const segments = [
-      [[1085, 268], [940, 324], [832, 260], [726, 326]],
-      [[726, 326], [594, 408], [474, 384], [346, 462]],
-      [[346, 462], [214, 544], [118, 520], [18, 604]]
-    ];
     let best = { distance: Infinity, y: H + 80 };
-    for (const segment of segments) {
+    for (const segment of riverSegments()) {
       for (let i = 0; i <= 42; i++) {
         const p = cubicPoint(segment, i / 42);
         const distance = Math.abs(p.x - x);
@@ -237,7 +240,7 @@
   function nearestRiverRow(cx, shift) {
     const p = cellCenter(cx, 0);
     const y = riverYAtX(p.x, shift);
-    return clamp(Math.round((y - offset.y - tile / 2) / tile), 5, rows - 2);
+    return clamp(Math.round((y - offset.y - tile / 2) / tile), 6, rows - 3);
   }
 
   function createBridgeCells(bridgeX, shift) {
@@ -343,14 +346,14 @@
   }
 
   function createRoute(riverShift, bridgeCells, bridgeX) {
-    const start = [0, randInt(6, 9)];
+    const start = [0, randInt(6, 10)];
     const bridgeY = nearestRiverRow(bridgeX, riverShift);
     const bridge = [bridgeX, bridgeY];
-    const end = [cols - 1, randInt(8, 12)];
+    const end = [cols - 1, randInt(11, 16)];
     const first = findRouteSegment(start, bridge, riverShift, bridgeCells);
     const second = findRouteSegment(bridge, end, riverShift, bridgeCells);
     if (!first || !second) {
-      return expandAnchors([[0, 8], [bridgeX, 8], [bridgeX, bridgeY], [bridgeX + 2, bridgeY], [cols - 1, 10]]);
+      return expandAnchors([[0, 9], [bridgeX, 9], [bridgeX, bridgeY], [bridgeX + 2, bridgeY], [cols - 1, 14]]);
     }
     return [...first, ...second.slice(1)];
   }
@@ -382,7 +385,7 @@
     const bridgePathCells = nextPathCells.filter(([x, y]) => bridgeCells.has(cellKey(x, y)));
     const trees = [];
     let guard = 0;
-    while (trees.length < 46 && guard < 400) {
+    while (trees.length < 64 && guard < 560) {
       guard += 1;
       const x = randInt(24, W - 24);
       const y = randInt(228, H - 34);
@@ -401,7 +404,7 @@
       mountainShift: randInt(-34, 34),
       riverShift,
       weatherSeed: Math.random() * 1000,
-      fieldMarks: Array.from({ length: 5 }, () => [randInt(80, 980), randInt(285, 650), randInt(110, 210), randInt(30, 62), (Math.random() - 0.5) * 0.34]),
+      fieldMarks: Array.from({ length: 7 }, () => [randInt(80, 980), randInt(285, H - 74), randInt(110, 220), randInt(30, 66), (Math.random() - 0.5) * 0.34]),
       trees
     };
   }
@@ -1362,23 +1365,26 @@
       ctx.fill();
     });
 
+    const drawRiverLine = () => {
+      const segments = riverSegments();
+      ctx.beginPath();
+      ctx.moveTo(segments[0][0][0], segments[0][0][1] + battlefield.riverShift);
+      segments.forEach(segment => {
+        ctx.bezierCurveTo(
+          segment[1][0], segment[1][1] + battlefield.riverShift,
+          segment[2][0], segment[2][1] + battlefield.riverShift,
+          segment[3][0], segment[3][1] + battlefield.riverShift
+        );
+      });
+      ctx.stroke();
+    };
     ctx.strokeStyle = theme.river[0];
     ctx.lineWidth = 48;
     ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(1085, 268 + battlefield.riverShift);
-    ctx.bezierCurveTo(940, 324 + battlefield.riverShift, 832, 260 + battlefield.riverShift, 726, 326 + battlefield.riverShift);
-    ctx.bezierCurveTo(594, 408 + battlefield.riverShift, 474, 384 + battlefield.riverShift, 346, 462 + battlefield.riverShift);
-    ctx.bezierCurveTo(214, 544 + battlefield.riverShift, 118, 520 + battlefield.riverShift, 18, 604 + battlefield.riverShift);
-    ctx.stroke();
+    drawRiverLine();
     ctx.strokeStyle = theme.river[1];
     ctx.lineWidth = 34;
-    ctx.beginPath();
-    ctx.moveTo(1085, 268 + battlefield.riverShift);
-    ctx.bezierCurveTo(940, 324 + battlefield.riverShift, 832, 260 + battlefield.riverShift, 726, 326 + battlefield.riverShift);
-    ctx.bezierCurveTo(594, 408 + battlefield.riverShift, 474, 384 + battlefield.riverShift, 346, 462 + battlefield.riverShift);
-    ctx.bezierCurveTo(214, 544 + battlefield.riverShift, 118, 520 + battlefield.riverShift, 18, 604 + battlefield.riverShift);
-    ctx.stroke();
+    drawRiverLine();
     ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
     ctx.lineWidth = 3;
     ctx.setLineDash([18, 22]);
