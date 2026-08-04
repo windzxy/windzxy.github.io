@@ -98,7 +98,8 @@
   const effectFiles = window.BeexEffectFiles || {
     baseDamageLight: "assets/effects/base-damage-light.png",
     baseDamageMedium: "assets/effects/base-damage-medium.png",
-    baseDamageHeavy: "assets/effects/base-damage-heavy.png"
+    baseDamageHeavy: "assets/effects/base-damage-heavy.png",
+    frostOverlay: "assets/effects/frost-overlay.png"
   };
   const sceneFiles = window.BeexSceneFiles || {
     ancient: [],
@@ -217,80 +218,80 @@
   const sceneLayouts = {
     ancient: [
       {
-        camp: { x: 84, y: 407, label: "敌营" },
+        camp: { x: 95, y: 170, label: "敌营" },
         gate: { x: 985, y: 220, label: "蜂巢城门" },
-        route: [[84, 407], [150, 507], [299, 634], [311, 547], [335, 454], [370, 407], [418, 367], [502, 347], [585, 320], [615, 280], [573, 240], [615, 210], [693, 200], [777, 227], [866, 220], [956, 200], [985, 220]],
-        noBuild: [{ x: 84, y: 407, r: 118 }, { x: 985, y: 220, r: 136 }]
+        route: [[72, 188], [126, 250], [214, 310], [286, 370], [205, 470], [150, 548], [270, 606], [405, 560], [482, 472], [490, 390], [585, 338], [718, 384], [838, 492], [914, 470], [930, 360], [1005, 260]],
+        noBuild: [{ x: 92, y: 170, r: 112 }, { x: 990, y: 230, r: 136 }]
       },
       {
         camp: { x: 82, y: 300, label: "敌营" },
         gate: { x: 992, y: 245, label: "蜂巢城门" },
-        route: [[45, 350], [170, 350], [135, 520], [315, 565], [380, 430], [270, 300], [450, 250], [590, 350], [665, 520], [825, 500], [895, 360], [1005, 270]],
+        route: [[64, 300], [128, 354], [98, 455], [150, 535], [270, 545], [372, 485], [410, 395], [365, 305], [458, 245], [568, 288], [635, 365], [748, 382], [846, 340], [922, 278], [992, 245]],
         noBuild: [{ x: 78, y: 300, r: 118 }, { x: 990, y: 245, r: 136 }]
       },
       {
         camp: { x: 78, y: 190, label: "敌营" },
         gate: { x: 972, y: 170, label: "蜂巢城门" },
-        route: [[64, 210], [155, 285], [115, 435], [300, 455], [430, 380], [535, 520], [700, 455], [650, 330], [790, 265], [915, 280], [1000, 205]],
+        route: [[70, 205], [158, 285], [132, 365], [226, 420], [338, 372], [442, 382], [522, 430], [596, 410], [630, 345], [706, 385], [785, 442], [875, 418], [920, 328], [985, 255]],
         noBuild: [{ x: 80, y: 190, r: 120 }, { x: 972, y: 170, r: 142 }]
       },
       {
-        camp: { x: 76, y: 555, label: "敌营" },
-        gate: { x: 1005, y: 210, label: "蜂巢城门" },
-        route: [[62, 558], [195, 515], [150, 375], [315, 315], [455, 405], [575, 555], [745, 505], [690, 360], [815, 285], [940, 320], [1018, 230]],
-        noBuild: [{ x: 76, y: 555, r: 118 }, { x: 1005, y: 210, r: 142 }]
+        camp: { x: 84, y: 407, label: "敌营" },
+        gate: { x: 985, y: 220, label: "蜂巢城门" },
+        route: [[84, 407], [150, 507], [299, 634], [311, 547], [335, 454], [370, 407], [418, 367], [502, 347], [585, 320], [615, 280], [573, 240], [615, 210], [693, 200], [777, 227], [866, 220], [956, 200], [985, 220]],
+        noBuild: [{ x: 84, y: 407, r: 118 }, { x: 985, y: 220, r: 136 }]
       }
     ],
     glacier: [
       {
         camp: { x: 82, y: 170, label: "雪原敌哨" },
         gate: { x: 955, y: 245, label: "冰晶要塞" },
-        route: [[70, 190], [158, 285], [130, 455], [270, 570], [405, 500], [335, 365], [505, 315], [660, 385], [780, 540], [900, 455], [925, 320], [982, 270]],
+        route: [[88, 174], [156, 244], [150, 342], [142, 448], [222, 535], [342, 620], [450, 572], [440, 456], [502, 382], [596, 392], [686, 348], [775, 320], [858, 260], [955, 245]],
         noBuild: [{ x: 82, y: 170, r: 118 }, { x: 955, y: 245, r: 148 }]
       },
       {
         camp: { x: 126, y: 390, label: "雪原敌哨" },
         gate: { x: 965, y: 260, label: "冰晶要塞" },
-        route: [[85, 420], [205, 515], [340, 475], [305, 330], [465, 250], [635, 310], [560, 485], [720, 555], [875, 475], [835, 340], [970, 285]],
+        route: [[104, 390], [126, 486], [82, 558], [138, 642], [286, 668], [430, 622], [560, 590], [718, 655], [790, 588], [762, 496], [846, 420], [968, 400], [930, 318], [965, 260]],
         noBuild: [{ x: 126, y: 390, r: 120 }, { x: 965, y: 260, r: 150 }]
       },
       {
-        camp: { x: 82, y: 470, label: "雪原敌哨" },
-        gate: { x: 890, y: 280, label: "冰晶要塞" },
-        route: [[70, 500], [210, 470], [255, 320], [425, 330], [505, 510], [670, 545], [770, 420], [680, 300], [810, 220], [920, 285]],
-        noBuild: [{ x: 82, y: 470, r: 116 }, { x: 890, y: 280, r: 150 }]
+        camp: { x: 82, y: 245, label: "雪原敌哨" },
+        gate: { x: 930, y: 250, label: "冰晶要塞" },
+        route: [[74, 250], [170, 310], [182, 420], [150, 530], [226, 642], [354, 620], [438, 535], [548, 500], [690, 468], [805, 410], [780, 318], [842, 244], [930, 250]],
+        noBuild: [{ x: 82, y: 245, r: 116 }, { x: 930, y: 250, r: 150 }]
       },
       {
         camp: { x: 85, y: 230, label: "雪原敌哨" },
         gate: { x: 980, y: 245, label: "冰晶要塞" },
-        route: [[68, 250], [180, 300], [125, 455], [300, 525], [445, 470], [390, 325], [545, 290], [650, 425], [795, 520], [910, 430], [880, 305], [1000, 260]],
+        route: [[82, 230], [170, 292], [280, 318], [372, 360], [340, 478], [218, 570], [95, 620], [194, 682], [360, 632], [512, 562], [575, 438], [520, 304], [612, 180], [735, 224], [842, 296], [980, 245]],
         noBuild: [{ x: 85, y: 230, r: 118 }, { x: 980, y: 245, r: 150 }]
       }
     ],
     volcano: [
       {
-        camp: { x: 78, y: 575, label: "熔岩敌阵" },
+        camp: { x: 86, y: 175, label: "熔岩敌阵" },
         gate: { x: 980, y: 230, label: "黑曜城门" },
-        route: [[65, 565], [175, 505], [130, 360], [295, 320], [435, 425], [370, 560], [545, 590], [675, 480], [625, 330], [790, 285], [905, 340], [1005, 250]],
-        noBuild: [{ x: 78, y: 575, r: 120 }, { x: 980, y: 230, r: 150 }]
+        route: [[86, 175], [152, 255], [132, 342], [190, 416], [306, 456], [420, 516], [540, 542], [590, 492], [570, 404], [628, 332], [732, 310], [848, 354], [870, 454], [788, 520], [728, 608], [846, 632], [952, 540], [966, 400], [1000, 250]],
+        noBuild: [{ x: 86, y: 175, r: 120 }, { x: 980, y: 230, r: 150 }]
       },
       {
         camp: { x: 82, y: 230, label: "熔岩敌阵" },
         gate: { x: 980, y: 255, label: "黑曜城门" },
-        route: [[68, 245], [205, 315], [160, 500], [335, 575], [470, 465], [415, 310], [575, 255], [715, 355], [665, 525], [840, 545], [910, 395], [1000, 280]],
+        route: [[75, 245], [180, 290], [286, 250], [402, 198], [502, 255], [486, 382], [470, 520], [520, 650], [650, 665], [748, 562], [708, 440], [786, 338], [900, 370], [980, 280]],
         noBuild: [{ x: 82, y: 230, r: 120 }, { x: 980, y: 255, r: 150 }]
       },
       {
-        camp: { x: 82, y: 515, label: "熔岩敌阵" },
+        camp: { x: 82, y: 235, label: "熔岩敌阵" },
         gate: { x: 995, y: 230, label: "黑曜城门" },
-        route: [[70, 530], [210, 505], [285, 350], [450, 300], [555, 430], [490, 580], [675, 610], [790, 485], [730, 335], [880, 285], [1010, 250]],
-        noBuild: [{ x: 82, y: 515, r: 118 }, { x: 995, y: 230, r: 150 }]
+        route: [[76, 236], [178, 296], [302, 312], [430, 250], [550, 304], [520, 410], [456, 502], [520, 610], [648, 642], [724, 548], [700, 442], [790, 360], [902, 318], [995, 230]],
+        noBuild: [{ x: 82, y: 235, r: 118 }, { x: 995, y: 230, r: 150 }]
       },
       {
-        camp: { x: 82, y: 260, label: "熔岩敌阵" },
+        camp: { x: 82, y: 530, label: "熔岩敌阵" },
         gate: { x: 988, y: 210, label: "黑曜城门" },
-        route: [[70, 278], [190, 330], [145, 500], [315, 560], [470, 480], [425, 330], [590, 280], [720, 380], [675, 535], [850, 560], [925, 380], [1005, 235]],
-        noBuild: [{ x: 82, y: 260, r: 120 }, { x: 988, y: 210, r: 150 }]
+        route: [[82, 530], [190, 562], [316, 558], [406, 470], [420, 365], [500, 280], [612, 260], [710, 318], [640, 415], [570, 500], [650, 590], [790, 560], [850, 440], [900, 330], [988, 210]],
+        noBuild: [{ x: 82, y: 530, r: 120 }, { x: 988, y: 210, r: 150 }]
       }
     ]
   };
@@ -2272,6 +2273,12 @@
     ctx.ellipse(p.x, p.y + 4, 19, 11, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
+
+    ctx.globalAlpha = ok ? 0.14 : 0.08;
+    ctx.fillStyle = ok ? def.color : "rgba(255, 101, 125, 0.8)";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, def.range, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
   }
 
@@ -2614,6 +2621,18 @@
     for (const tower of state.towers) {
       const def = towerDef(tower.type);
       const selected = state.selectedTower === tower;
+      const stats = towerStats(tower);
+      if (selected) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(tower.x, tower.y, stats.range, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(86, 216, 255, 0.055)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(86, 216, 255, 0.24)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
       ctx.save();
       ctx.translate(tower.x, tower.y);
       ctx.fillStyle = "rgba(0, 0, 0, 0.36)";
@@ -2681,19 +2700,6 @@
       ctx.translate(0, bob);
       ctx.rotate(tilt);
 
-      if (enemy.boss) {
-        const aura = enemy.finalBoss ? "rgba(255, 88, 54, 0.42)" : "rgba(255, 216, 120, 0.32)";
-        ctx.fillStyle = aura;
-        ctx.beginPath();
-        ctx.arc(0, -18, enemy.finalBoss ? 42 : 34, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = enemy.finalBoss ? "rgba(255, 236, 178, 0.86)" : "rgba(255, 216, 120, 0.72)";
-        ctx.lineWidth = enemy.finalBoss ? 4 : 3;
-        ctx.beginPath();
-        ctx.arc(0, -18, enemy.finalBoss ? 46 : 38, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
       const sprite = enemySprites[enemy.spriteType || enemy.type];
       const size = enemy.finalBoss ? 150 : enemy.bossStage === 2 ? 126 : enemy.boss ? 112 : enemy.type === "runner" ? 62 : enemy.type === "elite" ? 68 : 54;
       if (sprite && sprite.complete && sprite.naturalWidth > 0) {
@@ -2706,7 +2712,7 @@
           ctx.fillRect(-size / 2, -size + 14, size, size);
         }
         ctx.restore();
-        if (chapter.id !== "ancient") {
+        if (chapter.id !== "ancient" && !enemy.boss) {
           ctx.strokeStyle = chapter.id === "glacier" ? "rgba(190, 245, 255, 0.74)" : "rgba(255, 126, 58, 0.72)";
           ctx.lineWidth = 2;
           ctx.beginPath();
@@ -2740,22 +2746,24 @@
           ctx.stroke();
         }
         if (enemy.slow < 1) {
-          ctx.fillStyle = "rgba(210, 250, 255, 0.86)";
-          ctx.strokeStyle = "rgba(96, 196, 255, 0.78)";
-          ctx.lineWidth = 1.8;
-          for (let i = 0; i < 5; i++) {
-            const a = -Math.PI / 2 + i * (Math.PI * 2 / 5);
-            const px = Math.cos(a) * size * 0.28;
-            const py = -18 + Math.sin(a) * size * 0.22;
+          const frost = effects.frostOverlay;
+          const frostSize = size * (enemy.boss ? 1.05 : 1.18);
+          ctx.save();
+          ctx.globalAlpha = enemy.boss ? 0.76 : 0.82;
+          ctx.globalCompositeOperation = "screen";
+          if (frost && frost.complete && frost.naturalWidth > 0) {
+            ctx.drawImage(frost, -frostSize / 2, -frostSize + 16, frostSize, frostSize);
+          } else {
+            const grad = ctx.createRadialGradient(0, -size * 0.35, 6, 0, -size * 0.34, frostSize * 0.46);
+            grad.addColorStop(0, "rgba(220, 250, 255, 0.42)");
+            grad.addColorStop(0.55, "rgba(110, 210, 255, 0.22)");
+            grad.addColorStop(1, "rgba(110, 210, 255, 0)");
+            ctx.fillStyle = grad;
             ctx.beginPath();
-            ctx.moveTo(px, py - 9);
-            ctx.lineTo(px + 6, py);
-            ctx.lineTo(px, py + 9);
-            ctx.lineTo(px - 6, py);
-            ctx.closePath();
+            ctx.ellipse(0, -size * 0.34, frostSize * 0.36, frostSize * 0.42, -0.08, 0, Math.PI * 2);
             ctx.fill();
-            ctx.stroke();
           }
+          ctx.restore();
         }
       } else {
         const color = enemy.boss ? "#9b3d24" : enemy.type === "elite" ? "#d6a24a" : enemy.type === "runner" ? "#c85a3a" : "#405a37";
@@ -2865,24 +2873,22 @@
       } else if (shot.type === "frostBloom") {
         const grow = 0.65 + progress * 0.55;
         ctx.translate(shot.x, shot.y);
-        ctx.scale(grow, grow);
-        ctx.fillStyle = "rgba(218, 252, 255, 0.72)";
-        ctx.strokeStyle = "rgba(118, 218, 255, 0.9)";
-        ctx.lineWidth = 2;
-        for (let i = 0; i < 8; i++) {
-          ctx.rotate(Math.PI / 4);
+        ctx.globalAlpha = lifeRatio * 0.82;
+        ctx.globalCompositeOperation = "screen";
+        const frost = effects.frostOverlay;
+        const size = 104 * grow;
+        if (frost && frost.complete && frost.naturalWidth > 0) {
+          ctx.drawImage(frost, -size / 2, -size / 2, size, size);
+        } else {
+          const grad = ctx.createRadialGradient(0, 0, 4, 0, 0, size * 0.42);
+          grad.addColorStop(0, "rgba(235, 252, 255, 0.5)");
+          grad.addColorStop(0.65, "rgba(115, 215, 255, 0.25)");
+          grad.addColorStop(1, "rgba(115, 215, 255, 0)");
+          ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.moveTo(0, -6);
-          ctx.quadraticCurveTo(18, -18, 34, 0);
-          ctx.quadraticCurveTo(18, 18, 0, 6);
-          ctx.quadraticCurveTo(10, 0, 0, -6);
+          ctx.arc(0, 0, size * 0.42, 0, Math.PI * 2);
           ctx.fill();
-          ctx.stroke();
         }
-        ctx.fillStyle = "rgba(255, 255, 255, 0.86)";
-        ctx.beginPath();
-        ctx.arc(0, 0, 9, 0, Math.PI * 2);
-        ctx.fill();
       } else if (shot.type === "thunder") {
         const s = (shot.scale || 1) * (0.78 + progress * 0.38);
         ctx.translate(shot.x, shot.y - 24);
