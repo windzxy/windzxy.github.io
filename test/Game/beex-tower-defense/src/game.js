@@ -24,6 +24,8 @@
     leaderboardHint: document.getElementById("leaderboardHint"),
     powerStatus: document.getElementById("powerStatus"),
     themeStatus: document.getElementById("themeStatus"),
+    difficultySelect: document.getElementById("difficultySelect"),
+    difficultyStatus: document.getElementById("difficultyStatus"),
     chapterGate: document.getElementById("chapterGate"),
     chapterGateTitle: document.getElementById("chapterGateTitle"),
     chapterGateText: document.getElementById("chapterGateText"),
@@ -65,6 +67,14 @@
     drone: "assets/enemies/enemy-footman.png",
     runner: "assets/enemies/enemy-rider.png",
     elite: "assets/enemies/enemy-armor.png"
+  };
+  const landmarkFiles = window.BeexLandmarkFiles || {
+    ancientCamp: "assets/map/start-camp-ancient.png",
+    ancientGate: "assets/map/end-gate-ancient.png",
+    glacierCamp: "assets/map/start-camp-glacier.png",
+    glacierGate: "assets/map/end-gate-glacier.png",
+    volcanoCamp: "assets/map/start-camp-volcano.png",
+    volcanoGate: "assets/map/end-gate-volcano.png"
   };
   const powerFiles = {
     beeCrossbow: "assets/icons/weapon-bee-crossbow.svg"
@@ -178,6 +188,45 @@
   ];
   let activeChapterIndex = 0;
   let wavePlan = [];
+  const difficulties = {
+    easy: {
+      name: "簡單",
+      status: "敵軍較慢較少，初始糧草與城防更多。",
+      hp: 0.82,
+      speed: 0.9,
+      count: 0.86,
+      reward: 1,
+      score: 0.9,
+      energy: 280,
+      lives: 30,
+      bossHp: 0.9
+    },
+    normal: {
+      name: "中等",
+      status: "標準守城節奏，Boss 波需要集中火力。",
+      hp: 1,
+      speed: 1,
+      count: 1,
+      reward: 1,
+      score: 1,
+      energy: 240,
+      lives: 24,
+      bossHp: 1
+    },
+    hard: {
+      name: "困難",
+      status: "敵軍更快更硬，數量更多，但戰功倍率更高。",
+      hp: 1.25,
+      speed: 1.12,
+      count: 1.18,
+      reward: 1.15,
+      score: 1.28,
+      energy: 210,
+      lives: 18,
+      bossHp: 1.22
+    }
+  };
+  let selectedDifficultyId = difficulties[localStorage.getItem("beexTdDifficulty")] ? localStorage.getItem("beexTdDifficulty") : "easy";
 
   function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -297,6 +346,10 @@
     return chapters[activeChapterIndex] || chapters[0];
   }
 
+  function currentDifficulty() {
+    return difficulties[selectedDifficultyId] || difficulties.easy;
+  }
+
   function towerDef(type) {
     const base = towers[type];
     const chapter = currentChapter();
@@ -310,15 +363,30 @@
 
   function createWavePlan(level) {
     const chapter = currentChapter();
+    const difficulty = currentDifficulty();
     const levelBoost = 1 + (level - 1) * 0.17;
-    return Array.from({ length: 12 }, (_, i) => ({
-      count: 8 + i * 2 + Math.floor((level - 1) * 1.4),
-      hp: Math.round((50 + i * 17 + Math.max(0, i - 6) * 12) * levelBoost * chapter.enemyHp),
-      speed: (48 + i * 3 + Math.max(0, level - 1) * 1.6) * chapter.enemySpeed,
-      reward: Math.round((13 + Math.floor(i / 2) + Math.floor((level - 1) / 2)) * chapter.reward),
-      spawnGap: Math.max(0.42, 0.9 - i * 0.025 - (level - 1) * 0.012),
-      swarm: i > 7 || level > 2 ? 2 : 1
-    }));
+    return Array.from({ length: 12 }, (_, i) => {
+      const waveNumber = i + 1;
+      const boss = waveNumber % 4 === 0;
+      const finalBoss = waveNumber === 12;
+      const baseCount = 8 + i * 2 + Math.floor((level - 1) * 1.4);
+      const regularCount = Math.max(3, Math.round(baseCount * difficulty.count));
+      const hp = Math.round((50 + i * 17 + Math.max(0, i - 6) * 12) * levelBoost * chapter.enemyHp * difficulty.hp);
+      return {
+        count: regularCount + (boss ? 1 : 0),
+        regularCount,
+        hp,
+        speed: (48 + i * 3 + Math.max(0, level - 1) * 1.6) * chapter.enemySpeed * difficulty.speed,
+        reward: Math.round((13 + Math.floor(i / 2) + Math.floor((level - 1) / 2)) * chapter.reward * difficulty.reward),
+        spawnGap: Math.max(0.36, (0.9 - i * 0.025 - (level - 1) * 0.012) / Math.max(0.86, difficulty.count)),
+        swarm: i > 7 || level > 2 ? 2 : 1,
+        boss,
+        finalBoss,
+        bossHp: Math.round(hp * (finalBoss ? 6.8 : 3.8) * difficulty.bossHp),
+        bossSpeed: (48 + i * 2 + Math.max(0, level - 1) * 1.2) * chapter.enemySpeed * difficulty.speed * (finalBoss ? 0.46 : 0.58),
+        bossReward: Math.round((finalBoss ? 82 : 46) * chapter.reward * difficulty.reward * (1 + level * 0.08))
+      };
+    });
   }
 
   function expandAnchors(anchors) {
@@ -346,14 +414,14 @@
   }
 
   function createRoute(riverShift, bridgeCells, bridgeX) {
-    const start = [0, randInt(6, 10)];
+    const start = [1, randInt(6, 10)];
     const bridgeY = nearestRiverRow(bridgeX, riverShift);
     const bridge = [bridgeX, bridgeY];
-    const end = [cols - 1, randInt(11, 16)];
+    const end = [cols - 2, randInt(11, 16)];
     const first = findRouteSegment(start, bridge, riverShift, bridgeCells);
     const second = findRouteSegment(bridge, end, riverShift, bridgeCells);
     if (!first || !second) {
-      return expandAnchors([[0, 9], [bridgeX, 9], [bridgeX, bridgeY], [bridgeX + 2, bridgeY], [cols - 1, 14]]);
+      return expandAnchors([[1, 9], [bridgeX, 9], [bridgeX, bridgeY], [bridgeX + 2, bridgeY], [cols - 2, 14]]);
     }
     return [...first, ...second.slice(1)];
   }
@@ -432,6 +500,7 @@
 
   const icons = loadImages(iconFiles);
   const enemySprites = loadImages(enemyFiles);
+  const landmarks = loadImages(landmarkFiles);
   const powerIcons = loadImages(powerFiles);
   resetBattlefield();
   const audio = {
@@ -602,9 +671,9 @@
   wavePlan = createWavePlan(1);
 
   const state = {
-    energy: 240,
-    lives: 24,
-    maxLives: 24,
+    energy: currentDifficulty().energy,
+    lives: currentDifficulty().lives,
+    maxLives: currentDifficulty().lives,
     chapterIndex: 0,
     chapterLevel: 1,
     waveIndex: 0,
@@ -613,6 +682,7 @@
     localScores: readLocalScores(),
     remoteScores: [],
     playerName: localStorage.getItem("beexTdPlayer") || "",
+    difficultyId: selectedDifficultyId,
     scoreSubmittedFor: "",
     selectedBuild: "pulse",
     selectedTower: null,
@@ -655,7 +725,7 @@
   }
 
   function scoreKey() {
-    return `${state.playerName}:${state.score}:${state.chapterLevel}:${state.chapterIndex}:${state.waveIndex}:${state.lives}:${state.energy}`;
+    return `${state.playerName}:${state.score}:${state.chapterLevel}:${state.chapterIndex}:${state.waveIndex}:${state.lives}:${state.energy}:${state.difficultyId}`;
   }
 
   function progressWave() {
@@ -688,6 +758,7 @@
       score: state.score,
       wave: Math.min(state.waveIndex + 1, wavePlan.length),
       chapter: `${currentChapter().name} ${state.chapterLevel}`,
+      difficulty: currentDifficulty().name,
       lives: Math.max(0, state.lives),
       energy: state.energy,
       time: new Date().toISOString()
@@ -764,6 +835,7 @@
       `玩家: ${state.playerName}`,
       `戰功: ${state.score}`,
       `主題: ${currentChapter().name}`,
+      `難度: ${currentDifficulty().name}`,
       `周目: ${state.chapterLevel}`,
       `波次: ${Math.min(state.waveIndex + 1, wavePlan.length)}`,
       `城防: ${Math.max(0, state.lives)}`,
@@ -824,10 +896,12 @@
 
   function makeEnemy(index) {
     const plan = wavePlan[state.waveIndex];
+    const boss = plan.boss && index >= plan.regularCount;
+    const finalBoss = boss && plan.finalBoss;
     const elite = state.waveIndex >= 5 && index % 7 === 0;
     const runner = state.waveIndex >= 3 && index % 5 === 2;
-    const hp = plan.hp * (elite ? 1.65 : 1) * (runner ? 0.7 : 1);
-    const speed = plan.speed * (runner ? 1.35 : 1) * (elite ? 0.75 : 1);
+    const hp = boss ? plan.bossHp : plan.hp * (elite ? 1.65 : 1) * (runner ? 0.7 : 1);
+    const speed = boss ? plan.bossSpeed : plan.speed * (runner ? 1.35 : 1) * (elite ? 0.75 : 1);
     const first = path[0];
     return {
       x: first.x - 28,
@@ -835,13 +909,16 @@
       hp,
       maxHp: hp,
       speed,
-      reward: plan.reward + (elite ? 10 : runner ? 3 : 0),
+      reward: boss ? plan.bossReward : plan.reward + (elite ? 10 : runner ? 3 : 0),
       node: 0,
-      radius: elite ? 16 : runner ? 10 : 13,
+      radius: finalBoss ? 31 : boss ? 25 : elite ? 16 : runner ? 10 : 13,
       facing: -1,
       slow: 1,
       slowTimer: 0,
-      type: elite ? "elite" : runner ? "runner" : "drone",
+      type: finalBoss ? "finalBoss" : boss ? "boss" : elite ? "elite" : runner ? "runner" : "drone",
+      spriteType: boss ? "elite" : null,
+      boss,
+      finalBoss,
       alive: true,
       leaked: false
     };
@@ -850,7 +927,7 @@
   function maybeDropPower(enemy) {
     const maxDrops = state.waveIndex >= 8 ? 2 : 1;
     if (state.dropsThisWave >= maxDrops) return;
-    const baseChance = enemy.type === "elite" ? 0.12 : enemy.type === "runner" ? 0.035 : 0.02;
+    const baseChance = enemy.finalBoss ? 0.9 : enemy.boss ? 0.42 : enemy.type === "elite" ? 0.12 : enemy.type === "runner" ? 0.035 : 0.02;
     const waveBoost = Math.min(0.035, state.waveIndex * 0.0035);
     if (Math.random() > baseChance + waveBoost) return;
     state.dropsThisWave += 1;
@@ -886,7 +963,7 @@
       });
       damageEnemy(enemy, damage, false);
     });
-    state.score += 30 + living.length * 8;
+    state.score += Math.round((30 + living.length * 8) * currentDifficulty().score);
     state.sparks.push({ x: drop.x, y: drop.y, r: 34, life: 0.55, color: "#fff1a6" });
     playSound("power");
     showBanner(`蜂鳴神弩發動，全場齊射 ${living.length} 名敵軍`);
@@ -953,12 +1030,16 @@
 
   function updateUi() {
     const chapter = currentChapter();
+    const difficulty = currentDifficulty();
+    const plan = wavePlan[state.waveIndex] || wavePlan[wavePlan.length - 1];
     ui.energy.textContent = state.energy;
     ui.lives.textContent = state.lives;
-    ui.wave.textContent = `${Math.min(state.waveIndex + 1, wavePlan.length)}/${wavePlan.length}`;
+    ui.wave.textContent = `${Math.min(state.waveIndex + 1, wavePlan.length)}/${wavePlan.length}${plan && plan.finalBoss ? " 大Boss" : plan && plan.boss ? " Boss" : ""}`;
     ui.score.textContent = state.score;
     ui.bestScore.textContent = state.best;
-    ui.themeStatus.textContent = `第 ${state.chapterLevel} 主題｜${chapter.name}｜${chapter.weather}：${chapter.status}`;
+    ui.themeStatus.textContent = `第 ${state.chapterLevel} 主題｜${chapter.name}｜${chapter.weather}：${chapter.status}｜第4/8波Boss，第12波大Boss`;
+    ui.difficultySelect.value = state.difficultyId;
+    ui.difficultyStatus.textContent = `${difficulty.name}｜${difficulty.status}`;
     ui.powerStatus.textContent = state.powerUses > 0
       ? `已發動 ${state.powerUses} 次。本波掉落 ${state.dropsThisWave} 次，看到金光要手動點擊。`
       : "低概率驚喜掉落，點擊即可全場齊射。";
@@ -1016,14 +1097,16 @@
   }
 
   function resetStateForChapter({ chapterIndex, chapterLevel, carryScore = false }) {
+    const difficulty = currentDifficulty();
     state.chapterIndex = chapterIndex;
     state.chapterLevel = chapterLevel;
+    state.difficultyId = selectedDifficultyId;
     activeChapterIndex = chapterIndex;
     resetBattlefield(chapterIndex);
     wavePlan = createWavePlan(chapterLevel);
-    const maxLives = 24 + Math.min(6, chapterLevel - 1);
+    const maxLives = difficulty.lives + Math.min(6, chapterLevel - 1);
     Object.assign(state, {
-      energy: 240 + Math.min(80, (chapterLevel - 1) * 20),
+      energy: difficulty.energy + Math.min(80, (chapterLevel - 1) * 20),
       lives: maxLives,
       maxLives,
       waveIndex: 0,
@@ -1094,7 +1177,8 @@
     state.dropsThisWave = 0;
     ui.banner.classList.add("hidden");
     playSound("start");
-    showBanner(`第 ${state.waveIndex + 1} 波敵軍來襲`);
+    const plan = wavePlan[state.waveIndex];
+    showBanner(plan.finalBoss ? `第 ${state.waveIndex + 1} 波：終章大Boss壓境！` : plan.boss ? `第 ${state.waveIndex + 1} 波：Boss來襲！` : `第 ${state.waveIndex + 1} 波敵軍來襲`);
     updateUi();
   }
 
@@ -1124,13 +1208,13 @@
       y: enemy.y,
       r: 4,
       life: 0.28,
-      color: enemy.type === "elite" ? "#ffd166" : "#56d8ff"
+      color: enemy.boss ? "#ff6d3a" : enemy.type === "elite" ? "#ffd166" : "#56d8ff"
     });
     if (enemy.hp <= 0 && enemy.alive) {
       enemy.alive = false;
       state.energy += enemy.reward;
-      state.score += enemy.reward * 12 + (state.waveIndex + 1) * 4;
-      state.sparks.push({ x: enemy.x, y: enemy.y, r: 18, life: 0.36, color: "#66f2c2" });
+      state.score += Math.round((enemy.reward * 12 + (state.waveIndex + 1) * 4) * currentDifficulty().score);
+      state.sparks.push({ x: enemy.x, y: enemy.y, r: enemy.boss ? 34 : 18, life: enemy.boss ? 0.56 : 0.36, color: enemy.boss ? "#ffd878" : "#66f2c2" });
       playSound("kill");
       if (allowDrop) maybeDropPower(enemy);
     }
@@ -1220,7 +1304,7 @@
         if (enemy.node >= path.length - 1) {
           enemy.alive = false;
           enemy.leaked = true;
-          state.lives -= enemy.type === "elite" ? 2 : 1;
+          state.lives -= enemy.finalBoss ? 8 : enemy.boss ? 5 : enemy.type === "elite" ? 2 : 1;
           state.shake = 0.24;
           state.sparks.push({ x: enemy.x, y: enemy.y, r: 22, life: 0.35, color: "#ff657d" });
           playSound("leak");
@@ -1292,7 +1376,7 @@
     state.won = win;
     state.readyForNextTheme = win;
     state.waveActive = false;
-    const bonus = win ? state.lives * 35 + state.energy * 2 : 0;
+    const bonus = win ? Math.round((state.lives * 35 + state.energy * 2) * currentDifficulty().score) : 0;
     state.score += bonus;
     state.best = Math.max(state.best, state.score);
     localStorage.setItem("beexTdBest", String(state.best));
@@ -1348,6 +1432,23 @@
       ctx.fill();
     });
 
+    ctx.strokeStyle = "rgba(255, 245, 210, 0.18)";
+    ctx.lineWidth = 2;
+    [[82, 118], [236, 94], [420, 128], [618, 112], [838, 108]].forEach(([x, y], i) => {
+      ctx.beginPath();
+      ctx.moveTo(x - 42, y + 58 + battlefield.mountainShift * 0.35);
+      ctx.quadraticCurveTo(x, y + 26 + battlefield.mountainShift * 0.35, x + 48, y + 60 + battlefield.mountainShift * 0.35);
+      ctx.stroke();
+      if (i % 2 === 0) {
+        ctx.strokeStyle = "rgba(34, 68, 48, 0.22)";
+        ctx.beginPath();
+        ctx.moveTo(x - 78, y + 94 + battlefield.mountainShift * 0.25);
+        ctx.lineTo(x + 88, y + 90 + battlefield.mountainShift * 0.25);
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(255, 245, 210, 0.18)";
+      }
+    });
+
     ctx.fillStyle = theme.field;
     ctx.beginPath();
     ctx.moveTo(0, 218);
@@ -1357,6 +1458,18 @@
     ctx.lineTo(0, H);
     ctx.closePath();
     ctx.fill();
+
+    for (let i = 0; i < 170; i++) {
+      const x = (i * 73 + battlefield.weatherSeed * 19) % W;
+      const y = 236 + ((i * 47 + battlefield.weatherSeed * 31) % (H - 258));
+      const len = 8 + (i % 5) * 3;
+      ctx.strokeStyle = i % 3 === 0 ? "rgba(255, 241, 172, 0.12)" : "rgba(39, 91, 52, 0.12)";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(x + len * 0.5, y - 4, x + len, y - 1);
+      ctx.stroke();
+    }
 
     ctx.fillStyle = "rgba(224, 199, 118, 0.36)";
     battlefield.fieldMarks.forEach(([x, y, rx, ry, rot]) => {
@@ -1390,6 +1503,19 @@
     ctx.setLineDash([18, 22]);
     ctx.stroke();
     ctx.setLineDash([]);
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.36)";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    riverSegments().forEach(segment => {
+      for (let i = 1; i < 5; i++) {
+        const p = cubicPoint(segment, i / 6);
+        ctx.beginPath();
+        ctx.moveTo(p.x - 16, p.y + battlefield.riverShift + 3);
+        ctx.lineTo(p.x + 14, p.y + battlefield.riverShift - 5);
+        ctx.stroke();
+      }
+    });
 
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
@@ -1459,6 +1585,22 @@
       ctx.fill();
     });
 
+    ctx.strokeStyle = "rgba(255, 235, 171, 0.38)";
+    ctx.lineWidth = 3;
+    path.forEach((p, i) => {
+      if (i % 5 !== 2 || i >= path.length - 1) return;
+      const next = path[i + 1];
+      const dx = next.x - p.x;
+      const dy = next.y - p.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = -dy / len;
+      const ny = dx / len;
+      ctx.beginPath();
+      ctx.moveTo(p.x + nx * 12, p.y + ny * 12);
+      ctx.lineTo(p.x + nx * 12 + dx * 0.42, p.y + ny * 12 + dy * 0.42);
+      ctx.stroke();
+    });
+
     battlefield.bridgeCells.forEach(([cx, cy]) => {
       const p = gridToWorld(cx, cy);
       const prev = pathCells.find(([x, y]) => Math.abs(x - cx) + Math.abs(y - cy) === 1);
@@ -1496,39 +1638,41 @@
       ctx.restore();
     });
 
-    ctx.fillStyle = "#7e2b1a";
-    ctx.strokeStyle = "#2b1208";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.roundRect(path[0].x - 62, path[0].y - 32, 58, 54, 8);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = "#ffd878";
-    ctx.beginPath();
-    ctx.moveTo(path[0].x - 49, path[0].y - 40);
-    ctx.lineTo(path[0].x - 18, path[0].y - 24);
-    ctx.lineTo(path[0].x - 49, path[0].y - 12);
-    ctx.closePath();
-    ctx.fill();
+    const drawLandmark = (img, x, y, w, h, fallback) => {
+      ctx.save();
+      ctx.shadowColor = "rgba(35, 15, 5, 0.35)";
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetY = 6;
+      if (img && img.complete && img.naturalWidth) {
+        ctx.drawImage(img, x, y, w, h);
+      } else {
+        fallback();
+      }
+      ctx.restore();
+    };
 
-    const gateX = path[path.length - 1].x + 8;
-    const gateY = path[path.length - 1].y - 34;
-    ctx.fillStyle = theme.gate[0];
-    ctx.strokeStyle = "#2d1409";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.roundRect(gateX, gateY, 70, 62, 8);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = theme.gate[1];
-    ctx.beginPath();
-    ctx.moveTo(gateX - 6, gateY);
-    ctx.lineTo(gateX + 35, gateY - 28);
-    ctx.lineTo(gateX + 76, gateY);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = "#3a1a0d";
-    ctx.fillRect(gateX + 24, gateY + 30, 22, 28);
+    const campImg = landmarks[`${chapter.id}Camp`];
+    const gateImg = landmarks[`${chapter.id}Gate`];
+    const startPoint = path[0];
+    const endPoint = path[path.length - 1];
+    drawLandmark(campImg, startPoint.x - 48, startPoint.y - 92, 116, 116, () => {
+      ctx.fillStyle = "#7e2b1a";
+      ctx.strokeStyle = "#2b1208";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(startPoint.x - 42, startPoint.y - 38, 66, 58, 8);
+      ctx.fill();
+      ctx.stroke();
+    });
+    drawLandmark(gateImg, endPoint.x - 65, endPoint.y - 108, 126, 126, () => {
+      ctx.fillStyle = theme.gate[0];
+      ctx.strokeStyle = "#2d1409";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(endPoint.x - 38, endPoint.y - 76, 72, 68, 8);
+      ctx.fill();
+      ctx.stroke();
+    });
 
     ctx.fillStyle = "rgba(36, 82, 44, 0.72)";
     battlefield.trees.forEach(([x, y]) => {
@@ -1684,8 +1828,21 @@
       ctx.ellipse(0, enemy.radius + 5, enemy.radius + 8, 5, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      const sprite = enemySprites[enemy.type];
-      const size = enemy.type === "runner" ? 62 : enemy.type === "elite" ? 68 : 54;
+      if (enemy.boss) {
+        const aura = enemy.finalBoss ? "rgba(255, 88, 54, 0.42)" : "rgba(255, 216, 120, 0.32)";
+        ctx.fillStyle = aura;
+        ctx.beginPath();
+        ctx.arc(0, -18, enemy.finalBoss ? 42 : 34, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = enemy.finalBoss ? "rgba(255, 236, 178, 0.86)" : "rgba(255, 216, 120, 0.72)";
+        ctx.lineWidth = enemy.finalBoss ? 4 : 3;
+        ctx.beginPath();
+        ctx.arc(0, -18, enemy.finalBoss ? 46 : 38, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      const sprite = enemySprites[enemy.spriteType || enemy.type];
+      const size = enemy.finalBoss ? 98 : enemy.boss ? 84 : enemy.type === "runner" ? 62 : enemy.type === "elite" ? 68 : 54;
       if (sprite && sprite.complete && sprite.naturalWidth > 0) {
         ctx.save();
         ctx.scale(enemy.facing || 1, 1);
@@ -1703,6 +1860,20 @@
           ctx.arc(0, -18, size * 0.34, 0, Math.PI * 2);
           ctx.stroke();
         }
+        if (enemy.boss) {
+          ctx.fillStyle = enemy.finalBoss ? "#ffe6a3" : "#ffd878";
+          ctx.strokeStyle = "rgba(45,18,8,0.82)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(-22, -size + 22);
+          ctx.lineTo(-10, -size + 2);
+          ctx.lineTo(0, -size + 18);
+          ctx.lineTo(10, -size + 2);
+          ctx.lineTo(22, -size + 22);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
         if (enemy.slow < 1) {
           ctx.strokeStyle = "rgba(159, 232, 255, 0.8)";
           ctx.lineWidth = 3;
@@ -1711,7 +1882,7 @@
           ctx.stroke();
         }
       } else {
-        const color = enemy.type === "elite" ? "#d6a24a" : enemy.type === "runner" ? "#c85a3a" : "#405a37";
+        const color = enemy.boss ? "#9b3d24" : enemy.type === "elite" ? "#d6a24a" : enemy.type === "runner" ? "#c85a3a" : "#405a37";
         ctx.fillStyle = enemy.slow < 1 ? "#9fe8ff" : color;
         ctx.strokeStyle = "rgba(39,17,8,0.88)";
         ctx.lineWidth = 3;
@@ -1719,12 +1890,12 @@
         ctx.roundRect(-enemy.radius, -enemy.radius + 3, enemy.radius * 2, enemy.radius * 1.8, 5);
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = enemy.type === "elite" ? "#7c2d1a" : "#d8c08a";
+        ctx.fillStyle = enemy.boss ? "#ffd878" : enemy.type === "elite" ? "#7c2d1a" : "#d8c08a";
         ctx.beginPath();
         ctx.arc(0, -enemy.radius + 1, enemy.radius * 0.62, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = enemy.type === "elite" ? "#ffd878" : "#251007";
+        ctx.fillStyle = enemy.boss || enemy.type === "elite" ? "#ffd878" : "#251007";
         ctx.beginPath();
         ctx.moveTo(-enemy.radius - 2, -enemy.radius + 1);
         ctx.lineTo(0, -enemy.radius - 10);
@@ -1733,10 +1904,11 @@
         ctx.fill();
         ctx.stroke();
       }
+      const barWidth = enemy.finalBoss ? 76 : enemy.boss ? 62 : 40;
       ctx.fillStyle = "rgba(39,17,8,0.92)";
-      ctx.fillRect(-20, -enemy.radius - 30, 40, 5);
+      ctx.fillRect(-barWidth / 2, -enemy.radius - 30, barWidth, enemy.boss ? 7 : 5);
       ctx.fillStyle = hp > 0.5 ? "#70d4a4" : hp > 0.24 ? "#ffd878" : "#e55236";
-      ctx.fillRect(-20, -enemy.radius - 30, 40 * hp, 5);
+      ctx.fillRect(-barWidth / 2, -enemy.radius - 30, barWidth * hp, enemy.boss ? 7 : 5);
       ctx.restore();
     }
   }
@@ -1938,6 +2110,16 @@
   });
   ui.submitScoreBtn.addEventListener("click", submitScore);
   ui.refreshBoardBtn.addEventListener("click", loadRemoteLeaderboard);
+  ui.difficultySelect.addEventListener("change", () => {
+    selectedDifficultyId = difficulties[ui.difficultySelect.value] ? ui.difficultySelect.value : "easy";
+    localStorage.setItem("beexTdDifficulty", selectedDifficultyId);
+    resetStateForChapter({
+      chapterIndex: state.chapterIndex,
+      chapterLevel: state.chapterLevel,
+      carryScore: false
+    });
+    showBanner(`難度切換：${currentDifficulty().name}`);
+  });
   ui.playerName.addEventListener("input", () => {
     state.playerName = cleanPlayerName(ui.playerName.value);
     localStorage.setItem("beexTdPlayer", state.playerName);
@@ -1946,7 +2128,7 @@
 
   window.addEventListener("resize", resizeCanvas);
   window.addEventListener("keydown", event => {
-    if (event.target && ["INPUT", "TEXTAREA"].includes(event.target.tagName)) return;
+    if (event.target && ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)) return;
     if (event.key === "1") state.selectedBuild = "pulse";
     if (event.key === "2") state.selectedBuild = "frost";
     if (event.key === "3") state.selectedBuild = "arc";
