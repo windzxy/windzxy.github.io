@@ -217,10 +217,10 @@
   const sceneLayouts = {
     ancient: [
       {
-        camp: { x: 95, y: 170, label: "敌营" },
+        camp: { x: 84, y: 407, label: "敌营" },
         gate: { x: 985, y: 220, label: "蜂巢城门" },
-        route: [[72, 188], [126, 250], [214, 310], [286, 370], [205, 470], [150, 548], [270, 606], [405, 560], [482, 472], [490, 390], [585, 338], [718, 384], [838, 492], [914, 470], [930, 360], [1005, 260]],
-        noBuild: [{ x: 92, y: 170, r: 112 }, { x: 990, y: 230, r: 136 }]
+        route: [[84, 407], [150, 507], [299, 634], [311, 547], [335, 454], [370, 407], [418, 367], [502, 347], [585, 320], [615, 280], [573, 240], [615, 210], [693, 200], [777, 227], [866, 220], [956, 200], [985, 220]],
+        noBuild: [{ x: 84, y: 407, r: 118 }, { x: 985, y: 220, r: 136 }]
       },
       {
         camp: { x: 82, y: 300, label: "敌营" },
@@ -2272,12 +2272,6 @@
     ctx.ellipse(p.x, p.y + 4, 19, 11, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
-
-    ctx.globalAlpha = ok ? 0.14 : 0.08;
-    ctx.fillStyle = ok ? def.color : "rgba(255, 101, 125, 0.8)";
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, def.range, 0, Math.PI * 2);
-    ctx.fill();
     ctx.restore();
   }
 
@@ -2620,16 +2614,7 @@
     for (const tower of state.towers) {
       const def = towerDef(tower.type);
       const selected = state.selectedTower === tower;
-      const stats = towerStats(tower);
       ctx.save();
-      if (selected) {
-        ctx.beginPath();
-        ctx.arc(tower.x, tower.y, stats.range, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(86, 216, 255, 0.055)";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(86, 216, 255, 0.24)";
-        ctx.stroke();
-      }
       ctx.translate(tower.x, tower.y);
       ctx.fillStyle = "rgba(0, 0, 0, 0.36)";
       ctx.beginPath();
