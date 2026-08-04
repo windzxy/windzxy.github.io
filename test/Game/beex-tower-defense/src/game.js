@@ -1965,55 +1965,176 @@
 
   function drawBattleFlag(point, label, side, chapter) {
     const isEnemy = side === "enemy";
-    const poleColor = isEnemy ? "#4a2115" : "#5a3d18";
-    const flagColor = isEnemy
-      ? (chapter.id === "glacier" ? "#9d2f3e" : "#b63a25")
-      : (chapter.id === "glacier" ? "#f5d978" : "#e8b84d");
-    const flagEdge = isEnemy ? "#ff9a6a" : "#fff0a8";
-    const textColor = isEnemy ? "#fff2dc" : "#3b2410";
     const direction = isEnemy ? 1 : -1;
-    const poleTop = point.y - 76;
-    const poleBottom = point.y - 4;
-    const flagW = 44;
-    const flagH = 30;
+    const poleTop = point.y - 102;
+    const poleBottom = point.y - 5;
+    const flagW = 70;
+    const flagH = 46;
+    const flagY = poleTop + 17;
+    const x = (offset) => point.x + direction * offset;
+    const palette = isEnemy
+      ? {
+        poleA: "#2d130b",
+        poleB: "#9a6336",
+        clothA: chapter.id === "glacier" ? "#8f233d" : "#8e2418",
+        clothB: chapter.id === "glacier" ? "#d94b69" : "#d85627",
+        clothC: "#2a0b08",
+        trimA: "#ffd78d",
+        trimB: "#9b4a21",
+        markA: "#f7c36a",
+        markB: "#7d1f16",
+        text: "#fff4d8",
+        glow: "rgba(255, 96, 42, 0.42)"
+      }
+      : {
+        poleA: "#3b2410",
+        poleB: "#d09a3d",
+        clothA: chapter.id === "glacier" ? "#ffe58a" : "#f2bd3d",
+        clothB: chapter.id === "glacier" ? "#fff6c4" : "#ffe07c",
+        clothC: "#7b4b10",
+        trimA: "#fff5b6",
+        trimB: "#a86f1a",
+        markA: "#513114",
+        markB: "#ffdf72",
+        text: "#2a1709",
+        glow: "rgba(255, 226, 118, 0.4)"
+      };
 
     ctx.save();
-    ctx.shadowColor = "rgba(22, 10, 3, 0.45)";
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetY = 4;
-    ctx.strokeStyle = poleColor;
-    ctx.lineWidth = 5;
+    ctx.shadowColor = "rgba(18, 8, 3, 0.5)";
+    ctx.shadowBlur = 13;
+    ctx.shadowOffsetY = 7;
+
+    const poleGrad = ctx.createLinearGradient(point.x - 4, 0, point.x + 4, 0);
+    poleGrad.addColorStop(0, palette.poleA);
+    poleGrad.addColorStop(0.44, palette.poleB);
+    poleGrad.addColorStop(0.68, palette.trimA);
+    poleGrad.addColorStop(1, palette.poleA);
+    ctx.strokeStyle = poleGrad;
+    ctx.lineWidth = 6;
     ctx.lineCap = "round";
     ctx.beginPath();
     ctx.moveTo(point.x, poleBottom);
     ctx.lineTo(point.x, poleTop);
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(38, 18, 7, 0.46)";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3.2;
+    ctx.strokeStyle = palette.trimA;
     ctx.beginPath();
-    ctx.moveTo(point.x - 14, point.y + 2);
-    ctx.lineTo(point.x + 14, point.y - 2);
+    ctx.moveTo(x(2), flagY - 3);
+    ctx.lineTo(x(flagW + 8), flagY - 3);
     ctx.stroke();
 
-    ctx.fillStyle = flagColor;
-    ctx.strokeStyle = flagEdge;
-    ctx.lineWidth = 2;
+    ctx.fillStyle = palette.trimA;
     ctx.beginPath();
-    ctx.moveTo(point.x, poleTop + 4);
-    ctx.lineTo(point.x + direction * flagW, poleTop + 9);
-    ctx.lineTo(point.x + direction * (flagW - 9), poleTop + flagH);
-    ctx.lineTo(point.x, poleTop + flagH - 5);
+    ctx.moveTo(point.x, poleTop - 15);
+    ctx.lineTo(point.x + direction * 8, poleTop - 1);
+    ctx.lineTo(point.x, poleTop + 8);
+    ctx.lineTo(point.x - direction * 8, poleTop - 1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = palette.trimB;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = palette.glow;
+    const clothGrad = ctx.createLinearGradient(x(4), flagY, x(flagW), flagY + flagH);
+    clothGrad.addColorStop(0, palette.clothB);
+    clothGrad.addColorStop(0.46, palette.clothA);
+    clothGrad.addColorStop(1, palette.clothC);
+    ctx.fillStyle = clothGrad;
+    ctx.strokeStyle = palette.trimA;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x(4), flagY);
+    ctx.quadraticCurveTo(x(22), flagY - 10, x(43), flagY - 4);
+    ctx.quadraticCurveTo(x(58), flagY + 1, x(flagW), flagY - 7);
+    ctx.lineTo(x(flagW - 10), flagY + flagH * 0.48);
+    ctx.lineTo(x(flagW), flagY + flagH + 1);
+    ctx.quadraticCurveTo(x(48), flagY + flagH - 7, x(28), flagY + flagH);
+    ctx.quadraticCurveTo(x(15), flagY + flagH + 4, x(4), flagY + flagH - 5);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
     ctx.shadowBlur = 0;
-    ctx.fillStyle = textColor;
-    ctx.font = "900 17px system-ui";
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x(7), flagY + 4);
+    ctx.quadraticCurveTo(x(25), flagY - 3, x(43), flagY + 2);
+    ctx.quadraticCurveTo(x(56), flagY + 6, x(flagW - 6), flagY + 1);
+    ctx.lineTo(x(flagW - 15), flagY + flagH * 0.48);
+    ctx.lineTo(x(flagW - 6), flagY + flagH - 5);
+    ctx.quadraticCurveTo(x(48), flagY + flagH - 12, x(30), flagY + flagH - 5);
+    ctx.quadraticCurveTo(x(18), flagY + flagH - 1, x(7), flagY + flagH - 9);
+    ctx.closePath();
+    ctx.clip();
+    ctx.globalAlpha = 0.22;
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(x(7), flagY + 7);
+    ctx.quadraticCurveTo(x(26), flagY + 1, x(45), flagY + 6);
+    ctx.lineTo(x(42), flagY + 16);
+    ctx.quadraticCurveTo(x(26), flagY + 11, x(8), flagY + 18);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.globalAlpha = 0.18;
+    ctx.strokeStyle = "#1a0804";
+    ctx.lineWidth = 2;
+    [20, 36, 54].forEach((fold) => {
+      ctx.beginPath();
+      ctx.moveTo(x(fold), flagY + 1);
+      ctx.bezierCurveTo(x(fold + 6), flagY + 15, x(fold - 5), flagY + 27, x(fold + 1), flagY + flagH - 3);
+      ctx.stroke();
+    });
+    ctx.restore();
+
+    const crestX = x(37);
+    const crestY = flagY + 23;
+    const crestGrad = ctx.createLinearGradient(crestX - 16, crestY - 18, crestX + 16, crestY + 16);
+    crestGrad.addColorStop(0, palette.markB);
+    crestGrad.addColorStop(1, palette.markA);
+    ctx.fillStyle = crestGrad;
+    ctx.strokeStyle = palette.trimA;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(crestX, crestY - 18);
+    ctx.lineTo(crestX + direction * 19, crestY - 6);
+    ctx.lineTo(crestX + direction * 13, crestY + 17);
+    ctx.lineTo(crestX, crestY + 22);
+    ctx.lineTo(crestX - direction * 13, crestY + 17);
+    ctx.lineTo(crestX - direction * 19, crestY - 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(crestX - direction * 10, crestY - 7);
+    ctx.lineTo(crestX, crestY - 13);
+    ctx.lineTo(crestX + direction * 10, crestY - 7);
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = palette.text;
+    ctx.font = "900 21px KaiTi, STKaiti, 'Noto Serif CJK TC', serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(label, point.x + direction * 22, poleTop + 18);
+    ctx.strokeStyle = isEnemy ? "rgba(80, 18, 7, 0.75)" : "rgba(255, 242, 180, 0.58)";
+    ctx.lineWidth = 3;
+    ctx.strokeText(label, crestX, crestY + 2);
+    ctx.fillText(label, crestX, crestY + 2);
+
+    ctx.strokeStyle = palette.trimB;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(point.x - direction * 10, poleBottom + 5);
+    ctx.lineTo(point.x + direction * 13, poleBottom + 1);
+    ctx.lineTo(point.x + direction * 24, poleBottom + 8);
+    ctx.stroke();
     ctx.restore();
   }
 
