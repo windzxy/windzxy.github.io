@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="爆蜂罐">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="34%" r="62%">
+      <stop offset="0" stop-color="#fff2a8"/>
+      <stop offset=".42" stop-color="#ffb43d"/>
+      <stop offset="1" stop-color="#6a2314"/>
+    </radialGradient>
+    <linearGradient id="jar" x1="18" y1="18" x2="78" y2="82">
+      <stop offset="0" stop-color="#ffd879"/>
+      <stop offset=".5" stop-color="#c66322"/>
+      <stop offset="1" stop-color="#4a170d"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="50" r="42" fill="#2b1209"/>
+  <circle cx="48" cy="50" r="35" fill="url(#glow)" opacity=".96"/>
+  <path d="M28 31c5-10 13-16 22-16 8 0 16 5 21 15-7 4-15 6-23 6-7 0-14-2-20-5Z" fill="#fff0af"/>
+  <path d="M22 45c5-7 14-11 26-11 13 0 23 4 29 12-1 18-12 32-29 32-16 0-27-14-26-33Z" fill="url(#jar)" stroke="#371409" stroke-width="4"/>
+  <path d="M29 48h38M30 59h36M37 37c-3 10-3 21 0 33M48 35c-2 11-2 25 0 37M59 38c3 10 3 21-1 32" fill="none" stroke="#ffe09a" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+  <path d="M71 24c5-7 9-12 13-14-1 7-3 13-8 19" fill="none" stroke="#ffc85d" stroke-width="5" stroke-linecap="round"/>
+  <path d="M80 32l8-2M75 19l4-7M86 20l5-5" stroke="#fff2b4" stroke-width="4" stroke-linecap="round"/>
+</svg>
