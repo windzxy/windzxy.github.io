@@ -46,6 +46,7 @@
   let blockedSet = new Set();
   let battlefield = null;
   let activeChapterLevel = 1;
+  const nativePadRange = { min: 52, max: 150 };
   const leaderboardUrl = "leaderboard.json";
   const issueUrl = "https://github.com/windzxy/windzxy.github.io/issues/new";
   const iconFiles = window.BeexTowerFiles || {
@@ -194,6 +195,86 @@
       }
     }
   ];
+  const sceneLayouts = {
+    ancient: [
+      {
+        camp: { x: 95, y: 170, label: "敵營" },
+        gate: { x: 985, y: 220, label: "蜂巢城門" },
+        route: [[70, 185], [132, 270], [240, 365], [155, 530], [320, 575], [480, 500], [430, 345], [590, 305], [735, 390], [875, 500], [910, 360], [1005, 260]],
+        noBuild: [{ x: 92, y: 170, r: 112 }, { x: 990, y: 230, r: 136 }]
+      },
+      {
+        camp: { x: 82, y: 300, label: "敵營" },
+        gate: { x: 992, y: 245, label: "蜂巢城門" },
+        route: [[45, 350], [170, 350], [135, 520], [315, 565], [380, 430], [270, 300], [450, 250], [590, 350], [665, 520], [825, 500], [895, 360], [1005, 270]],
+        noBuild: [{ x: 78, y: 300, r: 118 }, { x: 990, y: 245, r: 136 }]
+      },
+      {
+        camp: { x: 78, y: 190, label: "敵營" },
+        gate: { x: 972, y: 170, label: "蜂巢城門" },
+        route: [[64, 210], [155, 285], [115, 435], [300, 455], [430, 380], [535, 520], [700, 455], [650, 330], [790, 265], [915, 280], [1000, 205]],
+        noBuild: [{ x: 80, y: 190, r: 120 }, { x: 972, y: 170, r: 142 }]
+      },
+      {
+        camp: { x: 76, y: 555, label: "敵營" },
+        gate: { x: 1005, y: 210, label: "蜂巢城門" },
+        route: [[62, 558], [195, 515], [150, 375], [315, 315], [455, 405], [575, 555], [745, 505], [690, 360], [815, 285], [940, 320], [1018, 230]],
+        noBuild: [{ x: 76, y: 555, r: 118 }, { x: 1005, y: 210, r: 142 }]
+      }
+    ],
+    glacier: [
+      {
+        camp: { x: 82, y: 170, label: "雪原敵哨" },
+        gate: { x: 955, y: 245, label: "冰晶要塞" },
+        route: [[70, 190], [158, 285], [130, 455], [270, 570], [405, 500], [335, 365], [505, 315], [660, 385], [780, 540], [900, 455], [925, 320], [982, 270]],
+        noBuild: [{ x: 82, y: 170, r: 118 }, { x: 955, y: 245, r: 148 }]
+      },
+      {
+        camp: { x: 126, y: 390, label: "雪原敵哨" },
+        gate: { x: 965, y: 260, label: "冰晶要塞" },
+        route: [[85, 420], [205, 515], [340, 475], [305, 330], [465, 250], [635, 310], [560, 485], [720, 555], [875, 475], [835, 340], [970, 285]],
+        noBuild: [{ x: 126, y: 390, r: 120 }, { x: 965, y: 260, r: 150 }]
+      },
+      {
+        camp: { x: 82, y: 470, label: "雪原敵哨" },
+        gate: { x: 890, y: 280, label: "冰晶要塞" },
+        route: [[70, 500], [210, 470], [255, 320], [425, 330], [505, 510], [670, 545], [770, 420], [680, 300], [810, 220], [920, 285]],
+        noBuild: [{ x: 82, y: 470, r: 116 }, { x: 890, y: 280, r: 150 }]
+      },
+      {
+        camp: { x: 85, y: 230, label: "雪原敵哨" },
+        gate: { x: 980, y: 245, label: "冰晶要塞" },
+        route: [[68, 250], [180, 300], [125, 455], [300, 525], [445, 470], [390, 325], [545, 290], [650, 425], [795, 520], [910, 430], [880, 305], [1000, 260]],
+        noBuild: [{ x: 85, y: 230, r: 118 }, { x: 980, y: 245, r: 150 }]
+      }
+    ],
+    volcano: [
+      {
+        camp: { x: 78, y: 575, label: "熔岩敵陣" },
+        gate: { x: 980, y: 230, label: "黑曜城門" },
+        route: [[65, 565], [175, 505], [130, 360], [295, 320], [435, 425], [370, 560], [545, 590], [675, 480], [625, 330], [790, 285], [905, 340], [1005, 250]],
+        noBuild: [{ x: 78, y: 575, r: 120 }, { x: 980, y: 230, r: 150 }]
+      },
+      {
+        camp: { x: 82, y: 230, label: "熔岩敵陣" },
+        gate: { x: 980, y: 255, label: "黑曜城門" },
+        route: [[68, 245], [205, 315], [160, 500], [335, 575], [470, 465], [415, 310], [575, 255], [715, 355], [665, 525], [840, 545], [910, 395], [1000, 280]],
+        noBuild: [{ x: 82, y: 230, r: 120 }, { x: 980, y: 255, r: 150 }]
+      },
+      {
+        camp: { x: 82, y: 515, label: "熔岩敵陣" },
+        gate: { x: 995, y: 230, label: "黑曜城門" },
+        route: [[70, 530], [210, 505], [285, 350], [450, 300], [555, 430], [490, 580], [675, 610], [790, 485], [730, 335], [880, 285], [1010, 250]],
+        noBuild: [{ x: 82, y: 515, r: 118 }, { x: 995, y: 230, r: 150 }]
+      },
+      {
+        camp: { x: 82, y: 260, label: "熔岩敵陣" },
+        gate: { x: 988, y: 210, label: "黑曜城門" },
+        route: [[70, 278], [190, 330], [145, 500], [315, 560], [470, 480], [425, 330], [590, 280], [720, 380], [675, 535], [850, 560], [925, 380], [1005, 235]],
+        noBuild: [{ x: 82, y: 260, r: 120 }, { x: 988, y: 210, r: 150 }]
+      }
+    ]
+  };
   let activeChapterIndex = 0;
   let wavePlan = [];
   const difficulties = {
@@ -246,6 +327,24 @@
 
   function cellKey(x, y) {
     return `${x},${y}`;
+  }
+
+  function pointSegmentDistance(p, a, b) {
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    if (!dx && !dy) return Math.hypot(p.x - a.x, p.y - a.y);
+    const t = clamp(((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy), 0, 1);
+    return Math.hypot(p.x - (a.x + dx * t), p.y - (a.y + dy * t));
+  }
+
+  function distanceToRoute(point, route) {
+    if (!route || !route.length) return Infinity;
+    if (route.length === 1) return Math.hypot(point.x - route[0].x, point.y - route[0].y);
+    let best = Infinity;
+    for (let i = 0; i < route.length - 1; i++) {
+      best = Math.min(best, pointSegmentDistance(point, route[i], route[i + 1]));
+    }
+    return best;
   }
 
   function riverSegments() {
@@ -421,6 +520,63 @@
     return cells;
   }
 
+  function activeSceneLayout(chapter, sceneIndex) {
+    const layouts = sceneLayouts[chapter.id] || [];
+    if (!layouts.length || sceneIndex < 0) return null;
+    return layouts[sceneIndex % layouts.length] || layouts[0];
+  }
+
+  function sampleRoute(route, spacing = 30) {
+    const points = [];
+    route.forEach(([x, y], index) => {
+      const current = { x, y };
+      if (!index) {
+        points.push(current);
+        return;
+      }
+      const prev = points[points.length - 1];
+      const distance = Math.hypot(current.x - prev.x, current.y - prev.y);
+      const steps = Math.max(1, Math.round(distance / spacing));
+      for (let i = 1; i <= steps; i++) {
+        points.push({
+          x: prev.x + (current.x - prev.x) * (i / steps),
+          y: prev.y + (current.y - prev.y) * (i / steps)
+        });
+      }
+    });
+    return points;
+  }
+
+  function routeCellsFromPoints(routePoints, radius = 42) {
+    const cells = [];
+    const seen = new Set();
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const key = cellKey(x, y);
+        const p = cellCenter(x, y);
+        if (distanceToRoute(p, routePoints) <= radius) {
+          cells.push([x, y]);
+          seen.add(key);
+        }
+      }
+    }
+    return { cells, set: seen };
+  }
+
+  function createNativeBlockedCells(layout, nextPathSet) {
+    const cells = new Set();
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const key = cellKey(x, y);
+        if (nextPathSet.has(key)) continue;
+        const p = cellCenter(x, y);
+        const blocked = (layout.noBuild || []).some(zone => Math.hypot(p.x - zone.x, p.y - zone.y) <= zone.r);
+        if (blocked) cells.add(key);
+      }
+    }
+    return cells;
+  }
+
   function createRoute(riverShift, bridgeCells, bridgeX) {
     const start = [1, randInt(6, 10)];
     const bridgeY = nearestRiverRow(bridgeX, riverShift);
@@ -455,6 +611,30 @@
     const chapter = currentChapter();
     const sceneList = sceneFiles[chapter.id] || [];
     const sceneIndex = sceneList.length ? (chapterLevel - 1 + randInt(0, sceneList.length - 1)) % sceneList.length : -1;
+    const sceneLayout = activeSceneLayout(chapter, sceneIndex);
+    if (sceneLayout) {
+      const routePoints = sampleRoute(sceneLayout.route);
+      const routeCells = routeCellsFromPoints(routePoints);
+      return {
+        theme: chapter.theme,
+        pathCells: routeCells.cells,
+        pathSet: routeCells.set,
+        routePoints,
+        blockedSet: createNativeBlockedCells(sceneLayout, routeCells.set),
+        bridgeCells: [],
+        mountainShift: 0,
+        riverShift: 0,
+        sceneIndex,
+        sceneVariant: 0,
+        sceneLayout,
+        weatherSeed: Math.random() * 1000,
+        fieldMarks: [],
+        trees: [],
+        groundStones: [],
+        blooms: [],
+        riverRocks: []
+      };
+    }
     const riverShift = randInt(-28, 28);
     const bridgeX = randInt(7, 17);
     const bridgeCells = createBridgeCells(bridgeX, riverShift);
@@ -528,7 +708,7 @@
     pathCells = battlefield.pathCells;
     pathSet = battlefield.pathSet;
     blockedSet = battlefield.blockedSet;
-    path = pathCells.map(([x, y]) => ({
+    path = battlefield.routePoints || pathCells.map(([x, y]) => ({
       x: offset.x + x * tile + tile / 2,
       y: offset.y + y * tile + tile / 2
     }));
@@ -954,14 +1134,17 @@
   function cellDistanceToPath(cell) {
     if (!cell || !path.length) return Infinity;
     const p = gridToWorld(cell.cx, cell.cy);
-    return path.reduce((best, item) => Math.min(best, Math.hypot(item.x - p.x, item.y - p.y)), Infinity);
+    return distanceToRoute(p, path);
   }
 
   function canUseAsTowerPad(cell) {
     if (!cell) return false;
-    if (isMountainCell(cell.cx, cell.cy) || isRiverCell(cell.cx, cell.cy, battlefield.riverShift, 36)) return false;
     if (pathSet.has(cell.key) || blockedSet.has(cell.key) || cellHasTower(cell.key)) return false;
     const distance = cellDistanceToPath(cell);
+    if (battlefield.sceneLayout) {
+      return distance >= nativePadRange.min && distance <= nativePadRange.max;
+    }
+    if (isMountainCell(cell.cx, cell.cy) || isRiverCell(cell.cx, cell.cy, battlefield.riverShift, 36)) return false;
     return distance >= 58 && distance <= 172;
   }
 
@@ -1735,7 +1918,21 @@
     }
   }
 
+  function drawNativeRouteGuide(chapter) {
+    const glow = chapter.id === "volcano" ? "rgba(255, 114, 48, 0.5)" : "rgba(255, 229, 140, 0.46)";
+    ctx.save();
+    drawPathStroke(11, "rgba(35, 17, 8, 0.16)", null, 0.45);
+    drawPathStroke(4, glow, [18, 18], 0.75);
+    drawOffsetPath(-48, 3.2, "rgba(255, 232, 150, 0.34)", [18, 15], 0.78);
+    drawOffsetPath(48, 3.2, "rgba(255, 232, 150, 0.34)", [18, 15], 0.78);
+    ctx.restore();
+  }
+
   function drawSceneRoute(theme, chapter) {
+    if (battlefield.sceneLayout) {
+      drawNativeRouteGuide(chapter);
+      return;
+    }
     const style = roadStyle(chapter, theme);
     ctx.save();
     ctx.globalCompositeOperation = chapter.id === "volcano" ? "screen" : "source-over";
@@ -1765,6 +1962,33 @@
   }
 
   function drawSceneLandmarks(theme, chapter) {
+    if (battlefield.sceneLayout) {
+      const { camp, gate } = battlefield.sceneLayout;
+      const drawMarker = (point, fill, stroke, label, align) => {
+        ctx.save();
+        ctx.globalAlpha = 0.95;
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(point.x, point.y, 46, 20, -0.06, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.font = "900 15px system-ui";
+        ctx.textAlign = align;
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "rgba(255, 246, 218, 0.94)";
+        ctx.strokeStyle = "rgba(30, 12, 5, 0.72)";
+        ctx.lineWidth = 4;
+        const labelX = point.x + (align === "left" ? 54 : -54);
+        ctx.strokeText(label, labelX, point.y - 4);
+        ctx.fillText(label, labelX, point.y - 4);
+        ctx.restore();
+      };
+      drawMarker(camp, "rgba(202, 61, 34, 0.22)", "rgba(255, 92, 56, 0.78)", camp.label || chapter.enemyCamp, "left");
+      drawMarker(gate, "rgba(255, 202, 82, 0.18)", "rgba(255, 219, 116, 0.78)", gate.label || chapter.gate, "right");
+      return;
+    }
     const campImg = landmarks[`${chapter.id}Camp`];
     const gateImg = landmarks[`${chapter.id}Gate`];
     const startPoint = path[0];
