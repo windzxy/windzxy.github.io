@@ -47,7 +47,8 @@
   let blockedSet = new Set();
   let battlefield = null;
   let activeChapterLevel = 1;
-  const nativePadRange = { min: 52, max: 150 };
+  const nativeRoadRadius = 72;
+  const nativePadRange = { min: 86, max: 156 };
   const leaderboardUrl = "leaderboard.json";
   const issueUrl = "https://github.com/windzxy/windzxy.github.io/issues/new";
   const iconFiles = window.BeexTowerFiles || {
@@ -66,11 +67,6 @@
     upgrade: "assets/icons/action-upgrade.svg",
     sell: "assets/icons/action-sell.svg"
   };
-  const enemyFiles = {
-    drone: "assets/enemies/enemy-footman.png",
-    runner: "assets/enemies/enemy-rider.png",
-    elite: "assets/enemies/enemy-armor.png"
-  };
   const landmarkFiles = window.BeexLandmarkFiles || {
     ancientCamp: "assets/map/start-camp-ancient.png",
     ancientGate: "assets/map/end-gate-ancient.png",
@@ -83,8 +79,26 @@
     enemy: "assets/flags/enemy-banner.png",
     bee: "assets/flags/bee-banner.png"
   };
+  const bossFiles = window.BeexBossFiles || {
+    siegeCart: "assets/enemies/boss-siege-cart.png",
+    warCannon: "assets/enemies/boss-war-cannon.png",
+    titanEngine: "assets/enemies/boss-titan-engine.png"
+  };
+  const enemyFiles = {
+    drone: "assets/enemies/enemy-footman.png",
+    runner: "assets/enemies/enemy-rider.png",
+    elite: "assets/enemies/enemy-armor.png",
+    bossSiege: bossFiles.siegeCart,
+    bossCannon: bossFiles.warCannon,
+    bossTitan: bossFiles.titanEngine
+  };
   const powerFiles = window.BeexPowerFiles || {
     beeCrossbow: "assets/towers/weapon-bee-crossbow.png"
+  };
+  const effectFiles = window.BeexEffectFiles || {
+    baseDamageLight: "assets/effects/base-damage-light.png",
+    baseDamageMedium: "assets/effects/base-damage-medium.png",
+    baseDamageHeavy: "assets/effects/base-damage-heavy.png"
   };
   const sceneFiles = window.BeexSceneFiles || {
     ancient: [],
@@ -205,7 +219,7 @@
       {
         camp: { x: 95, y: 170, label: "敌营" },
         gate: { x: 985, y: 220, label: "蜂巢城门" },
-        route: [[70, 185], [132, 270], [240, 365], [155, 530], [320, 575], [480, 500], [430, 345], [590, 305], [735, 390], [875, 500], [910, 360], [1005, 260]],
+        route: [[72, 188], [126, 250], [214, 310], [286, 370], [205, 470], [150, 548], [270, 606], [405, 560], [482, 472], [490, 390], [585, 338], [718, 384], [838, 492], [914, 470], [930, 360], [1005, 260]],
         noBuild: [{ x: 92, y: 170, r: 112 }, { x: 990, y: 230, r: 136 }]
       },
       {
@@ -559,6 +573,7 @@
         swarm: i > 7 || level > 2 ? 2 : 1,
         boss,
         finalBoss,
+        bossStage: finalBoss ? 3 : boss ? Math.max(1, Math.floor(waveNumber / 4)) : 0,
         bossHp: Math.round(hp * (finalBoss ? 6.8 : 3.8) * difficulty.bossHp),
         bossSpeed: (48 + i * 2 + Math.max(0, level - 1) * 1.2) * chapter.enemySpeed * difficulty.speed * (finalBoss ? 0.46 : 0.58),
         bossReward: Math.round((finalBoss ? 82 : 46) * chapter.reward * difficulty.reward * (1 + level * 0.08))
@@ -601,8 +616,6 @@
     const routes = [];
     if (Array.isArray(layout.route)) routes.push(layout.route);
     if (Array.isArray(layout.routes)) routes.push(...layout.routes);
-    const alternates = sceneRouteAlternates[chapter.id]?.[sceneIndex % (sceneRouteAlternates[chapter.id]?.length || 1)] || [];
-    routes.push(...alternates);
     return routes.filter(route => Array.isArray(route) && route.length >= 2);
   }
 
@@ -711,7 +724,7 @@
     if (sceneLayout) {
       const routePaths = sceneRoutesForLayout(chapter, sceneIndex, sceneLayout).map(route => sampleRoute(route));
       const routePoints = routePaths[0] || sampleRoute(sceneLayout.route);
-      const routeCells = routeCellsFromRouteList(routePaths.length ? routePaths : [routePoints]);
+      const routeCells = routeCellsFromRouteList(routePaths.length ? routePaths : [routePoints], nativeRoadRadius);
       return {
         theme: chapter.theme,
         pathCells: routeCells.cells,
@@ -846,6 +859,7 @@
   const landmarks = loadImages(landmarkFiles);
   const flags = loadImages(flagFiles);
   const powerIcons = loadImages(powerFiles);
+  const effects = loadImages(effectFiles);
   const sceneImages = loadSceneImages(sceneFiles);
   resetBattlefield();
   const audio = {
@@ -1039,6 +1053,9 @@
     sparks: [],
     spawnTimer: 0,
     spawned: 0,
+    waveKills: 0,
+    waveLeaks: 0,
+    totalLeaks: 0,
     waveActive: false,
     paused: false,
     speed: 1,
@@ -1049,7 +1066,10 @@
     dropsThisWave: 0,
     last: 0,
     dpr: 1,
-    shake: 0
+    shake: 0,
+    baseDamageLevel: 0,
+    baseDamageTimer: 0,
+    baseImpacts: []
   };
 
   function readLocalScores() {
@@ -1273,6 +1293,7 @@
     const routeList = activeRoutes();
     const route = boss ? (routeList[0] || path) : (routeList[(state.waveIndex + index) % Math.max(1, routeList.length)] || path);
     const first = route[0] || path[0];
+    const bossSpriteType = finalBoss ? "bossTitan" : plan.bossStage >= 2 ? "bossCannon" : "bossSiege";
     return {
       x: first.x - 28,
       y: first.y,
@@ -1282,14 +1303,16 @@
       reward: boss ? plan.bossReward : plan.reward + (elite ? 10 : runner ? 3 : 0),
       route,
       node: 0,
-      radius: finalBoss ? 31 : boss ? 25 : elite ? 16 : runner ? 10 : 13,
+      radius: finalBoss ? 36 : boss ? 29 : elite ? 16 : runner ? 10 : 13,
       facing: -1,
       slow: 1,
       slowTimer: 0,
       type: finalBoss ? "finalBoss" : boss ? "boss" : elite ? "elite" : runner ? "runner" : "drone",
-      spriteType: boss ? "elite" : null,
+      spriteType: boss ? bossSpriteType : null,
       boss,
       finalBoss,
+      bossStage: plan.bossStage || 0,
+      anim: Math.random() * Math.PI * 2,
       alive: true,
       leaked: false
     };
@@ -1501,6 +1524,9 @@
       sparks: [],
       spawnTimer: 0,
       spawned: 0,
+      waveKills: 0,
+      waveLeaks: 0,
+      totalLeaks: 0,
       waveActive: false,
       paused: false,
       speed: 1,
@@ -1511,7 +1537,10 @@
       dropsThisWave: 0,
       last: performance.now(),
       scoreSubmittedFor: carryScore ? state.scoreSubmittedFor : "",
-      shake: 0
+      shake: 0,
+      baseDamageLevel: 0,
+      baseDamageTimer: 0,
+      baseImpacts: []
     });
     hideChapterGate();
     ui.banner.classList.add("hidden");
@@ -1556,6 +1585,8 @@
     state.spawned = 0;
     state.spawnTimer = 0;
     state.dropsThisWave = 0;
+    state.waveKills = 0;
+    state.waveLeaks = 0;
     ui.banner.classList.add("hidden");
     playSound("start");
     const plan = wavePlan[state.waveIndex];
@@ -1593,12 +1624,49 @@
     });
     if (enemy.hp <= 0 && enemy.alive) {
       enemy.alive = false;
+      state.waveKills += 1;
       state.energy += enemy.reward;
       state.score += Math.round((enemy.reward * 12 + (state.waveIndex + 1) * 4) * currentDifficulty().score);
       state.sparks.push({ x: enemy.x, y: enemy.y, r: enemy.boss ? 34 : 18, life: enemy.boss ? 0.56 : 0.36, color: enemy.boss ? "#ffd878" : "#66f2c2" });
       playSound("kill");
       if (allowDrop) maybeDropPower(enemy);
     }
+  }
+
+  function gateImpactPoint() {
+    const gate = battlefield?.sceneLayout?.gate;
+    if (gate) return { x: gate.x, y: gate.y - 36 };
+    const end = path[path.length - 1] || { x: W - 92, y: H / 2 };
+    return { x: end.x, y: end.y - 48 };
+  }
+
+  function damageBase(enemy) {
+    const point = gateImpactPoint();
+    const damage = enemy.finalBoss ? 8 : enemy.boss ? 5 : enemy.type === "elite" ? 2 : 1;
+    state.lives = Math.max(0, state.lives - damage);
+    state.waveLeaks += 1;
+    state.totalLeaks += 1;
+    state.baseDamageLevel = Math.min(5, state.baseDamageLevel + (enemy.finalBoss ? 3 : enemy.boss ? 2 : 1));
+    state.baseDamageTimer = Math.max(state.baseDamageTimer, enemy.finalBoss ? 1.4 : enemy.boss ? 1.1 : 0.85);
+    state.baseImpacts.push({
+      x: point.x,
+      y: point.y,
+      r: enemy.finalBoss ? 96 : enemy.boss ? 74 : 48,
+      life: enemy.finalBoss ? 1.15 : enemy.boss ? 0.95 : 0.72,
+      maxLife: enemy.finalBoss ? 1.15 : enemy.boss ? 0.95 : 0.72,
+      color: enemy.finalBoss ? "#ff4a24" : enemy.boss ? "#ff7838" : "#ff657d"
+    });
+    for (let i = 0; i < (enemy.finalBoss ? 12 : enemy.boss ? 8 : 5); i++) {
+      const a = -Math.PI * 0.88 + i * 0.34;
+      state.sparks.push({
+        x: point.x + Math.cos(a) * (18 + i * 2.4),
+        y: point.y + Math.sin(a) * (14 + (i % 3) * 5),
+        r: enemy.finalBoss ? 18 : enemy.boss ? 14 : 10,
+        life: 0.55 + (i % 3) * 0.08,
+        color: i % 2 ? "#ffd878" : "#ff4a24"
+      });
+    }
+    state.shake = enemy.finalBoss ? 0.58 : enemy.boss ? 0.42 : 0.32;
   }
 
   function findTarget(tower, stats) {
@@ -1684,18 +1752,18 @@
       if (dist <= move) {
         enemy.x = target.x;
         enemy.y = target.y;
+        enemy.anim += dist * (enemy.boss ? 0.045 : 0.085);
         enemy.node += 1;
         if (enemy.node >= route.length - 1) {
           enemy.alive = false;
           enemy.leaked = true;
-          state.lives -= enemy.finalBoss ? 8 : enemy.boss ? 5 : enemy.type === "elite" ? 2 : 1;
-          state.shake = 0.24;
-          state.sparks.push({ x: enemy.x, y: enemy.y, r: 22, life: 0.35, color: "#ff657d" });
+          damageBase(enemy);
           playSound("leak");
         }
       } else if (dist > 0) {
         enemy.x += (dx / dist) * move;
         enemy.y += (dy / dist) * move;
+        enemy.anim += move * (enemy.boss ? 0.045 : 0.085);
       }
     }
 
@@ -1729,6 +1797,12 @@
     state.drops = state.drops.filter(drop => drop.age < drop.ttl);
     state.shots.forEach(s => s.life -= dt);
     state.shots = state.shots.filter(s => s.life > 0);
+    if (state.baseDamageTimer > 0) state.baseDamageTimer -= dt;
+    state.baseImpacts.forEach(impact => {
+      impact.life -= dt;
+      impact.r += dt * 44;
+    });
+    state.baseImpacts = state.baseImpacts.filter(impact => impact.life > 0);
     state.sparks.forEach(s => {
       s.life -= dt;
       s.r += dt * 34;
@@ -1742,13 +1816,21 @@
 
     if (state.waveActive && state.spawned >= wavePlan[state.waveIndex].count && state.enemies.length === 0) {
       state.waveActive = false;
+      const finishedWave = state.waveIndex + 1;
+      const killed = state.waveKills;
+      const leaked = state.waveLeaks;
+      const supply = Math.round(killed * (4 + Math.min(10, finishedWave)) * currentChapter().reward * currentDifficulty().reward);
       state.waveIndex += 1;
-      state.energy += 42 + state.waveIndex * 7;
+      state.energy += supply;
       if (state.waveIndex >= wavePlan.length) {
-        endGame(true);
+        endGame(state.lives > 0);
       } else {
         const unlocked = newlyUnlockedTowers().map(tower => towerDef(tower.id).name);
-        showBanner(unlocked.length ? `新设施开放：${unlocked.join("、")}` : "敌军退散，粮草已补给。");
+        if (leaked) {
+          showBanner(`蜂巢受损：击杀 ${killed}，漏怪 ${leaked}，补给 ${supply} 粮。`);
+        } else {
+          showBanner(unlocked.length ? `新设施开放：${unlocked.join("、")}｜击杀 ${killed}，补给 ${supply} 粮。` : `敌军退散：击杀 ${killed}，补给 ${supply} 粮。`);
+        }
       }
       updateUi();
     }
@@ -2033,13 +2115,7 @@
   }
 
   function drawNativeRouteGuide(chapter) {
-    const glow = chapter.id === "volcano" ? "rgba(255, 114, 48, 0.5)" : "rgba(255, 229, 140, 0.46)";
-    ctx.save();
-    drawPathStroke(11, "rgba(35, 17, 8, 0.16)", null, 0.45);
-    drawPathStroke(4, glow, [18, 18], 0.75);
-    drawOffsetPath(-48, 3.2, "rgba(255, 232, 150, 0.34)", [18, 15], 0.78);
-    drawOffsetPath(48, 3.2, "rgba(255, 232, 150, 0.34)", [18, 15], 0.78);
-    ctx.restore();
+    return;
   }
 
   function drawSceneRoute(theme, chapter) {
@@ -2055,10 +2131,10 @@
     drawPathStroke(68, chapter.id === "glacier" ? "rgba(223,250,255,0.46)" : chapter.id === "volcano" ? "rgba(42,24,20,0.62)" : "rgba(86,58,30,0.52)", null, 0.78);
     drawPathStroke(52, style.mid, null, chapter.id === "volcano" ? 0.58 : 0.46);
     drawPathStroke(35, style.slab, null, chapter.id === "glacier" ? 0.32 : 0.26);
-    drawOffsetPath(-34, 4.5, style.edge, [16, 10], 0.62);
-    drawOffsetPath(34, 4.5, style.edge, [16, 10], 0.62);
+    drawOffsetPath(-34, 4.5, style.edge, null, 0.34);
+    drawOffsetPath(34, 4.5, style.edge, null, 0.34);
     drawRoadSlabs(style);
-    drawPathStroke(3, style.glow, [18, 22], chapter.id === "volcano" ? 0.82 : 0.52);
+    drawPathStroke(3, style.glow, null, chapter.id === "volcano" ? 0.34 : 0.22);
     ctx.restore();
   }
 
@@ -2102,6 +2178,50 @@
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawBaseDamage() {
+    if (!state.baseDamageLevel && !state.baseImpacts.length) return;
+    const p = gateImpactPoint();
+    ctx.save();
+    if (state.baseDamageLevel > 0) {
+      const key = state.baseDamageLevel >= 5 ? "baseDamageHeavy" : state.baseDamageLevel >= 3 ? "baseDamageMedium" : "baseDamageLight";
+      const img = effects[key];
+      const size = state.baseDamageLevel >= 5 ? 224 : state.baseDamageLevel >= 3 ? 188 : 154;
+      ctx.globalAlpha = Math.min(0.96, 0.7 + state.baseDamageLevel * 0.05);
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, p.x - size / 2, p.y - size / 2 + 12, size, size);
+      } else {
+        ctx.fillStyle = "rgba(22, 12, 8, 0.62)";
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + 12, size * 0.34, size * 0.26, -0.08, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    state.baseImpacts.forEach(impact => {
+      const ratio = Math.max(0, impact.life / impact.maxLife);
+      const grow = 1 - ratio;
+      ctx.globalAlpha = ratio;
+      const grad = ctx.createRadialGradient(impact.x, impact.y, 8, impact.x, impact.y, impact.r);
+      grad.addColorStop(0, "rgba(255, 238, 170, 0.9)");
+      grad.addColorStop(0.35, impact.color === "#ff4a24" ? "rgba(255, 74, 36, 0.58)" : impact.color === "#ff7838" ? "rgba(255, 120, 56, 0.54)" : "rgba(255, 101, 125, 0.48)");
+      grad.addColorStop(1, "rgba(60, 16, 8, 0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(impact.x, impact.y, impact.r * (0.42 + grow * 0.42), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 214, 116, 0.82)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(impact.x, impact.y, impact.r * (0.22 + grow * 0.58), 0, Math.PI * 2);
+      ctx.stroke();
+    });
+    if (state.baseDamageTimer > 0) {
+      ctx.globalAlpha = Math.min(0.45, state.baseDamageTimer * 0.42);
+      ctx.fillStyle = "rgba(255, 70, 36, 0.18)";
+      ctx.fillRect(0, 0, W, H);
     }
     ctx.restore();
   }
@@ -2297,9 +2417,7 @@
     drawRiverRocks(chapter);
     ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
     ctx.lineWidth = 3;
-    ctx.setLineDash([18, 22]);
     ctx.stroke();
-    ctx.setLineDash([]);
 
     ctx.strokeStyle = "rgba(255, 255, 255, 0.36)";
     ctx.lineWidth = 4;
@@ -2572,6 +2690,12 @@
       ctx.ellipse(0, enemy.radius + 5, enemy.radius + 8, 5, 0, 0, Math.PI * 2);
       ctx.fill();
 
+      const gait = enemy.anim || 0;
+      const bob = enemy.boss ? Math.sin(gait * 0.78) * 1.5 : Math.abs(Math.sin(gait)) * 3.2;
+      const tilt = enemy.boss ? Math.sin(gait * 0.62) * 0.028 : Math.sin(gait) * 0.045;
+      ctx.translate(0, bob);
+      ctx.rotate(tilt);
+
       if (enemy.boss) {
         const aura = enemy.finalBoss ? "rgba(255, 88, 54, 0.42)" : "rgba(255, 216, 120, 0.32)";
         ctx.fillStyle = aura;
@@ -2586,7 +2710,7 @@
       }
 
       const sprite = enemySprites[enemy.spriteType || enemy.type];
-      const size = enemy.finalBoss ? 98 : enemy.boss ? 84 : enemy.type === "runner" ? 62 : enemy.type === "elite" ? 68 : 54;
+      const size = enemy.finalBoss ? 150 : enemy.bossStage === 2 ? 126 : enemy.boss ? 112 : enemy.type === "runner" ? 62 : enemy.type === "elite" ? 68 : 54;
       if (sprite && sprite.complete && sprite.naturalWidth > 0) {
         ctx.save();
         ctx.scale(enemy.facing || 1, 1);
@@ -2604,7 +2728,19 @@
           ctx.arc(0, -18, size * 0.34, 0, Math.PI * 2);
           ctx.stroke();
         }
-        if (enemy.boss) {
+        if (enemy.boss && !(enemy.spriteType || "").startsWith("boss")) {
+          ctx.save();
+          ctx.globalAlpha = 0.76;
+          ctx.strokeStyle = enemy.finalBoss ? "rgba(255, 224, 128, 0.9)" : "rgba(255, 188, 84, 0.82)";
+          ctx.lineWidth = 2.2;
+          [-0.28, 0.28].forEach(side => {
+            const wx = side * size * 0.45;
+            const wy = -size * 0.16;
+            ctx.beginPath();
+            ctx.arc(wx, wy, size * 0.075, gait, gait + Math.PI * 1.45);
+            ctx.stroke();
+          });
+          ctx.restore();
           ctx.fillStyle = enemy.finalBoss ? "#ffe6a3" : "#ffd878";
           ctx.strokeStyle = "rgba(45,18,8,0.82)";
           ctx.lineWidth = 2;
@@ -2842,6 +2978,7 @@
     drawTowers();
     drawEnemies();
     drawShots();
+    drawBaseDamage();
     drawSparks();
   }
 
