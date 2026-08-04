@@ -360,6 +360,8 @@ canvas {
   background:
     linear-gradient(180deg, rgba(63, 101, 61, 0.78), rgba(48, 27, 15, 0.86)),
     rgba(66, 38, 20, 0.8);
+  cursor: grab;
+  user-select: none;
 }
 
 .tower-card.active {
@@ -367,6 +369,10 @@ canvas {
   box-shadow:
     0 0 0 2px rgba(255, 216, 120, 0.2),
     0 12px 24px rgba(0, 0, 0, 0.24);
+}
+
+.tower-card:active {
+  cursor: grabbing;
 }
 
 .tower-icon {
