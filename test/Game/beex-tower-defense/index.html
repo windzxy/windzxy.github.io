@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/icons/brand-beex.svg">
   <link rel="alternate icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20260804-layout7">
+  <link rel="stylesheet" href="styles.css?v=20260804-layout8">
 </head>
 <body>
   <main class="shell">
@@ -70,6 +70,19 @@
             <p id="themeStatus">古城山河｜晴嵐</p>
           </section>
 
+          <section class="panel-section compact difficulty-panel">
+            <h2><img src="assets/icons/stat-wave.svg" alt="">難度</h2>
+            <label class="difficulty-field">
+              <span>難度預設</span>
+              <select id="difficultySelect">
+                <option value="easy">簡單</option>
+                <option value="normal">中等</option>
+                <option value="hard">困難</option>
+              </select>
+            </label>
+            <p id="difficultyStatus">簡單｜適合熟悉地形與塔位。</p>
+          </section>
+
           <section class="panel-section leaderboard">
             <h2><img src="assets/icons/panel-rank.svg" alt="">排行榜</h2>
             <label class="player-field">
@@ -106,6 +119,7 @@
     </section>
   </main>
 
-  <script src="src/game.js?v=20260804-layout7"></script>
+  <script src="src/landmarks.js?v=20260804-layout8"></script>
+  <script src="src/game.js?v=20260804-layout8"></script>
 </body>
 </html>
