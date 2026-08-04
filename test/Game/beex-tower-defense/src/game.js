@@ -546,8 +546,15 @@
       themeId,
       sources.map(src => {
         const img = new Image();
+        img.decoding = "async";
+        img.fetchPriority = "high";
+        img._failed = false;
         img.src = src;
         img.addEventListener("load", () => draw());
+        img.addEventListener("error", () => {
+          img._failed = true;
+          draw();
+        });
         return img;
       })
     ]));
@@ -1683,7 +1690,20 @@
   function currentSceneImage(chapter) {
     const list = sceneImages[chapter.id] || [];
     const image = list[battlefield.sceneIndex] || list[0];
-    return image && image.complete && image.naturalWidth > 0 ? image : null;
+    if (image && image.complete && image.naturalWidth > 0) return image;
+    return list.find(item => item && item.complete && item.naturalWidth > 0) || null;
+  }
+
+  function sceneIsPending(chapter) {
+    const list = sceneImages[chapter.id] || [];
+    if (!list.length) return false;
+    return list.some(image => image && !image.complete && !image._failed);
+  }
+
+  function drawPendingSceneMap(theme, chapter) {
+    drawSceneRoute(theme, chapter);
+    drawSceneLandmarks(theme, chapter);
+    return true;
   }
 
   function drawSceneBackdrop(image, chapter) {
@@ -1800,7 +1820,7 @@
 
   function drawSceneMap(theme, chapter) {
     const scene = currentSceneImage(chapter);
-    if (!scene) return false;
+    if (!scene) return sceneIsPending(chapter) ? drawPendingSceneMap(theme, chapter) : false;
     drawSceneBackdrop(scene, chapter);
     drawSceneRoute(theme, chapter);
     drawSceneLandmarks(theme, chapter);
