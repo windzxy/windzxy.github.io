@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="城防蜂堡">
+  <defs>
+    <linearGradient id="stone" x1="18" y1="12" x2="80" y2="86">
+      <stop offset="0" stop-color="#ffe7a1"/>
+      <stop offset=".45" stop-color="#b97835"/>
+      <stop offset="1" stop-color="#4a2111"/>
+    </linearGradient>
+    <radialGradient id="core" cx="50%" cy="38%" r="58%">
+      <stop offset="0" stop-color="#fff7c7"/>
+      <stop offset=".55" stop-color="#58d4d0"/>
+      <stop offset="1" stop-color="#123b42"/>
+    </radialGradient>
+  </defs>
+  <circle cx="48" cy="50" r="42" fill="#241109"/>
+  <path d="M18 75h60V38l-9-8-9 8-10-9-10 9-9-8-13 10v35Z" fill="url(#stone)" stroke="#321409" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M27 45h42M27 58h42M36 35v38M49 34v39M62 37v36" stroke="#ffe3a5" stroke-width="4" stroke-linecap="round" opacity=".65"/>
+  <path d="M36 18h24l6 18H30l6-18Z" fill="#7b3a1e" stroke="#2e1309" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M48 24l13 8-4 14H39l-4-14 13-8Z" fill="url(#core)" stroke="#fff0af" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M33 76h30v-9c0-8-6-14-15-14s-15 6-15 14v9Z" fill="#2a130a" opacity=".78"/>
+  <path d="M48 56v19" stroke="#58d4d0" stroke-width="4" stroke-linecap="round"/>
+</svg>
