@@ -19,7 +19,7 @@
   <link rel="preload" as="image" href="assets/scenes/volcano-02.webp">
   <link rel="preload" as="image" href="assets/scenes/volcano-03.webp">
   <link rel="preload" as="image" href="assets/scenes/volcano-04.webp">
-  <link rel="stylesheet" href="styles.css?v=20260804-layout23">
+  <link rel="stylesheet" href="styles.css?v=20260804-layout24">
 </head>
 <body>
   <main class="shell">
@@ -60,6 +60,7 @@
               <button id="speedBtn" type="button"><img src="assets/icons/action-speed.svg" alt="">一倍速度</button>
               <button id="soundBtn" type="button"><img src="assets/icons/action-sound.svg" alt="">音效</button>
               <button id="restartBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">重开</button>
+              <button id="closeBtn" type="button"><img src="assets/icons/action-pause.svg" alt="">关闭游戏</button>
             </div>
           </section>
 
@@ -129,12 +130,20 @@
     </section>
   </main>
 
-  <script src="src/scenes.js?v=20260804-layout23"></script>
-  <script src="src/landmarks.js?v=20260804-layout23"></script>
-  <script src="src/sprites.js?v=20260804-layout23"></script>
-  <script src="src/flags.js?v=20260804-layout23"></script>
-  <script src="src/bosses.js?v=20260804-layout23"></script>
-  <script src="src/effects.js?v=20260804-layout23"></script>
-  <script src="src/game.js?v=20260804-layout23"></script>
+  <div id="closedScreen" class="closed-screen hidden" role="dialog" aria-modal="true" aria-label="游戏已关闭">
+    <div>
+      <strong>游戏已关闭</strong>
+      <p>战局已暂停，重新打开后可以继续当前进度。</p>
+      <button id="reopenBtn" type="button"><img src="assets/icons/action-start.svg" alt="">重新打开</button>
+    </div>
+  </div>
+
+  <script src="src/scenes.js?v=20260804-layout24"></script>
+  <script src="src/landmarks.js?v=20260804-layout24"></script>
+  <script src="src/sprites.js?v=20260804-layout24"></script>
+  <script src="src/flags.js?v=20260804-layout24"></script>
+  <script src="src/bosses.js?v=20260804-layout24"></script>
+  <script src="src/effects.js?v=20260804-layout24"></script>
+  <script src="src/game.js?v=20260804-layout24"></script>
 </body>
 </html>
