@@ -114,9 +114,9 @@ input::placeholder {
 }
 
 .shell {
-  width: min(1720px, 100%);
+  width: min(1780px, 100%);
   margin: 0 auto;
-  padding: 18px;
+  padding: 14px;
 }
 
 .game-card {
@@ -237,15 +237,15 @@ h2 img {
 
 .play-layout {
   display: grid;
-  grid-template-columns: minmax(690px, 1fr) minmax(520px, 610px);
-  gap: 16px;
-  padding: 16px;
-  align-items: start;
+  grid-template-columns: minmax(560px, 1fr) minmax(540px, 680px);
+  gap: 14px;
+  padding: 14px;
+  align-items: stretch;
 }
 
 .stage-wrap {
   position: relative;
-  min-height: 520px;
+  min-height: calc(100vh - 172px);
   border: 1px solid rgba(255, 220, 142, 0.28);
   border-radius: 8px;
   background:
@@ -258,22 +258,24 @@ h2 img {
 canvas {
   display: block;
   width: 100%;
-  height: min(76vh, 820px);
-  min-height: 600px;
+  height: clamp(580px, calc(100vh - 172px), 860px);
+  min-height: 580px;
   touch-action: none;
 }
 
 .panel {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  align-items: start;
+  grid-auto-flow: dense;
+  gap: 10px;
+  align-content: start;
+  align-items: stretch;
 }
 
 .panel-section {
   border: 1px solid rgba(255, 224, 149, 0.28);
   border-radius: 8px;
-  padding: 14px;
+  padding: 12px;
   background:
     linear-gradient(180deg, rgba(105, 57, 25, 0.9), rgba(50, 29, 17, 0.92)),
     var(--panel);
@@ -292,24 +294,30 @@ canvas {
   margin-top: 10px;
 }
 
-.leaderboard,
-.power-panel {
+.build-panel {
   grid-column: span 2;
+}
+
+.build-panel .tower-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .tower-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .tower-card {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) auto;
-  gap: 10px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  grid-template-areas:
+    "icon meta"
+    "icon cost";
+  gap: 4px 9px;
   align-items: center;
   width: 100%;
-  min-height: 72px;
-  padding: 10px;
+  min-height: 70px;
+  padding: 9px;
   text-align: left;
   background:
     linear-gradient(180deg, rgba(63, 101, 61, 0.78), rgba(48, 27, 15, 0.86)),
@@ -324,8 +332,9 @@ canvas {
 }
 
 .tower-icon {
-  width: 46px;
-  height: 46px;
+  grid-area: icon;
+  width: 42px;
+  height: 42px;
   border-radius: 8px;
   display: grid;
   place-items: center;
@@ -336,8 +345,8 @@ canvas {
 }
 
 .tower-icon img {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   display: block;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.32));
 }
@@ -380,20 +389,27 @@ canvas {
   display: block;
 }
 
+.tower-meta {
+  grid-area: meta;
+  min-width: 0;
+}
+
 .tower-meta strong {
   color: #fff6dc;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .tower-meta small {
   color: #e5c892;
   font-weight: 700;
-  margin-top: 3px;
+  margin-top: 2px;
+  font-size: 12px;
 }
 
 .tower-cost {
+  grid-area: cost;
   color: var(--gold);
-  font: 900 13px ui-sans-serif, system-ui, sans-serif;
+  font: 900 12px ui-sans-serif, system-ui, sans-serif;
 }
 
 .button-row,
@@ -524,7 +540,7 @@ canvas {
   display: none;
 }
 
-@media (max-width: 1260px) {
+@media (max-width: 1120px) {
   .play-layout {
     grid-template-columns: 1fr;
   }
@@ -553,13 +569,16 @@ canvas {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .leaderboard,
-  .power-panel {
+  .build-panel {
     grid-column: span 2;
+  }
+
+  .build-panel .tower-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 760px) {
   .shell {
     padding: 8px;
   }
@@ -590,8 +609,11 @@ canvas {
     grid-template-columns: 1fr;
   }
 
-  .leaderboard,
-  .power-panel {
+  .build-panel {
     grid-column: auto;
+  }
+
+  .build-panel .tower-list {
+    grid-template-columns: 1fr;
   }
 }
