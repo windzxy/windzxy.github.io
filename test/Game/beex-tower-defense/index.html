@@ -29,15 +29,23 @@
         <div class="stage-wrap">
           <canvas id="game" width="1100" height="720" aria-label="古城守衛戰場"></canvas>
           <div id="banner" class="banner hidden" role="status"></div>
+          <div id="chapterGate" class="chapter-gate hidden" role="dialog" aria-modal="true" aria-labelledby="chapterGateTitle">
+            <strong id="chapterGateTitle">通關</strong>
+            <p id="chapterGateText">是否進入下一主題？</p>
+            <div class="button-row">
+              <button id="nextThemeBtn" type="button"><img src="assets/icons/action-start.svg" alt="">下一主題</button>
+              <button id="stayThemeBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">留在本主題</button>
+            </div>
+          </div>
         </div>
 
         <aside class="panel" aria-label="戰場面板">
-          <section class="panel-section">
+          <section class="panel-section build-panel">
             <h2><img src="assets/icons/panel-build.svg" alt="">建造</h2>
             <div class="tower-list" id="towerList"></div>
           </section>
 
-          <section class="panel-section selected-box" id="selectedBox">
+          <section class="panel-section selected-box selected-panel" id="selectedBox">
             <h2><img src="assets/icons/panel-build.svg" alt="">選中</h2>
             <p id="selectedText">選擇一座塔或空地。</p>
             <div class="button-row">
@@ -55,6 +63,11 @@
               <button id="soundBtn" type="button"><img src="assets/icons/action-sound.svg" alt="">音效</button>
               <button id="restartBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">重開</button>
             </div>
+          </section>
+
+          <section class="panel-section compact theme-panel">
+            <h2><img src="assets/icons/stat-score.svg" alt="">主題</h2>
+            <p id="themeStatus">古城山河｜晴嵐</p>
           </section>
 
           <section class="panel-section leaderboard">
