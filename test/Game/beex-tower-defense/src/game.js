@@ -47,12 +47,12 @@
   let battlefield = null;
   const leaderboardUrl = "leaderboard.json";
   const issueUrl = "https://github.com/windzxy/windzxy.github.io/issues/new";
-  const iconFiles = {
-    crossbow: "assets/icons/tower-crossbow.svg",
-    lotus: "assets/icons/tower-lotus.svg",
-    drum: "assets/icons/tower-drum.svg",
-    mine: "assets/icons/tower-hive-mine.svg",
-    bastion: "assets/icons/tower-guard-bastion.svg"
+  const iconFiles = window.BeexTowerFiles || {
+    crossbow: "assets/towers/tower-crossbow.png",
+    lotus: "assets/towers/tower-lotus.png",
+    drum: "assets/towers/tower-drum.png",
+    mine: "assets/towers/tower-hive-mine.png",
+    bastion: "assets/towers/tower-guard-bastion.png"
   };
   const actionIcons = {
     start: "assets/icons/action-start.svg",
@@ -76,9 +76,11 @@
     volcanoCamp: "assets/map/start-camp-volcano.png",
     volcanoGate: "assets/map/end-gate-volcano.png"
   };
-  const powerFiles = {
-    beeCrossbow: "assets/icons/weapon-bee-crossbow.svg"
+  const powerFiles = window.BeexPowerFiles || {
+    beeCrossbow: "assets/towers/weapon-bee-crossbow.png"
   };
+  const powerCardIcon = document.querySelector(".power-icon img");
+  if (powerCardIcon) powerCardIcon.src = powerFiles.beeCrossbow;
   const chapters = [
     {
       id: "ancient",
@@ -1655,7 +1657,7 @@
     const gateImg = landmarks[`${chapter.id}Gate`];
     const startPoint = path[0];
     const endPoint = path[path.length - 1];
-    drawLandmark(campImg, startPoint.x - 48, startPoint.y - 92, 116, 116, () => {
+    drawLandmark(campImg, startPoint.x - 68, startPoint.y - 126, 154, 154, () => {
       ctx.fillStyle = "#7e2b1a";
       ctx.strokeStyle = "#2b1208";
       ctx.lineWidth = 3;
@@ -1664,7 +1666,7 @@
       ctx.fill();
       ctx.stroke();
     });
-    drawLandmark(gateImg, endPoint.x - 65, endPoint.y - 108, 126, 126, () => {
+    drawLandmark(gateImg, endPoint.x - 84, endPoint.y - 138, 164, 164, () => {
       ctx.fillStyle = theme.gate[0];
       ctx.strokeStyle = "#2d1409";
       ctx.lineWidth = 4;
@@ -1774,30 +1776,33 @@
       ctx.translate(tower.x, tower.y);
       ctx.fillStyle = "rgba(0, 0, 0, 0.36)";
       ctx.beginPath();
-      ctx.ellipse(0, 13, 18, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 15, 24, 10, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#5a2f17";
-      ctx.strokeStyle = "#281106";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.roundRect(-19, -10, 38, 29, 7);
-      ctx.fill();
-      ctx.stroke();
-      const grad = ctx.createRadialGradient(-7, -12, 3, 0, -8, 25);
-      grad.addColorStop(0, "#fff4c6");
-      grad.addColorStop(0.42, def.color);
-      grad.addColorStop(1, "#7a361a");
-      ctx.fillStyle = grad;
-      ctx.strokeStyle = selected ? "#fff7dc" : "rgba(45,18,8,0.7)";
-      ctx.lineWidth = selected ? 3 : 2;
-      ctx.beginPath();
-      ctx.roundRect(-21, -25, 42, 38, 8);
-      ctx.fill();
-      ctx.stroke();
       const img = icons[def.icon];
       if (img && img.complete && img.naturalWidth > 0) {
-        ctx.drawImage(img, -19, -27, 38, 38);
+        ctx.shadowColor = def.color;
+        ctx.shadowBlur = selected ? 18 : 8;
+        const spriteSize = tower.type === "mine" ? 62 : tower.type === "bastion" ? 66 : 70;
+        ctx.drawImage(img, -spriteSize / 2, -spriteSize + 18, spriteSize, spriteSize);
       } else {
+        ctx.fillStyle = "#5a2f17";
+        ctx.strokeStyle = "#281106";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(-19, -10, 38, 29, 7);
+        ctx.fill();
+        ctx.stroke();
+        const grad = ctx.createRadialGradient(-7, -12, 3, 0, -8, 25);
+        grad.addColorStop(0, "#fff4c6");
+        grad.addColorStop(0.42, def.color);
+        grad.addColorStop(1, "#7a361a");
+        ctx.fillStyle = grad;
+        ctx.strokeStyle = selected ? "#fff7dc" : "rgba(45,18,8,0.7)";
+        ctx.lineWidth = selected ? 3 : 2;
+        ctx.beginPath();
+        ctx.roundRect(-21, -25, 42, 38, 8);
+        ctx.fill();
+        ctx.stroke();
         ctx.fillStyle = def.color;
         ctx.beginPath();
         ctx.moveTo(0, -24);
@@ -1810,7 +1815,7 @@
       ctx.fillStyle = def.color;
       for (let i = 0; i < tower.level; i++) {
         ctx.beginPath();
-        ctx.arc(-12 + i * 8, -32, 2.4, 0, Math.PI * 2);
+        ctx.arc(-12 + i * 8, -42, 2.4, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.restore();
