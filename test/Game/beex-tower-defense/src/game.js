@@ -17,6 +17,9 @@
     speedBtn: document.getElementById("speedBtn"),
     soundBtn: document.getElementById("soundBtn"),
     restartBtn: document.getElementById("restartBtn"),
+    closeBtn: document.getElementById("closeBtn"),
+    reopenBtn: document.getElementById("reopenBtn"),
+    closedScreen: document.getElementById("closedScreen"),
     playerName: document.getElementById("playerName"),
     submitScoreBtn: document.getElementById("submitScoreBtn"),
     refreshBoardBtn: document.getElementById("refreshBoardBtn"),
@@ -117,7 +120,6 @@
       weather: "晴岚",
       weatherKind: "breeze",
       status: "标准地形，攻守均衡。",
-      enemyTint: "rgba(255, 220, 130, 0.1)",
       enemyHp: 1,
       enemySpeed: 1,
       reward: 1,
@@ -148,7 +150,6 @@
       weather: "暴雪",
       weatherKind: "snow",
       status: "敌军稍慢但更耐打，寒玉莲控制更强。",
-      enemyTint: "rgba(120, 220, 255, 0.24)",
       enemyHp: 1.12,
       enemySpeed: 0.92,
       reward: 1.08,
@@ -185,7 +186,6 @@
       weather: "火山灰",
       weatherKind: "ember",
       status: "敌军更快更硬，击杀粮草更多，雷鼓台爆发更强。",
-      enemyTint: "rgba(255, 98, 42, 0.22)",
       enemyHp: 1.18,
       enemySpeed: 1.1,
       reward: 1.16,
@@ -1045,6 +1045,7 @@
     difficultyId: selectedDifficultyId,
     scoreSubmittedFor: "",
     selectedBuild: "pulse",
+    buildArmed: false,
     selectedTower: null,
     hoverCell: null,
     towers: [],
@@ -1405,7 +1406,7 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.draggable = true;
-      btn.className = `tower-card ${state.selectedBuild === tower.id ? "active" : ""}`;
+      btn.className = `tower-card ${state.buildArmed && state.selectedBuild === tower.id ? "active" : ""}`;
       btn.innerHTML = `
         <span class="tower-icon"><img src="${iconFiles[def.icon]}" alt=""></span>
         <span class="tower-meta"><strong>${def.name}</strong><small>${def.effect}</small></span>
@@ -1413,12 +1414,14 @@
       `;
       btn.addEventListener("click", () => {
         state.selectedBuild = tower.id;
+        state.buildArmed = true;
         state.selectedTower = null;
         updateUi();
         showBanner(`已选择 ${def.name}，移到道路旁亮出投放点后建造。`);
       });
       btn.addEventListener("dragstart", event => {
         state.selectedBuild = tower.id;
+        state.buildArmed = true;
         state.selectedTower = null;
         event.dataTransfer.setData("text/plain", tower.id);
         event.dataTransfer.effectAllowed = "copy";
@@ -1468,7 +1471,9 @@
       const def = towerDef(state.selectedBuild);
       const next = nextLockedTower();
       const hint = next ? ` 第 ${towerUnlockWave(next.id)} 波会开放新设施。` : "";
-      ui.selectedText.textContent = `准备投放 ${def.name}。消耗 ${def.cost} 粮草，${def.effect}。移到道路旁亮出投放点后建造。${hint}`;
+      ui.selectedText.textContent = state.buildArmed
+        ? `准备投放 ${def.name}。消耗 ${def.cost} 粮草，${def.effect}。移到道路旁亮出投放点后建造。${hint}`
+        : `点击右侧设备后进入建造模式。当前设备：${def.name}，消耗 ${def.cost} 粮草。${hint}`;
       ui.upgradeBtn.disabled = true;
       setActionButton(ui.upgradeBtn, "upgrade", "升级");
       ui.sellBtn.disabled = true;
@@ -1516,6 +1521,7 @@
       waveIndex: 0,
       score: carryScore ? state.score : 0,
       selectedBuild: "pulse",
+      buildArmed: false,
       selectedTower: null,
       hoverCell: null,
       towers: [],
@@ -1571,6 +1577,7 @@
       repairTimer: def.repairCooldown || 0
     });
     state.selectedTower = state.towers[state.towers.length - 1];
+    state.buildArmed = false;
     playSound("build");
     updateUi();
   }
@@ -1602,6 +1609,24 @@
       carryScore: false
     });
     playSound("click");
+  }
+
+  function closeGame() {
+    state.paused = true;
+    state.buildArmed = false;
+    state.selectedTower = null;
+    document.body.classList.add("game-closed");
+    ui.closedScreen.classList.remove("hidden");
+    playSound("click");
+    updateUi();
+  }
+
+  function reopenGame() {
+    document.body.classList.remove("game-closed");
+    ui.closedScreen.classList.add("hidden");
+    resizeCanvas();
+    showBanner("游戏已重新打开，点击继续恢复战局。");
+    updateUi();
   }
 
   function enterNextTheme() {
@@ -2259,7 +2284,7 @@
   }
 
   function drawBuildPads() {
-    if (state.selectedTower || state.ended || !towerUnlocked(state.selectedBuild)) return;
+    if (!state.buildArmed || state.selectedTower || state.ended || !towerUnlocked(state.selectedBuild)) return;
     if (!state.hoverCell || !canUseAsTowerPad(state.hoverCell)) return;
     const def = towerDef(state.selectedBuild);
     const p = gridToWorld(state.hoverCell.cx, state.hoverCell.cy);
@@ -2274,11 +2299,6 @@
     ctx.fill();
     ctx.stroke();
 
-    ctx.globalAlpha = ok ? 0.14 : 0.08;
-    ctx.fillStyle = ok ? def.color : "rgba(255, 101, 125, 0.8)";
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, def.range, 0, Math.PI * 2);
-    ctx.fill();
     ctx.restore();
   }
 
@@ -2706,11 +2726,6 @@
         ctx.save();
         ctx.scale(enemy.facing || 1, 1);
         ctx.drawImage(sprite, -size / 2, -size + 14, size, size);
-        if (chapter.enemyTint) {
-          ctx.globalCompositeOperation = "source-atop";
-          ctx.fillStyle = chapter.enemyTint;
-          ctx.fillRect(-size / 2, -size + 14, size, size);
-        }
         ctx.restore();
         if (chapter.id !== "ancient" && !enemy.boss) {
           ctx.strokeStyle = chapter.id === "glacier" ? "rgba(190, 245, 255, 0.74)" : "rgba(255, 126, 58, 0.72)";
@@ -3007,11 +3022,16 @@
     const tower = pickTower(cell);
     if (tower) {
       state.selectedTower = tower;
+      state.buildArmed = false;
       updateUi();
       return;
     }
     state.selectedTower = null;
-    buildTower(cell);
+    if (state.buildArmed) {
+      buildTower(cell);
+      return;
+    }
+    updateUi();
   });
 
   canvas.addEventListener("dragover", event => {
@@ -3026,6 +3046,7 @@
     unlockAudio();
     const towerId = event.dataTransfer.getData("text/plain");
     if (towers[towerId]) state.selectedBuild = towerId;
+    state.buildArmed = true;
     state.selectedTower = null;
     const point = pointerToWorld(event);
     state.hoverCell = worldToCell(point.x, point.y);
@@ -3084,6 +3105,8 @@
     updateUi();
   });
   ui.restartBtn.addEventListener("click", restart);
+  ui.closeBtn.addEventListener("click", closeGame);
+  ui.reopenBtn.addEventListener("click", reopenGame);
   ui.nextThemeBtn.addEventListener("click", () => {
     unlockAudio();
     if (!state.won) return;
@@ -3114,9 +3137,25 @@
   window.addEventListener("resize", resizeCanvas);
   window.addEventListener("keydown", event => {
     if (event.target && ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)) return;
-    if (event.key === "1") state.selectedBuild = "pulse";
-    if (event.key === "2") state.selectedBuild = "frost";
-    if (event.key === "3") state.selectedBuild = "arc";
+    if (event.key === "1") {
+      state.selectedBuild = "pulse";
+      state.buildArmed = true;
+      state.selectedTower = null;
+    }
+    if (event.key === "2") {
+      state.selectedBuild = "frost";
+      state.buildArmed = true;
+      state.selectedTower = null;
+    }
+    if (event.key === "3") {
+      state.selectedBuild = "arc";
+      state.buildArmed = true;
+      state.selectedTower = null;
+    }
+    if (event.key === "Escape") {
+      state.buildArmed = false;
+      state.selectedTower = null;
+    }
     if (event.code === "Space") {
       event.preventDefault();
       startWave();
