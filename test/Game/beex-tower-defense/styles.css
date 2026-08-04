@@ -114,13 +114,13 @@ input::placeholder {
 }
 
 .shell {
-  width: min(1780px, 100%);
+  width: min(1920px, 100%);
   margin: 0 auto;
-  padding: 14px;
+  padding: 10px;
 }
 
 .game-card {
-  min-height: calc(100vh - 36px);
+  min-height: calc(100vh - 20px);
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
@@ -134,8 +134,8 @@ input::placeholder {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 18px 20px;
+  gap: 12px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--line);
   background:
     linear-gradient(90deg, rgba(89, 20, 13, 0.9), rgba(42, 87, 55, 0.7)),
@@ -162,14 +162,14 @@ h1 {
   gap: 12px;
   margin-bottom: 0;
   color: #fff5d4;
-  font-size: clamp(25px, 3vw, 43px);
+  font-size: clamp(24px, 2.3vw, 36px);
   line-height: 1.05;
   text-shadow: 0 3px 0 rgba(58, 20, 7, 0.72), 0 8px 20px rgba(0, 0, 0, 0.36);
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   flex: 0 0 auto;
   border-radius: 999px;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.32);
@@ -197,7 +197,7 @@ h2 img {
   display: grid;
   grid-template-columns: repeat(4, minmax(82px, 1fr));
   gap: 8px;
-  width: min(590px, 56vw);
+  width: min(560px, 54vw);
 }
 
 .stats span {
@@ -207,15 +207,15 @@ h2 img {
   align-items: center;
   border: 1px solid rgba(255, 224, 149, 0.25);
   border-radius: 8px;
-  padding: 9px 10px;
+  padding: 7px 9px;
   background: linear-gradient(180deg, rgba(72, 40, 20, 0.78), rgba(33, 20, 12, 0.78));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .stats img {
   grid-row: span 2;
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.36));
 }
 
@@ -226,7 +226,7 @@ h2 img {
 
 .stats b {
   color: #fff7df;
-  font: 900 22px/1 ui-sans-serif, system-ui, sans-serif;
+  font: 900 20px/1 ui-sans-serif, system-ui, sans-serif;
 }
 
 .stats small {
@@ -237,15 +237,17 @@ h2 img {
 
 .play-layout {
   display: grid;
-  grid-template-columns: minmax(560px, 1fr) minmax(540px, 680px);
-  gap: 14px;
-  padding: 14px;
+  grid-template-columns: minmax(0, 1fr) clamp(500px, 39vw, 640px);
+  gap: 10px;
+  padding: 10px;
   align-items: stretch;
 }
 
 .stage-wrap {
   position: relative;
-  height: clamp(620px, calc(100vh - 172px), 1040px);
+  height: calc(100vh - 128px);
+  min-height: 560px;
+  max-height: 920px;
   min-height: 0;
   border: 1px solid rgba(255, 220, 142, 0.28);
   border-radius: 8px;
@@ -276,7 +278,7 @@ canvas {
 .panel-section {
   border: 1px solid rgba(255, 224, 149, 0.28);
   border-radius: 8px;
-  padding: 12px;
+  padding: 10px;
   background:
     linear-gradient(180deg, rgba(105, 57, 25, 0.9), rgba(50, 29, 17, 0.92)),
     var(--panel);
@@ -300,7 +302,7 @@ canvas {
 }
 
 .build-panel .tower-list {
-  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .tower-list {
@@ -310,15 +312,15 @@ canvas {
 
 .tower-card {
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
+  grid-template-columns: 38px minmax(0, 1fr);
   grid-template-areas:
     "icon meta"
     "icon cost";
-  gap: 4px 9px;
+  gap: 3px 7px;
   align-items: center;
   width: 100%;
-  min-height: 70px;
-  padding: 9px;
+  min-height: 64px;
+  padding: 8px;
   text-align: left;
   background:
     linear-gradient(180deg, rgba(63, 101, 61, 0.78), rgba(48, 27, 15, 0.86)),
@@ -334,8 +336,8 @@ canvas {
 
 .tower-icon {
   grid-area: icon;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   border-radius: 8px;
   display: grid;
   place-items: center;
@@ -346,21 +348,23 @@ canvas {
 }
 
 .tower-icon img {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   display: block;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.32));
 }
 
 .power-card {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: 42px minmax(0, auto);
   gap: 9px;
   align-items: center;
+  justify-content: start;
 }
 
 .power-card p {
   margin: 0;
+  min-width: 0;
 }
 
 .power-card strong,
@@ -376,8 +380,9 @@ canvas {
 .power-card small {
   margin-top: 2px;
   color: #e7c98f;
-  font: 800 12px/1.32 ui-sans-serif, system-ui, sans-serif;
+  font: 800 12px/1.25 ui-sans-serif, system-ui, sans-serif;
   overflow-wrap: normal;
+  white-space: nowrap;
 }
 
 .power-icon {
@@ -398,14 +403,15 @@ canvas {
 
 .tower-meta strong {
   color: #fff6dc;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .tower-meta small {
   color: #e5c892;
   font-weight: 700;
   margin-top: 2px;
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.22;
 }
 
 .tower-cost {
@@ -546,7 +552,7 @@ canvas {
   display: none;
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 940px) {
   .play-layout {
     grid-template-columns: 1fr;
   }
@@ -557,11 +563,6 @@ canvas {
 }
 
 @media (max-width: 980px) {
-  .topbar,
-  .play-layout {
-    grid-template-columns: 1fr;
-  }
-
   .topbar {
     display: grid;
   }
@@ -570,17 +571,8 @@ canvas {
     width: 100%;
   }
 
-  .panel {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .build-panel {
-    grid-column: span 2;
-  }
-
-  .build-panel .tower-list {
-    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  .stats {
+    width: 100%;
   }
 }
 
