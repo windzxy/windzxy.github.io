@@ -338,6 +338,7 @@
     paused: false,
     speed: 1,
     ended: false,
+    won: false,
     powerUses: 0,
     dropsThisWave: 0,
     last: 0,
@@ -636,7 +637,8 @@
       ? `已發動 ${state.powerUses} 次。本波掉落 ${state.dropsThisWave} 次，看到金光要手動點擊。`
       : "低概率驚喜掉落，點擊即可全場齊射。";
     ui.startBtn.disabled = state.waveActive || state.ended || state.waveIndex >= wavePlan.length;
-    setActionButton(ui.startBtn, "start", "迎敵");
+    setActionButton(ui.startBtn, "start", state.ended ? (state.won ? "已通關" : "已失守") : "迎敵");
+    ui.pauseBtn.disabled = state.ended;
     setActionButton(ui.pauseBtn, "pause", state.paused ? "繼續" : "暫停");
     setActionButton(ui.speedBtn, "speed", `${state.speed === 1 ? "一" : state.speed === 2 ? "二" : "三"}倍速度`);
     setActionButton(ui.soundBtn, "sound", audio.muted ? "靜音" : "音效");
@@ -663,10 +665,10 @@
   }
 
   function showBanner(text, persist = false) {
+    window.clearTimeout(showBanner.timer);
     ui.banner.textContent = text;
     ui.banner.classList.remove("hidden");
     if (!persist) {
-      window.clearTimeout(showBanner.timer);
       showBanner.timer = window.setTimeout(() => ui.banner.classList.add("hidden"), 1500);
     }
   }
@@ -733,6 +735,7 @@
       paused: false,
       speed: 1,
       ended: false,
+      won: false,
       powerUses: 0,
       dropsThisWave: 0,
       last: performance.now(),
@@ -891,7 +894,9 @@
   }
 
   function endGame(win) {
+    if (state.ended) return;
     state.ended = true;
+    state.won = win;
     state.waveActive = false;
     const bonus = win ? state.lives * 35 + state.energy * 2 : 0;
     state.score += bonus;
@@ -899,7 +904,7 @@
     localStorage.setItem("beexTdBest", String(state.best));
     saveLocalScore();
     playSound(win ? "win" : "lose");
-    showBanner(win ? `守城大捷！戰功 ${state.score}` : `城門失守。戰功 ${state.score}`, true);
+    showBanner(win ? `守城大捷！戰功 ${state.score}。可提交榜單或重開新地圖。` : `城門失守。戰功 ${state.score}。可提交榜單或重開。`, true);
     updateUi();
   }
 
@@ -1344,6 +1349,11 @@
 
   canvas.addEventListener("pointerdown", event => {
     unlockAudio();
+    if (state.ended) {
+      playSound("deny");
+      showBanner(state.won ? "已通關，請提交榜單或重開新地圖。" : "戰局已結束，請提交榜單或重開。", true);
+      return;
+    }
     const point = pointerToWorld(event);
     const drop = pickDrop(point);
     if (drop) {
