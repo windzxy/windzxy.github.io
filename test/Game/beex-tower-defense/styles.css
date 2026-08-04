@@ -88,10 +88,14 @@ button img {
   width: 24px;
   height: 24px;
   flex: 0 0 auto;
-  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.32));
+  filter:
+    saturate(1.1)
+    drop-shadow(0 3px 4px rgba(0, 0, 0, 0.32))
+    drop-shadow(0 0 6px rgba(255, 227, 150, 0.26));
 }
 
-input {
+input,
+select {
   width: 100%;
   border: 1px solid rgba(255, 224, 149, 0.36);
   border-radius: 8px;
@@ -104,13 +108,23 @@ input {
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.22);
 }
 
-input:focus {
+input:focus,
+select:focus {
   border-color: rgba(255, 229, 150, 0.9);
   box-shadow: 0 0 0 3px rgba(255, 216, 120, 0.14), inset 0 2px 8px rgba(0, 0, 0, 0.22);
 }
 
 input::placeholder {
   color: rgba(234, 210, 165, 0.58);
+}
+
+select {
+  appearance: none;
+  cursor: pointer;
+  background:
+    linear-gradient(45deg, transparent 50%, #ffe5a0 50%) calc(100% - 18px) 17px / 7px 7px no-repeat,
+    linear-gradient(135deg, #ffe5a0 50%, transparent 50%) calc(100% - 12px) 17px / 7px 7px no-repeat,
+    rgba(32, 17, 9, 0.72);
 }
 
 .shell {
@@ -189,7 +203,9 @@ h2 {
 h2 img {
   width: 20px;
   height: 20px;
-  filter: drop-shadow(0 2px 2px rgba(72, 31, 8, 0.32));
+  filter:
+    drop-shadow(0 2px 2px rgba(72, 31, 8, 0.32))
+    drop-shadow(0 0 7px rgba(255, 240, 185, 0.48));
 }
 
 .stats {
@@ -209,13 +225,27 @@ h2 img {
   padding: 7px 9px;
   background: linear-gradient(180deg, rgba(72, 40, 20, 0.78), rgba(33, 20, 12, 0.78));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats span::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.14), transparent 42%);
+  pointer-events: none;
 }
 
 .stats img {
   grid-row: span 2;
   width: 30px;
   height: 30px;
-  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.36));
+  filter:
+    saturate(1.12)
+    drop-shadow(0 4px 5px rgba(0, 0, 0, 0.36))
+    drop-shadow(0 0 8px rgba(255, 216, 120, 0.22));
 }
 
 .stats b,
@@ -357,14 +387,35 @@ canvas {
   background: radial-gradient(circle at 38% 24%, #ffeec4, #7c3d1e 64%, #2b130a);
   box-shadow:
     inset 0 2px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -4px 9px rgba(41, 15, 5, 0.34),
+    0 0 0 1px rgba(255, 231, 162, 0.32),
     0 8px 16px rgba(0, 0, 0, 0.28);
+  position: relative;
+  overflow: hidden;
+}
+
+.tower-icon::after {
+  content: "";
+  position: absolute;
+  inset: 5px 7px auto;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.26);
+  filter: blur(0.3px);
+  pointer-events: none;
 }
 
 .tower-icon img {
   width: 34px;
   height: 34px;
   display: block;
-  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.32));
+  filter:
+    saturate(1.12)
+    contrast(1.03)
+    drop-shadow(0 4px 4px rgba(0, 0, 0, 0.32))
+    drop-shadow(0 0 6px rgba(255, 231, 162, 0.22));
+  position: relative;
+  z-index: 1;
 }
 
 .power-card {
@@ -497,13 +548,15 @@ canvas {
   font: 900 13px ui-sans-serif, system-ui, sans-serif;
 }
 
-.player-field {
+.player-field,
+.difficulty-field {
   display: grid;
   gap: 7px;
   margin-bottom: 10px;
 }
 
-.player-field span {
+.player-field span,
+.difficulty-field span {
   color: #f2dca8;
   font: 900 12px ui-sans-serif, system-ui, sans-serif;
 }
