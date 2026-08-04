@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/icons/brand-beex.svg">
   <link rel="alternate icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20260804-layout8">
+  <link rel="stylesheet" href="styles.css?v=20260804-layout9">
 </head>
 <body>
   <main class="shell">
@@ -40,6 +40,17 @@
         </div>
 
         <aside class="panel" aria-label="戰場面板">
+          <section class="panel-section command-panel">
+            <h2><img src="assets/icons/stat-wave.svg" alt="">戰令</h2>
+            <div class="button-grid">
+              <button id="startBtn" type="button"><img src="assets/icons/action-start.svg" alt="">迎敵</button>
+              <button id="pauseBtn" type="button"><img src="assets/icons/action-pause.svg" alt="">暫停</button>
+              <button id="speedBtn" type="button"><img src="assets/icons/action-speed.svg" alt="">一倍速度</button>
+              <button id="soundBtn" type="button"><img src="assets/icons/action-sound.svg" alt="">音效</button>
+              <button id="restartBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">重開</button>
+            </div>
+          </section>
+
           <section class="panel-section build-panel">
             <h2><img src="assets/icons/panel-build.svg" alt="">建造</h2>
             <div class="tower-list" id="towerList"></div>
@@ -54,14 +65,13 @@
             </div>
           </section>
 
-          <section class="panel-section">
-            <h2><img src="assets/icons/stat-wave.svg" alt="">戰令</h2>
-            <div class="button-grid">
-              <button id="startBtn" type="button"><img src="assets/icons/action-start.svg" alt="">迎敵</button>
-              <button id="pauseBtn" type="button"><img src="assets/icons/action-pause.svg" alt="">暫停</button>
-              <button id="speedBtn" type="button"><img src="assets/icons/action-speed.svg" alt="">一倍速度</button>
-              <button id="soundBtn" type="button"><img src="assets/icons/action-sound.svg" alt="">音效</button>
-              <button id="restartBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">重開</button>
+          <section class="panel-section compact power-panel">
+            <h2><img src="assets/icons/panel-drop.svg" alt="">驚喜掉落</h2>
+            <div class="power-card">
+              <p>
+                <span class="power-title-row"><span class="tower-icon power-icon"><img src="assets/towers/weapon-bee-crossbow.png" alt=""></span><strong>蜂鳴神弩</strong></span>
+                <small id="powerStatus">低概率驚喜掉落，點擊即可全場齊射。</small>
+              </p>
             </div>
           </section>
 
@@ -98,28 +108,17 @@
             <p class="record">最高戰功：<span id="bestScore">0</span></p>
           </section>
 
-          <div class="bottom-strip">
-            <section class="panel-section compact power-panel">
-              <h2><img src="assets/icons/panel-drop.svg" alt="">驚喜掉落</h2>
-              <div class="power-card">
-                <p>
-                  <span class="power-title-row"><span class="tower-icon power-icon"><img src="assets/icons/weapon-bee-crossbow.svg" alt=""></span><strong>蜂鳴神弩</strong></span>
-                  <small id="powerStatus">低概率驚喜掉落，點擊即可全場齊射。</small>
-                </p>
-              </div>
-            </section>
-
-            <section class="panel-section compact advisor-panel">
-              <h2><img src="assets/icons/stat-score.svg" alt="">軍師提示</h2>
-              <p class="tip-line"><span>每局官道與地貌都會變化：彎道放寒玉蓮，直線放神機弩，敵人密集時補雷鼓臺。城防歸零則失守。</span></p>
-            </section>
-          </div>
+          <section class="panel-section compact advisor-panel">
+            <h2><img src="assets/icons/stat-score.svg" alt="">軍師提示</h2>
+            <p class="tip-line"><span>每局官道與地貌都會變化：彎道放寒玉蓮，直線放神機弩，敵人密集時補雷鼓臺。城防歸零則失守。</span></p>
+          </section>
         </aside>
       </div>
     </section>
   </main>
 
-  <script src="src/landmarks.js?v=20260804-layout8"></script>
-  <script src="src/game.js?v=20260804-layout8"></script>
+  <script src="src/landmarks.js?v=20260804-layout9"></script>
+  <script src="src/sprites.js?v=20260804-layout9"></script>
+  <script src="src/game.js?v=20260804-layout9"></script>
 </body>
 </html>
