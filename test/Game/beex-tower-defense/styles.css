@@ -248,7 +248,6 @@ h2 img {
   height: calc(100vh - 128px);
   min-height: 560px;
   max-height: 920px;
-  min-height: 0;
   border: 1px solid rgba(255, 220, 142, 0.28);
   border-radius: 8px;
   background:
