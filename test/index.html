@@ -3,22 +3,157 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Windzxy Test</title>
+  <title>Test</title>
   <style>
-    :root { color-scheme: dark; --bg:#07111f; --card:#0f2238; --line:rgba(145,170,194,.22); --text:#ecf8ff; --muted:#91aac2; --mint:#66f2c2; }
-    * { box-sizing: border-box; }
-    body { margin:0; min-height:100vh; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--text); background: radial-gradient(circle at 20% 10%, rgba(86,216,255,.2), transparent 35%), linear-gradient(135deg,#07111f,#0d2035); display:grid; place-items:center; padding:24px; }
-    main { width:min(760px,100%); border:1px solid var(--line); border-radius:8px; background:rgba(15,34,56,.82); padding:24px; box-shadow:0 24px 80px rgba(0,0,0,.32); }
-    h1 { margin:0 0 8px; font-size:clamp(28px,5vw,48px); }
-    p { color:var(--muted); line-height:1.7; }
-    a { display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border:1px solid rgba(102,242,194,.36); border-radius:8px; color:#07111f; background:linear-gradient(180deg,#66f2c2,#56d8ff); font-weight:850; text-decoration:none; }
+    :root {
+      color-scheme: light;
+      --text: #172033;
+      --muted: rgba(23, 32, 51, 0.62);
+      --glass: rgba(255, 255, 255, 0.34);
+      --line: rgba(255, 255, 255, 0.58);
+      --shadow: 0 28px 90px rgba(58, 83, 122, 0.24);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.72), transparent 26%),
+        radial-gradient(circle at 82% 12%, rgba(255, 255, 255, 0.42), transparent 24%),
+        linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      overflow: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 46vmin;
+      aspect-ratio: 1;
+      border-radius: 999px;
+      pointer-events: none;
+      filter: blur(6px);
+      opacity: 0.72;
+    }
+
+    body::before {
+      left: -13vmin;
+      bottom: -10vmin;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+    }
+
+    body::after {
+      right: -12vmin;
+      top: -12vmin;
+      background: linear-gradient(135deg, #fddb92, #d1fdff);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(860px, 100%);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    a {
+      min-height: 230px;
+      display: grid;
+      align-content: space-between;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      color: inherit;
+      text-decoration: none;
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px) saturate(1.18);
+      -webkit-backdrop-filter: blur(22px) saturate(1.18);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+      overflow: hidden;
+    }
+
+    a:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 34px 110px rgba(58, 83, 122, 0.32);
+    }
+
+    a::before {
+      content: "";
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 18px 36px rgba(74, 94, 128, 0.18);
+    }
+
+    a::after {
+      content: "";
+      justify-self: start;
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, rgba(23, 32, 51, 0.18), rgba(23, 32, 51, 0.06)),
+        rgba(255, 255, 255, 0.46);
+    }
+
+    strong {
+      display: block;
+      margin: 26px 0 18px;
+      font-size: clamp(44px, 9vw, 82px);
+      line-height: 0.94;
+      letter-spacing: 0;
+    }
+
+    .game {
+      background:
+        radial-gradient(circle at 78% 22%, rgba(255, 255, 255, 0.64), transparent 26%),
+        linear-gradient(135deg, rgba(255, 236, 210, 0.74), rgba(252, 182, 159, 0.46));
+    }
+
+    .html {
+      background:
+        radial-gradient(circle at 82% 24%, rgba(255, 255, 255, 0.62), transparent 28%),
+        linear-gradient(135deg, rgba(137, 247, 254, 0.68), rgba(102, 166, 255, 0.44));
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 18px;
+        overflow: auto;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      a {
+        min-height: 190px;
+        border-radius: 16px;
+      }
+    }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Windzxy Test</h1>
-    <p>公開測試入口。遊戲已同步到 GitHub Pages 可訪問路徑。</p>
-    <a href="./Game/beex-tower-defense/">Open BeeX Tower Defense</a>
+  <main aria-label="Branch">
+    <a class="game" href="./Game/"><strong>Game</strong></a>
+    <a class="html" href="./Html/"><strong>Html</strong></a>
   </main>
 </body>
 </html>
