@@ -23,6 +23,12 @@
     leaderboardList: document.getElementById("leaderboardList"),
     leaderboardHint: document.getElementById("leaderboardHint"),
     powerStatus: document.getElementById("powerStatus"),
+    themeStatus: document.getElementById("themeStatus"),
+    chapterGate: document.getElementById("chapterGate"),
+    chapterGateTitle: document.getElementById("chapterGateTitle"),
+    chapterGateText: document.getElementById("chapterGateText"),
+    nextThemeBtn: document.getElementById("nextThemeBtn"),
+    stayThemeBtn: document.getElementById("stayThemeBtn"),
     banner: document.getElementById("banner")
   };
 
@@ -61,6 +67,105 @@
   const powerFiles = {
     beeCrossbow: "assets/icons/weapon-bee-crossbow.svg"
   };
+  const chapters = [
+    {
+      id: "ancient",
+      name: "古城山河",
+      gate: "蜂巢城門",
+      enemyCamp: "敵營",
+      weather: "晴嵐",
+      weatherKind: "breeze",
+      status: "標準地形，攻守均衡。",
+      enemyTint: "rgba(255, 220, 130, 0.1)",
+      enemyHp: 1,
+      enemySpeed: 1,
+      reward: 1,
+      towerBoosts: {},
+      towers: {
+        pulse: { name: "神機弩", color: "#ffd878", effect: "遠距離單體輸出" },
+        frost: { name: "寒玉蓮", color: "#9fe8ff", effect: "寒氣減速控制" },
+        arc: { name: "雷鼓臺", color: "#ffcf5d", effect: "雷擊連鎖傷害" }
+      },
+      theme: {
+        sky: ["#8fc9d8", "#dce9c4", "#91bd68", "#789b52"],
+        far: ["#6e8f7f", "#3f5d49"],
+        field: "#91b866",
+        road: ["#5f391b", "#b47a3a", "#d1a55f"],
+        river: ["#39748e", "#a8e2ea"],
+        blocker: ["rgba(69, 65, 42, 0.72)", "rgba(47, 103, 58, 0.86)", "rgba(38, 91, 52, 0.78)"],
+        sun: "rgba(255, 230, 156, 0.48)",
+        gate: ["#9b5528", "#ca3c25"]
+      }
+    },
+    {
+      id: "glacier",
+      name: "冰川寒原",
+      gate: "冰晶要塞",
+      enemyCamp: "雪原敵哨",
+      weather: "暴雪",
+      weatherKind: "snow",
+      status: "敵軍稍慢但更耐打，寒玉蓮控制更強。",
+      enemyTint: "rgba(120, 220, 255, 0.24)",
+      enemyHp: 1.12,
+      enemySpeed: 0.92,
+      reward: 1.08,
+      towerBoosts: {
+        frost: { slow: 0.43, slowTime: 1.8, damageMod: 1.12 },
+        pulse: { rangeMod: 0.96 },
+        arc: { cooldownMod: 1.04 }
+      },
+      towers: {
+        pulse: { name: "破冰弩", color: "#bfefff", effect: "破冰遠射，射程略短" },
+        frost: { name: "霜晶蓮", color: "#d4fbff", effect: "暴雪增幅，減速更久" },
+        arc: { name: "極光鼓", color: "#a8d8ff", effect: "極光連鎖，節奏略慢" }
+      },
+      theme: {
+        sky: ["#b7e6ff", "#e8f7ff", "#bcd7d9", "#8eb4c4"],
+        far: ["#b8d7e8", "#6f8fa4"],
+        field: "#b8d6c9",
+        road: ["#405b68", "#8fb6c4", "#d6edf1"],
+        river: ["#5a94bf", "#d6fbff"],
+        blocker: ["rgba(113, 136, 146, 0.78)", "rgba(220, 245, 255, 0.82)", "rgba(142, 188, 202, 0.84)"],
+        sun: "rgba(238, 251, 255, 0.38)",
+        gate: ["#7397a7", "#dff8ff"]
+      }
+    },
+    {
+      id: "volcano",
+      name: "火山熔境",
+      gate: "黑曜城門",
+      enemyCamp: "熔岩敵陣",
+      weather: "火山灰",
+      weatherKind: "ember",
+      status: "敵軍更快更硬，擊殺糧草更多，雷鼓臺爆發更強。",
+      enemyTint: "rgba(255, 98, 42, 0.22)",
+      enemyHp: 1.18,
+      enemySpeed: 1.1,
+      reward: 1.16,
+      towerBoosts: {
+        pulse: { damageMod: 1.08 },
+        frost: { slow: 0.56, slowTime: 1.18 },
+        arc: { damageMod: 1.2, cooldownMod: 0.92 }
+      },
+      towers: {
+        pulse: { name: "熔芯弩", color: "#ffb15c", effect: "高溫弩矢，單體更痛" },
+        frost: { name: "灰燼蓮", color: "#ffcf9a", effect: "灰霧緩速，控制較短" },
+        arc: { name: "火山雷鼓", color: "#ff6a3d", effect: "熔雷連鎖，爆發更強" }
+      },
+      theme: {
+        sky: ["#3a1c1b", "#8a3b24", "#b45c2a", "#614123"],
+        far: ["#6e3430", "#2d2521"],
+        field: "#7c6841",
+        road: ["#2f1a14", "#8a4a25", "#d07438"],
+        river: ["#7d251d", "#ff9c3d"],
+        blocker: ["rgba(70, 47, 41, 0.86)", "rgba(129, 64, 35, 0.88)", "rgba(219, 82, 38, 0.72)"],
+        sun: "rgba(255, 94, 38, 0.32)",
+        gate: ["#4d3229", "#ff693a"]
+      }
+    }
+  ];
+  let activeChapterIndex = 0;
+  let wavePlan = [];
 
   function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -68,6 +173,34 @@
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
+  }
+
+  function currentChapter() {
+    return chapters[activeChapterIndex] || chapters[0];
+  }
+
+  function towerDef(type) {
+    const base = towers[type];
+    const chapter = currentChapter();
+    const skin = chapter.towers[type] || {};
+    return { ...base, ...skin, id: base.id, icon: base.icon };
+  }
+
+  function towerBoost(type) {
+    return currentChapter().towerBoosts[type] || {};
+  }
+
+  function createWavePlan(level) {
+    const chapter = currentChapter();
+    const levelBoost = 1 + (level - 1) * 0.17;
+    return Array.from({ length: 12 }, (_, i) => ({
+      count: 8 + i * 2 + Math.floor((level - 1) * 1.4),
+      hp: Math.round((50 + i * 17 + Math.max(0, i - 6) * 12) * levelBoost * chapter.enemyHp),
+      speed: (48 + i * 3 + Math.max(0, level - 1) * 1.6) * chapter.enemySpeed,
+      reward: Math.round((13 + Math.floor(i / 2) + Math.floor((level - 1) / 2)) * chapter.reward),
+      spawnGap: Math.max(0.42, 0.9 - i * 0.025 - (level - 1) * 0.012),
+      swarm: i > 7 || level > 2 ? 2 : 1
+    }));
   }
 
   function expandAnchors(anchors) {
@@ -131,26 +264,24 @@
   }
 
   function createBattlefield() {
-    const themes = [
-      { sky: ["#8fc9d8", "#dce9c4", "#91bd68", "#789b52"], far: ["#6e8f7f", "#3f5d49"], field: "#91b866", road: ["#5f391b", "#b47a3a", "#d1a55f"], river: ["#39748e", "#a8e2ea"] },
-      { sky: ["#d8b47f", "#f0d1a4", "#a4aa62", "#87724a"], far: ["#8b7253", "#5a4a37"], field: "#a9a665", road: ["#6f451f", "#bd8540", "#dec072"], river: ["#4e8693", "#b5e7e8"] },
-      { sky: ["#8fb5de", "#d7e5ef", "#77a16e", "#526f4d"], far: ["#627990", "#40505d"], field: "#7ea266", road: ["#533820", "#9f7442", "#c6a061"], river: ["#315f95", "#91c7ee"] }
-    ];
+    const chapter = currentChapter();
     const nextPathCells = createRoute();
     const nextPathSet = new Set(nextPathCells.map(([x, y]) => `${x},${y}`));
     return {
-      theme: themes[randInt(0, themes.length - 1)],
+      theme: chapter.theme,
       pathCells: nextPathCells,
       pathSet: nextPathSet,
       blockedSet: createBlockedCells(nextPathSet),
       mountainShift: randInt(-34, 34),
       riverShift: randInt(-28, 28),
+      weatherSeed: Math.random() * 1000,
       fieldMarks: Array.from({ length: 5 }, () => [randInt(80, 980), randInt(285, 650), randInt(110, 210), randInt(30, 62), (Math.random() - 0.5) * 0.34]),
       trees: Array.from({ length: 46 }, (_, i) => [(i * randInt(61, 91)) % W, 228 + ((i * randInt(43, 69)) % 430)])
     };
   }
 
-  function resetBattlefield() {
+  function resetBattlefield(chapterIndex = activeChapterIndex) {
+    activeChapterIndex = chapterIndex;
     battlefield = createBattlefield();
     pathCells = battlefield.pathCells;
     pathSet = battlefield.pathSet;
@@ -305,18 +436,13 @@
     }
   };
 
-  const wavePlan = Array.from({ length: 12 }, (_, i) => ({
-    count: 8 + i * 2,
-    hp: 50 + i * 17 + Math.max(0, i - 6) * 12,
-    speed: 48 + i * 3,
-    reward: 13 + Math.floor(i / 2),
-    spawnGap: Math.max(0.48, 0.9 - i * 0.025),
-    swarm: i > 7 ? 2 : 1
-  }));
+  wavePlan = createWavePlan(1);
 
   const state = {
     energy: 240,
     lives: 24,
+    chapterIndex: 0,
+    chapterLevel: 1,
     waveIndex: 0,
     score: 0,
     best: Number(localStorage.getItem("beexTdBest") || 0),
@@ -339,6 +465,7 @@
     speed: 1,
     ended: false,
     won: false,
+    readyForNextTheme: false,
     powerUses: 0,
     dropsThisWave: 0,
     last: 0,
@@ -364,7 +491,7 @@
   }
 
   function scoreKey() {
-    return `${state.playerName}:${state.score}:${state.waveIndex}:${state.lives}:${state.energy}`;
+    return `${state.playerName}:${state.score}:${state.chapterLevel}:${state.chapterIndex}:${state.waveIndex}:${state.lives}:${state.energy}`;
   }
 
   function saveLocalScore() {
@@ -373,6 +500,7 @@
       name,
       score: state.score,
       wave: Math.min(state.waveIndex + 1, wavePlan.length),
+      chapter: `${currentChapter().name} ${state.chapterLevel}`,
       lives: Math.max(0, state.lives),
       energy: state.energy,
       time: new Date().toISOString()
@@ -448,6 +576,8 @@
       "代碼: beex-tower-defense",
       `玩家: ${state.playerName}`,
       `戰功: ${state.score}`,
+      `主題: ${currentChapter().name}`,
+      `周目: ${state.chapterLevel}`,
       `波次: ${Math.min(state.waveIndex + 1, wavePlan.length)}`,
       `城防: ${Math.max(0, state.lives)}`,
       `糧草: ${state.energy}`,
@@ -500,7 +630,7 @@
   function canBuild(cell) {
     if (!cell) return false;
     if (pathSet.has(cell.key) || blockedSet.has(cell.key) || cellHasTower(cell.key)) return false;
-    return state.energy >= towers[state.selectedBuild].cost;
+    return state.energy >= towerDef(state.selectedBuild).cost;
   }
 
   function makeEnemy(index) {
@@ -579,26 +709,27 @@
   }
 
   function towerStats(t) {
-    const base = towers[t.type];
+    const base = towerDef(t.type);
+    const boost = towerBoost(t.type);
     const level = t.level;
     return {
-      range: base.range + (level - 1) * 15,
-      damage: Math.round(base.damage * (1 + (level - 1) * 0.45)),
-      cooldown: Math.max(0.22, base.cooldown * (1 - (level - 1) * 0.1)),
-      slow: base.slow,
-      slowTime: base.slowTime,
+      range: Math.round((base.range + (level - 1) * 15) * (boost.rangeMod || 1)),
+      damage: Math.round(base.damage * (boost.damageMod || 1) * (1 + (level - 1) * 0.45)),
+      cooldown: Math.max(0.22, base.cooldown * (boost.cooldownMod || 1) * (1 - (level - 1) * 0.1)),
+      slow: boost.slow || base.slow,
+      slowTime: boost.slowTime || base.slowTime,
       chain: base.chain ? base.chain + level - 1 : 0
     };
   }
 
   function upgradeCost(t) {
-    return Math.round(towers[t.type].cost * (0.72 + t.level * 0.5));
+    return Math.round(towerDef(t.type).cost * (0.72 + t.level * 0.5));
   }
 
   function sellValue(t) {
-    let spent = towers[t.type].cost;
+    let spent = towerDef(t.type).cost;
     for (let i = 1; i < t.level; i++) {
-      spent += Math.round(towers[t.type].cost * (0.72 + i * 0.5));
+      spent += Math.round(towerDef(t.type).cost * (0.72 + i * 0.5));
     }
     return Math.floor(spent * 0.68);
   }
@@ -606,13 +737,14 @@
   function renderTowerButtons() {
     ui.towerList.innerHTML = "";
     Object.values(towers).forEach(tower => {
+      const def = towerDef(tower.id);
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = `tower-card ${state.selectedBuild === tower.id ? "active" : ""}`;
       btn.innerHTML = `
-        <span class="tower-icon"><img src="${iconFiles[tower.icon]}" alt=""></span>
-        <span class="tower-meta"><strong>${tower.name}</strong><small>${tower.effect}</small></span>
-        <span class="tower-cost">${tower.cost} 糧</span>
+        <span class="tower-icon"><img src="${iconFiles[def.icon]}" alt=""></span>
+        <span class="tower-meta"><strong>${def.name}</strong><small>${def.effect}</small></span>
+        <span class="tower-cost">${def.cost} 糧</span>
       `;
       btn.addEventListener("click", () => {
         state.selectedBuild = tower.id;
@@ -628,11 +760,13 @@
   }
 
   function updateUi() {
+    const chapter = currentChapter();
     ui.energy.textContent = state.energy;
     ui.lives.textContent = state.lives;
     ui.wave.textContent = `${Math.min(state.waveIndex + 1, wavePlan.length)}/${wavePlan.length}`;
     ui.score.textContent = state.score;
     ui.bestScore.textContent = state.best;
+    ui.themeStatus.textContent = `第 ${state.chapterLevel} 主題｜${chapter.name}｜${chapter.weather}：${chapter.status}`;
     ui.powerStatus.textContent = state.powerUses > 0
       ? `已發動 ${state.powerUses} 次。本波掉落 ${state.dropsThisWave} 次，看到金光要手動點擊。`
       : "低概率驚喜掉落，點擊即可全場齊射。";
@@ -646,7 +780,7 @@
     ui.submitScoreBtn.disabled = !state.ended || state.score <= 0 || scoreKey() === state.scoreSubmittedFor;
     if (state.selectedTower) {
       const t = state.selectedTower;
-      const def = towers[t.type];
+      const def = towerDef(t.type);
       const cost = upgradeCost(t);
       ui.selectedText.textContent = `${def.name} ${t.level}級｜攻擊 ${towerStats(t).damage}｜拆除返還 ${sellValue(t)}`;
       ui.upgradeBtn.disabled = t.level >= 4 || state.energy < cost;
@@ -654,7 +788,7 @@
       ui.sellBtn.disabled = false;
       setActionButton(ui.sellBtn, "sell", "拆除");
     } else {
-      const def = towers[state.selectedBuild];
+      const def = towerDef(state.selectedBuild);
       ui.selectedText.textContent = `準備建造 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。`;
       ui.upgradeBtn.disabled = true;
       setActionButton(ui.upgradeBtn, "upgrade", "升級");
@@ -673,8 +807,61 @@
     }
   }
 
+  function showChapterGate() {
+    const chapter = currentChapter();
+    const next = chapters[(state.chapterIndex + 1) % chapters.length];
+    ui.chapterGateTitle.textContent = `${chapter.name} 通關`;
+    ui.chapterGateText.textContent = `是否進入「${next.name}」？下一主題會生成新地圖、新天氣與更高難度。`;
+    setActionButton(ui.nextThemeBtn, "start", `進入 ${next.name}`);
+    setActionButton(ui.stayThemeBtn, "restart", "留在本主題");
+    ui.chapterGate.classList.remove("hidden");
+  }
+
+  function hideChapterGate() {
+    ui.chapterGate.classList.add("hidden");
+  }
+
+  function resetStateForChapter({ chapterIndex, chapterLevel, carryScore = false }) {
+    state.chapterIndex = chapterIndex;
+    state.chapterLevel = chapterLevel;
+    activeChapterIndex = chapterIndex;
+    resetBattlefield(chapterIndex);
+    wavePlan = createWavePlan(chapterLevel);
+    Object.assign(state, {
+      energy: 240 + Math.min(80, (chapterLevel - 1) * 20),
+      lives: 24 + Math.min(6, chapterLevel - 1),
+      waveIndex: 0,
+      score: carryScore ? state.score : 0,
+      selectedBuild: "pulse",
+      selectedTower: null,
+      hoverCell: null,
+      towers: [],
+      enemies: [],
+      drops: [],
+      shots: [],
+      sparks: [],
+      spawnTimer: 0,
+      spawned: 0,
+      waveActive: false,
+      paused: false,
+      speed: 1,
+      ended: false,
+      won: false,
+      readyForNextTheme: false,
+      powerUses: carryScore ? state.powerUses : 0,
+      dropsThisWave: 0,
+      last: performance.now(),
+      scoreSubmittedFor: carryScore ? state.scoreSubmittedFor : "",
+      shake: 0
+    });
+    hideChapterGate();
+    ui.banner.classList.add("hidden");
+    updateUi();
+    showBanner(`${currentChapter().name} 開戰：${currentChapter().weather}`);
+  }
+
   function buildTower(cell) {
-    const def = towers[state.selectedBuild];
+    const def = towerDef(state.selectedBuild);
     if (!canBuild(cell)) {
       state.shake = 0.18;
       playSound("deny");
@@ -715,36 +902,22 @@
   }
 
   function restart() {
-    resetBattlefield();
-    Object.assign(state, {
-      energy: 240,
-      lives: 24,
-      waveIndex: 0,
-      score: 0,
-      selectedBuild: "pulse",
-      selectedTower: null,
-      hoverCell: null,
-      towers: [],
-      enemies: [],
-      drops: [],
-      shots: [],
-      sparks: [],
-      spawnTimer: 0,
-      spawned: 0,
-      waveActive: false,
-      paused: false,
-      speed: 1,
-      ended: false,
-      won: false,
-      powerUses: 0,
-      dropsThisWave: 0,
-      last: performance.now(),
-      scoreSubmittedFor: "",
-      shake: 0
+    resetStateForChapter({
+      chapterIndex: state.chapterIndex,
+      chapterLevel: state.chapterLevel,
+      carryScore: false
     });
-    ui.banner.classList.add("hidden");
     playSound("click");
-    updateUi();
+  }
+
+  function enterNextTheme() {
+    const nextIndex = (state.chapterIndex + 1) % chapters.length;
+    resetStateForChapter({
+      chapterIndex: nextIndex,
+      chapterLevel: state.chapterLevel + 1,
+      carryScore: true
+    });
+    playSound("start");
   }
 
   function damageEnemy(enemy, amount, allowDrop = true) {
@@ -781,7 +954,7 @@
   }
 
   function fireTower(tower, target, stats) {
-    const def = towers[tower.type];
+    const def = towerDef(tower.type);
     if (tower.type === "arc") {
       const chainTargets = state.enemies
         .filter(e => e.alive && Math.hypot(e.x - target.x, e.y - target.y) <= 118)
@@ -897,6 +1070,7 @@
     if (state.ended) return;
     state.ended = true;
     state.won = win;
+    state.readyForNextTheme = win;
     state.waveActive = false;
     const bonus = win ? state.lives * 35 + state.energy * 2 : 0;
     state.score += bonus;
@@ -904,7 +1078,8 @@
     localStorage.setItem("beexTdBest", String(state.best));
     saveLocalScore();
     playSound(win ? "win" : "lose");
-    showBanner(win ? `守城大捷！戰功 ${state.score}。可提交榜單或重開新地圖。` : `城門失守。戰功 ${state.score}。可提交榜單或重開。`, true);
+    showBanner(win ? `守城大捷！戰功 ${state.score}。可選擇下一主題。` : `城門失守。戰功 ${state.score}。可提交榜單或重開。`, true);
+    if (win) showChapterGate();
     updateUi();
   }
 
@@ -912,6 +1087,7 @@
     ctx.save();
     ctx.translate(state.shake > 0 ? Math.sin(performance.now() / 22) * 3 : 0, 0);
     const theme = battlefield.theme;
+    const chapter = currentChapter();
 
     const sky = ctx.createLinearGradient(0, 0, 0, H);
     sky.addColorStop(0, theme.sky[0]);
@@ -921,7 +1097,7 @@
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, H);
 
-    ctx.fillStyle = "rgba(255, 230, 156, 0.48)";
+    ctx.fillStyle = theme.sun;
     ctx.beginPath();
     ctx.arc(88, 82, 44, 0, Math.PI * 2);
     ctx.fill();
@@ -999,16 +1175,16 @@
         const py = offset.y + y * tile;
         if (pathSet.has(key)) continue;
         if (blockedSet.has(key)) {
-          ctx.fillStyle = "rgba(69, 65, 42, 0.72)";
+          ctx.fillStyle = theme.blocker[0];
           ctx.beginPath();
           ctx.moveTo(px + 4, py + 38);
           ctx.lineTo(px + 20, py + 10);
           ctx.lineTo(px + 39, py + 38);
           ctx.closePath();
           ctx.fill();
-          ctx.fillStyle = "rgba(47, 103, 58, 0.86)";
+          ctx.fillStyle = theme.blocker[1];
           ctx.fillRect(px + 7, py + 33, 30, 7);
-          ctx.fillStyle = "rgba(38, 91, 52, 0.78)";
+          ctx.fillStyle = theme.blocker[2];
           for (let i = 0; i < 3; i++) {
             ctx.beginPath();
             ctx.moveTo(px + 12 + i * 9, py + 34);
@@ -1077,14 +1253,14 @@
 
     const gateX = path[path.length - 1].x + 8;
     const gateY = path[path.length - 1].y - 34;
-    ctx.fillStyle = "#9b5528";
+    ctx.fillStyle = theme.gate[0];
     ctx.strokeStyle = "#2d1409";
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.roundRect(gateX, gateY, 70, 62, 8);
     ctx.fill();
     ctx.stroke();
-    ctx.fillStyle = "#ca3c25";
+    ctx.fillStyle = theme.gate[1];
     ctx.beginPath();
     ctx.moveTo(gateX - 6, gateY);
     ctx.lineTo(gateX + 35, gateY - 28);
@@ -1098,12 +1274,62 @@
     battlefield.trees.forEach(([x, y]) => {
       if (pathSet.has(`${Math.floor((x - offset.x) / tile)},${Math.floor((y - offset.y) / tile)}`)) return;
       ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + 4, y - 16);
-      ctx.lineTo(x + 9, y);
+      if (chapter.id === "glacier") {
+        ctx.moveTo(x - 6, y);
+        ctx.lineTo(x + 3, y - 18);
+        ctx.lineTo(x + 12, y);
+      } else if (chapter.id === "volcano") {
+        ctx.moveTo(x - 7, y);
+        ctx.lineTo(x + 2, y - 18);
+        ctx.lineTo(x + 12, y);
+      } else {
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 4, y - 16);
+        ctx.lineTo(x + 9, y);
+      }
       ctx.closePath();
       ctx.fill();
     });
+    ctx.restore();
+  }
+
+  function drawWeather() {
+    const chapter = currentChapter();
+    const t = performance.now() / 1000 + battlefield.weatherSeed;
+    ctx.save();
+    if (chapter.weatherKind === "snow") {
+      ctx.fillStyle = "rgba(238, 252, 255, 0.82)";
+      for (let i = 0; i < 70; i++) {
+        const x = (i * 83 + t * 34 + Math.sin(t + i) * 26) % W;
+        const y = (i * 47 + t * 66) % H;
+        const r = 1.5 + (i % 4) * 0.7;
+        ctx.globalAlpha = 0.42 + (i % 5) * 0.08;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (chapter.weatherKind === "ember") {
+      for (let i = 0; i < 46; i++) {
+        const x = (i * 97 + Math.sin(t * 0.8 + i) * 90 + W) % W;
+        const y = (H - ((i * 53 + t * 82) % H));
+        ctx.globalAlpha = 0.32 + (i % 4) * 0.12;
+        ctx.fillStyle = i % 3 === 0 ? "#ffd27a" : "#ff743d";
+        ctx.beginPath();
+        ctx.ellipse(x, y, 2 + (i % 3), 5 + (i % 4), -0.35, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      ctx.strokeStyle = "rgba(255, 239, 170, 0.26)";
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 34; i++) {
+        const x = (i * 76 + t * 28) % W;
+        const y = 54 + ((i * 61 + Math.sin(t + i) * 18) % 520);
+        ctx.globalAlpha = 0.3 + (i % 4) * 0.08;
+        ctx.beginPath();
+        ctx.ellipse(x, y, 12, 5, 0.25, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
     ctx.restore();
   }
 
@@ -1119,7 +1345,7 @@
     ctx.lineWidth = 2;
     ctx.fillRect(px + 3, py + 3, tile - 6, tile - 6);
     ctx.strokeRect(px + 3, py + 3, tile - 6, tile - 6);
-    const def = towers[state.selectedBuild];
+    const def = towerDef(state.selectedBuild);
     ctx.beginPath();
     ctx.arc(px + tile / 2, py + tile / 2, def.range, 0, Math.PI * 2);
     ctx.fillStyle = ok ? "rgba(86, 216, 255, 0.045)" : "rgba(255, 101, 125, 0.035)";
@@ -1129,7 +1355,7 @@
 
   function drawTowers() {
     for (const tower of state.towers) {
-      const def = towers[tower.type];
+      const def = towerDef(tower.type);
       const selected = state.selectedTower === tower;
       const stats = towerStats(tower);
       ctx.save();
@@ -1188,6 +1414,7 @@
   }
 
   function drawEnemies() {
+    const chapter = currentChapter();
     for (const enemy of state.enemies) {
       const hp = Math.max(0, enemy.hp / enemy.maxHp);
       ctx.save();
@@ -1203,7 +1430,19 @@
         ctx.save();
         ctx.scale(enemy.facing || 1, 1);
         ctx.drawImage(sprite, -size / 2, -size + 14, size, size);
+        if (chapter.enemyTint) {
+          ctx.globalCompositeOperation = "source-atop";
+          ctx.fillStyle = chapter.enemyTint;
+          ctx.fillRect(-size / 2, -size + 14, size, size);
+        }
         ctx.restore();
+        if (chapter.id !== "ancient") {
+          ctx.strokeStyle = chapter.id === "glacier" ? "rgba(190, 245, 255, 0.74)" : "rgba(255, 126, 58, 0.72)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(0, -18, size * 0.34, 0, Math.PI * 2);
+          ctx.stroke();
+        }
         if (enemy.slow < 1) {
           ctx.strokeStyle = "rgba(159, 232, 255, 0.8)";
           ctx.lineWidth = 3;
@@ -1303,13 +1542,17 @@
   }
 
   function drawTopLabels() {
+    const chapter = currentChapter();
     ctx.save();
     ctx.fillStyle = "rgba(255,243,216,0.86)";
     ctx.font = "900 14px system-ui";
     ctx.textAlign = "left";
-    ctx.fillText("敵營", 12, 26);
+    ctx.fillText(chapter.enemyCamp, 12, 26);
     ctx.textAlign = "right";
-    ctx.fillText("蜂巢城門", W - 12, 26);
+    ctx.fillText(chapter.gate, W - 12, 26);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(255,243,216,0.74)";
+    ctx.fillText(`${chapter.name} · ${chapter.weather}`, W / 2, 26);
     if (!state.waveActive && !state.ended) {
       ctx.textAlign = "center";
       ctx.fillStyle = "rgba(255,243,216,0.72)";
@@ -1322,6 +1565,7 @@
   function draw() {
     ctx.clearRect(0, 0, W, H);
     drawGrid();
+    drawWeather();
     drawHover();
     drawDrops();
     drawTowers();
@@ -1351,7 +1595,8 @@
     unlockAudio();
     if (state.ended) {
       playSound("deny");
-      showBanner(state.won ? "已通關，請提交榜單或重開新地圖。" : "戰局已結束，請提交榜單或重開。", true);
+      showBanner(state.won ? "已通關，請選擇下一主題或留在本主題。" : "戰局已結束，請提交榜單或重開。", true);
+      if (state.won) showChapterGate();
       return;
     }
     const point = pointerToWorld(event);
@@ -1378,7 +1623,7 @@
     if (state.energy < cost) return;
     state.energy -= cost;
     t.level += 1;
-    state.sparks.push({ x: t.x, y: t.y, r: 18, life: 0.4, color: towers[t.type].color });
+    state.sparks.push({ x: t.x, y: t.y, r: 18, life: 0.4, color: towerDef(t.type).color });
     playSound("upgrade");
     updateUi();
   });
@@ -1422,6 +1667,15 @@
     updateUi();
   });
   ui.restartBtn.addEventListener("click", restart);
+  ui.nextThemeBtn.addEventListener("click", () => {
+    unlockAudio();
+    if (!state.won) return;
+    enterNextTheme();
+  });
+  ui.stayThemeBtn.addEventListener("click", () => {
+    unlockAudio();
+    restart();
+  });
   ui.submitScoreBtn.addEventListener("click", submitScore);
   ui.refreshBoardBtn.addEventListener("click", loadRemoteLeaderboard);
   ui.playerName.addEventListener("input", () => {
