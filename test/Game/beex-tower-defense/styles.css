@@ -245,7 +245,8 @@ h2 img {
 
 .stage-wrap {
   position: relative;
-  min-height: calc(100vh - 172px);
+  height: clamp(620px, calc(100vh - 172px), 1040px);
+  min-height: 0;
   border: 1px solid rgba(255, 220, 142, 0.28);
   border-radius: 8px;
   background:
@@ -258,8 +259,8 @@ h2 img {
 canvas {
   display: block;
   width: 100%;
-  height: clamp(580px, calc(100vh - 172px), 860px);
-  min-height: 580px;
+  height: 100%;
+  min-height: 0;
   touch-action: none;
 }
 
@@ -299,7 +300,7 @@ canvas {
 }
 
 .build-panel .tower-list {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
 }
 
 .tower-list {
@@ -353,8 +354,8 @@ canvas {
 
 .power-card {
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 9px;
   align-items: center;
 }
 
@@ -373,9 +374,10 @@ canvas {
 }
 
 .power-card small {
-  margin-top: 4px;
+  margin-top: 2px;
   color: #e7c98f;
-  font: 800 12px/1.4 ui-sans-serif, system-ui, sans-serif;
+  font: 800 12px/1.32 ui-sans-serif, system-ui, sans-serif;
+  overflow-wrap: normal;
 }
 
 .power-icon {
@@ -410,6 +412,10 @@ canvas {
   grid-area: cost;
   color: var(--gold);
   font: 900 12px ui-sans-serif, system-ui, sans-serif;
+}
+
+.power-panel {
+  grid-column: span 2;
 }
 
 .button-row,
@@ -546,7 +552,7 @@ canvas {
   }
 
   canvas {
-    min-height: 520px;
+    min-height: 0;
   }
 }
 
@@ -574,7 +580,7 @@ canvas {
   }
 
   .build-panel .tower-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
   }
 }
 
@@ -601,8 +607,12 @@ canvas {
     min-height: 430px;
   }
 
-  canvas {
+  .stage-wrap {
     height: 62vh;
+  }
+
+  canvas {
+    height: 100%;
   }
 
   .panel {
@@ -615,5 +625,9 @@ canvas {
 
   .build-panel .tower-list {
     grid-template-columns: 1fr;
+  }
+
+  .power-panel {
+    grid-column: auto;
   }
 }
