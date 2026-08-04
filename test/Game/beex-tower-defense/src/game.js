@@ -42,6 +42,7 @@
   const offset = { x: 0, y: 24 };
   let pathCells = [];
   let path = [];
+  let paths = [];
   let pathSet = new Set();
   let blockedSet = new Set();
   let battlefield = null;
@@ -279,6 +280,62 @@
       }
     ]
   };
+  const sceneRouteAlternates = {
+    ancient: [
+      [
+        [[70, 185], [150, 250], [285, 285], [430, 255], [560, 205], [680, 235], [780, 310], [895, 325], [1005, 260]],
+        [[70, 185], [115, 330], [190, 515], [330, 585], [465, 555], [610, 505], [760, 495], [890, 365], [1005, 260]]
+      ],
+      [
+        [[45, 350], [170, 305], [300, 285], [455, 245], [600, 315], [745, 405], [880, 360], [1005, 270]],
+        [[45, 350], [120, 470], [285, 575], [465, 545], [620, 485], [770, 535], [890, 400], [1005, 270]]
+      ],
+      [
+        [[64, 210], [170, 255], [315, 290], [465, 250], [610, 305], [760, 260], [900, 250], [1000, 205]],
+        [[64, 210], [120, 360], [255, 455], [430, 455], [560, 535], [720, 480], [860, 340], [1000, 205]]
+      ],
+      [
+        [[62, 558], [190, 505], [330, 430], [465, 455], [600, 540], [745, 500], [845, 360], [1018, 230]],
+        [[62, 558], [140, 410], [285, 320], [430, 285], [575, 330], [705, 420], [850, 330], [1018, 230]]
+      ]
+    ],
+    glacier: [
+      [
+        [[70, 190], [155, 300], [285, 315], [430, 280], [570, 320], [715, 390], [865, 360], [982, 270]],
+        [[70, 190], [120, 390], [265, 560], [430, 515], [585, 465], [745, 535], [890, 430], [982, 270]]
+      ],
+      [
+        [[85, 420], [215, 360], [375, 285], [535, 255], [675, 320], [810, 330], [970, 285]],
+        [[85, 420], [220, 520], [380, 500], [530, 445], [700, 545], [865, 470], [970, 285]]
+      ],
+      [
+        [[70, 500], [190, 430], [320, 315], [480, 300], [610, 380], [735, 325], [920, 285]],
+        [[70, 500], [230, 520], [390, 500], [540, 545], [700, 520], [800, 395], [920, 285]]
+      ],
+      [
+        [[68, 250], [190, 300], [320, 285], [475, 290], [620, 360], [780, 335], [1000, 260]],
+        [[68, 250], [130, 440], [285, 520], [455, 475], [620, 430], [790, 520], [920, 430], [1000, 260]]
+      ]
+    ],
+    volcano: [
+      [
+        [[65, 565], [180, 455], [335, 335], [495, 360], [625, 445], [760, 395], [905, 340], [1005, 250]],
+        [[65, 565], [210, 545], [370, 555], [545, 590], [705, 515], [820, 400], [935, 340], [1005, 250]]
+      ],
+      [
+        [[68, 245], [220, 315], [370, 295], [540, 255], [700, 340], [835, 360], [1000, 280]],
+        [[68, 245], [150, 470], [330, 575], [500, 520], [665, 525], [835, 545], [935, 395], [1000, 280]]
+      ],
+      [
+        [[70, 530], [215, 450], [345, 330], [515, 315], [650, 425], [785, 405], [1010, 250]],
+        [[70, 530], [250, 520], [425, 570], [610, 600], [770, 500], [900, 355], [1010, 250]]
+      ],
+      [
+        [[70, 278], [210, 330], [365, 310], [540, 280], [710, 380], [845, 365], [1005, 235]],
+        [[70, 278], [150, 485], [320, 560], [500, 515], [675, 535], [850, 560], [930, 380], [1005, 235]]
+      ]
+    ]
+  };
   let activeChapterIndex = 0;
   let wavePlan = [];
   const difficulties = {
@@ -349,6 +406,15 @@
       best = Math.min(best, pointSegmentDistance(point, route[i], route[i + 1]));
     }
     return best;
+  }
+
+  function activeRoutes() {
+    return paths.length ? paths : (path.length ? [path] : []);
+  }
+
+  function distanceToRoutes(point, routeList = activeRoutes()) {
+    if (!routeList.length) return Infinity;
+    return routeList.reduce((best, route) => Math.min(best, distanceToRoute(point, route)), Infinity);
   }
 
   function riverSegments() {
@@ -530,6 +596,16 @@
     return layouts[sceneIndex % layouts.length] || layouts[0];
   }
 
+  function sceneRoutesForLayout(chapter, sceneIndex, layout) {
+    if (!layout) return [];
+    const routes = [];
+    if (Array.isArray(layout.route)) routes.push(layout.route);
+    if (Array.isArray(layout.routes)) routes.push(...layout.routes);
+    const alternates = sceneRouteAlternates[chapter.id]?.[sceneIndex % (sceneRouteAlternates[chapter.id]?.length || 1)] || [];
+    routes.push(...alternates);
+    return routes.filter(route => Array.isArray(route) && route.length >= 2);
+  }
+
   function sampleRoute(route, spacing = 30) {
     const points = [];
     route.forEach(([x, y], index) => {
@@ -559,6 +635,22 @@
         const key = cellKey(x, y);
         const p = cellCenter(x, y);
         if (distanceToRoute(p, routePoints) <= radius) {
+          cells.push([x, y]);
+          seen.add(key);
+        }
+      }
+    }
+    return { cells, set: seen };
+  }
+
+  function routeCellsFromRouteList(routeList, radius = 42) {
+    const cells = [];
+    const seen = new Set();
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const key = cellKey(x, y);
+        const p = cellCenter(x, y);
+        if (routeList.some(route => distanceToRoute(p, route) <= radius)) {
           cells.push([x, y]);
           seen.add(key);
         }
@@ -617,13 +709,15 @@
     const sceneIndex = sceneList.length ? (chapterLevel - 1 + randInt(0, sceneList.length - 1)) % sceneList.length : -1;
     const sceneLayout = activeSceneLayout(chapter, sceneIndex);
     if (sceneLayout) {
-      const routePoints = sampleRoute(sceneLayout.route);
-      const routeCells = routeCellsFromPoints(routePoints);
+      const routePaths = sceneRoutesForLayout(chapter, sceneIndex, sceneLayout).map(route => sampleRoute(route));
+      const routePoints = routePaths[0] || sampleRoute(sceneLayout.route);
+      const routeCells = routeCellsFromRouteList(routePaths.length ? routePaths : [routePoints]);
       return {
         theme: chapter.theme,
         pathCells: routeCells.cells,
         pathSet: routeCells.set,
         routePoints,
+        routePaths,
         blockedSet: createNativeBlockedCells(sceneLayout, routeCells.set),
         bridgeCells: [],
         mountainShift: 0,
@@ -716,6 +810,7 @@
       x: offset.x + x * tile + tile / 2,
       y: offset.y + y * tile + tile / 2
     }));
+    paths = battlefield.routePaths?.length ? battlefield.routePaths : (path.length ? [path] : []);
   }
 
   function loadImages(files) {
@@ -1137,9 +1232,9 @@
   }
 
   function cellDistanceToPath(cell) {
-    if (!cell || !path.length) return Infinity;
+    if (!cell || !activeRoutes().length) return Infinity;
     const p = gridToWorld(cell.cx, cell.cy);
-    return distanceToRoute(p, path);
+    return distanceToRoutes(p);
   }
 
   function canUseAsTowerPad(cell) {
@@ -1175,7 +1270,9 @@
     const runner = state.waveIndex >= 3 && index % 5 === 2;
     const hp = boss ? plan.bossHp : plan.hp * (elite ? 1.65 : 1) * (runner ? 0.7 : 1);
     const speed = boss ? plan.bossSpeed : plan.speed * (runner ? 1.35 : 1) * (elite ? 0.75 : 1);
-    const first = path[0];
+    const routeList = activeRoutes();
+    const route = boss ? (routeList[0] || path) : (routeList[(state.waveIndex + index) % Math.max(1, routeList.length)] || path);
+    const first = route[0] || path[0];
     return {
       x: first.x - 28,
       y: first.y,
@@ -1183,6 +1280,7 @@
       maxHp: hp,
       speed,
       reward: boss ? plan.bossReward : plan.reward + (elite ? 10 : runner ? 3 : 0),
+      route,
       node: 0,
       radius: finalBoss ? 31 : boss ? 25 : elite ? 16 : runner ? 10 : 13,
       facing: -1,
@@ -1576,7 +1674,8 @@
         enemy.slowTimer -= dt;
         if (enemy.slowTimer <= 0) enemy.slow = 1;
       }
-      const target = path[enemy.node + 1] || path[enemy.node];
+      const route = enemy.route?.length ? enemy.route : path;
+      const target = route[enemy.node + 1] || route[enemy.node];
       const dx = target.x - enemy.x;
       const dy = target.y - enemy.y;
       const dist = Math.hypot(dx, dy);
@@ -1586,7 +1685,7 @@
         enemy.x = target.x;
         enemy.y = target.y;
         enemy.node += 1;
-        if (enemy.node >= path.length - 1) {
+        if (enemy.node >= route.length - 1) {
           enemy.alive = false;
           enemy.leaked = true;
           state.lives -= enemy.finalBoss ? 8 : enemy.boss ? 5 : enemy.type === "elite" ? 2 : 1;
@@ -1672,8 +1771,8 @@
     updateUi();
   }
 
-  function drawPathStroke(width, style, dash = null, alpha = 1) {
-    if (!path.length) return;
+  function drawPathStroke(width, style, dash = null, alpha = 1, routeList = activeRoutes()) {
+    if (!routeList.length) return;
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.lineCap = "round";
@@ -1682,26 +1781,28 @@
     ctx.lineWidth = width;
     if (dash) ctx.setLineDash(dash);
     ctx.beginPath();
-    path.forEach((p, i) => {
-      if (i === 0) ctx.moveTo(p.x, p.y);
-      else ctx.lineTo(p.x, p.y);
+    routeList.forEach(route => {
+      route.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
     });
     ctx.stroke();
     ctx.restore();
   }
 
-  function pathNormalAt(index) {
-    const p = path[index];
-    const prev = path[Math.max(0, index - 1)] || p;
-    const next = path[Math.min(path.length - 1, index + 1)] || p;
+  function pathNormalAt(route, index) {
+    const p = route[index];
+    const prev = route[Math.max(0, index - 1)] || p;
+    const next = route[Math.min(route.length - 1, index + 1)] || p;
     const dx = next.x - prev.x;
     const dy = next.y - prev.y;
     const len = Math.hypot(dx, dy) || 1;
     return { nx: -dy / len, ny: dx / len, angle: Math.atan2(dy, dx) };
   }
 
-  function drawOffsetPath(distance, width, style, dash = null, alpha = 1) {
-    if (!path.length) return;
+  function drawOffsetPath(distance, width, style, dash = null, alpha = 1, routeList = activeRoutes()) {
+    if (!routeList.length) return;
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.lineCap = "round";
@@ -1710,12 +1811,14 @@
     ctx.lineWidth = width;
     if (dash) ctx.setLineDash(dash);
     ctx.beginPath();
-    path.forEach((p, i) => {
-      const normal = pathNormalAt(i);
-      const x = p.x + normal.nx * distance;
-      const y = p.y + normal.ny * distance;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    routeList.forEach(route => {
+      route.forEach((p, i) => {
+        const normal = pathNormalAt(route, i);
+        const x = p.x + normal.nx * distance;
+        const y = p.y + normal.ny * distance;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
     });
     ctx.stroke();
     ctx.restore();
@@ -1765,35 +1868,37 @@
   }
 
   function drawRoadSlabs(style) {
-    path.forEach((p, i) => {
-      if (i === 0 || i === path.length - 1) return;
-      const normal = pathNormalAt(i);
-      const bend = i > 0 && i < path.length - 1 && (
-        Math.abs(path[i - 1].x - path[i + 1].x) < 4 ||
-        Math.abs(path[i - 1].y - path[i + 1].y) < 4
-      );
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(normal.angle);
-      const jitter = ((i * 37) % 11) - 5;
-      const w = bend ? 30 : 38 + (i % 3) * 4;
-      const h = bend ? 30 : 25 + (i % 2) * 5;
-      ctx.fillStyle = i % 2 ? style.slab : style.slabAlt;
-      ctx.globalAlpha = 0.62;
-      ctx.beginPath();
-      ctx.roundRect(-w / 2 + jitter * 0.25, -h / 2, w, h, 8);
-      ctx.fill();
-      ctx.globalAlpha = 0.46;
-      ctx.strokeStyle = style.line;
-      ctx.lineWidth = 1.4;
-      ctx.stroke();
-      ctx.globalAlpha = 0.32;
-      ctx.strokeStyle = style.glow;
-      ctx.beginPath();
-      ctx.moveTo(-w * 0.32, -h * 0.24);
-      ctx.lineTo(w * 0.28, -h * 0.22);
-      ctx.stroke();
-      ctx.restore();
+    activeRoutes().forEach(route => {
+      route.forEach((p, i) => {
+        if (i === 0 || i === route.length - 1) return;
+        const normal = pathNormalAt(route, i);
+        const bend = i > 0 && i < route.length - 1 && (
+          Math.abs(route[i - 1].x - route[i + 1].x) < 4 ||
+          Math.abs(route[i - 1].y - route[i + 1].y) < 4
+        );
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(normal.angle);
+        const jitter = ((i * 37) % 11) - 5;
+        const w = bend ? 30 : 38 + (i % 3) * 4;
+        const h = bend ? 30 : 25 + (i % 2) * 5;
+        ctx.fillStyle = i % 2 ? style.slab : style.slabAlt;
+        ctx.globalAlpha = 0.62;
+        ctx.beginPath();
+        ctx.roundRect(-w / 2 + jitter * 0.25, -h / 2, w, h, 8);
+        ctx.fill();
+        ctx.globalAlpha = 0.46;
+        ctx.strokeStyle = style.line;
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+        ctx.globalAlpha = 0.32;
+        ctx.strokeStyle = style.glow;
+        ctx.beginPath();
+        ctx.moveTo(-w * 0.32, -h * 0.24);
+        ctx.lineTo(w * 0.28, -h * 0.22);
+        ctx.stroke();
+        ctx.restore();
+      });
     });
   }
 
@@ -1819,15 +1924,17 @@
 
     ctx.save();
     ctx.fillStyle = style.chip;
-    path.forEach((p, i) => {
-      if (i % 3 !== 1) return;
-      const normal = pathNormalAt(i);
-      [-1, 1].forEach(side => {
-        const x = p.x + normal.nx * (26 + (i % 4)) * side + ((i * 9) % 7) - 3;
-        const y = p.y + normal.ny * (26 + (i % 4)) * side + ((i * 13) % 7) - 3;
-        ctx.beginPath();
-        ctx.ellipse(x, y, 5 + (i % 3), 2.2 + (i % 2), normal.angle + 0.4, 0, Math.PI * 2);
-        ctx.fill();
+    activeRoutes().forEach(route => {
+      route.forEach((p, i) => {
+        if (i % 3 !== 1) return;
+        const normal = pathNormalAt(route, i);
+        [-1, 1].forEach(side => {
+          const x = p.x + normal.nx * (26 + (i % 4)) * side + ((i * 9) % 7) - 3;
+          const y = p.y + normal.ny * (26 + (i % 4)) * side + ((i * 13) % 7) - 3;
+          ctx.beginPath();
+          ctx.ellipse(x, y, 5 + (i % 3), 2.2 + (i % 2), normal.angle + 0.4, 0, Math.PI * 2);
+          ctx.fill();
+        });
       });
     });
     ctx.restore();
