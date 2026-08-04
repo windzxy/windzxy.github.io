@@ -465,6 +465,35 @@
       if (nextPathSet.has(key) || isRiverCell(cx, cy, riverShift, 42) || isMountainCell(cx, cy)) continue;
       trees.push([x, y]);
     }
+    const groundStones = [];
+    guard = 0;
+    while (groundStones.length < 92 && guard < 760) {
+      guard += 1;
+      const x = randInt(20, W - 20);
+      const y = randInt(238, H - 28);
+      const cx = Math.floor((x - offset.x) / tile);
+      const cy = Math.floor((y - offset.y) / tile);
+      const key = cellKey(cx, cy);
+      if (nextPathSet.has(key) || isRiverCell(cx, cy, riverShift, 50) || isMountainCell(cx, cy)) continue;
+      groundStones.push([x, y, randInt(3, 10), randInt(2, 6), Math.random() * Math.PI]);
+    }
+    const blooms = [];
+    guard = 0;
+    while (blooms.length < 76 && guard < 680) {
+      guard += 1;
+      const x = randInt(28, W - 28);
+      const y = randInt(255, H - 40);
+      const cx = Math.floor((x - offset.x) / tile);
+      const cy = Math.floor((y - offset.y) / tile);
+      const key = cellKey(cx, cy);
+      if (nextPathSet.has(key) || isRiverCell(cx, cy, riverShift, 44) || isMountainCell(cx, cy)) continue;
+      blooms.push([x, y, randInt(2, 5), Math.random()]);
+    }
+    const riverRocks = Array.from({ length: 34 }, (_, i) => {
+      const x = 26 + (i * 137 + randInt(0, 70)) % (W - 52);
+      const y = riverYAtX(x, riverShift) + randInt(-34, 34);
+      return [x, y, randInt(5, 16), randInt(3, 9), Math.random() * Math.PI];
+    });
     return {
       theme: chapter.theme,
       pathCells: nextPathCells,
@@ -475,7 +504,10 @@
       riverShift,
       weatherSeed: Math.random() * 1000,
       fieldMarks: Array.from({ length: 7 }, () => [randInt(80, 980), randInt(285, H - 74), randInt(110, 220), randInt(30, 66), (Math.random() - 0.5) * 0.34]),
-      trees
+      trees,
+      groundStones,
+      blooms,
+      riverRocks
     };
   }
 
@@ -1389,6 +1421,213 @@
     updateUi();
   }
 
+  function drawPathStroke(width, style, dash = null, alpha = 1) {
+    if (!path.length) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = style;
+    ctx.lineWidth = width;
+    if (dash) ctx.setLineDash(dash);
+    ctx.beginPath();
+    path.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    });
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function pathNormalAt(index) {
+    const p = path[index];
+    const prev = path[Math.max(0, index - 1)] || p;
+    const next = path[Math.min(path.length - 1, index + 1)] || p;
+    const dx = next.x - prev.x;
+    const dy = next.y - prev.y;
+    const len = Math.hypot(dx, dy) || 1;
+    return { nx: -dy / len, ny: dx / len, angle: Math.atan2(dy, dx) };
+  }
+
+  function drawOffsetPath(distance, width, style, dash = null, alpha = 1) {
+    if (!path.length) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = style;
+    ctx.lineWidth = width;
+    if (dash) ctx.setLineDash(dash);
+    ctx.beginPath();
+    path.forEach((p, i) => {
+      const normal = pathNormalAt(i);
+      const x = p.x + normal.nx * distance;
+      const y = p.y + normal.ny * distance;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function roadStyle(chapter, theme) {
+    if (chapter.id === "glacier") {
+      return {
+        shadow: "rgba(21, 52, 70, 0.5)",
+        verge: "rgba(219, 246, 255, 0.62)",
+        outer: theme.road[0],
+        mid: theme.road[1],
+        slab: "#d8f0f2",
+        slabAlt: "#a9cdd7",
+        line: "rgba(48, 88, 102, 0.38)",
+        edge: "rgba(246, 255, 255, 0.78)",
+        glow: "rgba(215, 250, 255, 0.4)",
+        chip: "rgba(79, 113, 126, 0.42)"
+      };
+    }
+    if (chapter.id === "volcano") {
+      return {
+        shadow: "rgba(16, 6, 4, 0.68)",
+        verge: "rgba(67, 41, 31, 0.7)",
+        outer: theme.road[0],
+        mid: theme.road[1],
+        slab: "#9b5430",
+        slabAlt: "#5b3328",
+        line: "rgba(255, 143, 66, 0.42)",
+        edge: "rgba(255, 126, 58, 0.7)",
+        glow: "rgba(255, 99, 44, 0.34)",
+        chip: "rgba(255, 191, 95, 0.45)"
+      };
+    }
+    return {
+      shadow: "rgba(55, 33, 15, 0.58)",
+      verge: "rgba(80, 92, 42, 0.58)",
+      outer: theme.road[0],
+      mid: theme.road[1],
+      slab: "#d7ad65",
+      slabAlt: "#b77b3e",
+      line: "rgba(88, 52, 20, 0.38)",
+      edge: "rgba(255, 220, 126, 0.6)",
+      glow: "rgba(255, 232, 166, 0.34)",
+      chip: "rgba(92, 55, 22, 0.42)"
+    };
+  }
+
+  function drawRoadSlabs(style) {
+    path.forEach((p, i) => {
+      if (i === 0 || i === path.length - 1) return;
+      const normal = pathNormalAt(i);
+      const bend = i > 0 && i < path.length - 1 && (
+        Math.abs(path[i - 1].x - path[i + 1].x) < 4 ||
+        Math.abs(path[i - 1].y - path[i + 1].y) < 4
+      );
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(normal.angle);
+      const jitter = ((i * 37) % 11) - 5;
+      const w = bend ? 30 : 38 + (i % 3) * 4;
+      const h = bend ? 30 : 25 + (i % 2) * 5;
+      ctx.fillStyle = i % 2 ? style.slab : style.slabAlt;
+      ctx.globalAlpha = 0.62;
+      ctx.beginPath();
+      ctx.roundRect(-w / 2 + jitter * 0.25, -h / 2, w, h, 8);
+      ctx.fill();
+      ctx.globalAlpha = 0.46;
+      ctx.strokeStyle = style.line;
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+      ctx.globalAlpha = 0.32;
+      ctx.strokeStyle = style.glow;
+      ctx.beginPath();
+      ctx.moveTo(-w * 0.32, -h * 0.24);
+      ctx.lineTo(w * 0.28, -h * 0.22);
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
+
+  function drawPremiumRoad(theme, chapter) {
+    const style = roadStyle(chapter, theme);
+    ctx.save();
+    ctx.shadowColor = style.shadow;
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 12;
+    drawPathStroke(72, style.shadow, null, 0.72);
+    ctx.restore();
+
+    drawPathStroke(70, style.verge, null, 0.54);
+    drawPathStroke(62, style.outer, null, 0.88);
+    drawPathStroke(52, style.mid, null, 0.94);
+    drawPathStroke(42, theme.road[2], null, 0.86);
+    drawOffsetPath(-29, 6, style.edge, [18, 10], 0.5);
+    drawOffsetPath(29, 6, style.edge, [18, 10], 0.5);
+    drawOffsetPath(-22, 2.5, "rgba(45, 20, 9, 0.42)", [8, 9], 0.75);
+    drawOffsetPath(22, 2.5, "rgba(45, 20, 9, 0.42)", [8, 9], 0.75);
+    drawRoadSlabs(style);
+    drawPathStroke(2, style.glow, [20, 24], 0.62);
+
+    ctx.save();
+    ctx.fillStyle = style.chip;
+    path.forEach((p, i) => {
+      if (i % 3 !== 1) return;
+      const normal = pathNormalAt(i);
+      [-1, 1].forEach(side => {
+        const x = p.x + normal.nx * (26 + (i % 4)) * side + ((i * 9) % 7) - 3;
+        const y = p.y + normal.ny * (26 + (i % 4)) * side + ((i * 13) % 7) - 3;
+        ctx.beginPath();
+        ctx.ellipse(x, y, 5 + (i % 3), 2.2 + (i % 2), normal.angle + 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+    ctx.restore();
+  }
+
+  function drawTerrainDetails(chapter) {
+    ctx.save();
+    const rockFill = chapter.id === "glacier" ? "rgba(230, 250, 255, 0.52)" : chapter.id === "volcano" ? "rgba(88, 54, 42, 0.58)" : "rgba(216, 204, 150, 0.42)";
+    const rockStroke = chapter.id === "volcano" ? "rgba(255, 120, 54, 0.22)" : "rgba(62, 54, 38, 0.18)";
+    battlefield.groundStones.forEach(([x, y, rx, ry, rot]) => {
+      ctx.fillStyle = rockFill;
+      ctx.strokeStyle = rockStroke;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    });
+    battlefield.blooms.forEach(([x, y, r, seed]) => {
+      const flower = chapter.id === "glacier" ? "rgba(238, 255, 255, 0.62)" : chapter.id === "volcano" ? "rgba(255, 138, 65, 0.52)" : "rgba(255, 232, 122, 0.58)";
+      ctx.fillStyle = flower;
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.arc(x + Math.cos(seed * 6 + i * 2.1) * r, y + Math.sin(seed * 6 + i * 2.1) * r, r * 0.72, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+    ctx.restore();
+  }
+
+  function drawRiverRocks(chapter) {
+    ctx.save();
+    battlefield.riverRocks.forEach(([x, y, rx, ry, rot], i) => {
+      ctx.fillStyle = chapter.id === "volcano" ? "rgba(56, 32, 28, 0.78)" : "rgba(238, 244, 226, 0.62)";
+      ctx.strokeStyle = chapter.id === "volcano" ? "rgba(255, 118, 52, 0.32)" : "rgba(71, 107, 116, 0.28)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      if (i % 3 === 0) {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.32)";
+        ctx.beginPath();
+        ctx.moveTo(x - rx * 0.38, y - ry * 0.2);
+        ctx.lineTo(x + rx * 0.28, y - ry * 0.32);
+        ctx.stroke();
+      }
+    });
+    ctx.restore();
+  }
+
   function drawGrid() {
     ctx.save();
     ctx.translate(state.shake > 0 ? Math.sin(performance.now() / 22) * 3 : 0, 0);
@@ -1479,6 +1718,7 @@
       ctx.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2);
       ctx.fill();
     });
+    drawTerrainDetails(chapter);
 
     const drawRiverLine = () => {
       const segments = riverSegments();
@@ -1493,13 +1733,21 @@
       });
       ctx.stroke();
     };
-    ctx.strokeStyle = theme.river[0];
-    ctx.lineWidth = 48;
+    ctx.strokeStyle = chapter.id === "volcano" ? "rgba(37, 19, 17, 0.72)" : "rgba(35, 73, 78, 0.42)";
+    ctx.lineWidth = 72;
     ctx.lineCap = "round";
     drawRiverLine();
-    ctx.strokeStyle = theme.river[1];
-    ctx.lineWidth = 34;
+    ctx.strokeStyle = theme.river[0];
+    ctx.lineWidth = 56;
     drawRiverLine();
+    const riverGrad = ctx.createLinearGradient(0, 260 + battlefield.riverShift, W, 700 + battlefield.riverShift);
+    riverGrad.addColorStop(0, theme.river[0]);
+    riverGrad.addColorStop(0.45, theme.river[1]);
+    riverGrad.addColorStop(1, chapter.id === "volcano" ? "#ff7a31" : "#63c9df");
+    ctx.strokeStyle = riverGrad;
+    ctx.lineWidth = 38;
+    drawRiverLine();
+    drawRiverRocks(chapter);
     ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
     ctx.lineWidth = 3;
     ctx.setLineDash([18, 22]);
@@ -1553,55 +1801,7 @@
       }
     }
 
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "rgba(65, 39, 19, 0.56)";
-    ctx.lineWidth = 54;
-    ctx.beginPath();
-    path.forEach((p, i) => {
-      if (i === 0) ctx.moveTo(p.x, p.y);
-      else ctx.lineTo(p.x, p.y);
-    });
-    ctx.stroke();
-    ctx.strokeStyle = theme.road[1];
-    ctx.lineWidth = 42;
-    ctx.stroke();
-    ctx.strokeStyle = theme.road[2];
-    ctx.lineWidth = 32;
-    ctx.stroke();
-    ctx.setLineDash([14, 18]);
-    ctx.strokeStyle = "rgba(94, 54, 23, 0.34)";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.setLineDash([18, 18]);
-    ctx.strokeStyle = "rgba(255, 236, 178, 0.28)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    ctx.fillStyle = "rgba(77, 43, 19, 0.55)";
-    path.forEach((p, i) => {
-      if (i % 4 !== 0) return;
-      ctx.beginPath();
-      ctx.ellipse(p.x + ((i % 2) ? 9 : -9), p.y + 10, 8, 3, 0.25, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    ctx.strokeStyle = "rgba(255, 235, 171, 0.38)";
-    ctx.lineWidth = 3;
-    path.forEach((p, i) => {
-      if (i % 5 !== 2 || i >= path.length - 1) return;
-      const next = path[i + 1];
-      const dx = next.x - p.x;
-      const dy = next.y - p.y;
-      const len = Math.hypot(dx, dy) || 1;
-      const nx = -dy / len;
-      const ny = dx / len;
-      ctx.beginPath();
-      ctx.moveTo(p.x + nx * 12, p.y + ny * 12);
-      ctx.lineTo(p.x + nx * 12 + dx * 0.42, p.y + ny * 12 + dy * 0.42);
-      ctx.stroke();
-    });
+    drawPremiumRoad(theme, chapter);
 
     battlefield.bridgeCells.forEach(([cx, cy]) => {
       const p = gridToWorld(cx, cy);
@@ -1610,32 +1810,38 @@
       ctx.save();
       ctx.translate(p.x, p.y);
       if (vertical) ctx.rotate(Math.PI / 2);
-      ctx.fillStyle = "rgba(43, 22, 9, 0.42)";
+      ctx.fillStyle = "rgba(20, 9, 4, 0.48)";
       ctx.beginPath();
-      ctx.roundRect(-36, -28, 72, 56, 8);
+      ctx.roundRect(-46, -32, 92, 64, 10);
       ctx.fill();
-      ctx.fillStyle = "#9b5a2b";
-      ctx.strokeStyle = "#4f2610";
-      ctx.lineWidth = 3;
+      ctx.fillStyle = chapter.id === "glacier" ? "#c4d8dc" : chapter.id === "volcano" ? "#654030" : "#9b5a2b";
+      ctx.strokeStyle = chapter.id === "glacier" ? "#58717a" : "#4f2610";
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.roundRect(-34, -24, 68, 48, 7);
+      ctx.roundRect(-42, -26, 84, 52, 8);
       ctx.fill();
       ctx.stroke();
-      ctx.strokeStyle = "rgba(255, 213, 130, 0.35)";
-      ctx.lineWidth = 2;
-      for (let i = -22; i <= 22; i += 11) {
+      ctx.strokeStyle = chapter.id === "volcano" ? "rgba(255, 145, 72, 0.34)" : "rgba(255, 231, 160, 0.42)";
+      ctx.lineWidth = 2.5;
+      for (let i = -30; i <= 30; i += 12) {
         ctx.beginPath();
-        ctx.moveTo(i, -22);
-        ctx.lineTo(i, 22);
+        ctx.moveTo(i, -24);
+        ctx.lineTo(i, 24);
         ctx.stroke();
       }
-      ctx.strokeStyle = "#6d3517";
-      ctx.lineWidth = 5;
+      ctx.strokeStyle = chapter.id === "glacier" ? "#6d8a95" : "#6d3517";
+      ctx.lineWidth = 6;
       ctx.beginPath();
-      ctx.moveTo(-34, -20);
-      ctx.lineTo(34, -20);
-      ctx.moveTo(-34, 20);
-      ctx.lineTo(34, 20);
+      ctx.moveTo(-44, -24);
+      ctx.lineTo(44, -24);
+      ctx.moveTo(-44, 24);
+      ctx.lineTo(44, 24);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(255, 246, 204, 0.35)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-32, -13);
+      ctx.lineTo(32, -15);
       ctx.stroke();
       ctx.restore();
     });
