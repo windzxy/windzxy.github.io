@@ -19,7 +19,7 @@
   <link rel="preload" as="image" href="assets/scenes/volcano-02.webp">
   <link rel="preload" as="image" href="assets/scenes/volcano-03.webp">
   <link rel="preload" as="image" href="assets/scenes/volcano-04.webp">
-  <link rel="stylesheet" href="styles.css?v=20260804-layout12">
+  <link rel="stylesheet" href="styles.css?v=20260804-layout13">
 </head>
 <body>
   <main class="shell">
@@ -63,6 +63,24 @@
             </div>
           </section>
 
+          <section class="panel-section compact theme-panel">
+            <h2><img src="assets/icons/stat-score.svg" alt="">主題</h2>
+            <p id="themeStatus">古城山河｜晴嵐</p>
+          </section>
+
+          <section class="panel-section compact difficulty-panel">
+            <h2><img src="assets/icons/stat-wave.svg" alt="">難度</h2>
+            <label class="difficulty-field">
+              <span>難度預設</span>
+              <select id="difficultySelect">
+                <option value="easy">簡單</option>
+                <option value="normal">中等</option>
+                <option value="hard">困難</option>
+              </select>
+            </label>
+            <p id="difficultyStatus">簡單｜適合熟悉地形與塔位。</p>
+          </section>
+
           <section class="panel-section build-panel">
             <h2><img src="assets/icons/panel-build.svg" alt="">攻防設備</h2>
             <div class="tower-list" id="towerList"></div>
@@ -85,24 +103,6 @@
                 <small id="powerStatus">低概率驚喜掉落，點擊即可全場齊射。</small>
               </p>
             </div>
-          </section>
-
-          <section class="panel-section compact theme-panel">
-            <h2><img src="assets/icons/stat-score.svg" alt="">主題</h2>
-            <p id="themeStatus">古城山河｜晴嵐</p>
-          </section>
-
-          <section class="panel-section compact difficulty-panel">
-            <h2><img src="assets/icons/stat-wave.svg" alt="">難度</h2>
-            <label class="difficulty-field">
-              <span>難度預設</span>
-              <select id="difficultySelect">
-                <option value="easy">簡單</option>
-                <option value="normal">中等</option>
-                <option value="hard">困難</option>
-              </select>
-            </label>
-            <p id="difficultyStatus">簡單｜適合熟悉地形與塔位。</p>
           </section>
 
           <section class="panel-section leaderboard">
@@ -129,9 +129,9 @@
     </section>
   </main>
 
-  <script src="src/scenes.js?v=20260804-layout12"></script>
-  <script src="src/landmarks.js?v=20260804-layout12"></script>
-  <script src="src/sprites.js?v=20260804-layout12"></script>
-  <script src="src/game.js?v=20260804-layout12"></script>
+  <script src="src/scenes.js?v=20260804-layout13"></script>
+  <script src="src/landmarks.js?v=20260804-layout13"></script>
+  <script src="src/sprites.js?v=20260804-layout13"></script>
+  <script src="src/game.js?v=20260804-layout13"></script>
 </body>
 </html>
