@@ -1155,9 +1155,9 @@
 
   function buildDenyReason(cell) {
     const def = towerDef(state.selectedBuild);
-    if (!cell) return "請拖到戰場內的可投放平台。";
+    if (!cell) return "請拖到戰場內道路旁可放置位置。";
     if (!towerUnlocked(state.selectedBuild)) return `${def.name} 尚未開放。`;
-    if (!canUseAsTowerPad(cell)) return "這裡不能投放，請選金色平台或道路旁空地。";
+    if (!canUseAsTowerPad(cell)) return "這裡不能投放，請移到道路旁可放置位置。";
     if (state.energy < def.cost) return `糧草不足，${def.name} 需要 ${def.cost}。`;
     return "暫時不能投放。";
   }
@@ -1288,7 +1288,7 @@
         state.selectedBuild = tower.id;
         state.selectedTower = null;
         updateUi();
-        showBanner(`已選擇 ${def.name}，點擊金色平台投放。`);
+        showBanner(`已選擇 ${def.name}，移到道路旁亮出投放點後建造。`);
       });
       btn.addEventListener("dragstart", event => {
         state.selectedBuild = tower.id;
@@ -1341,7 +1341,7 @@
       const def = towerDef(state.selectedBuild);
       const next = nextLockedTower();
       const hint = next ? ` 第 ${towerUnlockWave(next.id)} 波會開放新設施。` : "";
-      ui.selectedText.textContent = `準備投放 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。點擊或拖到金色平台。${hint}`;
+      ui.selectedText.textContent = `準備投放 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。移到道路旁亮出投放點後建造。${hint}`;
       ui.upgradeBtn.disabled = true;
       setActionButton(ui.upgradeBtn, "upgrade", "升級");
       ui.sellBtn.disabled = true;
@@ -1518,7 +1518,7 @@
       const victims = state.enemies.filter(enemy => enemy.alive && Math.hypot(enemy.x - tower.x, enemy.y - tower.y) <= stats.blastRadius);
       victims.forEach(enemy => damageEnemy(enemy, stats.damage));
       state.sparks.push({ x: tower.x, y: tower.y, r: stats.blastRadius * 0.5, life: 0.42, color: def.color });
-      state.shots.push({ x1: tower.x, y1: tower.y, x2: target.x, y2: target.y, life: 0.18, color: def.color, width: 7 });
+      state.shots.push({ type: "blast", x: tower.x, y: tower.y, radius: stats.blastRadius, life: 0.34, maxLife: 0.34, color: def.color });
       tower.remove = true;
       playSound("power");
       return;
@@ -1531,7 +1531,7 @@
       let from = tower;
       chainTargets.forEach((enemy, index) => {
         damageEnemy(enemy, Math.round(stats.damage * Math.pow(0.74, index)));
-        state.shots.push({ x1: from.x, y1: from.y, x2: enemy.x, y2: enemy.y, life: 0.16, color: def.color, width: 4 - index * 0.6 });
+        state.shots.push({ type: "thunder", x: enemy.x, y: enemy.y, life: 0.24, maxLife: 0.24, color: def.color, scale: 1 - index * 0.1 });
         from = enemy;
       });
       playSound("shot");
@@ -1541,8 +1541,10 @@
     if (tower.type === "frost") {
       target.slow = stats.slow;
       target.slowTimer = stats.slowTime;
+      state.shots.push({ type: "frostBloom", x: target.x, y: target.y, life: 0.38, maxLife: 0.38, color: def.color });
+    } else {
+      state.shots.push({ type: tower.type === "bastion" ? "beeBolt" : "bolt", x1: tower.x, y1: tower.y, x2: target.x, y2: target.y, life: 0.28, maxLife: 0.28, color: def.color });
     }
-    state.shots.push({ x1: tower.x, y1: tower.y, x2: target.x, y2: target.y, life: 0.2, color: def.color, width: tower.type === "frost" ? 5 : 3 });
     playSound("shot");
   }
 
@@ -1961,32 +1963,65 @@
     ctx.restore();
   }
 
+  function drawBattleFlag(point, label, side, chapter) {
+    const isEnemy = side === "enemy";
+    const poleColor = isEnemy ? "#4a2115" : "#5a3d18";
+    const flagColor = isEnemy
+      ? (chapter.id === "glacier" ? "#9d2f3e" : "#b63a25")
+      : (chapter.id === "glacier" ? "#f5d978" : "#e8b84d");
+    const flagEdge = isEnemy ? "#ff9a6a" : "#fff0a8";
+    const textColor = isEnemy ? "#fff2dc" : "#3b2410";
+    const direction = isEnemy ? 1 : -1;
+    const poleTop = point.y - 76;
+    const poleBottom = point.y - 4;
+    const flagW = 44;
+    const flagH = 30;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(22, 10, 3, 0.45)";
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 4;
+    ctx.strokeStyle = poleColor;
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(point.x, poleBottom);
+    ctx.lineTo(point.x, poleTop);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(38, 18, 7, 0.46)";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(point.x - 14, point.y + 2);
+    ctx.lineTo(point.x + 14, point.y - 2);
+    ctx.stroke();
+
+    ctx.fillStyle = flagColor;
+    ctx.strokeStyle = flagEdge;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(point.x, poleTop + 4);
+    ctx.lineTo(point.x + direction * flagW, poleTop + 9);
+    ctx.lineTo(point.x + direction * (flagW - 9), poleTop + flagH);
+    ctx.lineTo(point.x, poleTop + flagH - 5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = textColor;
+    ctx.font = "900 17px system-ui";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, point.x + direction * 22, poleTop + 18);
+    ctx.restore();
+  }
+
   function drawSceneLandmarks(theme, chapter) {
     if (battlefield.sceneLayout) {
       const { camp, gate } = battlefield.sceneLayout;
-      const drawMarker = (point, fill, stroke, label, align) => {
-        ctx.save();
-        ctx.globalAlpha = 0.95;
-        ctx.fillStyle = fill;
-        ctx.strokeStyle = stroke;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.ellipse(point.x, point.y, 46, 20, -0.06, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.font = "900 15px system-ui";
-        ctx.textAlign = align;
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "rgba(255, 246, 218, 0.94)";
-        ctx.strokeStyle = "rgba(30, 12, 5, 0.72)";
-        ctx.lineWidth = 4;
-        const labelX = point.x + (align === "left" ? 54 : -54);
-        ctx.strokeText(label, labelX, point.y - 4);
-        ctx.fillText(label, labelX, point.y - 4);
-        ctx.restore();
-      };
-      drawMarker(camp, "rgba(202, 61, 34, 0.22)", "rgba(255, 92, 56, 0.78)", camp.label || chapter.enemyCamp, "left");
-      drawMarker(gate, "rgba(255, 202, 82, 0.18)", "rgba(255, 219, 116, 0.78)", gate.label || chapter.gate, "right");
+      drawBattleFlag(camp, "敵", "enemy", chapter);
+      drawBattleFlag(gate, "蜂", "bee", chapter);
       return;
     }
     const campImg = landmarks[`${chapter.id}Camp`];
@@ -2015,32 +2050,25 @@
 
   function drawBuildPads() {
     if (state.selectedTower || state.ended || !towerUnlocked(state.selectedBuild)) return;
+    if (!state.hoverCell || !canUseAsTowerPad(state.hoverCell)) return;
     const def = towerDef(state.selectedBuild);
+    const p = gridToWorld(state.hoverCell.cx, state.hoverCell.cy);
+    const ok = state.energy >= def.cost;
     ctx.save();
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        const cell = { cx: x, cy: y, key: cellKey(x, y) };
-        if (!canUseAsTowerPad(cell)) continue;
-        const p = gridToWorld(x, y);
-        const ok = state.energy >= def.cost;
-        const nearHover = state.hoverCell && state.hoverCell.key === cell.key;
-        ctx.globalAlpha = nearHover ? 0.92 : 0.42;
-        ctx.fillStyle = ok ? "rgba(255,216,120,0.16)" : "rgba(255,101,125,0.12)";
-        ctx.strokeStyle = ok ? "rgba(255,226,142,0.78)" : "rgba(255,101,125,0.62)";
-        ctx.lineWidth = nearHover ? 3 : 1.6;
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y + 4, 18, 10, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        if (nearHover) {
-          ctx.globalAlpha = 0.18;
-          ctx.fillStyle = def.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, def.range, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-    }
+    ctx.globalAlpha = 0.92;
+    ctx.fillStyle = ok ? "rgba(255,216,120,0.18)" : "rgba(255,101,125,0.14)";
+    ctx.strokeStyle = ok ? "rgba(255,226,142,0.9)" : "rgba(255,101,125,0.72)";
+    ctx.lineWidth = 2.8;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y + 4, 19, 11, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.globalAlpha = ok ? 0.14 : 0.08;
+    ctx.fillStyle = ok ? def.color : "rgba(255, 101, 125, 0.8)";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, def.range, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
   }
 
@@ -2361,14 +2389,16 @@
         ctx.fill();
       }
     } else {
-      ctx.strokeStyle = "rgba(255, 239, 170, 0.26)";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(255, 239, 170, 0.18)";
+      ctx.lineWidth = 2.2;
+      ctx.lineCap = "round";
       for (let i = 0; i < 34; i++) {
         const x = (i * 76 + t * 28) % W;
         const y = 54 + ((i * 61 + Math.sin(t + i) * 18) % 520);
         ctx.globalAlpha = 0.3 + (i % 4) * 0.08;
         ctx.beginPath();
-        ctx.ellipse(x, y, 12, 5, 0.25, 0, Math.PI * 2);
+        ctx.moveTo(x - 12, y + 4);
+        ctx.lineTo(x + 15, y - 4);
         ctx.stroke();
       }
     }
@@ -2376,27 +2406,7 @@
   }
 
   function drawHover() {
-    const cell = state.hoverCell;
-    if (!cell || state.ended) return;
-    const p = gridToWorld(cell.cx, cell.cy);
-    const ok = canBuild(cell);
-    ctx.save();
-    const def = towerDef(state.selectedBuild);
-    ctx.fillStyle = ok ? "rgba(102, 242, 194, 0.2)" : "rgba(255, 101, 125, 0.18)";
-    ctx.strokeStyle = ok ? "rgba(102, 242, 194, 0.9)" : "rgba(255, 101, 125, 0.88)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.ellipse(p.x, p.y + 4, 22, 13, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, def.range, 0, Math.PI * 2);
-    ctx.fillStyle = ok ? "rgba(86, 216, 255, 0.045)" : "rgba(255, 101, 125, 0.035)";
-    ctx.fill();
-    ctx.strokeStyle = ok ? "rgba(86, 216, 255, 0.24)" : "rgba(255, 101, 125, 0.2)";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.restore();
+    return;
   }
 
   function drawTowers() {
@@ -2520,11 +2530,22 @@
           ctx.stroke();
         }
         if (enemy.slow < 1) {
-          ctx.strokeStyle = "rgba(159, 232, 255, 0.8)";
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.arc(0, -16, size * 0.38, 0, Math.PI * 2);
-          ctx.stroke();
+          ctx.fillStyle = "rgba(210, 250, 255, 0.86)";
+          ctx.strokeStyle = "rgba(96, 196, 255, 0.78)";
+          ctx.lineWidth = 1.8;
+          for (let i = 0; i < 5; i++) {
+            const a = -Math.PI / 2 + i * (Math.PI * 2 / 5);
+            const px = Math.cos(a) * size * 0.28;
+            const py = -18 + Math.sin(a) * size * 0.22;
+            ctx.beginPath();
+            ctx.moveTo(px, py - 9);
+            ctx.lineTo(px + 6, py);
+            ctx.lineTo(px, py + 9);
+            ctx.lineTo(px - 6, py);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+          }
         }
       } else {
         const color = enemy.boss ? "#9b3d24" : enemy.type === "elite" ? "#d6a24a" : enemy.type === "runner" ? "#c85a3a" : "#405a37";
@@ -2590,17 +2611,121 @@
 
   function drawShots() {
     for (const shot of state.shots) {
+      const maxLife = shot.maxLife || 0.2;
+      const lifeRatio = Math.max(0, Math.min(1, shot.life / maxLife));
+      const progress = 1 - lifeRatio;
       ctx.save();
-      ctx.globalAlpha = Math.max(0, shot.life / 0.2);
-      ctx.strokeStyle = shot.color;
-      ctx.lineWidth = shot.width;
-      ctx.lineCap = "round";
+      ctx.globalAlpha = lifeRatio;
       ctx.shadowColor = shot.color;
-      ctx.shadowBlur = 18;
-      ctx.beginPath();
-      ctx.moveTo(shot.x1, shot.y1);
-      ctx.lineTo(shot.x2, shot.y2);
-      ctx.stroke();
+      ctx.shadowBlur = 16;
+
+      if (shot.type === "bolt" || shot.type === "beeBolt") {
+        const x = shot.x1 + (shot.x2 - shot.x1) * progress;
+        const y = shot.y1 + (shot.y2 - shot.y1) * progress;
+        const angle = Math.atan2(shot.y2 - shot.y1, shot.x2 - shot.x1);
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillStyle = shot.color;
+        ctx.strokeStyle = "rgba(62, 30, 8, 0.7)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(24, 0);
+        ctx.lineTo(8, -7);
+        ctx.lineTo(-20, -4);
+        ctx.lineTo(-30, 0);
+        ctx.lineTo(-20, 4);
+        ctx.lineTo(8, 7);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = shot.type === "beeBolt" ? "#58d4d0" : "#fff0a8";
+        ctx.beginPath();
+        ctx.ellipse(-2, 0, 12, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,0.72)";
+        ctx.beginPath();
+        ctx.moveTo(-10, -8);
+        ctx.quadraticCurveTo(-2, -18, 7, -8);
+        ctx.quadraticCurveTo(-1, -11, -10, -8);
+        ctx.moveTo(-10, 8);
+        ctx.quadraticCurveTo(-2, 18, 7, 8);
+        ctx.quadraticCurveTo(-1, 11, -10, 8);
+        ctx.fill();
+      } else if (shot.type === "frostBloom") {
+        const grow = 0.65 + progress * 0.55;
+        ctx.translate(shot.x, shot.y);
+        ctx.scale(grow, grow);
+        ctx.fillStyle = "rgba(218, 252, 255, 0.72)";
+        ctx.strokeStyle = "rgba(118, 218, 255, 0.9)";
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 8; i++) {
+          ctx.rotate(Math.PI / 4);
+          ctx.beginPath();
+          ctx.moveTo(0, -6);
+          ctx.quadraticCurveTo(18, -18, 34, 0);
+          ctx.quadraticCurveTo(18, 18, 0, 6);
+          ctx.quadraticCurveTo(10, 0, 0, -6);
+          ctx.fill();
+          ctx.stroke();
+        }
+        ctx.fillStyle = "rgba(255, 255, 255, 0.86)";
+        ctx.beginPath();
+        ctx.arc(0, 0, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (shot.type === "thunder") {
+        const s = (shot.scale || 1) * (0.78 + progress * 0.38);
+        ctx.translate(shot.x, shot.y - 24);
+        ctx.scale(s, s);
+        ctx.fillStyle = "rgba(255, 214, 84, 0.26)";
+        ctx.strokeStyle = "rgba(255, 230, 132, 0.9)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const a = -Math.PI / 2 + i * Math.PI / 3;
+          const r = i % 2 ? 25 : 34;
+          const x = Math.cos(a) * r;
+          const y = Math.sin(a) * r;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#fff1a6";
+        ctx.beginPath();
+        ctx.moveTo(-4, -24);
+        ctx.lineTo(10, -2);
+        ctx.lineTo(1, -2);
+        ctx.lineTo(9, 24);
+        ctx.lineTo(-13, -6);
+        ctx.lineTo(-2, -6);
+        ctx.closePath();
+        ctx.fill();
+      } else if (shot.type === "blast") {
+        const s = 0.55 + progress * 0.75;
+        ctx.translate(shot.x, shot.y);
+        ctx.scale(s, s);
+        ctx.fillStyle = "rgba(255, 122, 48, 0.28)";
+        ctx.strokeStyle = "rgba(255, 218, 125, 0.86)";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        for (let i = 0; i < 12; i++) {
+          const a = i * Math.PI / 6;
+          const r = i % 2 ? shot.radius * 0.32 : shot.radius * 0.54;
+          const x = Math.cos(a) * r;
+          const y = Math.sin(a) * r;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255, 236, 170, 0.9)";
+        ctx.beginPath();
+        ctx.arc(0, 0, 18, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.restore();
     }
   }
@@ -2618,27 +2743,6 @@
     }
   }
 
-  function drawTopLabels() {
-    const chapter = currentChapter();
-    ctx.save();
-    ctx.fillStyle = "rgba(255,243,216,0.86)";
-    ctx.font = "900 14px system-ui";
-    ctx.textAlign = "left";
-    ctx.fillText(chapter.enemyCamp, 12, 26);
-    ctx.textAlign = "right";
-    ctx.fillText(chapter.gate, W - 12, 26);
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(255,243,216,0.74)";
-    ctx.fillText(`${chapter.name} · ${chapter.weather}`, W / 2, 26);
-    if (!state.waveActive && !state.ended) {
-      ctx.textAlign = "center";
-      ctx.fillStyle = "rgba(255,243,216,0.72)";
-      ctx.font = "900 16px system-ui";
-      ctx.fillText("先布防，再迎敵", W / 2, H - 28);
-    }
-    ctx.restore();
-  }
-
   function draw() {
     ctx.clearRect(0, 0, W, H);
     drawGrid();
@@ -2650,7 +2754,6 @@
     drawEnemies();
     drawShots();
     drawSparks();
-    drawTopLabels();
   }
 
   function loop(now) {
@@ -2826,7 +2929,6 @@
   updateUi();
   renderLeaderboard();
   loadRemoteLeaderboard();
-  showBanner("布防守城，護住蜂巢城門");
   state.last = performance.now();
   requestAnimationFrame(loop);
 })();
