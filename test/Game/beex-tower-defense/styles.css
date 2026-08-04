@@ -34,17 +34,6 @@ body {
   overflow-x: hidden;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 56px 56px,
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 56px 56px;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 78%);
-}
-
 button {
   display: inline-flex;
   align-items: center;
@@ -659,6 +648,43 @@ canvas {
 
 .hidden {
   display: none;
+}
+
+body.game-closed .shell {
+  display: none;
+}
+
+.closed-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.closed-screen.hidden {
+  display: none;
+}
+
+.closed-screen > div {
+  width: min(420px, 100%);
+  border: 1px solid rgba(255, 224, 149, 0.36);
+  border-radius: 8px;
+  padding: 22px;
+  background: rgba(33, 18, 10, 0.88);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.closed-screen strong {
+  display: block;
+  color: #ffe7a6;
+  font: 900 24px ui-sans-serif, system-ui, sans-serif;
+}
+
+.closed-screen p {
+  margin: 10px 0 16px;
+  color: var(--muted);
+  font: 800 14px/1.6 ui-sans-serif, system-ui, sans-serif;
 }
 
 @media (max-width: 940px) {
