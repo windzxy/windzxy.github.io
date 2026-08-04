@@ -1,6 +1,6 @@
 # 蜂巢古城守衛
 
-蜂巢古城守衛是一個純前端、無第三方依賴的 HTML5 Canvas 塔防遊戲。畫面採用原創中國古代城防風格，塔與狀態圖標使用獨立 SVG 文件，不使用字母佔位。
+蜂巢古城守衛是一個純前端、無第三方依賴的 HTML5 Canvas 塔防遊戲。畫面採用原創中國古代城防風格，塔、掉落和起終點使用高精度 PNG 美術，狀態與操作圖標使用獨立 SVG 文件，不使用字母佔位。
 
 ## 玩法
 
@@ -33,7 +33,9 @@
 - `styles.css` - 響應式界面與古代城防視覺
 - `src/game.js` - 遊戲邏輯、隨機山河官道、難度、Boss、音效、交互
 - `src/landmarks.js` - 內嵌高精度 PNG 地標，確保公開頁可直接載入起點/終點美術
-- `assets/icons/` - 塔、資源、城門、波次 SVG 圖標
+- `src/sprites.js` - 內嵌高精度 PNG 塔與掉落素材，確保公開頁可直接載入新美術
+- `assets/icons/` - 資源、城門、波次與操作 SVG 圖標
 - `assets/map/` - 主題起點營地與終點城門 PNG
+- `assets/towers/` - 高精度塔與蜂鳴神弩 PNG
 - `assets/enemies/` - 透明敵軍 PNG
 - `leaderboard.json` - GitHub Action 更新的排行榜資料
