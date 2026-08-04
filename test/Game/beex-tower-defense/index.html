@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/icons/brand-beex.svg">
   <link rel="alternate icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20260804-layout4">
+  <link rel="stylesheet" href="styles.css?v=20260804-layout5">
 </head>
 <body>
   <main class="shell">
@@ -84,19 +84,20 @@
             <p id="leaderboardHint" class="leaderboard-hint">打完一局後可提交戰功。</p>
           </section>
 
-          <section class="panel-section compact power-panel">
-            <h2><img src="assets/icons/panel-drop.svg" alt="">驚喜掉落</h2>
-            <div class="power-card">
-              <span class="tower-icon power-icon"><img src="assets/icons/weapon-bee-crossbow.svg" alt=""></span>
-              <p><strong>蜂鳴神弩</strong><small id="powerStatus">低概率驚喜掉落，點擊即可全場齊射。</small></p>
-            </div>
-          </section>
+          <div class="bottom-strip">
+            <section class="panel-section compact power-panel">
+              <h2><img src="assets/icons/panel-drop.svg" alt="">驚喜掉落</h2>
+              <div class="power-card">
+                <span class="tower-icon power-icon"><img src="assets/icons/weapon-bee-crossbow.svg" alt=""></span>
+                <p><strong>蜂鳴神弩</strong><small id="powerStatus">低概率驚喜掉落，點擊即可全場齊射。</small></p>
+              </div>
+            </section>
 
-          <section class="panel-section compact">
-            <h2><img src="assets/icons/stat-score.svg" alt="">軍師提示</h2>
-            <p>每局官道與地貌都會變化：彎道放寒玉蓮，直線放神機弩，敵人密集時補雷鼓臺。城防歸零則失守。</p>
-            <p class="record">最高戰功：<span id="bestScore">0</span></p>
-          </section>
+            <section class="panel-section compact advisor-panel">
+              <h2><img src="assets/icons/stat-score.svg" alt="">軍師提示</h2>
+              <p class="tip-line"><span>每局官道與地貌都會變化：彎道放寒玉蓮，直線放神機弩，敵人密集時補雷鼓臺。城防歸零則失守。</span><b>最高戰功：<span id="bestScore">0</span></b></p>
+            </section>
+          </div>
         </aside>
       </div>
     </section>
