@@ -187,6 +187,109 @@
     return Math.max(min, Math.min(max, value));
   }
 
+  function cellKey(x, y) {
+    return `${x},${y}`;
+  }
+
+  function cubicPoint(points, t) {
+    const u = 1 - t;
+    const [p0, p1, p2, p3] = points;
+    return {
+      x: u ** 3 * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t ** 3 * p3[0],
+      y: u ** 3 * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t ** 3 * p3[1]
+    };
+  }
+
+  function riverYAtX(x, shift) {
+    const segments = [
+      [[1085, 268], [940, 324], [832, 260], [726, 326]],
+      [[726, 326], [594, 408], [474, 384], [346, 462]],
+      [[346, 462], [214, 544], [118, 520], [18, 604]]
+    ];
+    let best = { distance: Infinity, y: H + 80 };
+    for (const segment of segments) {
+      for (let i = 0; i <= 42; i++) {
+        const p = cubicPoint(segment, i / 42);
+        const distance = Math.abs(p.x - x);
+        if (distance < best.distance) best = { distance, y: p.y + shift };
+      }
+    }
+    return best.y;
+  }
+
+  function cellCenter(cx, cy) {
+    return {
+      x: offset.x + cx * tile + tile / 2,
+      y: offset.y + cy * tile + tile / 2
+    };
+  }
+
+  function isRiverCell(cx, cy, shift, margin = 34) {
+    const p = cellCenter(cx, cy);
+    if (p.x < 18 || p.x > 1085) return false;
+    return Math.abs(p.y - riverYAtX(p.x, shift)) <= margin;
+  }
+
+  function isMountainCell(cx, cy) {
+    return cy < 5;
+  }
+
+  function nearestRiverRow(cx, shift) {
+    const p = cellCenter(cx, 0);
+    const y = riverYAtX(p.x, shift);
+    return clamp(Math.round((y - offset.y - tile / 2) / tile), 5, rows - 2);
+  }
+
+  function createBridgeCells(bridgeX, shift) {
+    const cells = new Set();
+    const centerRow = nearestRiverRow(bridgeX, shift);
+    for (let x = bridgeX - 1; x <= bridgeX + 1; x++) {
+      for (let y = centerRow - 2; y <= centerRow + 2; y++) {
+        if (x < 1 || x >= cols - 1 || y < 5 || y >= rows - 1) continue;
+        if (isRiverCell(x, y, shift, 44)) cells.add(cellKey(x, y));
+      }
+    }
+    if (!cells.size) cells.add(cellKey(bridgeX, centerRow));
+    return cells;
+  }
+
+  function findRouteSegment(start, goal, shift, bridgeCells) {
+    const startKey = cellKey(start[0], start[1]);
+    const goalKey = cellKey(goal[0], goal[1]);
+    const queue = [start];
+    const cameFrom = new Map([[startKey, null]]);
+    const directions = [[1, 0], [0, 1], [0, -1], [-1, 0]];
+    const canUseCell = (x, y) => {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return false;
+      if (isMountainCell(x, y)) return false;
+      if (isRiverCell(x, y, shift, 36) && !bridgeCells.has(cellKey(x, y))) return false;
+      return true;
+    };
+
+    while (queue.length) {
+      const [x, y] = queue.shift();
+      if (cellKey(x, y) === goalKey) break;
+      directions
+        .map(([dx, dy]) => [x + dx, y + dy])
+        .sort((a, b) => (Math.abs(a[0] - goal[0]) + Math.abs(a[1] - goal[1])) - (Math.abs(b[0] - goal[0]) + Math.abs(b[1] - goal[1])) + (Math.random() - 0.5) * 0.18)
+        .forEach(([nx, ny]) => {
+          const key = cellKey(nx, ny);
+          if (cameFrom.has(key) || !canUseCell(nx, ny)) return;
+          cameFrom.set(key, [x, y]);
+          queue.push([nx, ny]);
+        });
+    }
+
+    if (!cameFrom.has(goalKey)) return null;
+    const segment = [];
+    let current = goal;
+    while (current) {
+      segment.push(current);
+      current = cameFrom.get(cellKey(current[0], current[1]));
+    }
+    return segment.reverse();
+  }
+
   function currentChapter() {
     return chapters[activeChapterIndex] || chapters[0];
   }
@@ -239,26 +342,20 @@
     return cells;
   }
 
-  function createRoute() {
-    const anchors = [];
-    let x = 0;
-    let y = randInt(5, 9);
-    anchors.push([x, y]);
-    while (x < cols - 1) {
-      x = Math.min(cols - 1, x + randInt(3, 5));
-      anchors.push([x, y]);
-      if (x >= cols - 1) break;
-      const bend = (Math.random() < 0.5 ? -1 : 1) * randInt(2, 4);
-      const nextY = clamp(y + bend, 3, rows - 3);
-      if (nextY !== y) {
-        y = nextY;
-        anchors.push([x, y]);
-      }
+  function createRoute(riverShift, bridgeCells, bridgeX) {
+    const start = [0, randInt(6, 9)];
+    const bridgeY = nearestRiverRow(bridgeX, riverShift);
+    const bridge = [bridgeX, bridgeY];
+    const end = [cols - 1, randInt(8, 12)];
+    const first = findRouteSegment(start, bridge, riverShift, bridgeCells);
+    const second = findRouteSegment(bridge, end, riverShift, bridgeCells);
+    if (!first || !second) {
+      return expandAnchors([[0, 8], [bridgeX, 8], [bridgeX, bridgeY], [bridgeX + 2, bridgeY], [cols - 1, 10]]);
     }
-    return expandAnchors(anchors);
+    return [...first, ...second.slice(1)];
   }
 
-  function createBlockedCells(nextPathSet) {
+  function createBlockedCells(nextPathSet, riverShift) {
     const cells = new Set();
     const clusters = randInt(5, 7);
     for (let i = 0; i < clusters; i++) {
@@ -268,8 +365,8 @@
       for (const [dx, dy] of shape) {
         const x = cx + dx;
         const y = cy + dy;
-        const key = `${x},${y}`;
-        if (!nextPathSet.has(key)) cells.add(key);
+        const key = cellKey(x, y);
+        if (!nextPathSet.has(key) && !isRiverCell(x, y, riverShift, 40) && !isMountainCell(x, y)) cells.add(key);
       }
     }
     return cells;
@@ -277,18 +374,35 @@
 
   function createBattlefield() {
     const chapter = currentChapter();
-    const nextPathCells = createRoute();
-    const nextPathSet = new Set(nextPathCells.map(([x, y]) => `${x},${y}`));
+    const riverShift = randInt(-28, 28);
+    const bridgeX = randInt(7, 17);
+    const bridgeCells = createBridgeCells(bridgeX, riverShift);
+    const nextPathCells = createRoute(riverShift, bridgeCells, bridgeX);
+    const nextPathSet = new Set(nextPathCells.map(([x, y]) => cellKey(x, y)));
+    const bridgePathCells = nextPathCells.filter(([x, y]) => bridgeCells.has(cellKey(x, y)));
+    const trees = [];
+    let guard = 0;
+    while (trees.length < 46 && guard < 400) {
+      guard += 1;
+      const x = randInt(24, W - 24);
+      const y = randInt(228, H - 34);
+      const cx = Math.floor((x - offset.x) / tile);
+      const cy = Math.floor((y - offset.y) / tile);
+      const key = cellKey(cx, cy);
+      if (nextPathSet.has(key) || isRiverCell(cx, cy, riverShift, 42) || isMountainCell(cx, cy)) continue;
+      trees.push([x, y]);
+    }
     return {
       theme: chapter.theme,
       pathCells: nextPathCells,
       pathSet: nextPathSet,
-      blockedSet: createBlockedCells(nextPathSet),
+      blockedSet: createBlockedCells(nextPathSet, riverShift),
+      bridgeCells: bridgePathCells,
       mountainShift: randInt(-34, 34),
-      riverShift: randInt(-28, 28),
+      riverShift,
       weatherSeed: Math.random() * 1000,
       fieldMarks: Array.from({ length: 5 }, () => [randInt(80, 980), randInt(285, 650), randInt(110, 210), randInt(30, 62), (Math.random() - 0.5) * 0.34]),
-      trees: Array.from({ length: 46 }, (_, i) => [(i * randInt(61, 91)) % W, 228 + ((i * randInt(43, 69)) % 430)])
+      trees
     };
   }
 
@@ -700,6 +814,7 @@
   function canBuild(cell) {
     if (!cell) return false;
     if (!towerUnlocked(state.selectedBuild)) return false;
+    if (isMountainCell(cell.cx, cell.cy) || isRiverCell(cell.cx, cell.cy, battlefield.riverShift, 36)) return false;
     if (pathSet.has(cell.key) || blockedSet.has(cell.key) || cellHasTower(cell.key)) return false;
     return state.energy >= towerDef(state.selectedBuild).cost;
   }
@@ -1336,6 +1451,43 @@
       ctx.beginPath();
       ctx.ellipse(p.x + ((i % 2) ? 9 : -9), p.y + 10, 8, 3, 0.25, 0, Math.PI * 2);
       ctx.fill();
+    });
+
+    battlefield.bridgeCells.forEach(([cx, cy]) => {
+      const p = gridToWorld(cx, cy);
+      const prev = pathCells.find(([x, y]) => Math.abs(x - cx) + Math.abs(y - cy) === 1);
+      const vertical = prev ? prev[0] === cx : false;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      if (vertical) ctx.rotate(Math.PI / 2);
+      ctx.fillStyle = "rgba(43, 22, 9, 0.42)";
+      ctx.beginPath();
+      ctx.roundRect(-36, -28, 72, 56, 8);
+      ctx.fill();
+      ctx.fillStyle = "#9b5a2b";
+      ctx.strokeStyle = "#4f2610";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(-34, -24, 68, 48, 7);
+      ctx.fill();
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(255, 213, 130, 0.35)";
+      ctx.lineWidth = 2;
+      for (let i = -22; i <= 22; i += 11) {
+        ctx.beginPath();
+        ctx.moveTo(i, -22);
+        ctx.lineTo(i, 22);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = "#6d3517";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(-34, -20);
+      ctx.lineTo(34, -20);
+      ctx.moveTo(-34, 20);
+      ctx.lineTo(34, 20);
+      ctx.stroke();
+      ctx.restore();
     });
 
     ctx.fillStyle = "#7e2b1a";
