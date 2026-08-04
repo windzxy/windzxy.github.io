@@ -324,24 +324,16 @@ canvas {
   margin-top: 10px;
 }
 
-.bottom-strip {
-  display: grid;
-  grid-column: span 2;
-  gap: 8px;
-}
-
-.bottom-strip .panel-section {
-  min-height: 0;
-  padding: 8px 10px;
-  overflow: hidden;
-}
-
-.bottom-strip h2 {
-  margin-bottom: 6px;
-}
-
 .build-panel {
   grid-column: span 2;
+}
+
+.command-panel {
+  grid-column: span 2;
+}
+
+.command-panel .button-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .build-panel .tower-list {
@@ -502,6 +494,7 @@ canvas {
 
 .power-panel {
   grid-column: auto;
+  min-height: 0;
 }
 
 .advisor-panel .tip-line {
@@ -721,12 +714,16 @@ canvas {
     grid-column: auto;
   }
 
-  .build-panel .tower-list {
-    grid-template-columns: 1fr;
+  .command-panel {
+    grid-column: auto;
   }
 
-  .bottom-strip {
-    grid-column: auto;
+  .command-panel .button-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .build-panel .tower-list {
+    grid-template-columns: 1fr;
   }
 
   .power-card p,
