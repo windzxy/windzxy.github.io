@@ -79,6 +79,11 @@
   const powerFiles = window.BeexPowerFiles || {
     beeCrossbow: "assets/towers/weapon-bee-crossbow.png"
   };
+  const sceneFiles = window.BeexSceneFiles || {
+    ancient: [],
+    glacier: [],
+    volcano: []
+  };
   const powerCardIcon = document.querySelector(".power-icon img");
   if (powerCardIcon) powerCardIcon.src = powerFiles.beeCrossbow;
   const chapters = [
@@ -447,6 +452,8 @@
 
   function createBattlefield() {
     const chapter = currentChapter();
+    const sceneList = sceneFiles[chapter.id] || [];
+    const sceneIndex = sceneList.length ? (state.chapterLevel - 1 + randInt(0, sceneList.length - 1)) % sceneList.length : -1;
     const riverShift = randInt(-28, 28);
     const bridgeX = randInt(7, 17);
     const bridgeCells = createBridgeCells(bridgeX, riverShift);
@@ -502,6 +509,8 @@
       bridgeCells: bridgePathCells,
       mountainShift: randInt(-34, 34),
       riverShift,
+      sceneIndex,
+      sceneVariant: randInt(0, 3),
       weatherSeed: Math.random() * 1000,
       fieldMarks: Array.from({ length: 7 }, () => [randInt(80, 980), randInt(285, H - 74), randInt(110, 220), randInt(30, 66), (Math.random() - 0.5) * 0.34]),
       trees,
@@ -532,10 +541,23 @@
     }));
   }
 
+  function loadSceneImages(files) {
+    return Object.fromEntries(Object.entries(files).map(([themeId, sources]) => [
+      themeId,
+      sources.map(src => {
+        const img = new Image();
+        img.src = src;
+        img.addEventListener("load", () => draw());
+        return img;
+      })
+    ]));
+  }
+
   const icons = loadImages(iconFiles);
   const enemySprites = loadImages(enemyFiles);
   const landmarks = loadImages(landmarkFiles);
   const powerIcons = loadImages(powerFiles);
+  const sceneImages = loadSceneImages(sceneFiles);
   resetBattlefield();
   const audio = {
     ctx: null,
@@ -920,12 +942,32 @@
     return state.towers.some(t => t.key === key);
   }
 
-  function canBuild(cell) {
+  function cellDistanceToPath(cell) {
+    if (!cell || !path.length) return Infinity;
+    const p = gridToWorld(cell.cx, cell.cy);
+    return path.reduce((best, item) => Math.min(best, Math.hypot(item.x - p.x, item.y - p.y)), Infinity);
+  }
+
+  function canUseAsTowerPad(cell) {
     if (!cell) return false;
-    if (!towerUnlocked(state.selectedBuild)) return false;
     if (isMountainCell(cell.cx, cell.cy) || isRiverCell(cell.cx, cell.cy, battlefield.riverShift, 36)) return false;
     if (pathSet.has(cell.key) || blockedSet.has(cell.key) || cellHasTower(cell.key)) return false;
-    return state.energy >= towerDef(state.selectedBuild).cost;
+    const distance = cellDistanceToPath(cell);
+    return distance >= 58 && distance <= 172;
+  }
+
+  function canBuild(cell) {
+    if (!towerUnlocked(state.selectedBuild)) return false;
+    return canUseAsTowerPad(cell) && state.energy >= towerDef(state.selectedBuild).cost;
+  }
+
+  function buildDenyReason(cell) {
+    const def = towerDef(state.selectedBuild);
+    if (!cell) return "請拖到戰場內的可投放平台。";
+    if (!towerUnlocked(state.selectedBuild)) return `${def.name} 尚未開放。`;
+    if (!canUseAsTowerPad(cell)) return "這裡不能投放，請選金色平台或道路旁空地。";
+    if (state.energy < def.cost) return `糧草不足，${def.name} 需要 ${def.cost}。`;
+    return "暫時不能投放。";
   }
 
   function makeEnemy(index) {
@@ -1043,6 +1085,7 @@
       const def = towerDef(tower.id);
       const btn = document.createElement("button");
       btn.type = "button";
+      btn.draggable = true;
       btn.className = `tower-card ${state.selectedBuild === tower.id ? "active" : ""}`;
       btn.innerHTML = `
         <span class="tower-icon"><img src="${iconFiles[def.icon]}" alt=""></span>
@@ -1052,6 +1095,14 @@
       btn.addEventListener("click", () => {
         state.selectedBuild = tower.id;
         state.selectedTower = null;
+        updateUi();
+        showBanner(`已選擇 ${def.name}，點擊金色平台投放。`);
+      });
+      btn.addEventListener("dragstart", event => {
+        state.selectedBuild = tower.id;
+        state.selectedTower = null;
+        event.dataTransfer.setData("text/plain", tower.id);
+        event.dataTransfer.effectAllowed = "copy";
         updateUi();
       });
       ui.towerList.appendChild(btn);
@@ -1098,7 +1149,7 @@
       const def = towerDef(state.selectedBuild);
       const next = nextLockedTower();
       const hint = next ? ` 第 ${towerUnlockWave(next.id)} 波會開放新設施。` : "";
-      ui.selectedText.textContent = `準備建造 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。${hint}`;
+      ui.selectedText.textContent = `準備投放 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。點擊或拖到金色平台。${hint}`;
       ui.upgradeBtn.disabled = true;
       setActionButton(ui.upgradeBtn, "upgrade", "升級");
       ui.sellBtn.disabled = true;
@@ -1178,6 +1229,7 @@
     if (!canBuild(cell)) {
       state.shake = 0.18;
       playSound("deny");
+      showBanner(buildDenyReason(cell));
       return;
     }
     const pos = gridToWorld(cell.cx, cell.cy);
@@ -1628,11 +1680,143 @@
     ctx.restore();
   }
 
+  function currentSceneImage(chapter) {
+    const list = sceneImages[chapter.id] || [];
+    const image = list[battlefield.sceneIndex] || list[0];
+    return image && image.complete && image.naturalWidth > 0 ? image : null;
+  }
+
+  function drawSceneBackdrop(image, chapter) {
+    const variant = battlefield.sceneVariant || 0;
+    const scales = [1, 1.025, 1.04, 1.018];
+    const shifts = [[0, 0], [-12, 8], [14, -8], [8, 12]];
+    const scale = scales[variant] || 1;
+    const [shiftX, shiftY] = shifts[variant] || [0, 0];
+    const sw = image.naturalWidth / scale;
+    const sh = image.naturalHeight / scale;
+    const sx = Math.max(0, (image.naturalWidth - sw) / 2 + shiftX);
+    const sy = Math.max(0, (image.naturalHeight - sh) / 2 + shiftY);
+    ctx.drawImage(image, sx, sy, sw, sh, 0, 0, W, H);
+
+    const vignette = ctx.createRadialGradient(W / 2, H / 2, 250, W / 2, H / 2, 690);
+    vignette.addColorStop(0, "rgba(255,255,255,0)");
+    vignette.addColorStop(1, chapter.id === "glacier" ? "rgba(7,22,44,0.28)" : "rgba(24,8,4,0.34)");
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, W, H);
+
+    if (variant === 1) {
+      ctx.fillStyle = chapter.id === "volcano" ? "rgba(255,87,31,0.08)" : "rgba(255,232,166,0.08)";
+      ctx.fillRect(0, 0, W, H);
+    } else if (variant === 2) {
+      ctx.fillStyle = chapter.id === "glacier" ? "rgba(190,238,255,0.1)" : "rgba(40,84,68,0.08)";
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  function drawSceneRoute(theme, chapter) {
+    const style = roadStyle(chapter, theme);
+    ctx.save();
+    ctx.globalCompositeOperation = chapter.id === "volcano" ? "screen" : "source-over";
+    drawPathStroke(76, chapter.id === "volcano" ? "rgba(255,68,24,0.18)" : "rgba(18,10,5,0.24)", null, 0.75);
+    ctx.globalCompositeOperation = "source-over";
+    drawPathStroke(68, chapter.id === "glacier" ? "rgba(223,250,255,0.46)" : chapter.id === "volcano" ? "rgba(42,24,20,0.62)" : "rgba(86,58,30,0.52)", null, 0.78);
+    drawPathStroke(52, style.mid, null, chapter.id === "volcano" ? 0.58 : 0.46);
+    drawPathStroke(35, style.slab, null, chapter.id === "glacier" ? 0.32 : 0.26);
+    drawOffsetPath(-34, 4.5, style.edge, [16, 10], 0.62);
+    drawOffsetPath(34, 4.5, style.edge, [16, 10], 0.62);
+    drawRoadSlabs(style);
+    drawPathStroke(3, style.glow, [18, 22], chapter.id === "volcano" ? 0.82 : 0.52);
+    ctx.restore();
+  }
+
+  function drawLandmarkImage(img, x, y, w, h, fallback) {
+    ctx.save();
+    ctx.shadowColor = "rgba(35, 15, 5, 0.35)";
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 6;
+    if (img && img.complete && img.naturalWidth) {
+      ctx.drawImage(img, x, y, w, h);
+    } else {
+      fallback();
+    }
+    ctx.restore();
+  }
+
+  function drawSceneLandmarks(theme, chapter) {
+    const campImg = landmarks[`${chapter.id}Camp`];
+    const gateImg = landmarks[`${chapter.id}Gate`];
+    const startPoint = path[0];
+    const endPoint = path[path.length - 1];
+    drawLandmarkImage(campImg, startPoint.x - 68, startPoint.y - 126, 154, 154, () => {
+      ctx.fillStyle = "#7e2b1a";
+      ctx.strokeStyle = "#2b1208";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(startPoint.x - 42, startPoint.y - 38, 66, 58, 8);
+      ctx.fill();
+      ctx.stroke();
+    });
+    drawLandmarkImage(gateImg, endPoint.x - 84, endPoint.y - 138, 164, 164, () => {
+      ctx.fillStyle = theme.gate[0];
+      ctx.strokeStyle = "#2d1409";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(endPoint.x - 38, endPoint.y - 76, 72, 68, 8);
+      ctx.fill();
+      ctx.stroke();
+    });
+  }
+
+  function drawBuildPads() {
+    if (state.selectedTower || state.ended || !towerUnlocked(state.selectedBuild)) return;
+    const def = towerDef(state.selectedBuild);
+    ctx.save();
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const cell = { cx: x, cy: y, key: cellKey(x, y) };
+        if (!canUseAsTowerPad(cell)) continue;
+        const p = gridToWorld(x, y);
+        const ok = state.energy >= def.cost;
+        const nearHover = state.hoverCell && state.hoverCell.key === cell.key;
+        ctx.globalAlpha = nearHover ? 0.92 : 0.42;
+        ctx.fillStyle = ok ? "rgba(255,216,120,0.16)" : "rgba(255,101,125,0.12)";
+        ctx.strokeStyle = ok ? "rgba(255,226,142,0.78)" : "rgba(255,101,125,0.62)";
+        ctx.lineWidth = nearHover ? 3 : 1.6;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + 4, 18, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        if (nearHover) {
+          ctx.globalAlpha = 0.18;
+          ctx.fillStyle = def.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, def.range, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawSceneMap(theme, chapter) {
+    const scene = currentSceneImage(chapter);
+    if (!scene) return false;
+    drawSceneBackdrop(scene, chapter);
+    drawSceneRoute(theme, chapter);
+    drawSceneLandmarks(theme, chapter);
+    return true;
+  }
+
   function drawGrid() {
     ctx.save();
     ctx.translate(state.shake > 0 ? Math.sin(performance.now() / 22) * 3 : 0, 0);
     const theme = battlefield.theme;
     const chapter = currentChapter();
+
+    if (drawSceneMap(theme, chapter)) {
+      ctx.restore();
+      return;
+    }
 
     const sky = ctx.createLinearGradient(0, 0, 0, H);
     sky.addColorStop(0, theme.sky[0]);
@@ -1948,20 +2132,24 @@
   function drawHover() {
     const cell = state.hoverCell;
     if (!cell || state.ended) return;
-    const px = offset.x + cell.cx * tile;
-    const py = offset.y + cell.cy * tile;
+    const p = gridToWorld(cell.cx, cell.cy);
     const ok = canBuild(cell);
     ctx.save();
-    ctx.fillStyle = ok ? "rgba(102, 242, 194, 0.16)" : "rgba(255, 101, 125, 0.16)";
-    ctx.strokeStyle = ok ? "rgba(102, 242, 194, 0.86)" : "rgba(255, 101, 125, 0.86)";
-    ctx.lineWidth = 2;
-    ctx.fillRect(px + 3, py + 3, tile - 6, tile - 6);
-    ctx.strokeRect(px + 3, py + 3, tile - 6, tile - 6);
     const def = towerDef(state.selectedBuild);
+    ctx.fillStyle = ok ? "rgba(102, 242, 194, 0.2)" : "rgba(255, 101, 125, 0.18)";
+    ctx.strokeStyle = ok ? "rgba(102, 242, 194, 0.9)" : "rgba(255, 101, 125, 0.88)";
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(px + tile / 2, py + tile / 2, def.range, 0, Math.PI * 2);
+    ctx.ellipse(p.x, p.y + 4, 22, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, def.range, 0, Math.PI * 2);
     ctx.fillStyle = ok ? "rgba(86, 216, 255, 0.045)" : "rgba(255, 101, 125, 0.035)";
     ctx.fill();
+    ctx.strokeStyle = ok ? "rgba(86, 216, 255, 0.24)" : "rgba(255, 101, 125, 0.2)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -2209,6 +2397,7 @@
     ctx.clearRect(0, 0, W, H);
     drawGrid();
     drawWeather();
+    drawBuildPads();
     drawHover();
     drawDrops();
     drawTowers();
@@ -2257,6 +2446,25 @@
     }
     state.selectedTower = null;
     buildTower(cell);
+  });
+
+  canvas.addEventListener("dragover", event => {
+    event.preventDefault();
+    const point = pointerToWorld(event);
+    state.hoverCell = worldToCell(point.x, point.y);
+    event.dataTransfer.dropEffect = "copy";
+  });
+
+  canvas.addEventListener("drop", event => {
+    event.preventDefault();
+    unlockAudio();
+    const towerId = event.dataTransfer.getData("text/plain");
+    if (towers[towerId]) state.selectedBuild = towerId;
+    state.selectedTower = null;
+    const point = pointerToWorld(event);
+    state.hoverCell = worldToCell(point.x, point.y);
+    buildTower(state.hoverCell);
+    updateUi();
   });
 
   ui.upgradeBtn.addEventListener("click", () => {
