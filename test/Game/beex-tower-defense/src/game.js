@@ -45,6 +45,7 @@
   let pathSet = new Set();
   let blockedSet = new Set();
   let battlefield = null;
+  let activeChapterLevel = 1;
   const leaderboardUrl = "leaderboard.json";
   const issueUrl = "https://github.com/windzxy/windzxy.github.io/issues/new";
   const iconFiles = window.BeexTowerFiles || {
@@ -450,10 +451,10 @@
     return cells;
   }
 
-  function createBattlefield() {
+  function createBattlefield(chapterLevel = activeChapterLevel) {
     const chapter = currentChapter();
     const sceneList = sceneFiles[chapter.id] || [];
-    const sceneIndex = sceneList.length ? (state.chapterLevel - 1 + randInt(0, sceneList.length - 1)) % sceneList.length : -1;
+    const sceneIndex = sceneList.length ? (chapterLevel - 1 + randInt(0, sceneList.length - 1)) % sceneList.length : -1;
     const riverShift = randInt(-28, 28);
     const bridgeX = randInt(7, 17);
     const bridgeCells = createBridgeCells(bridgeX, riverShift);
@@ -520,9 +521,10 @@
     };
   }
 
-  function resetBattlefield(chapterIndex = activeChapterIndex) {
+  function resetBattlefield(chapterIndex = activeChapterIndex, chapterLevel = activeChapterLevel) {
     activeChapterIndex = chapterIndex;
-    battlefield = createBattlefield();
+    activeChapterLevel = chapterLevel;
+    battlefield = createBattlefield(chapterLevel);
     pathCells = battlefield.pathCells;
     pathSet = battlefield.pathSet;
     blockedSet = battlefield.blockedSet;
@@ -1194,7 +1196,7 @@
     state.chapterLevel = chapterLevel;
     state.difficultyId = selectedDifficultyId;
     activeChapterIndex = chapterIndex;
-    resetBattlefield(chapterIndex);
+    resetBattlefield(chapterIndex, chapterLevel);
     wavePlan = createWavePlan(chapterLevel);
     const maxLives = difficulty.lives + Math.min(6, chapterLevel - 1);
     Object.assign(state, {
