@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-HK">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>蜂巢古城守衛</title>
+  <title>蜂巢古城守卫</title>
   <link rel="icon" type="image/svg+xml" href="assets/icons/brand-beex.svg">
   <link rel="alternate icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
@@ -19,88 +19,88 @@
   <link rel="preload" as="image" href="assets/scenes/volcano-02.webp">
   <link rel="preload" as="image" href="assets/scenes/volcano-03.webp">
   <link rel="preload" as="image" href="assets/scenes/volcano-04.webp">
-  <link rel="stylesheet" href="styles.css?v=20260804-layout16">
+  <link rel="stylesheet" href="styles.css?v=20260804-layout18">
 </head>
 <body>
   <main class="shell">
-    <section class="game-card" aria-label="蜂巢古城守衛">
+    <section class="game-card" aria-label="蜂巢古城守卫">
       <header class="topbar">
         <div>
-          <p class="eyebrow">蜂巢遊戲工坊</p>
-          <h1><img class="brand-mark" src="assets/icons/brand-beex.svg" alt="">蜂巢古城守衛</h1>
+          <p class="eyebrow">Beex 游戏工坊</p>
+          <h1><img class="brand-mark" src="assets/icons/brand-beex.svg" alt="">蜂巢古城守卫</h1>
         </div>
-        <div class="stats" aria-label="戰局狀態">
-          <span><img src="assets/icons/stat-rice.svg" alt=""><b id="energy">240</b><small>糧草</small></span>
+        <div class="stats" aria-label="战局状态">
+          <span><img src="assets/icons/stat-rice.svg" alt=""><b id="energy">240</b><small>粮草</small></span>
           <span><img src="assets/icons/stat-gate.svg" alt=""><b id="lives">24</b><small>城防</small></span>
-          <span><img src="assets/icons/stat-wave.svg" alt=""><b id="wave">1/12</b><small>敵襲</small></span>
-          <span><img src="assets/icons/stat-score.svg" alt=""><b id="score">0</b><small>戰功</small></span>
+          <span><img src="assets/icons/stat-wave.svg" alt=""><b id="wave">1/12</b><small>敌袭</small></span>
+          <span><img src="assets/icons/stat-score.svg" alt=""><b id="score">0</b><small>战功</small></span>
         </div>
       </header>
 
       <div class="play-layout">
         <div class="stage-wrap">
-          <canvas id="game" width="1100" height="820" aria-label="古城守衛戰場"></canvas>
+          <canvas id="game" width="1100" height="820" aria-label="古城守卫战场"></canvas>
           <div id="banner" class="banner hidden" role="status"></div>
           <div id="chapterGate" class="chapter-gate hidden" role="dialog" aria-modal="true" aria-labelledby="chapterGateTitle">
-            <strong id="chapterGateTitle">通關</strong>
-            <p id="chapterGateText">是否進入下一主題？</p>
+            <strong id="chapterGateTitle">通关</strong>
+            <p id="chapterGateText">是否进入下一主题？</p>
             <div class="button-row">
-              <button id="nextThemeBtn" type="button"><img src="assets/icons/action-start.svg" alt="">下一主題</button>
-              <button id="stayThemeBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">留在本主題</button>
+              <button id="nextThemeBtn" type="button"><img src="assets/icons/action-start.svg" alt="">下一主题</button>
+              <button id="stayThemeBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">留在本主题</button>
             </div>
           </div>
         </div>
 
-        <aside class="panel" aria-label="戰場面板">
+        <aside class="panel" aria-label="战场面板">
           <section class="panel-section command-panel">
-            <h2><img src="assets/icons/stat-wave.svg" alt="">戰令</h2>
+            <h2><img src="assets/icons/stat-wave.svg" alt="">战令</h2>
             <div class="button-grid">
-              <button id="startBtn" type="button"><img src="assets/icons/action-start.svg" alt="">迎敵</button>
-              <button id="pauseBtn" type="button"><img src="assets/icons/action-pause.svg" alt="">暫停</button>
+              <button id="startBtn" type="button"><img src="assets/icons/action-start.svg" alt="">迎敌</button>
+              <button id="pauseBtn" type="button"><img src="assets/icons/action-pause.svg" alt="">暂停</button>
               <button id="speedBtn" type="button"><img src="assets/icons/action-speed.svg" alt="">一倍速度</button>
               <button id="soundBtn" type="button"><img src="assets/icons/action-sound.svg" alt="">音效</button>
-              <button id="restartBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">重開</button>
+              <button id="restartBtn" type="button"><img src="assets/icons/action-restart.svg" alt="">重开</button>
             </div>
           </section>
 
           <section class="panel-section compact theme-panel">
-            <h2><img src="assets/icons/stat-score.svg" alt="">主題</h2>
-            <p id="themeStatus">古城山河｜晴嵐</p>
+            <h2><img src="assets/icons/stat-score.svg" alt="">主题</h2>
+            <p id="themeStatus">古城山河｜晴岚</p>
           </section>
 
           <section class="panel-section compact difficulty-panel">
-            <h2><img src="assets/icons/stat-wave.svg" alt="">難度</h2>
+            <h2><img src="assets/icons/stat-wave.svg" alt="">难度</h2>
             <label class="difficulty-field">
-              <span>難度預設</span>
+              <span>难度预设</span>
               <select id="difficultySelect">
-                <option value="easy">簡單</option>
+                <option value="easy">简单</option>
                 <option value="normal">中等</option>
-                <option value="hard">困難</option>
+                <option value="hard">困难</option>
               </select>
             </label>
-            <p id="difficultyStatus">簡單｜適合熟悉地形與塔位。</p>
+            <p id="difficultyStatus">简单｜适合熟悉地形与塔位。</p>
           </section>
 
           <section class="panel-section build-panel">
-            <h2><img src="assets/icons/panel-build.svg" alt="">攻防設備</h2>
+            <h2><img src="assets/icons/panel-build.svg" alt="">攻防设备</h2>
             <div class="tower-list" id="towerList"></div>
           </section>
 
           <section class="panel-section selected-box selected-panel" id="selectedBox">
-            <h2><img src="assets/icons/panel-build.svg" alt="">選中</h2>
-            <p id="selectedText">選擇一座塔或空地。</p>
+            <h2><img src="assets/icons/panel-build.svg" alt="">选中</h2>
+            <p id="selectedText">选择一座塔或空地。</p>
             <div class="button-row">
-              <button id="upgradeBtn" type="button"><img src="assets/icons/action-upgrade.svg" alt="">升級</button>
+              <button id="upgradeBtn" type="button"><img src="assets/icons/action-upgrade.svg" alt="">升级</button>
               <button id="sellBtn" type="button"><img src="assets/icons/action-sell.svg" alt="">拆除</button>
             </div>
           </section>
 
           <section class="panel-section compact power-panel">
-            <h2><img src="assets/icons/panel-drop.svg" alt="">驚喜掉落</h2>
+            <h2><img src="assets/icons/panel-drop.svg" alt="">惊喜掉落</h2>
             <div class="power-card">
               <p>
-                <span class="power-title-row"><span class="tower-icon power-icon"><img src="assets/towers/weapon-bee-crossbow.png" alt=""></span><strong>蜂鳴神弩</strong></span>
-                <small id="powerStatus">低概率驚喜掉落，點擊即可全場齊射。</small>
+                <span class="power-title-row"><span class="tower-icon power-icon"><img src="assets/towers/weapon-bee-crossbow.png" alt=""></span><strong>蜂鸣神弩</strong></span>
+                <small id="powerStatus">低概率惊喜掉落，点击即可全场齐射。</small>
               </p>
             </div>
           </section>
@@ -109,29 +109,30 @@
             <h2><img src="assets/icons/panel-rank.svg" alt="">排行榜</h2>
             <label class="player-field">
               <span>玩家名字</span>
-              <input id="playerName" maxlength="18" autocomplete="nickname" placeholder="輸入你的名字">
+              <input id="playerName" maxlength="18" autocomplete="nickname" placeholder="输入你的名字">
             </label>
             <div class="button-row">
               <button id="submitScoreBtn" type="button" disabled>提交排行榜</button>
-              <button id="refreshBoardBtn" type="button">刷新榜單</button>
+              <button id="refreshBoardBtn" type="button">刷新榜单</button>
             </div>
             <ol id="leaderboardList" class="leaderboard-list"></ol>
-            <p id="leaderboardHint" class="leaderboard-hint">打完一局後可提交戰功。</p>
-            <p class="record">最高戰功：<span id="bestScore">0</span></p>
+            <p id="leaderboardHint" class="leaderboard-hint">打完一局后可提交战功。</p>
+            <p class="record">最高战功：<span id="bestScore">0</span></p>
           </section>
 
           <section class="panel-section compact advisor-panel">
-            <h2><img src="assets/icons/stat-score.svg" alt="">軍師提示</h2>
-            <p class="tip-line"><span>敵軍會沿場景原本道路前進：彎道放寒玉蓮，直線放神機弩，鼠標移到道路旁才會亮出投放點。</span></p>
+            <h2><img src="assets/icons/stat-score.svg" alt="">军师提示</h2>
+            <p class="tip-line"><span>敌军会沿场景原本道路前进：弯道放寒玉莲，直线放神机弩，鼠标移到道路旁才会亮出投放点。</span></p>
           </section>
         </aside>
       </div>
     </section>
   </main>
 
-  <script src="src/scenes.js?v=20260804-layout16"></script>
-  <script src="src/landmarks.js?v=20260804-layout16"></script>
-  <script src="src/sprites.js?v=20260804-layout16"></script>
-  <script src="src/game.js?v=20260804-layout16"></script>
+  <script src="src/scenes.js?v=20260804-layout18"></script>
+  <script src="src/landmarks.js?v=20260804-layout18"></script>
+  <script src="src/sprites.js?v=20260804-layout18"></script>
+  <script src="src/flags.js?v=20260804-layout18"></script>
+  <script src="src/game.js?v=20260804-layout18"></script>
 </body>
 </html>
