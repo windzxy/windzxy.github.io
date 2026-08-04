@@ -48,7 +48,9 @@
   const iconFiles = {
     crossbow: "assets/icons/tower-crossbow.svg",
     lotus: "assets/icons/tower-lotus.svg",
-    drum: "assets/icons/tower-drum.svg"
+    drum: "assets/icons/tower-drum.svg",
+    mine: "assets/icons/tower-hive-mine.svg",
+    bastion: "assets/icons/tower-guard-bastion.svg"
   };
   const actionIcons = {
     start: "assets/icons/action-start.svg",
@@ -84,7 +86,9 @@
       towers: {
         pulse: { name: "神機弩", color: "#ffd878", effect: "遠距離單體輸出" },
         frost: { name: "寒玉蓮", color: "#9fe8ff", effect: "寒氣減速控制" },
-        arc: { name: "雷鼓臺", color: "#ffcf5d", effect: "雷擊連鎖傷害" }
+        arc: { name: "雷鼓臺", color: "#ffcf5d", effect: "雷擊連鎖傷害" },
+        mine: { name: "爆蜂罐", color: "#ffad38", effect: "近距離觸發範圍爆破" },
+        bastion: { name: "城防蜂堡", color: "#58d4d0", effect: "修補城防兼弱攻擊" }
       },
       theme: {
         sky: ["#8fc9d8", "#dce9c4", "#91bd68", "#789b52"],
@@ -112,12 +116,16 @@
       towerBoosts: {
         frost: { slow: 0.43, slowTime: 1.8, damageMod: 1.12 },
         pulse: { rangeMod: 0.96 },
-        arc: { cooldownMod: 1.04 }
+        arc: { cooldownMod: 1.04 },
+        mine: { damageMod: 1.1, blastMod: 1.08 },
+        bastion: { repairMod: 1.18 }
       },
       towers: {
         pulse: { name: "破冰弩", color: "#bfefff", effect: "破冰遠射，射程略短" },
         frost: { name: "霜晶蓮", color: "#d4fbff", effect: "暴雪增幅，減速更久" },
-        arc: { name: "極光鼓", color: "#a8d8ff", effect: "極光連鎖，節奏略慢" }
+        arc: { name: "極光鼓", color: "#a8d8ff", effect: "極光連鎖，節奏略慢" },
+        mine: { name: "裂冰蜂罐", color: "#8cecff", effect: "破冰爆裂，範圍更寬" },
+        bastion: { name: "凍壁蜂堡", color: "#c8f6ff", effect: "冰壁修補，城防更穩" }
       },
       theme: {
         sky: ["#b7e6ff", "#e8f7ff", "#bcd7d9", "#8eb4c4"],
@@ -145,12 +153,16 @@
       towerBoosts: {
         pulse: { damageMod: 1.08 },
         frost: { slow: 0.56, slowTime: 1.18 },
-        arc: { damageMod: 1.2, cooldownMod: 0.92 }
+        arc: { damageMod: 1.2, cooldownMod: 0.92 },
+        mine: { damageMod: 1.26, blastMod: 0.94 },
+        bastion: { repairMod: 0.82, damageMod: 1.12 }
       },
       towers: {
         pulse: { name: "熔芯弩", color: "#ffb15c", effect: "高溫弩矢，單體更痛" },
         frost: { name: "灰燼蓮", color: "#ffcf9a", effect: "灰霧緩速，控制較短" },
-        arc: { name: "火山雷鼓", color: "#ff6a3d", effect: "熔雷連鎖，爆發更強" }
+        arc: { name: "火山雷鼓", color: "#ff6a3d", effect: "熔雷連鎖，爆發更強" },
+        mine: { name: "熔爆蜂罐", color: "#ff7c35", effect: "熔岩爆破，傷害更高" },
+        bastion: { name: "黑曜蜂堡", color: "#ff9f66", effect: "黑曜護城，修補較慢" }
       },
       theme: {
         sky: ["#3a1c1b", "#8a3b24", "#b45c2a", "#614123"],
@@ -433,7 +445,41 @@
       cooldown: 0.96,
       chain: 3,
       effect: "雷擊連鎖傷害"
+    },
+    mine: {
+      id: "mine",
+      name: "爆蜂罐",
+      icon: "mine",
+      cost: 82,
+      color: "#ffad38",
+      range: 74,
+      damage: 96,
+      cooldown: 0.28,
+      blastRadius: 88,
+      singleUse: true,
+      effect: "近距離觸發範圍爆破"
+    },
+    bastion: {
+      id: "bastion",
+      name: "城防蜂堡",
+      icon: "bastion",
+      cost: 76,
+      color: "#58d4d0",
+      range: 104,
+      damage: 9,
+      cooldown: 1.25,
+      repair: 1,
+      repairCooldown: 4.8,
+      effect: "修補城防兼弱攻擊"
     }
+  };
+
+  const towerUnlocks = {
+    pulse: 1,
+    frost: 3,
+    arc: 5,
+    mine: 7,
+    bastion: 9
   };
 
   wavePlan = createWavePlan(1);
@@ -441,6 +487,7 @@
   const state = {
     energy: 240,
     lives: 24,
+    maxLives: 24,
     chapterIndex: 0,
     chapterLevel: 1,
     waveIndex: 0,
@@ -492,6 +539,29 @@
 
   function scoreKey() {
     return `${state.playerName}:${state.score}:${state.chapterLevel}:${state.chapterIndex}:${state.waveIndex}:${state.lives}:${state.energy}`;
+  }
+
+  function progressWave() {
+    return (state.chapterLevel - 1) * wavePlan.length + state.waveIndex + 1;
+  }
+
+  function towerUnlockWave(type) {
+    return towerUnlocks[type] || 1;
+  }
+
+  function towerUnlocked(type) {
+    return progressWave() >= towerUnlockWave(type);
+  }
+
+  function newlyUnlockedTowers() {
+    const wave = progressWave();
+    return Object.values(towers).filter(tower => towerUnlockWave(tower.id) === wave);
+  }
+
+  function nextLockedTower() {
+    return Object.values(towers)
+      .filter(tower => !towerUnlocked(tower.id))
+      .sort((a, b) => towerUnlockWave(a.id) - towerUnlockWave(b.id))[0] || null;
   }
 
   function saveLocalScore() {
@@ -629,6 +699,7 @@
 
   function canBuild(cell) {
     if (!cell) return false;
+    if (!towerUnlocked(state.selectedBuild)) return false;
     if (pathSet.has(cell.key) || blockedSet.has(cell.key) || cellHasTower(cell.key)) return false;
     return state.energy >= towerDef(state.selectedBuild).cost;
   }
@@ -718,7 +789,10 @@
       cooldown: Math.max(0.22, base.cooldown * (boost.cooldownMod || 1) * (1 - (level - 1) * 0.1)),
       slow: boost.slow || base.slow,
       slowTime: boost.slowTime || base.slowTime,
-      chain: base.chain ? base.chain + level - 1 : 0
+      chain: base.chain ? base.chain + level - 1 : 0,
+      blastRadius: Math.round((base.blastRadius || 0) * (boost.blastMod || 1) * (1 + (level - 1) * 0.1)),
+      repair: Math.max(0, Math.round((base.repair || 0) * (boost.repairMod || 1) * (1 + (level - 1) * 0.35))),
+      repairCooldown: base.repairCooldown ? Math.max(2.6, base.repairCooldown * (1 - (level - 1) * 0.08)) : 0
     };
   }
 
@@ -736,7 +810,7 @@
 
   function renderTowerButtons() {
     ui.towerList.innerHTML = "";
-    Object.values(towers).forEach(tower => {
+    Object.values(towers).filter(tower => towerUnlocked(tower.id)).forEach(tower => {
       const def = towerDef(tower.id);
       const btn = document.createElement("button");
       btn.type = "button";
@@ -789,7 +863,9 @@
       setActionButton(ui.sellBtn, "sell", "拆除");
     } else {
       const def = towerDef(state.selectedBuild);
-      ui.selectedText.textContent = `準備建造 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。`;
+      const next = nextLockedTower();
+      const hint = next ? ` 第 ${towerUnlockWave(next.id)} 波會開放新設施。` : "";
+      ui.selectedText.textContent = `準備建造 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。${hint}`;
       ui.upgradeBtn.disabled = true;
       setActionButton(ui.upgradeBtn, "upgrade", "升級");
       ui.sellBtn.disabled = true;
@@ -827,9 +903,11 @@
     activeChapterIndex = chapterIndex;
     resetBattlefield(chapterIndex);
     wavePlan = createWavePlan(chapterLevel);
+    const maxLives = 24 + Math.min(6, chapterLevel - 1);
     Object.assign(state, {
       energy: 240 + Math.min(80, (chapterLevel - 1) * 20),
-      lives: 24 + Math.min(6, chapterLevel - 1),
+      lives: maxLives,
+      maxLives,
       waveIndex: 0,
       score: carryScore ? state.score : 0,
       selectedBuild: "pulse",
@@ -877,7 +955,8 @@
       cy: cell.cy,
       key: cell.key,
       level: 1,
-      cooldown: 0
+      cooldown: 0,
+      repairTimer: def.repairCooldown || 0
     });
     state.selectedTower = state.towers[state.towers.length - 1];
     playSound("build");
@@ -955,6 +1034,15 @@
 
   function fireTower(tower, target, stats) {
     const def = towerDef(tower.type);
+    if (tower.type === "mine") {
+      const victims = state.enemies.filter(enemy => enemy.alive && Math.hypot(enemy.x - tower.x, enemy.y - tower.y) <= stats.blastRadius);
+      victims.forEach(enemy => damageEnemy(enemy, stats.damage));
+      state.sparks.push({ x: tower.x, y: tower.y, r: stats.blastRadius * 0.5, life: 0.42, color: def.color });
+      state.shots.push({ x1: tower.x, y1: tower.y, x2: target.x, y2: target.y, life: 0.18, color: def.color, width: 7 });
+      tower.remove = true;
+      playSound("power");
+      return;
+    }
     if (tower.type === "arc") {
       const chainTargets = state.enemies
         .filter(e => e.alive && Math.hypot(e.x - target.x, e.y - target.y) <= 118)
@@ -1026,9 +1114,21 @@
     }
 
     for (const tower of state.towers) {
+      const stats = towerStats(tower);
+      if (tower.type === "bastion" && stats.repair > 0 && state.lives < state.maxLives) {
+        tower.repairTimer = (tower.repairTimer || 0) - dt;
+        if (tower.repairTimer <= 0) {
+          const before = state.lives;
+          state.lives = Math.min(state.maxLives, state.lives + stats.repair);
+          tower.repairTimer = stats.repairCooldown;
+          if (state.lives > before) {
+            state.sparks.push({ x: tower.x, y: tower.y, r: 24, life: 0.38, color: "#58d4d0" });
+            playSound("build");
+          }
+        }
+      }
       tower.cooldown -= dt;
       if (tower.cooldown <= 0) {
-        const stats = towerStats(tower);
         const target = findTarget(tower, stats);
         if (target) {
           fireTower(tower, target, stats);
@@ -1036,6 +1136,7 @@
         }
       }
     }
+    state.towers = state.towers.filter(tower => !tower.remove);
 
     state.enemies = state.enemies.filter(e => e.alive);
     state.drops.forEach(drop => drop.age += dt);
@@ -1060,7 +1161,8 @@
       if (state.waveIndex >= wavePlan.length) {
         endGame(true);
       } else {
-        showBanner("敵軍退散，糧草已補給。");
+        const unlocked = newlyUnlockedTowers().map(tower => towerDef(tower.id).name);
+        showBanner(unlocked.length ? `新設施開放：${unlocked.join("、")}` : "敵軍退散，糧草已補給。");
       }
       updateUi();
     }
