@@ -78,6 +78,10 @@
     volcanoCamp: "assets/map/start-camp-volcano.png",
     volcanoGate: "assets/map/end-gate-volcano.png"
   };
+  const flagFiles = window.BeexFlagFiles || {
+    enemy: "assets/flags/enemy-banner.png",
+    bee: "assets/flags/bee-banner.png"
+  };
   const powerFiles = window.BeexPowerFiles || {
     beeCrossbow: "assets/towers/weapon-bee-crossbow.png"
   };
@@ -92,22 +96,22 @@
     {
       id: "ancient",
       name: "古城山河",
-      gate: "蜂巢城門",
-      enemyCamp: "敵營",
-      weather: "晴嵐",
+      gate: "蜂巢城门",
+      enemyCamp: "敌营",
+      weather: "晴岚",
       weatherKind: "breeze",
-      status: "標準地形，攻守均衡。",
+      status: "标准地形，攻守均衡。",
       enemyTint: "rgba(255, 220, 130, 0.1)",
       enemyHp: 1,
       enemySpeed: 1,
       reward: 1,
       towerBoosts: {},
       towers: {
-        pulse: { name: "神機弩", color: "#ffd878", effect: "遠距離單體輸出" },
-        frost: { name: "寒玉蓮", color: "#9fe8ff", effect: "寒氣減速控制" },
-        arc: { name: "雷鼓臺", color: "#ffcf5d", effect: "雷擊連鎖傷害" },
-        mine: { name: "爆蜂罐", color: "#ffad38", effect: "近距離觸發範圍爆破" },
-        bastion: { name: "城防蜂堡", color: "#58d4d0", effect: "修補城防兼弱攻擊" }
+        pulse: { name: "神机弩", color: "#ffd878", effect: "远距离单体输出" },
+        frost: { name: "寒玉莲", color: "#9fe8ff", effect: "寒气减速控制" },
+        arc: { name: "雷鼓台", color: "#ffcf5d", effect: "雷击连锁伤害" },
+        mine: { name: "爆蜂罐", color: "#ffad38", effect: "近距离触发范围爆破" },
+        bastion: { name: "城防蜂堡", color: "#58d4d0", effect: "修补城防兼弱攻击" }
       },
       theme: {
         sky: ["#8fc9d8", "#dce9c4", "#91bd68", "#789b52"],
@@ -124,10 +128,10 @@
       id: "glacier",
       name: "冰川寒原",
       gate: "冰晶要塞",
-      enemyCamp: "雪原敵哨",
+      enemyCamp: "雪原敌哨",
       weather: "暴雪",
       weatherKind: "snow",
-      status: "敵軍稍慢但更耐打，寒玉蓮控制更強。",
+      status: "敌军稍慢但更耐打，寒玉莲控制更强。",
       enemyTint: "rgba(120, 220, 255, 0.24)",
       enemyHp: 1.12,
       enemySpeed: 0.92,
@@ -140,11 +144,11 @@
         bastion: { repairMod: 1.18 }
       },
       towers: {
-        pulse: { name: "破冰弩", color: "#bfefff", effect: "破冰遠射，射程略短" },
-        frost: { name: "霜晶蓮", color: "#d4fbff", effect: "暴雪增幅，減速更久" },
-        arc: { name: "極光鼓", color: "#a8d8ff", effect: "極光連鎖，節奏略慢" },
-        mine: { name: "裂冰蜂罐", color: "#8cecff", effect: "破冰爆裂，範圍更寬" },
-        bastion: { name: "凍壁蜂堡", color: "#c8f6ff", effect: "冰壁修補，城防更穩" }
+        pulse: { name: "破冰弩", color: "#bfefff", effect: "破冰远射，射程略短" },
+        frost: { name: "霜晶莲", color: "#d4fbff", effect: "暴雪增幅，减速更久" },
+        arc: { name: "极光鼓", color: "#a8d8ff", effect: "极光连锁，节奏略慢" },
+        mine: { name: "裂冰蜂罐", color: "#8cecff", effect: "破冰爆裂，范围更宽" },
+        bastion: { name: "冻壁蜂堡", color: "#c8f6ff", effect: "冰壁修补，城防更稳" }
       },
       theme: {
         sky: ["#b7e6ff", "#e8f7ff", "#bcd7d9", "#8eb4c4"],
@@ -160,11 +164,11 @@
     {
       id: "volcano",
       name: "火山熔境",
-      gate: "黑曜城門",
-      enemyCamp: "熔岩敵陣",
+      gate: "黑曜城门",
+      enemyCamp: "熔岩敌阵",
       weather: "火山灰",
       weatherKind: "ember",
-      status: "敵軍更快更硬，擊殺糧草更多，雷鼓臺爆發更強。",
+      status: "敌军更快更硬，击杀粮草更多，雷鼓台爆发更强。",
       enemyTint: "rgba(255, 98, 42, 0.22)",
       enemyHp: 1.18,
       enemySpeed: 1.1,
@@ -177,11 +181,11 @@
         bastion: { repairMod: 0.82, damageMod: 1.12 }
       },
       towers: {
-        pulse: { name: "熔芯弩", color: "#ffb15c", effect: "高溫弩矢，單體更痛" },
-        frost: { name: "灰燼蓮", color: "#ffcf9a", effect: "灰霧緩速，控制較短" },
-        arc: { name: "火山雷鼓", color: "#ff6a3d", effect: "熔雷連鎖，爆發更強" },
-        mine: { name: "熔爆蜂罐", color: "#ff7c35", effect: "熔岩爆破，傷害更高" },
-        bastion: { name: "黑曜蜂堡", color: "#ff9f66", effect: "黑曜護城，修補較慢" }
+        pulse: { name: "熔芯弩", color: "#ffb15c", effect: "高温弩矢，单体更痛" },
+        frost: { name: "灰烬莲", color: "#ffcf9a", effect: "灰雾缓速，控制较短" },
+        arc: { name: "火山雷鼓", color: "#ff6a3d", effect: "熔雷连锁，爆发更强" },
+        mine: { name: "熔爆蜂罐", color: "#ff7c35", effect: "熔岩爆破，伤害更高" },
+        bastion: { name: "黑曜蜂堡", color: "#ff9f66", effect: "黑曜护城，修补较慢" }
       },
       theme: {
         sky: ["#3a1c1b", "#8a3b24", "#b45c2a", "#614123"],
@@ -198,51 +202,51 @@
   const sceneLayouts = {
     ancient: [
       {
-        camp: { x: 95, y: 170, label: "敵營" },
-        gate: { x: 985, y: 220, label: "蜂巢城門" },
+        camp: { x: 95, y: 170, label: "敌营" },
+        gate: { x: 985, y: 220, label: "蜂巢城门" },
         route: [[70, 185], [132, 270], [240, 365], [155, 530], [320, 575], [480, 500], [430, 345], [590, 305], [735, 390], [875, 500], [910, 360], [1005, 260]],
         noBuild: [{ x: 92, y: 170, r: 112 }, { x: 990, y: 230, r: 136 }]
       },
       {
-        camp: { x: 82, y: 300, label: "敵營" },
-        gate: { x: 992, y: 245, label: "蜂巢城門" },
+        camp: { x: 82, y: 300, label: "敌营" },
+        gate: { x: 992, y: 245, label: "蜂巢城门" },
         route: [[45, 350], [170, 350], [135, 520], [315, 565], [380, 430], [270, 300], [450, 250], [590, 350], [665, 520], [825, 500], [895, 360], [1005, 270]],
         noBuild: [{ x: 78, y: 300, r: 118 }, { x: 990, y: 245, r: 136 }]
       },
       {
-        camp: { x: 78, y: 190, label: "敵營" },
-        gate: { x: 972, y: 170, label: "蜂巢城門" },
+        camp: { x: 78, y: 190, label: "敌营" },
+        gate: { x: 972, y: 170, label: "蜂巢城门" },
         route: [[64, 210], [155, 285], [115, 435], [300, 455], [430, 380], [535, 520], [700, 455], [650, 330], [790, 265], [915, 280], [1000, 205]],
         noBuild: [{ x: 80, y: 190, r: 120 }, { x: 972, y: 170, r: 142 }]
       },
       {
-        camp: { x: 76, y: 555, label: "敵營" },
-        gate: { x: 1005, y: 210, label: "蜂巢城門" },
+        camp: { x: 76, y: 555, label: "敌营" },
+        gate: { x: 1005, y: 210, label: "蜂巢城门" },
         route: [[62, 558], [195, 515], [150, 375], [315, 315], [455, 405], [575, 555], [745, 505], [690, 360], [815, 285], [940, 320], [1018, 230]],
         noBuild: [{ x: 76, y: 555, r: 118 }, { x: 1005, y: 210, r: 142 }]
       }
     ],
     glacier: [
       {
-        camp: { x: 82, y: 170, label: "雪原敵哨" },
+        camp: { x: 82, y: 170, label: "雪原敌哨" },
         gate: { x: 955, y: 245, label: "冰晶要塞" },
         route: [[70, 190], [158, 285], [130, 455], [270, 570], [405, 500], [335, 365], [505, 315], [660, 385], [780, 540], [900, 455], [925, 320], [982, 270]],
         noBuild: [{ x: 82, y: 170, r: 118 }, { x: 955, y: 245, r: 148 }]
       },
       {
-        camp: { x: 126, y: 390, label: "雪原敵哨" },
+        camp: { x: 126, y: 390, label: "雪原敌哨" },
         gate: { x: 965, y: 260, label: "冰晶要塞" },
         route: [[85, 420], [205, 515], [340, 475], [305, 330], [465, 250], [635, 310], [560, 485], [720, 555], [875, 475], [835, 340], [970, 285]],
         noBuild: [{ x: 126, y: 390, r: 120 }, { x: 965, y: 260, r: 150 }]
       },
       {
-        camp: { x: 82, y: 470, label: "雪原敵哨" },
+        camp: { x: 82, y: 470, label: "雪原敌哨" },
         gate: { x: 890, y: 280, label: "冰晶要塞" },
         route: [[70, 500], [210, 470], [255, 320], [425, 330], [505, 510], [670, 545], [770, 420], [680, 300], [810, 220], [920, 285]],
         noBuild: [{ x: 82, y: 470, r: 116 }, { x: 890, y: 280, r: 150 }]
       },
       {
-        camp: { x: 85, y: 230, label: "雪原敵哨" },
+        camp: { x: 85, y: 230, label: "雪原敌哨" },
         gate: { x: 980, y: 245, label: "冰晶要塞" },
         route: [[68, 250], [180, 300], [125, 455], [300, 525], [445, 470], [390, 325], [545, 290], [650, 425], [795, 520], [910, 430], [880, 305], [1000, 260]],
         noBuild: [{ x: 85, y: 230, r: 118 }, { x: 980, y: 245, r: 150 }]
@@ -250,26 +254,26 @@
     ],
     volcano: [
       {
-        camp: { x: 78, y: 575, label: "熔岩敵陣" },
-        gate: { x: 980, y: 230, label: "黑曜城門" },
+        camp: { x: 78, y: 575, label: "熔岩敌阵" },
+        gate: { x: 980, y: 230, label: "黑曜城门" },
         route: [[65, 565], [175, 505], [130, 360], [295, 320], [435, 425], [370, 560], [545, 590], [675, 480], [625, 330], [790, 285], [905, 340], [1005, 250]],
         noBuild: [{ x: 78, y: 575, r: 120 }, { x: 980, y: 230, r: 150 }]
       },
       {
-        camp: { x: 82, y: 230, label: "熔岩敵陣" },
-        gate: { x: 980, y: 255, label: "黑曜城門" },
+        camp: { x: 82, y: 230, label: "熔岩敌阵" },
+        gate: { x: 980, y: 255, label: "黑曜城门" },
         route: [[68, 245], [205, 315], [160, 500], [335, 575], [470, 465], [415, 310], [575, 255], [715, 355], [665, 525], [840, 545], [910, 395], [1000, 280]],
         noBuild: [{ x: 82, y: 230, r: 120 }, { x: 980, y: 255, r: 150 }]
       },
       {
-        camp: { x: 82, y: 515, label: "熔岩敵陣" },
-        gate: { x: 995, y: 230, label: "黑曜城門" },
+        camp: { x: 82, y: 515, label: "熔岩敌阵" },
+        gate: { x: 995, y: 230, label: "黑曜城门" },
         route: [[70, 530], [210, 505], [285, 350], [450, 300], [555, 430], [490, 580], [675, 610], [790, 485], [730, 335], [880, 285], [1010, 250]],
         noBuild: [{ x: 82, y: 515, r: 118 }, { x: 995, y: 230, r: 150 }]
       },
       {
-        camp: { x: 82, y: 260, label: "熔岩敵陣" },
-        gate: { x: 988, y: 210, label: "黑曜城門" },
+        camp: { x: 82, y: 260, label: "熔岩敌阵" },
+        gate: { x: 988, y: 210, label: "黑曜城门" },
         route: [[70, 278], [190, 330], [145, 500], [315, 560], [470, 480], [425, 330], [590, 280], [720, 380], [675, 535], [850, 560], [925, 380], [1005, 235]],
         noBuild: [{ x: 82, y: 260, r: 120 }, { x: 988, y: 210, r: 150 }]
       }
@@ -279,8 +283,8 @@
   let wavePlan = [];
   const difficulties = {
     easy: {
-      name: "簡單",
-      status: "敵軍較慢較少，初始糧草與城防更多。",
+      name: "简单",
+      status: "敌军较慢较少，初始粮草与城防更多。",
       hp: 0.82,
       speed: 0.9,
       count: 0.86,
@@ -292,7 +296,7 @@
     },
     normal: {
       name: "中等",
-      status: "標準守城節奏，Boss 波需要集中火力。",
+      status: "标准守城节奏，Boss 波需要集中火力。",
       hp: 1,
       speed: 1,
       count: 1,
@@ -303,8 +307,8 @@
       bossHp: 1
     },
     hard: {
-      name: "困難",
-      status: "敵軍更快更硬，數量更多，但戰功倍率更高。",
+      name: "困难",
+      status: "敌军更快更硬，数量更多，但战功倍率更高。",
       hp: 1.25,
       speed: 1.12,
       count: 1.18,
@@ -745,6 +749,7 @@
   const icons = loadImages(iconFiles);
   const enemySprites = loadImages(enemyFiles);
   const landmarks = loadImages(landmarkFiles);
+  const flags = loadImages(flagFiles);
   const powerIcons = loadImages(powerFiles);
   const sceneImages = loadSceneImages(sceneFiles);
   resetBattlefield();
@@ -843,18 +848,18 @@
   const towers = {
     pulse: {
       id: "pulse",
-      name: "神機弩",
+      name: "神机弩",
       icon: "crossbow",
       cost: 50,
       color: "#ffd878",
       range: 128,
       damage: 24,
       cooldown: 0.52,
-      effect: "遠距離單體輸出"
+      effect: "远距离单体输出"
     },
     frost: {
       id: "frost",
-      name: "寒玉蓮",
+      name: "寒玉莲",
       icon: "lotus",
       cost: 68,
       color: "#9fe8ff",
@@ -863,11 +868,11 @@
       cooldown: 0.8,
       slow: 0.5,
       slowTime: 1.45,
-      effect: "寒氣減速控制"
+      effect: "寒气减速控制"
     },
     arc: {
       id: "arc",
-      name: "雷鼓臺",
+      name: "雷鼓台",
       icon: "drum",
       cost: 94,
       color: "#ffcf5d",
@@ -875,7 +880,7 @@
       damage: 18,
       cooldown: 0.96,
       chain: 3,
-      effect: "雷擊連鎖傷害"
+      effect: "雷击连锁伤害"
     },
     mine: {
       id: "mine",
@@ -888,7 +893,7 @@
       cooldown: 0.28,
       blastRadius: 88,
       singleUse: true,
-      effect: "近距離觸發範圍爆破"
+      effect: "近距离触发范围爆破"
     },
     bastion: {
       id: "bastion",
@@ -901,7 +906,7 @@
       cooldown: 1.25,
       repair: 1,
       repairCooldown: 4.8,
-      effect: "修補城防兼弱攻擊"
+      effect: "修补城防兼弱攻击"
     }
   };
 
@@ -997,7 +1002,7 @@
   }
 
   function saveLocalScore() {
-    const name = cleanPlayerName(state.playerName) || "無名俠客";
+    const name = cleanPlayerName(state.playerName) || "无名侠客";
     const entry = {
       name,
       score: state.score,
@@ -1029,14 +1034,14 @@
     ui.leaderboardList.innerHTML = "";
     if (!scores.length) {
       const empty = document.createElement("li");
-      empty.innerHTML = `<span class="rank">-</span><span class="player">暫無戰功</span><span class="score">0</span>`;
+      empty.innerHTML = `<span class="rank">-</span><span class="player">暂无战功</span><span class="score">0</span>`;
       ui.leaderboardList.appendChild(empty);
       return;
     }
     scores.forEach((entry, index) => {
       const li = document.createElement("li");
-      const name = cleanPlayerName(entry.name) || "無名俠客";
-      const source = entry.source === "github" ? "雲榜" : "本地";
+      const name = cleanPlayerName(entry.name) || "无名侠客";
+      const source = entry.source === "github" ? "云榜" : "本地";
       const rank = document.createElement("span");
       const player = document.createElement("span");
       const score = document.createElement("span");
@@ -1056,44 +1061,44 @@
   }
 
   async function loadRemoteLeaderboard() {
-    ui.leaderboardHint.textContent = "正在讀取 GitHub 排行榜...";
+    ui.leaderboardHint.textContent = "正在读取 GitHub 排行榜...";
     try {
       const response = await fetch(`${leaderboardUrl}?t=${Date.now()}`, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const scores = await response.json();
       state.remoteScores = Array.isArray(scores) ? scores : [];
-      ui.leaderboardHint.textContent = "已讀取 GitHub 排行榜。";
+      ui.leaderboardHint.textContent = "已读取 GitHub 排行榜。";
     } catch {
       state.remoteScores = [];
-      ui.leaderboardHint.textContent = "暫時未讀到雲端榜單，仍會顯示本地戰功。";
+      ui.leaderboardHint.textContent = "暂时未读到云端榜单，仍会显示本地战功。";
     }
     renderLeaderboard();
   }
 
   function submitScore() {
-    state.playerName = cleanPlayerName(ui.playerName.value) || "無名俠客";
+    state.playerName = cleanPlayerName(ui.playerName.value) || "无名侠客";
     localStorage.setItem("beexTdPlayer", state.playerName);
     if (!state.ended || state.score <= 0 || state.scoreSubmittedFor === scoreKey()) return;
     const body = [
-      "遊戲: 蜂巢古城守衛",
-      "代碼: beex-tower-defense",
+      "游戏: 蜂巢古城守卫",
+      "代码: beex-tower-defense",
       `玩家: ${state.playerName}`,
-      `戰功: ${state.score}`,
-      `主題: ${currentChapter().name}`,
-      `難度: ${currentDifficulty().name}`,
+      `战功: ${state.score}`,
+      `主题: ${currentChapter().name}`,
+      `难度: ${currentDifficulty().name}`,
       `周目: ${state.chapterLevel}`,
       `波次: ${Math.min(state.waveIndex + 1, wavePlan.length)}`,
       `城防: ${Math.max(0, state.lives)}`,
-      `糧草: ${state.energy}`,
-      `時間: ${new Date().toISOString()}`
+      `粮草: ${state.energy}`,
+      `时间: ${new Date().toISOString()}`
     ].join("\n");
     const params = new URLSearchParams({
-      title: `[古城戰功] ${state.playerName} - ${state.score}`,
+      title: `[古城战功] ${state.playerName} - ${state.score}`,
       body
     });
     state.scoreSubmittedFor = scoreKey();
     updateUi();
-    ui.leaderboardHint.textContent = "已打開 GitHub 提交頁，送出 Issue 後會由 Action 寫入雲端榜單。";
+    ui.leaderboardHint.textContent = "已打开 GitHub 提交页，送出 Issue 后会由 Action 写入云端榜单。";
     window.open(`${issueUrl}?${params.toString()}`, "_blank", "noopener,noreferrer");
   }
 
@@ -1155,11 +1160,11 @@
 
   function buildDenyReason(cell) {
     const def = towerDef(state.selectedBuild);
-    if (!cell) return "請拖到戰場內道路旁可放置位置。";
-    if (!towerUnlocked(state.selectedBuild)) return `${def.name} 尚未開放。`;
-    if (!canUseAsTowerPad(cell)) return "這裡不能投放，請移到道路旁可放置位置。";
-    if (state.energy < def.cost) return `糧草不足，${def.name} 需要 ${def.cost}。`;
-    return "暫時不能投放。";
+    if (!cell) return "请拖到战场内道路旁可放置位置。";
+    if (!towerUnlocked(state.selectedBuild)) return `${def.name} 尚未开放。`;
+    if (!canUseAsTowerPad(cell)) return "这里不能投放，请移到道路旁可放置位置。";
+    if (state.energy < def.cost) return `粮草不足，${def.name} 需要 ${def.cost}。`;
+    return "暂时不能投放。";
   }
 
   function makeEnemy(index) {
@@ -1202,7 +1207,7 @@
     state.drops.push({
       id: self.crypto && self.crypto.randomUUID ? self.crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
       type: "beeCrossbow",
-      name: "蜂鳴神弩",
+      name: "蜂鸣神弩",
       x: enemy.x,
       y: enemy.y,
       age: 0,
@@ -1210,7 +1215,7 @@
       radius: 26
     });
     playSound("drop");
-    showBanner("驚喜掉落：蜂鳴神弩！");
+    showBanner("惊喜掉落：蜂鸣神弩！");
   }
 
   function collectDrop(drop) {
@@ -1234,7 +1239,7 @@
     state.score += Math.round((30 + living.length * 8) * currentDifficulty().score);
     state.sparks.push({ x: drop.x, y: drop.y, r: 34, life: 0.55, color: "#fff1a6" });
     playSound("power");
-    showBanner(`蜂鳴神弩發動，全場齊射 ${living.length} 名敵軍`);
+    showBanner(`蜂鸣神弩发动，全场齐射 ${living.length} 名敌军`);
     updateUi();
   }
 
@@ -1282,13 +1287,13 @@
       btn.innerHTML = `
         <span class="tower-icon"><img src="${iconFiles[def.icon]}" alt=""></span>
         <span class="tower-meta"><strong>${def.name}</strong><small>${def.effect}</small></span>
-        <span class="tower-cost">${def.cost} 糧</span>
+        <span class="tower-cost">${def.cost} 粮</span>
       `;
       btn.addEventListener("click", () => {
         state.selectedBuild = tower.id;
         state.selectedTower = null;
         updateUi();
-        showBanner(`已選擇 ${def.name}，移到道路旁亮出投放點後建造。`);
+        showBanner(`已选择 ${def.name}，移到道路旁亮出投放点后建造。`);
       });
       btn.addEventListener("dragstart", event => {
         state.selectedBuild = tower.id;
@@ -1314,36 +1319,36 @@
     ui.wave.textContent = `${Math.min(state.waveIndex + 1, wavePlan.length)}/${wavePlan.length}${plan && plan.finalBoss ? " 大Boss" : plan && plan.boss ? " Boss" : ""}`;
     ui.score.textContent = state.score;
     ui.bestScore.textContent = state.best;
-    ui.themeStatus.textContent = `第 ${state.chapterLevel} 主題｜${chapter.name}｜${chapter.weather}：${chapter.status}｜第4/8波Boss，第12波大Boss`;
+    ui.themeStatus.textContent = `第 ${state.chapterLevel} 主题｜${chapter.name}｜${chapter.weather}：${chapter.status}｜第4/8波Boss，第12波大Boss`;
     ui.difficultySelect.value = state.difficultyId;
     ui.difficultyStatus.textContent = `${difficulty.name}｜${difficulty.status}`;
     ui.powerStatus.textContent = state.powerUses > 0
-      ? `已發動 ${state.powerUses} 次。本波掉落 ${state.dropsThisWave} 次，看到金光要手動點擊。`
-      : "低概率驚喜掉落，點擊即可全場齊射。";
+      ? `已发动 ${state.powerUses} 次。本波掉落 ${state.dropsThisWave} 次，看到金光要手动点击。`
+      : "低概率惊喜掉落，点击即可全场齐射。";
     ui.startBtn.disabled = state.waveActive || state.ended || state.waveIndex >= wavePlan.length;
-    setActionButton(ui.startBtn, "start", state.ended ? (state.won ? "已通關" : "已失守") : "迎敵");
+    setActionButton(ui.startBtn, "start", state.ended ? (state.won ? "已通关" : "已失守") : "迎敌");
     ui.pauseBtn.disabled = state.ended;
-    setActionButton(ui.pauseBtn, "pause", state.paused ? "繼續" : "暫停");
+    setActionButton(ui.pauseBtn, "pause", state.paused ? "继续" : "暂停");
     setActionButton(ui.speedBtn, "speed", `${state.speed === 1 ? "一" : state.speed === 2 ? "二" : "三"}倍速度`);
-    setActionButton(ui.soundBtn, "sound", audio.muted ? "靜音" : "音效");
-    setActionButton(ui.restartBtn, "restart", "重開");
+    setActionButton(ui.soundBtn, "sound", audio.muted ? "静音" : "音效");
+    setActionButton(ui.restartBtn, "restart", "重开");
     ui.submitScoreBtn.disabled = !state.ended || state.score <= 0 || scoreKey() === state.scoreSubmittedFor;
     if (state.selectedTower) {
       const t = state.selectedTower;
       const def = towerDef(t.type);
       const cost = upgradeCost(t);
-      ui.selectedText.textContent = `${def.name} ${t.level}級｜攻擊 ${towerStats(t).damage}｜拆除返還 ${sellValue(t)}`;
+      ui.selectedText.textContent = `${def.name} ${t.level}级｜攻击 ${towerStats(t).damage}｜拆除返还 ${sellValue(t)}`;
       ui.upgradeBtn.disabled = t.level >= 4 || state.energy < cost;
-      setActionButton(ui.upgradeBtn, "upgrade", t.level >= 4 ? "滿級" : `升級 ${cost}`);
+      setActionButton(ui.upgradeBtn, "upgrade", t.level >= 4 ? "满级" : `升级 ${cost}`);
       ui.sellBtn.disabled = false;
       setActionButton(ui.sellBtn, "sell", "拆除");
     } else {
       const def = towerDef(state.selectedBuild);
       const next = nextLockedTower();
-      const hint = next ? ` 第 ${towerUnlockWave(next.id)} 波會開放新設施。` : "";
-      ui.selectedText.textContent = `準備投放 ${def.name}。消耗 ${def.cost} 糧草，${def.effect}。移到道路旁亮出投放點後建造。${hint}`;
+      const hint = next ? ` 第 ${towerUnlockWave(next.id)} 波会开放新设施。` : "";
+      ui.selectedText.textContent = `准备投放 ${def.name}。消耗 ${def.cost} 粮草，${def.effect}。移到道路旁亮出投放点后建造。${hint}`;
       ui.upgradeBtn.disabled = true;
-      setActionButton(ui.upgradeBtn, "upgrade", "升級");
+      setActionButton(ui.upgradeBtn, "upgrade", "升级");
       ui.sellBtn.disabled = true;
       setActionButton(ui.sellBtn, "sell", "拆除");
     }
@@ -1362,10 +1367,10 @@
   function showChapterGate() {
     const chapter = currentChapter();
     const next = chapters[(state.chapterIndex + 1) % chapters.length];
-    ui.chapterGateTitle.textContent = `${chapter.name} 通關`;
-    ui.chapterGateText.textContent = `是否進入「${next.name}」？下一主題會生成新地圖、新天氣與更高難度。`;
-    setActionButton(ui.nextThemeBtn, "start", `進入 ${next.name}`);
-    setActionButton(ui.stayThemeBtn, "restart", "留在本主題");
+    ui.chapterGateTitle.textContent = `${chapter.name} 通关`;
+    ui.chapterGateText.textContent = `是否进入「${next.name}」？下一主题会生成新地图、新天气与更高难度。`;
+    setActionButton(ui.nextThemeBtn, "start", `进入 ${next.name}`);
+    setActionButton(ui.stayThemeBtn, "restart", "留在本主题");
     ui.chapterGate.classList.remove("hidden");
   }
 
@@ -1413,7 +1418,7 @@
     hideChapterGate();
     ui.banner.classList.add("hidden");
     updateUi();
-    showBanner(`${currentChapter().name} 開戰：${currentChapter().weather}`);
+    showBanner(`${currentChapter().name} 开战：${currentChapter().weather}`);
   }
 
   function buildTower(cell) {
@@ -1456,7 +1461,7 @@
     ui.banner.classList.add("hidden");
     playSound("start");
     const plan = wavePlan[state.waveIndex];
-    showBanner(plan.finalBoss ? `第 ${state.waveIndex + 1} 波：終章大Boss壓境！` : plan.boss ? `第 ${state.waveIndex + 1} 波：Boss來襲！` : `第 ${state.waveIndex + 1} 波敵軍來襲`);
+    showBanner(plan.finalBoss ? `第 ${state.waveIndex + 1} 波：终章大Boss压境！` : plan.boss ? `第 ${state.waveIndex + 1} 波：Boss来袭！` : `第 ${state.waveIndex + 1} 波敌军来袭`);
     updateUi();
   }
 
@@ -1644,7 +1649,7 @@
         endGame(true);
       } else {
         const unlocked = newlyUnlockedTowers().map(tower => towerDef(tower.id).name);
-        showBanner(unlocked.length ? `新設施開放：${unlocked.join("、")}` : "敵軍退散，糧草已補給。");
+        showBanner(unlocked.length ? `新设施开放：${unlocked.join("、")}` : "敌军退散，粮草已补给。");
       }
       updateUi();
     }
@@ -1662,7 +1667,7 @@
     localStorage.setItem("beexTdBest", String(state.best));
     saveLocalScore();
     playSound(win ? "win" : "lose");
-    showBanner(win ? `守城大捷！戰功 ${state.score}。可選擇下一主題。` : `城門失守。戰功 ${state.score}。可提交榜單或重開。`, true);
+    showBanner(win ? `守城大捷！战功 ${state.score}。可选择下一主题。` : `城门失守。战功 ${state.score}。可提交榜单或重开。`, true);
     if (win) showChapterGate();
     updateUi();
   }
@@ -1963,186 +1968,42 @@
     ctx.restore();
   }
 
-  function drawBattleFlag(point, label, side, chapter) {
+  function drawBattleFlag(point, side) {
+    const img = flags[side];
     const isEnemy = side === "enemy";
     const direction = isEnemy ? 1 : -1;
-    const poleTop = point.y - 102;
-    const poleBottom = point.y - 5;
-    const flagW = 70;
-    const flagH = 46;
-    const flagY = poleTop + 17;
-    const x = (offset) => point.x + direction * offset;
-    const palette = isEnemy
-      ? {
-        poleA: "#2d130b",
-        poleB: "#9a6336",
-        clothA: chapter.id === "glacier" ? "#8f233d" : "#8e2418",
-        clothB: chapter.id === "glacier" ? "#d94b69" : "#d85627",
-        clothC: "#2a0b08",
-        trimA: "#ffd78d",
-        trimB: "#9b4a21",
-        markA: "#f7c36a",
-        markB: "#7d1f16",
-        text: "#fff4d8",
-        glow: "rgba(255, 96, 42, 0.42)"
-      }
-      : {
-        poleA: "#3b2410",
-        poleB: "#d09a3d",
-        clothA: chapter.id === "glacier" ? "#ffe58a" : "#f2bd3d",
-        clothB: chapter.id === "glacier" ? "#fff6c4" : "#ffe07c",
-        clothC: "#7b4b10",
-        trimA: "#fff5b6",
-        trimB: "#a86f1a",
-        markA: "#513114",
-        markB: "#ffdf72",
-        text: "#2a1709",
-        glow: "rgba(255, 226, 118, 0.4)"
-      };
+    const w = isEnemy ? 110 : 102;
+    const h = isEnemy ? 165 : 168;
+    const x = point.x + direction * 12 - w / 2;
+    const y = point.y - h + 12;
 
     ctx.save();
-    ctx.shadowColor = "rgba(18, 8, 3, 0.5)";
-    ctx.shadowBlur = 13;
-    ctx.shadowOffsetY = 7;
-
-    const poleGrad = ctx.createLinearGradient(point.x - 4, 0, point.x + 4, 0);
-    poleGrad.addColorStop(0, palette.poleA);
-    poleGrad.addColorStop(0.44, palette.poleB);
-    poleGrad.addColorStop(0.68, palette.trimA);
-    poleGrad.addColorStop(1, palette.poleA);
-    ctx.strokeStyle = poleGrad;
-    ctx.lineWidth = 6;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(point.x, poleBottom);
-    ctx.lineTo(point.x, poleTop);
-    ctx.stroke();
-
-    ctx.lineWidth = 3.2;
-    ctx.strokeStyle = palette.trimA;
-    ctx.beginPath();
-    ctx.moveTo(x(2), flagY - 3);
-    ctx.lineTo(x(flagW + 8), flagY - 3);
-    ctx.stroke();
-
-    ctx.fillStyle = palette.trimA;
-    ctx.beginPath();
-    ctx.moveTo(point.x, poleTop - 15);
-    ctx.lineTo(point.x + direction * 8, poleTop - 1);
-    ctx.lineTo(point.x, poleTop + 8);
-    ctx.lineTo(point.x - direction * 8, poleTop - 1);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = palette.trimB;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
+    ctx.shadowColor = isEnemy ? "rgba(80, 12, 4, 0.44)" : "rgba(184, 128, 24, 0.38)";
     ctx.shadowBlur = 16;
-    ctx.shadowColor = palette.glow;
-    const clothGrad = ctx.createLinearGradient(x(4), flagY, x(flagW), flagY + flagH);
-    clothGrad.addColorStop(0, palette.clothB);
-    clothGrad.addColorStop(0.46, palette.clothA);
-    clothGrad.addColorStop(1, palette.clothC);
-    ctx.fillStyle = clothGrad;
-    ctx.strokeStyle = palette.trimA;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(x(4), flagY);
-    ctx.quadraticCurveTo(x(22), flagY - 10, x(43), flagY - 4);
-    ctx.quadraticCurveTo(x(58), flagY + 1, x(flagW), flagY - 7);
-    ctx.lineTo(x(flagW - 10), flagY + flagH * 0.48);
-    ctx.lineTo(x(flagW), flagY + flagH + 1);
-    ctx.quadraticCurveTo(x(48), flagY + flagH - 7, x(28), flagY + flagH);
-    ctx.quadraticCurveTo(x(15), flagY + flagH + 4, x(4), flagY + flagH - 5);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.shadowBlur = 0;
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(x(7), flagY + 4);
-    ctx.quadraticCurveTo(x(25), flagY - 3, x(43), flagY + 2);
-    ctx.quadraticCurveTo(x(56), flagY + 6, x(flagW - 6), flagY + 1);
-    ctx.lineTo(x(flagW - 15), flagY + flagH * 0.48);
-    ctx.lineTo(x(flagW - 6), flagY + flagH - 5);
-    ctx.quadraticCurveTo(x(48), flagY + flagH - 12, x(30), flagY + flagH - 5);
-    ctx.quadraticCurveTo(x(18), flagY + flagH - 1, x(7), flagY + flagH - 9);
-    ctx.closePath();
-    ctx.clip();
-    ctx.globalAlpha = 0.22;
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.moveTo(x(7), flagY + 7);
-    ctx.quadraticCurveTo(x(26), flagY + 1, x(45), flagY + 6);
-    ctx.lineTo(x(42), flagY + 16);
-    ctx.quadraticCurveTo(x(26), flagY + 11, x(8), flagY + 18);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.globalAlpha = 0.18;
-    ctx.strokeStyle = "#1a0804";
-    ctx.lineWidth = 2;
-    [20, 36, 54].forEach((fold) => {
+    ctx.shadowOffsetY = 8;
+    if (img && img.complete && img.naturalWidth) {
+      ctx.drawImage(img, x, y, w, h);
+    } else {
+      ctx.fillStyle = isEnemy ? "#8b1d18" : "#f2c24d";
+      ctx.strokeStyle = isEnemy ? "#f6c36d" : "#10756d";
+      ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(x(fold), flagY + 1);
-      ctx.bezierCurveTo(x(fold + 6), flagY + 15, x(fold - 5), flagY + 27, x(fold + 1), flagY + flagH - 3);
+      ctx.moveTo(point.x, point.y - 92);
+      ctx.lineTo(point.x + direction * 34, point.y - 76);
+      ctx.lineTo(point.x + direction * 16, point.y - 48);
+      ctx.lineTo(point.x, point.y - 56);
+      ctx.closePath();
+      ctx.fill();
       ctx.stroke();
-    });
-    ctx.restore();
-
-    const crestX = x(37);
-    const crestY = flagY + 23;
-    const crestGrad = ctx.createLinearGradient(crestX - 16, crestY - 18, crestX + 16, crestY + 16);
-    crestGrad.addColorStop(0, palette.markB);
-    crestGrad.addColorStop(1, palette.markA);
-    ctx.fillStyle = crestGrad;
-    ctx.strokeStyle = palette.trimA;
-    ctx.lineWidth = 2.2;
-    ctx.beginPath();
-    ctx.moveTo(crestX, crestY - 18);
-    ctx.lineTo(crestX + direction * 19, crestY - 6);
-    ctx.lineTo(crestX + direction * 13, crestY + 17);
-    ctx.lineTo(crestX, crestY + 22);
-    ctx.lineTo(crestX - direction * 13, crestY + 17);
-    ctx.lineTo(crestX - direction * 19, crestY - 6);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(crestX - direction * 10, crestY - 7);
-    ctx.lineTo(crestX, crestY - 13);
-    ctx.lineTo(crestX + direction * 10, crestY - 7);
-    ctx.stroke();
-
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = palette.text;
-    ctx.font = "900 21px KaiTi, STKaiti, 'Noto Serif CJK TC', serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.strokeStyle = isEnemy ? "rgba(80, 18, 7, 0.75)" : "rgba(255, 242, 180, 0.58)";
-    ctx.lineWidth = 3;
-    ctx.strokeText(label, crestX, crestY + 2);
-    ctx.fillText(label, crestX, crestY + 2);
-
-    ctx.strokeStyle = palette.trimB;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(point.x - direction * 10, poleBottom + 5);
-    ctx.lineTo(point.x + direction * 13, poleBottom + 1);
-    ctx.lineTo(point.x + direction * 24, poleBottom + 8);
-    ctx.stroke();
+    }
     ctx.restore();
   }
 
   function drawSceneLandmarks(theme, chapter) {
     if (battlefield.sceneLayout) {
       const { camp, gate } = battlefield.sceneLayout;
-      drawBattleFlag(camp, "敵", "enemy", chapter);
-      drawBattleFlag(gate, "蜂", "bee", chapter);
+      drawBattleFlag(camp, "enemy");
+      drawBattleFlag(gate, "bee");
       return;
     }
     const campImg = landmarks[`${chapter.id}Camp`];
@@ -2897,7 +2758,7 @@
     unlockAudio();
     if (state.ended) {
       playSound("deny");
-      showBanner(state.won ? "已通關，請選擇下一主題或留在本主題。" : "戰局已結束，請提交榜單或重開。", true);
+      showBanner(state.won ? "已通关，请选择下一主题或留在本主题。" : "战局已结束，请提交榜单或重开。", true);
       if (state.won) showChapterGate();
       return;
     }
@@ -2969,7 +2830,7 @@
     if (state.ended) return;
     state.paused = !state.paused;
     playSound("click");
-    showBanner(state.paused ? "已暫停" : "繼續迎敵");
+    showBanner(state.paused ? "已暂停" : "继续迎敌");
     updateUi();
   });
   ui.speedBtn.addEventListener("click", () => {
@@ -3007,7 +2868,7 @@
       chapterLevel: state.chapterLevel,
       carryScore: false
     });
-    showBanner(`難度切換：${currentDifficulty().name}`);
+    showBanner(`难度切换：${currentDifficulty().name}`);
   });
   ui.playerName.addEventListener("input", () => {
     state.playerName = cleanPlayerName(ui.playerName.value);
