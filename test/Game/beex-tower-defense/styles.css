@@ -244,8 +244,8 @@ h2 img {
 
 .stage-wrap {
   position: relative;
-  height: min(760px, calc(100vh - 128px));
-  min-height: 560px;
+  height: min(820px, calc(100vh - 118px));
+  min-height: 620px;
   border: 1px solid rgba(255, 220, 142, 0.28);
   border-radius: 8px;
   background:
@@ -368,39 +368,39 @@ canvas {
 }
 
 .power-card {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
-  gap: 9px;
-  align-items: center;
+  display: block;
   min-width: 0;
   overflow: hidden;
 }
 
 .power-card p {
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
-  gap: 2px;
+  gap: 5px;
   margin: 0;
   min-width: 0;
 }
 
-.power-card strong,
-.power-card small {
-  display: block;
+.power-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .power-card strong {
   color: #fff6dc;
   font: 900 15px ui-sans-serif, system-ui, sans-serif;
+  white-space: nowrap;
 }
 
 .power-card small {
+  display: block;
   min-width: 0;
   margin-top: 0;
   color: #e7c98f;
-  font: 800 12px/1.35 ui-sans-serif, system-ui, sans-serif;
-  overflow-wrap: normal;
+  font: 800 13px/1.45 ui-sans-serif, system-ui, sans-serif;
+  overflow-wrap: anywhere;
   white-space: normal;
 }
 
@@ -493,6 +493,8 @@ canvas {
 .record {
   color: var(--gold) !important;
   font-weight: 800;
+  margin-top: 8px;
+  font: 900 13px ui-sans-serif, system-ui, sans-serif;
 }
 
 .player-field {
