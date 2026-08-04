@@ -236,10 +236,10 @@
         noBuild: [{ x: 80, y: 190, r: 120 }, { x: 972, y: 170, r: 142 }]
       },
       {
-        camp: { x: 84, y: 407, label: "敌营" },
+        camp: { x: 102, y: 575, label: "敌营" },
         gate: { x: 985, y: 220, label: "蜂巢城门" },
-        route: [[84, 407], [150, 507], [299, 634], [311, 547], [335, 454], [370, 407], [418, 367], [502, 347], [585, 320], [615, 280], [573, 240], [615, 210], [693, 200], [777, 227], [866, 220], [956, 200], [985, 220]],
-        noBuild: [{ x: 84, y: 407, r: 118 }, { x: 985, y: 220, r: 136 }]
+        route: [[212, 590], [278, 628], [308, 555], [336, 465], [372, 405], [420, 366], [504, 346], [585, 320], [612, 280], [574, 240], [616, 210], [694, 200], [778, 226], [866, 220], [956, 200], [985, 220]],
+        noBuild: [{ x: 102, y: 575, r: 118 }, { x: 985, y: 220, r: 136 }, { x: 500, y: 574, r: 78 }, { x: 548, y: 464, r: 86 }, { x: 784, y: 520, r: 92 }]
       }
     ],
     glacier: [
@@ -360,10 +360,10 @@
       hp: 0.82,
       speed: 0.9,
       count: 0.86,
-      reward: 1,
+      reward: 1.06,
       score: 0.9,
-      energy: 280,
-      lives: 30,
+      energy: 300,
+      lives: 32,
       bossHp: 0.9
     },
     normal: {
@@ -372,10 +372,10 @@
       hp: 1,
       speed: 1,
       count: 1,
-      reward: 1,
+      reward: 1.04,
       score: 1,
-      energy: 240,
-      lives: 24,
+      energy: 260,
+      lives: 26,
       bossHp: 1
     },
     hard: {
@@ -384,9 +384,9 @@
       hp: 1.25,
       speed: 1.12,
       count: 1.18,
-      reward: 1.15,
+      reward: 1.2,
       score: 1.28,
-      energy: 210,
+      energy: 220,
       lives: 18,
       bossHp: 1.22
     }
@@ -862,6 +862,11 @@
   const powerIcons = loadImages(powerFiles);
   const effects = loadImages(effectFiles);
   const sceneImages = loadSceneImages(sceneFiles);
+  const terrainProbe = {
+    canvas: document.createElement("canvas"),
+    ctx: null,
+    cache: new WeakMap()
+  };
   resetBattlefield();
   const audio = {
     ctx: null,
@@ -927,6 +932,9 @@
       playTone(660, 0.1, "triangle", 0.045, 0.14);
     } else if (name === "shot") {
       playTone(720, 0.045, "square", 0.025);
+    } else if (name === "freeze") {
+      playTone(880, 0.055, "sine", 0.035);
+      playTone(1320, 0.09, "triangle", 0.028, 0.035);
     } else if (name === "kill") {
       playTone(210, 0.07, "sawtooth", 0.04);
       playNoise(0.08, 0.025);
@@ -1259,9 +1267,81 @@
     return distanceToRoutes(p);
   }
 
+  function sceneTerrainData(chapter) {
+    const image = currentSceneImage(chapter);
+    if (!image || !image.complete || image.naturalWidth <= 0) return null;
+    const cached = terrainProbe.cache.get(image);
+    if (cached) return cached;
+    if (!terrainProbe.ctx) {
+      terrainProbe.canvas.width = W;
+      terrainProbe.canvas.height = H;
+      terrainProbe.ctx = terrainProbe.canvas.getContext("2d", { willReadFrequently: true });
+    }
+    const probeCtx = terrainProbe.ctx;
+    try {
+      probeCtx.clearRect(0, 0, W, H);
+      probeCtx.drawImage(image, 0, 0, W, H);
+      const data = probeCtx.getImageData(0, 0, W, H).data;
+      const terrain = { data, width: W, height: H };
+      terrainProbe.cache.set(image, terrain);
+      return terrain;
+    } catch {
+      return null;
+    }
+  }
+
+  function rgbToHue(r, g, b) {
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+    if (delta === 0) return 0;
+    let hue = 0;
+    if (max === r) hue = ((g - b) / delta) % 6;
+    else if (max === g) hue = (b - r) / delta + 2;
+    else hue = (r - g) / delta + 4;
+    return (hue * 60 + 360) % 360;
+  }
+
+  function isUnbuildablePixel(r, g, b, chapterId) {
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const saturation = max <= 0 ? 0 : (max - min) / max;
+    const hue = rgbToHue(r, g, b);
+    if (max < 24 && saturation > 0.18) return true;
+    if (chapterId === "volcano") {
+      return (hue <= 48 || hue >= 342) && saturation > 0.42 && max > 96 && r > b * 1.55;
+    }
+    if (chapterId === "glacier") {
+      return hue >= 178 && hue <= 226 && saturation > 0.34 && max > 92 && b > r + 24;
+    }
+    return hue >= 168 && hue <= 226 && saturation > 0.28 && max > 68 && b > r + 18;
+  }
+
+  function isBlockedByNativeTerrain(cell) {
+    if (!battlefield.sceneLayout) return false;
+    const terrain = sceneTerrainData(currentChapter());
+    if (!terrain) return false;
+    const center = gridToWorld(cell.cx, cell.cy);
+    const samples = [
+      [0, 0],
+      [-13, -9], [13, -9],
+      [-13, 9], [13, 9],
+      [0, -15], [0, 15]
+    ];
+    let blocked = 0;
+    for (const [dx, dy] of samples) {
+      const x = clamp(Math.round(center.x + dx), 0, terrain.width - 1);
+      const y = clamp(Math.round(center.y + dy), 0, terrain.height - 1);
+      const i = (y * terrain.width + x) * 4;
+      if (isUnbuildablePixel(terrain.data[i], terrain.data[i + 1], terrain.data[i + 2], currentChapter().id)) blocked += 1;
+    }
+    return blocked >= 3;
+  }
+
   function canUseAsTowerPad(cell) {
     if (!cell) return false;
     if (pathSet.has(cell.key) || blockedSet.has(cell.key) || cellHasTower(cell.key)) return false;
+    if (isBlockedByNativeTerrain(cell)) return false;
     const distance = cellDistanceToPath(cell);
     if (battlefield.sceneLayout) {
       return distance >= nativePadRange.min && distance <= nativePadRange.max;
@@ -1309,6 +1389,7 @@
       facing: -1,
       slow: 1,
       slowTimer: 0,
+      hitTimer: 0,
       type: finalBoss ? "finalBoss" : boss ? "boss" : elite ? "elite" : runner ? "runner" : "drone",
       spriteType: boss ? bossSpriteType : null,
       boss,
@@ -1321,10 +1402,10 @@
   }
 
   function maybeDropPower(enemy) {
-    const maxDrops = state.waveIndex >= 8 ? 2 : 1;
+    const maxDrops = state.waveIndex >= 9 ? 3 : state.waveIndex >= 4 ? 2 : 1;
     if (state.dropsThisWave >= maxDrops) return;
-    const baseChance = enemy.finalBoss ? 0.9 : enemy.boss ? 0.42 : enemy.type === "elite" ? 0.12 : enemy.type === "runner" ? 0.035 : 0.02;
-    const waveBoost = Math.min(0.035, state.waveIndex * 0.0035);
+    const baseChance = enemy.finalBoss ? 1 : enemy.boss ? 0.62 : enemy.type === "elite" ? 0.18 : enemy.type === "runner" ? 0.055 : 0.028;
+    const waveBoost = Math.min(0.045, state.waveIndex * 0.0045);
     if (Math.random() > baseChance + waveBoost) return;
     state.dropsThisWave += 1;
     state.drops.push({
@@ -1347,22 +1428,32 @@
     state.powerUses += 1;
     const damage = 72 + state.waveIndex * 14;
     const living = state.enemies.filter(enemy => enemy.alive);
-    living.forEach(enemy => {
+    living.forEach((enemy, index) => {
+      const spread = (index % 7 - 3) * 18;
       state.shots.push({
+        type: "beeBolt",
         x1: drop.x,
         y1: drop.y,
-        x2: enemy.x,
-        y2: enemy.y,
-        life: 0.24,
+        x2: enemy.x + spread * 0.18,
+        y2: enemy.y - 16,
+        life: 0.34 + Math.min(0.22, index * 0.012),
+        maxLife: 0.34 + Math.min(0.22, index * 0.012),
         color: "#fff1a6",
         width: 5
       });
       damageEnemy(enemy, damage, false);
     });
-    state.score += Math.round((30 + living.length * 8) * currentDifficulty().score);
-    state.sparks.push({ x: drop.x, y: drop.y, r: 34, life: 0.55, color: "#fff1a6" });
+    if (!living.length) {
+      const supply = 44 + state.waveIndex * 6;
+      state.energy += supply;
+      state.score += Math.round(supply * 2 * currentDifficulty().score);
+      showBanner(`蜂鸣神弩回收为 ${supply} 粮草补给。`);
+    } else {
+      state.score += Math.round((40 + living.length * 12) * currentDifficulty().score);
+      showBanner(`蜂鸣神弩发动，全场齐射 ${living.length} 名敌军`);
+    }
+    state.sparks.push({ x: drop.x, y: drop.y, r: 78, life: 0.72, color: "#fff1a6" });
     playSound("power");
-    showBanner(`蜂鸣神弩发动，全场齐射 ${living.length} 名敌军`);
     updateUi();
   }
 
@@ -1641,6 +1732,7 @@
 
   function damageEnemy(enemy, amount, allowDrop = true) {
     enemy.hp -= amount;
+    enemy.hitTimer = Math.max(enemy.hitTimer || 0, enemy.boss ? 0.16 : 0.12);
     state.sparks.push({
       x: enemy.x,
       y: enemy.y,
@@ -1717,6 +1809,7 @@
       state.sparks.push({ x: tower.x, y: tower.y, r: stats.blastRadius * 0.5, life: 0.42, color: def.color });
       state.shots.push({ type: "blast", x: tower.x, y: tower.y, radius: stats.blastRadius, life: 0.34, maxLife: 0.34, color: def.color });
       tower.remove = true;
+      tower.recoil = 0.18;
       playSound("power");
       return;
     }
@@ -1731,18 +1824,21 @@
         state.shots.push({ type: "thunder", x: enemy.x, y: enemy.y, life: 0.24, maxLife: 0.24, color: def.color, scale: 1 - index * 0.1 });
         from = enemy;
       });
+      tower.recoil = 0.16;
       playSound("shot");
       return;
     }
+    tower.recoil = 0.14;
     damageEnemy(target, stats.damage);
     if (tower.type === "frost") {
       target.slow = stats.slow;
       target.slowTimer = stats.slowTime;
       state.shots.push({ type: "frostBloom", x: target.x, y: target.y, life: 0.38, maxLife: 0.38, color: def.color });
+      playSound("freeze");
     } else {
       state.shots.push({ type: tower.type === "bastion" ? "beeBolt" : "bolt", x1: tower.x, y1: tower.y, x2: target.x, y2: target.y, life: 0.28, maxLife: 0.28, color: def.color });
+      playSound("shot");
     }
-    playSound("shot");
   }
 
   function update(dt) {
@@ -1768,6 +1864,7 @@
         enemy.slowTimer -= dt;
         if (enemy.slowTimer <= 0) enemy.slow = 1;
       }
+      if (enemy.hitTimer > 0) enemy.hitTimer -= dt;
       const route = enemy.route?.length ? enemy.route : path;
       const target = route[enemy.node + 1] || route[enemy.node];
       const dx = target.x - enemy.x;
@@ -1795,6 +1892,7 @@
 
     for (const tower of state.towers) {
       const stats = towerStats(tower);
+      if (tower.recoil > 0) tower.recoil -= dt;
       if (tower.type === "bastion" && stats.repair > 0 && state.lives < state.maxLives) {
         tower.repairTimer = (tower.repairTimer || 0) - dt;
         if (tower.repairTimer <= 0) {
@@ -2215,8 +2313,8 @@
     if (state.baseDamageLevel > 0) {
       const key = state.baseDamageLevel >= 5 ? "baseDamageHeavy" : state.baseDamageLevel >= 3 ? "baseDamageMedium" : "baseDamageLight";
       const img = effects[key];
-      const size = state.baseDamageLevel >= 5 ? 224 : state.baseDamageLevel >= 3 ? 188 : 154;
-      ctx.globalAlpha = Math.min(0.96, 0.7 + state.baseDamageLevel * 0.05);
+      const size = state.baseDamageLevel >= 5 ? 196 : state.baseDamageLevel >= 3 ? 168 : 136;
+      ctx.globalAlpha = Math.min(0.78, 0.42 + state.baseDamageLevel * 0.07);
       if (img && img.complete && img.naturalWidth > 0) {
         ctx.drawImage(img, p.x - size / 2, p.y - size / 2 + 12, size, size);
       } else {
@@ -2238,16 +2336,21 @@
       ctx.beginPath();
       ctx.arc(impact.x, impact.y, impact.r * (0.42 + grow * 0.42), 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "rgba(255, 214, 116, 0.82)";
-      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgba(255, 214, 116, 0.5)";
+      ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(impact.x, impact.y, impact.r * (0.22 + grow * 0.58), 0, Math.PI * 2);
       ctx.stroke();
     });
     if (state.baseDamageTimer > 0) {
-      ctx.globalAlpha = Math.min(0.45, state.baseDamageTimer * 0.42);
-      ctx.fillStyle = "rgba(255, 70, 36, 0.18)";
-      ctx.fillRect(0, 0, W, H);
+      const alpha = Math.min(0.22, state.baseDamageTimer * 0.2);
+      const grad = ctx.createRadialGradient(p.x, p.y, 12, p.x, p.y, 190);
+      grad.addColorStop(0, `rgba(255, 96, 48, ${alpha})`);
+      grad.addColorStop(1, "rgba(255, 96, 48, 0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 190, 0, Math.PI * 2);
+      ctx.fill();
     }
     ctx.restore();
   }
@@ -2641,20 +2744,26 @@
     for (const tower of state.towers) {
       const def = towerDef(tower.type);
       const selected = state.selectedTower === tower;
-      const stats = towerStats(tower);
       if (selected) {
         ctx.save();
+        ctx.translate(tower.x, tower.y);
+        ctx.shadowColor = def.color;
+        ctx.shadowBlur = 16;
+        ctx.strokeStyle = "rgba(255, 244, 205, 0.9)";
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(tower.x, tower.y, stats.range, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(86, 216, 255, 0.055)";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(86, 216, 255, 0.24)";
-        ctx.lineWidth = 2;
+        ctx.ellipse(0, 15, 30, 13, 0, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
       ctx.save();
       ctx.translate(tower.x, tower.y);
+      const recoil = Math.max(0, tower.recoil || 0);
+      if (recoil > 0) {
+        const kick = Math.min(1, recoil / 0.16);
+        ctx.translate(0, kick * 5);
+        ctx.scale(1 + kick * 0.035, 1 - kick * 0.035);
+      }
       ctx.fillStyle = "rgba(0, 0, 0, 0.36)";
       ctx.beginPath();
       ctx.ellipse(0, 15, 24, 10, 0, 0, Math.PI * 2);
@@ -2717,7 +2826,8 @@
       const gait = enemy.anim || 0;
       const bob = enemy.boss ? Math.sin(gait * 0.78) * 1.5 : Math.abs(Math.sin(gait)) * 3.2;
       const tilt = enemy.boss ? Math.sin(gait * 0.62) * 0.028 : Math.sin(gait) * 0.045;
-      ctx.translate(0, bob);
+      const hitPulse = Math.max(0, enemy.hitTimer || 0) / (enemy.boss ? 0.16 : 0.12);
+      ctx.translate(Math.sin(gait * 3.3) * hitPulse * (enemy.boss ? 2.4 : 1.4), bob - hitPulse * 1.6);
       ctx.rotate(tilt);
 
       const sprite = enemySprites[enemy.spriteType || enemy.type];
@@ -2725,15 +2835,9 @@
       if (sprite && sprite.complete && sprite.naturalWidth > 0) {
         ctx.save();
         ctx.scale(enemy.facing || 1, 1);
+        if (hitPulse > 0) ctx.filter = `brightness(${1 + hitPulse * 0.32}) saturate(${1 + hitPulse * 0.12})`;
         ctx.drawImage(sprite, -size / 2, -size + 14, size, size);
         ctx.restore();
-        if (chapter.id !== "ancient" && !enemy.boss) {
-          ctx.strokeStyle = chapter.id === "glacier" ? "rgba(190, 245, 255, 0.74)" : "rgba(255, 126, 58, 0.72)";
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(0, -18, size * 0.34, 0, Math.PI * 2);
-          ctx.stroke();
-        }
         if (enemy.boss && !(enemy.spriteType || "").startsWith("boss")) {
           ctx.save();
           ctx.globalAlpha = 0.76;
