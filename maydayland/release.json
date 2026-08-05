@@ -1,15 +1,17 @@
 {
   "name": "Maydayland Ideal World",
-  "version": "5.0.0",
-  "releasedAt": "2026-08-05T07:18:00Z",
+  "version": "6.0.0",
+  "releasedAt": "2026-08-05T08:14:00Z",
   "features": [
-    "new iOS exhibition layout",
-    "distinct fixed imagery for every album and tour",
-    "desktop gallery and mobile story-card browsing",
-    "Mayday universe autoplay queue",
-    "concert, album, OST and party worlds",
-    "Bubu carrot desktop cursor",
-    "full player, lyrics, search and queue",
-    "WMLS fan-site disclaimer"
+    "from-scratch responsive iOS exhibition design",
+    "Mayday-only fixed official imagery",
+    "real STAYREAL MOJO CARROT visual cursor",
+    "immediate shuffled autoplay attempt",
+    "one-tap sound unlock only when browsers block autoplay",
+    "rebuilt queue, search and resilient audio playback",
+    "timed LRC lyrics with translation support",
+    "distinct desktop, tablet and mobile browsing",
+    "concert, album, OST, MOJO and history worlds",
+    "WMLS unofficial fan-site disclaimer"
   ]
 }
