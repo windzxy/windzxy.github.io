@@ -19,22 +19,38 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import base64, gzip, re
+          import base64, gzip, re, zlib
+
+          def unpack(payload):
+              data = base64.b64decode(payload)
+              try:
+                  return gzip.decompress(data)
+              except gzip.BadGzipFile:
+                  return zlib.decompress(data[10:-8], -zlib.MAX_WBITS)
 
           root = Path('test/Study')
+          assets = root / 'assets'
           for name in ('catalog-v4.js', 'questions-v4.js', 'app-v4.js'):
-              path = root / 'assets' / name
+              path = assets / name
               text = path.read_text(encoding='utf-8')
               match = re.search(r"'(H4sI[A-Za-z0-9+/=]+)'", text)
-              if match:
-                  source = gzip.decompress(base64.b64decode(match.group(1))).decode('utf-8')
-                  path.write_text(source, encoding='utf-8')
+              if not match:
+                  continue
+              source = unpack(match.group(1)).decode('utf-8')
+              path.write_text(source, encoding='utf-8')
 
           for path in root.glob('*.html'):
               text = path.read_text(encoding='utf-8')
-              text = re.sub(r'v=20260805-\d+', 'v=20260805-6', text)
+              text = re.sub(r'v=20260805-\d+', 'v=20260805-8', text)
               path.write_text(text, encoding='utf-8')
           PY
+      - name: Validate scripts
+        run: |
+          node --check test/Study/assets/catalog-v4.js
+          node --check test/Study/assets/questions-v4.js
+          node --check test/Study/assets/app-v4.js
+          grep -q 'window.WIND_CATALOG' test/Study/assets/catalog-v4.js
+          grep -q 'window.WIND_QUESTIONS' test/Study/assets/questions-v4.js
       - name: Commit fix
         run: |
           git config user.name windzxy
