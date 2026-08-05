@@ -1,0 +1,76 @@
+name: 配置 Maydayland 公共聊天室
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - "maydayland/**"
+      - ".github/workflows/maydayland-giscus.yml"
+
+permissions:
+  contents: write
+  discussions: read
+
+concurrency:
+  group: maydayland-giscus
+  cancel-in-progress: true
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 讀取 Discussions 識別碼
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          QUERY='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id discussionCategories(first:25){nodes{id name emoji isAnswerable}}}}'
+          gh api graphql \
+            -f query="$QUERY" \
+            -F owner="$GITHUB_REPOSITORY_OWNER" \
+            -F name="${GITHUB_REPOSITORY#*/}" \
+            > /tmp/maydayland-discussions.json
+
+          node <<'NODE'
+          const fs = require('fs');
+          const payload = JSON.parse(fs.readFileSync('/tmp/maydayland-discussions.json', 'utf8'));
+          const repository = payload?.data?.repository;
+          const categories = repository?.discussionCategories?.nodes || [];
+
+          if (!repository?.id) throw new Error('Cannot resolve repository GraphQL ID.');
+          if (!categories.length) throw new Error('No GitHub Discussions categories found.');
+
+          const preferredNames = ['General', 'Announcements', '一般', '公告', 'Q&A'];
+          const category = preferredNames
+            .map(name => categories.find(item => item.name === name))
+            .find(Boolean) || categories[0];
+
+          const config = {
+            repo: process.env.GITHUB_REPOSITORY,
+            repoId: repository.id,
+            category: category.name,
+            categoryId: category.id,
+            updatedAt: new Date().toISOString()
+          };
+
+          fs.writeFileSync(
+            'maydayland/giscus-config.json',
+            `${JSON.stringify(config, null, 2)}\n`
+          );
+          console.log(`Configured category: ${category.name}`);
+          NODE
+
+      - name: 提交自動配置
+        run: |
+          if git diff --quiet -- maydayland/giscus-config.json; then
+            echo "聊天室配置沒有變化。"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add maydayland/giscus-config.json
+          git commit -m "更新 Maydayland 聊天室配置"
+          git push
