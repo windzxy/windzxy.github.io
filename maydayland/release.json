@@ -1,17 +1,6 @@
 {
-  "name": "Maydayland Ideal World",
-  "version": "6.0.0",
-  "releasedAt": "2026-08-05T08:14:00Z",
-  "features": [
-    "from-scratch responsive iOS exhibition design",
-    "Mayday-only fixed official imagery",
-    "real STAYREAL MOJO CARROT visual cursor",
-    "immediate shuffled autoplay attempt",
-    "one-tap sound unlock only when browsers block autoplay",
-    "rebuilt queue, search and resilient audio playback",
-    "timed LRC lyrics with translation support",
-    "distinct desktop, tablet and mobile browsing",
-    "concert, album, OST, MOJO and history worlds",
-    "WMLS unofficial fan-site disclaimer"
-  ]
+  "name":"Maydayland Memory Signal Tracker",
+  "version":"7.0.0",
+  "releasedAt":"2026-08-05T17:00:00+08:00",
+  "features":["interactive Mayday memory signal map","desktop pan and zoom tracker","mobile story-card browsing","official public Mayday and STAYREAL imagery","automatic random Mayday radio","queue and synchronized LRC lyrics","WMLS fan-site disclaimer"]
 }
