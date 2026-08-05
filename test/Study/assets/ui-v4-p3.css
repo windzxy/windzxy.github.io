@@ -1,0 +1,56 @@
+
+.course-hero h1{font-size:36px}
+.course-hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.course-hero-meta span{padding:6px 9px;border-radius:9px;background:#f3f5f9;color:#65718a;font-size:11px;font-weight:800}
+.cycle-tabs{display:flex;gap:7px;overflow:auto;margin:18px 0;padding:7px;border:1px solid var(--line);border-radius:16px;background:#fff}
+.cycle-tabs button{flex:1;min-width:110px;height:42px;border:0;border-radius:11px;background:transparent;color:#65718a;font-weight:850;cursor:pointer}
+.cycle-tabs button.active{color:#fff;background:var(--primary)}
+.topic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.topic-card{padding:22px;border-radius:22px}
+.topic-card h3{margin:0 0 12px;font-size:21px}
+.concept-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:17px}
+.concept-row span{padding:6px 9px;border-radius:9px;background:#f2f4f8;color:#5e6c85;font-size:11px;font-weight:800}
+.task-block{padding:14px;border-radius:14px;background:#f7f8fc}
+.task-block strong{display:block;margin-bottom:5px;font-size:12px;color:#526078}
+.task-block p{margin:0;font-size:14px;line-height:1.55}
+.topic-actions{display:flex;gap:8px;margin-top:16px}
+.filter-panel{padding:20px;border-radius:var(--radius-xl);margin-bottom:18px}
+.filter-grid{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:11px}
+.field{display:grid;gap:6px}
+.field label{color:#6b768d;font-size:11px;font-weight:850}
+.field select,.field input{width:100%}
+.filter-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.session-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:22px 0 12px}
+.session-head h2{margin:0;font-size:23px}
+.session-head-actions{display:flex;gap:8px}
+.question-list{display:grid;gap:13px;counter-reset:q}
+.question-card{padding:22px;border-radius:21px;counter-increment:q;break-inside:avoid}
+.question-title{display:flex;align-items:flex-start;gap:12px}
+.question-title:before{content:counter(q);display:grid;place-items:center;flex:0 0 32px;height:32px;border-radius:10px;background:#eef0ff;color:var(--primary);font-size:12px;font-weight:900}
+.question-title h3{margin:3px 0 0;font-size:17px;line-height:1.55}
+.question-tags{display:flex;gap:6px;margin:10px 0 0 44px}
+.question-tags span{padding:4px 7px;border-radius:7px;background:#f3f5f9;color:#6e7890;font-size:10px;font-weight:800}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0 0 44px}
+.option{display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:#fff;cursor:pointer;transition:.16s}
+.option:hover{border-color:#aeb6f4;background:#fafaff}
+.option input{accent-color:var(--primary)}
+.option.correct{border-color:#72c9aa;background:#edfbf5;color:#0e7455}
+.option.wrong{border-color:#ef9cab;background:#fff2f4;color:#af3449}
+.answer-input{width:min(360px,calc(100% - 44px));margin:16px 0 0 44px;height:48px!important}
+.question-tools{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0 0 44px}
+.text-btn{height:34px;padding:0 10px;border:0;border-radius:9px;background:#f2f4f8;color:#59667e;font-size:11px;font-weight:850;cursor:pointer}
+.explain-box{display:none;margin:12px 0 0 44px;padding:14px;border-radius:13px;background:#f7f8fc;color:#47546d;font-size:13px;line-height:1.6}
+.explain-box.show{display:block}
+.question-card.answered-correct{border-color:#9dd8c2}
+.question-card.answered-wrong{border-color:#f0b0bc}
+.result-card{position:sticky;bottom:14px;z-index:20;display:flex;align-items:center;gap:16px;margin-top:18px;padding:16px 18px;border-radius:18px}
+.result-card strong{font-size:26px}
+.result-card span{color:var(--muted);font-size:13px}
+.result-card .btn{margin-left:auto}
+.empty-state{display:grid;place-items:center;min-height:280px;padding:30px;border-radius:var(--radius-xl);text-align:center}
+.empty-state strong{font-size:24px}
+.empty-state p{margin:8px 0 18px;color:var(--muted)}
+.mistake-list{display:grid;gap:12px}
+.mistake-item{padding:18px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.mistake-item h3{margin:0 0 9px;font-size:16px}
+.mistake-item p{margin:5px 0;color:var(--muted);font-size:13px;line-height:1.55}

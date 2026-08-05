@@ -1,0 +1,51 @@
+
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-light{color:#26304e;background:#fff}
+.btn-soft{background:#eef0ff;color:#4953cd}
+.btn-danger{color:#b33449;background:#fff0f3}
+.btn-ghost{background:#f5f6fa;color:#526079}
+.dashboard-side{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.metric-card{display:flex;flex-direction:column;justify-content:space-between;min-height:124px;padding:20px;border-radius:var(--radius-lg)}
+.metric-card strong{font-size:31px;letter-spacing:-.04em}
+.metric-card span{color:var(--muted);font-size:13px;font-weight:750}
+.metric-card.wide{grid-column:1/-1;min-height:124px}
+.selector-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.selector-row select,.select-control,input[type="number"],input[type="text"]{height:42px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--text);outline:none}
+.selector-row select:focus,.select-control:focus,input:focus{border-color:#a4adf9;box-shadow:0 0 0 3px rgba(90,101,242,.1)}
+.section-bar{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:32px 2px 14px}
+.section-bar h2{margin:0;font-size:25px;letter-spacing:-.025em}
+.section-bar span{color:var(--muted);font-size:13px;font-weight:700}
+.cycle-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.cycle-card{min-height:136px;padding:18px;border-radius:18px;transition:.18s}
+.cycle-card:hover{transform:translateY(-3px);border-color:#bec4f5}
+.cycle-card b{display:grid;place-items:center;width:34px;height:34px;margin-bottom:20px;border-radius:11px;background:#f0f2ff;color:var(--primary);font-size:12px}
+.cycle-card strong{display:block;font-size:18px}
+.cycle-card span{display:block;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.45}
+.group-section{margin-top:16px;padding:20px;border-radius:var(--radius-xl)}
+.group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.group-title h3{margin:0;font-size:17px}
+.group-title span{color:var(--muted);font-size:12px}
+.subject-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.subject-card{position:relative;overflow:hidden;min-height:178px;padding:18px;border-radius:18px;box-shadow:none;transition:.18s}
+.subject-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(38,52,91,.1)}
+.subject-card:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--accent,var(--primary))}
+.subject-card-top{display:flex;align-items:center;justify-content:space-between}
+.subject-icon{display:grid;place-items:center;min-width:44px;height:44px;padding:0 8px;border-radius:14px;background:color-mix(in srgb,var(--accent,var(--primary)) 10%,white);color:var(--accent,var(--primary));font-weight:950}
+.subject-stage{color:var(--muted);font-size:11px;font-weight:800}
+.subject-card h3{margin:17px 0 8px;font-size:20px}
+.subject-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+.mini-progress{position:absolute;left:18px;right:18px;bottom:17px;display:flex;align-items:center;gap:8px}
+.mini-progress div{flex:1;height:6px;border-radius:999px;background:#edf0f5;overflow:hidden}
+.mini-progress i{display:block;height:100%;border-radius:inherit;background:var(--accent,var(--primary))}
+.mini-progress b{font-size:11px;color:var(--muted)}
+.catalog-toolbar,.practice-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.catalog-toolbar select,.catalog-toolbar input,.practice-toolbar select,.practice-toolbar input{min-width:150px}
+.catalog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.catalog-card{min-height:220px;padding:22px;border-radius:22px}
+.catalog-card .subject-icon{margin-bottom:18px}
+.catalog-card h3{margin:0 0 8px;font-size:22px}
+.catalog-card p{margin:0 0 18px;color:var(--muted);font-size:13px;line-height:1.6}
+.catalog-meta{display:flex;gap:8px;flex-wrap:wrap}
+.catalog-meta span{padding:6px 8px;border-radius:9px;background:#f3f5f9;color:#65718a;font-size:11px;font-weight:800}
+.course-hero{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:20px;padding:27px;border-radius:var(--radius-xl)}
+.course-hero .subject-icon{width:66px;height:66px;border-radius:20px;font-size:25px}
