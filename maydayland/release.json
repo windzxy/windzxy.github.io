@@ -1,13 +1,16 @@
 {
-  "name": "Maydayland Music + Editorial",
-  "version": "1.1.0",
-  "releasedAt": "2026-08-05T05:49:00Z",
+  "name": "Maydayland Ideal World",
+  "version": "3.0.0",
+  "releasedAt": "2026-08-05T06:00:00Z",
   "features": [
-    "online music player",
-    "Mayday band editorial",
-    "formation timeline",
-    "member profiles",
-    "studio album index",
-    "GD Music source credit"
+    "iOS glass visual system",
+    "Mayday universe autoplay queue",
+    "concert world cards",
+    "studio album galaxy",
+    "OST and special single discovery",
+    "MOJO and character world",
+    "full screen lyrics player",
+    "GD Music source credit",
+    "WMLS fan-site disclaimer"
   ]
 }
