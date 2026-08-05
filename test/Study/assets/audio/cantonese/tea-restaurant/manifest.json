@@ -1,0 +1,42 @@
+{
+  "language": "yue-HK",
+  "course": "tea-restaurant",
+  "engine": "edge-tts 7.2.8",
+  "items": [
+    {
+      "file": "01-customer.mp3",
+      "text": "顧客：唔該，我想要一個菠蘿包同一杯凍奶茶。",
+      "voice": "zh-HK-HiuMaanNeural",
+      "bytes": 33264,
+      "sha256": "81d45a0f636b6aec4395092455ecee7990a700beb6d69dc13172d186f1ef9c96"
+    },
+    {
+      "file": "02-staff.mp3",
+      "text": "店員：凍奶茶要少甜定正常甜？",
+      "voice": "zh-HK-WanLungNeural",
+      "bytes": 25488,
+      "sha256": "0310524632a94fb190a09f1e2579a5ee7a096cbe6c58aaffa30f1362846f70e8"
+    },
+    {
+      "file": "03-customer.mp3",
+      "text": "顧客：少甜，唔該。請問一共幾多錢？",
+      "voice": "zh-HK-HiuMaanNeural",
+      "bytes": 36000,
+      "sha256": "f61e1f03fe93327cf52f23032773179e90da1afc1c6193057a51862b97c11a25"
+    },
+    {
+      "file": "04-staff.mp3",
+      "text": "店員：四十二蚊。多謝。",
+      "voice": "zh-HK-WanLungNeural",
+      "bytes": 26640,
+      "sha256": "0591ce0419499b4c9a717bca8ce433ce83cab6cf3b9dfa6a21a997ea86dc8a3b"
+    },
+    {
+      "file": "05-customer.mp3",
+      "text": "顧客：唔該晒。",
+      "voice": "zh-HK-HiuMaanNeural",
+      "bytes": 15840,
+      "sha256": "bae341ea3027e7509e558189f1ec86e84019d855c0b1ae3b4cdd4bf292c69b53"
+    }
+  ]
+}
