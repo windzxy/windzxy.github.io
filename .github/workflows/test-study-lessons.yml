@@ -1,0 +1,59 @@
+name: Test Study Lessons
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - test/Study/assets/learning-v5.js
+      - test/Study/assets/learning-v5.css
+      - test/Study/assets/decompression-compat.js
+      - test/Study/assets/app-v4.js
+      - test/Study/assets/catalog-v4.js
+      - test/Study/*.html
+      - .github/workflows/test-study-lessons.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --check test/Study/assets/learning-v5.js
+      - run: |
+          python3 -m http.server 8765 --directory . >/tmp/study-server.log 2>&1 &
+          echo $! >/tmp/study-server.pid
+          sleep 2
+          BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$BROWSER"
+          mkdir -p /tmp/study-lessons
+          check_page() {
+            subject="$1"
+            stage="$2"
+            output="/tmp/study-lessons/${subject}-${stage}.html"
+            timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=10000 --dump-dom "http://127.0.0.1:8765/test/Study/course.html?subject=${subject}&stage=${stage}" >"$output"
+            grep -q 'id="learning-v5-root"' "$output"
+            grep -q '本课目标' "$output"
+            grep -q '讲解' "$output"
+            grep -q '示例' "$output"
+            grep -q '操练' "$output"
+            grep -q '输出任务' "$output"
+            ! grep -q '页面加载失败' "$output"
+          }
+          check_page cantonese preschool
+          check_page english primary
+          check_page chinese junior
+          check_page math primary
+          check_page japanese primary
+          check_page korean primary
+          grep -q '粤拼' /tmp/study-lessons/cantonese-preschool.html
+          grep -q '六个声调' /tmp/study-lessons/cantonese-preschool.html
+          grep -q 'sound-btn' /tmp/study-lessons/cantonese-preschool.html
+          grep -q 'Phonics patterns' /tmp/study-lessons/english-primary.html
+          grep -q 'learning-resource' /tmp/study-lessons/cantonese-preschool.html
+          kill "$(cat /tmp/study-server.pid)"
