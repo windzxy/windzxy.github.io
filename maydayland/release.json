@@ -1,16 +1,17 @@
 {
   "name": "Maydayland Ideal World",
-  "version": "3.0.0",
-  "releasedAt": "2026-08-05T06:00:00Z",
+  "version": "4.0.0",
+  "releasedAt": "2026-08-05T07:02:00Z",
   "features": [
-    "iOS glass visual system",
+    "MOJO orbit entrance",
+    "Mayday centered immersive hero",
+    "desktop depth poster exhibition",
+    "mobile vertical story browsing",
+    "tablet adaptive layout",
+    "Bubu carrot mouse cursor",
+    "dynamic album and concert cover hydration",
     "Mayday universe autoplay queue",
-    "concert world cards",
-    "studio album galaxy",
-    "OST and special single discovery",
-    "MOJO and character world",
     "full screen lyrics player",
-    "GD Music source credit",
     "WMLS fan-site disclaimer"
   ]
 }
