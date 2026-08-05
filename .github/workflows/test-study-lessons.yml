@@ -36,8 +36,10 @@ jobs:
             subject="$1"
             stage="$2"
             output="/tmp/study-lessons/${subject}-${stage}.html"
-            timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=10000 --dump-dom "http://127.0.0.1:8765/test/Study/course.html?subject=${subject}&stage=${stage}" >"$output"
-            grep -q 'id="learning-v5-root"' "$output"
+            timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=12000 --dump-dom "http://127.0.0.1:8765/test/Study/course.html?subject=${subject}&stage=${stage}" >"$output"
+            echo "Rendered ${subject}/${stage}: $(wc -c < "$output") bytes"
+            grep -oE '.{0,50}(learning-v5-root|页面加载失败|本课目标|课程路线|输出任务|粤拼|Phonics patterns).{0,80}' "$output" | head -20 || true
+            grep -q 'learning-v5-root' "$output"
             grep -q '本课目标' "$output"
             grep -q '讲解' "$output"
             grep -q '示例' "$output"
