@@ -85,11 +85,20 @@
     state.catalog.set(cacheKey,result); return result;
   }
   function dedupe(list){const m=new Map();list.forEach(s=>{if(s?.id&&!m.has(key(s)))m.set(key(s),s)});return [...m.values()]}
+  const CORE_QUERIES=['五月天','五月天 Live','五月天 第一張創作專輯','五月天 愛情萬歲','五月天 人生海海','五月天 第二人生','五月天 自傳','五月天 OST'];
+  const EXTENDED_QUERIES=['五月天 時光機','五月天 神的孩子都在跳舞','五月天 為愛而生','五月天 後青春期的詩','五月天 Final Home Live','五月天 離開地球表面 Live','五月天 DNA Live','五月天 諾亞方舟 Live','五月天 人生無限公司 Live','五月天 回到那一天 Live','五月天 電影主題曲','五月天 單曲'];
   async function loadUniverse(){
-    const queries=['五月天','五月天 Live','五月天 第一張創作專輯','五月天 愛情萬歲','五月天 人生海海','五月天 時光機','五月天 神的孩子都在跳舞','五月天 為愛而生','五月天 後青春期的詩','五月天 第二人生','五月天 自傳','五月天 Final Home Live','五月天 離開地球表面 Live','五月天 DNA Live','五月天 諾亞方舟 Live','五月天 人生無限公司 Live','五月天 回到那一天 Live','五月天 OST','五月天 電影主題曲','五月天 單曲'];
-    const all=[]; for(let i=0;i<queries.length;i++){setBoot(8+Math.round((i/queries.length)*82),`正在整理：${queries[i].replace('五月天 ','')}`);const rows=await searchQuery(queries[i],22);all.push(...rows);if(i%3===0)await sleep(60)}
-    state.universe=dedupe(all); dom.universeCount.textContent=state.universe.length||'—'; setBoot(96,`已整理 ${state.universe.length} 首歌曲`);dom.enter.disabled=!state.universe.length;dom.enter.querySelector('span:last-child').textContent=state.universe.length?'進入 Maydayland':'重新連線';
+    let finished=0;const all=[];
+    await Promise.all(CORE_QUERIES.map(async query=>{const rows=await searchQuery(query,40);all.push(...rows);finished+=1;setBoot(10+Math.round((finished/CORE_QUERIES.length)*82),`正在整理：${query.replace('五月天 ','')}`)}));
+    state.universe=dedupe(all);dom.universeCount.textContent=state.universe.length||'—';setBoot(96,`已整理 ${state.universe.length} 首歌曲`);dom.enter.disabled=!state.universe.length;dom.enter.querySelector('span:last-child').textContent=state.universe.length?'進入 Maydayland':'重新連線';
     if(!state.universe.length)toast('歌源暫時繁忙，可稍後重新整理。');
+  }
+  async function hydrateUniverse(){
+    const rows=await Promise.all(EXTENDED_QUERIES.map(query=>searchQuery(query,28)));
+    const expanded=dedupe([...state.universe,...rows.flat()]);
+    if(expanded.length===state.universe.length)return;
+    const previous=new Set(state.universe.map(key));state.universe=expanded;dom.universeCount.textContent=expanded.length;
+    if(state.world?.id==='forever'){const currentKey=state.current&&key(state.current);state.queue=dedupe([...state.queue,...expanded.filter(s=>!previous.has(key(s)))]);state.index=currentKey?state.queue.findIndex(s=>key(s)===currentKey):state.index;updateQueue()}
   }
 
   async function buildWorld(world){
@@ -127,7 +136,7 @@
   function closePanels(){[dom.searchPanel,dom.infoPanel,dom.queuePanel].forEach(p=>{p.classList.remove('is-open');p.setAttribute('aria-hidden','true')});dom.scrim.classList.remove('is-open')}
 
   function bind(){
-    dom.enter.onclick=async()=>{if(!state.universe.length){dom.enter.disabled=true;await loadUniverse();return}state.started=true;localStorage.setItem('maydayland-entered','1');dom.boot.classList.add('is-hidden');await startWorld('forever')};
+    dom.enter.onclick=async()=>{if(!state.universe.length){dom.enter.disabled=true;await loadUniverse();return}state.started=true;localStorage.setItem('maydayland-entered','1');dom.boot.classList.add('is-hidden');await startWorld('forever');hydrateUniverse()};
     $('playUniverse').onclick=()=>startWorld('forever');document.addEventListener('click',e=>{const w=e.target.closest('[data-play-world]');if(w)startWorld(w.dataset.playWorld);const a=e.target.closest('[data-play-album]');if(a)startWorld(a.dataset.playAlbum);const group=e.target.closest('[data-play-group]');if(group){const list=group.dataset.playGroup==='album'?albums:worlds.filter(x=>x.group===group.dataset.playGroup);const merged=[];Promise.all(list.map(buildWorld)).then(rows=>{rows.forEach(r=>merged.push(...r));state.queue=dedupe(merged);state.world={title:group.dataset.playGroup==='album'?'專輯星系':'演唱會世界'};state.index=0;updateQueue();playAt(0)})}const open=e.target.closest('[data-open-world]');if(open)document.getElementById(open.dataset.openWorld)?.scrollIntoView({behavior:'smooth'})});
     dom.play.onclick=dom.fullPlay.onclick=togglePlay;dom.next.onclick=dom.fullNext.onclick=nextTrack;dom.prev.onclick=dom.fullPrev.onclick=prevTrack;dom.shuffle.onclick=dom.fullShuffle.onclick=()=>{state.shuffle=!state.shuffle;dom.shuffle.classList.toggle('is-active',state.shuffle);dom.fullShuffle.classList.toggle('is-active',state.shuffle);toast(state.shuffle?'已開啟隨機播放':'已改為順序播放')};dom.fullRepeat.onclick=()=>{state.repeat=!state.repeat;dom.fullRepeat.classList.toggle('is-active',state.repeat);toast(state.repeat?'單曲循環':'關閉單曲循環')};
     dom.queueButton.onclick=()=>openPanel(dom.queuePanel);dom.searchToggle.onclick=()=>openPanel(dom.searchPanel);dom.infoToggle.onclick=()=>openPanel(dom.infoPanel);dom.scrim.onclick=closePanels;document.querySelectorAll('[data-close-panel]').forEach(b=>b.onclick=closePanels);dom.openFull.onclick=()=>{dom.full.classList.add('is-open');dom.full.setAttribute('aria-hidden','false')};dom.closeFull.onclick=()=>{dom.full.classList.remove('is-open');dom.full.setAttribute('aria-hidden','true')};
