@@ -1,0 +1,26 @@
+body[data-page="home"] .hero,
+body[data-page="home"] section:has(.roadmap),
+body[data-page="home"] section:has(.source-grid),
+body[data-page="home"] .home-title p,
+body[data-page="home"] .section-head p,
+body[data-page="home"] .subject-card > p,
+body[data-page="home"] .next-lesson span,
+body[data-page="home"] .special-card p,
+.course-title p,
+.course-controls > div > span,
+.track-title p,
+.footer {
+  display: none !important;
+}
+
+body[data-page="home"] .home-dashboard {
+  padding-bottom: 20px;
+}
+
+body[data-page="home"] .section-head {
+  margin-bottom: 12px;
+}
+
+.course-controls > div > strong {
+  display: block;
+}
