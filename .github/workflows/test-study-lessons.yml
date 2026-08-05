@@ -4,9 +4,9 @@ on:
   push:
     branches: [master]
     paths:
-      - test/Study/assets/learning-v5.js
-      - test/Study/assets/learning-v5.css
-      - test/Study/assets/decompression-compat.js
+      - test/Study/assets/learning-v6.js
+      - test/Study/assets/learning-v6.css
+      - test/Study/assets/bootstrap-v6.js
       - test/Study/assets/app-v4.js
       - test/Study/assets/catalog-v4.js
       - test/Study/*.html
@@ -24,43 +24,47 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node --check test/Study/assets/learning-v5.js
       - run: |
-          grep -q 'sound-btn' test/Study/assets/learning-v5.js
-          grep -q '输出任务' test/Study/assets/learning-v5.js
-          grep -q 'learning-resource' test/Study/assets/learning-v5.js
-          grep -q 'Phonics patterns' test/Study/assets/learning-v5.js
-          grep -q '情境对话' test/Study/assets/learning-v5.js
+          node --check test/Study/assets/bootstrap-v6.js
+          node --check test/Study/assets/learning-v6.js
+      - run: |
+          grep -q '春眠不觉晓' test/Study/assets/learning-v6.js
+          grep -q '无边落木萧萧下' test/Study/assets/learning-v6.js
+          grep -q '作者思路' test/Study/assets/learning-v6.js
+          grep -q '名句考点' test/Study/assets/learning-v6.js
+          grep -q 'yue-HK' test/Study/assets/learning-v6.js
+          grep -q 'zh-HK' test/Study/assets/learning-v6.js
+          grep -q 'ja-JP' test/Study/assets/learning-v6.js
+          grep -q 'ko-KR' test/Study/assets/learning-v6.js
+          grep -q '不会改用普通话' test/Study/assets/learning-v6.js
       - run: |
           python3 -m http.server 8765 --directory . >/tmp/study-server.log 2>&1 &
           echo $! >/tmp/study-server.pid
           sleep 2
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$BROWSER"
-          mkdir -p /tmp/study-lessons
-          check_page() {
-            subject="$1"
-            stage="$2"
-            output="/tmp/study-lessons/${subject}-${stage}.html"
-            timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=12000 --dump-dom "http://127.0.0.1:8765/test/Study/course.html?subject=${subject}&stage=${stage}" >"$output"
-            echo "Rendered ${subject}/${stage}: $(wc -c < "$output") bytes"
-            grep -q 'learning-v5-root' "$output"
-            grep -q '课程路线' "$output"
-            grep -q '本课目标' "$output"
-            grep -q '讲解' "$output"
-            grep -q '示例' "$output"
-            grep -q '操练' "$output"
-            grep -q '复习' "$output"
-            grep -q '资源' "$output"
+          mkdir -p /tmp/study-v6
+          render() {
+            page="$1"
+            output="$2"
+            timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=14000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
+            grep -q 'deep-course-v6' "$output"
+            grep -q '完整课程' "$output"
+            grep -q '逐层讲解' "$output"
+            grep -q '考点' "$output"
             ! grep -q '页面加载失败' "$output"
           }
-          check_page cantonese preschool
-          check_page english primary
-          check_page chinese junior
-          check_page math primary
-          check_page japanese primary
-          check_page korean primary
-          grep -q '粤拼' /tmp/study-lessons/cantonese-preschool.html
-          grep -q '六个声调' /tmp/study-lessons/cantonese-preschool.html
-          grep -q 'Phonics patterns' /tmp/study-lessons/english-primary.html
+          render 'chinese.html?stage=primary' /tmp/study-v6/chinese.html
+          render 'math.html?stage=primary' /tmp/study-v6/math.html
+          render 'english.html?stage=primary' /tmp/study-v6/english.html
+          render 'cantonese.html?stage=primary' /tmp/study-v6/cantonese.html
+          render 'japanese.html?stage=primary' /tmp/study-v6/japanese.html
+          render 'korean.html?stage=primary' /tmp/study-v6/korean.html
+          grep -q '《春晓》' /tmp/study-v6/chinese.html
+          grep -q '《静夜思》' /tmp/study-v6/chinese.html
+          grep -q '在茶餐厅点餐' /tmp/study-v6/cantonese.html
+          grep -q 'data-language="cantonese"' /tmp/study-v6/cantonese.html
+          grep -q 'A Day at the Lake' /tmp/study-v6/english.html
+          grep -q 'コンビニで買い物' /tmp/study-v6/japanese.html
+          grep -q '카페에서 주문하기' /tmp/study-v6/korean.html
           kill "$(cat /tmp/study-server.pid)"
