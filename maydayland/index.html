@@ -1,42 +1,197 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08131b">
-<meta name="description" content="Maydayland 線上音樂台：搜尋、收藏與播放喜歡的歌曲。"><title>Maydayland · 線上音樂台</title>
-<style>
-:root{color-scheme:dark;--bg:#08131b;--panel:rgba(17,29,39,.9);--soft:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--text:#f5f7f8;--muted:#94a2ad;--orange:#ff913e;--yellow:#ffc35a;--green:#79d8a4;--blue:#64cfff;font-family:Inter,system-ui,-apple-system,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif}*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--text)}body{overflow:hidden}button,input,select{font:inherit;color:inherit}button{cursor:pointer}.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 15%,rgba(62,151,185,.2),transparent 31%),radial-gradient(circle at 75% 22%,rgba(255,145,62,.13),transparent 28%),linear-gradient(145deg,#071119,#0d1c27 55%,#071119);overflow:hidden}.bg:before{content:"";position:absolute;inset:-10%;background:var(--cover,none) center/cover;filter:blur(75px) saturate(1.3);opacity:.22;transition:.5s}.bg:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(3,8,12,.18),rgba(3,8,12,.75))}.app{position:relative;z-index:1;height:100dvh;display:grid;grid-template-columns:76px minmax(0,1fr) 340px}.rail{display:flex;flex-direction:column;align-items:center;gap:10px;padding:11px 9px 110px;border-right:1px solid var(--line);background:rgba(7,15,21,.72);backdrop-filter:blur(22px)}.logo{width:54px;height:54px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#29475a,#101e29);display:grid;place-items:center;font-weight:900;letter-spacing:.08em;box-shadow:0 12px 30px #0006}.logo i{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;background:conic-gradient(#70e8ff,#6979ff,#b26cff,#ff913e,#70e8ff)}.rail small{writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.18em;color:#82909a;font-size:8px}.nav{width:49px;height:49px;border:1px solid transparent;border-radius:15px;background:transparent;color:#9eabb5;font-size:20px}.nav:hover,.nav.active{background:var(--soft);border-color:var(--line);color:#fff}.nav.active{box-shadow:inset 3px 0 var(--orange)}.spacer{flex:1}.main{min-width:0;display:grid;grid-template-rows:70px minmax(0,1fr);padding-bottom:94px}.top{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line);background:#09131b99;backdrop-filter:blur(18px)}.brand{min-width:170px}.brand b{display:block;letter-spacing:.16em;font-size:14px}.brand span{display:block;margin-top:3px;color:var(--muted);font-size:9px}.search{height:46px;flex:1;display:flex;align-items:center;border:1px solid var(--line);border-radius:15px;background:var(--soft);overflow:hidden}.search:focus-within{border-color:#64cfff88;box-shadow:0 0 0 4px #64cfff12}.search em{width:42px;text-align:center;font-style:normal}.search input{height:100%;min-width:0;flex:1;border:0;outline:0;background:transparent}.search select{height:32px;max-width:110px;border:1px solid var(--line);border-radius:9px;background:#172733;font-size:10px}.search button{height:32px;margin:0 7px;padding:0 14px;border:0;border-radius:9px;background:linear-gradient(135deg,var(--orange),var(--yellow));color:#291606;font-weight:850}.info-btn{width:43px;height:43px;border:1px solid var(--line);border-radius:13px;background:var(--soft);font-weight:900}.content{min-height:0;overflow:auto;padding:22px}.hero{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:16px;margin-bottom:20px}.hero-card,.now-card,.table{border:1px solid var(--line);background:rgba(11,22,30,.78);box-shadow:0 24px 65px #0005}.hero-card{position:relative;min-height:245px;padding:28px;border-radius:23px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;background:radial-gradient(circle at 78% 20%,#ffc35a22,transparent 28%),radial-gradient(circle at 12% 20%,#64cfff25,transparent 31%),linear-gradient(135deg,#172e3d,#0a171f)}.planet{position:absolute;right:-35px;top:-65px;width:230px;height:230px;border:1px solid #ffffff18;border-radius:50%}.planet:before{content:"";position:absolute;inset:52px;border-radius:50%;background:radial-gradient(circle at 32% 25%,#fff,transparent 6%),linear-gradient(145deg,#5eb8d6,#173b50);box-shadow:0 0 55px #64cfff44}.eyebrow{width:max-content;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:var(--soft);font-size:9px;letter-spacing:.14em}.hero h1{position:relative;margin:17px 0 9px;font-size:clamp(36px,4.4vw,60px);line-height:.98;letter-spacing:-.045em}.hero p{position:relative;max-width:600px;margin:0;color:#aeb9c2;font-size:12px;line-height:1.7}.chips{position:relative;display:flex;flex-wrap:wrap;gap:7px;margin-top:17px}.chip{padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--soft);font-size:10px}.chip:hover{border-color:#ff913e88;background:#ff913e16}.now-card{border-radius:23px;padding:20px;display:flex;flex-direction:column;justify-content:space-between}.now-card header{display:flex;justify-content:space-between;color:var(--muted);font-size:9px;letter-spacing:.14em}.live{color:#baf0cf}.disc-wrap{display:grid;place-items:center}.disc{width:122px;height:122px;border-radius:50%;background:conic-gradient(#09141d,#2d4556,#09141d,#425d70,#09141d);box-shadow:0 18px 38px #0008;position:relative;animation:spin 11s linear infinite;animation-play-state:paused}.playing .disc{animation-play-state:running}.disc:before{content:"";position:absolute;inset:25px;border-radius:50%;background:var(--disc,linear-gradient(145deg,#ffad69,#42748e)) center/cover}.disc:after{content:"";position:absolute;inset:55px;border-radius:50%;background:#eaf0f2;box-shadow:0 0 0 4px #08131bbb}@keyframes spin{to{transform:rotate(360deg)}}.signal b,.signal span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.signal b{font-size:13px}.signal span{margin-top:5px;color:var(--muted);font-size:10px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:0 2px 12px}.section-head h2{margin:0;font-size:20px}.section-head p{margin:4px 0 0;color:var(--muted);font-size:10px}.status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:10px}.dot{width:8px;height:8px;border-radius:50%;background:#6f7c85}.dot.ok{background:var(--green);box-shadow:0 0 10px #79d8a4aa}.dot.bad{background:#ff7d85}.table{border-radius:18px;overflow:hidden}.thead,.row{display:grid;grid-template-columns:48px minmax(200px,1.5fr) minmax(125px,.8fr) 82px 90px;align-items:center;gap:11px;padding:0 14px}.thead{height:40px;border-bottom:1px solid var(--line);color:#788792;font-size:8px;letter-spacing:.13em}.row{min-height:68px;border-bottom:1px solid #ffffff0e;transition:.18s}.row:last-child{border-bottom:0}.row:hover,.row.active{background:#ffffff0a}.index{text-align:center;color:#74838e;font-size:10px}.song{display:flex;align-items:center;gap:11px;min-width:0}.cover{width:45px;height:45px;flex:0 0 45px;border-radius:10px;object-fit:cover;background:#182b37}.copy,.artist{min-width:0}.copy b,.copy span,.artist{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.copy b{font-size:12px}.copy span{margin-top:4px;color:var(--muted);font-size:9px}.artist{color:#a3afb8;font-size:10px}.source{width:max-content;padding:5px 7px;border:1px solid var(--line);border-radius:7px;color:#b8c2c9;font-size:8px}.actions{display:flex;justify-content:flex-end}.act{width:34px;height:34px;border:1px solid transparent;border-radius:10px;background:transparent;color:#87959f}.act:hover,.act.on{border-color:var(--line);background:var(--soft);color:#fff}.act.on{color:#ff9a68}.empty{min-height:235px;display:grid;place-items:center;padding:30px;text-align:center;color:var(--muted);font-size:11px}.empty b{display:block;color:#dce3e7;font-size:14px;margin-bottom:7px}.loading{padding:12px}.sk{height:58px;border-radius:12px;margin:7px 0;background:linear-gradient(90deg,#ffffff08,#ffffff14,#ffffff08);background-size:200%;animation:sh 1.1s linear infinite}@keyframes sh{to{background-position:-200%}}.info{min-width:0;display:flex;flex-direction:column;border-left:1px solid var(--line);background:rgba(23,33,41,.92);backdrop-filter:blur(20px);transition:.25s}.info-head{height:70px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.info-head b{font-size:13px}.close{width:33px;height:33px;border:0;border-radius:9px;background:transparent;color:#9ca8b0;font-size:22px}.close:hover{background:var(--soft);color:#fff}.info-body{flex:1;overflow:auto;padding:16px}.info-body>p{margin:0 0 15px;color:#bac4cb;font-size:10px;line-height:1.75}.label{margin:15px 0 8px;color:#7e8b95;font-size:8px;font-weight:800;letter-spacing:.14em}.card{padding:13px;border:1px solid var(--line);border-radius:12px;background:#ffffff08}.provider{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;text-decoration:none}.gd{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(145deg,var(--yellow),var(--orange));color:#321807;font-weight:950}.provider b,.provider span{display:block}.provider b{font-size:11px}.provider span{margin-top:4px;color:var(--muted);font-size:8px}.line{display:flex;justify-content:space-between;gap:10px;padding:6px 0;color:#a9b4bc;font-size:9px}.note{padding:8px 0;border-bottom:1px solid #ffffff0d;color:#aeb8bf;font-size:9px;line-height:1.55}.note:last-child{border:0}.info footer{padding:12px 16px;border-top:1px solid var(--line);color:#788691;font-size:8px}.player{position:fixed;z-index:20;left:76px;right:340px;bottom:0;height:94px;display:grid;grid-template-columns:minmax(210px,1fr) minmax(320px,1.3fr) minmax(150px,.7fr);align-items:center;gap:17px;padding:10px 20px;border-top:1px solid var(--line);background:rgba(7,15,22,.93);backdrop-filter:blur(24px);transition:.25s}.track-now{display:flex;align-items:center;gap:11px;min-width:0}.track-now img{width:57px;height:57px;border-radius:12px;object-fit:cover;background:#142631}.track-now div{min-width:0}.track-now b,.track-now span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track-now b{font-size:12px}.track-now span{margin-top:5px;color:var(--muted);font-size:9px}.heart{margin-left:auto}.center{display:flex;flex-direction:column;gap:8px}.controls{display:flex;justify-content:center;align-items:center;gap:7px}.controls button{width:36px;height:36px;border:0;border-radius:50%;background:transparent}.controls button:hover{background:var(--soft)}.controls .play{width:43px;height:43px;background:#f1f4f5;color:#14222c;font-size:17px}.mode.on{color:var(--orange)}.timeline{display:grid;grid-template-columns:35px 1fr 35px;align-items:center;gap:8px;color:#788691;font-size:8px}.timeline input,.right input{width:100%;accent-color:var(--orange)}.right{display:flex;align-items:center;justify-content:flex-end;gap:8px;color:#99a5ae}.right input{max-width:100px}.count{min-width:20px;height:20px;border-radius:999px;background:var(--soft);display:grid;place-items:center;font-size:8px}.sheet{position:fixed;z-index:30;right:340px;top:70px;bottom:94px;width:min(390px,calc(100vw - 76px));border-left:1px solid var(--line);background:rgba(11,22,30,.97);backdrop-filter:blur(22px);box-shadow:-25px 0 60px #0007;transform:translateX(105%);transition:.25s;display:flex;flex-direction:column}.sheet.open{transform:none}.sheet-head{padding:15px;display:flex;justify-content:space-between;border-bottom:1px solid var(--line)}.sheet-head b{font-size:13px}.sheet-head span{display:block;margin-top:4px;color:var(--muted);font-size:8px}.sheet-list{flex:1;overflow:auto;padding:8px}.side-row{display:grid;grid-template-columns:45px 1fr auto;gap:10px;align-items:center;padding:8px;border-radius:12px}.side-row:hover{background:var(--soft)}.side-row img{width:45px;height:45px;border-radius:9px;object-fit:cover}.side-row b,.side-row span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.side-row b{font-size:10px}.side-row span{margin-top:4px;color:var(--muted);font-size:8px}.scrim{position:fixed;z-index:25;inset:0;background:#02070b99;opacity:0;pointer-events:none;transition:.2s}.scrim.show{opacity:1;pointer-events:auto}.toast{position:fixed;z-index:60;left:50%;bottom:110px;transform:translate(-50%,10px);padding:10px 14px;border:1px solid var(--line);border-radius:11px;background:#172630f5;color:#e7ecef;font-size:10px;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}body.info-off .app{grid-template-columns:76px minmax(0,1fr) 0}body.info-off .info{transform:translateX(100%)}body.info-off .player{right:0}body.info-off .sheet{right:0}.mobile-nav{display:none}@media(max-width:1050px){.hero{grid-template-columns:1fr}.now-card{display:none}.thead,.row{grid-template-columns:45px minmax(180px,1fr) minmax(110px,.7fr) 80px}.source-col{display:none}.player{grid-template-columns:minmax(180px,.8fr) minmax(290px,1.3fr) 130px}}@media(max-width:850px){:root{--info:0}.app{grid-template-columns:68px minmax(0,1fr)}.rail{padding-left:7px;padding-right:7px}.info{position:fixed;z-index:40;right:0;top:0;bottom:0;width:min(350px,92vw);transform:translateX(105%);box-shadow:-25px 0 60px #0008}body.info-open .info{transform:none}.player{left:68px;right:0}.sheet{right:0}.brand{display:none}.thead,.row{grid-template-columns:42px minmax(170px,1fr) 80px}.artist-col{display:none}.right input{display:none}}@media(max-width:650px){body{overflow:auto}.app{display:block;height:auto;min-height:100dvh}.rail{display:none}.main{min-height:100dvh;padding-bottom:142px}.top{position:sticky;top:0;z-index:12;height:64px;padding:9px;background:#08131be8}.search{height:44px}.search em{width:35px}.search select{max-width:78px}.search button{padding:0 10px}.info-btn{width:40px;height:40px;flex:0 0 40px}.content{overflow:visible;padding:11px}.hero-card{min-height:215px;padding:21px;border-radius:18px}.hero h1{font-size:37px}.hero p{font-size:10px}.planet{right:-100px}.section-head{align-items:flex-start;flex-direction:column;gap:6px;margin-top:16px}.table{border:0;background:transparent;box-shadow:none}.thead{display:none}.track-list{display:grid;gap:7px}.row{grid-template-columns:minmax(0,1fr) 76px;min-height:66px;padding:7px;border:1px solid var(--line);border-radius:13px;background:rgba(11,22,30,.83)}.index,.artist-col,.source-col{display:none}.cover{width:49px;height:49px;flex-basis:49px}.player{left:7px;right:7px;bottom:61px;height:75px;grid-template-columns:minmax(0,1fr) auto;padding:8px 9px;border:1px solid var(--line);border-radius:17px}.track-now img{width:49px;height:49px}.track-now b{font-size:10px}.track-now span{font-size:8px}.heart,.timeline,.right,.controls .mode,.controls .prev{display:none}.center{display:block}.controls{gap:2px}.controls button{width:34px}.controls .play{width:42px;height:42px}.mobile-nav{position:fixed;z-index:22;left:0;right:0;bottom:0;height:69px;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:#071018f5}.mobile-nav button{border:0;background:transparent;color:#81909b;font-size:8px}.mobile-nav button.on{color:#fff}.sheet{left:0;right:0;top:auto;bottom:0;width:100%;height:72dvh;border-radius:19px 19px 0 0;transform:translateY(105%)}.toast{bottom:148px}}
-</style>
-<link rel="stylesheet" href="./editorial.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#eef4ff">
+  <meta name="description" content="Maydayland：一座由五迷心意構成的五月天沉浸式音樂理想世界。">
+  <meta property="og:title" content="Maydayland · 五月天理想世界">
+  <meta property="og:description" content="演唱會、專輯、OST 與回憶，在同一座五月天音樂宇宙裡持續播放。">
+  <title>Maydayland · 五月天理想世界</title>
+  <link rel="preconnect" href="https://music-api.gdstudio.xyz">
+  <link rel="stylesheet" href="./styles.css?v=3.0.0">
 </head>
 <body>
-<div class="bg" id="bg"></div><div class="scrim" id="scrim"></div>
-<div class="app">
-<aside class="rail"><button class="logo" id="home"><i>M</i></button><small>MAYDAYLAND MUSIC</small><button class="nav active" data-view="discover" title="探索">⌖</button><button class="nav" data-sheet="queue" title="播放佇列">☷</button><button class="nav" data-sheet="favorites" title="收藏">♡</button><button class="nav" data-view="recent" title="最近播放">◷</button><div class="spacer"></div><button class="nav" id="railInfo" title="資訊">ⓘ</button><a class="nav" href="../" title="返回" style="display:grid;place-items:center;text-decoration:none">←</a></aside>
-<main class="main">
-<header class="top"><div class="brand"><b>MAYDAYLAND</b><span>ONLINE MUSIC STATION</span></div><form class="search" id="searchForm"><em>⌕</em><input id="query" maxlength="80" placeholder="搜尋歌曲、歌手或專輯…" autocomplete="off"><select id="source"><option value="netease">網易雲</option><option value="kuwo">酷我</option><option value="tencent">QQ 音樂</option><option value="kugou">酷狗</option><option value="migu">咪咕</option><option value="netease,kuwo">綜合</option></select><button id="searchBtn">搜尋</button></form><button class="info-btn" id="infoBtn">i</button></header>
-<div class="content" id="content">
-<section class="hero" id="hero"><div class="hero-card"><div class="planet"></div><span class="eyebrow">● GITHUB PAGES 線上音樂台</span><h1>讓音樂陪你<br>穿過今天。</h1><p>搜尋喜歡的歌曲，建立自己的播放佇列與收藏。頁面不儲存音樂檔案，播放內容由第三方歌源即時提供。</p><div class="chips"><button class="chip" data-q="五月天">五月天</button><button class="chip" data-q="華語流行">華語流行</button><button class="chip" data-q="搖滾">搖滾</button><button class="chip" data-q="夜晚">夜晚</button><button class="chip" data-q="治癒">治癒</button></div></div><div class="now-card" id="signal"><header><span>NOW RECEIVING</span><span class="live">● ONLINE</span></header><div class="disc-wrap"><div class="disc" id="disc"></div></div><div class="signal"><b id="signalTitle">等待選擇歌曲</b><span id="signalArtist">搜尋後點擊即可播放</span></div></div></section>
-<section><div class="section-head"><div><h2 id="heading">搜尋結果</h2><p id="desc">正在準備 Maydayland 音樂台…</p></div><div class="status"><i class="dot" id="apiDot"></i><span id="meta">尚未連線</span></div></div><div class="table"><div class="thead"><span>#</span><span>歌曲</span><span class="artist-col">歌手</span><span class="source-col">來源</span><span></span></div><div class="track-list" id="list"></div></div></section>
-</div></main>
-<aside class="info" id="info"><div class="info-head"><b>ⓘ　資訊</b><button class="close" id="infoClose">×</button></div><div class="info-body"><p><b>Maydayland</b> 是部署於 GitHub Pages 的線上音樂播放器。搜尋、收藏與播放佇列資料只會保存在目前瀏覽器。</p><div class="label">歌源提供</div><div class="card"><a class="provider" href="https://music.gdstudio.xyz/" target="_blank" rel="noopener"><span class="gd">GD</span><span><b>感謝 GD 音樂台提供免費歌源 API</b><span>music.gdstudio.xyz</span></span><span>›</span></a></div><div class="label">服務狀態</div><div class="card"><div class="line"><span>搜尋 API</span><b id="service">等待連線</b></div><div class="line"><span>目前來源</span><span id="sourceName">網易雲</span></div><div class="line"><span>最後回應</span><span id="latency">—</span></div></div><div class="label">使用與權利</div><div class="card"><div class="note">⌕　搜尋歌曲、歌手或專輯，並可切換不同音樂來源。</div><div class="note">＋　歌曲可加入播放佇列；♡ 收藏會保存在本機。</div><div class="note">♪　本站不託管或上傳音樂檔案，歌曲、封面及相關權利歸原權利人所有。</div><div class="note">!　請僅作個人、非商業用途；第三方歌源的可用性可能隨時變動。</div><div class="note">↗　本頁與五月天、唱片公司及各音樂平台沒有官方關聯。</div></div></div><footer>介面：Windzxy Maydayland · 歌源服務：GD 音樂台</footer></aside>
-</div>
-<section class="sheet" id="sheet"><div class="sheet-head"><div><b id="sheetTitle">播放佇列</b><span id="sheetSub">0 首歌曲</span></div><button class="close" id="sheetClose">×</button></div><div class="sheet-list" id="sheetList"></div></section>
-<footer class="player" id="player"><div class="track-now"><img id="nowCover" alt=""><div><b id="nowTitle">尚未播放</b><span id="nowArtist">從搜尋結果選擇一首歌曲</span></div><button class="act heart" id="favCurrent">♡</button></div><div class="center"><div class="controls"><button class="mode" id="mode">⇄</button><button class="prev" id="prev">◀</button><button class="play" id="play">▶</button><button id="next">▶</button><button class="mode" id="queueBtn">☷</button></div><div class="timeline"><span id="cur">0:00</span><input id="progress" type="range" min="0" max="1000" value="0"><span id="dur">0:00</span></div></div><div class="right"><span>🔊</span><input id="volume" type="range" min="0" max="1" step=".01" value=".82"><button class="act" id="queueBtn2">☷</button><span class="count" id="count">0</span></div></footer>
-<nav class="mobile-nav"><button class="on" data-mobile="discover">⌖<br>探索</button><button data-mobile="queue">☷<br>佇列</button><button data-mobile="favorites">♡<br>收藏</button><button data-mobile="info">ⓘ<br>資訊</button></nav>
-<audio id="audio" preload="metadata"></audio><div class="toast" id="toast"></div>
-<script>
-(()=>{'use strict';const API='https://music-api.gdstudio.xyz/api.php',PLACE='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Cdefs%3E%3ClinearGradient id="g" x2="1" y2="1"%3E%3Cstop stop-color="%23284455"/%3E%3Cstop offset="1" stop-color="%230b1720"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="200" height="200" rx="28" fill="url(%23g)"/%3E%3Ccircle cx="100" cy="100" r="43" fill="none" stroke="%23aac8d6" stroke-opacity=".45" stroke-width="8"/%3E%3Ccircle cx="100" cy="100" r="9" fill="%23dce8ed"/%3E%3C/svg%3E',LABEL={netease:'網易雲',kuwo:'酷我',tencent:'QQ 音樂',kugou:'酷狗',migu:'咪咕','netease,kuwo':'綜合'},$=x=>document.getElementById(x),E={form:$('searchForm'),q:$('query'),source:$('source'),search:$('searchBtn'),list:$('list'),heading:$('heading'),desc:$('desc'),meta:$('meta'),dot:$('apiDot'),hero:$('hero'),audio:$('audio'),player:$('player'),play:$('play'),progress:$('progress'),cur:$('cur'),dur:$('dur'),vol:$('volume'),nowCover:$('nowCover'),nowTitle:$('nowTitle'),nowArtist:$('nowArtist'),signal:$('signal'),signalTitle:$('signalTitle'),signalArtist:$('signalArtist'),disc:$('disc'),favCurrent:$('favCurrent'),count:$('count'),sheet:$('sheet'),sheetList:$('sheetList'),sheetTitle:$('sheetTitle'),sheetSub:$('sheetSub'),scrim:$('scrim'),toast:$('toast'),service:$('service'),sourceName:$('sourceName'),latency:$('latency')};
-const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},S={results:[],queue:load('mdl.queue',[]),favs:load('mdl.favs',[]),recent:load('mdl.recent',[]),current:null,context:[],index:-1,view:'discover',sheet:null,mode:localStorage.getItem('mdl.mode')||'list',token:0,controller:null};E.nowCover.src=PLACE;E.audio.volume=+(localStorage.getItem('mdl.volume')||.82);E.vol.value=E.audio.volume;
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),key=s=>`${s.source}:${s.id}`,artist=a=>Array.isArray(a)?a.join(' / '):(a||'未知歌手'),song=s=>({id:String(s.id||''),name:String(s.name||s.title||'未知歌曲'),artist:artist(s.artist||s.artists),album:String(s.album||''),pic_id:s.pic_id||s.picId||'',source:s.source||E.source.value.split(',')[0]||'netease'}),cover=s=>s?.pic_id?`${API}?types=pic&id=${encodeURIComponent(s.pic_id)}&source=${encodeURIComponent(s.source)}&size=500`:PLACE,fmt=n=>!isFinite(n)?'0:00':`${Math.floor(n/60)}:${String(Math.floor(n%60)).padStart(2,'0')}`;
-let tt;function toast(t){clearTimeout(tt);E.toast.textContent=t;E.toast.classList.add('show');tt=setTimeout(()=>E.toast.classList.remove('show'),2600)}function save(){localStorage.setItem('mdl.queue',JSON.stringify(S.queue.slice(0,200)));localStorage.setItem('mdl.favs',JSON.stringify(S.favs.slice(0,500)));localStorage.setItem('mdl.recent',JSON.stringify(S.recent.slice(0,60)));E.count.textContent=S.queue.length>99?'99+':S.queue.length;if(S.sheet)renderSheet()}function status(ok,text,ms='—'){E.dot.className='dot '+(ok===true?'ok':ok===false?'bad':'');E.meta.textContent=text;E.service.textContent=ok===true?'連線正常':ok===false?'暫時異常':'等待連線';E.latency.textContent=ms}async function json(url,signal){const c=new AbortController(),t=setTimeout(()=>c.abort(),15000),a=()=>c.abort();signal?.addEventListener('abort',a,{once:true});try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(t);signal?.removeEventListener('abort',a)}}
-function empty(a,b){E.list.innerHTML=`<div class="empty"><div><b>${esc(a)}</b>${esc(b)}</div></div>`}function loading(){E.list.innerHTML='<div class="loading">'+Array(6).fill('<div class="sk"></div>').join('')+'</div>'}function fav(s){return S.favs.some(x=>key(x)===key(s))}function rows(list){if(!list.length)return empty('沒有歌曲','請搜尋其他關鍵字或切換歌源。');E.list.innerHTML=list.map((s,i)=>`<article class="row${S.current&&key(S.current)===key(s)?' active':''}" data-i="${i}"><span class="index">${String(i+1).padStart(2,'0')}</span><div class="song"><img class="cover" src="${esc(cover(s))}" onerror="this.src='${PLACE}'" alt=""><div class="copy"><b>${esc(s.name)}</b><span>${esc(s.album||LABEL[s.source]||s.source)}</span></div></div><span class="artist artist-col">${esc(s.artist)}</span><span class="source source-col">${esc(LABEL[s.source]||s.source)}</span><div class="actions"><button class="act${fav(s)?' on':''}" data-a="fav">♡</button><button class="act" data-a="queue">＋</button></div></article>`).join('')}
-async function search(q){q=String(q||'').trim();if(!q)return;S.controller?.abort();S.controller=new AbortController();E.search.disabled=true;E.q.value=q;E.hero.hidden=false;S.view='discover';nav('discover');E.heading.textContent=`「${q}」的搜尋結果`;E.desc.textContent='正在連接歌源…';E.sourceName.textContent=LABEL[E.source.value]||E.source.value;loading();status(null,'連線中…');const st=performance.now(),url=`${API}?types=search&source=${encodeURIComponent(E.source.value)}&name=${encodeURIComponent(q)}&count=40&pages=1&s=${Date.now().toString(36)}`;try{const d=await json(url,S.controller.signal);if(!Array.isArray(d))throw Error('格式錯誤');S.results=d.map(song).filter(x=>x.id);S.context=S.results;S.index=-1;const ms=Math.round(performance.now()-st);rows(S.results);E.desc.textContent=S.results.length?'點擊歌曲播放，也可加入收藏或佇列。':'沒有找到相符歌曲。';status(true,`${S.results.length} 首歌曲 · ${LABEL[E.source.value]||E.source.value}`,ms+' ms');let h=load('mdl.searches',[]).filter(x=>x!==q);h.unshift(q);localStorage.setItem('mdl.searches',JSON.stringify(h.slice(0,10)))}catch(e){if(e.name==='AbortError')return;console.error(e);empty('歌源暫時無法連線','請稍後再試，或切換其他音樂來源。');E.desc.textContent='免費歌源可能繁忙或維護中。';status(false,'歌源連線失敗');toast('歌源連線失敗，請稍後再試。')}finally{E.search.disabled=false}}
-function listNow(){return S.view==='recent'?S.recent:S.results}function nav(v){document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));document.querySelectorAll('[data-mobile]').forEach(b=>b.classList.toggle('on',b.dataset.mobile===v))}function show(v){closeSheet();S.view=v;nav(v);if(v==='recent'){E.hero.hidden=true;E.heading.textContent='最近播放';E.desc.textContent='資料只保存在目前瀏覽器。';rows(S.recent);status(true,S.recent.length+' 首最近播放')}else{E.hero.hidden=false;E.heading.textContent='搜尋結果';E.desc.textContent=S.results.length?'點擊歌曲即可開始播放。':'搜尋喜歡的歌曲。';rows(S.results)}}
-function updateNow(){const s=S.current,c=cover(s);E.nowCover.src=c;E.nowTitle.textContent=s?s.name:'尚未播放';E.nowArtist.textContent=s?s.artist:'從搜尋結果選擇一首歌曲';E.signalTitle.textContent=s?s.name:'等待選擇歌曲';E.signalArtist.textContent=s?s.artist:'搜尋後點擊即可播放';$('bg').style.setProperty('--cover',s?`url("${c}")`:'none');E.disc.style.setProperty('--disc',s?`url("${c}")`:'linear-gradient(145deg,#ffad69,#42748e)');E.favCurrent.classList.toggle('on',s&&fav(s))}function playing(on){E.player.classList.toggle('playing',on);E.signal.classList.toggle('playing',on);E.play.textContent=on?'Ⅱ':'▶'}async function play(s,list=null,i=-1){if(!s)return;const token=++S.token;S.current=s;if(list){S.context=list;S.index=i}updateNow();rows(listNow());renderSheet();toast('正在連接：'+s.name);try{let u='';for(const br of ['320','128']){const d=await json(`${API}?types=url&id=${encodeURIComponent(s.id)}&source=${encodeURIComponent(s.source)}&br=${br}&s=${Date.now().toString(36)}`);u=d?.url||'';if(u)break}if(token!==S.token)return;if(!u)throw Error('無播放地址');E.audio.src=String(u).replace(/^http:/,'https:');await E.audio.play();S.recent=[s,...S.recent.filter(x=>key(x)!==key(s))].slice(0,60);save();if('mediaSession'in navigator)try{navigator.mediaSession.metadata=new MediaMetadata({title:s.name,artist:s.artist,album:s.album||'Maydayland',artwork:[{src:cover(s),sizes:'500x500'}]})}catch{}}catch(e){console.error(e);playing(false);toast('這首歌曲暫時無法播放。')}}function toggle(){if(!S.current){const l=S.results.length?S.results:S.queue;return l.length?play(l[0],l,0):toast('請先搜尋並選擇歌曲。')}E.audio.paused?E.audio.play().catch(()=>toast('無法播放')):E.audio.pause()}function step(d=1){let l=S.context.length?S.context:(S.queue.length?S.queue:S.results);if(!l.length)return;let i=S.index;if(i<0&&S.current)i=l.findIndex(x=>key(x)===key(S.current));i=S.mode==='shuffle'?Math.floor(Math.random()*l.length):(i+d+l.length)%l.length;play(l[i],l,i)}function toggleFav(s){if(!s)return;const i=S.favs.findIndex(x=>key(x)===key(s));i>=0?S.favs.splice(i,1):S.favs.unshift(s);save();updateNow();rows(listNow());renderSheet();toast(i>=0?'已取消收藏':'已加入收藏')}function addQueue(s){if(S.queue.some(x=>key(x)===key(s)))return toast('佇列中已有這首歌曲');S.queue.push(s);save();toast('已加入播放佇列')}
-function openSheet(type){S.sheet=type;E.sheet.classList.add('open');E.scrim.classList.add('show');E.sheetTitle.textContent=type==='favorites'?'我的收藏':'播放佇列';renderSheet();document.querySelectorAll('[data-mobile]').forEach(b=>b.classList.toggle('on',b.dataset.mobile===type))}function closeSheet(){S.sheet=null;E.sheet.classList.remove('open');if(!document.body.classList.contains('info-open'))E.scrim.classList.remove('show')}function renderSheet(){if(!S.sheet)return;const l=S.sheet==='favorites'?S.favs:S.queue;E.sheetSub.textContent=l.length+' 首歌曲';E.sheetList.innerHTML=l.length?l.map((s,i)=>`<div class="side-row" data-si="${i}"><img src="${esc(cover(s))}" onerror="this.src='${PLACE}'" alt=""><div><b>${esc(s.name)}</b><span>${esc(s.artist)}</span></div><button class="act" data-r="${i}">×</button></div>`).join(''):'<div class="empty"><div><b>這裡還是空的</b>從搜尋結果加入歌曲。</div></div>'}function info(force){if(innerWidth<=850){const on=force??!document.body.classList.contains('info-open');document.body.classList.toggle('info-open',on);E.scrim.classList.toggle('show',on);if(on)closeSheet()}else document.body.classList.toggle('info-off',force===false?true:force===true?false:!document.body.classList.contains('info-off'))}function mode(){const m=['list','repeat','shuffle'];S.mode=m[(m.indexOf(S.mode)+1)%m.length];localStorage.setItem('mdl.mode',S.mode);$('mode').classList.toggle('on',S.mode!=='list');toast(S.mode==='repeat'?'單曲循環':S.mode==='shuffle'?'隨機播放':'列表循環')}
-E.form.onsubmit=e=>{e.preventDefault();search(E.q.value)};E.source.value=localStorage.getItem('mdl.source')||'netease';E.sourceName.textContent=LABEL[E.source.value]||E.source.value;E.source.onchange=()=>{localStorage.setItem('mdl.source',E.source.value);E.sourceName.textContent=LABEL[E.source.value]||E.source.value;if(E.q.value.trim())search(E.q.value)};document.querySelector('.chips').onclick=e=>{const b=e.target.closest('[data-q]');if(b)search(b.dataset.q)};E.list.onclick=e=>{const r=e.target.closest('.row');if(!r)return;const l=listNow(),i=+r.dataset.i,s=l[i],a=e.target.closest('[data-a]')?.dataset.a;a==='fav'?toggleFav(s):a==='queue'?addQueue(s):play(s,l,i)};E.play.onclick=toggle;$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);$('mode').onclick=mode;E.favCurrent.onclick=()=>toggleFav(S.current);$('queueBtn').onclick=$('queueBtn2').onclick=()=>openSheet('queue');$('sheetClose').onclick=closeSheet;E.sheetList.onclick=e=>{const r=e.target.closest('[data-si]');if(!r)return;const i=+r.dataset.si,l=S.sheet==='favorites'?S.favs:S.queue;if(e.target.closest('[data-r]')){S.sheet==='favorites'?toggleFav(l[i]):(S.queue.splice(i,1),save(),renderSheet())}else play(l[i],l,i)};document.querySelectorAll('[data-sheet]').forEach(b=>b.onclick=()=>openSheet(b.dataset.sheet));document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>show(b.dataset.view));document.querySelectorAll('[data-mobile]').forEach(b=>b.onclick=()=>{const v=b.dataset.mobile;v==='queue'||v==='favorites'?openSheet(v):v==='info'?info(true):show(v)});$('infoBtn').onclick=$('railInfo').onclick=()=>info();$('infoClose').onclick=()=>info(false);E.scrim.onclick=()=>{closeSheet();if(document.body.classList.contains('info-open'))info(false)};$('home').onclick=()=>show('discover');
-E.audio.onplay=()=>playing(true);E.audio.onpause=()=>playing(false);E.audio.onended=()=>S.mode==='repeat'?(E.audio.currentTime=0,E.audio.play()):step(1);E.audio.ontimeupdate=()=>{const d=E.audio.duration||0,c=E.audio.currentTime||0;E.progress.value=d?Math.round(c/d*1000):0;E.cur.textContent=fmt(c);E.dur.textContent=fmt(d)};E.audio.onerror=()=>{playing(false);toast('音訊載入失敗，請嘗試其他歌曲。')};E.progress.oninput=()=>{if(isFinite(E.audio.duration))E.audio.currentTime=E.progress.value/1000*E.audio.duration};E.vol.oninput=()=>{E.audio.volume=+E.vol.value;localStorage.setItem('mdl.volume',E.audio.volume)};document.onkeydown=e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.code==='Space'){e.preventDefault();toggle()}else if(e.code==='ArrowRight')E.audio.currentTime+=10;else if(e.code==='ArrowLeft')E.audio.currentTime=Math.max(0,E.audio.currentTime-10)};window.onresize=()=>{if(innerWidth>850)document.body.classList.remove('info-open');else document.body.classList.remove('info-off')};
-save();updateNow();$('mode').classList.toggle('on',S.mode!=='list');search(load('mdl.searches',[])[0]||'五月天');})();
-</script>
-<script src="./editorial.js" defer></script>
-</body></html>
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient__image" id="ambientImage"></div>
+    <div class="ambient__mesh"></div>
+    <div class="ambient__grain"></div>
+  </div>
+
+  <div class="boot" id="boot" aria-live="polite">
+    <div class="boot__glass">
+      <div class="boot__orb"><span>5</span></div>
+      <p class="boot__eyebrow">WELCOME TO THE IDEAL WORLD</p>
+      <h1>Maydayland</h1>
+      <p class="boot__copy">正在整理五月天的專輯、現場、OST 與一路走來的回憶。</p>
+      <div class="boot__progress"><i id="bootProgress"></i></div>
+      <p class="boot__status" id="bootStatus">連接歌源中…</p>
+      <button class="primary-button" id="enterButton" disabled>
+        <span class="primary-button__icon">▶</span>
+        <span>進入 Maydayland</span>
+      </button>
+      <p class="boot__hint">瀏覽器通常要求第一次播放必須由你點擊確認；進入後會自動連續播放。</p>
+    </div>
+  </div>
+
+  <header class="topbar glass">
+    <a class="brand" href="#home" aria-label="Maydayland 首頁">
+      <span class="brand__mark">M</span>
+      <span><b>Maydayland</b><small>五月天理想世界</small></span>
+    </a>
+    <nav class="segmented" aria-label="主要分類">
+      <button class="segmented__item is-active" data-section="home">今天</button>
+      <button class="segmented__item" data-section="concerts">演唱會</button>
+      <button class="segmented__item" data-section="albums">專輯</button>
+      <button class="segmented__item" data-section="stories">回憶館</button>
+    </nav>
+    <div class="topbar__actions">
+      <button class="round-button" id="searchToggle" aria-label="搜尋">⌕</button>
+      <button class="round-button" id="infoToggle" aria-label="關於本站">ⓘ</button>
+    </div>
+  </header>
+
+  <main class="page" id="home">
+    <section class="hero section-pad">
+      <article class="hero__feature glass-card">
+        <img class="hero__photo" src="https://www.mayday.jp/wp-content/uploads/ffb31aec0c0adb49e80f9fc7e18b284f-500x399.jpg" alt="五月天團體照片" referrerpolicy="no-referrer">
+        <div class="hero__shade"></div>
+        <div class="hero__content">
+          <p class="eyebrow">MAYDAY FOREVER RADIO · 24/7</p>
+          <h2>把每一場相遇，<br>都變成正在播放。</h2>
+          <p>從藍色三部曲、Final Home、DNA、諾亞方舟、人生無限公司，到回到那一天；讓專輯、演唱會、OST 與特別單曲在同一個宇宙裡接續前進。</p>
+          <div class="hero__buttons">
+            <button class="primary-button primary-button--light" id="playUniverse">▶ 播放五月天全宇宙</button>
+            <button class="soft-button" data-open-world="concerts">探索演唱會世界</button>
+          </div>
+        </div>
+        <div class="hero__stats glass">
+          <span><b id="universeCount">—</b><small>首已整理歌曲</small></span>
+          <span><b id="worldCount">—</b><small>個主題世界</small></span>
+          <span><b>1997</b><small>故事開始</small></span>
+        </div>
+      </article>
+
+      <aside class="now glass-card" id="nowCard">
+        <div class="now__top"><span>NOW PLAYING</span><i id="liveDot"></i></div>
+        <div class="vinyl" id="vinyl"><img id="nowCoverLarge" alt="目前歌曲封面"></div>
+        <div class="now__copy">
+          <span id="nowWorld">Mayday Forever Radio</span>
+          <h3 id="nowTitleLarge">等待進入世界</h3>
+          <p id="nowArtistLarge">五月天</p>
+        </div>
+        <div class="wave" id="wave" aria-hidden="true"></div>
+      </aside>
+    </section>
+
+    <section class="section-pad section" id="featured">
+      <div class="section-heading">
+        <div><p class="eyebrow">FEATURED WORLDS</p><h2>今天想回到哪一天？</h2></div>
+        <p>每張卡片都是一個能獨立播放的五月天世界。點進去，歌單、封面與背景會一起切換。</p>
+      </div>
+      <div class="world-grid" id="featuredGrid"></div>
+    </section>
+
+    <section class="section section-pad" id="concerts">
+      <div class="section-heading section-heading--compact">
+        <div><p class="eyebrow">LIVE ARCHIVE</p><h2>演唱會世界</h2></div>
+        <button class="soft-button" data-play-group="concert">全部演出隨機播放</button>
+      </div>
+      <div class="card-rail" id="concertRail"></div>
+    </section>
+
+    <section class="section section-pad" id="albums">
+      <div class="section-heading section-heading--compact">
+        <div><p class="eyebrow">ALBUM GALAXY</p><h2>專輯星系</h2></div>
+        <button class="soft-button" data-play-group="album">按年代播放專輯</button>
+      </div>
+      <div class="album-grid" id="albumGrid"></div>
+    </section>
+
+    <section class="section section-pad" id="stories">
+      <div class="section-heading">
+        <div><p class="eyebrow">MEMORY MUSEUM</p><h2>那些被音樂收藏的事</h2></div>
+        <p>不只是一張唱片或一場演出，而是五個人與無數五迷共同寫下的時間線。</p>
+      </div>
+      <div class="story-layout">
+        <article class="timeline glass-card" id="timeline"></article>
+        <div class="story-stack">
+          <article class="mojo-card glass-card" data-play-world="mojo">
+            <img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt="五月天公仔圖" referrerpolicy="no-referrer">
+            <div><p class="eyebrow">MOJO & FRIENDS</p><h3>五個憨人的小小分身</h3><p>讓公仔、喵星人與舞台角色，成為理想世界裡陪你聽歌的居民。</p></div>
+          </article>
+          <article class="quote-card glass-card">
+            <p class="eyebrow">WMLS LETTER</p>
+            <blockquote>「這裡不是官方資料庫，而是一位五迷，想把一路被五月天陪伴的時光，整理成一座可以反覆回來的島。」</blockquote>
+            <span>— Maydayland</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad footer-zone">
+      <article class="disclaimer glass-card">
+        <div class="disclaimer__mark">♥</div>
+        <div>
+          <h2>純屬 WMLS 的一份心意</h2>
+          <p>本站為非官方、非商業的五迷應援作品，與五月天、相信音樂、唱片公司及各音樂平台沒有隸屬或合作關係。頁面所使用的照片、專輯封面、演唱會視覺、公仔／角色圖案、文字資料及相關素材均整理自公開網絡，著作權、商標權、肖像權及其他權利均歸原作者與各權利人所有。</p>
+          <p>本站不儲存、上傳或販售音訊，播放資料由第三方歌源即時提供。若任何素材涉及權利疑慮，或權利人要求下架，將配合刪除或更換。</p>
+          <div class="credit-row">
+            <a href="https://music.gdstudio.xyz/" target="_blank" rel="noopener">感謝 GD 音樂台提供免費歌源 API ↗</a>
+            <a href="https://github.com/akudamatata/Solara" target="_blank" rel="noopener">播放器靈感：Solara ↗</a>
+            <a href="https://www.mayday.jp/" target="_blank" rel="noopener">部分圖片與資料：五月天日本官方網站 ↗</a>
+          </div>
+        </div>
+      </article>
+      <footer>Maydayland · Made with love by WMLS · 只為讓回憶繼續播放</footer>
+    </section>
+  </main>
+
+  <section class="search-panel glass" id="searchPanel" aria-hidden="true">
+    <div class="panel-handle"></div>
+    <header><div><p class="eyebrow">SEARCH THE UNIVERSE</p><h2>搜尋五月天歌曲</h2></div><button class="round-button" data-close-panel>×</button></header>
+    <form id="searchForm"><input id="searchInput" placeholder="歌曲、專輯、演唱會或 OST…" maxlength="80"><button class="primary-button">搜尋</button></form>
+    <div class="search-results" id="searchResults"></div>
+  </section>
+
+  <section class="info-panel glass" id="infoPanel" aria-hidden="true">
+    <div class="panel-handle"></div>
+    <header><div><p class="eyebrow">ABOUT</p><h2>關於這座島</h2></div><button class="round-button" data-close-panel>×</button></header>
+    <div class="info-panel__body">
+      <article><b>自動播放說明</b><p>第一次進站時，瀏覽器通常會阻止未經操作的有聲播放，因此需要點一次「進入 Maydayland」。之後歌曲會在目前世界中自動接續。</p></article>
+      <article><b>歌單整理方式</b><p>Maydayland 會從 GD 音樂台的公開 API 即時搜尋五月天相關專輯、現場、OST 與特別單曲，再去除重複項目，建立播放宇宙。</p></article>
+      <article><b>內容原則</b><p>資料以官方唱片、巡演名稱與公開資訊為主要線索；免費歌源可能因維護、區域或版權狀態而暫時無法播放。</p></article>
+    </div>
+  </section>
+
+  <div class="scrim" id="scrim"></div>
+
+  <section class="full-player" id="fullPlayer" aria-hidden="true">
+    <button class="full-player__close glass" id="closeFullPlayer">⌄</button>
+    <div class="full-player__art"><img id="fullCover" alt="歌曲封面"></div>
+    <div class="full-player__meta"><span id="fullWorld">Maydayland</span><h2 id="fullTitle">尚未播放</h2><p id="fullArtist">五月天</p></div>
+    <div class="full-player__timeline"><span id="fullCurrent">0:00</span><input id="fullProgress" type="range" min="0" max="1000" value="0"><span id="fullDuration">0:00</span></div>
+    <div class="full-player__controls"><button id="fullShuffle">⇄</button><button id="fullPrev">◀</button><button class="full-player__play" id="fullPlay">▶</button><button id="fullNext">▶</button><button id="fullRepeat">↻</button></div>
+    <div class="lyrics" id="lyrics">選擇一首歌，讓歌詞在這裡慢慢亮起。</div>
+  </section>
+
+  <footer class="mini-player glass" id="miniPlayer">
+    <button class="mini-player__track" id="openFullPlayer">
+      <img id="miniCover" alt="歌曲封面"><span><b id="miniTitle">Mayday Forever Radio</b><small id="miniArtist">等待進入世界</small></span>
+    </button>
+    <div class="mini-player__center"><button id="prevButton">◀</button><button class="mini-player__play" id="playButton">▶</button><button id="nextButton">▶</button></div>
+    <div class="mini-player__right"><button id="shuffleButton" title="隨機播放">⇄</button><button id="queueButton" title="播放佇列">☷</button><span id="queueCount">0</span></div>
+    <div class="mini-player__progress"><i id="miniProgress"></i></div>
+  </footer>
+
+  <section class="queue-panel glass" id="queuePanel" aria-hidden="true">
+    <div class="panel-handle"></div>
+    <header><div><p class="eyebrow">UP NEXT</p><h2>接下來播放</h2></div><button class="round-button" data-close-panel>×</button></header>
+    <div class="queue-list" id="queueList"></div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+  <audio id="audio" preload="metadata"></audio>
+  <script src="./app.js?v=3.0.0" defer></script>
+</body>
+</html>
