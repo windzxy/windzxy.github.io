@@ -1,0 +1,45 @@
+name: Fix Study loader
+
+on:
+  push:
+    paths:
+      - .github/workflows/fix-study-loader.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Restore plain scripts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, gzip, re
+
+          root = Path('test/Study')
+          for name in ('catalog-v4.js', 'questions-v4.js', 'app-v4.js'):
+              path = root / 'assets' / name
+              text = path.read_text(encoding='utf-8')
+              match = re.search(r"'(H4sI[A-Za-z0-9+/=]+)'", text)
+              if match:
+                  source = gzip.decompress(base64.b64decode(match.group(1))).decode('utf-8')
+                  path.write_text(source, encoding='utf-8')
+
+          for path in root.glob('*.html'):
+              text = path.read_text(encoding='utf-8')
+              text = re.sub(r'v=20260805-\d+', 'v=20260805-6', text)
+              path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name windzxy
+          git config user.email im.w@live.com
+          git add test/Study
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Fix Study browser script loading"
+          git push origin master
