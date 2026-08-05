@@ -43,7 +43,7 @@ jobs:
 
           for path in root.glob('*.html'):
               text = path.read_text(encoding='utf-8')
-              text = re.sub(r'v=20260805-\d+', 'v=20260805-9', text)
+              text = re.sub(r'v=20260805-\d+', 'v=20260805-10', text)
               path.write_text(text, encoding='utf-8')
           PY
       - name: Validate scripts
