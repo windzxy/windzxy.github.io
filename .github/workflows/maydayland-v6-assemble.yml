@@ -57,3 +57,5 @@ jobs:
           git add -A
           git commit -m '從零重建 Maydayland 6.0'
           git push
+
+# retry after chunk checksum correction
