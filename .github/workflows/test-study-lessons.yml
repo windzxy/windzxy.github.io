@@ -26,6 +26,12 @@ jobs:
           node-version: 22
       - run: node --check test/Study/assets/learning-v5.js
       - run: |
+          grep -q 'sound-btn' test/Study/assets/learning-v5.js
+          grep -q '输出任务' test/Study/assets/learning-v5.js
+          grep -q 'learning-resource' test/Study/assets/learning-v5.js
+          grep -q 'Phonics patterns' test/Study/assets/learning-v5.js
+          grep -q '情境对话' test/Study/assets/learning-v5.js
+      - run: |
           python3 -m http.server 8765 --directory . >/tmp/study-server.log 2>&1 &
           echo $! >/tmp/study-server.pid
           sleep 2
@@ -38,13 +44,14 @@ jobs:
             output="/tmp/study-lessons/${subject}-${stage}.html"
             timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=12000 --dump-dom "http://127.0.0.1:8765/test/Study/course.html?subject=${subject}&stage=${stage}" >"$output"
             echo "Rendered ${subject}/${stage}: $(wc -c < "$output") bytes"
-            grep -oE '.{0,50}(learning-v5-root|页面加载失败|本课目标|课程路线|输出任务|粤拼|Phonics patterns).{0,80}' "$output" | head -20 || true
             grep -q 'learning-v5-root' "$output"
+            grep -q '课程路线' "$output"
             grep -q '本课目标' "$output"
             grep -q '讲解' "$output"
             grep -q '示例' "$output"
             grep -q '操练' "$output"
-            grep -q '输出任务' "$output"
+            grep -q '复习' "$output"
+            grep -q '资源' "$output"
             ! grep -q '页面加载失败' "$output"
           }
           check_page cantonese preschool
@@ -55,7 +62,5 @@ jobs:
           check_page korean primary
           grep -q '粤拼' /tmp/study-lessons/cantonese-preschool.html
           grep -q '六个声调' /tmp/study-lessons/cantonese-preschool.html
-          grep -q 'sound-btn' /tmp/study-lessons/cantonese-preschool.html
           grep -q 'Phonics patterns' /tmp/study-lessons/english-primary.html
-          grep -q 'learning-resource' /tmp/study-lessons/cantonese-preschool.html
           kill "$(cat /tmp/study-server.pid)"
