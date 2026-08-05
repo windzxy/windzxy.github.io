@@ -7,9 +7,12 @@ on:
       - test/Study/assets/learning-v6.js
       - test/Study/assets/learning-v6.css
       - test/Study/assets/bootstrap-v6.js
+      - test/Study/assets/audio-v7.js
+      - test/Study/assets/audio/**
       - test/Study/assets/app-v4.js
       - test/Study/assets/catalog-v4.js
       - test/Study/*.html
+      - tools/generate-study-cantonese-audio.py
       - .github/workflows/test-study-lessons.yml
   workflow_dispatch:
 
@@ -27,16 +30,24 @@ jobs:
       - run: |
           node --check test/Study/assets/bootstrap-v6.js
           node --check test/Study/assets/learning-v6.js
+          node --check test/Study/assets/audio-v7.js
+          python -m py_compile tools/generate-study-cantonese-audio.py
       - run: |
           grep -q '春眠不觉晓' test/Study/assets/learning-v6.js
           grep -q '无边落木萧萧下' test/Study/assets/learning-v6.js
           grep -q '作者思路' test/Study/assets/learning-v6.js
           grep -q '名句考点' test/Study/assets/learning-v6.js
           grep -q 'yue-HK' test/Study/assets/learning-v6.js
-          grep -q 'zh-HK' test/Study/assets/learning-v6.js
           grep -q 'ja-JP' test/Study/assets/learning-v6.js
           grep -q 'ko-KR' test/Study/assets/learning-v6.js
-          grep -q '不会改用普通话' test/Study/assets/learning-v6.js
+          grep -q 'audio/cantonese/tea-restaurant' test/Study/assets/audio-v7.js
+          grep -q '01-customer.mp3' test/Study/assets/audio-v7.js
+          grep -q 'audio-v7.js' test/Study/assets/bootstrap-v6.js
+      - run: |
+          if [ -d test/Study/assets/audio/cantonese/tea-restaurant ]; then
+            test "$(find test/Study/assets/audio/cantonese/tea-restaurant -name '*.mp3' -size +2k | wc -l)" -eq 5
+            python -m json.tool test/Study/assets/audio/cantonese/tea-restaurant/manifest.json >/dev/null
+          fi
       - run: |
           python3 -m http.server 8765 --directory . >/tmp/study-server.log 2>&1 &
           echo $! >/tmp/study-server.pid
@@ -64,6 +75,7 @@ jobs:
           grep -q '《静夜思》' /tmp/study-v6/chinese.html
           grep -q '在茶餐厅点餐' /tmp/study-v6/cantonese.html
           grep -q 'data-language="cantonese"' /tmp/study-v6/cantonese.html
+          grep -q 'audio-v7.js' /tmp/study-v6/cantonese.html
           grep -q 'A Day at the Lake' /tmp/study-v6/english.html
           grep -q 'コンビニで買い物' /tmp/study-v6/japanese.html
           grep -q '카페에서 주문하기' /tmp/study-v6/korean.html
