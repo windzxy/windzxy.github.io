@@ -1,0 +1,41 @@
+name: Generate Study Cantonese Audio
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - tools/generate-study-cantonese-audio.py
+      - .github/workflows/generate-study-cantonese-audio.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: study-cantonese-audio
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check edge-tts==7.2.8
+      - run: python tools/generate-study-cantonese-audio.py
+      - run: |
+          test "$(find test/Study/assets/audio/cantonese/tea-restaurant -name '*.mp3' -size +2k | wc -l)" -eq 5
+          python -m json.tool test/Study/assets/audio/cantonese/tea-restaurant/manifest.json >/dev/null
+      - run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add test/Study/assets/audio/cantonese/tea-restaurant
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Add built-in Cantonese lesson audio"
+          git pull --rebase origin master
+          git push
