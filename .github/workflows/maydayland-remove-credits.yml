@@ -1,0 +1,47 @@
+name: 移除 Maydayland 底部來源連結
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/maydayland-remove-credits.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 刪除底部膠囊連結
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('maydayland/index.html')
+          html = path.read_text(encoding='utf-8')
+          updated, count = re.subn(
+              r'\n\s*<div class="credit-row">.*?</div>',
+              '',
+              html,
+              count=1,
+              flags=re.S,
+          )
+          if count != 1:
+              raise SystemExit('找不到 credit-row，未修改。')
+          if 'Solara' in updated or 'akudamatata' in updated:
+              raise SystemExit('仍存在 Solara 相關文字。')
+          path.write_text(updated, encoding='utf-8')
+          PY
+
+      - name: 移除一次性工作流並提交
+        run: |
+          rm .github/workflows/maydayland-remove-credits.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add maydayland/index.html .github/workflows/maydayland-remove-credits.yml
+          git commit -m "刪除 Maydayland 底部來源連結"
+          git push
