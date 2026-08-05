@@ -1,0 +1,41 @@
+name: Fix Study Loading
+
+on:
+  push:
+    paths:
+      - .github/workflows/fix-study-loading.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p test/Study/assets
+          curl -fL --retry 4 --retry-delay 2 -o test/Study/assets/pako_inflate.min.js https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako_inflate.min.js
+          cat > test/Study/assets/decompression-compat.js <<'JS'
+          if(!window.DecompressionStream&&window.pako){window.DecompressionStream=class{constructor(format){if(format!=="gzip"&&format!=="deflate")throw new TypeError("Unsupported format");const chunks=[];return new TransformStream({transform(chunk){chunks.push(chunk instanceof Uint8Array?chunk:new Uint8Array(chunk))},flush(controller){const size=chunks.reduce((n,c)=>n+c.length,0),input=new Uint8Array(size);let offset=0;for(const chunk of chunks){input.set(chunk,offset);offset+=chunk.length}controller.enqueue(format==="gzip"?window.pako.ungzip(input):window.pako.inflate(input))}})}}}
+          JS
+          python3 - <<'PY'
+          from pathlib import Path
+          for path in Path('test/Study').glob('*.html'):
+              text = path.read_text(encoding='utf-8')
+              text = text.replace('20260805-4', '20260805-5')
+              marker = '<script src="assets/catalog-v4.js?v=20260805-5"></script>'
+              prefix = '<script src="assets/pako_inflate.min.js?v=20260805-5"></script><script src="assets/decompression-compat.js?v=20260805-5"></script>'
+              if marker in text and 'pako_inflate.min.js' not in text:
+                  text = text.replace(marker, prefix + marker)
+              path.write_text(text, encoding='utf-8')
+          PY
+          git config user.name windzxy
+          git config user.email im.w@live.com
+          git add test/Study
+          git commit -m "Fix Study loading compatibility"
+          git push origin HEAD:master
