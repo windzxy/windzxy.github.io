@@ -1,0 +1,57 @@
+name: 接入 Maydayland 樂團誌
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - "maydayland/editorial.css"
+      - "maydayland/editorial.js"
+      - ".github/workflows/maydayland-editorial.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: maydayland-editorial
+  cancel-in-progress: true
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 接入樂團誌資源
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path("maydayland/index.html")
+          html = path.read_text(encoding="utf-8")
+          css = '<link rel="stylesheet" href="./editorial.css">'
+          script = '<script src="./editorial.js" defer></script>'
+
+          if css not in html:
+              html = html.replace("</head>", f"{css}\n</head>", 1)
+          if script not in html:
+              html = html.replace("</body>", f"{script}\n</body>", 1)
+
+          path.write_text(html, encoding="utf-8")
+          PY
+
+      - name: 驗證樂團誌腳本
+        run: node --check maydayland/editorial.js
+
+      - name: 提交接入
+        run: |
+          if git diff --quiet -- maydayland/index.html; then
+            echo "樂團誌已接入。"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add maydayland/index.html
+          git commit -m "接入 Maydayland 樂團誌"
+          git push
