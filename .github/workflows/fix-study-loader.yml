@@ -19,29 +19,31 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import base64, gzip, re, zlib
-
-          def unpack(payload):
-              data = base64.b64decode(payload)
-              try:
-                  return gzip.decompress(data)
-              except gzip.BadGzipFile:
-                  return zlib.decompress(data[10:-8], -zlib.MAX_WBITS)
+          import base64, gzip, re
 
           root = Path('test/Study')
           assets = root / 'assets'
-          for name in ('catalog-v4.js', 'questions-v4.js', 'app-v4.js'):
-              path = assets / name
-              text = path.read_text(encoding='utf-8')
-              match = re.search(r"'(H4sI[A-Za-z0-9+/=]+)'", text)
-              if not match:
-                  continue
-              source = unpack(match.group(1)).decode('utf-8')
-              path.write_text(source, encoding='utf-8')
+          payloads = Path('.github/fix-payloads')
+
+          app_payload = ''.join(path.read_text(encoding='utf-8').strip() for path in sorted(payloads.glob('app-*.txt')))
+          question_payload = ''.join(path.read_text(encoding='utf-8').strip() for path in sorted(payloads.glob('questions-*.txt')))
+          catalog_wrapper = (assets / 'catalog-v4.js').read_text(encoding='utf-8')
+          catalog_match = re.search(r"'(H4sI[A-Za-z0-9+/=]+)'", catalog_wrapper)
+          if not catalog_match:
+              raise RuntimeError('catalog payload missing')
+
+          sources = {
+              'catalog-v4.js': catalog_match.group(1),
+              'questions-v4.js': question_payload,
+              'app-v4.js': app_payload
+          }
+          for name, payload in sources.items():
+              source = gzip.decompress(base64.b64decode(payload)).decode('utf-8')
+              (assets / name).write_text(source, encoding='utf-8')
 
           for path in root.glob('*.html'):
               text = path.read_text(encoding='utf-8')
-              text = re.sub(r'v=20260805-\d+', 'v=20260805-8', text)
+              text = re.sub(r'v=20260805-\d+', 'v=20260805-9', text)
               path.write_text(text, encoding='utf-8')
           PY
       - name: Validate scripts
@@ -51,11 +53,13 @@ jobs:
           node --check test/Study/assets/app-v4.js
           grep -q 'window.WIND_CATALOG' test/Study/assets/catalog-v4.js
           grep -q 'window.WIND_QUESTIONS' test/Study/assets/questions-v4.js
+          grep -q "const page=document.body.dataset.page" test/Study/assets/app-v4.js
       - name: Commit fix
         run: |
           git config user.name windzxy
           git config user.email im.w@live.com
-          git add test/Study
+          rm -rf .github/fix-payloads
+          git add -A test/Study .github/fix-payloads
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Fix Study browser script loading"
           git push origin master
