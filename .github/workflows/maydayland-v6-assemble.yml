@@ -48,9 +48,11 @@ jobs:
           node --check maydayland/app.js
           grep -q 'styles.css?v=6.0.0' maydayland/index.html
           grep -q 'app.js?v=6.0.0' maydayland/index.html
-          grep -q 'MOJO FAMILY' maydayland/styles.css
-          grep -q 'attemptAutoplay' maydayland/app.js
-          grep -q 'parseTimedLyrics' maydayland/app.js
+          grep -q 'data:image/jpeg;base64' maydayland/styles.css
+          grep -q 'real-bubu' maydayland/styles.css
+          grep -q 'autoplayAttempt:true' maydayland/app.js
+          grep -q 'function parseLrc' maydayland/app.js
+          grep -q 'function syncLyrics' maydayland/app.js
           if grep -R -E 'tvbs|sohu|klook|ggpht|Solara|giscus|experience\.css|experience\.js' maydayland; then exit 1; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
