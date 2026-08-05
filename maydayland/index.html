@@ -3,133 +3,142 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#dceafa">
-  <meta name="description" content="Maydayland：由 WMLS 心意構成的五月天沉浸式音樂理想世界。">
+  <meta name="theme-color" content="#090b12">
+  <meta name="description" content="Maydayland：由 WMLS 心意構成的五月天沉浸式音樂世界。">
   <meta property="og:title" content="Maydayland · 五月天理想世界">
-  <meta property="og:description" content="演唱會、專輯、OST、MOJO 與回憶，在同一座音樂世界裡持續播放。">
+  <meta property="og:description" content="專輯、演唱會、OST 與回憶，在同一座五月天音樂世界裡持續播放。">
   <title>Maydayland · 五月天理想世界</title>
   <link rel="preconnect" href="https://music-api.gdstudio.xyz">
-  <link rel="stylesheet" href="./styles.css?v=4.0.0">
-  <link rel="stylesheet" href="./experience.css?v=4.0.0">
+  <link rel="stylesheet" href="./styles.css?v=5.0.0">
 </head>
 <body>
-  <div class="ambient" aria-hidden="true">
-    <div class="ambient__image" id="ambientImage"></div>
-    <div class="ambient__mesh"></div>
-    <div class="ambient__grain"></div>
-  </div>
+  <div class="page-bg" aria-hidden="true"><i></i><i></i><i></i></div>
 
-  <div class="boot" id="boot" aria-live="polite">
-    <div class="boot__sky" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="boot__world">
-      <div class="boot__halo" aria-hidden="true"></div>
-      <figure class="boot__band">
-        <img src="https://www.mayday.jp/wp-content/uploads/ffb31aec0c0adb49e80f9fc7e18b284f-500x399.jpg" alt="五月天">
-        <figcaption>五月天 · 自 1997 年開始的故事</figcaption>
-      </figure>
-      <div class="mojo-orbit" aria-hidden="true">
-        <span class="mojo mojo--1"><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
-        <span class="mojo mojo--2"><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
-        <span class="mojo mojo--3"><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
-        <span class="mojo mojo--4"><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
-        <span class="mojo mojo--5"><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
-        <span class="mojo mojo--6"><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
-        <span class="mojo mojo--7"><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
+  <section class="gateway" id="gateway" aria-live="polite">
+    <div class="gateway__aurora" aria-hidden="true"></div>
+    <div class="gateway__stage">
+      <div class="gateway__orbit" aria-hidden="true">
+        <span class="orbit-card orbit-card--1"><img src="https://www.mayday.jp/img/biography-oversea-1.jpg" alt=""></span>
+        <span class="orbit-card orbit-card--2"><img src="https://www.mayday.jp/img/biography-oversea-3.jpg" alt=""></span>
+        <span class="orbit-card orbit-card--3"><img src="https://www.mayday.jp/img/biography-oversea-7.jpg" alt=""></span>
+        <span class="orbit-card orbit-card--4"><img src="https://www.mayday.jp/img/biography-oversea-8.jpg" alt=""></span>
+        <span class="orbit-card orbit-card--5"><img src="https://www.mayday.jp/img/biography-oversea-9a.jpg" alt=""></span>
       </div>
-      <div class="boot__identity">
-        <span class="boot__seal">WMLS IDEAL WORLD</span>
+      <figure class="gateway__portrait media-fallback" data-label="MAYDAY">
+        <img src="https://www.mayday.jp/wp-content/uploads/ffb31aec0c0adb49e80f9fc7e18b284f-500x399.jpg" alt="五月天團體照片">
+        <figcaption>五月天 · 1997 — FOREVER</figcaption>
+      </figure>
+      <div class="gateway__bubu" aria-hidden="true">
+        <svg viewBox="0 0 150 190" role="img">
+          <g class="bubu-leaves"><path d="M74 54C52 32 49 13 61 4c17 13 22 31 13 50Z"/><path d="M78 55C78 27 91 8 107 8c4 23-6 40-29 47Z"/><path d="M69 55C48 44 31 47 23 61c19 8 34 5 46-6Z"/></g>
+          <ellipse cx="75" cy="111" rx="59" ry="65" fill="url(#carrot)"/>
+          <ellipse cx="55" cy="95" rx="11" ry="18" fill="#eef7ff"/><ellipse cx="55" cy="95" rx="6" ry="13" fill="#2362a9"/>
+          <ellipse cx="94" cy="95" rx="11" ry="18" fill="#eef7ff"/><ellipse cx="94" cy="95" rx="6" ry="13" fill="#2362a9"/>
+          <path d="M43 126c13 13 24 5 32 0 8 5 20 13 33 0" fill="none" stroke="#231d1b" stroke-width="10" stroke-linecap="round"/>
+          <defs><linearGradient id="carrot" x1="36" y1="55" x2="112" y2="169"><stop stop-color="#ffb21d"/><stop offset=".5" stop-color="#ff8518"/><stop offset="1" stop-color="#ef650d"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div class="gateway__copy">
+        <p>WELCOME TO THE IDEAL WORLD</p>
         <h1>Maydayland</h1>
-        <button class="enter-world" id="enterButton" disabled><i>→</i><span>進入五月天理想世界</span></button>
-        <div class="boot__progress"><i id="bootProgress"></i></div>
-        <p class="sr-only" id="bootStatus">連接歌源中</p>
+        <span id="gatewayStatus">正在整理五月天音樂宇宙…</span>
+        <button id="enterButton" class="enter-button" disabled><b>進入世界</b><i>→</i></button>
+        <div class="gateway__progress"><i id="gatewayProgress"></i></div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <header class="topbar glass">
-    <a class="brand" href="#home" aria-label="Maydayland 首頁"><span class="brand__mark">M</span><span><b>Maydayland</b><small>五月天理想世界</small></span></a>
-    <nav class="segmented" aria-label="主要分類">
-      <button class="segmented__item is-active" data-section="home">今天</button>
-      <button class="segmented__item" data-section="concerts">演出</button>
-      <button class="segmented__item" data-section="albums">唱片</button>
-      <button class="segmented__item" data-section="stories">回憶</button>
+  <header class="topbar">
+    <a class="brand" href="#home"><span class="brand__icon">M</span><span><b>Maydayland</b><small>五月天理想世界</small></span></a>
+    <nav class="nav-tabs" aria-label="主要分類">
+      <button class="is-active" data-scroll="home">首頁</button>
+      <button data-scroll="concerts">演出</button>
+      <button data-scroll="albums">唱片</button>
+      <button data-scroll="stories">故事</button>
     </nav>
-    <div class="topbar__actions"><button class="round-button" id="searchToggle" aria-label="搜尋">⌕</button><button class="round-button" id="infoToggle" aria-label="關於本站">ⓘ</button></div>
+    <div class="top-actions"><button id="searchButton" aria-label="搜尋">⌕</button><button id="aboutButton" aria-label="關於">i</button></div>
   </header>
 
-  <main class="page" id="home">
-    <section class="hero section-pad">
-      <article class="hero__feature glass-card">
-        <img class="hero__photo" src="https://www.mayday.jp/wp-content/uploads/ffb31aec0c0adb49e80f9fc7e18b284f-500x399.jpg" alt="五月天團體照片">
-        <div class="hero__shade"></div>
-        <div class="hero__mojos" aria-hidden="true">
-          <span><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
-          <span><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
-          <span><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt=""></span>
+  <main id="home">
+    <section class="hero shell">
+      <article class="hero-stage media-fallback" data-label="MAYDAY FOREVER">
+        <img src="https://news-images.tvbs.com.tw/legacy/img/upload/2026/05/13/20260513105831-1aab606f.jpg?h=900&w=1600" alt="五月天演出主視覺">
+        <div class="hero-stage__shade"></div>
+        <div class="hero-stage__copy">
+          <p>MAYDAY FOREVER RADIO</p>
+          <h2>把每一次相遇，<br>留在正在播放的今天。</h2>
+          <span>專輯、現場、OST、合作與特別單曲，進站後自動接續。</span>
+          <button class="hero-play" data-play-world="forever">▶ 播放五月天全宇宙</button>
         </div>
-        <div class="hero__content">
-          <p class="eyebrow">MAYDAY FOREVER RADIO · 24/7</p>
-          <h2>每個人，<br>都有自己的方向。</h2>
-          <p>從第一張創作專輯，到每一次萬人合唱；把演唱會、專輯、OST、現場版本與特別單曲，整理成一座可以一直走下去的島。</p>
-          <div class="hero__buttons"><button class="primary-button primary-button--light" id="playUniverse">▶ 播放五月天全宇宙</button><button class="soft-button" data-open-world="concerts">進入演出檔案館</button></div>
-        </div>
-        <div class="hero__stats glass"><span><b id="universeCount">—</b><small>已整理歌曲</small></span><span><b id="worldCount">—</b><small>主題世界</small></span><span><b>1997</b><small>故事開始</small></span></div>
+        <div class="hero-stage__meta"><b id="songCount">—</b><span>首歌曲已整理</span><b id="worldCount">—</b><span>個主題世界</span></div>
       </article>
 
-      <aside class="now glass-card" id="nowCard">
-        <div class="now__top"><span>NOW PLAYING</span><i id="liveDot"></i></div>
-        <div class="vinyl" id="vinyl"><img id="nowCoverLarge" alt="目前歌曲封面"></div>
-        <div class="now__copy"><span id="nowWorld">Mayday Forever Radio</span><h3 id="nowTitleLarge">等待進入世界</h3><p id="nowArtistLarge">五月天</p></div>
-        <div class="wave" id="wave" aria-hidden="true"></div>
+      <aside class="now-card" id="nowCard">
+        <div class="now-card__head"><span>NOW PLAYING</span><i id="liveDot"></i></div>
+        <button class="now-card__cover" id="openPlayer"><img id="nowCover" alt="目前歌曲封面"><span>展開播放器</span></button>
+        <div class="now-card__text"><small id="nowWorld">Mayday Forever Radio</small><h3 id="nowTitle">等待進入世界</h3><p id="nowArtist">五月天</p></div>
+        <div class="now-card__wave" id="wave"></div>
       </aside>
     </section>
 
-    <section class="section-pad section world-exhibition" id="featured">
-      <div class="section-heading"><div><p class="eyebrow">FEATURED WORLDS</p><h2>今天，想回到哪一天？</h2></div><p>它們不是功能卡片，而是一扇扇通往不同年代的門。靠近時會看見舞台，點擊後整座島便播放那個世界。</p></div>
-      <div class="world-grid" id="featuredGrid"></div>
+    <section class="feature shell section" aria-labelledby="featureTitle">
+      <header class="section-head"><div><p>CURATED WORLDS</p><h2 id="featureTitle">今天，想回到哪一天？</h2></div><span>每個世界都有自己的畫面、故事與歌單。</span></header>
+      <div class="feature-grid" id="featureGrid"></div>
     </section>
 
-    <section class="section section-pad live-archive" id="concerts">
-      <div class="section-heading section-heading--compact"><div><p class="eyebrow">LIVE POSTER ARCHIVE</p><h2>演唱會海報長廊</h2></div><button class="soft-button soft-button--ink" data-play-group="concert">全部演出隨機播放</button></div>
-      <div class="card-rail" id="concertRail"></div>
+    <section class="concerts shell section" id="concerts" aria-labelledby="concertTitle">
+      <header class="section-head"><div><p>LIVE ARCHIVE</p><h2 id="concertTitle">演唱會宇宙</h2></div><button class="text-button" data-play-group="concert">全部演出隨機播放 →</button></header>
+      <div class="concert-grid" id="concertGrid"></div>
     </section>
 
-    <section class="section section-pad album-galaxy" id="albums">
-      <div class="section-heading section-heading--compact"><div><p class="eyebrow">ALBUM GALAXY</p><h2>九顆唱片星球</h2></div><button class="soft-button soft-button--ink" data-play-group="album">按年代播放專輯</button></div>
-      <div class="album-grid" id="albumGrid"></div>
+    <section class="albums shell section" id="albums" aria-labelledby="albumTitle">
+      <header class="section-head"><div><p>ALBUM GALAXY</p><h2 id="albumTitle">九張創作唱片，九個時代。</h2></div><button class="text-button" data-play-group="album">按年代播放 →</button></header>
+      <div class="album-flow" id="albumFlow"></div>
     </section>
 
-    <section class="section section-pad" id="stories">
-      <div class="section-heading"><div><p class="eyebrow">MEMORY MUSEUM</p><h2>那些被音樂收藏的事</h2></div><p>一張唱片、一場演出、五個小小分身，以及無數五迷共同寫下的時間線。</p></div>
+    <section class="stories shell section" id="stories">
+      <header class="section-head"><div><p>MEMORY ARCHIVE</p><h2>故事不是資料表，<br>而是一段段被唱過的人生。</h2></div></header>
       <div class="story-layout">
-        <article class="timeline glass-card" id="timeline"></article>
-        <div class="story-stack">
-          <article class="mojo-card glass-card" data-play-world="mojo"><img src="https://twtmsearch.tipo.gov.tw/pic/20160227/102/041/399/pic_102041399_20130730_1.jpg" alt="五月天公仔圖"><div><p class="eyebrow">MOJO & FRIENDS</p><h3>五個憨人的小小分身</h3><p>他們不是裝飾，而是住在 Maydayland 裡、陪你尋找下一首歌的居民。</p></div></article>
-          <article class="quote-card glass-card"><p class="eyebrow">WMLS LETTER</p><blockquote>這裡不是官方資料庫，而是一位五迷想把被五月天陪伴的時光，整理成一座可以反覆回來的島。</blockquote><span>— Maydayland</span></article>
-        </div>
+        <article class="timeline-card"><div id="timeline"></div></article>
+        <article class="bubu-card" data-play-world="party">
+          <div class="bubu-card__art">
+            <svg viewBox="0 0 150 190" aria-hidden="true"><g class="bubu-leaves"><path d="M74 54C52 32 49 13 61 4c17 13 22 31 13 50Z"/><path d="M78 55C78 27 91 8 107 8c4 23-6 40-29 47Z"/><path d="M69 55C48 44 31 47 23 61c19 8 34 5 46-6Z"/></g><ellipse cx="75" cy="111" rx="59" ry="65" fill="#ff8518"/><ellipse cx="55" cy="95" rx="11" ry="18" fill="#eef7ff"/><ellipse cx="55" cy="95" rx="6" ry="13" fill="#2362a9"/><ellipse cx="94" cy="95" rx="11" ry="18" fill="#eef7ff"/><ellipse cx="94" cy="95" rx="6" ry="13" fill="#2362a9"/><path d="M43 126c13 13 24 5 32 0 8 5 20 13 33 0" fill="none" stroke="#231d1b" stroke-width="10" stroke-linecap="round"/></svg>
+          </div>
+          <div><p>MOJO RESIDENT</p><h3>卜卜的派對房間</h3><span>戀愛ING、OAOA、派對動物與所有適合一起跳起來的歌。</span><button>進入派對歌單 →</button></div>
+        </article>
       </div>
     </section>
 
-    <section class="section-pad footer-zone">
-      <article class="disclaimer glass-card"><div class="disclaimer__mark">♥</div><div><h2>純屬 WMLS 的一份心意</h2><p>本站為非官方、非商業的五迷應援作品，與五月天、相信音樂、唱片公司及各音樂平台沒有隸屬或合作關係。頁面照片、專輯封面、演唱會視覺、公仔／角色圖案、文字資料及相關素材均整理自公開網絡，著作權、商標權、肖像權及其他權利均歸原作者與各權利人所有。</p><p>本站不儲存、上傳或販售音訊，播放資料由第三方歌源即時提供。若任何素材涉及權利疑慮，或權利人要求下架，將配合刪除或更換。</p></div></article>
-      <footer>Maydayland · Made with love by WMLS · 只為讓回憶繼續播放</footer>
+    <section class="disclaimer shell">
+      <div class="disclaimer__heart">♥</div>
+      <div><h2>純屬 WMLS 的一份心意</h2><p>本站為非官方、非商業的五迷應援作品，與五月天、相信音樂、唱片公司及各音樂平台沒有隸屬或合作關係。頁面使用的照片、專輯封面、演唱會視覺、角色圖案與資料整理自公開網絡，所有權利歸原作者及相關權利人所有。</p><p>本站不儲存、上傳或販售音訊；音樂資料由第三方公開服務即時提供，感謝 GD 音樂台。若任何素材涉及權利疑慮，權利人提出要求後將配合刪除或更換。</p></div>
     </section>
   </main>
 
-  <section class="search-panel glass" id="searchPanel" aria-hidden="true"><div class="panel-handle"></div><header><div><p class="eyebrow">SEARCH THE UNIVERSE</p><h2>搜尋五月天歌曲</h2></div><button class="round-button" data-close-panel>×</button></header><form id="searchForm"><input id="searchInput" placeholder="歌曲、專輯、演唱會或 OST…" maxlength="80"><button class="primary-button">搜尋</button></form><div class="search-results" id="searchResults"></div></section>
+  <footer class="mini-player" id="miniPlayer">
+    <button class="mini-track" id="miniTrack"><img id="miniCover" alt="歌曲封面"><span><b id="miniTitle">Mayday Forever Radio</b><small id="miniArtist">等待進入世界</small></span></button>
+    <div class="mini-controls"><button id="prevButton">‹</button><button id="playButton" class="main-play">▶</button><button id="nextButton">›</button></div>
+    <button class="queue-button" id="queueButton">☷ <span id="queueCount">0</span></button>
+    <div class="mini-progress"><i id="miniProgress"></i></div>
+  </footer>
 
-  <section class="info-panel glass" id="infoPanel" aria-hidden="true"><div class="panel-handle"></div><header><div><p class="eyebrow">ABOUT</p><h2>關於這座島</h2></div><button class="round-button" data-close-panel>×</button></header><div class="info-panel__body"><article><b>自動播放</b><p>第一次有聲播放需要一次點擊確認，之後會在目前世界中自動接續。</p></article><article><b>歌單整理</b><p>網站從公開歌源即時搜尋五月天專輯、現場、OST 與特別單曲，並去除重複項目。</p></article><article><b>圖片與權利</b><p>圖片與封面整理自公開網絡；若權利人要求下架，將配合刪除或更換。</p></article></div></section>
+  <section class="drawer" id="drawer" aria-hidden="true">
+    <button class="drawer__close" id="drawerClose">×</button>
+    <div class="player-view" id="playerView">
+      <img id="fullCover" alt="歌曲封面">
+      <div><small id="fullWorld">Maydayland</small><h2 id="fullTitle">尚未播放</h2><p id="fullArtist">五月天</p></div>
+      <div class="time-row"><span id="currentTime">0:00</span><input id="progressInput" type="range" min="0" max="1000" value="0"><span id="durationTime">0:00</span></div>
+      <div class="full-controls"><button id="shuffleButton">⇄</button><button id="fullPrev">‹</button><button id="fullPlay">▶</button><button id="fullNext">›</button><button id="repeatButton">↻</button></div>
+      <div class="lyrics" id="lyrics">選一首歌，讓歌詞在這裡亮起。</div>
+    </div>
+    <div class="queue-view" id="queueView"><h2>接下來播放</h2><div id="queueList"></div></div>
+  </section>
 
+  <section class="modal" id="searchModal" aria-hidden="true"><div class="modal-card"><button class="modal-close" data-close-modal>×</button><p>SEARCH THE UNIVERSE</p><h2>搜尋五月天歌曲</h2><form id="searchForm"><input id="searchInput" placeholder="歌曲、專輯、演唱會或 OST…"><button>搜尋</button></form><div id="searchResults"></div></div></section>
+  <section class="modal" id="aboutModal" aria-hidden="true"><div class="modal-card"><button class="modal-close" data-close-modal>×</button><p>ABOUT MAYDAYLAND</p><h2>一座不官方，但很認真的島。</h2><div class="about-copy"><p>第一次有聲播放需要一次點擊確認；進入後，播放器會在目前世界中自動接續。</p><p>專輯與演唱會封面採明確指定的不同圖片，不再使用自動搜圖覆蓋。若原圖失效，卡片會保留自己的藝術底圖與標題，不會全部變成同一張圖。</p></div></div></section>
   <div class="scrim" id="scrim"></div>
-
-  <section class="full-player" id="fullPlayer" aria-hidden="true"><button class="full-player__close glass" id="closeFullPlayer">⌄</button><div class="full-player__art"><img id="fullCover" alt="歌曲封面"></div><div class="full-player__meta"><span id="fullWorld">Maydayland</span><h2 id="fullTitle">尚未播放</h2><p id="fullArtist">五月天</p></div><div class="full-player__timeline"><span id="fullCurrent">0:00</span><input id="fullProgress" type="range" min="0" max="1000" value="0"><span id="fullDuration">0:00</span></div><div class="full-player__controls"><button id="fullShuffle">⇄</button><button id="fullPrev">◀</button><button class="full-player__play" id="fullPlay">▶</button><button id="fullNext">▶</button><button id="fullRepeat">↻</button></div><div class="lyrics" id="lyrics">選擇一首歌，讓歌詞在這裡慢慢亮起。</div></section>
-
-  <footer class="mini-player glass" id="miniPlayer"><button class="mini-player__track" id="openFullPlayer"><img id="miniCover" alt="歌曲封面"><span><b id="miniTitle">Mayday Forever Radio</b><small id="miniArtist">等待進入世界</small></span></button><div class="mini-player__center"><button id="prevButton">◀</button><button class="mini-player__play" id="playButton">▶</button><button id="nextButton">▶</button></div><div class="mini-player__right"><button id="shuffleButton" title="隨機播放">⇄</button><button id="queueButton" title="播放佇列">☷</button><span id="queueCount">0</span></div><div class="mini-player__progress"><i id="miniProgress"></i></div></footer>
-
-  <section class="queue-panel glass" id="queuePanel" aria-hidden="true"><div class="panel-handle"></div><header><div><p class="eyebrow">UP NEXT</p><h2>接下來播放</h2></div><button class="round-button" data-close-panel>×</button></header><div class="queue-list" id="queueList"></div></section>
-
-  <div class="toast" id="toast"></div><audio id="audio" preload="metadata"></audio>
-  <script src="./app.js?v=4.0.0" defer></script>
-  <script src="./experience.js?v=4.0.0" defer></script>
+  <div class="toast" id="toast"></div>
+  <audio id="audio" preload="metadata"></audio>
+  <script src="./app.js?v=5.0.0" defer></script>
 </body>
 </html>
