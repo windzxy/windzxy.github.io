@@ -1,0 +1,424 @@
+{
+  "version": "20260805-1",
+  "engine": "edge-tts 7.2.8",
+  "items": [
+    {
+      "key": "japanese/convenience-store/01",
+      "language": "japanese",
+      "text": "店員：いらっしゃいませ。",
+      "file": "japanese/convenience-store/01-staff.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 16704,
+      "sha256": "39e792ba4caee0d7278ab94e522c0245dda91c0d41dac426afd67d529313006b"
+    },
+    {
+      "key": "japanese/convenience-store/02",
+      "language": "japanese",
+      "text": "客：このおにぎりを二つください。",
+      "file": "japanese/convenience-store/02-customer.mp3",
+      "voice": "ja-JP-KeitaNeural",
+      "bytes": 20448,
+      "sha256": "700a896a3ef3e3ed01ccee851e813d177d020861759adec1230ec6c6f768dd37"
+    },
+    {
+      "key": "japanese/convenience-store/03",
+      "language": "japanese",
+      "text": "店員：温めますか。",
+      "file": "japanese/convenience-store/03-staff.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 16992,
+      "sha256": "11c062a9dfb9394697c346efd6bf4daedaea7f57a25afc0019256b888031278b"
+    },
+    {
+      "key": "japanese/convenience-store/04",
+      "language": "japanese",
+      "text": "客：はい、お願いします。それから、水も一本ください。",
+      "file": "japanese/convenience-store/04-customer.mp3",
+      "voice": "ja-JP-KeitaNeural",
+      "bytes": 39600,
+      "sha256": "245f044267ac472341adc6b83013406e2887adac457f13f46428518fed9649f3"
+    },
+    {
+      "key": "japanese/convenience-store/05",
+      "language": "japanese",
+      "text": "店員：全部で五百円です。",
+      "file": "japanese/convenience-store/05-staff.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 20304,
+      "sha256": "580c1687a12355b4160a1103f191be501f459f123d6d2c682fe3571bd04cd548"
+    },
+    {
+      "key": "japanese/station-directions/01",
+      "language": "japanese",
+      "text": "旅行者：すみません。東京駅へはどう行きますか。",
+      "file": "japanese/station-directions/01-traveller.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 35712,
+      "sha256": "dd1017912457b328b9d7b7991c809f4456adc9d6f5ec9375e6e8e03f00ee1421"
+    },
+    {
+      "key": "japanese/station-directions/02",
+      "language": "japanese",
+      "text": "駅員：この電車で二つ目の駅まで行ってください。",
+      "file": "japanese/station-directions/02-staff.mp3",
+      "voice": "ja-JP-KeitaNeural",
+      "bytes": 27936,
+      "sha256": "5677c89d1cb7485641809bcf8a22e15d0b73cfeec59baff81f19ad22057b77a7"
+    },
+    {
+      "key": "japanese/station-directions/03",
+      "language": "japanese",
+      "text": "旅行者：乗り換えは必要ですか。",
+      "file": "japanese/station-directions/03-traveller.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 21168,
+      "sha256": "01416f4fdbb3a9f44658d9c1194891ddda1dc6cd636e9bef42f34b765764b4c3"
+    },
+    {
+      "key": "japanese/station-directions/04",
+      "language": "japanese",
+      "text": "駅員：いいえ、乗り換えなくても大丈夫です。",
+      "file": "japanese/station-directions/04-staff.mp3",
+      "voice": "ja-JP-KeitaNeural",
+      "bytes": 28656,
+      "sha256": "06ec21318346972609d0e4ee2e65caf812d8f6c0022a762738be50730c6c7772"
+    },
+    {
+      "key": "japanese/station-directions/05",
+      "language": "japanese",
+      "text": "旅行者：分かりました。ありがとうございます。",
+      "file": "japanese/station-directions/05-traveller.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 31248,
+      "sha256": "ea8182ecf5670b24d9a6b829ad6d086647ef450814cddebff12ab00122fa9777"
+    },
+    {
+      "key": "japanese/restaurant/01",
+      "language": "japanese",
+      "text": "店員：いらっしゃいませ。何名様ですか。",
+      "file": "japanese/restaurant/01-staff.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 30672,
+      "sha256": "ed036e9c54b3b33af14a60f95ff599ab5ee6e8e11526707464dc6631a386ee17"
+    },
+    {
+      "key": "japanese/restaurant/02",
+      "language": "japanese",
+      "text": "客：二人です。窓側の席は空いていますか。",
+      "file": "japanese/restaurant/02-customer.mp3",
+      "voice": "ja-JP-KeitaNeural",
+      "bytes": 31680,
+      "sha256": "18df93b4f59d2c76742719469d6fd81c6d4cf3a1a0441eb17ee1859975ef04a7"
+    },
+    {
+      "key": "japanese/restaurant/03",
+      "language": "japanese",
+      "text": "店員：はい、こちらへどうぞ。",
+      "file": "japanese/restaurant/03-staff.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 20160,
+      "sha256": "fc27f11461bd56c7d7e5d01bd54bf16044903ffa86531316de5c28420ef729f2"
+    },
+    {
+      "key": "japanese/restaurant/04",
+      "language": "japanese",
+      "text": "客：おすすめの料理は何ですか。",
+      "file": "japanese/restaurant/04-customer.mp3",
+      "voice": "ja-JP-KeitaNeural",
+      "bytes": 20592,
+      "sha256": "d97e2826c4a0b8f3eebb54aa5f70cd99e86f0bc7da148b7fc70dd142d3bbe855"
+    },
+    {
+      "key": "japanese/restaurant/05",
+      "language": "japanese",
+      "text": "店員：今日は焼き魚定食がおすすめです。",
+      "file": "japanese/restaurant/05-staff.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 26928,
+      "sha256": "b2572f7af255297a61e4babbf1915cd3f29e9b526d2a84d017e55534370dc4dd"
+    },
+    {
+      "key": "japanese/school-introduction/01",
+      "language": "japanese",
+      "text": "先生：はじめまして。お名前を教えてください。",
+      "file": "japanese/school-introduction/01-teacher.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 33552,
+      "sha256": "5d29f309f5e956630a615db7c11a49f395314e9b371dfaba3ebd91bac747e9e1"
+    },
+    {
+      "key": "japanese/school-introduction/02",
+      "language": "japanese",
+      "text": "学生：リンです。シンガポールから来ました。",
+      "file": "japanese/school-introduction/02-student.mp3",
+      "voice": "ja-JP-KeitaNeural",
+      "bytes": 27360,
+      "sha256": "973e8390f88a612fdaa4bb5d5fe44a6bb6c7a58f2bd0c9898de4f269bbc43b97"
+    },
+    {
+      "key": "japanese/school-introduction/03",
+      "language": "japanese",
+      "text": "先生：日本語をどのくらい勉強しましたか。",
+      "file": "japanese/school-introduction/03-teacher.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 26496,
+      "sha256": "43da684be4f174c85db8efe0d68efee52ea2b4594e6b298dcce3ee26b9232604"
+    },
+    {
+      "key": "japanese/school-introduction/04",
+      "language": "japanese",
+      "text": "学生：半年ぐらいです。会話をもっと練習したいです。",
+      "file": "japanese/school-introduction/04-student.mp3",
+      "voice": "ja-JP-KeitaNeural",
+      "bytes": 36576,
+      "sha256": "44961914ccf8328dded0348d262ffb3bfe88d8c50dcf80e34ae490558264ccc0"
+    },
+    {
+      "key": "japanese/school-introduction/05",
+      "language": "japanese",
+      "text": "先生：一緒に頑張りましょう。",
+      "file": "japanese/school-introduction/05-teacher.mp3",
+      "voice": "ja-JP-NanamiNeural",
+      "bytes": 21024,
+      "sha256": "83686a4c77e7971aa5a5917970a81b991b7fbd62dce76e9acdbc3e37f3c8379d"
+    },
+    {
+      "key": "korean/cafe-order/01",
+      "language": "korean",
+      "text": "직원: 어서 오세요. 무엇을 드릴까요?",
+      "file": "korean/cafe-order/01-staff.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 30816,
+      "sha256": "9ff89cfaef7a78870ad26b1f1a683750a31f75a1008bfd7bc89114a29eabd1bc"
+    },
+    {
+      "key": "korean/cafe-order/02",
+      "language": "korean",
+      "text": "손님: 아메리카노 한 잔하고 샌드위치 하나 주세요.",
+      "file": "korean/cafe-order/02-customer.mp3",
+      "voice": "ko-KR-InJoonNeural",
+      "bytes": 33408,
+      "sha256": "ea2468e45afe7f913ef5f2c23642c950159609afbb3eeada848153924470db9c"
+    },
+    {
+      "key": "korean/cafe-order/03",
+      "language": "korean",
+      "text": "직원: 커피는 따뜻한 것으로 드릴까요?",
+      "file": "korean/cafe-order/03-staff.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 25200,
+      "sha256": "91a69cf244f7c4f8b2e9324d456ed6928851a6ab5adf19b785062ae29a96f638"
+    },
+    {
+      "key": "korean/cafe-order/04",
+      "language": "korean",
+      "text": "손님: 네, 따뜻하게 주세요.",
+      "file": "korean/cafe-order/04-customer.mp3",
+      "voice": "ko-KR-InJoonNeural",
+      "bytes": 31536,
+      "sha256": "688419bf84fc23ba714a6ae0555daa246ccdf62517ec0a081c6f2583638ce604"
+    },
+    {
+      "key": "korean/cafe-order/05",
+      "language": "korean",
+      "text": "직원: 모두 만 이천 원입니다.",
+      "file": "korean/cafe-order/05-staff.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 21744,
+      "sha256": "226172e27b65c6bcf84a0a35c0cf17528342283970d97d059e504d5dd40825b4"
+    },
+    {
+      "key": "korean/subway-directions/01",
+      "language": "korean",
+      "text": "여행자: 실례합니다. 서울역에 어떻게 가요?",
+      "file": "korean/subway-directions/01-traveller.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 33840,
+      "sha256": "c923f16d9de0fbe889effdd0651425ea960f15d7e34d6da8447d728f8f495877"
+    },
+    {
+      "key": "korean/subway-directions/02",
+      "language": "korean",
+      "text": "직원: 이 지하철을 타고 세 정거장 가세요.",
+      "file": "korean/subway-directions/02-staff.mp3",
+      "voice": "ko-KR-InJoonNeural",
+      "bytes": 32400,
+      "sha256": "80c372e3b384b4b29f62c878360670dd8618d984b6db69f9275f0222db394e56"
+    },
+    {
+      "key": "korean/subway-directions/03",
+      "language": "korean",
+      "text": "여행자: 갈아타야 해요?",
+      "file": "korean/subway-directions/03-traveller.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 19152,
+      "sha256": "0de593a13223fa0137eba5417893b58c8ef0c1b846f79a5c5d04766e20c41351"
+    },
+    {
+      "key": "korean/subway-directions/04",
+      "language": "korean",
+      "text": "직원: 아니요, 갈아타지 않아도 돼요.",
+      "file": "korean/subway-directions/04-staff.mp3",
+      "voice": "ko-KR-InJoonNeural",
+      "bytes": 34272,
+      "sha256": "bde0811756fd1b5c4d94856ace612989590d17912bb734e7c9c7f9b8a5eba2f4"
+    },
+    {
+      "key": "korean/subway-directions/05",
+      "language": "korean",
+      "text": "여행자: 알겠습니다. 감사합니다.",
+      "file": "korean/subway-directions/05-traveller.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 31392,
+      "sha256": "4ed85d41c8a16b9cc89501082f936c026e6c47a77328951e9184e65a9351a5be"
+    },
+    {
+      "key": "korean/clothes-shopping/01",
+      "language": "korean",
+      "text": "손님: 이 셔츠 다른 색도 있어요?",
+      "file": "korean/clothes-shopping/01-customer.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 23328,
+      "sha256": "f2f79919adfc401784ec3a5c8fd7f14b3a77a47e537663756b80ac0522804920"
+    },
+    {
+      "key": "korean/clothes-shopping/02",
+      "language": "korean",
+      "text": "직원: 네, 파란색하고 검은색이 있어요.",
+      "file": "korean/clothes-shopping/02-staff.mp3",
+      "voice": "ko-KR-InJoonNeural",
+      "bytes": 36864,
+      "sha256": "fdbecb8e0929b58d9aea75895e1fd8a584e72800a9ed29e7f8b912a43093f2fb"
+    },
+    {
+      "key": "korean/clothes-shopping/03",
+      "language": "korean",
+      "text": "손님: 파란색을 입어 봐도 돼요?",
+      "file": "korean/clothes-shopping/03-customer.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 22176,
+      "sha256": "9364c1a9f2f3a0aeb01d33bdff263a2cee15b409c7dd086f1c6de88f3026a539"
+    },
+    {
+      "key": "korean/clothes-shopping/04",
+      "language": "korean",
+      "text": "직원: 네, 탈의실은 오른쪽에 있습니다.",
+      "file": "korean/clothes-shopping/04-staff.mp3",
+      "voice": "ko-KR-InJoonNeural",
+      "bytes": 36432,
+      "sha256": "c7a987104cb6c3e41ef801c0042acb4892be90c958649d1caad7f9760cf6ee2c"
+    },
+    {
+      "key": "korean/clothes-shopping/05",
+      "language": "korean",
+      "text": "손님: 감사합니다. 이걸로 살게요.",
+      "file": "korean/clothes-shopping/05-customer.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 31392,
+      "sha256": "e7f868ea6e298d684f4e3be54eac32d5b5e6377f3bf7bf2337909013f00ee900"
+    },
+    {
+      "key": "korean/school-introduction/01",
+      "language": "korean",
+      "text": "선생님: 처음 뵙겠습니다. 이름이 뭐예요?",
+      "file": "korean/school-introduction/01-teacher.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 32688,
+      "sha256": "0a28537be9d9ea4d58970c10f21bf71cea726c7e4d9d021023454df942b8de0b"
+    },
+    {
+      "key": "korean/school-introduction/02",
+      "language": "korean",
+      "text": "학생: 민수예요. 싱가포르에서 왔어요.",
+      "file": "korean/school-introduction/02-student.mp3",
+      "voice": "ko-KR-InJoonNeural",
+      "bytes": 39168,
+      "sha256": "ed990ce05a5f7155dc201dc62dbe45d8e91232c9cfd3de972e7d4bfef2602ad7"
+    },
+    {
+      "key": "korean/school-introduction/03",
+      "language": "korean",
+      "text": "선생님: 한국어를 얼마나 공부했어요?",
+      "file": "korean/school-introduction/03-teacher.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 25488,
+      "sha256": "94d944104dcb9649afbaef497ba5d67f83ece9aa2c85968a9d3fc05bff917fa1"
+    },
+    {
+      "key": "korean/school-introduction/04",
+      "language": "korean",
+      "text": "학생: 여섯 달 정도 공부했어요. 말하기를 더 연습하고 싶어요.",
+      "file": "korean/school-introduction/04-student.mp3",
+      "voice": "ko-KR-InJoonNeural",
+      "bytes": 49392,
+      "sha256": "9cf681e8207fc9b36b09b8fd28dfae16c29a54fadb4c431a7d705fa1436ccbea"
+    },
+    {
+      "key": "korean/school-introduction/05",
+      "language": "korean",
+      "text": "선생님: 좋아요. 같이 열심히 공부해요.",
+      "file": "korean/school-introduction/05-teacher.mp3",
+      "voice": "ko-KR-SunHiNeural",
+      "bytes": 33408,
+      "sha256": "4fe90f1e3e8d5418268216d5f839bffe87f5182008d95202d4e5073aa435831a"
+    }
+  ],
+  "sequences": {
+    "japanese/convenience-store": [
+      "japanese/convenience-store/01",
+      "japanese/convenience-store/02",
+      "japanese/convenience-store/03",
+      "japanese/convenience-store/04",
+      "japanese/convenience-store/05"
+    ],
+    "japanese/station-directions": [
+      "japanese/station-directions/01",
+      "japanese/station-directions/02",
+      "japanese/station-directions/03",
+      "japanese/station-directions/04",
+      "japanese/station-directions/05"
+    ],
+    "japanese/restaurant": [
+      "japanese/restaurant/01",
+      "japanese/restaurant/02",
+      "japanese/restaurant/03",
+      "japanese/restaurant/04",
+      "japanese/restaurant/05"
+    ],
+    "japanese/school-introduction": [
+      "japanese/school-introduction/01",
+      "japanese/school-introduction/02",
+      "japanese/school-introduction/03",
+      "japanese/school-introduction/04",
+      "japanese/school-introduction/05"
+    ],
+    "korean/cafe-order": [
+      "korean/cafe-order/01",
+      "korean/cafe-order/02",
+      "korean/cafe-order/03",
+      "korean/cafe-order/04",
+      "korean/cafe-order/05"
+    ],
+    "korean/subway-directions": [
+      "korean/subway-directions/01",
+      "korean/subway-directions/02",
+      "korean/subway-directions/03",
+      "korean/subway-directions/04",
+      "korean/subway-directions/05"
+    ],
+    "korean/clothes-shopping": [
+      "korean/clothes-shopping/01",
+      "korean/clothes-shopping/02",
+      "korean/clothes-shopping/03",
+      "korean/clothes-shopping/04",
+      "korean/clothes-shopping/05"
+    ],
+    "korean/school-introduction": [
+      "korean/school-introduction/01",
+      "korean/school-introduction/02",
+      "korean/school-introduction/03",
+      "korean/school-introduction/04",
+      "korean/school-introduction/05"
+    ]
+  }
+}
