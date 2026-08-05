@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#e5ebff">
+  <title>数学探险｜幼小衔接</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="math">
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">🌈</span>
+        <span class="brand-copy">幼小衔接学习中心<small>每天进步一点点</small></span>
+      </a>
+      <nav class="nav" aria-label="学科分页">
+        <a data-nav="home" href="index.html">🏠 首页</a>
+        <a data-nav="chinese" href="chinese.html">📖 语文</a>
+        <a data-nav="math" href="math.html">🔢 数学</a>
+        <a data-nav="english" href="english.html">🔤 英语</a>
+      </nav>
+      <div class="star-pill">⭐ <span data-stars>0</span></div>
+    </header>
+
+    <main>
+      <section class="subject-hero math">
+        <div class="hero-line">
+          <div>
+            <p class="eyebrow">MATH · 数学探险</p>
+            <h1>数一数、想一想、算一算</h1>
+            <p>从 0 到 10 的数量认识开始，逐步练习 10 以内加法与常见形状，让孩子建立直观数感。</p>
+          </div>
+          <div class="big-emoji">🔢</div>
+        </div>
+      </section>
+
+      <section class="lesson-grid">
+        <article class="lesson-card full">
+          <h2>🔟 认识数字</h2>
+          <p>从左到右大声读出这些数字。</p>
+          <div class="number-row" aria-label="0 到 10">
+            <span class="number-chip">0</span><span class="number-chip">1</span><span class="number-chip">2</span>
+            <span class="number-chip">3</span><span class="number-chip">4</span><span class="number-chip">5</span>
+            <span class="number-chip">6</span><span class="number-chip">7</span><span class="number-chip">8</span>
+            <span class="number-chip">9</span><span class="number-chip">10</span>
+          </div>
+        </article>
+
+        <article class="lesson-card">
+          <h2>🍎 数一数</h2>
+          <p>仔细观察，一共有多少个小图案？</p>
+          <div class="prompt-card">
+            <div class="objects" id="count-objects"></div>
+          </div>
+          <div class="choice-grid" id="count-choices"></div>
+          <div class="feedback" id="count-feedback"></div>
+          <button class="btn btn-primary" id="count-next" type="button">换一题</button>
+        </article>
+
+        <article class="lesson-card">
+          <h2>➕ 10 以内加法</h2>
+          <p>把两组数量合在一起，选择正确答案。</p>
+          <div class="prompt-card">
+            <div class="equation" id="equation">2 + 3 = ?</div>
+          </div>
+          <div class="choice-grid" id="addition-choices"></div>
+          <div class="feedback" id="addition-feedback"></div>
+          <button class="btn btn-primary" id="addition-next" type="button">换一题</button>
+        </article>
+
+        <article class="lesson-card full">
+          <h2>🔷 认识形状</h2>
+          <p>在生活中寻找这些形状：盘子像圆形，窗户常常像长方形。</p>
+          <div class="choice-grid">
+            <button class="choice" type="button" data-speak="圆形" data-lang="zh-CN">○ 圆形</button>
+            <button class="choice" type="button" data-speak="正方形" data-lang="zh-CN">□ 正方形</button>
+            <button class="choice" type="button" data-speak="三角形" data-lang="zh-CN">△ 三角形</button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">每答对一道题都会增加数学进度和星星。</footer>
+  </div>
+  <div class="reward-pop" aria-hidden="true">⭐</div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

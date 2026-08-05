@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#e2fbf2">
+  <title>英语星球｜幼小衔接</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="english">
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">🌈</span>
+        <span class="brand-copy">幼小衔接学习中心<small>每天进步一点点</small></span>
+      </a>
+      <nav class="nav" aria-label="学科分页">
+        <a data-nav="home" href="index.html">🏠 首页</a>
+        <a data-nav="chinese" href="chinese.html">📖 语文</a>
+        <a data-nav="math" href="math.html">🔢 数学</a>
+        <a data-nav="english" href="english.html">🔤 英语</a>
+      </nav>
+      <div class="star-pill">⭐ <span data-stars>0</span></div>
+    </header>
+
+    <main>
+      <section class="subject-hero english">
+        <div class="hero-line">
+          <div>
+            <p class="eyebrow">ENGLISH · 英语星球</p>
+            <h1>Hello! Let’s learn English.</h1>
+            <p>认识 A–Z 字母、常见生活单词和简单句型。英文为主，配合简体中文提示，点击按钮即可听标准读音。</p>
+          </div>
+          <div class="big-emoji">🔤</div>
+        </div>
+      </section>
+
+      <section class="lesson-grid">
+        <article class="lesson-card full">
+          <h2>🔊 Alphabet · 英文字母</h2>
+          <p>Click a letter and repeat. 点击字母，听一听并跟读。</p>
+          <div class="alphabet-grid">
+            <button class="letter-btn" data-speak="A" data-lang="en-US">A a</button>
+            <button class="letter-btn" data-speak="B" data-lang="en-US">B b</button>
+            <button class="letter-btn" data-speak="C" data-lang="en-US">C c</button>
+            <button class="letter-btn" data-speak="D" data-lang="en-US">D d</button>
+            <button class="letter-btn" data-speak="E" data-lang="en-US">E e</button>
+            <button class="letter-btn" data-speak="F" data-lang="en-US">F f</button>
+            <button class="letter-btn" data-speak="G" data-lang="en-US">G g</button>
+            <button class="letter-btn" data-speak="H" data-lang="en-US">H h</button>
+            <button class="letter-btn" data-speak="I" data-lang="en-US">I i</button>
+            <button class="letter-btn" data-speak="J" data-lang="en-US">J j</button>
+            <button class="letter-btn" data-speak="K" data-lang="en-US">K k</button>
+            <button class="letter-btn" data-speak="L" data-lang="en-US">L l</button>
+            <button class="letter-btn" data-speak="M" data-lang="en-US">M m</button>
+            <button class="letter-btn" data-speak="N" data-lang="en-US">N n</button>
+            <button class="letter-btn" data-speak="O" data-lang="en-US">O o</button>
+            <button class="letter-btn" data-speak="P" data-lang="en-US">P p</button>
+            <button class="letter-btn" data-speak="Q" data-lang="en-US">Q q</button>
+            <button class="letter-btn" data-speak="R" data-lang="en-US">R r</button>
+            <button class="letter-btn" data-speak="S" data-lang="en-US">S s</button>
+            <button class="letter-btn" data-speak="T" data-lang="en-US">T t</button>
+            <button class="letter-btn" data-speak="U" data-lang="en-US">U u</button>
+            <button class="letter-btn" data-speak="V" data-lang="en-US">V v</button>
+            <button class="letter-btn" data-speak="W" data-lang="en-US">W w</button>
+            <button class="letter-btn" data-speak="X" data-lang="en-US">X x</button>
+            <button class="letter-btn" data-speak="Y" data-lang="en-US">Y y</button>
+            <button class="letter-btn" data-speak="Z" data-lang="en-US">Z z</button>
+          </div>
+        </article>
+
+        <article class="lesson-card">
+          <h2>🖼️ Picture Words · 看图选词</h2>
+          <p>Look at the picture and choose the word. 看图选择正确单词。</p>
+          <div class="prompt-card word-display">
+            <div>
+              <div class="picture" id="word-picture">🍎</div>
+              <div class="hint" id="word-hint">This is “苹果”. 选择正确的英文单词。</div>
+            </div>
+          </div>
+          <div class="choice-grid" id="word-choices"></div>
+          <div class="feedback" id="word-feedback"></div>
+          <button class="btn btn-success" id="word-next" type="button">Next · 下一题</button>
+        </article>
+
+        <article class="lesson-card">
+          <h2>💬 Simple Sentences · 简单句型</h2>
+          <p>点击句子听读音，然后尝试跟读。</p>
+          <div class="task-list">
+            <button class="task" type="button" data-speak="Hello! My name is Tom." data-lang="en-US">
+              <span><strong>Hello! My name is Tom.</strong><small>你好！我的名字叫汤姆。</small></span>
+            </button>
+            <button class="task" type="button" data-speak="This is a cat." data-lang="en-US">
+              <span><strong>This is a cat.</strong><small>这是一只猫。</small></span>
+            </button>
+            <button class="task" type="button" data-speak="I like apples." data-lang="en-US">
+              <span><strong>I like apples.</strong><small>我喜欢苹果。</small></span>
+            </button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">English first, Chinese support · 英文为主，中文辅助理解。</footer>
+  </div>
+  <div class="reward-pop" aria-hidden="true">⭐</div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

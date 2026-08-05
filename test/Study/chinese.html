@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffe7f1">
+  <title>语文乐园｜幼小衔接</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="chinese">
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">🌈</span>
+        <span class="brand-copy">幼小衔接学习中心<small>每天进步一点点</small></span>
+      </a>
+      <nav class="nav" aria-label="学科分页">
+        <a data-nav="home" href="index.html">🏠 首页</a>
+        <a data-nav="chinese" href="chinese.html">📖 语文</a>
+        <a data-nav="math" href="math.html">🔢 数学</a>
+        <a data-nav="english" href="english.html">🔤 英语</a>
+      </nav>
+      <div class="star-pill">⭐ <span data-stars>0</span></div>
+    </header>
+
+    <main>
+      <section class="subject-hero chinese">
+        <div class="hero-line">
+          <div>
+            <p class="eyebrow">CHINESE · 语文乐园</p>
+            <h1>听一听、认一认、读一读</h1>
+            <p>先从声母、韵母和生活中常见的汉字开始。点击按钮即可播放读音，答对识字题可获得星星。</p>
+          </div>
+          <div class="big-emoji">📖</div>
+        </div>
+      </section>
+
+      <section class="lesson-grid">
+        <article class="lesson-card full">
+          <h2>🔊 拼音发音练习</h2>
+          <p>点击字母听读音。先慢慢听，再跟着大声读一次。</p>
+          <h3>声母</h3>
+          <div class="sound-grid">
+            <button class="sound-btn" data-speak="波" data-lang="zh-CN">b</button>
+            <button class="sound-btn" data-speak="坡" data-lang="zh-CN">p</button>
+            <button class="sound-btn" data-speak="摸" data-lang="zh-CN">m</button>
+            <button class="sound-btn" data-speak="佛" data-lang="zh-CN">f</button>
+            <button class="sound-btn" data-speak="得" data-lang="zh-CN">d</button>
+            <button class="sound-btn" data-speak="特" data-lang="zh-CN">t</button>
+            <button class="sound-btn" data-speak="讷" data-lang="zh-CN">n</button>
+            <button class="sound-btn" data-speak="勒" data-lang="zh-CN">l</button>
+          </div>
+          <h3>单韵母</h3>
+          <div class="sound-grid">
+            <button class="sound-btn" data-speak="啊" data-lang="zh-CN">a</button>
+            <button class="sound-btn" data-speak="喔" data-lang="zh-CN">o</button>
+            <button class="sound-btn" data-speak="鹅" data-lang="zh-CN">e</button>
+            <button class="sound-btn" data-speak="衣" data-lang="zh-CN">i</button>
+            <button class="sound-btn" data-speak="乌" data-lang="zh-CN">u</button>
+            <button class="sound-btn" data-speak="迂" data-lang="zh-CN">ü</button>
+          </div>
+        </article>
+
+        <article class="lesson-card">
+          <h2>🀄 看图识字</h2>
+          <p>观察图案与汉字，选择正确拼音。</p>
+          <div class="prompt-card">
+            <div>
+              <div class="prompt-main" id="hanzi-prompt">☀️ 日</div>
+              <div class="prompt-sub" id="hanzi-sub">选择正确的拼音</div>
+            </div>
+          </div>
+          <div class="choice-grid" id="hanzi-choices"></div>
+          <div class="feedback" id="hanzi-feedback"></div>
+          <button class="btn btn-primary" id="hanzi-next" type="button">换一题</button>
+        </article>
+
+        <article class="lesson-card">
+          <h2>✍️ 今日汉字</h2>
+          <p>先观察字形，再用手指在空中写一次。</p>
+          <div class="prompt-card">
+            <div>
+              <div class="prompt-main">木</div>
+              <div class="prompt-sub">mù · 树木 🌳 · 4 画</div>
+            </div>
+          </div>
+          <div class="tag-row">
+            <span class="tag">横</span>
+            <span class="tag">竖</span>
+            <span class="tag">撇</span>
+            <span class="tag">捺</span>
+          </div>
+          <button class="btn btn-soft" type="button" data-speak="木，树木" data-lang="zh-CN">播放读音 🔊</button>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">完成几题后，可返回首页查看语文进度。</footer>
+  </div>
+  <div class="reward-pop" aria-hidden="true">⭐</div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

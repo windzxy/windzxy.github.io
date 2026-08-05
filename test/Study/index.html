@@ -1,55 +1,131 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Study</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      min-height: 100%;
-      margin: 0;
-    }
-
-    body {
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      color: #172033;
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.62), transparent 28%),
-        linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
-    }
-
-    main {
-      width: min(720px, 100%);
-      min-height: 280px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(255, 255, 255, 0.72);
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.34);
-      box-shadow: 0 28px 80px rgba(54, 93, 149, 0.22);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(58px, 14vw, 112px);
-      line-height: 0.94;
-      letter-spacing: 0;
-    }
-  </style>
+  <meta name="theme-color" content="#e9ebff">
+  <title>幼小衔接学习中心</title>
+  <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
-  <main>
-    <h1>Study</h1>
-  </main>
+<body data-page="home">
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">🌈</span>
+        <span class="brand-copy">幼小衔接学习中心<small>每天进步一点点</small></span>
+      </a>
+      <nav class="nav" aria-label="学科分页">
+        <a data-nav="home" href="index.html">🏠 首页</a>
+        <a data-nav="chinese" href="chinese.html">📖 语文</a>
+        <a data-nav="math" href="math.html">🔢 数学</a>
+        <a data-nav="english" href="english.html">🔤 英语</a>
+      </nav>
+      <div class="star-pill" title="已获得的星星">⭐ <span data-stars>0</span></div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">PRESCHOOL LEARNING · 幼小衔接</p>
+          <h1>玩中学，轻松准备上小学</h1>
+          <p>从拼音与识字、10 以内数学，到英文字母和生活单词。每次练习只需几分钟，让孩子保持兴趣，也让家长清楚看到进步。</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="chinese.html">开始今日学习 ✨</a>
+            <a class="btn btn-soft" href="#subjects">查看三个学科</a>
+          </div>
+        </div>
+        <div class="mascot-card" aria-label="学习伙伴">
+          <div class="mascot">🦊</div>
+          <span class="mascot-note">今天也一起加油！</span>
+        </div>
+      </section>
+
+      <section id="subjects">
+        <div class="section-head">
+          <div>
+            <h2>选择今天的学科</h2>
+            <p>每答对一道题，都会获得星星和学科进度。</p>
+          </div>
+        </div>
+
+        <div class="subject-grid">
+          <a class="subject-card chinese" href="chinese.html">
+            <div class="subject-icon">📖</div>
+            <h3>语文乐园</h3>
+            <p>认识拼音、常用汉字和简单词语，点击即可听读音。</p>
+            <div class="tag-row"><span class="tag">拼音</span><span class="tag">识字</span><span class="tag">听读</span></div>
+            <div class="card-foot">
+              <div class="progress"><span data-progress="chinese"></span></div>
+              <span class="progress-text" data-progress-text="chinese">0%</span>
+            </div>
+          </a>
+
+          <a class="subject-card math" href="math.html">
+            <div class="subject-icon">🔢</div>
+            <h3>数学探险</h3>
+            <p>练习数量、10 以内加法和基本形状，建立数感。</p>
+            <div class="tag-row"><span class="tag">数数</span><span class="tag">加法</span><span class="tag">形状</span></div>
+            <div class="card-foot">
+              <div class="progress"><span data-progress="math"></span></div>
+              <span class="progress-text" data-progress-text="math">0%</span>
+            </div>
+          </a>
+
+          <a class="subject-card english" href="english.html">
+            <div class="subject-icon">🔤</div>
+            <h3>英语星球</h3>
+            <p>听读 A–Z 字母，认识常见英文单词并完成图词配对。</p>
+            <div class="tag-row"><span class="tag">字母</span><span class="tag">单词</span><span class="tag">发音</span></div>
+            <div class="card-foot">
+              <div class="progress"><span data-progress="english"></span></div>
+              <span class="progress-text" data-progress-text="english">0%</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <h2>今日小任务</h2>
+            <p>完成一项可获得 2 颗星，记录只保存在这台设备。</p>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="panel">
+            <h3>✅ 今日任务</h3>
+            <div class="task-list">
+              <label class="task" data-task="chinese">
+                <input type="checkbox">
+                <span><strong>语文练习</strong><small>完成 3 道拼音或识字题</small></span>
+              </label>
+              <label class="task" data-task="math">
+                <input type="checkbox">
+                <span><strong>数学练习</strong><small>数一数，再完成 3 道加法题</small></span>
+              </label>
+              <label class="task" data-task="english">
+                <input type="checkbox">
+                <span><strong>英语练习</strong><small>朗读 5 个字母或生活单词</small></span>
+              </label>
+            </div>
+          </div>
+
+          <aside class="panel">
+            <h3>📊 学习记录</h3>
+            <div class="stat-stack">
+              <div class="stat-box"><span>今日完成</span><b data-daily-count>0/3</b></div>
+              <div class="stat-box"><span>累计答对</span><b data-correct-total>0</b></div>
+              <div class="stat-box"><span>互动练习</span><b data-session-count>0</b></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">幼小衔接学习中心 · 纯浏览器运行，不需要登录</footer>
+  </div>
+  <div class="reward-pop" aria-hidden="true">⭐</div>
+  <script src="assets/app.js"></script>
 </body>
 </html>
