@@ -4,128 +4,86 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#e9ebff">
-  <title>幼小衔接学习中心</title>
+  <title>全学段学习中心</title>
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body data-page="home">
   <div class="page-shell">
     <header class="topbar">
-      <a class="brand" href="index.html">
-        <span class="brand-mark">🌈</span>
-        <span class="brand-copy">幼小衔接学习中心<small>每天进步一点点</small></span>
-      </a>
-      <nav class="nav" aria-label="学科分页">
-        <a data-nav="home" href="index.html">🏠 首页</a>
-        <a data-nav="chinese" href="chinese.html">📖 语文</a>
-        <a data-nav="math" href="math.html">🔢 数学</a>
-        <a data-nav="english" href="english.html">🔤 英语</a>
+      <a class="brand" href="index.html"><span class="brand-mark">🌈</span><span class="brand-copy" data-pinyin="quán xué duàn xué xí zhōng xīn">全学段学习中心<small>幼小衔接 · 小学 · 初中 · 高中</small></span></a>
+      <nav class="nav" aria-label="学习分页">
+        <a data-nav="home" href="index.html">🏠 首页</a><a data-nav="chinese" href="chinese.html">📖 语文</a><a data-nav="math" href="math.html">🔢 数学</a><a data-nav="english" href="english.html">🔤 英语</a><a data-nav="cantonese" href="cantonese.html">🗣️ 粤语</a><a data-nav="japanese" href="japanese.html">🗾 日语</a><a data-nav="korean" href="korean.html">🇰🇷 韩语</a>
       </nav>
-      <div class="star-pill" title="已获得的星星">⭐ <span data-stars>0</span></div>
+      <div class="toolbar"><button class="icon-btn" type="button" data-pinyin-toggle aria-pressed="false">拼音</button><div class="star-pill">⭐ <span data-stars>0</span></div></div>
     </header>
 
     <main>
       <section class="hero">
         <div>
-          <p class="eyebrow">PRESCHOOL LEARNING · 幼小衔接</p>
-          <h1>玩中学，轻松准备上小学</h1>
-          <p>从拼音与识字、10 以内数学，到英文字母和生活单词。每次练习只需几分钟，让孩子保持兴趣，也让家长清楚看到进步。</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="chinese.html">开始今日学习 ✨</a>
-            <a class="btn btn-soft" href="#subjects">查看三个学科</a>
-          </div>
+          <p class="eyebrow">PRESCHOOL TO SENIOR HIGH</p>
+          <h1 data-pinyin="cóng qǐ méng dào gāo zhōng de xué xí píng tái">从启蒙到高中的学习平台</h1>
+          <p data-pinyin="àn xué duàn hé xué kē zǔ zhī nèi róng">按学段和学科组织内容，兼顾中国大陆、香港和新加坡课程框架。题目由平台自编，古诗文优先采用公版作品，不直接复制受版权保护的教材正文。</p>
+          <div class="hero-actions"><a class="btn btn-primary" href="#subjects">选择学科</a><a class="btn btn-soft" href="#roadmap">查看学习路线</a></div>
         </div>
-        <div class="mascot-card" aria-label="学习伙伴">
-          <div class="mascot">🦊</div>
-          <span class="mascot-note">今天也一起加油！</span>
+        <div class="mascot-card"><div class="mascot">🧭</div><strong data-current-stage>幼小衔接</strong></div>
+      </section>
+
+      <section>
+        <div class="section-head"><div><h2 data-pinyin="xuǎn zé xué duàn">选择学段</h2><p>切换后，各学科页面会显示相应难度与课程内容。</p></div></div>
+        <div class="stage-switch">
+          <button class="stage-btn" data-stage="preschool">幼小衔接</button><button class="stage-btn" data-stage="primary">小学</button><button class="stage-btn" data-stage="junior">初中</button><button class="stage-btn" data-stage="senior">高中</button>
         </div>
       </section>
 
       <section id="subjects">
-        <div class="section-head">
-          <div>
-            <h2>选择今天的学科</h2>
-            <p>每答对一道题，都会获得星星和学科进度。</p>
-          </div>
-        </div>
-
+        <div class="section-head"><div><h2 data-pinyin="xué kē dì tú">学科地图</h2><p>六个学习分区，共享星星、进度和学段设置。</p></div></div>
         <div class="subject-grid">
-          <a class="subject-card chinese" href="chinese.html">
-            <div class="subject-icon">📖</div>
-            <h3>语文乐园</h3>
-            <p>认识拼音、常用汉字和简单词语，点击即可听读音。</p>
-            <div class="tag-row"><span class="tag">拼音</span><span class="tag">识字</span><span class="tag">听读</span></div>
-            <div class="card-foot">
-              <div class="progress"><span data-progress="chinese"></span></div>
-              <span class="progress-text" data-progress-text="chinese">0%</span>
-            </div>
-          </a>
+          <a class="subject-card chinese" href="chinese.html"><div class="subject-icon">📖</div><h3 data-pinyin="yǔ wén">语文</h3><p>拼音、识字、诗词、成语、阅读、写作、文言文与文学鉴赏。</p><div class="tag-row"><span class="tag">拼音辅助</span><span class="tag">古诗词</span><span class="tag">阅读写作</span></div><div class="card-foot"><div class="progress"><span data-progress="chinese"></span></div><span class="progress-text" data-progress-text="chinese">0%</span></div></a>
+          <a class="subject-card math" href="math.html"><div class="subject-icon">🔢</div><h3 data-pinyin="shù xué">数学</h3><p>数与运算、混合计算、方程、几何、函数、统计与独立奥数篇。</p><div class="tag-row"><span class="tag">混合计算</span><span class="tag">数学建模</span><span class="tag">奥数思维</span></div><div class="card-foot"><div class="progress"><span data-progress="math"></span></div><span class="progress-text" data-progress-text="math">0%</span></div></a>
+          <a class="subject-card english" href="english.html"><div class="subject-icon">🔤</div><h3>英语</h3><p>自然拼读、词汇、短句、语法、阅读、写作与综合表达。</p><div class="tag-row"><span class="tag">Phonics</span><span class="tag">短句</span><span class="tag">阅读写作</span></div><div class="card-foot"><div class="progress"><span data-progress="english"></span></div><span class="progress-text" data-progress-text="english">0%</span></div></a>
+          <a class="subject-card cantonese" href="cantonese.html"><div class="subject-icon">🗣️</div><h3 data-pinyin="yuè yǔ">粤语</h3><p>粤拼、声调、生活会话、听说训练、阅读与文化表达。</p><div class="tag-row"><span class="tag">粤拼</span><span class="tag">九声六调</span><span class="tag">会话</span></div><div class="card-foot"><div class="progress"><span data-progress="cantonese"></span></div><span class="progress-text" data-progress-text="cantonese">0%</span></div></a>
+          <a class="subject-card japanese" href="japanese.html"><div class="subject-icon">🗾</div><h3 data-pinyin="rì yǔ">日语</h3><p>五十音、假名、词汇、句型、语法、阅读与综合运用。</p><div class="tag-row"><span class="tag">五十音</span><span class="tag">句型</span><span class="tag">JLPT 路线</span></div><div class="card-foot"><div class="progress"><span data-progress="japanese"></span></div><span class="progress-text" data-progress-text="japanese">0%</span></div></a>
+          <a class="subject-card korean" href="korean.html"><div class="subject-icon">🇰🇷</div><h3 data-pinyin="hán yǔ">韩语</h3><p>韩文字母、拼读、生活表达、语法、阅读与写作。</p><div class="tag-row"><span class="tag">Hangul</span><span class="tag">会话</span><span class="tag">TOPIK 路线</span></div><div class="card-foot"><div class="progress"><span data-progress="korean"></span></div><span class="progress-text" data-progress-text="korean">0%</span></div></a>
+        </div>
+      </section>
 
-          <a class="subject-card math" href="math.html">
-            <div class="subject-icon">🔢</div>
-            <h3>数学探险</h3>
-            <p>练习数量、10 以内加法和基本形状，建立数感。</p>
-            <div class="tag-row"><span class="tag">数数</span><span class="tag">加法</span><span class="tag">形状</span></div>
-            <div class="card-foot">
-              <div class="progress"><span data-progress="math"></span></div>
-              <span class="progress-text" data-progress-text="math">0%</span>
-            </div>
-          </a>
-
-          <a class="subject-card english" href="english.html">
-            <div class="subject-icon">🔤</div>
-            <h3>英语星球</h3>
-            <p>听读 A–Z 字母，认识常见英文单词并完成图词配对。</p>
-            <div class="tag-row"><span class="tag">字母</span><span class="tag">单词</span><span class="tag">发音</span></div>
-            <div class="card-foot">
-              <div class="progress"><span data-progress="english"></span></div>
-              <span class="progress-text" data-progress-text="english">0%</span>
-            </div>
-          </a>
+      <section id="roadmap">
+        <div class="section-head"><div><h2 data-pinyin="sì jiē duàn xué xí lù xiàn">四阶段学习路线</h2><p>内容会持续扩展，先建立统一结构，再逐步增加题库与专题。</p></div></div>
+        <div class="roadmap">
+          <article class="roadmap-card"><b>1 · 幼小衔接</b><p>兴趣、语音、识字、数感、生活表达和学习习惯。</p></article>
+          <article class="roadmap-card"><b>2 · 小学</b><p>基础知识系统化，加入阅读、写作、应用题和语言运用。</p></article>
+          <article class="roadmap-card"><b>3 · 初中</b><p>抽象思维、学科方法、综合阅读、代数几何和语法体系。</p></article>
+          <article class="roadmap-card"><b>4 · 高中</b><p>深度理解、论证表达、函数模型、文学鉴赏和学术写作。</p></article>
         </div>
       </section>
 
       <section>
-        <div class="section-head">
-          <div>
-            <h2>今日小任务</h2>
-            <p>完成一项可获得 2 颗星，记录只保存在这台设备。</p>
-          </div>
-        </div>
-
+        <div class="section-head"><div><h2 data-pinyin="jīn rì rèn wù">今日任务</h2><p>完成任务可获得星星，记录仅保存在当前设备。</p></div></div>
         <div class="dashboard-grid">
-          <div class="panel">
-            <h3>✅ 今日任务</h3>
-            <div class="task-list">
-              <label class="task" data-task="chinese">
-                <input type="checkbox">
-                <span><strong>语文练习</strong><small>完成 3 道拼音或识字题</small></span>
-              </label>
-              <label class="task" data-task="math">
-                <input type="checkbox">
-                <span><strong>数学练习</strong><small>数一数，再完成 3 道加法题</small></span>
-              </label>
-              <label class="task" data-task="english">
-                <input type="checkbox">
-                <span><strong>英语练习</strong><small>朗读 5 个字母或生活单词</small></span>
-              </label>
-            </div>
-          </div>
+          <div class="panel"><div class="task-list">
+            <label class="task" data-task="chinese"><input type="checkbox"><span><strong>语文</strong><small>完成拼音、诗词或阅读练习</small></span></label>
+            <label class="task" data-task="math"><input type="checkbox"><span><strong>数学</strong><small>完成常规计算或奥数思维练习</small></span></label>
+            <label class="task" data-task="english"><input type="checkbox"><span><strong>英语</strong><small>完成自然拼读或短句练习</small></span></label>
+            <label class="task" data-task="cantonese"><input type="checkbox"><span><strong>粤语</strong><small>朗读三个粤拼词语</small></span></label>
+            <label class="task" data-task="japanese"><input type="checkbox"><span><strong>日语</strong><small>练习五个假名或一个句型</small></span></label>
+            <label class="task" data-task="korean"><input type="checkbox"><span><strong>韩语</strong><small>练习五个韩文字母或一个短句</small></span></label>
+          </div></div>
+          <aside class="panel"><div class="stat-stack"><div class="stat-box"><span>今日完成</span><b data-daily-count>0/6</b></div><div class="stat-box"><span>累计答对</span><b data-correct-total>0</b></div><div class="stat-box"><span>互动练习</span><b data-session-count>0</b></div></div></aside>
+        </div>
+      </section>
 
-          <aside class="panel">
-            <h3>📊 学习记录</h3>
-            <div class="stat-stack">
-              <div class="stat-box"><span>今日完成</span><b data-daily-count>0/3</b></div>
-              <div class="stat-box"><span>累计答对</span><b data-correct-total>0</b></div>
-              <div class="stat-box"><span>互动练习</span><b data-session-count>0</b></div>
-            </div>
-          </aside>
+      <section>
+        <div class="section-head"><div><h2 data-pinyin="kè chéng cān kǎo kuàng jià">课程参考框架</h2><p>仅参考课程目标和能力结构，不复制教材正文。</p></div></div>
+        <div class="source-grid">
+          <article class="source-card"><h3>中国大陆</h3><p>参考教育部义务教育课程方案及语文、数学、英语、日语等课程标准。</p><a href="https://www.moe.gov.cn/srcsite/A26/s8001/202204/t20220420_619921.html" target="_blank" rel="noopener">查看官方课程标准</a></article>
+          <article class="source-card"><h3>中国香港</h3><p>参考教育局小一至中六课程指引，以及语文、英语和数学课程文件。</p><a href="https://www.edb.gov.hk/en/curriculum-development/index.html" target="_blank" rel="noopener">查看香港课程资料</a></article>
+          <article class="source-card"><h3>新加坡</h3><p>参考教育部小学与中学课程大纲，重视双语、数感和问题解决。</p><a href="https://www.moe.gov.sg/education-in-sg/our-programmes" target="_blank" rel="noopener">查看新加坡课程资料</a></article>
         </div>
       </section>
     </main>
-
-    <footer class="footer">幼小衔接学习中心 · 纯浏览器运行，不需要登录</footer>
+    <footer class="footer">全学段学习中心 · 简体中文界面 · 可切换拼音辅助</footer>
   </div>
-  <div class="reward-pop" aria-hidden="true">⭐</div>
+  <div class="reward-pop">⭐</div>
   <script src="assets/app.js"></script>
 </body>
 </html>
