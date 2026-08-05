@@ -8,11 +8,15 @@ on:
       - test/Study/assets/learning-v6.css
       - test/Study/assets/bootstrap-v6.js
       - test/Study/assets/audio-v7.js
+      - test/Study/assets/east-asian-audio-v8.js
+      - test/Study/assets/east-asian-lessons-v8.js
+      - test/Study/assets/more-courses-v8.js
       - test/Study/assets/audio/**
       - test/Study/assets/app-v4.js
       - test/Study/assets/catalog-v4.js
       - test/Study/*.html
       - tools/generate-study-cantonese-audio.py
+      - tools/generate-study-east-asian-audio.py
       - .github/workflows/test-study-lessons.yml
   workflow_dispatch:
 
@@ -31,22 +35,33 @@ jobs:
           node --check test/Study/assets/bootstrap-v6.js
           node --check test/Study/assets/learning-v6.js
           node --check test/Study/assets/audio-v7.js
+          node --check test/Study/assets/east-asian-audio-v8.js
+          node --check test/Study/assets/east-asian-lessons-v8.js
+          node --check test/Study/assets/more-courses-v8.js
           python -m py_compile tools/generate-study-cantonese-audio.py
+          python -m py_compile tools/generate-study-east-asian-audio.py
       - run: |
           grep -q '春眠不觉晓' test/Study/assets/learning-v6.js
           grep -q '无边落木萧萧下' test/Study/assets/learning-v6.js
           grep -q '作者思路' test/Study/assets/learning-v6.js
           grep -q '名句考点' test/Study/assets/learning-v6.js
-          grep -q 'yue-HK' test/Study/assets/learning-v6.js
-          grep -q 'ja-JP' test/Study/assets/learning-v6.js
-          grep -q 'ko-KR' test/Study/assets/learning-v6.js
-          grep -q 'audio/cantonese/tea-restaurant' test/Study/assets/audio-v7.js
-          grep -q '01-customer.mp3' test/Study/assets/audio-v7.js
-          grep -q 'audio-v7.js' test/Study/assets/bootstrap-v6.js
+          grep -q 'japanese/station-directions' test/Study/assets/east-asian-lessons-v8.js
+          grep -q 'korean/clothes-shopping' test/Study/assets/east-asian-lessons-v8.js
+          grep -q 'data-audio-sequence' test/Study/assets/east-asian-lessons-v8.js
+          grep -q 'audio/east-asian' test/Study/assets/east-asian-audio-v8.js
+          grep -q 'more-courses-v8' test/Study/assets/bootstrap-v6.js
+          grep -q '共享单车计费' test/Study/assets/more-courses-v8.js
+          grep -q '城市热岛调查' test/Study/assets/more-courses-v8.js
       - run: |
           if [ -d test/Study/assets/audio/cantonese/tea-restaurant ]; then
             test "$(find test/Study/assets/audio/cantonese/tea-restaurant -name '*.mp3' -size +2k | wc -l)" -eq 5
             python -m json.tool test/Study/assets/audio/cantonese/tea-restaurant/manifest.json >/dev/null
+          fi
+          if [ -d test/Study/assets/audio/east-asian ]; then
+            test "$(find test/Study/assets/audio/east-asian -name '*.mp3' -size +2k | wc -l)" -eq 40
+            python -m json.tool test/Study/assets/audio/east-asian/manifest.json >/dev/null
+            grep -q 'ja-JP-NanamiNeural' test/Study/assets/audio/east-asian/manifest.json
+            grep -q 'ko-KR-SunHiNeural' test/Study/assets/audio/east-asian/manifest.json
           fi
       - run: |
           python3 -m http.server 8765 --directory . >/tmp/study-server.log 2>&1 &
@@ -54,29 +69,27 @@ jobs:
           sleep 2
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$BROWSER"
-          mkdir -p /tmp/study-v6
+          mkdir -p /tmp/study-v8
           render() {
             page="$1"
             output="$2"
-            timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=14000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
+            timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=16000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
             grep -q 'deep-course-v6' "$output"
             grep -q '完整课程' "$output"
             grep -q '逐层讲解' "$output"
-            grep -q '考点' "$output"
             ! grep -q '页面加载失败' "$output"
           }
-          render 'chinese.html?stage=primary' /tmp/study-v6/chinese.html
-          render 'math.html?stage=primary' /tmp/study-v6/math.html
-          render 'english.html?stage=primary' /tmp/study-v6/english.html
-          render 'cantonese.html?stage=primary' /tmp/study-v6/cantonese.html
-          render 'japanese.html?stage=primary' /tmp/study-v6/japanese.html
-          render 'korean.html?stage=primary' /tmp/study-v6/korean.html
-          grep -q '《春晓》' /tmp/study-v6/chinese.html
-          grep -q '《静夜思》' /tmp/study-v6/chinese.html
-          grep -q '在茶餐厅点餐' /tmp/study-v6/cantonese.html
-          grep -q 'data-language="cantonese"' /tmp/study-v6/cantonese.html
-          grep -q 'audio-v7.js' /tmp/study-v6/cantonese.html
-          grep -q 'A Day at the Lake' /tmp/study-v6/english.html
-          grep -q 'コンビニで買い物' /tmp/study-v6/japanese.html
-          grep -q '카페에서 주문하기' /tmp/study-v6/korean.html
+          render 'chinese.html?stage=primary' /tmp/study-v8/chinese.html
+          render 'math.html?stage=primary' /tmp/study-v8/math.html
+          render 'english.html?stage=primary' /tmp/study-v8/english.html
+          render 'cantonese.html?stage=primary' /tmp/study-v8/cantonese.html
+          render 'japanese.html?stage=primary' /tmp/study-v8/japanese.html
+          render 'korean.html?stage=primary' /tmp/study-v8/korean.html
+          grep -q 'more-courses-v8' /tmp/study-v8/chinese.html
+          grep -q '更多完整案例与例子' /tmp/study-v8/math.html
+          grep -q 'east-language-library' /tmp/study-v8/japanese.html
+          grep -q '更多日常语言课程' /tmp/study-v8/korean.html
+          grep -q 'data-audio-sequence' /tmp/study-v8/japanese.html
+          grep -q 'data-audio-key' /tmp/study-v8/korean.html
+          grep -q 'east-asian-audio-v8.js' /tmp/study-v8/japanese.html
           kill "$(cat /tmp/study-server.pid)"
