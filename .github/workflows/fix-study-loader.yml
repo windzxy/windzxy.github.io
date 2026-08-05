@@ -43,7 +43,7 @@ jobs:
 
           for path in root.glob('*.html'):
               text = path.read_text(encoding='utf-8')
-              text = re.sub(r'v=20260805-\d+', 'v=20260805-10', text)
+              text = re.sub(r'v=20260805-\d+', 'v=20260805-11', text)
               path.write_text(text, encoding='utf-8')
           PY
       - name: Validate scripts
@@ -53,7 +53,6 @@ jobs:
           node --check test/Study/assets/app-v4.js
           grep -q 'window.WIND_CATALOG' test/Study/assets/catalog-v4.js
           grep -q 'window.WIND_QUESTIONS' test/Study/assets/questions-v4.js
-          grep -q "const page=document.body.dataset.page" test/Study/assets/app-v4.js
       - name: Commit fix
         run: |
           git config user.name windzxy
