@@ -6,6 +6,10 @@ on:
     paths:
       - test/Study/assets/learning-v6.js
       - test/Study/assets/learning-v6.css
+      - test/Study/assets/guided-v9-core.js
+      - test/Study/assets/guided-v9-session.js
+      - test/Study/assets/guided-v9-ui.js
+      - test/Study/assets/learning-path-v9*.css
       - test/Study/assets/bootstrap-v6.js
       - test/Study/assets/audio-v7.js
       - test/Study/assets/east-asian-audio-v8.js
@@ -34,6 +38,9 @@ jobs:
       - run: |
           node --check test/Study/assets/bootstrap-v6.js
           node --check test/Study/assets/learning-v6.js
+          node --check test/Study/assets/guided-v9-core.js
+          node --check test/Study/assets/guided-v9-session.js
+          node --check test/Study/assets/guided-v9-ui.js
           node --check test/Study/assets/audio-v7.js
           node --check test/Study/assets/east-asian-audio-v8.js
           node --check test/Study/assets/east-asian-lessons-v8.js
@@ -47,11 +54,15 @@ jobs:
           grep -q '名句考点' test/Study/assets/learning-v6.js
           grep -q 'japanese/station-directions' test/Study/assets/east-asian-lessons-v8.js
           grep -q 'korean/clothes-shopping' test/Study/assets/east-asian-lessons-v8.js
-          grep -q 'data-audio-sequence' test/Study/assets/east-asian-lessons-v8.js
           grep -q 'audio/east-asian' test/Study/assets/east-asian-audio-v8.js
-          grep -q 'more-courses-v8' test/Study/assets/bootstrap-v6.js
           grep -q '共享单车计费' test/Study/assets/more-courses-v8.js
           grep -q '城市热岛调查' test/Study/assets/more-courses-v8.js
+          grep -q '主动回忆' test/Study/assets/guided-v9-session.js
+          grep -q '间隔复习' test/Study/assets/guided-v9-ui.js
+          grep -q '课程地图' test/Study/assets/guided-v9-ui.js
+          grep -q 'wind-guided-learning-v9' test/Study/assets/guided-v9-core.js
+          grep -q 'guided-v9-ui.js' test/Study/assets/bootstrap-v6.js
+          grep -q 'bootstrap-v6.js?v=20260805-4' test/Study/japanese.html
       - run: |
           if [ -d test/Study/assets/audio/cantonese/tea-restaurant ]; then
             test "$(find test/Study/assets/audio/cantonese/tea-restaurant -name '*.mp3' -size +2k | wc -l)" -eq 5
@@ -69,27 +80,29 @@ jobs:
           sleep 2
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$BROWSER"
-          mkdir -p /tmp/study-v8
-          render() {
+          mkdir -p /tmp/study-v9
+          render_course() {
             page="$1"
             output="$2"
-            timeout 45s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=16000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
+            timeout 55s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=22000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
             grep -q 'deep-course-v6' "$output"
-            grep -q '完整课程' "$output"
-            grep -q '逐层讲解' "$output"
+            grep -q 'guided-path-v9' "$output"
+            grep -q '课程地图' "$output"
+            grep -q '主动回忆' "$output"
             ! grep -q '页面加载失败' "$output"
           }
-          render 'chinese.html?stage=primary' /tmp/study-v8/chinese.html
-          render 'math.html?stage=primary' /tmp/study-v8/math.html
-          render 'english.html?stage=primary' /tmp/study-v8/english.html
-          render 'cantonese.html?stage=primary' /tmp/study-v8/cantonese.html
-          render 'japanese.html?stage=primary' /tmp/study-v8/japanese.html
-          render 'korean.html?stage=primary' /tmp/study-v8/korean.html
-          grep -q 'more-courses-v8' /tmp/study-v8/chinese.html
-          grep -q '更多完整案例与例子' /tmp/study-v8/math.html
-          grep -q 'east-language-library' /tmp/study-v8/japanese.html
-          grep -q '更多日常语言课程' /tmp/study-v8/korean.html
-          grep -q 'data-audio-sequence' /tmp/study-v8/japanese.html
-          grep -q 'data-audio-key' /tmp/study-v8/korean.html
-          grep -q 'east-asian-audio-v8.js' /tmp/study-v8/japanese.html
+          render_course 'chinese.html?stage=primary' /tmp/study-v9/chinese.html
+          render_course 'math.html?stage=primary' /tmp/study-v9/math.html
+          render_course 'english.html?stage=primary' /tmp/study-v9/english.html
+          render_course 'cantonese.html?stage=primary' /tmp/study-v9/cantonese.html
+          render_course 'japanese.html?stage=primary' /tmp/study-v9/japanese.html
+          render_course 'korean.html?stage=primary' /tmp/study-v9/korean.html
+          render_course 'course.html?subject=science&stage=primary' /tmp/study-v9/science.html
+          timeout 55s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=22000 --dump-dom "http://127.0.0.1:8765/test/Study/index.html" >/tmp/study-v9/home.html
+          grep -q 'v9-home-mission' /tmp/study-v9/home.html
+          grep -q '今日学习计划' /tmp/study-v9/home.html
+          timeout 55s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=26000 --dump-dom "http://127.0.0.1:8765/test/Study/japanese.html?stage=primary&guided=1" >/tmp/study-v9/guided.html
+          grep -q 'v9-session-panel' /tmp/study-v9/guided.html
+          grep -q '引导学习' /tmp/study-v9/guided.html
+          grep -q '完整情境' /tmp/study-v9/guided.html
           kill "$(cat /tmp/study-server.pid)"
