@@ -1,0 +1,90 @@
+name: Test Study Questions
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - test/Study/assets/questions-v4.js
+      - test/Study/assets/decompression-compat.js
+      - .github/workflows/test-study-questions.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const memory = {};
+          const context = {
+            console,
+            Math,
+            Date,
+            JSON,
+            String,
+            Number,
+            Array,
+            Object,
+            Set,
+            Map,
+            Uint8Array,
+            TransformStream,
+            localStorage: {
+              getItem: key => memory[key] || null,
+              setItem: (key, value) => { memory[key] = value; }
+            }
+          };
+          context.window = context;
+          vm.createContext(context);
+          vm.runInContext(fs.readFileSync('test/Study/assets/decompression-compat.js', 'utf8'), context);
+          vm.runInContext(fs.readFileSync('test/Study/assets/questions-v4.js', 'utf8'), context);
+          const engine = context.WIND_QUESTIONS;
+          const subjects = ['chinese','math','english','cantonese','japanese','korean','science','physics','chemistry','biology','history','geography','computing','finance','logic'];
+          const stages = ['preschool','primary','junior','senior','advanced'];
+          const norm = value => String(value ?? '').normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').trim();
+          const key = question => [question.subject, question.stage, question.type, norm(question.prompt), norm(question.answer)].join('|');
+          const check = question => {
+            if (!norm(question.prompt) || !norm(question.answer) || !norm(question.explanation)) throw new Error('Missing question content');
+            if (question.type === 'choice') {
+              if (!Array.isArray(question.options) || question.options.length < 2) throw new Error('Invalid choice options');
+              const options = question.options.map(norm);
+              if (new Set(options).size !== options.length) throw new Error('Duplicate options');
+              if (options.filter(option => option === norm(question.answer)).length !== 1) throw new Error('Answer is not unique');
+            }
+          };
+          let total = 0;
+          for (const subject of subjects) {
+            for (const stage of stages) {
+              const questions = engine.generate({subject, stage, system:'integrated', difficulty:2, count:10});
+              if (!questions.length) throw new Error(`No questions for ${subject}/${stage}`);
+              const keys = questions.map(key);
+              if (new Set(keys).size !== keys.length) throw new Error(`Duplicate paper questions for ${subject}/${stage}`);
+              questions.forEach(check);
+              total += questions.length;
+            }
+          }
+          const sampleEngine = {generate: (() => {
+            let index = 0;
+            const source = [
+              {subject:'chinese',stage:'primary',type:'choice',prompt:'题目甲？',options:['甲','乙','丙'],answer:'甲',explanation:'甲正确',hint:'提示'},
+              {subject:'chinese',stage:'primary',type:'choice',prompt:'题目乙？',options:['丁','戊','己'],answer:'丁',explanation:'丁正确',hint:'提示'},
+              {subject:'chinese',stage:'primary',type:'choice',prompt:'题目丙？',options:['庚','辛','壬'],answer:'庚',explanation:'庚正确',hint:'提示'}
+            ];
+            return () => [source[index++ % source.length]];
+          })()};
+          context.WIND_QUESTIONS = sampleEngine;
+          const first = context.WIND_QUESTIONS.generate({subject:'chinese',stage:'primary',system:'mainland',difficulty:2,count:10});
+          const second = context.WIND_QUESTIONS.generate({subject:'chinese',stage:'primary',system:'mainland',difficulty:2,count:10});
+          const firstKeys = new Set(first.map(context.WIND_QUESTIONS.questionFingerprint));
+          if (second.some(question => firstKeys.has(context.WIND_QUESTIONS.questionFingerprint(question)))) throw new Error('Sequential papers overlap before exhaustion');
+          console.log(`Validated ${total} generated questions across ${subjects.length * stages.length} combinations.`);
+          NODE
