@@ -1,3 +1,3 @@
-# Wind AICG
+# Astra Gallery
 
-Original visual gallery for GitHub Pages.
+Original visual gallery.
