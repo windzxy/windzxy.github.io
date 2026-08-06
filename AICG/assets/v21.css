@@ -1,0 +1,9 @@
+/* Astra Gallery 2.1 refinements */
+.brand-logo{width:34px;height:34px;display:block;flex:0 0 34px;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.brand.compact .brand-logo{width:30px;height:30px;flex-basis:30px;border-radius:10px}
+.language-switch{padding:4px 6px;gap:2px;min-width:132px}
+.language-switch button{min-width:34px;height:28px;padding:0 8px;border:0;border-radius:999px;background:transparent;color:var(--muted);font-size:10px;letter-spacing:.04em;cursor:pointer;transition:.2s}
+.language-switch button:hover{color:#fff;background:rgba(255,255,255,.055)}
+.language-switch button.is-active{color:#111217;background:#f6f4f0;font-weight:700}
+.language-switch i{color:rgba(255,255,255,.28);font-style:normal;font-size:9px;pointer-events:none}
+@media(max-width:760px){.language-switch{min-width:auto}.language-switch button{min-width:30px;padding:0 6px}}
