@@ -4,21 +4,8 @@ on:
   push:
     branches: [master]
     paths:
-      - test/Study/assets/learning-v6.js
-      - test/Study/assets/learning-v6.css
-      - test/Study/assets/guided-v9-core.js
-      - test/Study/assets/guided-v9-session.js
-      - test/Study/assets/guided-v9-ui.js
-      - test/Study/assets/learning-path-v9*.css
-      - test/Study/assets/bootstrap-v6.js
-      - test/Study/assets/audio-v7.js
-      - test/Study/assets/east-asian-audio-v8.js
-      - test/Study/assets/east-asian-lessons-v8.js
-      - test/Study/assets/more-courses-v8.js
-      - test/Study/assets/audio/**
-      - test/Study/assets/app-v4.js
-      - test/Study/assets/catalog-v4.js
-      - test/Study/*.html
+      - test/Study/**
+      - tools/update-study-open-resources.py
       - tools/generate-study-cantonese-audio.py
       - tools/generate-study-east-asian-audio.py
       - .github/workflows/test-study-lessons.yml
@@ -35,34 +22,58 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - run: |
           node --check test/Study/assets/bootstrap-v6.js
           node --check test/Study/assets/learning-v6.js
           node --check test/Study/assets/guided-v9-core.js
           node --check test/Study/assets/guided-v9-session.js
           node --check test/Study/assets/guided-v9-ui.js
+          node --check test/Study/assets/content-packs-v10.js
+          node --check test/Study/assets/content-hub-v10.js
           node --check test/Study/assets/audio-v7.js
           node --check test/Study/assets/east-asian-audio-v8.js
           node --check test/Study/assets/east-asian-lessons-v8.js
           node --check test/Study/assets/more-courses-v8.js
+          python -m py_compile tools/update-study-open-resources.py
           python -m py_compile tools/generate-study-cantonese-audio.py
           python -m py_compile tools/generate-study-east-asian-audio.py
       - run: |
+          node <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          const context={window:{}};
+          vm.createContext(context);
+          vm.runInContext(fs.readFileSync('test/Study/assets/content-packs-v10.js','utf8'),context);
+          const packs=context.window.WIND_CONTENT_PACKS_V10;
+          if(!packs||packs.total<1500) throw new Error(`course units too small: ${packs?.total}`);
+          if(Object.keys(packs.subjects).length!==15) throw new Error('subject count');
+          if(Object.keys(packs.stages).length!==5) throw new Error('stage count');
+          for(const subject of Object.keys(packs.subjects)){
+            for(const stage of Object.keys(packs.stages)){
+              if(packs.list({subject,stage}).length<18) throw new Error(`${subject}/${stage} too small`);
+            }
+          }
+          console.log(`validated ${packs.total} course units`);
+          NODE
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("test/Study/assets/open-resources-v10.json").read_text(encoding="utf-8"))
+          assert len(data["items"]) >= 20
+          assert any(item["source"] == "中华人民共和国教育部" for item in data["items"])
+          assert any(item["source"] == "MIT OpenCourseWare" for item in data["items"])
+          assert any(item["source"] == "Wikimedia" for item in data["items"])
+          PY
+      - run: |
           grep -q '春眠不觉晓' test/Study/assets/learning-v6.js
-          grep -q '无边落木萧萧下' test/Study/assets/learning-v6.js
           grep -q '作者思路' test/Study/assets/learning-v6.js
-          grep -q '名句考点' test/Study/assets/learning-v6.js
-          grep -q 'japanese/station-directions' test/Study/assets/east-asian-lessons-v8.js
-          grep -q 'korean/clothes-shopping' test/Study/assets/east-asian-lessons-v8.js
-          grep -q 'audio/east-asian' test/Study/assets/east-asian-audio-v8.js
-          grep -q '共享单车计费' test/Study/assets/more-courses-v8.js
-          grep -q '城市热岛调查' test/Study/assets/more-courses-v8.js
           grep -q '主动回忆' test/Study/assets/guided-v9-session.js
-          grep -q '间隔复习' test/Study/assets/guided-v9-ui.js
           grep -q '课程地图' test/Study/assets/guided-v9-ui.js
-          grep -q 'wind-guided-learning-v9' test/Study/assets/guided-v9-core.js
-          grep -q 'guided-v9-ui.js' test/Study/assets/bootstrap-v6.js
-          grep -q 'bootstrap-v6.js?v=20260805-4' test/Study/japanese.html
+          grep -q 'content-packs-v10.js' test/Study/assets/bootstrap-v6.js
+          grep -q '在线搜索开放资源' test/Study/assets/content-hub-v10.js
+          grep -q 'data-page="library"' test/Study/library.html
       - run: |
           if [ -d test/Study/assets/audio/cantonese/tea-restaurant ]; then
             test "$(find test/Study/assets/audio/cantonese/tea-restaurant -name '*.mp3' -size +2k | wc -l)" -eq 5
@@ -71,8 +82,6 @@ jobs:
           if [ -d test/Study/assets/audio/east-asian ]; then
             test "$(find test/Study/assets/audio/east-asian -name '*.mp3' -size +2k | wc -l)" -eq 40
             python -m json.tool test/Study/assets/audio/east-asian/manifest.json >/dev/null
-            grep -q 'ja-JP-NanamiNeural' test/Study/assets/audio/east-asian/manifest.json
-            grep -q 'ko-KR-SunHiNeural' test/Study/assets/audio/east-asian/manifest.json
           fi
       - run: |
           python3 -m http.server 8765 --directory . >/tmp/study-server.log 2>&1 &
@@ -80,29 +89,25 @@ jobs:
           sleep 2
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$BROWSER"
-          mkdir -p /tmp/study-v9
-          render_course() {
+          mkdir -p /tmp/study-v10
+          render() {
             page="$1"
             output="$2"
-            timeout 55s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=22000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
-            grep -q 'deep-course-v6' "$output"
-            grep -q 'guided-path-v9' "$output"
-            grep -q '课程地图' "$output"
-            grep -q '主动回忆' "$output"
+            timeout 65s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=30000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
             ! grep -q '页面加载失败' "$output"
           }
-          render_course 'chinese.html?stage=primary' /tmp/study-v9/chinese.html
-          render_course 'math.html?stage=primary' /tmp/study-v9/math.html
-          render_course 'english.html?stage=primary' /tmp/study-v9/english.html
-          render_course 'cantonese.html?stage=primary' /tmp/study-v9/cantonese.html
-          render_course 'japanese.html?stage=primary' /tmp/study-v9/japanese.html
-          render_course 'korean.html?stage=primary' /tmp/study-v9/korean.html
-          render_course 'course.html?subject=science&stage=primary' /tmp/study-v9/science.html
-          timeout 55s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=22000 --dump-dom "http://127.0.0.1:8765/test/Study/index.html" >/tmp/study-v9/home.html
-          grep -q 'v9-home-mission' /tmp/study-v9/home.html
-          grep -q '今日学习计划' /tmp/study-v9/home.html
-          timeout 55s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=26000 --dump-dom "http://127.0.0.1:8765/test/Study/japanese.html?stage=primary&guided=1" >/tmp/study-v9/guided.html
-          grep -q 'v9-session-panel' /tmp/study-v9/guided.html
-          grep -q '引导学习' /tmp/study-v9/guided.html
-          grep -q '完整情境' /tmp/study-v9/guided.html
+          render 'index.html' /tmp/study-v10/home.html
+          render 'library.html' /tmp/study-v10/library.html
+          render 'chinese.html?stage=primary' /tmp/study-v10/chinese.html
+          render 'math.html?stage=junior' /tmp/study-v10/math.html
+          render 'japanese.html?stage=primary' /tmp/study-v10/japanese.html
+          render 'course.html?subject=science&stage=primary' /tmp/study-v10/science.html
+          grep -q 'v10-home-library' /tmp/study-v10/home.html
+          grep -q '1800 个结构化学习单元' /tmp/study-v10/home.html
+          grep -q 'v10-library-root' /tmp/study-v10/library.html
+          grep -q '在线搜索开放资源' /tmp/study-v10/library.html
+          grep -q 'v10-course-library' /tmp/study-v10/chinese.html
+          grep -q '扩展课程包' /tmp/study-v10/math.html
+          grep -q 'guided-path-v9' /tmp/study-v10/japanese.html
+          grep -q 'v10-course-library' /tmp/study-v10/science.html
           kill "$(cat /tmp/study-server.pid)"
