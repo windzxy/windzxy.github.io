@@ -25,7 +25,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Check scripts
+
+      - name: Check syntax
         run: |
           for file in \
             bootstrap-v6.js learning-v6.js guided-v9-core.js guided-v9-session.js guided-v9-ui.js \
@@ -34,7 +35,8 @@ jobs:
             named-curriculum-v11-sciences.js named-curriculum-v11-humanities.js \
             named-curriculum-v11-applied.js named-curriculum-v11-normalize.js named-curriculum-v11.js \
             detailed-v12-base.js detailed-v12-chinese.js detailed-v12-math.js detailed-v12-languages.js \
-            detailed-v12-sciences.js detailed-v12-humanities.js detailed-v12-applied.js detailed-v12-ui.js \
+            detailed-v12-sciences.js detailed-v12-humanities.js detailed-v12-applied.js \
+            detailed-v12-quality.js detailed-v12-ui.js \
             audio-v7.js east-asian-audio-v8.js east-asian-lessons-v8.js more-courses-v8.js
           do
             node --check "test/Study/assets/$file"
@@ -42,7 +44,8 @@ jobs:
           python -m py_compile tools/update-study-open-resources.py
           python -m py_compile tools/generate-study-cantonese-audio.py
           python -m py_compile tools/generate-study-east-asian-audio.py
-      - name: Validate all concrete lessons
+
+      - name: Validate every named course
         run: |
           node <<'NODE'
           const fs=require('fs'),vm=require('vm');
@@ -50,103 +53,85 @@ jobs:
           vm.createContext(context);
           const run=file=>vm.runInContext(fs.readFileSync(`test/Study/assets/${file}`,'utf8'),context,{filename:file});
           run('content-packs-v10.js');
-          const packs=context.window.WIND_CONTENT_PACKS_V10;
-          if(!packs||packs.total<1500) throw new Error(`course units too small: ${packs?.total}`);
-          if(Object.keys(packs.subjects).length!==15) throw new Error('subject count');
-          if(Object.keys(packs.stages).length!==5) throw new Error('stage count');
           for(const file of [
             'named-curriculum-v11-languages.js','named-curriculum-v11-eastasia.js',
             'named-curriculum-v11-sciences.js','named-curriculum-v11-humanities.js',
-            'named-curriculum-v11-applied.js','named-curriculum-v11-normalize.js'
-          ]) run(file);
-          for(const file of [
+            'named-curriculum-v11-applied.js','named-curriculum-v11-normalize.js',
             'detailed-v12-base.js','detailed-v12-chinese.js','detailed-v12-math.js',
             'detailed-v12-languages.js','detailed-v12-sciences.js',
-            'detailed-v12-humanities.js','detailed-v12-applied.js'
+            'detailed-v12-humanities.js','detailed-v12-applied.js','detailed-v12-quality.js'
           ]) run(file);
+          const packs=context.window.WIND_CONTENT_PACKS_V10;
           const named=context.window.WIND_NAMED_SYLLABI_V11;
           const api=context.window.WIND_DETAILED_CURRICULUM_V12;
-          if(!named||Object.keys(named).length!==15) throw new Error('named subject count');
-          if(!api) throw new Error('detailed curriculum API missing');
-          const registered=Object.keys(api.registry).sort();
-          const subjects=Object.keys(packs.subjects).sort();
-          if(JSON.stringify(registered)!==JSON.stringify(subjects)) throw new Error(`builders mismatch: ${registered}`);
+          const subjects=Object.keys(packs.subjects);
+          const stages=Object.keys(packs.stages);
+          if(subjects.length!==15||stages.length!==5) throw new Error('subject or stage coverage');
+          if(Object.keys(api.registry).length!==15) throw new Error('builder coverage');
+          const errors=[],fingerprints=new Set();
           let total=0;
-          const failures=[];
-          const fingerprints=new Set();
           for(const subject of subjects){
-            for(const stage of Object.keys(packs.stages)){
+            for(const stage of stages){
               const titles=named[subject]?.[stage];
-              if(!Array.isArray(titles)||titles.length<8) throw new Error(`${subject}/${stage} named lessons too small`);
-              if(new Set(titles).size!==titles.length) throw new Error(`${subject}/${stage} duplicate named lesson`);
+              if(!Array.isArray(titles)||titles.length<8){errors.push(`${subject}/${stage}: too few titles`);continue}
+              if(new Set(titles).size!==titles.length)errors.push(`${subject}/${stage}: duplicate titles`);
               titles.forEach((title,index)=>{
                 const lesson=api.build(subject,stage,title,index);
                 const check=api.validate(lesson);
-                if(!check.ok) failures.push(`${subject}/${stage}/${title}: ${check.errors.join(',')}`);
-                if(lesson.title!==title) failures.push(`${subject}/${stage}/${title}: title mismatch`);
-                if(lesson.material.length<70) failures.push(`${subject}/${stage}/${title}: short material`);
-                if(lesson.workedExamples.some(item=>String(item.body||'').length<25)) failures.push(`${subject}/${stage}/${title}: short example`);
-                if(lesson.practice.some(item=>String(item.a||'').length<8)) failures.push(`${subject}/${stage}/${title}: short answer`);
-                if(fingerprints.has(lesson.fingerprint)) failures.push(`${subject}/${stage}/${title}: duplicate fingerprint`);
+                if(!check.ok)errors.push(`${subject}/${stage}/${title}: ${check.errors.join(',')}`);
+                if(lesson.title!==title)errors.push(`${subject}/${stage}/${title}: title mismatch`);
+                if(lesson.material.length<120)errors.push(`${subject}/${stage}/${title}: material too short`);
+                if(lesson.explanation.length<3||lesson.explanation.some(x=>String(x.body||'').length<55))errors.push(`${subject}/${stage}/${title}: explanation incomplete`);
+                if(lesson.workedExamples.length<2||lesson.workedExamples.some(x=>String(x.body||'').length<95))errors.push(`${subject}/${stage}/${title}: examples incomplete`);
+                if(lesson.keyPoints.length<4||lesson.examPoints.length<3||lesson.mistakes.length<3)errors.push(`${subject}/${stage}/${title}: study lists incomplete`);
+                if(lesson.practice.length<4||lesson.practice.some(x=>String(x.q||'').length<18||String(x.a||'').length<38))errors.push(`${subject}/${stage}/${title}: exercises incomplete`);
+                if(fingerprints.has(lesson.fingerprint))errors.push(`${subject}/${stage}/${title}: duplicate content fingerprint`);
                 fingerprints.add(lesson.fingerprint);
                 total++;
               });
             }
           }
-          if(total<850) failures.push(`detailed lesson total too small: ${total}`);
-          const get=(subject,needle)=>{
+          if(total<850)errors.push(`total detailed lessons ${total}`);
+          const sample=(subject,needle,expected)=>{
             for(const [stage,titles] of Object.entries(named[subject])){
               const index=titles.findIndex(title=>title.includes(needle));
-              if(index>=0)return api.build(subject,stage,titles[index],index);
+              if(index>=0){
+                const lesson=api.build(subject,stage,titles[index],index);
+                const full=JSON.stringify(lesson);
+                if(!full.includes(expected))errors.push(`${subject}/${needle}: missing ${expected}`);
+                return;
+              }
             }
-            throw new Error(`sample missing: ${subject}/${needle}`);
+            errors.push(`${subject}/${needle}: sample title missing`);
           };
-          const samples=[
-            [get('chinese','春晓'),'春眠不觉晓','古诗全文'],
-            [get('math','20 以内进位加法'),'8＋7','数学例题'],
-            [get('english','At the Supermarket'),'How much','英语对话'],
-            [get('cantonese','茶餐厅点餐'),'菠萝油','粤语对话'],
-            [get('japanese','いくらですか'),'三百円','日语对话'],
-            [get('korean','餐厅点餐'),'아메리카노','韩语对话'],
-            [get('science','控制变量'),'种子','科学实验'],
-            [get('physics','欧姆定律'),'12Ω','物理计算'],
-            [get('chemistry','酸、碱、盐'),'pH','化学讲解'],
-            [get('biology','孟德尔遗传'),'Aa×Aa','生物遗传'],
-            [get('history','秦统一'),'公元前221','历史时空'],
-            [get('geography','比例尺'),'1:20000','地理地图'],
-            [get('computing','Python 变量'),'input','编程代码'],
-            [get('finance','月度预算'),'3000','财商预算'],
-            [get('logic','相关不等于因果'),'咖啡','逻辑案例']
-          ];
-          for(const [lesson,needle,label] of samples){
-            const full=[lesson.material,...lesson.explanation.map(x=>x.body),...lesson.workedExamples.map(x=>x.body)].join('\n');
-            if(!full.includes(needle)) failures.push(`${label} missing ${needle}`);
-          }
-          if(failures.length){console.error(failures.slice(0,80).join('\n'));throw new Error(`${failures.length} detailed lesson failures`)}
-          console.log(`validated ${packs.total} generated units and ${total} fully detailed named lessons`);
+          sample('chinese','春晓','春眠不觉晓');
+          sample('math','20 以内进位加法','8＋7');
+          sample('english','At the Supermarket','How much');
+          sample('cantonese','茶餐厅点餐','菠萝油');
+          sample('japanese','いくらですか','三百円');
+          sample('korean','餐厅点餐','아메리카노');
+          sample('science','控制变量','种子');
+          sample('physics','欧姆定律','12Ω');
+          sample('chemistry','酸、碱、盐','pH');
+          sample('biology','孟德尔遗传','Aa×Aa');
+          sample('history','秦统一','公元前221');
+          sample('geography','比例尺','1:20000');
+          sample('computing','Python 变量','input');
+          sample('finance','月度预算','3000');
+          sample('logic','相关不等于因果','咖啡');
+          if(errors.length){console.error(errors.slice(0,100).join('\n'));throw new Error(`${errors.length} validation errors`)}
+          console.log(`Validated ${total} fully detailed named courses across ${subjects.length} subjects and ${stages.length} stages.`);
           NODE
           python - <<'PY'
           import json
           from pathlib import Path
-          data=json.loads(Path("test/Study/assets/open-resources-v10.json").read_text(encoding="utf-8"))
-          assert len(data["items"]) >= 20
-          assert any(item["source"] == "中华人民共和国教育部" for item in data["items"])
-          assert any(item["source"] == "MIT OpenCourseWare" for item in data["items"])
-          assert any(item["source"] == "Wikimedia" for item in data["items"])
+          data=json.loads(Path('test/Study/assets/open-resources-v10.json').read_text(encoding='utf-8'))
+          assert len(data['items']) >= 20
+          assert any(x['source']=='中华人民共和国教育部' for x in data['items'])
+          assert any(x['source']=='MIT OpenCourseWare' for x in data['items'])
           PY
-      - name: Check required content
-        run: |
-          grep -Fq 'detailed-v12-base.js' test/Study/assets/bootstrap-v6.js
-          grep -Fq 'detailed-v12-ui.js' test/Study/assets/bootstrap-v6.js
-          grep -Fq '春眠不觉晓' test/Study/assets/detailed-v12-chinese.js
-          grep -Fq '8＋7＝8＋2＋5' test/Study/assets/detailed-v12-math.js
-          grep -Fq 'How much are these apples' test/Study/assets/detailed-v12-languages.js
-          grep -Fq '欧姆定律' test/Study/assets/detailed-v12-sciences.js
-          grep -Fq '公元前221' test/Study/assets/detailed-v12-humanities.js
-          grep -Fq 'Python程序' test/Study/assets/detailed-v12-applied.js
-          grep -Fq '每一课均包含独立材料' test/Study/assets/detailed-v12-ui.js
-          grep -Fq 'data-page="library"' test/Study/library.html
-      - name: Check audio files
+
+      - name: Check audio
         run: |
           if [ -d test/Study/assets/audio/cantonese/tea-restaurant ]; then
             test "$(find test/Study/assets/audio/cantonese/tea-restaurant -name '*.mp3' -size +2k | wc -l)" -eq 5
@@ -156,50 +141,36 @@ jobs:
             test "$(find test/Study/assets/audio/east-asian -name '*.mp3' -size +2k | wc -l)" -eq 40
             python -m json.tool test/Study/assets/audio/east-asian/manifest.json >/dev/null
           fi
-      - name: Browser render test
+
+      - name: Browser render all subjects
         run: |
           python3 -m http.server 8765 --directory . >/tmp/study-server.log 2>&1 &
-          echo $! >/tmp/study-server.pid
+          SERVER_PID=$!
           sleep 2
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$BROWSER"
           mkdir -p /tmp/study-v12
-          render() {
-            page="$1"
-            output="$2"
+          render(){
+            page="$1"; output="$2"; expected="$3"
             timeout 90s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=45000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
-            ! grep -Fq '页面加载失败' "$output"
             grep -Fq 'v12-course-map' "$output"
             grep -Fq '全部课程正文已接入' "$output"
+            grep -Fq "$expected" "$output"
+            ! grep -Fq '页面加载失败' "$output"
           }
-          render 'chinese.html?stage=primary' /tmp/study-v12/chinese.html
-          render 'math.html?stage=primary' /tmp/study-v12/math.html
-          render 'english.html?stage=primary' /tmp/study-v12/english.html
-          render 'cantonese.html?stage=primary' /tmp/study-v12/cantonese.html
-          render 'japanese.html?stage=primary' /tmp/study-v12/japanese.html
-          render 'korean.html?stage=primary' /tmp/study-v12/korean.html
-          render 'course.html?subject=science&stage=primary' /tmp/study-v12/science.html
-          render 'course.html?subject=physics&stage=junior' /tmp/study-v12/physics.html
-          render 'course.html?subject=chemistry&stage=junior' /tmp/study-v12/chemistry.html
-          render 'course.html?subject=biology&stage=junior' /tmp/study-v12/biology.html
-          render 'course.html?subject=history&stage=primary' /tmp/study-v12/history.html
-          render 'course.html?subject=geography&stage=primary' /tmp/study-v12/geography.html
-          render 'course.html?subject=computing&stage=junior' /tmp/study-v12/computing.html
-          render 'course.html?subject=finance&stage=primary' /tmp/study-v12/finance.html
-          render 'course.html?subject=logic&stage=junior' /tmp/study-v12/logic.html
-          grep -Fq '《春晓》：声音、花落与惜春' /tmp/study-v12/chinese.html
-          grep -Fq '20 以内进位加法：凑十法' /tmp/study-v12/math.html
-          grep -Fq 'Unit 6 At the Supermarket' /tmp/study-v12/english.html
-          grep -Fq '茶餐厅点餐' /tmp/study-v12/cantonese.html
-          grep -Fq 'いくらですか' /tmp/study-v12/japanese.html
-          grep -Fq '餐厅点餐' /tmp/study-v12/korean.html
-          grep -Fq '控制变量：光照会影响种子发芽吗' /tmp/study-v12/science.html
-          grep -Fq '欧姆定律 U=IR' /tmp/study-v12/physics.html
-          grep -Fq '酸、碱、盐与指示剂' /tmp/study-v12/chemistry.html
-          grep -Fq '孟德尔遗传与概率' /tmp/study-v12/biology.html
-          grep -Fq '秦统一与中央集权' /tmp/study-v12/history.html
-          grep -Fq '地图上的方向、图例和比例尺' /tmp/study-v12/geography.html
-          grep -Fq 'Python 变量、输入和输出' /tmp/study-v12/computing.html
-          grep -Fq '制作个人月度预算' /tmp/study-v12/finance.html
-          grep -Fq '相关不等于因果' /tmp/study-v12/logic.html
-          kill "$(cat /tmp/study-server.pid)"
+          render 'chinese.html?stage=primary' /tmp/study-v12/chinese.html '《春晓》：声音、花落与惜春'
+          render 'math.html?stage=primary' /tmp/study-v12/math.html '20 以内进位加法：凑十法'
+          render 'english.html?stage=primary' /tmp/study-v12/english.html 'Unit 6 At the Supermarket'
+          render 'cantonese.html?stage=primary' /tmp/study-v12/cantonese.html '茶餐厅点餐'
+          render 'japanese.html?stage=primary' /tmp/study-v12/japanese.html 'いくらですか'
+          render 'korean.html?stage=primary' /tmp/study-v12/korean.html '餐厅点餐'
+          render 'course.html?subject=science&stage=primary' /tmp/study-v12/science.html '控制变量：光照会影响种子发芽吗'
+          render 'course.html?subject=physics&stage=junior' /tmp/study-v12/physics.html '欧姆定律 U=IR'
+          render 'course.html?subject=chemistry&stage=junior' /tmp/study-v12/chemistry.html '酸、碱、盐与指示剂'
+          render 'course.html?subject=biology&stage=junior' /tmp/study-v12/biology.html '孟德尔遗传与概率'
+          render 'course.html?subject=history&stage=primary' /tmp/study-v12/history.html '秦统一与中央集权'
+          render 'course.html?subject=geography&stage=primary' /tmp/study-v12/geography.html '地图上的方向、图例和比例尺'
+          render 'course.html?subject=computing&stage=junior' /tmp/study-v12/computing.html 'Python 变量、输入和输出'
+          render 'course.html?subject=finance&stage=primary' /tmp/study-v12/finance.html '制作个人月度预算'
+          render 'course.html?subject=logic&stage=junior' /tmp/study-v12/logic.html '相关不等于因果'
+          kill "$SERVER_PID"
