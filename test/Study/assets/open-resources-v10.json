@@ -1,0 +1,226 @@
+{
+  "version": "20260806-1",
+  "generatedAt": "2026-08-06T00:00:00Z",
+  "items": [
+    {
+      "id": "cn-moe-2022",
+      "title": "中国大陆义务教育课程方案和课程标准（2022年版）",
+      "url": "https://www.moe.gov.cn/srcsite/A26/s8001/202204/t20220420_619921.html",
+      "description": "中国大陆义务教育阶段课程方案及语文、数学、英语、科学、历史、地理、物理、化学、生物、信息科技等课程标准入口。",
+      "subject": "general",
+      "subjectName": "课程标准",
+      "source": "中华人民共和国教育部",
+      "license": "官方公开文件",
+      "kind": "framework"
+    },
+    {
+      "id": "hk-curriculum-guides",
+      "title": "香港学校课程持续更新与课程指引",
+      "url": "https://www.edb.gov.hk/sc/curriculum-development/renewal/guides.html",
+      "description": "香港幼稚园、小学、中学及主要学习领域课程指引和跨学科资源入口。",
+      "subject": "general",
+      "subjectName": "课程标准",
+      "source": "香港教育局",
+      "license": "官方公开资料",
+      "kind": "framework"
+    },
+    {
+      "id": "hk-chinese",
+      "title": "香港中国语文课程文件",
+      "url": "https://www.edb.gov.hk/sc/curriculum-development/kla/chi-edu/curriculum-documents.html",
+      "description": "小学至高中中国语文、中国文学及普通话课程文件和建议学习重点。",
+      "subject": "chinese",
+      "subjectName": "语文",
+      "source": "香港教育局",
+      "license": "官方公开资料",
+      "kind": "framework"
+    },
+    {
+      "id": "hk-math",
+      "title": "香港数学教育课程文件",
+      "url": "https://www.edb.gov.hk/sc/curriculum-development/kla/ma/curr/index2.html",
+      "description": "小学、初中、高中数学课程内容、阐释文件和数学建模更新。",
+      "subject": "math",
+      "subjectName": "数学",
+      "source": "香港教育局",
+      "license": "官方公开资料",
+      "kind": "framework"
+    },
+    {
+      "id": "sg-primary",
+      "title": "新加坡小学课程与科目",
+      "url": "https://www.moe.gov.sg/primary/curriculum",
+      "description": "新加坡小学英语、母语、数学、科学、艺术、社会学习等课程和教学大纲入口。",
+      "subject": "general",
+      "subjectName": "小学综合",
+      "source": "新加坡教育部",
+      "license": "官方公开资料",
+      "kind": "framework"
+    },
+    {
+      "id": "ib-pyp",
+      "title": "IB PYP探究式课程框架",
+      "url": "https://www.ibo.org/programmes/primary-years-programme/curriculum/",
+      "description": "跨学科、探究式、以学习者为中心的小学课程框架。",
+      "subject": "general",
+      "subjectName": "国际课程",
+      "source": "International Baccalaureate",
+      "license": "官方公开介绍",
+      "kind": "framework"
+    },
+    {
+      "id": "mit-ocw",
+      "title": "MIT OpenCourseWare",
+      "url": "https://ocw.mit.edu/",
+      "description": "超过2500门课程的教学大纲、讲义、作业、考试和部分完整视频课程，适合高中进阶和大学预备。",
+      "subject": "general",
+      "subjectName": "大学预备",
+      "source": "MIT OpenCourseWare",
+      "license": "CC BY-NC-SA 4.0",
+      "kind": "collection"
+    },
+    {
+      "id": "openstax",
+      "title": "OpenStax开放教材",
+      "url": "https://openstax.org/subjects/",
+      "description": "涵盖数学、科学、社会科学、计算机和商业等领域的同行评审开放教材。",
+      "subject": "general",
+      "subjectName": "开放教材",
+      "source": "OpenStax",
+      "license": "CC BY-NC-SA；按具体版本核对",
+      "kind": "collection"
+    },
+    {
+      "id": "phet",
+      "title": "PhET互动科学与数学模拟",
+      "url": "https://phet.colorado.edu/zh_CN/",
+      "description": "数学、物理、化学、地球科学和生物互动模拟，可用于探究、预测和实验设计。",
+      "subject": "science",
+      "subjectName": "科学",
+      "source": "PhET",
+      "license": "CC BY 4.0 / CC BY-NC 4.0；按资源核对",
+      "kind": "simulation"
+    },
+    {
+      "id": "wikiversity-zh",
+      "title": "中文维基学院",
+      "url": "https://zh.wikiversity.org/",
+      "description": "由社区协作建设的开放课程、学习项目和研究资料，可通过资料库在线检索。",
+      "subject": "general",
+      "subjectName": "开放课程",
+      "source": "Wikimedia",
+      "license": "CC BY-SA",
+      "kind": "collection"
+    },
+    {
+      "id": "wikisource-zh",
+      "title": "中文维基文库",
+      "url": "https://zh.wikisource.org/",
+      "description": "古诗文、历史文献和公版作品检索入口；作品公版状态需逐项确认。",
+      "subject": "chinese",
+      "subjectName": "语文",
+      "source": "Wikimedia",
+      "license": "作品公版状态与站点条款需逐项确认",
+      "kind": "texts"
+    },
+    {
+      "id": "marugoto",
+      "title": "MARUGOTO日本语学习",
+      "url": "https://marugoto.jpf.go.jp/",
+      "description": "日本国际交流基金以Can-do实际沟通任务组织的日语课程和学习资源。",
+      "subject": "japanese",
+      "subjectName": "日语",
+      "source": "日本国际交流基金",
+      "license": "官方在线学习资源",
+      "kind": "language"
+    },
+    {
+      "id": "jf-standard",
+      "title": "JF日本语教育标准",
+      "url": "https://www.jfstandard.jpf.go.jp/",
+      "description": "以实际语言活动和Can-do能力描述组织日语学习目标、课程与评估。",
+      "subject": "japanese",
+      "subjectName": "日语",
+      "source": "日本国际交流基金",
+      "license": "官方公开资料",
+      "kind": "framework"
+    },
+    {
+      "id": "king-sejong",
+      "title": "在线世宗学堂",
+      "url": "https://www.iksi.or.kr/lms/main/main.do?lang=EN",
+      "description": "由世宗学堂基金会提供的入门、初级、中级、高级和商务韩国语在线课程。",
+      "subject": "korean",
+      "subjectName": "韩语",
+      "source": "世宗学堂基金会",
+      "license": "官方在线课程",
+      "kind": "language"
+    },
+    {
+      "id": "jyutping",
+      "title": "香港语言学学会粤拼方案",
+      "url": "https://lshk.org/jyutping-scheme/",
+      "description": "粤拼声母、韵母、声调和拼写规范的权威参考。",
+      "subject": "cantonese",
+      "subjectName": "粤语",
+      "source": "香港语言学学会",
+      "license": "官方公开资料",
+      "kind": "language"
+    },
+    {
+      "id": "mediawiki-api",
+      "title": "Wikimedia开放知识API",
+      "url": "https://www.mediawiki.org/wiki/Wikimedia_APIs",
+      "description": "用于按需检索维基学院、维基文库和其他开放知识项目的官方API说明。",
+      "subject": "computing",
+      "subjectName": "信息科技",
+      "source": "Wikimedia",
+      "license": "开放API；内容许可按项目核对",
+      "kind": "api"
+    },
+    {
+      "id": "mit-get-started",
+      "title": "MIT OCW学习者使用指南",
+      "url": "https://ocw.mit.edu/pages/get-started/",
+      "description": "介绍如何利用课程大纲、讲义、作业、考试和视频建立自主学习路径。",
+      "subject": "general",
+      "subjectName": "学习方法",
+      "source": "MIT OpenCourseWare",
+      "license": "CC BY-NC-SA 4.0",
+      "kind": "guide"
+    },
+    {
+      "id": "openstax-license",
+      "title": "OpenStax授权与使用说明",
+      "url": "https://openstax.org/license/",
+      "description": "使用或改编OpenStax材料前核对具体教材的署名、非商业和相同方式共享要求。",
+      "subject": "general",
+      "subjectName": "资源许可",
+      "source": "OpenStax",
+      "license": "许可说明",
+      "kind": "license"
+    },
+    {
+      "id": "mit-license",
+      "title": "MIT OpenCourseWare授权说明",
+      "url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+      "description": "MIT OCW材料通常采用CC BY-NC-SA 4.0，使用时需要署名并遵守非商业和相同方式共享要求。",
+      "subject": "general",
+      "subjectName": "资源许可",
+      "source": "MIT OpenCourseWare",
+      "license": "CC BY-NC-SA 4.0",
+      "kind": "license"
+    },
+    {
+      "id": "phet-license",
+      "title": "PhET授权说明",
+      "url": "https://phet.colorado.edu/en/licensing",
+      "description": "PhET模拟、活动和品牌元素可能适用不同许可，嵌入或改编前应核对具体条款。",
+      "subject": "science",
+      "subjectName": "资源许可",
+      "source": "PhET",
+      "license": "按具体资源核对",
+      "kind": "license"
+    }
+  ]
+}
