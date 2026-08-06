@@ -5,12 +5,12 @@
 
   const oldSwitch = document.querySelector("#languageSwitch");
   if (oldSwitch) {
-    const next = oldSwitch.cloneNode(false);
+    const next = document.createElement("div");
     next.id = "languageSwitch";
     next.className = "language-switch";
     next.setAttribute("role", "group");
     next.setAttribute("aria-label", "Language");
-    next.innerHTML = '<button type="button" data-lang="zh">中</button><i>/</i><button type="button" data-lang="en">EN</button><i>/</i><button type="button" data-lang="ja">日</button>';
+    next.innerHTML = '<button type="button" data-lang="zh" aria-label="中文">中</button><i>/</i><button type="button" data-lang="en" aria-label="English">EN</button><i>/</i><button type="button" data-lang="ja" aria-label="日本語">日</button>';
     oldSwitch.replaceWith(next);
   }
 
@@ -18,7 +18,11 @@
     const langMap={zh:"zh-Hant",en:"en",ja:"ja"};
     document.documentElement.lang=langMap[state.language]||"zh-Hant";
     document.querySelectorAll('[data-i18n]').forEach(node=>node.textContent=text(node.dataset.i18n));
-    document.querySelectorAll('#languageSwitch [data-lang]').forEach(button=>button.classList.toggle('is-active',button.dataset.lang===state.language));
+    document.querySelectorAll('#languageSwitch [data-lang]').forEach(button=>{
+      const active=button.dataset.lang===state.language;
+      button.classList.toggle('is-active',active);
+      button.setAttribute('aria-pressed',active?'true':'false');
+    });
   };
 
   formatDate = function(value){
@@ -29,7 +33,8 @@
     return new Intl.DateTimeFormat(locales[state.language]||"zh-Hant",{year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
   };
 
-  document.querySelectorAll('#languageSwitch [data-lang]').forEach(button=>button.addEventListener('click',()=>{
+  document.querySelectorAll('#languageSwitch [data-lang]').forEach(button=>button.addEventListener('click',event=>{
+    event.stopPropagation();
     state.language=button.dataset.lang;
     localStorage.setItem("astra-gallery-language",state.language);
     renderAll();
