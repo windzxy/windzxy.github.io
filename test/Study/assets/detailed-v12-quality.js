@@ -39,6 +39,10 @@ const ensureList=(items,count,title,subject,kind)=>{
 };
 api.build=(subject,stage,title,index=0)=>{
  const lesson=original(subject,stage,title,index);
+ if(subject==='cantonese'&&title.includes('茶餐厅点餐')){
+  lesson.material='茶餐廳完整對話：\n顧客：唔該，我想要一個菠蘿油同一杯凍檸茶。\n店員：凍檸茶要少甜定正常甜？\n顧客：少甜，唔該。請問一共幾多錢？\n店員：四十二蚊，多謝。\n顧客：唔該晒。\n\n學習任務：先用內置粵語音頻聽完整對話，再標出關鍵粵拼、六聲、量詞和禮貌用語，最後替換飲品、甜度與數量完成新對話。';
+  lesson.audioLanguage='cantonese';
+ }
  const advice=subjectAdvice[subject]||'使用明确材料、步骤和证据完成本课，并检查结果。';
  lesson.overview=minText(lesson.overview,55,`本课围绕“${title}”形成从理解、示范到独立应用和复习的完整闭环。`);
  lesson.material=minText(lesson.material,120,`学习材料必须直接服务“${title}”：先标出对象、条件和目标，再找出决定结论的关键词、数据、公式、语法或史料。${advice}`);
