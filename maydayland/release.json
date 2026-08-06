@@ -1,6 +1,15 @@
 {
-  "name":"Maydayland Memory Signal Tracker",
-  "version":"7.0.0",
-  "releasedAt":"2026-08-05T17:00:00+08:00",
-  "features":["interactive Mayday memory signal map","desktop pan and zoom tracker","mobile story-card browsing","official public Mayday and STAYREAL imagery","automatic random Mayday radio","queue and synchronized LRC lyrics","WMLS fan-site disclaimer"]
+  "name": "Maydayland World Tour Archive",
+  "version": "8.0.0",
+  "releasedAt": "2026-08-06T08:40:00+08:00",
+  "features": [
+    "standard system mouse cursor without custom artwork",
+    "interactive world map with verified Mayday tour layers",
+    "numbered cities and route connections",
+    "official-source links and clear verification notes",
+    "album archive with high-resolution Apple Music artwork and track lookup",
+    "song search, random autoplay and synchronized LRC lyrics",
+    "Mayday and member book archive",
+    "separate desktop and mobile layouts"
+  ]
 }
