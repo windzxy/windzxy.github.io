@@ -146,17 +146,27 @@ jobs:
         run: |
           python3 -m http.server 8765 --directory . >/tmp/study-server.log 2>&1 &
           SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           sleep 2
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$BROWSER"
           mkdir -p /tmp/study-v12
           render(){
             page="$1"; output="$2"; expected="$3"
+            echo "Rendering: $page"
             timeout 90s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=45000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
-            grep -Fq 'v12-course-map' "$output"
-            grep -Fq '全部课程正文已接入' "$output"
-            grep -Fq "$expected" "$output"
-            ! grep -Fq '页面加载失败' "$output"
+            for marker in 'v12-course-map' '全部课程正文已接入' "$expected"; do
+              if ! grep -Fq "$marker" "$output"; then
+                echo "Missing marker '$marker' in $page"
+                grep -oE 'v12-course-map|全部课程正文已接入|课程地图|第 [0-9]+ 课|<h[1-4][^>]*>[^<]+' "$output" | tail -n 80 || true
+                exit 1
+              fi
+            done
+            if grep -Fq '页面加载失败' "$output"; then
+              echo "Page load failure in $page"
+              exit 1
+            fi
+            echo "PASS: $page"
           }
           render 'chinese.html?stage=primary' /tmp/study-v12/chinese.html '《春晓》：声音、花落与惜春'
           render 'math.html?stage=primary' /tmp/study-v12/math.html '20 以内进位加法：凑十法'
@@ -172,5 +182,4 @@ jobs:
           render 'course.html?subject=geography&stage=primary' /tmp/study-v12/geography.html '地图上的方向、图例和比例尺'
           render 'course.html?subject=computing&stage=junior' /tmp/study-v12/computing.html 'Python 变量、输入和输出'
           render 'course.html?subject=finance&stage=primary' /tmp/study-v12/finance.html '制作个人月度预算'
-          render 'course.html?subject=logic&stage=junior' /tmp/study-v12/logic.html '相关不等于因果'
-          kill "$SERVER_PID"
+          render 'course.html?subject=logic&stage=primary' /tmp/study-v12/logic.html '相关不等于因果'
