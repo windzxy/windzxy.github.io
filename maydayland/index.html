@@ -6,17 +6,18 @@
   <meta name="theme-color" content="#050912">
   <meta name="description" content="Maydayland 五月天巡演地圖、時光唱片室、歌曲、書籍與歷程檔案。">
   <title>Maydayland · 五月天巡演地圖與時光唱片室</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=16.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=16.0.0">
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=17.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=17.0.0">
   <link rel="stylesheet" href="./app-v15.css?v=15.0.0">
   <link rel="stylesheet" href="./app-v16.css?v=16.0.0">
+  <link rel="stylesheet" href="./app-v17.css?v=17.0.0">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
   <div class="md-app">
     <header class="topbar glass">
       <a class="brand" href="#tour" data-nav="tour" aria-label="Maydayland 首頁">
-        <span class="logo-orbit"><img src="./mayday-logo.svg?v=16.0.0" alt="Mayday"></span>
+        <span class="logo-orbit"><img src="./mayday-logo.svg?v=17.0.0" alt="Mayday"></span>
         <span><b>MAYDAYLAND</b><small>WORLD TOUR ARCHIVE</small></span>
       </a>
       <nav class="main-nav" aria-label="內容導航">
@@ -35,7 +36,7 @@
         <aside class="tour-rail glass">
           <div class="section-kicker">TOUR STAGES</div>
           <h1>把每一輪巡演，做成可以走進去的世界</h1>
-          <p>v16 已將假 SVG 地圖替換成行政區 Canvas 地圖引擎。可拖曳旋轉、滾輪縮放、點擊城市，右側照片詳情同步更新。</p>
+          <p>v17 進入內容補完階段：巡演按年份、城市、場館、官方來源與待補資料拆開，不再是 demo 卡片。</p>
           <div class="tour-list" id="tourList"></div>
           <button class="wide-btn" data-nav="timeline">查看完整時間軸</button>
         </aside>
@@ -66,18 +67,19 @@
       </section>
 
       <section class="view" id="albums" aria-label="時光唱片室">
-        <div class="room-view glass"><aside class="room-left"><div class="section-kicker">THE ROOM WHERE SONGS REMAIN</div><h2>五月天時光唱片室</h2><p>把專輯縮成小 CD 盒，依年代放在木質唱片架裡。點擊專輯後右側顯示曲目與時代說明。</p><div class="era-filter" id="eraFilter"></div><div class="turntable-card"><div class="turntable"><i></i></div><span><b id="needleTitle">知足 最真傑作選</b><small id="needleYear">2005 · 珍藏精選</small></span></div></aside><main class="shelf-room"><div class="lamp"></div><h3 id="shelfTitle">2000–2009 青春木架</h3><div class="album-shelf" id="albumShelf"></div></main><aside class="album-detail glass" id="albumDetail"></aside></div>
+        <div class="room-view glass"><aside class="room-left"><div class="section-kicker">THE ROOM WHERE SONGS REMAIN</div><h2>五月天時光唱片室</h2><p>v17 擴充為完整唱片室資料層：專輯、年代、曲目、時代說明與海外作品入口。</p><div class="era-filter" id="eraFilter"></div><div class="turntable-card"><div class="turntable"><i></i></div><span><b id="needleTitle">知足 最真傑作選</b><small id="needleYear">2005 · 珍藏精選</small></span></div></aside><main class="shelf-room"><div class="lamp"></div><h3 id="shelfTitle">1999–2016 唱片收藏木架</h3><div class="album-shelf" id="albumShelf"></div></main><aside class="album-detail glass" id="albumDetail"></aside></div>
       </section>
-      <section class="view" id="songs" aria-label="歌曲宇宙"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">MAYDAY COMPLETE LIBRARY</div><h2>歌曲與歌單宇宙</h2><p>按巡演情緒、年代、現場能量重組。</p></div><button class="mini-action" id="randomPlaylist">隨機歌單</button></div><div class="playlist-grid" id="playlistGrid"></div></div></section>
-      <section class="view" id="books" aria-label="書籍出版"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">BOOKS & PUBLICATIONS</div><h2>書籍與出版品</h2><p>小封面比例的資料館書架，不再使用巨大縮略圖。</p></div></div><div class="bookcase" id="bookcase"></div></div></section>
-      <section class="view" id="timeline" aria-label="歷程"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">MAYDAY MEMORY TIMELINE</div><h2>歷程與大事記</h2><p>把作品、巡演和城市記憶串成展覽牆。</p></div></div><div class="timeline-wall" id="timelineWall"></div></div></section>
+      <section class="view" id="songs" aria-label="歌曲宇宙"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">MAYDAY COMPLETE LIBRARY</div><h2>歌曲與歌單宇宙</h2><p>v17 改成編輯型音樂資料館：按現場、青春、專輯敘事、海外入口整理，而不是 demo 歌單卡。</p></div><button class="mini-action" id="randomPlaylist">隨機歌單</button></div><div class="playlist-grid" id="playlistGrid"></div></div></section>
+      <section class="view" id="books" aria-label="書籍出版"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">BOOKS & PUBLICATIONS</div><h2>書籍與出版品</h2><p>v17 以資料館書架整理書籍、樂譜、成員文集與場刊週邊，不再只有三張 demo 卡片。</p></div></div><div class="bookcase" id="bookcase"></div></div></section>
+      <section class="view" id="timeline" aria-label="歷程"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">MAYDAY MEMORY TIMELINE</div><h2>歷程與大事記</h2><p>v17 形成展覽牆：從成軍、專輯、巡演到 5525，並標記下一步資料補完方向。</p></div></div><div class="timeline-wall" id="timelineWall"></div></div></section>
     </main>
 
     <footer class="player-dock glass" id="playerDock"><div class="player-progress"><i id="playerProgress"></i></div><button class="now-track" id="openPlayer" aria-label="打開播放器"><span class="cover-mini" id="miniCover"></span><span><small id="miniMode">MAYDAYLAND RADIO</small><b id="miniTitle">倔強 · 現場心跳版</b><em id="miniSub">播放器改成穩定狀態，不再無限載入</em></span></button><div class="control-cluster"><button id="shuffleBtn" aria-label="隨機">⇄</button><button id="prevBtn" aria-label="上一首">‹</button><button class="play-button" id="playBtn" aria-label="播放">▶</button><button id="nextBtn" aria-label="下一首">›</button><button id="repeatBtn" aria-label="循環">↻</button></div><div class="player-side"><button id="queueBtn">≣</button><button id="muteBtn">♬</button></div></footer>
   </div>
 
-  <section class="player-sheet" id="playerSheet" aria-hidden="true"><button class="sheet-close" id="sheetClose">×</button><div class="sheet-inner glass"><span class="cover-large" id="sheetCover"></span><div class="sheet-copy"><div class="section-kicker">RADIO PREVIEW</div><h2 id="sheetTitle">倔強 · 現場心跳版</h2><p id="sheetText">播放條優先保持穩定，不再一直載入不同歌曲。正式接回音源前先確保 UI 與控制狀態可靠。</p><div class="scrub"><span id="currentTime">0:00</span><div><i id="sheetProgress"></i></div><span id="durationTime">3:45</span></div><div class="queue" id="queueList"></div></div></div></section>
+  <section class="player-sheet" id="playerSheet" aria-hidden="true"><button class="sheet-close" id="sheetClose">×</button><div class="sheet-inner glass"><span class="cover-large" id="sheetCover"></span><div class="sheet-copy"><div class="section-kicker">RADIO PREVIEW</div><h2 id="sheetTitle">倔強 · 現場心跳版</h2><p id="sheetText">播放條優先保持穩定，不再一直載入不同歌曲。v17 已補完歌單隊列與精緻狀態，正式接回音源前先確保 UI 與控制可靠。</p><div class="scrub"><span id="currentTime">0:00</span><div><i id="sheetProgress"></i></div><span id="durationTime">3:45</span></div><div class="queue" id="queueList"></div></div></div></section>
   <div class="toast" id="toast"></div>
   <script src="./app-v16.js?v=16.0.0" defer></script>
+  <script src="./app-v17.js?v=17.0.0" defer></script>
 </body>
 </html>
