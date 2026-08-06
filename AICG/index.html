@@ -13,100 +13,16 @@
   <link rel="stylesheet" href="./assets/v23.css?v=2.3.0">
   <link rel="stylesheet" href="./assets/v24.css?v=2.4.0">
   <link rel="stylesheet" href="./assets/v25.css?v=2.5.0">
+  <link rel="stylesheet" href="./assets/v26.css?v=2.6.0">
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
-
   <header class="site-header" id="top">
-    <a class="brand" href="#featured" aria-label="Astra Gallery 首頁">
-      <img class="brand-logo" src="./assets/astra-logo.svg?v=2.1.0" alt="">
-      <span><b>ASTRA GALLERY</b><small>VISUAL ARCHIVE</small></span>
-    </a>
-    <nav class="main-nav" aria-label="主導航">
-      <a href="#featured" data-i18n="navFeatured">焦點作品</a>
-      <a href="#gallery" data-i18n="navGallery">作品集</a>
-    </nav>
-    <div class="header-actions">
-      <button class="protection-toggle" id="protectionToggle" type="button" aria-label="青少年保護模式">
-        <span class="shield">◆</span><b id="protectionLabel">青少年模式</b>
-      </button>
-      <button class="icon-button" id="favoriteJump" type="button" aria-label="查看收藏">
-        <span>♡</span><em id="favoriteCount">0</em>
-      </button>
-      <button class="language-switch" id="languageSwitch" type="button" aria-label="切換語言">
-        <b id="languageLabel">中文</b><span>/ EN</span>
-      </button>
-      <a class="back-desk" href="../" data-i18n="backDesk">返回 WebDesk</a>
-    </div>
+    <a class="brand" href="#featured" aria-label="Astra Gallery 首頁"><img class="brand-logo" src="./assets/astra-logo.svg?v=2.1.0" alt=""><span><b>ASTRA GALLERY</b><small>VISUAL ARCHIVE</small></span></a>
+    <nav class="main-nav" aria-label="主導航"><a href="#featured" data-i18n="navFeatured">焦點作品</a><a href="#gallery" data-i18n="navGallery">作品集</a></nav>
+    <div class="header-actions"><button class="protection-toggle" id="protectionToggle" type="button"><span class="shield">◆</span><b id="protectionLabel">青少年模式</b></button><button class="icon-button" id="favoriteJump" type="button"><span>♡</span><em id="favoriteCount">0</em></button><button class="language-switch" id="languageSwitch" type="button"><b>中文</b><span>/ EN / 日</span></button><a class="back-desk" href="../" data-i18n="backDesk">返回 WebDesk</a></div>
   </header>
-
-  <main>
-    <section class="hero" id="featured" aria-label="焦點作品">
-      <div class="hero-media"><img id="heroImage" alt="" fetchpriority="high"><div class="hero-vignette"></div><div class="hero-grid" aria-hidden="true"></div></div>
-      <aside class="series-rail" aria-label="作品選擇"><span class="rail-line"></span><div id="seriesRail"></div></aside>
-
-      <div class="hero-copy">
-        <div class="hero-kicker"><span id="heroIndex">01</span><i></i><span id="heroCategory"></span></div>
-        <div class="hero-badges"><span class="rating-badge" id="heroRating">ALL</span><span class="style-badge" id="heroStyle"></span></div>
-        <h1 id="heroTitle"></h1>
-        <p id="heroDescription"></p>
-        <dl class="hero-meta"><div><dt data-i18n="metaDate">發佈</dt><dd id="heroDate"></dd></div></dl>
-        <div class="hero-actions">
-          <button class="primary-action" id="openHero" type="button"><span data-i18n="viewWork">查看作品</span><b>↗</b></button>
-          <button class="ghost-action" id="favoriteHero" type="button"><span class="heart">♡</span><span data-i18n="favorite">收藏</span></button>
-        </div>
-      </div>
-
-      <div class="hero-lock" id="heroLock" hidden>
-        <span class="rating-badge" id="heroLockRating">16+</span>
-        <b data-i18n="maturePreview">成熟向內容已隱藏</b>
-        <button type="button" id="unlockHero" data-i18n="confirmView">確認後查看</button>
-      </div>
-
-      <div class="hero-footer"><div class="hero-progress"><i id="heroProgress"></i></div><button id="heroPrev" type="button" aria-label="上一張">←</button><span id="heroCounter">01 / 05</span><button id="heroNext" type="button" aria-label="下一張">→</button></div>
-      <a class="scroll-cue" href="#gallery"><span data-i18n="scrollExplore">向下探索</span><i></i></a>
-    </section>
-
-    <section class="section gallery-section" id="gallery">
-      <div class="section-head">
-        <div><span class="eyebrow">ORIGINAL WORKS</span><h2 data-i18n="galleryTitle">視覺作品集</h2></div>
-      </div>
-      <div class="gallery-toolbar">
-        <div class="filter-row" id="filterRow" aria-label="作品分類"></div>
-        <div class="rating-legend" aria-label="內容分級"><span><b>ALL</b><small data-i18n="ratingAll">全年齡</small></span><span><b>12+</b><small data-i18n="rating12">輕度成熟題材</small></span><span><b>16+</b><small data-i18n="rating16">成熟向內容</small></span><span><b>18+</b><small data-i18n="rating18">僅限成人</small></span></div>
-      </div>
-      <div class="gallery-grid" id="galleryGrid" aria-live="polite"></div>
-      <div class="empty-state" id="emptyState" hidden><span>◌</span><p data-i18n="emptyFavorites">目前還沒有收藏作品。</p></div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <a class="brand compact" href="#top"><img class="brand-logo" src="./assets/astra-logo.svg?v=2.1.0" alt=""><span><b>ASTRA GALLERY</b><small>VISUAL ARCHIVE</small></span></a>
-    <p>Original visual works</p><span id="currentYear"></span>
-  </footer>
-
-  <dialog class="age-gate" id="ageGate">
-    <form method="dialog" class="age-gate-card">
-      <span class="age-mark" id="ageGateRating">16+</span>
-      <h2 data-i18n="ageGateTitle">觀看前確認</h2>
-      <p data-i18n="ageGateText">本區可能包含成熟氛圍、性感暗示、驚悚或其他不適合兒童的視覺內容。請確認你已達所在地要求的年齡。</p>
-      <div class="age-actions"><button class="ghost-action" value="cancel" data-i18n="goBack">返回</button><button class="primary-action" id="ageConfirm" value="default" type="button" data-i18n="ageConfirm">我已知悉，繼續查看</button></div>
-    </form>
-  </dialog>
-
-  <dialog class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="關閉">×</button>
-    <div class="lightbox-media"><img id="lightboxImage" alt=""></div>
-    <aside class="lightbox-copy">
-      <div class="lightbox-badges"><span class="rating-badge" id="lightboxRating"></span><span class="style-badge" id="lightboxStyle"></span></div>
-      <span id="lightboxCategory"></span><h2 id="lightboxTitle"></h2><p id="lightboxDescription"></p>
-      <dl><div><dt data-i18n="metaDate">發佈</dt><dd id="lightboxDate"></dd></div></dl>
-      <button class="primary-action" id="lightboxFavorite" type="button"><span class="heart">♡</span><span data-i18n="favorite">收藏</span></button>
-    </aside>
-  </dialog>
-
-  <script src="./assets/app.js?v=2.0.0" defer></script>
-  <script src="./assets/v21.js?v=2.1.0" defer></script>
-  <script src="./assets/v22.js?v=2.2.0" defer></script>
+  <main><section class="hero" id="featured"><div class="hero-media"><img id="heroImage" alt="" fetchpriority="high"><div class="hero-vignette"></div></div><div class="hero-copy"><div class="hero-kicker"><span id="heroIndex">01</span></div><div class="hero-badges"><span class="rating-badge" id="heroRating"></span></div><h1 id="heroTitle"></h1><p id="heroDescription"></p><div class="hero-actions"><button class="primary-action" id="openHero">查看作品 ↗</button><button class="ghost-action" id="favoriteHero">♡ 收藏</button></div></div></section><section class="section gallery-section" id="gallery"><div class="section-head"><div><span class="eyebrow">ORIGINAL WORKS</span><h2 data-i18n="galleryTitle">視覺作品集</h2></div></div><div class="gallery-grid" id="galleryGrid"></div></section></main>
+  <script src="./assets/app.js?v=2.0.0" defer></script><script src="./assets/v21.js?v=2.1.0" defer></script><script src="./assets/v22.js?v=2.2.0" defer></script>
 </body>
 </html>
