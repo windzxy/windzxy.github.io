@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#050912">
   <meta name="description" content="Maydayland 五月天巡演地圖、時光唱片室、歌曲、書籍與歷程檔案。">
   <title>Maydayland · 五月天巡演地圖與時光唱片室</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=20.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=20.0.0">
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=22.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=22.0.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="./app-v15.css?v=15.0.0">
   <link rel="stylesheet" href="./app-v16.css?v=16.0.0">
@@ -15,13 +15,14 @@
   <link rel="stylesheet" href="./app-v18.css?v=18.0.0">
   <link rel="stylesheet" href="./app-v19.css?v=19.0.0">
   <link rel="stylesheet" href="./app-v20.css?v=20.0.0">
+  <link rel="stylesheet" href="./app-v22.css?v=22.0.0">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
   <div class="md-app">
     <header class="topbar glass">
       <a class="brand" href="#tour" data-nav="tour" aria-label="Maydayland 首頁">
-        <span class="logo-orbit"><img src="./mayday-logo.svg?v=20.0.0" alt="Mayday"></span>
+        <span class="logo-orbit"><img src="./mayday-logo.svg?v=22.0.0" alt="Mayday"></span>
         <span><b>MAYDAYLAND</b><small>WORLD TOUR ARCHIVE</small></span>
       </a>
       <nav class="main-nav" aria-label="內容導航">
@@ -38,16 +39,16 @@
     <main class="views">
       <section class="view active" id="tour" aria-label="巡演地圖">
         <aside class="tour-rail glass">
-          <div class="section-kicker">TOUR STAGES</div>
-          <h1>把每一輪巡演，做成可以走進去的世界</h1>
-          <p>v20 進入全站產品級重構：地圖、巡演、唱片室、歌曲、書籍、歷程、播放器都從 demo 升級為可繼續擴充的正式資料館架構。</p>
+          <div class="section-kicker">MAYDAY TRACKER</div>
+          <h1>Mayday Tracker：用地圖追蹤每座城市的巡演熱度</h1>
+          <p>v22 參考 Zoom Earth 的熱度圖與 Tracker 式主界面：城市到訪越多次，光斑越大、顏色越深；所有分頁從地圖追蹤器展開。</p>
           <div class="tour-list" id="tourList"></div>
           <button class="wide-btn" data-nav="timeline">查看完整時間軸</button>
         </aside>
 
         <section class="tour-stage glass">
           <div class="stage-head">
-            <div><div class="section-kicker">REAL WEB MAP</div><h2 id="mapTitle">回到那一天 · 真實 Web 地圖路線</h2></div>
+            <div><div class="section-kicker">HEAT TRACKING MAP</div><h2 id="mapTitle">回到那一天 · 巡演熱度追蹤地圖</h2></div>
             <div class="mode-pills"><button class="active" id="modeFlat">街道地圖</button><button id="modeAlbum">深色地圖</button><button id="routePlay">路線播放</button></div>
           </div>
           <div class="map-scene" id="mapScene">
@@ -88,5 +89,6 @@
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="./app-v19.js?v=19.0.0" defer></script>
   <script src="./app-v20.js?v=20.0.0" defer></script>
+  <script src="./app-v22.js?v=22.0.0" defer></script>
 </body>
 </html>
