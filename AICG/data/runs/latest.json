@@ -1,6 +1,0 @@
-{
-  "status": "not-run",
-  "message": "The AICG scheduled pipeline has been installed. Add the OPENAI_API_KEY repository secret before generation can begin.",
-  "installedAt": "2026-08-06T05:49:34Z",
-  "schedule": "20 1 * * 2,5"
-}
