@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "principles": [
+    "Create an original image. Do not reproduce existing artworks, branded characters, logos, copyrighted IP, celebrities, or identifiable public figures.",
+    "Do not imitate or reference any named living artist, studio, photographer, illustrator, film, game, anime, or franchise.",
+    "Prioritize coherent composition, believable materials, intentional light, desktop-icon readability, and a clear visual hierarchy.",
+    "No text, signatures, watermarks, frames, UI overlays, duplicate subjects, malformed anatomy, or obvious generation artifacts."
+  ],
+  "briefs": [
+    {
+      "id": "cinematic-coast",
+      "category": "nature",
+      "labelZh": "電影感自然",
+      "labelEn": "Cinematic Nature",
+      "subject": "a remote basalt coastline after a passing storm",
+      "composition": "wide low-angle view with a strong diagonal shoreline and open sky on the upper right",
+      "light": "late golden hour breaking through cool rain clouds",
+      "palette": "charcoal, slate blue, muted amber",
+      "mood": "quietly monumental and restorative",
+      "avoid": "tourists, buildings, boats, tropical postcard colors"
+    },
+    {
+      "id": "night-transit",
+      "category": "city",
+      "labelZh": "城市夜景",
+      "labelEn": "City Night",
+      "subject": "an elevated night transit interchange in a dense future city",
+      "composition": "long-lens compression with layered roads and one clear visual anchor",
+      "light": "rain-softened signage and practical sodium lights",
+      "palette": "deep ink, restrained magenta, warm amber",
+      "mood": "observational, lived-in, cinematic",
+      "avoid": "cyberpunk clichés, excessive neon, flying cars, logos"
+    },
+    {
+      "id": "quiet-orbit",
+      "category": "space",
+      "labelZh": "未來太空",
+      "labelEn": "Future Space",
+      "subject": "a small scientific observatory orbiting an ice giant",
+      "composition": "off-center station silhouette with the planet occupying two thirds of the frame",
+      "light": "soft reflected planetary light and tiny practical lamps",
+      "palette": "pale cyan, graphite, faded violet",
+      "mood": "solitary, precise, sublime",
+      "avoid": "battle scenes, spaceships in formation, recognizable franchise design"
+    },
+    {
+      "id": "monastic-concrete",
+      "category": "architecture",
+      "labelZh": "極簡建築",
+      "labelEn": "Minimal Architecture",
+      "subject": "a monolithic concrete cultural pavilion beside shallow water",
+      "composition": "strict frontal geometry interrupted by one narrow human-scale passage",
+      "light": "overcast diffuse daylight with subtle reflections",
+      "palette": "warm concrete, silver water, moss green",
+      "mood": "contemplative and tactile",
+      "avoid": "famous buildings, luxury villa clichés, crowds, text"
+    },
+    {
+      "id": "mineral-abstraction",
+      "category": "abstract",
+      "labelZh": "抽象材質",
+      "labelEn": "Abstract Material",
+      "subject": "translucent mineral sheets folding through a dark void",
+      "composition": "large sweeping curves with one crisp focal intersection",
+      "light": "internal subsurface glow with controlled edge highlights",
+      "palette": "smoky quartz, pale lilac, black",
+      "mood": "precise, weightless, elegant",
+      "avoid": "random blobs, glossy plastic, busy rainbow gradients"
+    },
+    {
+      "id": "mist-forest",
+      "category": "dark",
+      "labelZh": "暗色氛圍",
+      "labelEn": "Dark Atmosphere",
+      "subject": "an ancient cedar forest moments before dawn",
+      "composition": "vertical trunks creating rhythm, a narrow stream guiding inward",
+      "light": "very low blue ambient light with faint mist separation",
+      "palette": "midnight blue, desaturated green, silver",
+      "mood": "mysterious but not threatening",
+      "avoid": "horror figures, glowing eyes, fantasy creatures, crushed blacks"
+    },
+    {
+      "id": "healing-winter",
+      "category": "nature",
+      "labelZh": "季節治癒",
+      "labelEn": "Seasonal Calm",
+      "subject": "a small lakeside reading cabin after fresh snow",
+      "composition": "cabin placed at the lower left with broad quiet snowfield and frozen lake",
+      "light": "soft morning sun behind thin cloud",
+      "palette": "warm window amber, snow white, pale blue",
+      "mood": "safe, quiet, restorative",
+      "avoid": "Christmas decorations, people, smoke overload, commercial stock-photo look"
+    },
+    {
+      "id": "floating-botany",
+      "category": "fantasy",
+      "labelZh": "幻想世界",
+      "labelEn": "Fantasy World",
+      "subject": "a botanical research garden suspended above a sea of clouds",
+      "composition": "layered terraces receding into atmosphere with a small central greenhouse",
+      "light": "early morning rim light and soft volumetric haze",
+      "palette": "sage green, limestone, pearl sky",
+      "mood": "credible wonder and discovery",
+      "avoid": "castles, dragons, characters, game concept-art clichés"
+    }
+  ]
+}
