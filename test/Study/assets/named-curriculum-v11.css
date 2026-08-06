@@ -1,0 +1,59 @@
+#v10-course-library.v11-replaced{display:none!important}
+#v11-course-map{margin:24px 0 38px;border:1px solid #e6eaf2;border-radius:28px;background:#fff;overflow:hidden;box-shadow:0 18px 45px rgba(35,48,83,.08)}
+.v11-map-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:32px 34px;border-bottom:1px solid #edf0f6;background:linear-gradient(180deg,#fff 0%,#fbfcff 100%)}
+.v11-map-head>div:first-child span{display:block;color:#8190ac;font-size:14px;font-weight:800;letter-spacing:.08em;margin-bottom:8px}
+.v11-map-head h2{margin:0;color:#152440;font-size:32px;line-height:1.2}
+.v11-map-head p{max-width:760px;margin:12px 0 0;color:#6f7d96;line-height:1.7}
+.v11-map-head>div:last-child{display:flex;align-items:center;gap:14px}
+.v11-map-head select{min-width:150px;height:52px;border:1px solid #dbe1ec;border-radius:16px;background:#f8f9fc;padding:0 42px 0 18px;color:#53617a;font-size:18px;font-weight:800}
+.v11-map-total{display:flex;flex-direction:column;align-items:flex-end;padding:4px 2px}
+.v11-map-total strong{color:#182744;font-size:18px}.v11-map-total small{color:#8793aa}
+.v11-rows{position:relative;padding:24px 34px 28px}
+.v11-rows:before{content:"";position:absolute;left:76px;top:36px;bottom:40px;width:6px;border-radius:10px;background:#eef1f7}
+.v11-row{position:relative;width:100%;display:grid;grid-template-columns:90px minmax(0,1fr) 90px;align-items:center;gap:12px;min-height:104px;padding:14px 20px 14px 0;border:0;border-radius:24px;background:transparent;text-align:left;cursor:pointer;transition:.2s ease;color:inherit}
+.v11-row:hover,.v11-row:focus-visible{background:#f6f5ff;outline:none;transform:translateY(-1px)}
+.v11-row.complete{background:#f6fbf8}
+.v11-node{position:relative;z-index:2;display:grid;place-items:center;width:70px;height:70px;margin-left:7px;border:3px solid #e3e8f2;border-radius:50%;background:#fff;box-shadow:0 2px 0 rgba(33,45,77,.04)}
+.v11-node:before{content:"";width:48px;height:48px;border-radius:50%;background:#e9edf6}
+.v11-node i{position:absolute;width:11px;height:11px;border-radius:50%;background:#17233d}
+.v11-row.complete .v11-node{border-color:#bce3cc}.v11-row.complete .v11-node:before{background:#dff3e7}.v11-row.complete .v11-node i{background:#2b8f5d}
+.v11-row-main{display:flex;min-width:0;flex-direction:column}
+.v11-row-main small{color:#8b97ae;font-size:14px;font-weight:800;margin-bottom:6px}
+.v11-row-main strong{overflow:hidden;color:#2b3a58;font-size:20px;line-height:1.35;text-overflow:ellipsis;white-space:nowrap}
+.v11-row-main em{height:7px;margin-top:12px;border-radius:99px;background:#edf0f6;overflow:hidden}
+.v11-row-main em i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7a68ff,#6256ef)}
+.v11-row.complete .v11-row-main em i{background:#48aa76}
+.v11-row-side{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.v11-row-side b{padding:5px 10px;border-radius:99px;background:#6d5cf6;color:#fff;font-size:12px}
+.v11-row-side strong{color:#8a96ad;font-size:17px}
+#v11-lesson-modal{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:24px}
+.v11-backdrop{position:absolute;inset:0;background:rgba(18,27,48,.55);backdrop-filter:blur(8px)}
+.v11-modal{position:relative;display:flex;flex-direction:column;width:min(980px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow:hidden;border-radius:28px;background:#fff;box-shadow:0 34px 90px rgba(13,24,49,.3)}
+.v11-modal>header{display:flex;justify-content:space-between;gap:24px;padding:28px 30px 22px;border-bottom:1px solid #edf0f6}
+.v11-modal>header span{color:#7e8ca6;font-weight:800}.v11-modal>header h1{margin:8px 0;color:#172641;font-size:29px}.v11-modal>header p{margin:0;color:#8591a8}
+.v11-modal>header button{width:42px;height:42px;border:0;border-radius:14px;background:#f0f2f7;color:#52617b;font-size:28px;cursor:pointer}
+.v11-modal>main{overflow:auto;padding:26px 30px 32px}
+.v11-modal article{border:1px solid #e8ecf3;border-radius:18px;background:#fbfcff;padding:20px}
+.v11-modal h2{margin:0 0 12px;color:#23324e;font-size:19px}
+.v11-modal ul{margin:0;padding-left:22px;color:#5f6d86;line-height:1.8}
+.v11-material{margin-bottom:16px;background:#f6f5ff!important;border-color:#e7e2ff!important}
+.v11-material pre{margin:0;white-space:pre-wrap;font:inherit;color:#3e4c69;line-height:1.8}
+.v11-step-list{display:grid;gap:12px;margin:16px 0}
+.v11-step-list article{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;background:#fff}
+.v11-step-list article>div{display:flex;gap:14px;min-width:0}
+.v11-step-list article>div>b{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:50%;background:#eceffc;color:#6258e8}
+.v11-step-list article strong{display:block;color:#263553;margin-bottom:6px}
+.v11-step-list article p{margin:0;color:#68768e;line-height:1.65}
+.v11-step-list article button{flex:0 0 auto;border:0;border-radius:12px;background:#6759f3;color:#fff;padding:10px 14px;font-weight:800;cursor:pointer}
+.v11-step-list article.done{border-color:#bde3cc;background:#f5fbf7}.v11-step-list article.done>div>b{background:#dff3e7;color:#2d8e5e}.v11-step-list article.done button{background:#3f9d6a}
+.v11-quiz details{margin-top:12px;color:#56647c}.v11-quiz summary{cursor:pointer;font-weight:800;color:#6258e8}
+.v11-modal>footer{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 30px;border-top:1px solid #edf0f6;background:#fbfcff}
+.v11-modal>footer span{color:#7a879e}.v11-modal>footer strong{color:#172641}.v11-modal>footer a{border-radius:12px;background:#172641;color:#fff;text-decoration:none;padding:11px 16px;font-weight:800}
+@media(max-width:760px){
+ .v11-map-head{flex-direction:column;padding:24px 20px}.v11-map-head>div:last-child{width:100%;justify-content:space-between}.v11-map-head select{min-width:135px}
+ .v11-rows{padding:16px 14px 22px}.v11-rows:before{left:43px}
+ .v11-row{grid-template-columns:58px minmax(0,1fr) 52px;min-height:96px;padding-right:8px}.v11-node{width:54px;height:54px;margin-left:1px}.v11-node:before{width:38px;height:38px}
+ .v11-row-main strong{font-size:17px}.v11-row-side b{display:none}
+ .v11-modal>header,.v11-modal>main,.v11-modal>footer{padding-left:18px;padding-right:18px}.v11-modal>header h1{font-size:23px}
+ .v11-step-list article{flex-direction:column}.v11-step-list article button{align-self:flex-end}.v11-modal>footer{align-items:flex-start;flex-direction:column}
+}
