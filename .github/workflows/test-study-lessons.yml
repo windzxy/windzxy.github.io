@@ -33,6 +33,12 @@ jobs:
           node --check test/Study/assets/guided-v9-ui.js
           node --check test/Study/assets/content-packs-v10.js
           node --check test/Study/assets/content-hub-v10.js
+          node --check test/Study/assets/named-curriculum-v11-languages.js
+          node --check test/Study/assets/named-curriculum-v11-eastasia.js
+          node --check test/Study/assets/named-curriculum-v11-sciences.js
+          node --check test/Study/assets/named-curriculum-v11-humanities.js
+          node --check test/Study/assets/named-curriculum-v11-applied.js
+          node --check test/Study/assets/named-curriculum-v11.js
           node --check test/Study/assets/audio-v7.js
           node --check test/Study/assets/east-asian-audio-v8.js
           node --check test/Study/assets/east-asian-lessons-v8.js
@@ -55,7 +61,27 @@ jobs:
               if(packs.list({subject,stage}).length<18) throw new Error(`${subject}/${stage} too small`);
             }
           }
-          console.log(`validated ${packs.total} course units`);
+          for(const file of [
+            'named-curriculum-v11-languages.js',
+            'named-curriculum-v11-eastasia.js',
+            'named-curriculum-v11-sciences.js',
+            'named-curriculum-v11-humanities.js',
+            'named-curriculum-v11-applied.js'
+          ]) vm.runInContext(fs.readFileSync(`test/Study/assets/${file}`,'utf8'),context);
+          const named=context.window.WIND_NAMED_SYLLABI_V11;
+          if(!named||Object.keys(named).length!==15) throw new Error('named subject count');
+          let namedTotal=0;
+          for(const subject of Object.keys(packs.subjects)){
+            if(!named[subject]) throw new Error(`missing named subject: ${subject}`);
+            for(const stage of Object.keys(packs.stages)){
+              const lessons=named[subject][stage];
+              if(!Array.isArray(lessons)||lessons.length<8) throw new Error(`${subject}/${stage} named lessons too small`);
+              if(new Set(lessons).size!==lessons.length) throw new Error(`${subject}/${stage} duplicate named lesson`);
+              namedTotal+=lessons.length;
+            }
+          }
+          if(namedTotal<800) throw new Error(`named lessons too small: ${namedTotal}`);
+          console.log(`validated ${packs.total} generated units and ${namedTotal} concrete named lessons`);
           NODE
           python - <<'PY'
           import json
@@ -67,13 +93,20 @@ jobs:
           assert any(item["source"] == "Wikimedia" for item in data["items"])
           PY
       - run: |
-          grep -q '春眠不觉晓' test/Study/assets/learning-v6.js
-          grep -q '作者思路' test/Study/assets/learning-v6.js
-          grep -q '主动回忆' test/Study/assets/guided-v9-session.js
-          grep -q '课程地图' test/Study/assets/guided-v9-ui.js
-          grep -q 'content-packs-v10.js' test/Study/assets/bootstrap-v6.js
-          grep -q '在线搜索开放资源' test/Study/assets/content-hub-v10.js
-          grep -q 'data-page="library"' test/Study/library.html
+          grep -Fq '春眠不觉晓' test/Study/assets/learning-v6.js
+          grep -Fq '作者思路' test/Study/assets/learning-v6.js
+          grep -Fq '主动回忆' test/Study/assets/guided-v9-session.js
+          grep -Fq '课程地图' test/Study/assets/guided-v9-ui.js
+          grep -Fq 'content-packs-v10.js' test/Study/assets/bootstrap-v6.js
+          grep -Fq 'named-curriculum-v11-languages.js' test/Study/assets/bootstrap-v6.js
+          grep -Fq '《春晓》：声音、花落与惜春' test/Study/assets/named-curriculum-v11-languages.js
+          grep -Fq '20 以内进位加法：凑十法' test/Study/assets/named-curriculum-v11-eastasia.js
+          grep -Fq '欧姆定律 U=IR' test/Study/assets/named-curriculum-v11-sciences.js
+          grep -Fq '秦统一与中央集权' test/Study/assets/named-curriculum-v11-humanities.js
+          grep -Fq 'Python 变量、输入和输出' test/Study/assets/named-curriculum-v11-applied.js
+          grep -Fq '一步一步掌握' test/Study/assets/named-curriculum-v11.js
+          grep -Fq '在线搜索开放资源' test/Study/assets/content-hub-v10.js
+          grep -Fq 'data-page="library"' test/Study/library.html
       - run: |
           if [ -d test/Study/assets/audio/cantonese/tea-restaurant ]; then
             test "$(find test/Study/assets/audio/cantonese/tea-restaurant -name '*.mp3' -size +2k | wc -l)" -eq 5
@@ -89,37 +122,41 @@ jobs:
           sleep 2
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$BROWSER"
-          mkdir -p /tmp/study-v10
+          mkdir -p /tmp/study-v11
           render() {
             page="$1"
             output="$2"
-            timeout 65s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=30000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
-            ! grep -q '页面加载失败' "$output"
+            timeout 75s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=34000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
+            ! grep -Fq '页面加载失败' "$output"
           }
-          render 'index.html' /tmp/study-v10/home.html
-          render 'library.html' /tmp/study-v10/library.html
-          render 'chinese.html?stage=primary' /tmp/study-v10/chinese.html
-          render 'math.html?stage=junior' /tmp/study-v10/math.html
-          render 'japanese.html?stage=primary' /tmp/study-v10/japanese.html
-          render 'course.html?subject=science&stage=primary' /tmp/study-v10/science.html
+          render 'index.html' /tmp/study-v11/home.html
+          render 'library.html' /tmp/study-v11/library.html
+          render 'chinese.html?stage=primary' /tmp/study-v11/chinese.html
+          render 'math.html?stage=primary' /tmp/study-v11/math.html
+          render 'japanese.html?stage=primary' /tmp/study-v11/japanese.html
+          render 'course.html?subject=science&stage=primary' /tmp/study-v11/science.html
+          render 'course.html?subject=computing&stage=junior' /tmp/study-v11/computing.html
           check_dom() {
             file="$1"
             pattern="$2"
             label="$3"
-            if ! grep -q "$pattern" "$file"; then
+            if ! grep -Fq "$pattern" "$file"; then
               echo "::error title=Study browser check failed::$label missing: $pattern"
               echo "--- $label markers ---"
-              grep -oE 'id="[^"]+"|在线搜索开放资源|扩展课程包|结构化学习单元|课程地图' "$file" | tail -n 80 || true
+              grep -oE 'id="[^"]+"|课程地图|一步一步掌握|《春晓》|进位加法|控制变量|Python 变量|v11-replaced' "$file" | tail -n 100 || true
               exit 1
             fi
             echo "PASS: $label -> $pattern"
           }
-          check_dom /tmp/study-v10/home.html 'v10-home-library' 'home library'
-          check_dom /tmp/study-v10/home.html '1,800 个结构化学习单元' 'home count'
-          check_dom /tmp/study-v10/library.html 'v10-library-root' 'library root'
-          check_dom /tmp/study-v10/library.html '在线搜索开放资源' 'library live search'
-          check_dom /tmp/study-v10/chinese.html 'v10-course-library' 'Chinese course pack'
-          check_dom /tmp/study-v10/math.html '扩展课程包' 'math course pack'
-          check_dom /tmp/study-v10/japanese.html 'guided-path-v9' 'Japanese guided path'
-          check_dom /tmp/study-v10/science.html 'v10-course-library' 'science course pack'
+          check_dom /tmp/study-v11/home.html 'v10-home-library' 'home library'
+          check_dom /tmp/study-v11/home.html '1,800 个结构化学习单元' 'home count'
+          check_dom /tmp/study-v11/library.html 'v10-library-root' 'library root'
+          check_dom /tmp/study-v11/library.html '在线搜索开放资源' 'library live search'
+          check_dom /tmp/study-v11/chinese.html 'v11-course-map' 'Chinese concrete map'
+          check_dom /tmp/study-v11/chinese.html '《春晓》：声音、花落与惜春' 'Chinese named lesson'
+          check_dom /tmp/study-v11/chinese.html 'v11-replaced' 'old generic map hidden'
+          check_dom /tmp/study-v11/math.html '20 以内进位加法：凑十法' 'math concrete lesson'
+          check_dom /tmp/study-v11/japanese.html '五十音总复习' 'Japanese concrete lesson'
+          check_dom /tmp/study-v11/science.html '控制变量：光照会影响种子发芽吗' 'science concrete lesson'
+          check_dom /tmp/study-v11/computing.html 'Python 变量、输入和输出' 'computing concrete lesson'
           kill "$(cat /tmp/study-server.pid)"
