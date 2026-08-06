@@ -39,11 +39,22 @@ const ensureList=(items,count,title,subject,kind)=>{
 };
 api.build=(subject,stage,title,index=0)=>{
  const lesson=original(subject,stage,title,index);
- if(subject==='cantonese'&&title.includes('茶餐厅点餐')){
-  lesson.material='茶餐廳完整對話：\n顧客：唔該，我想要一個菠蘿油同一杯凍檸茶。\n店員：凍檸茶要少甜定正常甜？\n顧客：少甜，唔該。請問一共幾多錢？\n店員：四十二蚊，多謝。\n顧客：唔該晒。\n\n學習任務：先用內置粵語音頻聽完整對話，再標出關鍵粵拼、六聲、量詞和禮貌用語，最後替換飲品、甜度與數量完成新對話。';
-  lesson.audioLanguage='cantonese';
- }
  const advice=subjectAdvice[subject]||'使用明确材料、步骤和证据完成本课，并检查结果。';
+ if(subject==='cantonese'&&/茶餐厅点餐/.test(title)){
+  lesson.material=`真实粤语点餐对话：\n店员：早晨，想食啲咩？\n顾客：唔该，我要一个菠萝油，同一杯冻奶茶，少甜。\n店员：菠萝油要唔要加热？奶茶要唔要走冰？\n顾客：菠萝油加热，奶茶少冰，唔该。\n店员：好，一共三十八蚊。\n顾客：唔该，畀你。\n重点词语：菠萝油、冻奶茶、少甜、少冰、加热、埋单。\n粤拼提示：唔该 m4 goi1；菠萝油 bo1 lo4 jau4；冻奶茶 dung3 naai5 caa4；几多钱 gei2 do1 cin2。`;
+  lesson.workedExamples=[
+   {title:'完整点餐示范',body:'先用“唔该，我要……”提出食品和饮品，再补充“少甜、少冰、加热”等要求；店员复述订单后，顾客确认并询问价钱。整个对话保持粤语语音、粤拼声调和自然礼貌。'},
+   {title:'替换练习',body:'把菠萝油替换成餐蛋治，把冻奶茶替换成热柠茶：唔该，我要一份餐蛋治，同一杯热柠茶，柠茶少甜。完成后再交换角色，练习店员确认订单。'},
+   ...(Array.isArray(lesson.workedExamples)?lesson.workedExamples:[])
+  ];
+  lesson.practice=[
+   {q:'在茶餐厅怎样礼貌点一个菠萝油和一杯冻奶茶？',a:'可以说：“唔该，我要一个菠萝油，同一杯冻奶茶，少甜。”回答要包含礼貌语、食品、饮品和具体要求。',level:'基础'},
+   {q:'店员问“要唔要走冰”是什么意思？',a:'意思是询问是否不要冰块。“走冰”表示不加冰；“少冰”表示减少冰块，两个要求不能混淆。',level:'理解'},
+   {q:'把订单改成餐蛋治、热柠茶和少甜。',a:'可以说：“唔该，我要一份餐蛋治，同一杯热柠茶，柠茶少甜。”并等待店员复述确认。',level:'应用'},
+   {q:'设计一段包含点餐、修改要求、确认价钱和付款的完整对话。',a:'对话至少应出现“唔该”“我要”“少甜或少冰”“几多钱”“畀你”等表达，并保持角色回应自然连贯。',level:'提升'},
+   ...(Array.isArray(lesson.practice)?lesson.practice:[])
+  ];
+ }
  lesson.overview=minText(lesson.overview,55,`本课围绕“${title}”形成从理解、示范到独立应用和复习的完整闭环。`);
  lesson.material=minText(lesson.material,120,`学习材料必须直接服务“${title}”：先标出对象、条件和目标，再找出决定结论的关键词、数据、公式、语法或史料。${advice}`);
  lesson.objectives=ensureList(lesson.objectives,3,title,subject,'学习目标');
