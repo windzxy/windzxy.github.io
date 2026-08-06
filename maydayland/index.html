@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#050912">
   <meta name="description" content="Maydayland 五月天巡演地圖、時光唱片室、歌曲、書籍與歷程檔案。">
   <title>Maydayland · 五月天巡演地圖與時光唱片室</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=22.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=22.0.0">
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=23.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=23.0.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="./app-v15.css?v=15.0.0">
   <link rel="stylesheet" href="./app-v16.css?v=16.0.0">
@@ -16,13 +16,14 @@
   <link rel="stylesheet" href="./app-v19.css?v=19.0.0">
   <link rel="stylesheet" href="./app-v20.css?v=20.0.0">
   <link rel="stylesheet" href="./app-v22.css?v=22.0.0">
+  <link rel="stylesheet" href="./app-v23.css?v=23.0.0">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
   <div class="md-app">
     <header class="topbar glass">
       <a class="brand" href="#tour" data-nav="tour" aria-label="Maydayland 首頁">
-        <span class="logo-orbit"><img src="./mayday-logo.svg?v=22.0.0" alt="Mayday"></span>
+        <span class="logo-orbit"><img src="./mayday-logo.svg?v=23.0.0" alt="Mayday"></span>
         <span><b>MAYDAYLAND</b><small>WORLD TOUR ARCHIVE</small></span>
       </a>
       <nav class="main-nav" aria-label="內容導航">
@@ -39,16 +40,16 @@
     <main class="views">
       <section class="view active" id="tour" aria-label="巡演地圖">
         <aside class="tour-rail glass">
-          <div class="section-kicker">MAYDAY TRACKER</div>
-          <h1>Mayday Tracker：用地圖追蹤每座城市的巡演熱度</h1>
-          <p>v22 參考 Zoom Earth 的熱度圖與 Tracker 式主界面：城市到訪越多次，光斑越大、顏色越深；所有分頁從地圖追蹤器展開。</p>
+          <div class="section-kicker">TOUR STAGES</div>
+          <h1>把每一輪巡演，做成可以走進去的世界</h1>
+          <p>v23 進入全站產品級重構：地圖、巡演、唱片室、歌曲、書籍、歷程、播放器都從 demo 升級為可繼續擴充的正式資料館架構。</p>
           <div class="tour-list" id="tourList"></div>
           <button class="wide-btn" data-nav="timeline">查看完整時間軸</button>
         </aside>
 
         <section class="tour-stage glass">
           <div class="stage-head">
-            <div><div class="section-kicker">HEAT TRACKING MAP</div><h2 id="mapTitle">回到那一天 · 巡演熱度追蹤地圖</h2></div>
+            <div><div class="section-kicker">REAL WEB MAP</div><h2 id="mapTitle">回到那一天 · 真實 Web 地圖路線</h2></div>
             <div class="mode-pills"><button class="active" id="modeFlat">街道地圖</button><button id="modeAlbum">深色地圖</button><button id="routePlay">路線播放</button></div>
           </div>
           <div class="map-scene" id="mapScene">
@@ -72,17 +73,17 @@
       </section>
 
       <section class="view" id="albums" aria-label="時光唱片室">
-        <div class="room-view glass"><aside class="room-left"><div class="section-kicker">THE ROOM WHERE SONGS REMAIN</div><h2>五月天時光唱片室</h2><p>v20 將唱片室改為正式資料館：年代、唱片、曲目、關聯巡演與海外入口一起整理。</p><div class="era-filter" id="eraFilter"></div><div class="turntable-card"><div class="turntable"><i></i></div><span><b id="needleTitle">知足 最真傑作選</b><small id="needleYear">2005 · 珍藏精選</small></span></div></aside><main class="shelf-room"><div class="lamp"></div><h3 id="shelfTitle">1999–2026 唱片收藏木架</h3><div class="album-shelf" id="albumShelf"></div></main><aside class="album-detail glass" id="albumDetail"></aside></div>
+        <div class="room-view glass"><aside class="room-left"><div class="section-kicker">THE ROOM WHERE SONGS REMAIN</div><h2>五月天時光唱片室</h2><p>v23 將唱片室改為正式資料館：年代、唱片、曲目、關聯巡演與海外入口一起整理。</p><div class="era-filter" id="eraFilter"></div><div class="turntable-card"><div class="turntable"><i></i></div><span><b id="needleTitle">知足 最真傑作選</b><small id="needleYear">2005 · 珍藏精選</small></span></div></aside><main class="shelf-room"><div class="lamp"></div><h3 id="shelfTitle">1999–2026 唱片收藏木架</h3><div class="album-shelf" id="albumShelf"></div></main><aside class="album-detail glass" id="albumDetail"></aside></div>
       </section>
-      <section class="view" id="songs" aria-label="歌曲宇宙"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">MAYDAY COMPLETE LIBRARY</div><h2>歌曲與歌單宇宙</h2><p>v20 改成完整音樂資料館：現場、青春、世界觀、慢歌全部有隊列與播放器入口。</p></div><button class="mini-action" id="randomPlaylist">隨機歌單</button></div><div class="playlist-grid" id="playlistGrid"></div></div></section>
-      <section class="view" id="books" aria-label="書籍出版"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">BOOKS & PUBLICATIONS</div><h2>書籍與出版品</h2><p>v20 補成資料館書架：書籍、樂譜、成員文集與巡演場刊週邊都可擴充。</p></div></div><div class="bookcase" id="bookcase"></div></div></section>
-      <section class="view" id="timeline" aria-label="歷程"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">MAYDAY MEMORY TIMELINE</div><h2>歷程與大事記</h2><p>v20 將時間線升級為展覽牆，連接作品、巡演、城市與網站內容模組。</p></div></div><div class="timeline-wall" id="timelineWall"></div></div></section>
+      <section class="view" id="songs" aria-label="歌曲宇宙"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">MAYDAY COMPLETE LIBRARY</div><h2>歌曲與歌單宇宙</h2><p>v23 改成完整音樂資料館：現場、青春、世界觀、慢歌全部有隊列與播放器入口。</p></div><button class="mini-action" id="randomPlaylist">隨機歌單</button></div><div class="playlist-grid" id="playlistGrid"></div></div></section>
+      <section class="view" id="books" aria-label="書籍出版"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">BOOKS & PUBLICATIONS</div><h2>書籍與出版品</h2><p>v23 補成資料館書架：書籍、樂譜、成員文集與巡演場刊週邊都可擴充。</p></div></div><div class="bookcase" id="bookcase"></div></div></section>
+      <section class="view" id="timeline" aria-label="歷程"><div class="library-page glass"><div class="page-head"><div><div class="section-kicker">MAYDAY MEMORY TIMELINE</div><h2>歷程與大事記</h2><p>v23 將時間線升級為展覽牆，連接作品、巡演、城市與網站內容模組。</p></div></div><div class="timeline-wall" id="timelineWall"></div></div></section>
     </main>
 
     <footer class="player-dock glass" id="playerDock"><div class="player-progress"><i id="playerProgress"></i></div><button class="now-track" id="openPlayer" aria-label="打開播放器"><span class="cover-mini" id="miniCover"></span><span><small id="miniMode">MAYDAYLAND RADIO</small><b id="miniTitle">倔強 · 現場心跳版</b><em id="miniSub">播放器改成穩定狀態，不再無限載入</em></span></button><div class="control-cluster"><button id="shuffleBtn" aria-label="隨機">⇄</button><button id="prevBtn" aria-label="上一首">‹</button><button class="play-button" id="playBtn" aria-label="播放">▶</button><button id="nextBtn" aria-label="下一首">›</button><button id="repeatBtn" aria-label="循環">↻</button></div><div class="player-side"><button id="queueBtn">≣</button><button id="muteBtn">♬</button></div></footer>
   </div>
 
-  <section class="player-sheet" id="playerSheet" aria-hidden="true"><button class="sheet-close" id="sheetClose">×</button><div class="sheet-inner glass"><span class="cover-large" id="sheetCover"></span><div class="sheet-copy"><div class="section-kicker">RADIO PREVIEW</div><h2 id="sheetTitle">倔強 · 現場心跳版</h2><p id="sheetText">播放條優先保持穩定，不再一直載入不同歌曲。v20 已補完歌單隊列與精緻狀態，正式接回音源前先確保 UI 與控制可靠。</p><div class="scrub"><span id="currentTime">0:00</span><div><i id="sheetProgress"></i></div><span id="durationTime">3:45</span></div><div class="queue" id="queueList"></div></div></div></section>
+  <section class="player-sheet" id="playerSheet" aria-hidden="true"><button class="sheet-close" id="sheetClose">×</button><div class="sheet-inner glass"><span class="cover-large" id="sheetCover"></span><div class="sheet-copy"><div class="section-kicker">RADIO PREVIEW</div><h2 id="sheetTitle">倔強 · 現場心跳版</h2><p id="sheetText">播放條優先保持穩定，不再一直載入不同歌曲。v23 已補完歌單隊列與精緻狀態，正式接回音源前先確保 UI 與控制可靠。</p><div class="scrub"><span id="currentTime">0:00</span><div><i id="sheetProgress"></i></div><span id="durationTime">3:45</span></div><div class="queue" id="queueList"></div></div></div></section>
   <div class="toast" id="toast"></div>
   <script src="./app-v16.js?v=16.0.0" defer></script>
   <script src="./app-v17.js?v=17.0.0" defer></script>
@@ -90,5 +91,6 @@
   <script src="./app-v19.js?v=19.0.0" defer></script>
   <script src="./app-v20.js?v=20.0.0" defer></script>
   <script src="./app-v22.js?v=22.0.0" defer></script>
+  <script src="./app-v23.js?v=23.0.0" defer></script>
 </body>
 </html>
