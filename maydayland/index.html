@@ -6,19 +6,21 @@
   <meta name="theme-color" content="#050912">
   <meta name="description" content="Maydayland 五月天巡演地圖、時光唱片室、歌曲、書籍與歷程檔案。">
   <title>Maydayland · 五月天巡演地圖與時光唱片室</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=18.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=18.0.0">
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=19.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=19.0.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="./app-v15.css?v=15.0.0">
   <link rel="stylesheet" href="./app-v16.css?v=16.0.0">
   <link rel="stylesheet" href="./app-v17.css?v=17.0.0">
   <link rel="stylesheet" href="./app-v18.css?v=18.0.0">
+  <link rel="stylesheet" href="./app-v19.css?v=19.0.0">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
   <div class="md-app">
     <header class="topbar glass">
       <a class="brand" href="#tour" data-nav="tour" aria-label="Maydayland 首頁">
-        <span class="logo-orbit"><img src="./mayday-logo.svg?v=18.0.0" alt="Mayday"></span>
+        <span class="logo-orbit"><img src="./mayday-logo.svg?v=19.0.0" alt="Mayday"></span>
         <span><b>MAYDAYLAND</b><small>WORLD TOUR ARCHIVE</small></span>
       </a>
       <nav class="main-nav" aria-label="內容導航">
@@ -37,15 +39,15 @@
         <aside class="tour-rail glass">
           <div class="section-kicker">TOUR STAGES</div>
           <h1>把每一輪巡演，做成可以走進去的世界</h1>
-          <p>v17 進入內容補完階段：巡演按年份、城市、場館、官方來源與待補資料拆開，不再是 demo 卡片。</p>
+          <p>v19 已把地圖改成類似 Google / Bing 的真實瓦片地圖：可拖曳、縮放、切換街道/深色/衛星圖層，城市節點與右側詳情同步。</p>
           <div class="tour-list" id="tourList"></div>
           <button class="wide-btn" data-nav="timeline">查看完整時間軸</button>
         </aside>
 
         <section class="tour-stage glass">
           <div class="stage-head">
-            <div><div class="section-kicker">ADMIN ROUTE MAP</div><h2 id="mapTitle">回到那一天 · 行政區巡演路線</h2></div>
-            <div class="mode-pills"><button class="active" id="modeFlat">行政區地圖</button><button id="modeAlbum">地標相簿</button><button id="routePlay">路線播放</button></div>
+            <div><div class="section-kicker">REAL WEB MAP</div><h2 id="mapTitle">回到那一天 · 真實 Web 地圖路線</h2></div>
+            <div class="mode-pills"><button class="active" id="modeFlat">街道地圖</button><button id="modeAlbum">深色地圖</button><button id="routePlay">路線播放</button></div>
           </div>
           <div class="map-scene" id="mapScene">
             <div class="map-aurora"></div><div class="world-grid"></div>
@@ -82,5 +84,7 @@
   <div class="toast" id="toast"></div>
   <script src="./app-v16.js?v=16.0.0" defer></script>
   <script src="./app-v17.js?v=17.0.0" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="./app-v19.js?v=19.0.0" defer></script>
 </body>
 </html>
