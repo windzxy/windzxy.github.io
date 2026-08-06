@@ -21,7 +21,7 @@ const subjectAdvice={
 };
 const minText=(value,min,suffix)=>{
  let text=String(value??'').trim();
- while(text.length<min)text+=`${text?' ':'')}${suffix}`;
+ while(text.length<min)text+=`${text?' ':''}${suffix}`;
  return text;
 };
 const ensureBlocks=(items,count,title,subject,kind)=>{
@@ -44,7 +44,7 @@ api.build=(subject,stage,title,index=0)=>{
  lesson.material=minText(lesson.material,120,`学习材料必须直接服务“${title}”：先标出对象、条件和目标，再找出决定结论的关键词、数据、公式、语法或史料。${advice}`);
  lesson.objectives=ensureList(lesson.objectives,3,title,subject,'学习目标');
  lesson.explanation=ensureBlocks(lesson.explanation,3,title,subject,'分层讲解');
- lesson.workedExamples=ensureBlocks(lesson.workedExamples,2,title,subject,'完整示例').map((item,index)=>({
+ lesson.workedExamples=ensureBlocks(lesson.workedExamples,2,title,subject,'完整示例').map(item=>({
   ...item,
   body:minText(item.body,95,`请逐步重做这个“${title}”示例：写出输入或证据、每一步变化、所用规则、最终结果和至少一种检查方法。${advice}`)
  }));
