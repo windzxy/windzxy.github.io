@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07080b">
-  <meta name="description" content="Wind AICG Visual Lab：原創 AI 視覺作品、策展與生成流程檔案。">
-  <title>Wind AICG · Visual Lab</title>
-  <link rel="stylesheet" href="./assets/styles.css?v=1.0.0">
+  <meta name="description" content="Wind AICG 原創視覺作品集。">
+  <title>Wind AICG</title>
+  <link rel="stylesheet" href="./assets/styles.css?v=1.1.0">
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -14,14 +14,11 @@
   <header class="site-header" id="top">
     <a class="brand" href="#featured" aria-label="Wind AICG 首頁">
       <span class="brand-mark"><i></i><i></i><i></i></span>
-      <span><b>WIND AICG</b><small>VISUAL LAB</small></span>
+      <span><b>WIND AICG</b><small>VISUAL GALLERY</small></span>
     </a>
     <nav class="main-nav" aria-label="主導航">
       <a href="#featured" data-i18n="navFeatured">焦點作品</a>
       <a href="#gallery" data-i18n="navGallery">作品集</a>
-      <a href="#process" data-i18n="navProcess">生成流程</a>
-      <a href="#notebook" data-i18n="navNotebook">提示詞筆記</a>
-      <a href="#about" data-i18n="navAbout">關於</a>
     </nav>
     <div class="header-actions">
       <button class="icon-button" id="favoriteJump" type="button" aria-label="查看收藏">
@@ -42,7 +39,7 @@
         <div class="hero-grid" aria-hidden="true"></div>
       </div>
 
-      <aside class="series-rail" aria-label="系列選擇">
+      <aside class="series-rail" aria-label="作品選擇">
         <span class="rail-line"></span>
         <div id="seriesRail"></div>
       </aside>
@@ -51,14 +48,12 @@
         <div class="hero-kicker">
           <span id="heroIndex">01</span>
           <i></i>
-          <span id="heroCategory">CINEMATIC NATURE</span>
+          <span id="heroCategory"></span>
         </div>
-        <h1 id="heroTitle">潮汐之後</h1>
-        <p id="heroDescription">在日落最後一束光消失前，海岸線像一段仍未完成的電影。</p>
+        <h1 id="heroTitle"></h1>
+        <p id="heroDescription"></p>
         <dl class="hero-meta">
-          <div><dt data-i18n="metaDate">發佈</dt><dd id="heroDate">2026.07.28</dd></div>
-          <div><dt data-i18n="metaDirection">視覺方向</dt><dd id="heroDirection">電影感自然</dd></div>
-          <div><dt data-i18n="metaStatus">策展狀態</dt><dd><span class="verified-dot"></span><span data-i18n="curated">已審核</span></dd></div>
+          <div><dt data-i18n="metaDate">發佈</dt><dd id="heroDate"></dd></div>
         </dl>
         <div class="hero-actions">
           <button class="primary-action" id="openHero" type="button">
@@ -83,10 +78,10 @@
     <section class="section gallery-section" id="gallery">
       <div class="section-head">
         <div>
-          <span class="eyebrow">CURATED ARCHIVE / 01</span>
-          <h2 data-i18n="galleryTitle">作品不是堆疊，而是策展</h2>
+          <span class="eyebrow">ORIGINAL WORKS</span>
+          <h2 data-i18n="galleryTitle">視覺作品集</h2>
         </div>
-        <p data-i18n="galleryIntro">每張作品都保留視覺方向、生成批次與審核狀態。網站只展示通過技術、安全與美學評估的版本。</p>
+        <p data-i18n="galleryIntro">持續更新的原創視覺作品。</p>
       </div>
       <div class="filter-row" id="filterRow" aria-label="作品分類"></div>
       <div class="gallery-grid" id="galleryGrid" aria-live="polite"></div>
@@ -94,82 +89,11 @@
         <span>◌</span><p data-i18n="emptyFavorites">目前還沒有收藏作品。</p>
       </div>
     </section>
-
-    <section class="section process-section" id="process">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow">EDITORIAL PIPELINE / 02</span>
-          <h2 data-i18n="processTitle">把 AICG 當成完整的視覺製作流程</h2>
-        </div>
-        <p data-i18n="processIntro">不是「輸入一句話、輸出一張圖」。真正穩定的品質來自藝術方向、變體比較、機器審核與人工策展標準。</p>
-      </div>
-      <div class="process-track">
-        <article>
-          <span>01</span><i></i>
-          <h3 data-i18n="step1Title">藝術方向</h3>
-          <p data-i18n="step1Text">先定義情緒、鏡頭、色彩、光線、主體與負面限制，避免隨機抽卡式生成。</p>
-        </article>
-        <article>
-          <span>02</span><i></i>
-          <h3 data-i18n="step2Title">批次生成</h3>
-          <p data-i18n="step2Text">同一方向生成多個候選，控制題材重複率，並維持每批視覺差異。</p>
-        </article>
-        <article>
-          <span>03</span><i></i>
-          <h3 data-i18n="step3Title">雙重審核</h3>
-          <p data-i18n="step3Text">先做尺寸、解碼與安全檢查，再由視覺模型評估構圖、細節、原創性風險與桌布適用性。</p>
-        </article>
-        <article>
-          <span>04</span><i></i>
-          <h3 data-i18n="step4Title">策展發佈</h3>
-          <p data-i18n="step4Text">只發布達標作品，輸出 WebP、縮略圖、描述與完整批次紀錄，交由 GitHub Pages 靜態展示。</p>
-        </article>
-      </div>
-      <div class="pipeline-status">
-        <div>
-          <span class="live-pulse"></span>
-          <p><b data-i18n="pipelineName">自動策展管線</b><small data-i18n="pipelineSchedule">每週二、週五定時執行 · GitHub Actions</small></p>
-        </div>
-        <div class="status-metrics">
-          <span><b id="publishedMetric">10</b><small data-i18n="publishedWorks">已發佈作品</small></span>
-          <span><b>3</b><small data-i18n="reviewGates">審核關卡</small></span>
-          <span><b>100%</b><small data-i18n="staticSite">靜態網站</small></span>
-        </div>
-      </div>
-    </section>
-
-    <section class="section notebook-section" id="notebook">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow">PROMPT NOTEBOOK / 03</span>
-          <h2 data-i18n="notebookTitle">公開思考方法，不公開複製公式</h2>
-        </div>
-        <p data-i18n="notebookIntro">筆記展示的是可遷移的視覺決策框架：如何描述鏡頭、節奏、材質與光線，而不是模仿特定畫師或現有作品。</p>
-      </div>
-      <div class="notebook-grid" id="notebookGrid"></div>
-    </section>
-
-    <section class="section about-section" id="about">
-      <div class="about-visual">
-        <div class="orbital"><i></i><i></i><i></i><b>AI</b></div>
-      </div>
-      <div class="about-copy">
-        <span class="eyebrow">MANIFESTO / 04</span>
-        <h2 data-i18n="aboutTitle">AI 是製作能力，審美才是作者性</h2>
-        <p data-i18n="aboutText">Wind AICG Visual Lab 是一個只依賴 GitHub Pages 的原創視覺檔案館。生成在後台定時完成，前台不暴露任何 API 金鑰；每一批作品都要經過品質、安全與原創風險檢查。</p>
-        <div class="principles">
-          <span data-i18n="principle1">不複製受保護 IP</span>
-          <span data-i18n="principle2">不模仿特定在世藝術家</span>
-          <span data-i18n="principle3">保留生成與審核紀錄</span>
-          <span data-i18n="principle4">優先作品品質而非數量</span>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="site-footer">
-    <a class="brand compact" href="#top"><span class="brand-mark"><i></i><i></i><i></i></span><span><b>WIND AICG</b><small>VISUAL LAB</small></span></a>
-    <p>Original AI-assisted visual direction and curation · Hosted on GitHub Pages</p>
+    <a class="brand compact" href="#top"><span class="brand-mark"><i></i><i></i><i></i></span><span><b>WIND AICG</b><small>VISUAL GALLERY</small></span></a>
+    <p>Original visual works</p>
     <span id="currentYear"></span>
   </footer>
 
@@ -181,14 +105,12 @@
       <h2 id="lightboxTitle"></h2>
       <p id="lightboxDescription"></p>
       <dl>
-        <div><dt data-i18n="metaDirection">視覺方向</dt><dd id="lightboxDirection"></dd></div>
         <div><dt data-i18n="metaDate">發佈</dt><dd id="lightboxDate"></dd></div>
-        <div><dt data-i18n="reviewScore">審核評分</dt><dd id="lightboxScore"></dd></div>
       </dl>
       <button class="primary-action" id="lightboxFavorite" type="button"><span class="heart">♡</span><span data-i18n="favorite">收藏</span></button>
     </aside>
   </dialog>
 
-  <script src="./assets/app.js?v=1.0.0" defer></script>
+  <script src="./assets/app.js?v=1.1.0" defer></script>
 </body>
 </html>
