@@ -115,7 +115,7 @@ jobs:
             echo "PASS: $label -> $pattern"
           }
           check_dom /tmp/study-v10/home.html 'v10-home-library' 'home library'
-          check_dom /tmp/study-v10/home.html '1800 个结构化学习单元' 'home count'
+          check_dom /tmp/study-v10/home.html '1,800 个结构化学习单元' 'home count'
           check_dom /tmp/study-v10/library.html 'v10-library-root' 'library root'
           check_dom /tmp/study-v10/library.html '在线搜索开放资源' 'library live search'
           check_dom /tmp/study-v10/chinese.html 'v10-course-library' 'Chinese course pack'
