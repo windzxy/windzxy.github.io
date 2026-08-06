@@ -1,9 +1,9 @@
 name: Deploy Windzxy Pages
 
-# GitHub Pages is already publishing this repository through the native
-# pages build and deployment flow. Keep this workflow manual-only to avoid
-# duplicate deploy jobs fighting for the same Pages environment on every push.
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
 
 permissions:
