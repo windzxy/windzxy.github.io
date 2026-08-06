@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Astra Gallery">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#171A25"/>
+      <stop offset="1" stop-color="#080A10"/>
+    </linearGradient>
+    <linearGradient id="orbit" x1="8" y1="44" x2="56" y2="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8A68FF"/>
+      <stop offset="1" stop-color="#D7B7FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="62" height="62" rx="18" fill="url(#bg)" stroke="#2B3040" stroke-width="2"/>
+  <path d="M18.5 45 31.6 15.5a1.2 1.2 0 0 1 2.2 0L47 45h-7.3l-2.9-7H28.4l2.5-5.8h3.4L32.7 28l-7.4 17H18.5Z" fill="#F8F7FB"/>
+  <path d="M10.5 38.5c7.2 4.9 18.1 6.1 28.9 3.1 8.1-2.2 13.3-6.1 14.9-10.1" fill="none" stroke="url(#orbit)" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="m49.5 16.5 1.7 4.2 4.3 1.7-4.3 1.7-1.7 4.2-1.7-4.2-4.3-1.7 4.3-1.7 1.7-4.2Z" fill="#D7B7FF"/>
+</svg>
