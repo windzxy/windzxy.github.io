@@ -33,10 +33,11 @@ jobs:
             content-packs-v10.js content-hub-v10.js \
             named-curriculum-v11-languages.js named-curriculum-v11-eastasia.js \
             named-curriculum-v11-sciences.js named-curriculum-v11-humanities.js \
-            named-curriculum-v11-applied.js named-curriculum-v11-normalize.js named-curriculum-v11.js \
+            named-curriculum-v11-applied.js named-curriculum-v11-normalize.js \
+            named-curriculum-v13-humanities-learning.js named-curriculum-v11.js \
             detailed-v12-base.js detailed-v12-chinese.js detailed-v12-math.js detailed-v12-languages.js \
             detailed-v12-sciences.js detailed-v12-humanities.js detailed-v12-applied.js \
-            detailed-v12-quality.js detailed-v12-ui.js \
+            detailed-v13-humanities-learning.js detailed-v12-quality.js detailed-v12-ui.js \
             audio-v7.js east-asian-audio-v8.js east-asian-lessons-v8.js more-courses-v8.js
           do
             node --check "test/Study/assets/$file"
@@ -57,9 +58,11 @@ jobs:
             'named-curriculum-v11-languages.js','named-curriculum-v11-eastasia.js',
             'named-curriculum-v11-sciences.js','named-curriculum-v11-humanities.js',
             'named-curriculum-v11-applied.js','named-curriculum-v11-normalize.js',
+            'named-curriculum-v13-humanities-learning.js',
             'detailed-v12-base.js','detailed-v12-chinese.js','detailed-v12-math.js',
             'detailed-v12-languages.js','detailed-v12-sciences.js',
-            'detailed-v12-humanities.js','detailed-v12-applied.js','detailed-v12-quality.js'
+            'detailed-v12-humanities.js','detailed-v12-applied.js',
+            'detailed-v13-humanities-learning.js','detailed-v12-quality.js'
           ]) run(file);
           const packs=context.window.WIND_CONTENT_PACKS_V10;
           const named=context.window.WIND_NAMED_SYLLABI_V11;
@@ -91,7 +94,7 @@ jobs:
               });
             }
           }
-          if(total<850)errors.push(`total detailed lessons ${total}`);
+          if(total<900)errors.push(`total detailed lessons ${total}`);
           const sample=(subject,needle,expected)=>{
             for(const [stage,titles] of Object.entries(named[subject])){
               const index=titles.findIndex(title=>title.includes(needle));
@@ -105,6 +108,8 @@ jobs:
             errors.push(`${subject}/${needle}: sample title missing`);
           };
           sample('chinese','春晓','春眠不觉晓');
+          sample('chinese','雨夜车站','装着药和地址的纸袋');
+          sample('chinese','一封迟到的信','窗外传来锯树声');
           sample('math','20 以内进位加法','8＋7');
           sample('english','At the Supermarket','How much');
           sample('cantonese','茶餐厅点餐','菠萝油');
@@ -115,10 +120,13 @@ jobs:
           sample('chemistry','酸、碱、盐','pH');
           sample('biology','孟德尔遗传','Aa×Aa');
           sample('history','秦统一','公元前221');
+          sample('history','长安西市','波斯商人');
           sample('geography','比例尺','1:20000');
+          sample('geography','一滴水的旅程','雪山冰川');
           sample('computing','Python 变量','input');
           sample('finance','月度预算','3000');
           sample('logic','相关不等于因果','咖啡');
+          sample('logic','谁动了班费','转账记录');
           if(errors.length){console.error(errors.slice(0,100).join('\n'));throw new Error(`${errors.length} validation errors`)}
           console.log(`Validated ${total} fully detailed named courses across ${subjects.length} subjects and ${stages.length} stages.`);
           NODE
@@ -150,7 +158,7 @@ jobs:
           sleep 2
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$BROWSER"
-          mkdir -p /tmp/study-v12
+          mkdir -p /tmp/study-v13
           render(){
             page="$1"; output="$2"; expected="$3"
             echo "Rendering: $page"
@@ -168,18 +176,22 @@ jobs:
             fi
             echo "PASS: $page"
           }
-          render 'chinese.html?stage=primary' /tmp/study-v12/chinese.html '《春晓》：声音、花落与惜春'
-          render 'math.html?stage=primary' /tmp/study-v12/math.html '20 以内进位加法：凑十法'
-          render 'english.html?stage=primary' /tmp/study-v12/english.html 'Unit 6 At the Supermarket'
-          render 'cantonese.html?stage=primary' /tmp/study-v12/cantonese.html '茶餐厅点餐'
-          render 'japanese.html?stage=primary' /tmp/study-v12/japanese.html 'いくらですか'
-          render 'korean.html?stage=primary' /tmp/study-v12/korean.html '餐厅点餐'
-          render 'course.html?subject=science&stage=primary' /tmp/study-v12/science.html '控制变量：光照会影响种子发芽吗'
-          render 'course.html?subject=physics&stage=junior' /tmp/study-v12/physics.html '欧姆定律 U=IR'
-          render 'course.html?subject=chemistry&stage=junior' /tmp/study-v12/chemistry.html '酸、碱、盐与指示剂'
-          render 'course.html?subject=biology&stage=junior' /tmp/study-v12/biology.html '孟德尔遗传与概率'
-          render 'course.html?subject=history&stage=primary' /tmp/study-v12/history.html '秦统一与中央集权'
-          render 'course.html?subject=geography&stage=primary' /tmp/study-v12/geography.html '地图上的方向、图例和比例尺'
-          render 'course.html?subject=computing&stage=junior' /tmp/study-v12/computing.html 'Python 变量、输入和输出'
-          render 'course.html?subject=finance&stage=primary' /tmp/study-v12/finance.html '制作个人月度预算'
-          render 'course.html?subject=logic&stage=primary' /tmp/study-v12/logic.html '相关不等于因果'
+          render 'chinese.html?stage=primary' /tmp/study-v13/chinese.html '《春晓》：声音、花落与惜春'
+          render 'chinese.html?stage=advanced' /tmp/study-v13/chinese-advanced.html '原创短剧《一封迟到的信》'
+          render 'math.html?stage=primary' /tmp/study-v13/math.html '20 以内进位加法：凑十法'
+          render 'english.html?stage=primary' /tmp/study-v13/english.html 'Unit 6 At the Supermarket'
+          render 'cantonese.html?stage=primary' /tmp/study-v13/cantonese.html '茶餐厅点餐'
+          render 'japanese.html?stage=primary' /tmp/study-v13/japanese.html 'いくらですか'
+          render 'korean.html?stage=primary' /tmp/study-v13/korean.html '餐厅点餐'
+          render 'course.html?subject=science&stage=primary' /tmp/study-v13/science.html '控制变量：光照会影响种子发芽吗'
+          render 'course.html?subject=physics&stage=junior' /tmp/study-v13/physics.html '欧姆定律 U=IR'
+          render 'course.html?subject=chemistry&stage=junior' /tmp/study-v13/chemistry.html '酸、碱、盐与指示剂'
+          render 'course.html?subject=biology&stage=junior' /tmp/study-v13/biology.html '孟德尔遗传与概率'
+          render 'course.html?subject=history&stage=primary' /tmp/study-v13/history.html '秦统一与中央集权'
+          render 'course.html?subject=history&stage=advanced' /tmp/study-v13/history-advanced.html '历史短剧《长安西市的一天》'
+          render 'course.html?subject=geography&stage=primary' /tmp/study-v13/geography.html '地图上的方向、图例和比例尺'
+          render 'course.html?subject=geography&stage=advanced' /tmp/study-v13/geography-advanced.html '一滴水的旅程'
+          render 'course.html?subject=computing&stage=junior' /tmp/study-v13/computing.html 'Python 变量、输入和输出'
+          render 'course.html?subject=finance&stage=primary' /tmp/study-v13/finance.html '制作个人月度预算'
+          render 'course.html?subject=logic&stage=primary' /tmp/study-v13/logic.html '相关不等于因果'
+          render 'course.html?subject=logic&stage=advanced' /tmp/study-v13/logic-advanced.html '短剧《谁动了班费》'
