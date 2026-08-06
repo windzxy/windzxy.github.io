@@ -1,0 +1,73 @@
+name: Astra Staging Assemble
+
+on:
+  push:
+    branches:
+      - "agent/astra-batch-*"
+    paths:
+      - "AICG/.staging/**/.assemble-ready"
+
+permissions:
+  contents: write
+
+jobs:
+  assemble-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install image validator
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+
+      - name: Assemble and validate staged base64
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          import io
+          import json
+          import re
+          from pathlib import Path
+          from PIL import Image
+
+          roots = sorted(Path("AICG/.staging").glob("*/.assemble-ready"))
+          if not roots:
+              raise SystemExit("No Astra assemble marker found")
+          for marker in roots:
+              batch_dir = marker.parent
+              manifest = json.loads((batch_dir / "batch.json").read_text(encoding="utf-8"))
+              for work in manifest["works"]:
+                  target = batch_dir / work["source"]
+                  parts = sorted(batch_dir.glob(target.name + ".part-*"))
+                  if not parts:
+                      raise RuntimeError(f"No parts found for {target}")
+                  joined = "".join(part.read_text(encoding="ascii").strip() for part in parts)
+                  payload = base64.b64decode(re.sub(r"\s+", "", joined), validate=True)
+                  with Image.open(io.BytesIO(payload)) as probe:
+                      probe.verify()
+                  with Image.open(io.BytesIO(payload)) as image:
+                      image.load()
+                      if image.width < 1600 or image.height < 900 or image.width <= image.height:
+                          raise RuntimeError(f"Invalid staged image dimensions for {target}: {image.size}")
+                  target.write_text(joined, encoding="ascii")
+                  for part in parts:
+                      part.unlink()
+              marker.unlink()
+          PY
+
+      - name: Commit assembled staging files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add AICG/.staging
+          git commit -m "Assemble Astra Gallery staging payloads"
+          git push origin HEAD
