@@ -1,21 +1,64 @@
 (() => {
   const sessionKey = "astra-gallery-mature-session";
+  const carouselDelay = 7000;
   const isMatureWork = work => ["16+", "18+"].includes(String(work?.rating || "").toLowerCase());
   const normalWorks = () => (Array.isArray(state.works) ? state.works : []).filter(work => !isMatureWork(work));
   const matureWorks = () => (Array.isArray(state.works) ? state.works : []).filter(isMatureWork);
   const visibleGalleryWorks = () => state.matureUnlocked ? [...normalWorks(), ...matureWorks()] : normalWorks();
-  const carouselWorks = () => normalWorks();
+  const carouselWorks = () => {
+    const safe = normalWorks();
+    const featured = safe.filter(work => work.featured === true);
+    return (featured.length ? featured : safe).slice(0, 5);
+  };
 
   localStorage.removeItem("astra-gallery-mature");
   state.matureUnlocked = sessionStorage.getItem(sessionKey) === "1";
 
+  function stopAutoPlay(){
+    if (state.timer !== null) {
+      clearTimeout(state.timer);
+      clearInterval(state.timer);
+      state.timer = null;
+    }
+  }
+
+  function preloadNext(){
+    if (!Array.isArray(state.featured) || state.featured.length < 2) return;
+    const next = state.featured[(state.index + 1) % state.featured.length];
+    if (next?.image) {
+      const image = new Image();
+      image.src = next.image;
+    }
+  }
+
   function syncVisibleState(){
     const visible = visibleGalleryWorks();
     if (state.filter !== "all" && state.filter !== "favorites" && !visible.some(work => work.category === state.filter)) state.filter = "all";
-    const safeFeatured = carouselWorks().filter(work => work.featured);
-    state.featured = (safeFeatured.length ? safeFeatured : carouselWorks()).slice(0, 5);
-    state.index = Math.max(0, Math.min(state.index || 0, Math.max(state.featured.length - 1, 0)));
+    state.featured = carouselWorks();
+    state.index = Math.max(0, Math.min(Number(state.index) || 0, Math.max(state.featured.length - 1, 0)));
   }
+
+  startAutoPlay = function(){
+    stopAutoPlay();
+    syncVisibleState();
+    if (document.hidden || state.featured.length < 2) return;
+    preloadNext();
+    state.timer = window.setTimeout(() => {
+      if (document.hidden || state.featured.length < 2) return;
+      state.index = (state.index + 1) % state.featured.length;
+      renderHero(true);
+      startAutoPlay();
+    }, carouselDelay);
+  };
+
+  selectHero = function(index){
+    syncVisibleState();
+    if (!state.featured.length) return;
+    stopAutoPlay();
+    state.index = (Number(index) + state.featured.length) % state.featured.length;
+    renderHero(true);
+    startAutoPlay();
+  };
 
   renderAll = function(){
     syncVisibleState();
@@ -34,7 +77,11 @@
     const categories = [...new Set(visibleGalleryWorks().map(work => work.category))];
     const filters = ["all", ...categories, "favorites"];
     row.innerHTML = filters.map(filter => `<button class="filter-button ${state.filter === filter ? "active" : ""}" type="button" data-filter="${escapeHtml(filter)}">${escapeHtml(text(filter))}</button>`).join("");
-    document.querySelectorAll(".filter-button").forEach(button => button.addEventListener("click", () => { state.filter = button.dataset.filter; renderAll(); }));
+    document.querySelectorAll(".filter-button").forEach(button => button.addEventListener("click", () => {
+      state.filter = button.dataset.filter;
+      renderFilters();
+      renderGallery();
+    }));
   };
 
   renderGallery = function(){
@@ -51,14 +98,24 @@
       card.addEventListener("click", event => { if (!event.target.closest("[data-favorite]")) openLightbox(card.dataset.id); });
       card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openLightbox(card.dataset.id); } });
     });
-    document.querySelectorAll("[data-favorite]").forEach(button => button.addEventListener("click", event => { event.stopPropagation(); toggleFavorite(button.dataset.favorite); }));
+    document.querySelectorAll("[data-favorite]").forEach(button => button.addEventListener("click", event => {
+      event.stopPropagation();
+      toggleFavorite(button.dataset.favorite);
+    }));
   };
 
   const baseOpenLightbox = openLightbox;
   openLightbox = function(id){
     const work = state.works.find(item => item.id === id);
     if (work && isMatureWork(work) && !state.matureUnlocked) return;
+    stopAutoPlay();
     baseOpenLightbox(id);
+  };
+
+  const baseCloseLightbox = closeLightbox;
+  closeLightbox = function(){
+    baseCloseLightbox();
+    startAutoPlay();
   };
 
   confirmMatureAccess = function(){
@@ -70,6 +127,7 @@
     if (gate?.open) gate.close();
     state.index = 0;
     renderAll();
+    startAutoPlay();
   };
 
   lockMatureContent = function(){
@@ -79,6 +137,7 @@
     if (state.activeLightbox) closeLightbox();
     state.index = 0;
     renderAll();
+    startAutoPlay();
   };
 
   renderAll();
