@@ -102,12 +102,24 @@ jobs:
           render 'math.html?stage=junior' /tmp/study-v10/math.html
           render 'japanese.html?stage=primary' /tmp/study-v10/japanese.html
           render 'course.html?subject=science&stage=primary' /tmp/study-v10/science.html
-          grep -q 'v10-home-library' /tmp/study-v10/home.html
-          grep -q '1800 个结构化学习单元' /tmp/study-v10/home.html
-          grep -q 'v10-library-root' /tmp/study-v10/library.html
-          grep -q '在线搜索开放资源' /tmp/study-v10/library.html
-          grep -q 'v10-course-library' /tmp/study-v10/chinese.html
-          grep -q '扩展课程包' /tmp/study-v10/math.html
-          grep -q 'guided-path-v9' /tmp/study-v10/japanese.html
-          grep -q 'v10-course-library' /tmp/study-v10/science.html
+          check_dom() {
+            file="$1"
+            pattern="$2"
+            label="$3"
+            if ! grep -q "$pattern" "$file"; then
+              echo "::error title=Study browser check failed::$label missing: $pattern"
+              echo "--- $label markers ---"
+              grep -oE 'id="[^"]+"|在线搜索开放资源|扩展课程包|结构化学习单元|课程地图' "$file" | tail -n 80 || true
+              exit 1
+            fi
+            echo "PASS: $label -> $pattern"
+          }
+          check_dom /tmp/study-v10/home.html 'v10-home-library' 'home library'
+          check_dom /tmp/study-v10/home.html '1800 个结构化学习单元' 'home count'
+          check_dom /tmp/study-v10/library.html 'v10-library-root' 'library root'
+          check_dom /tmp/study-v10/library.html '在线搜索开放资源' 'library live search'
+          check_dom /tmp/study-v10/chinese.html 'v10-course-library' 'Chinese course pack'
+          check_dom /tmp/study-v10/math.html '扩展课程包' 'math course pack'
+          check_dom /tmp/study-v10/japanese.html 'guided-path-v9' 'Japanese guided path'
+          check_dom /tmp/study-v10/science.html 'v10-course-library' 'science course pack'
           kill "$(cat /tmp/study-server.pid)"
