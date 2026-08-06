@@ -8,6 +8,7 @@ on:
     branches: [master]
     paths:
       - tools/update-study-open-resources.py
+      - test/Study/assets/open-resources-v10.json
       - .github/workflows/refresh-study-open-resources.yml
 
 permissions:
