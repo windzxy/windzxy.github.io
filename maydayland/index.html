@@ -1,6 +1,68 @@
-<!doctype html><html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#071019"><meta name="description" content="Maydayland 五月天世界巡演地图、作品与完整历程档案"><title>Maydayland · 五月天世界巡演地图</title><link rel="icon" type="image/jpeg" href="https://logowiki.net/wp-content/uploads/imgp/Members-of-Mayday----Band-Logo-1-6457.jpg"><link rel="apple-touch-icon" href="https://logowiki.net/wp-content/uploads/imgp/Members-of-Mayday----Band-Logo-1-6457.jpg"><link rel="preconnect" href="https://music-api.gdstudio.xyz"><link rel="preconnect" href="https://tile.openstreetmap.org"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynhZ+MZLjx4+YM+z8ZL3zvQ+9GfM=" crossorigin=""><link rel="stylesheet" href="./map-v8.css?v=8.0.1"><link rel="stylesheet" href="./map-v8-hotfix.css?v=8.0.1"></head><body>
-<div class="app"><header class="topbar"><div class="brand"><span class="brand-logo-wrap"><img class="brand-logo" src="https://logowiki.net/wp-content/uploads/imgp/Members-of-Mayday----Band-Logo-1-6457.jpg" alt="五月天 Mayday Logo" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('logo-failed')"><span class="brand-logo-fallback">五月天</span></span><span><b>MAYDAYLAND</b><small>WORLD TOUR ARCHIVE</small></span></div><button class="mobile-tour-toggle" id="mobileTourToggle">巡演列表</button><nav class="topnav"><button class="active" data-view="map">巡演地图</button><button data-view="albums">专辑</button><button data-view="songs">歌曲</button><button data-view="books">书籍</button><button data-view="timeline">历程</button></nav><div class="top-actions"><button class="ghost-btn" id="randomButton">随机巡演</button><button class="icon-btn" id="aboutButton">历程</button></div></header>
-<main class="main"><aside class="sidebar"><span class="section-label">VERIFIED TOUR LAYERS</span><h1>五月天世界巡演路线</h1><p>只显示可由官方资料核实的城市、场馆与日期；未有逐场日期的官方城市档案，不会自行补写。</p><div class="tour-list" id="tourList"></div></aside><section class="map-wrap"><div class="map-overlay"><p>GLOBAL TOUR MAP</p><h2>沿着每一轮巡演，重新走过五月天的世界</h2></div><div id="map" class="map"></div><div class="map-legend"><span class="legend-chip">数字＝巡演站点顺序</span><span class="legend-chip">发光虚线＝城市连线，不代表实际交通航线</span></div><section class="archive" id="archive"><div class="archive-head"><div><span class="section-label">MAYDAY COMPLETE ARCHIVE</span><h2 id="archiveTitle">档案馆</h2></div><button class="ghost-btn" id="archiveClose">返回地图</button></div><div id="archiveBody"></div></section></section><aside class="detail" id="detail"><div class="detail-empty"><div><b>选择一轮巡演</b><p>查看路线、城市、场馆、日期与官方来源。</p></div></div></aside></main>
-<footer class="player" id="playerDock"><i class="progress"><i id="miniProgress"></i></i><button class="track" id="openPlayer"><img id="miniCover" alt="歌曲封面" referrerpolicy="no-referrer"><span><small id="miniWorld">MAYDAYLAND RADIO</small><b id="miniTitle">正在建立五月天歌单</b><em id="miniArtist">五月天</em></span></button><div class="controls"><button id="prevButton">‹</button><button class="play" id="playButton">▶</button><button id="nextButton">›</button></div><button class="queue-btn">自动随机播放</button></footer></div>
-<section class="sheet" id="playerSheet"><button class="sheet-close" id="playerClose">×</button><div class="player-full"><img id="fullCover" alt="歌曲封面" referrerpolicy="no-referrer"><div class="full-meta"><span class="section-label" id="fullWorld">MAYDAYLAND</span><h2 id="fullTitle">尚未播放</h2><h3 id="fullArtist">五月天</h3><div><span id="currentTime">0:00</span><input class="range" id="progressInput" type="range" min="0" max="1000" value="0"><span id="durationTime">0:00</span></div><div class="controls" style="justify-content:center;margin-top:18px"><button id="fullPlay" class="play">▶</button></div><div class="lyrics" id="lyrics"><p>歌词尚未载入。</p></div></div></div></section>
-<button class="sound-unlock" id="soundUnlock" hidden>▶ 点一下开启声音</button><div class="toast" id="toast"></div><audio id="audio" preload="metadata" crossorigin="anonymous"></audio><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script><script src="./data-v8.js?v=8.0.1"></script><script src="./map-v8-hotfix.js?v=8.0.1"></script><script src="./map-v8.js?v=8.0.1" defer></script></body></html>
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071019">
+  <meta name="description" content="Maydayland 五月天世界巡演路线、专辑、歌曲、书籍与完整历程档案">
+  <title>Maydayland · 五月天世界巡演地图</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=9.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=9.0.0">
+  <link rel="preconnect" href="https://music-api.gdstudio.xyz">
+  <link rel="stylesheet" href="./map-v9.css?v=9.0.0">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><img class="brand-logo" src="./mayday-logo.svg?v=9.0.0" alt="五月天 Mayday Logo"><span><b>MAYDAYLAND</b><small>WORLD TOUR ARCHIVE</small></span></div>
+    <button class="mobile-tour-toggle" id="mobileTourToggle">巡演列表</button>
+    <nav class="topnav" aria-label="内容分类">
+      <button class="active" data-view="map">巡演地图</button><button data-view="albums">专辑</button><button data-view="songs">歌曲</button><button data-view="books">书籍</button><button data-view="timeline">历程</button>
+    </nav>
+    <div class="top-actions"><button class="ghost-btn" id="randomButton">随机巡演</button><button class="icon-btn" id="aboutButton">历程</button></div>
+  </header>
+
+  <main class="main">
+    <aside class="sidebar">
+      <span class="section-label">VERIFIED TOUR LAYERS</span><h1>五月天世界巡演路线</h1>
+      <p>只显示可由官方资料核实的城市、场馆与日期；未有逐场日期的官方城市档案，不会自行补写。</p>
+      <div class="tour-list" id="tourList"><p>正在载入巡演资料…</p></div>
+    </aside>
+
+    <section class="map-wrap">
+      <div class="map-overlay"><p>GLOBAL TOUR MAP</p><h2>沿着每一轮巡演，重新走过五月天的世界</h2></div>
+      <div id="map" class="map" aria-label="五月天巡演世界地图">
+        <div id="mapCanvas" class="map-canvas">
+          <img class="world-map" src="./world-map.svg?v=9.0.0" alt="世界地图">
+          <svg class="route-svg" viewBox="0 0 1400 700" preserveAspectRatio="none" aria-label="巡演路线">
+            <g id="routeLayer"></g><g id="markerLayer"></g>
+          </svg>
+        </div>
+        <div id="mapStatus" class="map-status"><b>正在建立世界巡演地图</b><span>读取巡演资料与城市坐标…</span></div>
+      </div>
+      <div class="map-controls"><button id="zoomIn" aria-label="放大">＋</button><button id="zoomOut" aria-label="缩小">−</button><button id="fitMap" aria-label="显示完整路线">◎</button></div>
+      <div class="map-legend"><span class="legend-chip">数字＝巡演站点顺序</span><span class="legend-chip">发光虚线＝城市连线，不代表实际交通航线</span></div>
+      <section class="archive" id="archive">
+        <div class="archive-head"><div><span class="section-label">MAYDAY COMPLETE ARCHIVE</span><h2 id="archiveTitle">档案馆</h2></div><button class="ghost-btn" id="archiveClose">返回地图</button></div><div id="archiveBody"></div>
+      </section>
+    </section>
+
+    <aside class="detail" id="detail"><div class="detail-empty"><div><b>正在载入巡演档案</b><p>路线与城市资料会自动显示。</p></div></div></aside>
+  </main>
+
+  <footer class="player" id="playerDock">
+    <i class="progress"><i id="miniProgress"></i></i>
+    <button class="track" id="openPlayer"><img id="miniCover" src="./mayday-logo.svg?v=9.0.0" alt="歌曲封面"><span><small id="miniWorld">MAYDAYLAND RADIO</small><b id="miniTitle">正在建立五月天歌单</b><em id="miniArtist">五月天</em></span></button>
+    <div class="controls"><button id="prevButton">‹</button><button class="play" id="playButton">▶</button><button id="nextButton">›</button></div><button class="queue-btn">自动随机播放</button>
+  </footer>
+</div>
+
+<section class="sheet" id="playerSheet">
+  <button class="sheet-close" id="playerClose">×</button>
+  <div class="player-full"><img id="fullCover" src="./mayday-logo.svg?v=9.0.0" alt="歌曲封面"><div class="full-meta"><span class="section-label" id="fullWorld">MAYDAYLAND</span><h2 id="fullTitle">尚未播放</h2><h3 id="fullArtist">五月天</h3><div><span id="currentTime">0:00</span><input class="range" id="progressInput" type="range" min="0" max="1000" value="0"><span id="durationTime">0:00</span></div><div class="controls" style="justify-content:center;margin-top:18px"><button id="fullPlay" class="play">▶</button></div><div class="lyrics" id="lyrics"><p>歌词尚未载入。</p></div></div></div>
+</section>
+
+<button class="sound-unlock" id="soundUnlock" hidden>▶ 点一下开启声音</button><div class="toast" id="toast"></div><audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+<script src="./data-v8.js?v=9.0.0"></script><script src="./map-v9.js?v=9.0.0" defer></script>
+</body>
+</html>
