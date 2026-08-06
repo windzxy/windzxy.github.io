@@ -23,7 +23,7 @@
     ['5525 起跑 / 台中跨年線','補台中起跑、跨年與 5525 主線敘事','https://www.bin-music.com.tw/news/1985'],
     ['Mayday.jp Discography','海外作品、專輯與日文資料入口','https://www.mayday.jp/discography/']
   ];
-  let active = cities[0], map, markers = [];
+  let active = cities[0], map = null, markers = [];
 
   function toast(text){ const t=$('#toast'); if(!t) return; t.textContent=text; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1600); }
   function setPlayer(song, city=active.city){ $('#trackTitle').textContent = `${song} · ${city}現場檔案`; $('#trackSub').textContent = '資料型播放器：先保持穩定，不載入外部音源'; toast(`已加入播放器：${song}`); }
@@ -50,8 +50,8 @@
   }
   function setNav(view){ document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active', b.dataset.view===view)); }
   function show(view){ setNav(view); if(view==='tour') renderTour(); if(view==='albums') renderAlbums(); if(view==='songs') renderSongs(); if(view==='books') renderBooks(); if(view==='timeline') renderTimeline(); }
+  function renderHero(){ return `<section class="hero"><span class="kicker">CLEAN RESET · NO MORE STACKED WIDGETS</span><h1>先恢復秩序，再做到驚喜。</h1><p>v29 取消 v15–v27 多版本疊加，只保留一套 CSS / JS。現在每個模組在正常文檔流中排列，不再互相遮擋。</p><div class="score-grid"><span><b>1</b>單一樣式系統</span><span><b>1</b>單一互動入口</span><span><b>0</b>舊 widget 疊層</span><span><b>70</b>暫估分數</span></div></section>`; }
 
-  function renderHero(){ return `<section class="hero"><span class="kicker">CLEAN RESET · NO MORE STACKED WIDGETS</span><h1>先恢復秩序，再做到驚喜。</h1><p>v29 取消 v15–v27 多版本疊加，只保留一套 CSS / JS。現在每個模組在正常文檔流中排列，不再互相遮擋。評分不再虛高：目前是修復架構後的產品底座。</p><div class="score-grid"><span><b>1</b>單一樣式系統</span><span><b>1</b>單一互動入口</span><span><b>0</b>舊 widget 疊層</span><span><b>70</b>暫估分數</span></div></section>`; }
   function renderTour(){
     $('#page').innerHTML = `${renderHero()}<section class="tour-layout"><aside class="panel"><span class="kicker">TOUR HEAT</span><h2>巡演城市</h2><p>點選城市後，地圖、右側詳情與下方 Landing Page 同步更新。</p><div class="city-list">${cities.map(c=>`<button data-city="${c.city}" class="${c.city===active.city?'active':''}"><span><b>${c.city}</b><br><small>${c.level}</small></span><small>${c.visits}</small></button>`).join('')}</div></aside><section class="panel map-card"><div class="map-head"><div><span class="kicker">REAL MAP</span><h2>巡演熱度地圖</h2></div><button class="pill-btn primary" id="fitMap">重置地圖</button></div><div id="tourMap"></div></section><aside class="panel" id="detail"></aside></section><section class="section" id="landing"></section>`;
     document.querySelectorAll('[data-city]').forEach(b=>b.addEventListener('click',()=>selectCity(b.dataset.city)));
@@ -59,17 +59,31 @@
     renderDetail(); renderLanding(); initMap();
   }
   function initMap(){
-    if(map){ map.remove(); map=null; markers=[]; }
+    if(map){ map.remove(); map = null; markers = []; }
+    if(!window.L) return;
     map = L.map('tourMap',{zoomControl:true,attributionControl:true}).setView([29.5,117],5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
-    const line=[];
-    cities.forEach(c=>{ line.push([c.lat,c.lng]); const r=Math.max(9, Math.min(28, 6+c.visits*.75)); const m=L.circleMarker([c.lat,c.lng],{radius:r,color:'#5beeff',weight:2,fillColor:c.visits>12?'#ff74b8':'#ffd66b',fillOpacity:.46}).addTo(map).bindPopup(`<b>${c.city}</b><br>${c.venue}<br>熱度 ${c.visits}`); m.on('click',()=>selectCity(c.city)); markers.push(m); });
+    const line = [];
+    cities.forEach(c=>{
+      line.push([c.lat,c.lng]);
+      const r = Math.max(9, Math.min(28, 6 + c.visits * 0.75));
+      const m = L.circleMarker([c.lat,c.lng],{radius:r,color:'#5beeff',weight:2,fillColor:c.visits>12?'#ff74b8':'#ffd66b',fillOpacity:.46}).addTo(map).bindPopup(`<b>${c.city}</b><br>${c.venue}<br>熱度 ${c.visits}`);
+      m.on('click',()=>selectCity(c.city)); markers.push(m);
+    });
     L.polyline(line,{color:'#5beeff',weight:3,opacity:.65,dashArray:'8 8'}).addTo(map); fitMap();
   }
-  function fitMap(){ if(map){ map.fitBounds(cities.map(c=>[c.lat,c.lng]),{padding:[35,35]}); } }
-  function selectCity(name){ active = cityByName(name); document.querySelectorAll('[data-city]').forEach(b=>b.classList.toggle('active', b.dataset.city===active.city)); renderDetail(); renderLanding(); if(map){ map.setView([active.lat,active.lng],8); markers.forEach((m,i)=>m.setStyle({weight:cities[i].city===active.city?5:2,fillOpacity:cities[i].city===active.city?.75:.42})); } }
+  function fitMap(){ if(map) map.fitBounds(cities.map(c=>[c.lat,c.lng]),{padding:[35,35]}); }
+  function selectCity(name){
+    active = cityByName(name);
+    document.querySelectorAll('[data-city]').forEach(b=>b.classList.toggle('active', b.dataset.city===active.city));
+    renderDetail(); renderLanding();
+    if(map){
+      map.setView([active.lat,active.lng],8);
+      markers.forEach((m,i)=>m.setStyle({weight:cities[i].city===active.city ? 5 : 2, fillOpacity:cities[i].city===active.city ? .75 : .42}));
+    }
+  }
   function renderDetail(){ $('#detail').innerHTML = `<div class="detail-visual" style="--city-bg:${active.bg}"><b>${active.city}</b></div><span class="kicker">CITY DOSSIER</span><h2>${active.venue}</h2><p>${active.mood}</p><div class="meta-grid"><span><b>${active.visits}</b>熱度</span><span><b>${active.score}%</b>完成度</span><span><b>${active.years}</b>年份</span><span><b>${active.level}</b>定位</span></div><div class="tags">${active.set.map(s=>`<span class="tag">${s}</span>`).join('')}</div><div class="actions"><button class="primary" id="pushSet">推送歌單</button>${active.source==='#'?'<button>來源待補</button>':`<a href="${active.source}" target="_blank" rel="noopener">官方來源</a>`}</div>`; $('#pushSet').addEventListener('click',()=>setPlayer(active.set[0])); }
-  function renderLanding(){ $('#landing').innerHTML = `<div class="section-head"><div><span class="kicker">CITY LANDING PAGE</span><h2>${active.city} 專題頁</h2><p>採用單欄/雙欄的正常文檔流，不使用漂浮 widget，避免遮擋。</p></div></div><div class="landing-grid"><div class="cards"><article class="card"><b>逐站歌單</b><div class="track-row">${active.set.map(s=>`<div class="track"><span>${s}</span><button data-song="${s}">播放</button></div>`).join('')}</div></article><article class="card"><b>待補任務</b><p>${active.tasks.map(t=>'· '+t).join('<br>')}</p></article></div><div class="city-card" style="--bgc:${active.bg}"><span class="kicker">VENUE HERO SLOT</span><b>${active.venue}</b><p>此區後續替換為授權或官方來源照片，現在先保留清楚佔位，不冒充真實照片。</p></div></div>`; document.querySelectorAll('[data-song]').forEach(b=>b.addEventListener('click',()=>setPlayer(b.dataset.song))); }
+  function renderLanding(){ $('#landing').innerHTML = `<div class="section-head"><div><span class="kicker">CITY LANDING PAGE</span><h2>${active.city} 專題頁</h2><p>採用正常文檔流，不使用漂浮 widget，避免遮擋。</p></div></div><div class="landing-grid"><div class="cards"><article class="card"><b>逐站歌單</b><div class="track-row">${active.set.map(s=>`<div class="track"><span>${s}</span><button data-song="${s}">播放</button></div>`).join('')}</div></article><article class="card"><b>待補任務</b><p>${active.tasks.map(t=>'· '+t).join('<br>')}</p></article></div><div class="city-card" style="--bgc:${active.bg}"><span class="kicker">VENUE HERO SLOT</span><b>${active.venue}</b><p>此區後續替換為授權或官方來源照片，現在先保留清楚佔位，不冒充真實照片。</p></div></div>`; document.querySelectorAll('[data-song]').forEach(b=>b.addEventListener('click',()=>setPlayer(b.dataset.song))); }
   function renderAlbums(){ $('#page').innerHTML = `${renderHero()}<section class="section"><div class="section-head"><div><span class="kicker">ALBUM ROOM</span><h2>時光唱片室</h2><p>先使用穩定封面牆，不再與城市浮層互相疊加。</p></div></div><div class="cover-grid">${albums.map(a=>`<article class="cover"><img src="${a[2]}" alt="${esc(a[0])}" loading="lazy"><span>${a[0]} · ${a[1]}</span></article>`).join('')}</div></section>`; }
   function renderSongs(){ $('#page').innerHTML = `${renderHero()}<section class="section"><div class="section-head"><div><span class="kicker">SONG UNIVERSE</span><h2>歌曲宇宙</h2><p>歌曲先按城市歌單整理，按鈕只更新播放器，不開新浮窗。</p></div></div><div class="cards">${cities.map(c=>`<article class="card"><b>${c.city} 推薦歌單</b>${c.set.map(s=>`<div class="track"><span>${s}</span><button data-play="${s}" data-cityname="${c.city}">加入</button></div>`).join('')}</article>`).join('')}</div></section>`; document.querySelectorAll('[data-play]').forEach(b=>b.addEventListener('click',()=>setPlayer(b.dataset.play,b.dataset.cityname))); }
   function renderBooks(){ $('#page').innerHTML = `${renderHero()}<section class="section"><span class="kicker">BOOKS & ARCHIVE</span><h2>書籍出版</h2><div class="cards"><article class="card"><b>書籍</b><p>待補封面、出版社、ISBN、官方/館藏來源。</p></article><article class="card"><b>樂譜</b><p>按專輯和歌曲關聯到唱片室。</p></article><article class="card"><b>場刊 / 票根</b><p>按城市專題掛接到巡演資料。</p></article></div></section>`; }
