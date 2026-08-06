@@ -1,0 +1,97 @@
+name: AICG Curated Publishing
+
+on:
+  schedule:
+    - cron: "20 1 * * 2,5"
+  workflow_dispatch:
+    inputs:
+      candidates:
+        description: "Number of image candidates to generate"
+        required: false
+        default: "4"
+      publish_count:
+        description: "Maximum number of approved works to publish"
+        required: false
+        default: "2"
+      minimum_score:
+        description: "Minimum visual review score"
+        required: false
+        default: "84"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: aicg-curated-publishing
+  cancel-in-progress: false
+
+jobs:
+  generate-review-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-1' }}
+      OPENAI_REVIEW_MODEL: ${{ vars.OPENAI_REVIEW_MODEL || 'gpt-5-mini' }}
+      AICG_CANDIDATES: ${{ inputs.candidates || '4' }}
+      AICG_PUBLISH_COUNT: ${{ inputs.publish_count || '2' }}
+      AICG_MIN_SCORE: ${{ inputs.minimum_score || '84' }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install pipeline dependencies
+        run: npm install --no-save --no-package-lock openai sharp
+
+      - name: Generate, review and curate images
+        run: node AICG/scripts/pipeline.mjs
+
+      - name: Commit approved works
+        shell: bash
+        run: |
+          if git diff --quiet -- AICG/data AICG/assets/generated; then
+            echo "No approved AICG changes to publish."
+            exit 0
+          fi
+          git config user.name "wind-aicg-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add AICG/data AICG/assets/generated
+          git commit -m "Publish scheduled AICG curated works"
+          git push
+
+  deploy-pages:
+    needs: generate-review-publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: windzxy-pages
+      cancel-in-progress: true
+    steps:
+      - name: Check out updated repository
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
