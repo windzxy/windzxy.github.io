@@ -3,78 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#071019">
-  <meta name="description" content="Maydayland 五月天世界巡演路线、专辑、歌曲、书籍与完整历程档案">
-  <title>Maydayland · 五月天世界巡演地图</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=11.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=11.0.0">
+  <meta name="theme-color" content="#06101a">
+  <meta name="description" content="Maydayland 五月天巡演地图、时光唱片室、歌曲、书籍与完整历程档案">
+  <title>Maydayland · 五月天巡演与时光唱片室</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=12.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=12.0.0">
   <link rel="preconnect" href="https://music-api.gdstudio.xyz">
-  <link rel="preconnect" href="https://assets.science.nasa.gov">
-  <link rel="stylesheet" href="./map-v9.css?v=11.0.0">
-  <link rel="stylesheet" href="./map-v10.css?v=11.0.0">
-  <link rel="stylesheet" href="./books-v10.css?v=11.0.0">
-  <link rel="stylesheet" href="./album-room-v11.css?v=11.0.0">
+  <link rel="stylesheet" href="./app-v12.css?v=12.0.0">
 </head>
 <body>
-<div class="app">
+<div class="site-shell">
   <header class="topbar">
-    <div class="brand"><img class="brand-logo" src="./mayday-logo.svg?v=11.0.0" alt="五月天 Mayday Logo"><span><b>MAYDAYLAND</b><small>WORLD TOUR ARCHIVE</small></span></div>
+    <a class="brand" href="#" data-view="map" aria-label="Maydayland 首页">
+      <img class="brand-logo" src="./mayday-logo.svg?v=12.0.0" alt="五月天 Mayday Logo">
+      <span><b>MAYDAYLAND</b><small>五月天官方资料馆 · 非官方站</small></span>
+    </a>
     <button class="mobile-tour-toggle" id="mobileTourToggle">巡演列表</button>
-    <nav class="topnav" aria-label="内容分类"><button class="active" data-view="map">巡演地图</button><button data-view="albums">专辑</button><button data-view="songs">歌曲</button><button data-view="books">书籍</button><button data-view="timeline">历程</button></nav>
-    <div class="top-actions"><button class="ghost-btn" id="randomButton">随机巡演</button><button class="icon-btn" id="aboutButton">历程</button></div>
+    <nav class="topnav" aria-label="Maydayland 内容导航"><button class="active" data-view="map">巡演地图</button><button data-view="albums">专辑</button><button data-view="songs">歌曲</button><button data-view="books">书籍</button><button data-view="timeline">历程</button></nav>
+    <form class="global-search" id="globalSearch" role="search"><input id="globalSearchInput" placeholder="搜索巡演、城市、场馆、歌曲…" autocomplete="off"><button aria-label="搜索">⌕</button></form>
+    <div class="top-actions"><button class="ghost-btn" id="randomButton">随机巡演</button><button class="ghost-btn" id="timelineButton">时间轴</button></div>
   </header>
 
-  <main class="main">
-    <aside class="sidebar">
-      <span class="section-label">VERIFIED TOUR LAYERS</span><h1>五月天世界巡演路线</h1>
-      <p>只显示可由官方资料核实的城市、场馆与日期；未有逐场日期的官方城市档案，不会自行补写。</p>
-      <div class="tour-list" id="tourList"><p>正在载入巡演资料…</p></div>
-    </aside>
+  <main class="app-main">
+    <aside class="tour-sidebar" id="tourSidebar"><div class="sidebar-head"><span class="eyebrow">TOUR PHASES</span><h1>五月天巡演阶段</h1><p>按巡演与年度拆分路线；官方只有城市资料时，不补写未核实日期。</p></div><div class="tour-list" id="tourList"></div><button class="wide-btn" data-view="timeline">全部巡演时间轴</button></aside>
 
-    <section class="map-wrap">
-      <div class="map-overlay"><p>GLOBAL TOUR TRACKER</p><h2>像追踪风暴一样，沿着路线重返每一次相遇</h2></div>
-
-      <div class="layer-panel" aria-label="地图图层">
-        <b>地图图层</b>
-        <button class="layer-button active" data-layer="satellite"><i></i>卫星影像</button>
-        <button class="layer-button active" data-layer="grid"><i></i>国界轮廓</button>
-        <button class="layer-button active" data-layer="route"><i></i>巡演路线</button>
-      </div>
-
-      <div id="map" class="map" aria-label="五月天巡演世界地图">
-        <div id="mapCanvas" class="map-canvas">
-          <img id="satelliteMap" class="satellite-map" src="https://assets.science.nasa.gov/content/dam/science/esd/eo/images/bmng/bmng-base/january/world.200401.3x5400x2700.jpg" alt="NASA Blue Marble 卫星世界地图" fetchpriority="high" referrerpolicy="no-referrer">
-          <img class="world-map" src="./world-map.svg?v=11.0.0" alt="世界边界轮廓">
-          <svg class="route-svg" viewBox="0 0 1400 700" preserveAspectRatio="none" aria-label="巡演路线"><g id="routeLayer"></g><g id="markerLayer"></g></svg>
-        </div>
-        <div id="mapStatus" class="map-status"><b>正在建立世界巡演地图</b><span>读取巡演资料与城市坐标…</span></div>
-      </div>
-
-      <div class="map-controls"><button id="zoomIn" aria-label="放大">＋</button><button id="zoomOut" aria-label="缩小">−</button><button id="fitMap" aria-label="显示完整路线">◎</button></div>
-      <div class="map-legend"><span class="legend-chip">小圆点＝巡演站点</span><span class="legend-chip">动态轨迹＝城市先后顺序，不代表实际交通航线</span></div>
-
-      <div class="tour-timeline" id="tourTimeline">
-        <button id="timelinePlay" aria-label="播放巡演路线">▶</button>
-        <div class="timeline-rail" id="timelineRail"><i class="timeline-progress" id="timelineProgress"></i></div>
-        <div class="timeline-caption" id="timelineCaption"><b>路线准备中</b><small>等待巡演资料</small></div>
-      </div>
-
-      <section class="archive" id="archive"><div class="archive-head"><div><span class="section-label">MAYDAY COMPLETE ARCHIVE</span><h2 id="archiveTitle">档案馆</h2></div><button class="ghost-btn" id="archiveClose">返回地图</button></div><div id="archiveBody"></div></section>
+    <section class="stage" id="viewStage">
+      <section class="map-view view active" id="mapView">
+        <div class="map-head"><div><span class="eyebrow">GLOBAL TOUR MAP</span><h2>沿着每一轮巡演，重新走过五月天的世界</h2></div><div class="map-mode"><button id="flatMode" class="active">平面地图</button><button id="globeMode">地球视角</button><button id="rotateLeft">↺</button><button id="rotateRight">↻</button></div></div>
+        <div class="map-frame" id="mapFrame"><div class="map-canvas" id="mapCanvas"><img class="admin-map" src="./world-map.svg?v=12.0.0" alt="世界行政区域地图"><svg class="map-svg" viewBox="0 0 1400 700" preserveAspectRatio="none" aria-label="巡演路线地图"><g id="routeLayer"></g><g id="markerLayer"></g></svg></div><div class="map-popover" id="mapPopover" hidden></div><div class="map-tools"><button id="zoomIn">＋</button><button id="zoomOut">−</button><button id="fitMap">◎</button></div><div class="map-legend"><b>图例</b><span><i class="done"></i>已完成</span><span><i class="active"></i>进行中</span><span><i class="plan"></i>规划中</span></div><div class="route-player" id="routePlayer"><button id="routePlay">▶</button><div class="route-rail" id="routeRail"></div><p id="routeCaption">选择一轮巡演</p></div></div>
+      </section>
+      <section class="archive view" id="archiveView" aria-live="polite"><div class="archive-head"><div><span class="eyebrow">MAYDAY COMPLETE ARCHIVE</span><h2 id="archiveTitle">档案馆</h2></div><button class="ghost-btn" data-view="map">返回地图</button></div><div id="archiveBody"></div></section>
     </section>
 
-    <aside class="detail" id="detail"><div class="detail-empty"><div><b>正在载入巡演档案</b><p>路线与城市资料会自动显示。</p></div></div></aside>
+    <aside class="detail-panel" id="detailPanel"><div class="detail-empty"><b>选择一座城市或巡演</b><p>查看路线、城市、场馆、日期、当地照片与官方来源。</p></div></aside>
   </main>
 
-  <footer class="player loading" id="playerDock">
-    <i class="progress"><i id="miniProgress"></i></i>
-    <button class="track" id="openPlayer"><img id="miniCover" src="./mayday-logo.svg?v=11.0.0" alt="歌曲封面"><span><small id="miniWorld">MAYDAYLAND RADIO</small><b id="miniTitle">正在建立五月天歌单</b><em id="miniArtist">五月天</em></span></button>
-    <div class="controls"><button id="prevButton">‹</button><button class="play" id="playButton">▶</button><button id="nextButton">›</button></div><button class="queue-btn">自动随机播放</button>
-  </footer>
+  <footer class="player-dock" id="playerDock"><div class="play-progress"><i id="miniProgress"></i></div><button class="now-track" id="openPlayer"><img id="miniCover" src="./mayday-logo.svg?v=12.0.0" alt="歌曲封面"><span><small id="miniWorld">MAYDAYLAND RADIO</small><b id="miniTitle">等待播放</b><em id="miniArtist">五月天</em></span></button><div class="player-controls"><button id="shuffleButton">⇄</button><button id="prevButton">‹</button><button class="main-play" id="playButton">▶</button><button id="nextButton">›</button><button id="repeatButton">↻</button></div><div class="player-tools"><button id="queueButton">☰</button><button id="lyricsButton">♫</button></div></footer>
 </div>
 
-<section class="sheet" id="playerSheet"><button class="sheet-close" id="playerClose">×</button><div class="player-full"><img id="fullCover" src="./mayday-logo.svg?v=11.0.0" alt="歌曲封面"><div class="full-meta"><span class="section-label" id="fullWorld">MAYDAYLAND</span><h2 id="fullTitle">尚未播放</h2><h3 id="fullArtist">五月天</h3><div><span id="currentTime">0:00</span><input class="range" id="progressInput" type="range" min="0" max="1000" value="0"><span id="durationTime">0:00</span></div><div class="controls" style="justify-content:center;margin-top:18px"><button id="fullPlay" class="play">▶</button></div><div class="lyrics" id="lyrics"><p>歌词尚未载入。</p></div></div></div></section>
-
-<button class="sound-unlock" id="soundUnlock" hidden>▶ 点一下开始播放</button><div class="toast" id="toast"></div><audio id="audio" preload="auto" crossorigin="anonymous"></audio>
-<script src="./data-v8.js?v=11.0.0"></script><script src="./map-v10.js?v=11.0.0" defer></script><script src="./books-v10.js?v=11.0.0" defer></script><script src="./album-room-v11.js?v=11.0.0" defer></script>
+<section class="player-sheet" id="playerSheet" aria-hidden="true"><button class="sheet-close" id="playerClose">×</button><div class="player-full"><img id="fullCover" src="./mayday-logo.svg?v=12.0.0" alt="歌曲封面"><div><span class="eyebrow" id="fullWorld">MAYDAYLAND RADIO</span><h2 id="fullTitle">尚未播放</h2><h3 id="fullArtist">五月天</h3><div class="scrub"><span id="currentTime">0:00</span><input id="progressInput" type="range" min="0" max="1000" value="0"><span id="durationTime">0:00</span></div><div class="lyrics" id="lyrics"><p>歌词尚未载入。</p></div></div></div></section>
+<button class="sound-unlock" id="soundUnlock" hidden>▶ 点一下开启声音</button><div class="toast" id="toast"></div><audio id="audio" preload="metadata" playsinline></audio>
+<script src="./data-v8.js?v=12.0.0"></script><script src="./app-v12.js?v=12.0.0" defer></script>
 </body>
 </html>
