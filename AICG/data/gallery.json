@@ -1,61 +1,7 @@
 {
-  "version": 10,
-  "updatedAt": "2026-08-07T01:56:23Z",
+  "version": 11,
+  "updatedAt": "2026-08-07T03:08:00Z",
   "works": [
-    {
-      "id": "2026-08-07-silent-architectural-light-a7k9m",
-      "title": {
-        "zh": "静光中庭",
-        "en": "Silent Architectural Light"
-      },
-      "description": {
-        "zh": "极简混凝土空间里，一束天光切开安静的灰金色层次。",
-        "en": "A restrained concrete atrium where a single shaft of light cuts through quiet grey-gold layers."
-      },
-      "category": "architecture",
-      "categoryLabel": {
-        "zh": "建筑空间",
-        "en": "Architecture"
-      },
-      "style": "minimal-architecture",
-      "styleLabel": {
-        "zh": "极简建筑",
-        "en": "Minimal Architecture"
-      },
-      "rating": "all",
-      "warningTags": [],
-      "date": "2026-08-07",
-      "featured": false,
-      "image": "../assets/generated/2026-08-07/2026-08-07-silent-architectural-light-a7k9m.webp",
-      "thumb": "../assets/generated/2026-08-07/2026-08-07-silent-architectural-light-a7k9m-thumb.webp"
-    },
-    {
-      "id": "2026-08-07-celestial-ring-silence-p4n2q",
-      "title": {
-        "zh": "寂环天体",
-        "en": "Celestial Ring Silence"
-      },
-      "description": {
-        "zh": "深空中的环形结构悬在暗蓝行星旁，像一段冷静的科幻序章。",
-        "en": "A ring structure hangs beside a dark blue planet, like the quiet opening of a restrained sci-fi film."
-      },
-      "category": "sci-fi",
-      "categoryLabel": {
-        "zh": "科幻",
-        "en": "Sci-Fi"
-      },
-      "style": "cinematic-sci-fi",
-      "styleLabel": {
-        "zh": "电影感科幻",
-        "en": "Cinematic Sci-Fi"
-      },
-      "rating": "all",
-      "warningTags": [],
-      "date": "2026-08-07",
-      "featured": false,
-      "image": "../assets/generated/2026-08-07/2026-08-07-celestial-ring-silence-p4n2q.webp",
-      "thumb": "../assets/generated/2026-08-07/2026-08-07-celestial-ring-silence-p4n2q-thumb.webp"
-    },
     {
       "id": "2026-08-06-03-late-blue-atlas",
       "title": {
