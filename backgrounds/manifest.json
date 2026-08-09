@@ -30,16 +30,6 @@
     "file": "backgrounds/2026-07-28-06-web.webp"
   },
   {
-    "id": "2026-07-28-desert-observatory",
-    "title": "Desert Observatory",
-    "file": "backgrounds/2026-07-28-07-web.webp"
-  },
-  {
-    "id": "2026-07-28-quiet-geometry",
-    "title": "Quiet Geometry",
-    "file": "backgrounds/2026-07-28-08-web.webp"
-  },
-  {
     "id": "2026-07-28-neon-canal-dawn",
     "title": "Neon Canal Dawn",
     "file": "backgrounds/2026-07-28-09-web.webp"
@@ -448,5 +438,55 @@
     "id": "2026-08-04-basalt-transit-hall",
     "title": "Basalt Transit Hall",
     "file": "backgrounds/2026-08-04-10-web.webp"
+  },
+  {
+    "id": "2026-08-09-tea-cloud-sea",
+    "title": "Tea Cloud Sea",
+    "file": "backgrounds/2026-08-09-01-web.webp"
+  },
+  {
+    "id": "2026-08-09-sunset-amusement-park",
+    "title": "Sunset Amusement Park",
+    "file": "backgrounds/2026-08-09-02-web.webp"
+  },
+  {
+    "id": "2026-08-09-snowy-nordic-inlet",
+    "title": "Snowy Nordic Inlet",
+    "file": "backgrounds/2026-08-09-03-web.webp"
+  },
+  {
+    "id": "2026-08-09-alabaster-hall",
+    "title": "Alabaster Hall",
+    "file": "backgrounds/2026-08-09-04-web.webp"
+  },
+  {
+    "id": "2026-08-09-lacquer-relief",
+    "title": "Lacquer Relief",
+    "file": "backgrounds/2026-08-09-05-web.webp"
+  },
+  {
+    "id": "2026-08-09-moonlit-chalk-cliffs",
+    "title": "Moonlit Chalk Cliffs",
+    "file": "backgrounds/2026-08-09-06-web.webp"
+  },
+  {
+    "id": "2026-08-09-icy-asteroid-habitat",
+    "title": "Icy Asteroid Habitat",
+    "file": "backgrounds/2026-08-09-07-web.webp"
+  },
+  {
+    "id": "2026-08-09-spring-river-watercolor",
+    "title": "Spring River Watercolor",
+    "file": "backgrounds/2026-08-09-08-web.webp"
+  },
+  {
+    "id": "2026-08-09-aluminum-cobalt",
+    "title": "Aluminum Cobalt",
+    "file": "backgrounds/2026-08-09-09-web.webp"
+  },
+  {
+    "id": "2026-08-09-dry-lake-storm",
+    "title": "Dry Lake Storm",
+    "file": "backgrounds/2026-08-09-10-web.webp"
   }
 ]
