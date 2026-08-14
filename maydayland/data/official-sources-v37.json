@@ -1,0 +1,69 @@
+{
+  "version": "37.0.0",
+  "updatedAt": "2026-08-14",
+  "sources": [
+    {
+      "id": "bin-2468",
+      "type": "official-news",
+      "publisher": "相信音樂 B'in Music",
+      "title": "五月天《回到那一天》25週年巡迴演唱會 與7490000人次162場共同交織搖滾宇宙新篇章",
+      "url": "https://www.bin-music.com.tw/news/2468",
+      "supports": ["5525 累積 100400 公里", "925 天", "162 場", "7490000 人次", "2023 年從台中起跑"],
+      "useIn": ["meta.officialFacts", "cities.taipei", "cities.taichung", "source-wall"]
+    },
+    {
+      "id": "bin-2460",
+      "type": "official-news",
+      "publisher": "相信音樂 B'in Music",
+      "title": "五月天5525+2《回到那一天》演唱會 重現《愛情萬歲》專輯封面照 / MAYDAYLAND 十區十美",
+      "url": "https://www.bin-music.com.tw/news/2460",
+      "supports": ["台北 / 台中 / 台南 / 高雄四大城市", "十大特區", "MAYDAYLAND 展區", "愛情萬歲 / 十萬青年站出來回憶"],
+      "useIn": ["city-landing.taipei", "asset-manifest.exhibitions", "sources-wall"]
+    },
+    {
+      "id": "bin-2424",
+      "type": "official-news",
+      "publisher": "相信音樂 B'in Music",
+      "title": "五月天和歌迷共創55場鳥巢搖滾新紀錄",
+      "url": "https://www.bin-music.com.tw/news/2424",
+      "supports": ["北京鳥巢", "12場5525+2北京站", "55場鳥巢紀錄", "5525巡演累積資料"],
+      "useIn": ["cities.beijing", "venues.beijing-birdnest", "setlist-days.beijing"]
+    },
+    {
+      "id": "bin-2409",
+      "type": "official-news",
+      "publisher": "相信音樂 B'in Music",
+      "title": "五月天重返台北大巨蛋 5525+2《回到那一天》演唱會5大彩蛋傾巢而出",
+      "url": "https://www.bin-music.com.tw/news/2409",
+      "supports": ["台北大巨蛋", "5525+2", "25週年巡迴", "台北主場資料"],
+      "useIn": ["cities.taipei", "venues.taipei-dome", "setlist-days.taipei"]
+    },
+    {
+      "id": "bin-2326",
+      "type": "official-news",
+      "publisher": "相信音樂 B'in Music",
+      "title": "五月天《回到那一天》巡迴演唱會重回起點 累積6260000人次相約唱到80歲",
+      "url": "https://www.bin-music.com.tw/news/2326",
+      "supports": ["5525+1 台中站", "回到起點", "6260000人次", "138場"],
+      "useIn": ["cities.taichung", "setlist-days.taichung"]
+    },
+    {
+      "id": "bin-2282",
+      "type": "official-news",
+      "publisher": "相信音樂 B'in Music",
+      "title": "2025+1年的第1刻 五月天《回到那一天》臺中站新年快樂版",
+      "url": "https://www.bin-music.com.tw/news/2282",
+      "supports": ["2025/12/27、28、31 與 2026/1/1、3、4 台中場", "新年快樂版", "台中洲際棒球場"],
+      "useIn": ["venues.taichung-intercontinental", "setlist-days.taichung"]
+    },
+    {
+      "id": "mayday-jp-discography",
+      "type": "official-discography",
+      "publisher": "Mayday Japanese Official Website",
+      "title": "Discography",
+      "url": "https://www.mayday.jp/discography/",
+      "supports": ["1999/07/07 Mayday's First Album", "日本官方作品資料", "Mayday × 五月天 the Best of 1999-2013"],
+      "useIn": ["albums", "cities.tokyo", "sources-wall"]
+    }
+  ]
+}
