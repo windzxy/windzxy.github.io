@@ -1,0 +1,24 @@
+{
+  "timeline": [
+    {"year":"1997","title":"成軍與校園時期","detail":"從校園樂團逐步形成五月天的創作核心。","sourceIds":["mayday-jp-biography"]},
+    {"year":"1999","title":"第一張創作專輯","detail":"正式建立作品入口，也作為唱片室的起點。","sourceIds":["mayday-jp-discography"]},
+    {"year":"2003","title":"時光機","detail":"時間、青春與記憶成為網站視覺主軸。","sourceIds":["bin-artist"]},
+    {"year":"2011","title":"第二人生","detail":"大型概念專輯與巡演視覺升級。","sourceIds":["mayday-jp-discography"]},
+    {"year":"2017","title":"LiFE 人生無限公司 / 日本資料支線","detail":"世界巡演與海外資料線的重要節點。","sourceIds":["mayday-jp-biography"]},
+    {"year":"2023","title":"5525 回到那一天起跑","detail":"台中起跑並串接 25 週年敘事。","sourceIds":["bin-2468"]},
+    {"year":"2026","title":"5525+2 年度延伸","detail":"台北大巨蛋等大型場館成為高熱度節點。","sourceIds":["bin-2458"]}
+  ],
+  "publications": [
+    {"id":"tickets","title":"票根資料庫","type":"archive","status":"schema-ready","need":"城市、日期、場館、票價區、來源與照片授權"},
+    {"id":"tour-books","title":"巡演場刊 / 官方出版","type":"book","status":"needs-source","need":"封面、ISBN 或官方銷售頁、年份與關聯巡演"},
+    {"id":"fan-route","title":"城市朝聖路線","type":"travel","status":"draft","need":"場館交通、拍照點、周邊餐飲、官方限制提醒"},
+    {"id":"media-wall","title":"媒體報導牆","type":"press","status":"schema-ready","need":"來源、標題、日期、城市、重點摘錄"}
+  ],
+  "contentRoadmap": [
+    {"phase":"Data Split","scoreTarget":80,"status":"done-v36","items":["拆分 cities / venues / albums / setlists / sources / assets / roadmap","前端並行載入","資料載入失敗 fallback"]},
+    {"phase":"Verified Setlists","scoreTarget":83,"status":"next","items":["補逐日歌單 JSON","每場綁定來源","標記 confidence"]},
+    {"phase":"Licensed Visuals","scoreTarget":86,"status":"next","items":["建立 assets/cities/","補原創或授權照片","封面缺口本地化"]},
+    {"phase":"City Landing","scoreTarget":88,"status":"next","items":["每城市獨立 URL hash","場館交通卡","照片牆與票根牆"]},
+    {"phase":"Editorial Polish","scoreTarget":90,"status":"next","items":["移動端細節","來源彈窗","路線播放動畫","可分享城市卡"]}
+  ]
+}
