@@ -1,0 +1,20 @@
+{
+  "version": "37.0.0",
+  "updatedAt": "2026-08-14",
+  "status": "data-layer-ready-front-end-pending",
+  "purpose": "記錄 v37 資料層下一步如何接入前端，避免直接在主 JS 中亂加資料。",
+  "frontendTasks": [
+    {"id":"wire-city-landing","target":"app-v38.js","dataFile":"city-landing-v37.json","ui":"城市專題頁", "priority":"P0"},
+    {"id":"wire-venue-guides","target":"app-v38.js","dataFile":"venue-guides-v37.json","ui":"場館攻略頁", "priority":"P0"},
+    {"id":"wire-setlist-days","target":"app-v38.js","dataFile":"setlist-days-v37.json","ui":"逐站歌單頁", "priority":"P0"},
+    {"id":"wire-asset-manifest","target":"app-v38.js","dataFile":"asset-manifest-v37.json","ui":"素材庫 / 缺口牆", "priority":"P0"},
+    {"id":"wire-official-sources","target":"app-v38.js","dataFile":"official-sources-v37.json","ui":"來源牆", "priority":"P1"},
+    {"id":"wire-research-queue","target":"app-v38.js","dataFile":"research-queue-v37.json","ui":"補全進度板", "priority":"P1"}
+  ],
+  "guardrails": [
+    "v38 仍只允許單一 CSS/JS 入口。",
+    "不恢復 v15-v34 疊層。",
+    "接入新資料前先保留 v36 fallback。",
+    "歌單仍顯示 needs-verification，不能冒充官方完整歌單。"
+  ]
+}
