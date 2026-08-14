@@ -1,0 +1,46 @@
+{
+  "version": "37.0.0",
+  "updatedAt": "2026-08-14",
+  "queues": [
+    {
+      "id": "official-setlists",
+      "priority": "P0",
+      "title": "逐站官方 / 可信歌單核對",
+      "tasks": ["台北 5525+2 每日曲序", "台中 5525+1 跨年曲序", "北京鳥巢 12 場曲序", "高雄 / 香港 / 上海站曲序"],
+      "done": 0,
+      "total": 4
+    },
+    {
+      "id": "venue-guides",
+      "priority": "P0",
+      "title": "場館交通與拍照點",
+      "tasks": ["台北大巨蛋", "台中洲際", "高雄世運", "鳥巢", "中環海濱"],
+      "done": 1,
+      "total": 5
+    },
+    {
+      "id": "assets-rights",
+      "priority": "P0",
+      "title": "素材權利與替代策略",
+      "tasks": ["官方封面外鏈合規檢查", "自製城市抽象圖", "票根 / 場刊授權", "展區照片來源"],
+      "done": 1,
+      "total": 4
+    },
+    {
+      "id": "mobile-polish",
+      "priority": "P1",
+      "title": "手機端精修",
+      "tasks": ["地圖高度", "右側欄轉下方", "播放器不遮擋", "來源牆可讀性"],
+      "done": 2,
+      "total": 4
+    },
+    {
+      "id": "source-index",
+      "priority": "P1",
+      "title": "官方來源索引補全",
+      "tasks": ["B’in Music 2468", "B’in Music 2460", "B’in Music 2424", "B’in Music 2409", "Mayday.jp Discography"],
+      "done": 3,
+      "total": 5
+    }
+  ]
+}
