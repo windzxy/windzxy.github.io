@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="台中原創城市視覺占位">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#071018"/><stop offset=".5" stop-color="#25354a"/><stop offset="1" stop-color="#ffd36a"/></linearGradient><radialGradient id="field" cx="50%" cy="76%" r="58%"><stop offset="0" stop-color="#88f0a4" stop-opacity=".55"/><stop offset="1" stop-color="#88f0a4" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="720" fill="url(#bg)"/><rect width="1200" height="720" fill="url(#field)"/>
+  <ellipse cx="650" cy="560" rx="440" ry="120" fill="none" stroke="#fff" stroke-width="18" opacity=".22"/>
+  <ellipse cx="650" cy="560" rx="290" ry="72" fill="none" stroke="#ffd36a" stroke-width="6" opacity=".55"/>
+  <g fill="#071018" opacity=".88"><rect x="0" y="574" width="1200" height="146"/><rect x="160" y="445" width="88" height="129"/><rect x="300" y="392" width="55" height="182"/><rect x="835" y="430" width="80" height="144"/><rect x="960" y="360" width="58" height="214"/></g>
+  <path d="M205 472c120-74 244-102 392-90 160 14 295 75 395 173" fill="none" stroke="#ffd36a" stroke-width="10" opacity=".75"/>
+  <text x="72" y="110" fill="#fff" font-size="66" font-family="Arial, sans-serif" font-weight="800">TAICHUNG</text>
+  <text x="76" y="158" fill="#ffd36a" font-size="24" font-family="Arial, sans-serif" letter-spacing="8">5525 LAUNCH NODE</text>
+  <text x="76" y="640" fill="#f7eed1" font-size="26" font-family="Arial, sans-serif">Intercontinental stadium story · Original placeholder</text>
+</svg>
