@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="香港原創城市視覺占位">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#06101d"/><stop offset=".55" stop-color="#261a59"/><stop offset="1" stop-color="#8f7dff"/></linearGradient><radialGradient id="harbour" cx="55%" cy="78%" r="48%"><stop offset="0" stop-color="#63e7ff" stop-opacity=".56"/><stop offset="1" stop-color="#63e7ff" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="720" fill="url(#bg)"/><rect width="1200" height="720" fill="url(#harbour)"/>
+  <g fill="#050912" opacity=".86"><rect x="0" y="540" width="1200" height="180"/><rect x="80" y="360" width="56" height="180"/><rect x="175" y="315" width="70" height="225"/><rect x="310" y="420" width="92" height="120"/><rect x="480" y="275" width="58" height="265"/><rect x="685" y="350" width="88" height="190"/><rect x="865" y="295" width="74" height="245"/><rect x="1000" y="390" width="80" height="150"/></g>
+  <path d="M72 565c170 48 330 48 515 0s345-48 540 0" fill="none" stroke="#63e7ff" stroke-width="9" opacity=".72"/>
+  <path d="M72 612c210 52 414 52 620 0s332-42 435 0" fill="none" stroke="#ffd36a" stroke-width="5" opacity=".42"/>
+  <text x="72" y="110" fill="#fff" font-size="66" font-family="Arial, sans-serif" font-weight="800">HONG KONG</text>
+  <text x="76" y="158" fill="#ffd36a" font-size="24" font-family="Arial, sans-serif" letter-spacing="8">HARBOUR LIVE NODE</text>
+  <text x="76" y="640" fill="#e9e5ff" font-size="26" font-family="Arial, sans-serif">Harbour skyline memory · Original placeholder</text>
+</svg>
