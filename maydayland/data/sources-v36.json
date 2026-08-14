@@ -1,0 +1,10 @@
+[
+  {"id":"bin-artist","name":"相信音樂 · 五月天藝人專區","type":"official","url":"https://www.bin-music.com.tw/artist/MAYDAY","useFor":["artist-profile","discography-entry","official-identity"],"status":"active"},
+  {"id":"bin-2458","name":"相信音樂 · 5525+2 台北大巨蛋新聞","type":"official-news","url":"https://www.bin-music.com.tw/news/2458","useFor":["taipei","taipei-dome","2026-tour"],"status":"active"},
+  {"id":"bin-2468","name":"相信音樂 · 5525 巡演總結新聞","type":"official-news","url":"https://www.bin-music.com.tw/news/2468","useFor":["5525-summary","tour-facts","taichung-launch"],"status":"active"},
+  {"id":"bin-tour-2020-2024","name":"相信音樂 · 2020–2024 巡演新聞入口","type":"official-news-index","url":"https://www.bin-music.com.tw/news","useFor":["tour-index","city-source-gap"],"status":"needs-extraction"},
+  {"id":"mayday-jp-discography","name":"Mayday Japanese Official Website · Discography","type":"official-overseas","url":"https://www.mayday.jp/discography/","useFor":["discography","japan","albums"],"status":"active"},
+  {"id":"mayday-jp-biography","name":"Mayday Japanese Official Website · Biography","type":"official-overseas","url":"https://www.mayday.jp/biography/","useFor":["biography","timeline","japan"],"status":"active"},
+  {"id":"mayday-jp-news","name":"Mayday Japanese Official Website · News","type":"official-overseas","url":"https://www.mayday.jp/news/","useFor":["overseas-news","japan","hongkong"],"status":"needs-extraction"},
+  {"id":"local-editorial","name":"Maydayland 編輯資料","type":"local-editorial","url":"./data/","useFor":["asset-gaps","editorial-roadmap","quality-gate"],"status":"maintained"}
+]
