@@ -1,0 +1,33 @@
+{
+  "version": "39.0.0",
+  "updatedAt": "2026-08-14",
+  "purpose": "Connect split data, v37 enrichment modules, and v39 rights-safe original visual placeholders.",
+  "baseFiles": {
+    "meta": "./data/meta-v36.json?v=39.0.0",
+    "cities": "./data/cities-v36.json?v=39.0.0",
+    "venues": "./data/venues-v36.json?v=39.0.0",
+    "albums": "./data/albums-v36.json?v=39.0.0",
+    "setlists": "./data/setlists-v36.json?v=39.0.0",
+    "sources": "./data/sources-v36.json?v=39.0.0",
+    "assets": "./data/assets-v36.json?v=39.0.0",
+    "roadmap": "./data/roadmap-v36.json?v=39.0.0"
+  },
+  "enrichmentFiles": {
+    "venueGuides": "./data/venue-guides-v37.json?v=39.0.0",
+    "setlistDays": "./data/setlist-days-v37.json?v=39.0.0",
+    "cityLanding": "./data/city-landing-v37.json?v=39.0.0",
+    "assetManifest": "./data/asset-manifest-v37.json?v=39.0.0",
+    "researchQueue": "./data/research-queue-v37.json?v=39.0.0",
+    "officialSources": "./data/official-sources-v37.json?v=39.0.0",
+    "schema": "./data/schema-v37.json?v=39.0.0",
+    "visualAssets": "./data/visual-assets-v39.json?v=39.0.0"
+  },
+  "uiModules": ["overview-dashboard","city-landing-pages","venue-guide-board","setlist-days-board","visual-asset-library","official-source-wall","research-queue-board"],
+  "qualityTarget": 85,
+  "currentInternalScore": 83,
+  "nextWork": [
+    "replace city placeholders with licensed images or stronger original generated visuals",
+    "verify daily setlists before official labels",
+    "add independent route urls for each city landing page"
+  ]
+}
