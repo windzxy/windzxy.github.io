@@ -1,0 +1,62 @@
+{
+  "version": "37.0.0",
+  "updatedAt": "2026-08-14",
+  "landing": [
+    {
+      "cityId": "taipei",
+      "layout": "hero + dossier + timeline + assets + setlist",
+      "headline": "台北：回到那一天的主場核心",
+      "scoreTarget": 88,
+      "modules": ["台北大巨蛋主視覺", "七號公園 / 萬人演唱會記憶", "5525+2 逐日歌單", "松菸 / 北流 / 大巨蛋展區", "票根與場刊牆"],
+      "missing": ["授權照片牆", "完整逐日曲序", "票根 / 場刊", "交通拍照點"]
+    },
+    {
+      "cityId": "taichung",
+      "layout": "countdown + launch + stadium + new-year",
+      "headline": "台中：5525 起跑與新年倒數",
+      "scoreTarget": 84,
+      "modules": ["洲際棒球場", "跨年倒數", "起跑站時間線", "台中城市展區", "倒數歌單"],
+      "missing": ["跨年現場圖", "交通資料", "完整歌單", "場館周邊攻略"]
+    },
+    {
+      "cityId": "kaohsiung",
+      "layout": "harbor + stadium + exhibition",
+      "headline": "高雄：港都夜景與戶外大場",
+      "scoreTarget": 82,
+      "modules": ["世運主場館", "高雄流行音樂中心", "港都夜景", "五場歌單", "城市旅遊延伸"],
+      "missing": ["官方照片", "逐日場次", "旅遊延伸", "展區資料"]
+    },
+    {
+      "cityId": "hongkong",
+      "layout": "harbour + overseas + night-view",
+      "headline": "香港：維港海風與海外線",
+      "scoreTarget": 80,
+      "modules": ["中環海濱", "紅磡記憶", "維港夜景", "海外華語場景"],
+      "missing": ["票務來源", "場館圖", "完整場次", "海外新聞"]
+    },
+    {
+      "cityId": "beijing",
+      "layout": "monument + record + stadium",
+      "headline": "北京：鳥巢紀錄與大型場館敘事",
+      "scoreTarget": 84,
+      "modules": ["鳥巢主視覺", "12 場連場", "55 場鳥巢紀錄", "北方收官線", "大型場館交通攻略"],
+      "missing": ["完整日期", "官方圖", "交通攻略", "特殊曲目"]
+    },
+    {
+      "cityId": "singapore",
+      "layout": "overseas + gateway",
+      "headline": "新加坡：東南亞海外線入口",
+      "scoreTarget": 78,
+      "modules": ["海外城市模板", "國家體育場", "交通與票務", "日文 / 英文資料交叉"],
+      "missing": ["官方場次", "場館照片", "票務來源", "海外歌單"]
+    },
+    {
+      "cityId": "tokyo",
+      "layout": "japan-data + discography",
+      "headline": "東京：日本官方資料與作品支線",
+      "scoreTarget": 78,
+      "modules": ["Mayday.jp 資料入口", "日文 Discography", "日本場館支線", "日版作品封面"],
+      "missing": ["日本場館核對", "日文新聞分類", "日版封面", "交通提示"]
+    }
+  ]
+}
