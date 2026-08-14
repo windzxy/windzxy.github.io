@@ -1,0 +1,28 @@
+{
+  "policy": "先登記素材需求與目標路徑；只有拿到授權或自製原創素材後才放入 assets/。避免直接搬運未授權圖片。",
+  "basePath": "maydayland/assets/",
+  "cityAssets": [
+    {"key":"city-taipei-hero","cityId":"taipei","type":"hero","target":"assets/cities/taipei/hero.webp","status":"pending","priority":1,"need":"台北大巨蛋或城市夜景主視覺"},
+    {"key":"city-taichung-hero","cityId":"taichung","type":"hero","target":"assets/cities/taichung/hero.webp","status":"pending","priority":1,"need":"洲際棒球場或起跑主視覺"},
+    {"key":"city-kaohsiung-hero","cityId":"kaohsiung","type":"hero","target":"assets/cities/kaohsiung/hero.webp","status":"pending","priority":2,"need":"世運主場館與港都夜景"},
+    {"key":"city-hongkong-hero","cityId":"hongkong","type":"hero","target":"assets/cities/hongkong/hero.webp","status":"pending","priority":2,"need":"維港或中環海濱主視覺"},
+    {"key":"city-shanghai-hero","cityId":"shanghai","type":"hero","target":"assets/cities/shanghai/hero.webp","status":"pending","priority":3,"need":"上海夜景與體育場視覺"},
+    {"key":"city-beijing-hero","cityId":"beijing","type":"hero","target":"assets/cities/beijing/hero.webp","status":"pending","priority":3,"need":"鳥巢與大型場館視覺"}
+  ],
+  "venueAssets": [
+    {"key":"venue-taipei-dome","venueId":"taipei-dome","target":"assets/venues/taipei-dome.webp","status":"pending","priority":1},
+    {"key":"venue-taichung-intercontinental","venueId":"taichung-intercontinental","target":"assets/venues/taichung-intercontinental.webp","status":"pending","priority":1},
+    {"key":"venue-kaohsiung-national","venueId":"kaohsiung-national-stadium","target":"assets/venues/kaohsiung-national-stadium.webp","status":"pending","priority":2},
+    {"key":"venue-beijing-birdnest","venueId":"beijing-birdnest","target":"assets/venues/beijing-birdnest.webp","status":"pending","priority":3}
+  ],
+  "albumAssets": [
+    {"albumId":"poetry","target":"assets/albums/poetry.webp","status":"needs-cover","priority":2},
+    {"albumId":"second-round","target":"assets/albums/second-round.webp","status":"needs-cover","priority":1},
+    {"albumId":"history-of-tomorrow","target":"assets/albums/history-of-tomorrow.webp","status":"needs-cover","priority":1},
+    {"albumId":"japanese-best","target":"assets/albums/japanese-best.webp","status":"needs-cover","priority":3}
+  ],
+  "photoWallTemplate": {
+    "fields": ["id", "cityId", "venueId", "src", "caption", "sourceId", "license", "status"],
+    "statusValues": ["pending", "licensed", "original", "rejected"]
+  }
+}
