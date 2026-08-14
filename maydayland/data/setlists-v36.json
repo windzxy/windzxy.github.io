@@ -1,0 +1,24 @@
+{
+  "note": "目前為主題歌單與代表曲資料，不聲稱是完整逐日官方歌單。後續可在此檔補每場日期、城市、曲序、嘉賓與彩蛋。",
+  "themes": {
+    "homecoming": ["回到那一天", "倔強", "突然好想你", "知足", "乾杯", "憨人"],
+    "launch": ["派對動物", "OAOA", "倔強", "乾杯", "離開地球表面"],
+    "stadium": ["離開地球表面", "戀愛ing", "溫柔", "乾杯"],
+    "harbour": ["知足", "突然好想你", "倔強", "溫柔"],
+    "metro": ["派對動物", "夜訪吸血鬼", "傷心的人別聽慢歌", "乾杯"],
+    "monument": ["諾亞方舟", "成名在望", "頑固", "倔強"],
+    "neon": ["OAOA", "戀愛ing", "派對動物", "突然好想你"],
+    "overseas": ["倔強", "知足", "乾杯", "溫柔"],
+    "japan": ["YOUR LEGEND", "Do You Ever Shine?", "Dancin' Dancin'", "倔強"]
+  },
+  "playlists": [
+    {"id":"live-core","title":"現場必唱核心","mood":"終場大合唱 / 高共鳴","tracks":["倔強","知足","乾杯","憨人","溫柔"],"cityRefs":["taipei","hongkong","singapore"]},
+    {"id":"stadium-energy","title":"大型場館能量","mood":"開場、煙火、跳動段落","tracks":["派對動物","離開地球表面","OAOA","戀愛ing","傷心的人別聽慢歌"],"cityRefs":["kaohsiung","shanghai","shenzhen"]},
+    {"id":"concept-world","title":"世界觀與末日感","mood":"概念段落 / 視覺主題","tracks":["諾亞方舟","第二人生","成名在望","頑固","如煙"],"cityRefs":["beijing","taichung"]},
+    {"id":"japan-entry","title":"日本資料入口","mood":"日文官方資料與海外歌單","tracks":["YOUR LEGEND","Do You Ever Shine?","Dancin' Dancin'","倔強"],"cityRefs":["tokyo"]}
+  ],
+  "showTemplate": {
+    "fields": ["date", "cityId", "venueId", "tour", "songs", "guests", "encore", "sourceIds", "confidence"],
+    "example": {"date":"待補","cityId":"taipei","venueId":"taipei-dome","tour":"5525+2","songs":[],"guests":[],"encore":[],"sourceIds":[],"confidence":"needs-official-source"}
+  }
+}
