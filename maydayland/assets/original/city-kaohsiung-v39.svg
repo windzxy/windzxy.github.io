@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="高雄原創城市視覺占位">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#08111f"/><stop offset=".45" stop-color="#2e2144"/><stop offset="1" stop-color="#ff9a56"/></linearGradient><radialGradient id="sun" cx="76%" cy="24%" r="38%"><stop offset="0" stop-color="#ffd36a" stop-opacity=".95"/><stop offset="1" stop-color="#ffd36a" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="720" fill="url(#bg)"/><rect width="1200" height="720" fill="url(#sun)" opacity=".75"/>
+  <path d="M0 520c170-55 330-35 480 30 190 82 405 82 720-30v200H0Z" fill="#06111f" opacity=".9"/>
+  <path d="M70 470c150-84 340-84 520 0s330 82 540-6" fill="none" stroke="#63e7ff" stroke-width="8" opacity=".65"/>
+  <g fill="none" stroke="#fff" stroke-width="5" opacity=".28"><path d="M250 510h690"/><path d="M350 510c80-110 180-165 300-165s220 55 300 165"/><path d="M455 510c48-67 110-101 195-101s147 34 195 101"/></g>
+  <text x="72" y="110" fill="#fff" font-size="66" font-family="Arial, sans-serif" font-weight="800">KAOHSIUNG</text>
+  <text x="76" y="158" fill="#ffd36a" font-size="24" font-family="Arial, sans-serif" letter-spacing="8">STADIUM / HARBOUR</text>
+  <text x="76" y="640" fill="#ffe8d7" font-size="26" font-family="Arial, sans-serif">Outdoor stadium memory · Original placeholder</text>
+</svg>
