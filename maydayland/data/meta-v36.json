@@ -1,0 +1,30 @@
+{
+  "version": "36.0.0",
+  "updatedAt": "2026-08-14",
+  "title": "Maydayland · Data Atlas",
+  "description": "五月天巡演地圖、城市檔案、時光唱片室、歌曲宇宙、書籍出版、場館與來源資料庫。",
+  "qualityGate": 85,
+  "currentScore": 78,
+  "dataPrinciple": "資料拆分；補城市、場館、歌單、素材時只改 data/，不再破壞主版面。",
+  "dataFiles": [
+    "meta-v36.json",
+    "cities-v36.json",
+    "venues-v36.json",
+    "albums-v36.json",
+    "setlists-v36.json",
+    "sources-v36.json",
+    "assets-v36.json",
+    "roadmap-v36.json"
+  ],
+  "officialFacts": [
+    {"id":"5525-summary","label":"5525 巡演累積","value":"2023 年從台中起跑，累積 100400 公里、925 天、162 場、7490000 人次。","sourceId":"bin-2468"},
+    {"id":"taipei-dome-2026","label":"台北大巨蛋回歸","value":"5525+2 回到台北大巨蛋，台北城市頁作為主敘事入口。","sourceId":"bin-2458"},
+    {"id":"first-album","label":"首張專輯入口","value":"Mayday Japanese Official Discography 收錄 1999/07/07 Mayday's First Album。","sourceId":"mayday-jp-discography"}
+  ],
+  "scoreModel": [
+    {"label":"架構穩定","score":92,"note":"單入口、資料外置、無多版本疊層"},
+    {"label":"資料完整","score":74,"note":"已有城市/場館/專輯/來源骨架，逐站歌單與照片仍需補"},
+    {"label":"視覺完成","score":76,"note":"主視覺與版面穩定，缺真實照片牆與高質素材"},
+    {"label":"可維護性","score":86,"note":"v36 起補資料主要改 JSON"}
+  ]
+}
