@@ -1,0 +1,12 @@
+[
+  {"id":"first-album","title":"第一張創作專輯","year":"1999","tag":"青春起點","cover":"https://www.bin-music.com.tw/album/artist_album/6256aaa3c124b-lw500h500.jpeg","sourceIds":["mayday-jp-discography"],"tracks":["瘋狂世界","擁抱","志明與春嬌"],"status":"cover-linked","cityRefs":["taipei","tokyo"]},
+  {"id":"love-live","title":"愛情萬歲","year":"2000","tag":"早期搖滾記憶","cover":"https://www.bin-music.com.tw/album/artist_album/5ecf788f0856f-lw420h420.jpg","sourceIds":["bin-artist"],"tracks":["愛情萬歲","溫柔","終結孤單"],"status":"cover-linked","cityRefs":["taipei"]},
+  {"id":"people-life","title":"人生海海","year":"2001","tag":"成長與海風","cover":"https://www.bin-music.com.tw/album/artist_album/5ed7efaf18827-lw500h500.jpg","sourceIds":["bin-artist"],"tracks":["人生海海","好不好","候鳥"],"status":"cover-linked","cityRefs":["kaohsiung"]},
+  {"id":"time-machine","title":"時光機","year":"2003","tag":"時間主題","cover":"https://www.bin-music.com.tw/album/artist_album/5ed8e4a2afda5-lw500h500.jpg","sourceIds":["bin-artist"],"tracks":["時光機","恆星的恆心","而我知道"],"status":"cover-linked","cityRefs":["taipei"]},
+  {"id":"jump","title":"神的孩子都在跳舞","year":"2004","tag":"大型現場核心","cover":"https://www.bin-music.com.tw/album/artist_album/5ed8f08519147%2Btcw500h500.jpg","sourceIds":["mayday-jp-discography"],"tracks":["孫悟空","倔強","垃圾車"],"status":"cover-linked","cityRefs":["taichung","kaohsiung","beijing"]},
+  {"id":"best-content","title":"知足 最真傑作選","year":"2005","tag":"入門精選","cover":"https://www.bin-music.com.tw/album/artist_album/5ed80323cb98f-lw500h500.jpg","sourceIds":["bin-artist"],"tracks":["知足","戀愛ing","牙關"],"status":"cover-linked","cityRefs":["taipei","hongkong"]},
+  {"id":"poetry","title":"後青春期的詩","year":"2008","tag":"成熟轉折","cover":"","sourceIds":["mayday-jp-biography"],"tracks":["突然好想你","你不是真正的快樂","如煙"],"status":"needs-cover","cityRefs":["kaohsiung","hongkong"]},
+  {"id":"second-round","title":"第二人生","year":"2011","tag":"大型概念","cover":"","sourceIds":["mayday-jp-discography"],"tracks":["OAOA","第二人生","諾亞方舟"],"status":"needs-cover","cityRefs":["taichung","shanghai","beijing","shenzhen"]},
+  {"id":"history-of-tomorrow","title":"自傳","year":"2016","tag":"回望與重生","cover":"","sourceIds":["mayday-jp-jiden"],"tracks":["派對動物","成名在望","頑固"],"status":"needs-cover","cityRefs":["taipei","taichung","shanghai","shenzhen"]},
+  {"id":"japanese-best","title":"Mayday × 五月天 Best","year":"2017","tag":"日本資料入口","cover":"","sourceIds":["mayday-jp-discography"],"tracks":["Dancin' Dancin'","YOUR LEGEND","Do You Ever Shine?"],"status":"needs-cover","cityRefs":["tokyo","singapore","hongkong"]}
+]
