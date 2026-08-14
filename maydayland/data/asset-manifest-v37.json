@@ -1,0 +1,25 @@
+{
+  "version": "37.0.0",
+  "updatedAt": "2026-08-14",
+  "policy": "只使用官方可連結入口、原創佔位圖或後續授權素材；缺素材時顯示 pending，不用低質假圖。",
+  "requiredFolders": [
+    "maydayland/assets/cities/",
+    "maydayland/assets/venues/",
+    "maydayland/assets/tickets/",
+    "maydayland/assets/posters/",
+    "maydayland/assets/exhibitions/"
+  ],
+  "assets": [
+    {"key":"city-taipei-hero","cityId":"taipei","type":"city-hero","status":"pending","targetPath":"assets/cities/taipei-hero.webp","ratio":"16:9","usage":"台北 Landing Page 主視覺"},
+    {"key":"venue-taipei-dome","venueId":"taipei-dome","type":"venue-photo","status":"pending","targetPath":"assets/venues/taipei-dome-exterior.webp","ratio":"16:9","usage":"台北大巨蛋場館 Hero"},
+    {"key":"ticket-taipei-5525p2","cityId":"taipei","type":"ticket-stub","status":"pending","targetPath":"assets/tickets/taipei-5525p2.webp","ratio":"4:3","usage":"台北票根 / 場刊牆"},
+    {"key":"exhibition-maydayland-taipei","cityId":"taipei","type":"exhibition","status":"pending","targetPath":"assets/exhibitions/taipei-maydayland.webp","ratio":"16:9","usage":"MAYDAYLAND 十區十美展區"},
+    {"key":"city-taichung-countdown","cityId":"taichung","type":"city-hero","status":"pending","targetPath":"assets/cities/taichung-countdown.webp","ratio":"16:9","usage":"台中跨年倒數主視覺"},
+    {"key":"venue-taichung-intercontinental","venueId":"taichung-intercontinental","type":"venue-photo","status":"pending","targetPath":"assets/venues/taichung-intercontinental.webp","ratio":"16:9","usage":"台中洲際棒球場"},
+    {"key":"venue-kaohsiung-national","venueId":"kaohsiung-national-stadium","type":"venue-photo","status":"pending","targetPath":"assets/venues/kaohsiung-national-stadium.webp","ratio":"16:9","usage":"高雄世運主場館"},
+    {"key":"city-hongkong-harbour","cityId":"hongkong","type":"city-hero","status":"pending","targetPath":"assets/cities/hongkong-harbour.webp","ratio":"16:9","usage":"香港維港海外線"},
+    {"key":"venue-beijing-birdnest","venueId":"beijing-birdnest","type":"venue-photo","status":"pending","targetPath":"assets/venues/beijing-birdnest.webp","ratio":"16:9","usage":"北京鳥巢專題"},
+    {"key":"city-singapore-overseas","cityId":"singapore","type":"city-hero","status":"pending","targetPath":"assets/cities/singapore-overseas.webp","ratio":"16:9","usage":"新加坡海外城市模板"},
+    {"key":"city-tokyo-data","cityId":"tokyo","type":"city-hero","status":"pending","targetPath":"assets/cities/tokyo-data.webp","ratio":"16:9","usage":"日本資料支線"}
+  ]
+}
