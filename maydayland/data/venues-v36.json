@@ -1,0 +1,13 @@
+[
+  {"id":"taipei-dome","name":"台北大巨蛋","cityId":"taipei","type":"dome","priority":1,"status":"official-focus","story":"5525+2 台北主線場館。","needs":["官方外觀照","座位區說明","交通方式","附近拍照點"],"assetKey":"venue-taipei-dome"},
+  {"id":"taipei-arena","name":"台北小巨蛋","cityId":"taipei","type":"arena","priority":2,"status":"history-node","story":"台北早期大型室內場館記憶。","needs":["歷年場次表","現場照片牆","票根資料"],"assetKey":"venue-taipei-arena"},
+  {"id":"taichung-intercontinental","name":"台中洲際棒球場","cityId":"taichung","type":"stadium","priority":1,"status":"tour-launch","story":"5525 起跑與跨年節點。","needs":["起跑海報","跨年場次","交通圖","周邊景點"],"assetKey":"venue-taichung-intercontinental"},
+  {"id":"kaohsiung-national-stadium","name":"高雄世運主場館","cityId":"kaohsiung","type":"stadium","priority":1,"status":"needs-assets","story":"高雄戶外大場與港都夜景主場。","needs":["世運外觀照","港都夜景圖","逐日歌單","交通路線"],"assetKey":"venue-kaohsiung-national"},
+  {"id":"central-harbourfront","name":"中環海濱活動空間","cityId":"hongkong","type":"outdoor","priority":1,"status":"needs-source","story":"香港海港線戶外場景。","needs":["維港照片","場地入口","交通路線","票務來源"],"assetKey":"venue-hk-harbourfront"},
+  {"id":"hong-kong-coliseum","name":"香港體育館 / 紅磡","cityId":"hongkong","type":"arena","priority":2,"status":"history-node","story":"香港華語現場重要場館記憶。","needs":["歷史場次","場刊","歌單"],"assetKey":"venue-hk-coliseum"},
+  {"id":"shanghai-stadium","name":"上海體育場","cityId":"shanghai","type":"stadium","priority":1,"status":"needs-source","story":"上海連場都市線主場。","needs":["多場日曆","夜景圖牆","交通座位","特殊曲目"],"assetKey":"venue-shanghai-stadium"},
+  {"id":"beijing-birdnest","name":"國家體育場 鳥巢","cityId":"beijing","type":"stadium","priority":1,"status":"needs-source","story":"北京超大型場與北方收官敘事。","needs":["鳥巢官方圖","場次核對","交通攻略","城市收官專題"],"assetKey":"venue-beijing-birdnest"},
+  {"id":"shenzhen-universiade","name":"深圳大運中心體育場","cityId":"shenzhen","type":"stadium","priority":1,"status":"needs-source","story":"深圳霓虹城市與年輕市場場館。","needs":["場館照片","票務來源","交通整理","站點歌單"],"assetKey":"venue-shenzhen-universiade"},
+  {"id":"singapore-national-stadium","name":"新加坡國家體育場 / 室內體育館","cityId":"singapore","type":"overseas","priority":1,"status":"needs-source","story":"東南亞海外線資料入口。","needs":["官方場次","票務連結","場館外觀","交通提示"],"assetKey":"venue-singapore"},
+  {"id":"tokyo-live-node","name":"東京日本資料節點","cityId":"tokyo","type":"overseas-data","priority":1,"status":"data-node","story":"日本官方資料、作品與演出支線入口。","needs":["日本場館核對","日文新聞","日版封面","交通提示"],"assetKey":"venue-tokyo"}
+]
