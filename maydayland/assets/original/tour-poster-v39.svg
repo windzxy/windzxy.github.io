@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="原創巡演海報視覺占位">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#050912"/><stop offset=".45" stop-color="#111b33"/><stop offset="1" stop-color="#ff70b7"/></linearGradient><radialGradient id="core" cx="50%" cy="42%" r="40%"><stop offset="0" stop-color="#ffd36a" stop-opacity=".85"/><stop offset="1" stop-color="#ffd36a" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <rect width="1200" height="720" fill="url(#core)"/>
+  <circle cx="600" cy="360" r="210" fill="none" stroke="#fff" stroke-width="2" opacity=".25"/>
+  <circle cx="600" cy="360" r="150" fill="none" stroke="#ffd36a" stroke-width="9" opacity=".72"/>
+  <path d="M430 360h340M600 190v340M480 240l240 240M720 240 480 480" stroke="#63e7ff" stroke-width="5" opacity=".5"/>
+  <text x="90" y="130" fill="#fff" font-size="72" font-family="Arial, sans-serif" font-weight="900">5525</text>
+  <text x="90" y="186" fill="#ffd36a" font-size="26" font-family="Arial, sans-serif" letter-spacing="10">ORIGINAL POSTER SLOT</text>
+  <text x="90" y="610" fill="#f4d9ed" font-size="28" font-family="Arial, sans-serif">Use until official poster is licensed or replaced</text>
+</svg>
