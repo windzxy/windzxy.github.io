@@ -1,0 +1,14 @@
+{
+  "version": "39.0.0",
+  "updatedAt": "2026-08-14",
+  "policy": "Rights-safe original SVG placeholders. Replace only with licensed official imagery or clearly original generated assets.",
+  "items": [
+    {"id":"city-taipei-original","type":"city-hero","cityId":"taipei","label":"台北原創城市主視覺","src":"./assets/original/city-taipei-v39.svg","status":"original-placeholder","replaceWhen":"licensed venue photo or official campaign visual is available"},
+    {"id":"city-taichung-original","type":"city-hero","cityId":"taichung","label":"台中原創城市主視覺","src":"./assets/original/city-taichung-v39.svg","status":"original-placeholder","replaceWhen":"licensed launch / stadium image is available"},
+    {"id":"city-kaohsiung-original","type":"city-hero","cityId":"kaohsiung","label":"高雄原創城市主視覺","src":"./assets/original/city-kaohsiung-v39.svg","status":"original-placeholder","replaceWhen":"licensed stadium or harbour photo is available"},
+    {"id":"city-hongkong-original","type":"city-hero","cityId":"hongkong","label":"香港原創城市主視覺","src":"./assets/original/city-hongkong-v39.svg","status":"original-placeholder","replaceWhen":"licensed harbour / venue photo is available"},
+    {"id":"city-beijing-original","type":"city-hero","cityId":"beijing","label":"北京原創城市主視覺","src":"./assets/original/city-beijing-v39.svg","status":"original-placeholder","replaceWhen":"licensed Bird Nest visual is available"},
+    {"id":"ticket-original","type":"ticket-stub","cityId":"global","label":"原創票根視覺占位","src":"./assets/original/collectible-ticket-v39.svg","status":"original-placeholder","replaceWhen":"verified ticket-stub photo with rights is available"},
+    {"id":"poster-original","type":"poster","cityId":"global","label":"原創巡演海報占位","src":"./assets/original/tour-poster-v39.svg","status":"original-placeholder","replaceWhen":"licensed official poster image is available"}
+  ]
+}
