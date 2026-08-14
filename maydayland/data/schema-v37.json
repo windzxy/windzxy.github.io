@@ -1,0 +1,54 @@
+{
+  "version": "37.0.0",
+  "updatedAt": "2026-08-14",
+  "purpose": "定義 Maydayland 資料層關係，方便後續繼續補全而不破壞前端架構。",
+  "entities": {
+    "cities": {
+      "file": "cities-v36.json",
+      "primaryKey": "id",
+      "relations": ["venueIds -> venues.id", "albumRefs -> albums.id", "sourceIds -> sources.id", "setlistTheme -> setlists.themes"]
+    },
+    "venues": {
+      "file": "venues-v36.json",
+      "primaryKey": "id",
+      "relations": ["cityId -> cities.id", "assetKey -> assets.cityAssets/venueAssets"]
+    },
+    "setlistDays": {
+      "file": "setlist-days-v37.json",
+      "primaryKey": "id",
+      "relations": ["cityId -> cities.id", "venueId -> venues.id", "sourceIds -> official-sources-v37.sources.id"]
+    },
+    "cityLanding": {
+      "file": "city-landing-v37.json",
+      "primaryKey": "cityId",
+      "relations": ["cityId -> cities.id", "modules -> UI section", "missing -> researchQueue.tasks"]
+    },
+    "assetManifest": {
+      "file": "asset-manifest-v37.json",
+      "primaryKey": "key",
+      "relations": ["cityId -> cities.id", "venueId -> venues.id", "targetPath -> maydayland/assets/**"]
+    },
+    "venueGuides": {
+      "file": "venue-guides-v37.json",
+      "primaryKey": "venueId",
+      "relations": ["venueId -> venues.id", "cityId -> cities.id"]
+    },
+    "officialSources": {
+      "file": "official-sources-v37.json",
+      "primaryKey": "id",
+      "relations": ["supports -> factual claims", "useIn -> UI/data usage"]
+    },
+    "researchQueue": {
+      "file": "research-queue-v37.json",
+      "primaryKey": "id",
+      "relations": ["tasks -> missing fields/assets/sources"]
+    }
+  },
+  "rules": [
+    "新資料優先新增到 data/ 對應檔案，不直接寫死在 app JS。",
+    "未核對來源的逐日歌單必須標記 needs-verification。",
+    "未授權或未確認權利的圖片不可直接入庫，先在 asset-manifest 標記 pending。",
+    "城市與場館需要用 id 關聯，不用自由文本匹配。",
+    "前端最多只載入一套 CSS/JS，禁止回到多版本疊層。"
+  ]
+}
