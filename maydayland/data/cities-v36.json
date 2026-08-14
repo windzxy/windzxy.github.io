@@ -1,0 +1,76 @@
+[
+  {
+    "id":"taipei","city":"台北","country":"Taiwan","lat":25.037,"lng":121.565,"heat":100,"visitsEstimate":26,
+    "venueIds":["taipei-dome","taipei-arena"],"years":"1999–2026","level":"核心主場","score":80,"tone":"#ff70b7","status":"official-rich",
+    "hero":"台灣主場、25 週年收官與大型場館記憶核心。",
+    "story":"台北是 Maydayland 的主敘事核心：從早期萬人場、台北小巨蛋，到 5525+2 重返台北大巨蛋，都適合做成城市級 Landing Page。",
+    "setlistTheme":"homecoming","albumRefs":["first-album","love-live","best-content","history-of-tomorrow"],
+    "sourceIds":["bin-2458","bin-2468"],
+    "todo":["核對 2026 逐日場次與颱風調整","補官方主視覺與授權照片","補台北大巨蛋交通與拍照點","補逐日歌單與嘉賓彩蛋"]
+  },
+  {
+    "id":"taichung","city":"台中","country":"Taiwan","lat":24.179,"lng":120.646,"heat":82,"visitsEstimate":14,
+    "venueIds":["taichung-intercontinental"],"years":"2023–2026","level":"起跑 / 跨年","score":74,"tone":"#ffd36a","status":"official-partial",
+    "hero":"5525 起跑、跨年敘事與台灣中部大型場館線。",
+    "story":"台中作為 5525 的起跑站，適合承接巡演開始、跨年、洲際棒球場與年度時間線。",
+    "setlistTheme":"launch","albumRefs":["second-round","history-of-tomorrow","jump"],
+    "sourceIds":["bin-2468","bin-tour-2020-2024"],
+    "todo":["補起跑場圖牆","整理跨年節點","補場館交通","補年度時間線"]
+  },
+  {
+    "id":"kaohsiung","city":"高雄","country":"Taiwan","lat":22.755,"lng":120.31,"heat":74,"visitsEstimate":12,
+    "venueIds":["kaohsiung-national-stadium"],"years":"2024","level":"戶外大場","score":68,"tone":"#ff9a56","status":"needs-source",
+    "hero":"世運主場館、港都夜景與大型戶外舞台。",
+    "story":"高雄頁面需要呈現世運主場館、港都夜景、戶外舞台和南部場的記憶感。",
+    "setlistTheme":"stadium","albumRefs":["jump","poetry"],"sourceIds":["bin-tour-2020-2024"],
+    "todo":["補五場歌單","補世運照片","補交通資料","補港都旅遊延伸"]
+  },
+  {
+    "id":"hongkong","city":"香港","country":"Hong Kong","lat":22.282,"lng":114.158,"heat":68,"visitsEstimate":10,
+    "venueIds":["central-harbourfront","hong-kong-coliseum"],"years":"2013–2024","level":"海港海外線","score":66,"tone":"#8f7dff","status":"needs-source",
+    "hero":"維港、海風與城市天際線，是海外華語場景的高記憶點。",
+    "story":"香港頁面應以海港、紅磡現場記憶、維港夜色和海外華語場景作為情緒入口。",
+    "setlistTheme":"harbour","albumRefs":["best-content","japanese-best"],"sourceIds":["mayday-jp-news"],
+    "todo":["補官方票務","補維港照片","補交通路線","整理海外線"]
+  },
+  {
+    "id":"shanghai","city":"上海","country":"China","lat":31.23,"lng":121.474,"heat":62,"visitsEstimate":9,
+    "venueIds":["shanghai-stadium"],"years":"2024","level":"連場都市","score":64,"tone":"#64e8ff","status":"needs-source",
+    "hero":"都市密度、連場演出與夜景霓虹。",
+    "story":"上海頁面需要做成高密度都市、夜景和大型連場演出的資料入口。",
+    "setlistTheme":"metro","albumRefs":["second-round","history-of-tomorrow"],"sourceIds":["bin-tour-2020-2024"],
+    "todo":["整理多場日曆","補城市夜景","補交通座位","補特殊曲目"]
+  },
+  {
+    "id":"beijing","city":"北京","country":"China","lat":39.904,"lng":116.407,"heat":58,"visitsEstimate":8,
+    "venueIds":["beijing-birdnest"],"years":"2024–2026","level":"超大型場","score":63,"tone":"#c96dff","status":"needs-source",
+    "hero":"鳥巢級大型場館，適合做北方收官與大型場專題。",
+    "story":"北京頁面應該突出鳥巢、大型場、北方收官和城市級事件感。",
+    "setlistTheme":"monument","albumRefs":["second-round","history-of-tomorrow","jump"],"sourceIds":["bin-tour-2020-2024"],
+    "todo":["核對 2026 場次","補鳥巢官方圖","補收官專題","補票務交通"]
+  },
+  {
+    "id":"shenzhen","city":"深圳","country":"China","lat":22.543,"lng":114.057,"heat":46,"visitsEstimate":5,
+    "venueIds":["shenzhen-universiade"],"years":"2024","level":"霓虹城市","score":59,"tone":"#35d0ff","status":"needs-source",
+    "hero":"年輕市場、現代城市與夜景霓虹。",
+    "story":"深圳頁面需要更科技、霓虹、年輕市場和大型場館交通資訊。",
+    "setlistTheme":"neon","albumRefs":["history-of-tomorrow","second-round"],"sourceIds":["bin-tour-2020-2024"],
+    "todo":["補場館照片","補站點歌單","整理交通","補票務來源"]
+  },
+  {
+    "id":"singapore","city":"新加坡","country":"Singapore","lat":1.352,"lng":103.82,"heat":36,"visitsEstimate":3,
+    "venueIds":["singapore-national-stadium"],"years":"海外巡演支線","level":"東南亞節點","score":55,"tone":"#72ffc9","status":"needs-source",
+    "hero":"東南亞海外巡演節點，可作為海外線總覽入口。",
+    "story":"新加坡頁面先作為海外城市模板，後續補完整場館、票務和歌單。",
+    "setlistTheme":"overseas","albumRefs":["japanese-best"],"sourceIds":["mayday-jp-discography"],
+    "todo":["補官方場次","補場館照片","補海外票務","補城市交通"]
+  },
+  {
+    "id":"tokyo","city":"東京","country":"Japan","lat":35.676,"lng":139.65,"heat":32,"visitsEstimate":2,
+    "venueIds":["tokyo-live-node"],"years":"日本資料入口","level":"日文官方支線","score":52,"tone":"#ff9ed8","status":"needs-source",
+    "hero":"日本官方網站與日文作品資料入口。",
+    "story":"東京頁面先作為日本資料樞紐，承接 Mayday.jp 的 Biography、Discography、News 與日本巡演支線。",
+    "setlistTheme":"japan","albumRefs":["japanese-best","first-album"],"sourceIds":["mayday-jp-discography","mayday-jp-biography"],
+    "todo":["補日本場館資料","補日文新聞時間線","補日版作品封面","補海外交通提示"]
+  }
+]
