@@ -1,0 +1,66 @@
+{
+  "version": "37.0.0",
+  "updatedAt": "2026-08-14",
+  "disclaimer": "此檔是逐站歌單資料結構與主題模板，不冒充官方完整逐日歌單；正式曲序需後續由官方新聞、場刊或可信歌迷資料核對。",
+  "shows": [
+    {
+      "id": "taipei-5525p2-template",
+      "cityId": "taipei",
+      "venueId": "taipei-dome",
+      "tour": "5525+2 回到那一天",
+      "status": "needs-verification",
+      "sourceIds": ["bin-2409", "bin-2460", "bin-2468"],
+      "nights": [
+        {"date": "2026-07-03", "theme": "回到七號公園 / 開場夜", "tracks": ["回到那一天", "倔強", "突然好想你", "知足", "乾杯"], "needs": ["完整曲序", "嘉賓", "安可曲", "新聞圖"]},
+        {"date": "2026-07-04", "theme": "愛情萬歲 / 萬人演唱會記憶", "tracks": ["愛情萬歲", "溫柔", "終結孤單", "憨人"], "needs": ["完整曲序", "舞台彩蛋", "對應新聞"]},
+        {"date": "2026-07-13", "theme": "颱風延期補場 / 復出夜", "tracks": ["回到那一天", "倔強", "乾杯"], "needs": ["確認延期前後日期", "完整歌單", "現場新聞連結"]}
+      ]
+    },
+    {
+      "id": "taichung-5525-launch-template",
+      "cityId": "taichung",
+      "venueId": "taichung-intercontinental",
+      "tour": "5525 / 5525+1 起跑與新年線",
+      "status": "needs-verification",
+      "sourceIds": ["bin-2282", "bin-2326", "bin-2468"],
+      "nights": [
+        {"date": "2025-12-27", "theme": "新年快樂版開場", "tracks": ["派對動物", "OAOA", "倔強", "乾杯"], "needs": ["逐日曲序", "跨年橋段", "現場圖"]},
+        {"date": "2026-01-01", "theme": "新年第一刻", "tracks": ["乾杯", "倔強", "戀愛ing"], "needs": ["倒數流程", "嘉賓 / 彩蛋", "完整新聞來源"]}
+      ]
+    },
+    {
+      "id": "beijing-birdnest-template",
+      "cityId": "beijing",
+      "venueId": "beijing-birdnest",
+      "tour": "5525+2 北京鳥巢無限延伸版",
+      "status": "needs-verification",
+      "sourceIds": ["bin-2424"],
+      "nights": [
+        {"date": "2026-05-30", "theme": "鳥巢連場起點", "tracks": ["諾亞方舟", "成名在望", "頑固", "倔強"], "needs": ["12 場逐日日期", "完整曲序", "現場新聞圖"]},
+        {"date": "2026-06-template", "theme": "55 場鳥巢紀錄線", "tracks": ["倔強", "乾杯"], "needs": ["鳥巢累積場次證據", "特殊曲目", "城市專題圖"]}
+      ]
+    },
+    {
+      "id": "kaohsiung-stadium-template",
+      "cityId": "kaohsiung",
+      "venueId": "kaohsiung-national-stadium",
+      "tour": "5525 高雄戶外大場",
+      "status": "needs-verification",
+      "sourceIds": ["bin-tour-2020-2024"],
+      "nights": [
+        {"date": "2024-template", "theme": "港都戶外場", "tracks": ["離開地球表面", "戀愛ing", "溫柔", "乾杯"], "needs": ["逐日場次", "五場歌單", "世運現場圖"]}
+      ]
+    },
+    {
+      "id": "hongkong-harbour-template",
+      "cityId": "hongkong",
+      "venueId": "central-harbourfront",
+      "tour": "香港海港海外線",
+      "status": "needs-verification",
+      "sourceIds": ["mayday-jp-news"],
+      "nights": [
+        {"date": "2024-template", "theme": "維港海風", "tracks": ["知足", "突然好想你", "倔強", "溫柔"], "needs": ["官方票務", "完整歌單", "場館圖"]}
+      ]
+    }
+  ]
+}
