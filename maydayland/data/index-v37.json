@@ -1,0 +1,31 @@
+{
+  "version": "37.0.0",
+  "updatedAt": "2026-08-14",
+  "description": "Maydayland v37 資料索引。v36 是已接入前端的拆分資料，v37 是補全資料層，下一步可由前端接入。",
+  "coreFiles": [
+    "meta-v36.json",
+    "cities-v36.json",
+    "venues-v36.json",
+    "albums-v36.json",
+    "setlists-v36.json",
+    "sources-v36.json",
+    "assets-v36.json",
+    "roadmap-v36.json"
+  ],
+  "extensionFiles": [
+    "city-landing-v37.json",
+    "venue-guides-v37.json",
+    "setlist-days-v37.json",
+    "asset-manifest-v37.json",
+    "research-queue-v37.json",
+    "official-sources-v37.json",
+    "schema-v37.json"
+  ],
+  "nextFrontendWork": [
+    "把城市專題頁接入 city-landing-v37.json",
+    "把場館攻略頁接入 venue-guides-v37.json",
+    "把逐站歌單頁接入 setlist-days-v37.json",
+    "把素材庫頁接入 asset-manifest-v37.json",
+    "把來源牆補充 official-sources-v37.json"
+  ]
+}
