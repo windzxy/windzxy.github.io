@@ -1,0 +1,73 @@
+{
+  "version": "35.0.0",
+  "updatedAt": "2026-08-14",
+  "meta": {
+    "title": "Maydayland · Tour Atlas",
+    "description": "五月天巡演地圖、城市檔案、時光唱片室、歌曲宇宙、書籍出版與歷程資料庫。",
+    "qualityGate": 85,
+    "currentScore": 76,
+    "principle": "資料與介面分離；後續補資料只改 data/，不再破壞版面。"
+  },
+  "officialFacts": [
+    {"id":"5525-summary","label":"5525 巡演累積","value":"2023 年從台中起跑，累積 100400 公里、925 天、162 場、7490000 人次。","sourceId":"bin-2468"},
+    {"id":"taipei-dome-2026","label":"台北大巨蛋回歸","value":"5525+2 回到台北大巨蛋，原規劃 7 天 7 夜，後因颱風出現日期調整與補場。","sourceId":"bin-2458"},
+    {"id":"discography-1999","label":"首張專輯","value":"Mayday Japanese Official Discography 收錄 1999/07/07 Mayday's First Album。","sourceId":"mayday-jp-discography"}
+  ],
+  "cities": [
+    {"id":"taipei","city":"台北","country":"Taiwan","lat":25.037,"lng":121.565,"visits":26,"venue":"台北大巨蛋 / 台北小巨蛋","years":"1999–2026","level":"核心主場","score":80,"tone":"#ff70b7","status":"official-rich","hero":"台灣主場、25 週年收官與大型場館記憶核心。","story":"台北是 Maydayland 的主敘事核心：從早期萬人場、台北小巨蛋，到 5525+2 重返台北大巨蛋，都適合做成城市級 Landing Page。","setlist":["回到那一天","倔強","突然好想你","知足","乾杯","憨人"],"albums":["第一張創作專輯","愛情萬歲","知足 最真傑作選","自傳"],"sourceIds":["bin-2458","bin-2468"],"todo":["核對 2026 逐日場次與颱風調整","補官方主視覺與授權照片","補台北大巨蛋交通與拍照點","補逐日歌單與嘉賓彩蛋"],"assets":{"photoWall":"pending","venueMap":"pending","ticketStub":"pending","poster":"partial"}},
+    {"id":"taichung","city":"台中","country":"Taiwan","lat":24.179,"lng":120.646,"visits":14,"venue":"台中洲際棒球場","years":"2023–2026","level":"起跑 / 跨年","score":74,"tone":"#ffd36a","status":"official-partial","hero":"5525 起跑、跨年敘事與台灣中部大型場館線。","story":"台中作為 5525 的起跑站，適合承接巡演開始、跨年、洲際棒球場與年度時間線。","setlist":["派對動物","OAOA","倔強","乾杯","離開地球表面"],"albums":["第二人生","自傳","神的孩子都在跳舞"],"sourceIds":["bin-tour-2020-2024","bin-2468"],"todo":["補起跑場圖牆","整理跨年節點","補場館交通","補年度時間線"],"assets":{"photoWall":"pending","venueMap":"pending","ticketStub":"pending","poster":"partial"}},
+    {"id":"kaohsiung","city":"高雄","country":"Taiwan","lat":22.755,"lng":120.31,"visits":12,"venue":"高雄世運主場館","years":"2024","level":"戶外大場","score":68,"tone":"#ff9a56","status":"needs-source","hero":"世運主場館、港都夜景與大型戶外舞台。","story":"高雄頁面需要呈現世運主場館、港都夜景、戶外舞台和南部場的記憶感。","setlist":["離開地球表面","戀愛ing","溫柔","乾杯"],"albums":["神的孩子都在跳舞","後青春期的詩"],"sourceIds":["bin-tour-2020-2024"],"todo":["補五場歌單","補世運照片","補交通資料","補港都旅遊延伸"],"assets":{"photoWall":"pending","venueMap":"pending","ticketStub":"pending","poster":"missing"}},
+    {"id":"hongkong","city":"香港","country":"Hong Kong","lat":22.282,"lng":114.158,"visits":10,"venue":"中環海濱活動空間 / 紅磡支線","years":"2013–2024","level":"海港海外線","score":66,"tone":"#8f7dff","status":"needs-source","hero":"維港、海風與城市天際線，是海外華語場景的高記憶點。","story":"香港頁面應以海港、紅磡現場記憶、維港夜色和海外華語場景作為情緒入口。","setlist":["知足","突然好想你","倔強","溫柔"],"albums":["知足 最真傑作選","Mayday × 五月天 Best"],"sourceIds":["mayday-jp-news"],"todo":["補官方票務","補維港照片","補交通路線","整理海外線"],"assets":{"photoWall":"pending","venueMap":"pending","ticketStub":"pending","poster":"missing"}},
+    {"id":"shanghai","city":"上海","country":"China","lat":31.23,"lng":121.474,"visits":9,"venue":"上海體育場","years":"2024","level":"連場都市","score":64,"tone":"#64e8ff","status":"needs-source","hero":"都市密度、連場演出與夜景霓虹。","story":"上海頁面需要做成高密度都市、夜景和大型連場演出的資料入口。","setlist":["派對動物","夜訪吸血鬼","傷心的人別聽慢歌","乾杯"],"albums":["第二人生","自傳"],"sourceIds":["bin-tour-2020-2024"],"todo":["整理多場日曆","補城市夜景","補交通座位","補特殊曲目"],"assets":{"photoWall":"pending","venueMap":"pending","ticketStub":"pending","poster":"missing"}},
+    {"id":"beijing","city":"北京","country":"China","lat":39.904,"lng":116.407,"visits":8,"venue":"國家體育場 鳥巢","years":"2024–2026","level":"超大型場","score":63,"tone":"#c96dff","status":"needs-source","hero":"鳥巢級大型場館，適合做北方收官與大型場專題。","story":"北京頁面應該突出鳥巢、大型場、北方收官和城市級事件感。","setlist":["諾亞方舟","成名在望","頑固","倔強"],"albums":["第二人生","自傳","神的孩子都在跳舞"],"sourceIds":["bin-tour-2020-2024"],"todo":["核對 2026 場次","補鳥巢官方圖","補收官專題","補票務交通"],"assets":{"photoWall":"pending","venueMap":"pending","ticketStub":"pending","poster":"missing"}},
+    {"id":"shenzhen","city":"深圳","country":"China","lat":22.543,"lng":114.057,"visits":5,"venue":"深圳大運中心體育場","years":"2024","level":"霓虹城市","score":59,"tone":"#35d0ff","status":"needs-source","hero":"年輕市場、現代城市與夜景霓虹。","story":"深圳頁面需要更科技、霓虹、年輕市場和大型場館交通資訊。","setlist":["OAOA","戀愛ing","派對動物","突然好想你"],"albums":["自傳","第二人生"],"sourceIds":["bin-tour-2020-2024"],"todo":["補場館照片","補站點歌單","整理交通","補票務來源"],"assets":{"photoWall":"pending","venueMap":"pending","ticketStub":"missing","poster":"missing"}},
+    {"id":"singapore","city":"新加坡","country":"Singapore","lat":1.352,"lng":103.82,"visits":3,"venue":"新加坡國家體育場 / 室內體育館","years":"海外巡演支線","level":"東南亞節點","score":55,"tone":"#72ffc9","status":"needs-source","hero":"東南亞海外巡演節點，可作為海外線總覽入口。","story":"新加坡頁面先作為海外城市模板，後續補完整場館、票務和歌單。","setlist":["倔強","知足","乾杯"],"albums":["Mayday × 五月天 Best"],"sourceIds":["mayday-jp-discography"],"todo":["補官方場次","補場館照片","補海外票務","補城市交通"],"assets":{"photoWall":"pending","venueMap":"pending","ticketStub":"missing","poster":"missing"}}
+  ],
+  "albums": [
+    {"title":"第一張創作專輯","year":"1999","tag":"青春起點","cover":"https://www.bin-music.com.tw/album/artist_album/6256aaa3c124b-lw500h500.jpeg","sourceIds":["mayday-jp-discography"],"tracks":["瘋狂世界","擁抱","志明與春嬌"],"status":"cover-linked"},
+    {"title":"愛情萬歲","year":"2000","tag":"早期搖滾記憶","cover":"https://www.bin-music.com.tw/album/artist_album/5ecf788f0856f-lw420h420.jpg","sourceIds":["bin-2460"],"tracks":["愛情萬歲","溫柔","終結孤單"],"status":"cover-linked"},
+    {"title":"人生海海","year":"2001","tag":"成長與海風","cover":"https://www.bin-music.com.tw/album/artist_album/5ed7efaf18827-lw500h500.jpg","sourceIds":["bin-artist"],"tracks":["人生海海","好不好","候鳥"],"status":"cover-linked"},
+    {"title":"時光機","year":"2003","tag":"時間主題","cover":"https://www.bin-music.com.tw/album/artist_album/5ed8e4a2afda5-lw500h500.jpg","sourceIds":["bin-artist"],"tracks":["時光機","恆星的恆心","而我知道"],"status":"cover-linked"},
+    {"title":"神的孩子都在跳舞","year":"2004","tag":"大型現場核心","cover":"https://www.bin-music.com.tw/album/artist_album/5ed8f08519147%2Btcw500h500.jpg","sourceIds":["mayday-jp-discography"],"tracks":["孫悟空","倔強","垃圾車"],"status":"cover-linked"},
+    {"title":"知足 最真傑作選","year":"2005","tag":"入門精選","cover":"https://www.bin-music.com.tw/album/artist_album/5ed80323cb98f-lw500h500.jpg","sourceIds":["bin-artist"],"tracks":["知足","戀愛ing","牙關"],"status":"cover-linked"},
+    {"title":"後青春期的詩","year":"2008","tag":"成熟轉折","cover":"","sourceIds":["mayday-jp-biography"],"tracks":["突然好想你","你不是真正的快樂","如煙"],"status":"needs-cover"},
+    {"title":"第二人生","year":"2011","tag":"大型概念","cover":"","sourceIds":["mayday-jp-discography"],"tracks":["OAOA","第二人生","諾亞方舟"],"status":"needs-cover"},
+    {"title":"自傳","year":"2016","tag":"回望與重生","cover":"","sourceIds":["mayday-jp-jiden"],"tracks":["派對動物","成名在望","頑固"],"status":"needs-cover"}
+  ],
+  "playlists": [
+    {"id":"city-opener","title":"開場熱血","mood":"開場 / 大合唱","songs":["派對動物","離開地球表面","OAOA","戀愛ing"]},
+    {"id":"memory","title":"時光回望","mood":"回憶 / 時光機","songs":["回到那一天","突然好想你","知足","乾杯"]},
+    {"id":"stubborn","title":"倔強核心","mood":"信念 / 安可","songs":["倔強","憨人","頑固","成名在望"]}
+  ],
+  "publications": [
+    {"title":"場刊資料庫","type":"tour-program","status":"needs-assets","todo":["按巡演建立場刊條目","補封面縮圖","補發售/場次關聯"]},
+    {"title":"票根資料庫","type":"ticket","status":"needs-assets","todo":["建立城市票根模板","補日期/座位區示意","避免個資顯示"]},
+    {"title":"書籍與成員文集","type":"book","status":"needs-source","todo":["補出版資訊","補封面授權","補內容索引"]}
+  ],
+  "timeline": [
+    {"year":"1997","title":"成軍與校園時期","text":"從校園樂團逐步形成五月天的創作核心。"},
+    {"year":"1999","title":"第一張創作專輯","text":"正式建立作品入口，也作為唱片室的起點。"},
+    {"year":"2003","title":"時光機","text":"時間、青春與記憶成為網站視覺主軸。"},
+    {"year":"2011","title":"第二人生","text":"大型概念專輯與巡演視覺升級。"},
+    {"year":"2017","title":"LiFE 人生無限公司","text":"世界巡演資料館的重要支線。"},
+    {"year":"2023","title":"5525 回到那一天起跑","text":"台中起跑並串接 25 週年敘事。"},
+    {"year":"2026","title":"5525+2 年度延伸","text":"台北大巨蛋等大型場館成為高熱度節點。"}
+  ],
+  "sources": [
+    {"id":"bin-artist","name":"相信音樂 五月天藝人專區","url":"https://www.bin-music.com.tw/artist/MAYDAY","type":"official"},
+    {"id":"bin-2458","name":"5525+2 台北大巨蛋首場新聞","url":"https://www.bin-music.com.tw/news/2458","type":"official-news"},
+    {"id":"bin-2460","name":"5525+2 愛情萬歲封面重現新聞","url":"https://www.bin-music.com.tw/news/2460","type":"official-news"},
+    {"id":"bin-2468","name":"5525 巡演總結新聞","url":"https://www.bin-music.com.tw/news/2468","type":"official-news"},
+    {"id":"bin-tour-2020-2024","name":"五月天世界巡演 2020-2024","url":"https://www.bin-music.com.tw/event/maydaytour/","type":"official-event"},
+    {"id":"mayday-jp-discography","name":"Mayday.jp Discography","url":"https://www.mayday.jp/discography/","type":"official-discography"},
+    {"id":"mayday-jp-biography","name":"Mayday.jp Biography","url":"https://www.mayday.jp/biography/","type":"official-profile"},
+    {"id":"mayday-jp-jiden","name":"Mayday 自伝 / History of Tomorrow","url":"https://www.mayday.jp/jiden/","type":"official-album"}
+  ],
+  "contentRoadmap": [
+    {"area":"城市","done":["台北/台中官方來源初步接入","8 個城市資料模板"],"next":["逐站日期表","場館交通","照片牆與票根"]},
+    {"area":"專輯","done":["6 張官方封面入口","9 張專輯資料模板"],"next":["補完整曲目","補未接封面","專輯與巡演關聯"]},
+    {"area":"歌單","done":["3 組主題歌單","城市歌單可推送播放器"],"next":["逐日 setlist","嘉賓與彩蛋","現場版本標註"]},
+    {"area":"出版","done":["場刊/票根/書籍模板"],"next":["縮圖","出版資訊","來源與授權"]},
+    {"area":"品質","done":["資料與 UI 分離","單入口架構"],"next":["視覺素材","可訪問性","實機 QA"]}
+  ]
+}
