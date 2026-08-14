@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="原創票根視覺占位">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#070b18"/><stop offset="1" stop-color="#172849"/></linearGradient><linearGradient id="ticket" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4c4"/><stop offset=".5" stop-color="#ffd36a"/><stop offset="1" stop-color="#ff70b7"/></linearGradient></defs>
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <g transform="translate(125 150) rotate(-5 475 210)">
+    <path d="M0 40a40 40 0 0 1 40-40h870a40 40 0 0 1 40 40v330a40 40 0 0 1-40 40H40a40 40 0 0 1-40-40v-80a48 48 0 0 0 0-96V40Z" fill="url(#ticket)"/>
+    <path d="M690 0v410" stroke="#101828" stroke-width="6" stroke-dasharray="18 16" opacity=".35"/>
+    <text x="60" y="105" fill="#14101d" font-size="48" font-family="Arial, sans-serif" font-weight="900">MAYDAYLAND</text>
+    <text x="64" y="160" fill="#14101d" font-size="24" font-family="Arial, sans-serif" letter-spacing="8">TOUR ARCHIVE TICKET</text>
+    <text x="64" y="255" fill="#14101d" font-size="64" font-family="Arial, sans-serif" font-weight="900">PENDING VERIFIED STUB</text>
+    <text x="730" y="110" fill="#14101d" font-size="34" font-family="Arial, sans-serif" font-weight="900">A-25</text>
+    <text x="730" y="172" fill="#14101d" font-size="22" font-family="Arial, sans-serif">NO UNLICENSED PHOTO</text>
+    <path d="M730 245h150v70H730Z" fill="#14101d" opacity=".75"/><path d="M745 260h12v40h-12zm24 0h8v40h-8zm22 0h16v40h-16zm31 0h7v40h-7zm20 0h18v40h-18z" fill="#fff"/>
+  </g>
+  <text x="80" y="660" fill="#cbd6f4" font-size="24" font-family="Arial, sans-serif">Original ticket placeholder for rights-safe archive display</text>
+</svg>
