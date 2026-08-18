@@ -28,7 +28,7 @@ jobs:
           import re
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
-          version = '20260818-gold-widget12-api-push-panel'
+          version = '20260818-gold-widget13-half-second'
           tag = f'<script src="Html_tools/metals-widget.js?v={version}"></script>'
           pattern = r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>'
           if re.search(pattern, html):
