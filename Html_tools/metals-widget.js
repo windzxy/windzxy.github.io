@@ -2,12 +2,14 @@
   if(window.__windzxyMetalsWidgetLoaded)return;
   window.__windzxyMetalsWidgetLoaded=true;
   const APP_ID="metals";
-  const VERSION="20260818-gold-widget3";
+  const VERSION="20260818-gold-widget4";
   const REFRESH_MS=15000;
   const TENCENT_CODES=["hf_XAU","hf_XAG","hf_GC","hf_SI"];
   const JD_MINSHENG="https://api.jdjygold.com/gw/generic/hj/h5/m/latestPrice?reqData={}";
   const JD_ZHESHANG="https://api.jdjygold.com/gw2/generic/jrm/h5/m/stdLatestPrice?productSku=1961543816";
   const CMB_PAGES=["https://m.cmbchina.com/goldrate.html","https://gold.cmbchina.com/rate/"];
+  const DEFAULT_W=330;
+  const DEFAULT_H=238;
   let lastQuotes={};
   let loading=false;
 
@@ -20,6 +22,7 @@
     installApp();
     patchRenderers();
     ensureDefaultCard();
+    normalizeExistingCards();
     renderAll();
     loadMetals({force:true});
     setInterval(()=>loadMetals({silent:true}),REFRESH_MS);
@@ -28,12 +31,12 @@
 
   function installApp(){
     if(!apps.some(app=>app.id===APP_ID)){
-      apps.push({id:APP_ID,kind:"widget",title:"金價",desc:"招行黃金、平台金價、倫敦金、現貨白銀、紐約金價實時小看板。",icon:"Au",tone:"t-metals"});
+      apps.push({id:APP_ID,kind:"widget",title:"金價",desc:"招行黃金、現貨黃金、現貨白銀、紐約金價實時小看板。",icon:"Au",tone:"t-metals"});
     }
     if(typeof defaults!=="undefined"){
       defaults.forEach(ws=>{
         if(ws.id==="daily"&&!ws.cards.some(card=>card.appId===APP_ID)){
-          ws.cards.push({id:"daily-metals-0",appId:APP_ID,x:360,y:536,w:320,h:168,collapsed:false,data:{}});
+          ws.cards.push({id:"daily-metals-0",appId:APP_ID,x:360,y:536,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
         }
       });
     }
@@ -43,10 +46,25 @@
     try{
       const ws=activeWorkspace();
       if(ws&&!ws.cards.some(card=>card.appId===APP_ID)){
-        ws.cards.push({id:"card-metals-"+Date.now(),appId:APP_ID,x:360,y:536,w:320,h:168,collapsed:false,data:{}});
+        ws.cards.push({id:"card-metals-"+Date.now(),appId:APP_ID,x:360,y:536,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
         save();
       }
     }catch(error){console.warn("metals default card skipped",error)}
+  }
+
+  function normalizeExistingCards(){
+    try{
+      let changed=false;
+      workspaces.forEach(ws=>{
+        (ws.cards||[]).forEach(card=>{
+          if(card.appId===APP_ID){
+            if((card.w||0)<DEFAULT_W){card.w=DEFAULT_W;changed=true;}
+            if((card.h||0)<DEFAULT_H){card.h=DEFAULT_H;changed=true;}
+          }
+        });
+      });
+      if(changed)save();
+    }catch(error){console.warn('metals card normalize skipped',error)}
   }
 
   function patchRenderers(){
@@ -62,7 +80,7 @@
       addCard=function(appId){
         if(appId!==APP_ID)return oldAddCard(appId);
         const i=activeWorkspace().cards.length;
-        activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),appId:APP_ID,x:72+(i%5)*38,y:78+(i%7)*32,w:320,h:168,collapsed:false,data:{}});
+        activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),appId:APP_ID,x:72+(i%5)*38,y:78+(i%7)*32,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
         save();renderAll();loadMetals({force:true});
       };
     }
@@ -81,22 +99,23 @@
   }
 
   function visibleRows(card){
-    const h=Number(card?.h)||168;
-    const w=Number(card?.w)||320;
+    const h=Number(card?.h)||DEFAULT_H;
+    const w=Number(card?.w)||DEFAULT_W;
     if(h<135||w<305)return 2;
     if(h<170)return 3;
     if(h<210)return 4;
+    if(h<245)return 5;
     return 6;
   }
 
   function buildRows(){
     const cmb=lastQuotes.cmbGold;
-    const sourceGold=lastQuotes.jdZheshang||lastQuotes.jdMinsheng||emptyRow("平台金價","CNY/g","京東金岳公開行情未返回");
+    const platformGold=lastQuotes.jdZheshang||lastQuotes.jdMinsheng||emptyRow("平台金價","CNY/g","京東金岳公開行情未返回");
     return [
       cmb?.buyRow||emptyRow("招行買入","元/克","招商銀行公開頁未返回可讀買入價"),
       cmb?.sellRow||emptyRow("招行賣出","元/克","招商銀行公開頁未返回可讀賣出價"),
-      sourceGold,
-      lastQuotes.hf_XAU||emptyRow("倫敦金","USD/oz","騰訊行情未返回"),
+      lastQuotes.hf_XAU||emptyRow("現貨黃金","USD/oz","騰訊行情未返回"),
+      platformGold,
       lastQuotes.hf_XAG||emptyRow("現貨白銀","USD/oz","騰訊行情未返回"),
       lastQuotes.hf_GC||emptyRow("紐約金價","USD/oz","騰訊行情未返回")
     ];
@@ -201,7 +220,7 @@
     const pct=num(f[1]);
     const prev=num(f[7]);
     if(!Number.isFinite(price))return null;
-    const labels={hf_XAU:'倫敦金',hf_XAG:'現貨白銀',hf_GC:'紐約金價',hf_SI:'紐約白銀'};
+    const labels={hf_XAU:'現貨黃金',hf_XAG:'現貨白銀',hf_GC:'紐約金價',hf_SI:'紐約白銀'};
     return {label:labels[code]||code,price,change:Number.isFinite(prev)?price-prev:(Number.isFinite(pct)?price*pct/(100+pct):null),pct:Number.isFinite(pct)?pct:null,unit:'USD/oz',source:'Tencent qt.gtimg.cn '+code,time:[f[12],f[6]].filter(Boolean).join(' ')};
   }
 
