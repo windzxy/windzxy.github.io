@@ -1,0 +1,48 @@
+name: Inject WebDesk Metals Widget
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'Html_tools/metals-widget.js'
+      - '.github/workflows/inject-webdesk-metals.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Inject metals widget script
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+          tag = '<script src="Html_tools/metals-widget.js?v=20260818-gold-widget1"></script>'
+          if tag not in html:
+              if '</body>' not in html:
+                  raise SystemExit('index.html missing </body>')
+              html = html.replace('</body>', tag + '\n</body>', 1)
+              path.write_text(html, encoding='utf-8')
+          PY
+
+      - name: Commit injected script tag
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "index.html already has metals widget script."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Inject WebDesk metals widget script"
+          git push
