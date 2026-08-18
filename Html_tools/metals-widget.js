@@ -2,15 +2,14 @@
   if(window.__windzxyMetalsWidgetLoaded)return;
   window.__windzxyMetalsWidgetLoaded=true;
   const APP_ID="metals";
-  const VERSION="20260818-gold-widget2";
+  const VERSION="20260818-gold-widget3";
   const REFRESH_MS=15000;
-  const OZ_TO_GRAM=31.1034768;
-  const TENCENT_CODES=["hf_XAU","hf_XAG","hf_GC","hf_SI","fx_usr"];
+  const TENCENT_CODES=["hf_XAU","hf_XAG","hf_GC","hf_SI"];
   const JD_MINSHENG="https://api.jdjygold.com/gw/generic/hj/h5/m/latestPrice?reqData={}";
   const JD_ZHESHANG="https://api.jdjygold.com/gw2/generic/jrm/h5/m/stdLatestPrice?productSku=1961543816";
+  const CMB_PAGES=["https://m.cmbchina.com/goldrate.html","https://gold.cmbchina.com/rate/"];
   let lastQuotes={};
   let loading=false;
-  let timer=null;
 
   function boot(){
     if(typeof apps==="undefined"||typeof renderAll==="undefined"||typeof bodyHtml==="undefined"||typeof save==="undefined"){
@@ -23,18 +22,18 @@
     ensureDefaultCard();
     renderAll();
     loadMetals({force:true});
-    timer=setInterval(()=>loadMetals({silent:true}),REFRESH_MS);
+    setInterval(()=>loadMetals({silent:true}),REFRESH_MS);
     window.windzxyRefreshMetals=()=>loadMetals({force:true});
   }
 
   function installApp(){
     if(!apps.some(app=>app.id===APP_ID)){
-      apps.push({id:APP_ID,kind:"widget",title:"金價",desc:"國內金價、倫敦金、現貨白銀、紐約金價實時小看板。",icon:"Au",tone:"t-metals"});
+      apps.push({id:APP_ID,kind:"widget",title:"金價",desc:"招行黃金、平台金價、倫敦金、現貨白銀、紐約金價實時小看板。",icon:"Au",tone:"t-metals"});
     }
     if(typeof defaults!=="undefined"){
       defaults.forEach(ws=>{
         if(ws.id==="daily"&&!ws.cards.some(card=>card.appId===APP_ID)){
-          ws.cards.push({id:"daily-metals-0",appId:APP_ID,x:360,y:536,w:292,h:120,collapsed:false,data:{}});
+          ws.cards.push({id:"daily-metals-0",appId:APP_ID,x:360,y:536,w:320,h:168,collapsed:false,data:{}});
         }
       });
     }
@@ -44,7 +43,7 @@
     try{
       const ws=activeWorkspace();
       if(ws&&!ws.cards.some(card=>card.appId===APP_ID)){
-        ws.cards.push({id:"card-metals-"+Date.now(),appId:APP_ID,x:360,y:536,w:292,h:120,collapsed:false,data:{}});
+        ws.cards.push({id:"card-metals-"+Date.now(),appId:APP_ID,x:360,y:536,w:320,h:168,collapsed:false,data:{}});
         save();
       }
     }catch(error){console.warn("metals default card skipped",error)}
@@ -63,7 +62,7 @@
       addCard=function(appId){
         if(appId!==APP_ID)return oldAddCard(appId);
         const i=activeWorkspace().cards.length;
-        activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),appId:APP_ID,x:72+(i%5)*38,y:78+(i%7)*32,w:292,h:120,collapsed:false,data:{}});
+        activeWorkspace().cards.push({id:"card-"+Date.now()+"-"+Math.random().toString(16).slice(2),appId:APP_ID,x:72+(i%5)*38,y:78+(i%7)*32,w:320,h:168,collapsed:false,data:{}});
         save();renderAll();loadMetals({force:true});
       };
     }
@@ -82,27 +81,28 @@
   }
 
   function visibleRows(card){
-    const h=Number(card?.h)||120;
-    const w=Number(card?.w)||292;
-    if(h<150||w<330)return 2;
-    if(h<195)return 3;
-    return 5;
+    const h=Number(card?.h)||168;
+    const w=Number(card?.w)||320;
+    if(h<135||w<305)return 2;
+    if(h<170)return 3;
+    if(h<210)return 4;
+    return 6;
   }
 
   function buildRows(){
-    const xau=lastQuotes.hf_XAU;
-    const fx=lastQuotes.fx_usr;
-    const domestic=lastQuotes.jdZheshang||lastQuotes.jdMinsheng||calcDomestic(xau,fx);
+    const cmb=lastQuotes.cmbGold;
+    const sourceGold=lastQuotes.jdZheshang||lastQuotes.jdMinsheng||emptyRow("平台金價","CNY/g","京東金岳公開行情未返回");
     return [
-      domestic||emptyRow("國內金價","CNY/g"),
-      xau||emptyRow("倫敦金","USD/oz"),
-      lastQuotes.hf_XAG||emptyRow("現貨白銀","USD/oz"),
-      lastQuotes.hf_GC||emptyRow("紐約金價","USD/oz"),
-      lastQuotes.hf_SI||emptyRow("紐約白銀","USD/oz")
+      cmb?.buyRow||emptyRow("招行買入","元/克","招商銀行公開頁未返回可讀買入價"),
+      cmb?.sellRow||emptyRow("招行賣出","元/克","招商銀行公開頁未返回可讀賣出價"),
+      sourceGold,
+      lastQuotes.hf_XAU||emptyRow("倫敦金","USD/oz","騰訊行情未返回"),
+      lastQuotes.hf_XAG||emptyRow("現貨白銀","USD/oz","騰訊行情未返回"),
+      lastQuotes.hf_GC||emptyRow("紐約金價","USD/oz","騰訊行情未返回")
     ];
   }
 
-  function emptyRow(label,unit){return {label,price:null,change:null,pct:null,unit,source:"--"}}
+  function emptyRow(label,unit,source){return {label,price:null,change:null,pct:null,unit,source:source||"--"}}
 
   function rowHtml(row){
     const trend=row.pct>0?"up":row.pct<0?"down":"flat";
@@ -110,7 +110,7 @@
     const pct=fmtSigned(row.pct,2,"%");
     return '<div class="metal-row '+trend+'" title="'+escape(row.source||"")+'">'
       +'<b>'+escape(row.label)+'</b>'
-      +'<strong>'+fmt(row.price,row.unit==="CNY/g"?2:2)+'</strong>'
+      +'<strong>'+fmt(row.price,2)+'</strong>'
       +'<span>'+ch+'</span>'
       +'<em>'+pct+'</em>'
       +'</div>';
@@ -121,16 +121,18 @@
     loading=true;
     if(!options.silent){lastQuotes.status="刷新中…";rerenderMetalsOnly();}
     try{
-      const results=await Promise.allSettled([loadTencent(),loadJdZheshang(),loadJdMinsheng()]);
+      const results=await Promise.allSettled([loadTencent(),loadJdZheshang(),loadJdMinsheng(),loadCmbPublic()]);
       const tencent=results[0].status==="fulfilled"?results[0].value:null;
       const jdZ=results[1].status==="fulfilled"?results[1].value:null;
       const jdM=results[2].status==="fulfilled"?results[2].value:null;
+      const cmb=results[3].status==="fulfilled"?results[3].value:null;
       if(tencent)Object.assign(lastQuotes,tencent);
       if(jdZ)lastQuotes.jdZheshang=jdZ;
       if(jdM)lastQuotes.jdMinsheng=jdM;
-      const ok=!!(lastQuotes.hf_XAU||lastQuotes.hf_XAG||lastQuotes.hf_GC||lastQuotes.jdZheshang||lastQuotes.jdMinsheng);
+      if(cmb)lastQuotes.cmbGold=cmb;
+      const ok=!!(lastQuotes.cmbGold||lastQuotes.hf_XAU||lastQuotes.hf_XAG||lastQuotes.hf_GC||lastQuotes.jdZheshang||lastQuotes.jdMinsheng);
       lastQuotes.ok=ok;
-      lastQuotes.status=ok?(lastQuotes.jdZheshang?"京東/騰訊行情":"騰訊行情"):("行情源暫不可用");
+      lastQuotes.status=ok?(lastQuotes.cmbGold?"招行/平台行情":"平台行情"):("行情源暫不可用");
       lastQuotes.time=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(new Date());
     }catch(error){
       console.warn("metals load failed",error);
@@ -174,10 +176,7 @@
       script.charset='gbk';
       script.src='https://qt.gtimg.cn/q='+encodeURIComponent(TENCENT_CODES.join(','))+'&_='+Date.now();
       let done=false;
-      const finish=()=>{
-        if(done)return;done=true;
-        setTimeout(()=>resolve(parseTencent()),40);
-      };
+      const finish=()=>{if(done)return;done=true;setTimeout(()=>resolve(parseTencent()),40);};
       script.onload=finish;
       script.onerror=()=>resolve(null);
       setTimeout(()=>resolve(null),6500);
@@ -192,8 +191,6 @@
       const parsed=parseTencentMetal(code,raw);
       if(parsed)out[code]=parsed;
     });
-    const fx=parseTencentFx(window.v_fx_usr);
-    if(fx)out.fx_usr=fx;
     return Object.keys(out).length?out:null;
   }
 
@@ -205,26 +202,7 @@
     const prev=num(f[7]);
     if(!Number.isFinite(price))return null;
     const labels={hf_XAU:'倫敦金',hf_XAG:'現貨白銀',hf_GC:'紐約金價',hf_SI:'紐約白銀'};
-    const unit={hf_XAG:'USD/oz'}[code]||'USD/oz';
-    return {
-      label:labels[code]||code,
-      price,
-      change:Number.isFinite(prev)?price-prev:(Number.isFinite(pct)?price*pct/(100+pct):null),
-      pct:Number.isFinite(pct)?pct:null,
-      unit,
-      source:'Tencent qt.gtimg.cn '+code,
-      time:[f[12],f[6]].filter(Boolean).join(' ')
-    };
-  }
-
-  function parseTencentFx(raw){
-    if(!raw||String(raw).includes('none_match'))return null;
-    const f=String(raw).split('~');
-    const price=num(f[3])||num(f[1])||num(f[4]);
-    const change=num(f[31]);
-    const pct=num(f[32]);
-    if(!Number.isFinite(price))return null;
-    return {label:'USD/CNY',price,change,pct,unit:'CNY',source:'Tencent qt.gtimg.cn fx_usr'};
+    return {label:labels[code]||code,price,change:Number.isFinite(prev)?price-prev:(Number.isFinite(pct)?price*pct/(100+pct):null),pct:Number.isFinite(pct)?pct:null,unit:'USD/oz',source:'Tencent qt.gtimg.cn '+code,time:[f[12],f[6]].filter(Boolean).join(' ')};
   }
 
   async function loadJdZheshang(){
@@ -245,7 +223,7 @@
 
   function parseJd(json,label){
     const data=json?.resultData?.datas||json?.resultData?.data||json?.data||{};
-    const price=num(data.price)||num(data.goldPrice)||num(data.latestPrice)||num(data.value);
+    const price=num(data.price)||num(data.goldPrice)||num(data.latestPrice)||num(data.value)||num(data.buyPrice)||num(data.salePrice);
     if(!Number.isFinite(price))return null;
     const rateText=String(data.rate||data.upDownRate||data.changeRate||data.priceChangeRate||'').replace('%','');
     const pct=num(rateText);
@@ -253,13 +231,32 @@
     return {label,price,change:Number.isFinite(change)?change:null,pct:Number.isFinite(pct)?pct:null,unit:'CNY/g',source:'JD Gold '+label};
   }
 
-  function calcDomestic(xau,fx){
-    if(!xau?.price||!fx?.price)return null;
-    const price=xau.price*fx.price/OZ_TO_GRAM;
-    const prev=(xau.price-(xau.change||0))*fx.price/OZ_TO_GRAM;
-    const change=price-prev;
-    const pct=prev?change/prev*100:null;
-    return {label:'國內金價',price,change,pct,unit:'CNY/g',source:'XAU × USD/CNY ÷ 31.1034768 折算參考'};
+  async function loadCmbPublic(){
+    for(const url of CMB_PAGES){
+      try{
+        const res=await fetch(url,{cache:'no-store',credentials:'omit'});
+        if(!res.ok)continue;
+        const html=await res.text();
+        const parsed=parseCmbHtml(html,url);
+        if(parsed)return parsed;
+      }catch(error){
+        console.warn('cmb public quote failed',url,error);
+      }
+    }
+    return null;
+  }
+
+  function parseCmbHtml(html,url){
+    const text=String(html||'').replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ');
+    if(!/黃金|黄金|gold/i.test(text))return null;
+    const nums=[...text.matchAll(/(?:買入|买入|客戶買入|客户买入|賣出|卖出|客戶賣出|客户卖出|最新)[^0-9]{0,18}(\d{2,5}(?:\.\d{1,4})?)/gi)].map(m=>num(m[1])).filter(Number.isFinite);
+    const all=[...text.matchAll(/\d{2,5}\.\d{1,4}/g)].map(m=>num(m[0])).filter(v=>Number.isFinite(v)&&v>100&&v<3000);
+    const buy=nums[0]||all[0];
+    const sell=nums[1]||all[1];
+    if(!Number.isFinite(buy)&&!Number.isFinite(sell))return null;
+    const buyRow={label:'招行買入',price:buy||null,change:null,pct:null,unit:'元/克',source:'招商銀行公開頁 '+url};
+    const sellRow={label:'招行賣出',price:sell||null,change:null,pct:null,unit:'元/克',source:'招商銀行公開頁 '+url};
+    return {buyRow,sellRow,source:url};
   }
 
   function installStyle(){
@@ -302,9 +299,5 @@
   function escape(s){
     return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
-
-  document.addEventListener('click',event=>{
-    if(event.target.closest('[data-metals-refresh]'))return;
-  });
   boot();
 })();
