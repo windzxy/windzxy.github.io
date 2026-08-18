@@ -2,15 +2,16 @@
   if(window.__windzxyMetalsWidgetLoaded)return;
   window.__windzxyMetalsWidgetLoaded=true;
   const APP_ID="metals";
-  const VERSION="20260818-gold-widget5-realtime";
+  const VERSION="20260818-gold-widget6-koudai-cmb";
   const REFRESH_MS=3000;
   const TENCENT_CODES=["hf_XAU","hf_XAG","hf_GC","hf_SI"];
   const JD_PRO_PAGE="https://gold-price-pro.pf.jd.com/";
   const JD_MINSHENG="https://api.jdjygold.com/gw/generic/hj/h5/m/latestPrice?reqData={}";
   const JD_ZHESHANG="https://api.jdjygold.com/gw2/generic/jrm/h5/m/stdLatestPrice?productSku=1961543816";
   const CMB_PAGES=["https://m.cmbchina.com/goldrate.html","https://gold.cmbchina.com/rate/"];
-  const DEFAULT_W=350;
-  const DEFAULT_H=278;
+  const KOUDAI_GOLD_PAGE="https://www.gkoudai.com/quotesTrend/gold.html";
+  const DEFAULT_W=370;
+  const DEFAULT_H=312;
   let lastQuotes={};
   let loading=false;
   let refreshTimer=null;
@@ -34,7 +35,7 @@
 
   function installApp(){
     if(!apps.some(app=>app.id===APP_ID)){
-      apps.push({id:APP_ID,kind:"widget",title:"金價",desc:"現貨黃金、平台金價、招行買入賣出、白銀與紐約金價實時小看板。",icon:"Au",tone:"t-metals"});
+      apps.push({id:APP_ID,kind:"widget",title:"金價",desc:"現貨黃金、口袋招行金、平台金價、招行買賣、白銀與紐約金價。",icon:"Au",tone:"t-metals"});
     }
     if(typeof defaults!=="undefined"){
       defaults.forEach(ws=>{
@@ -97,7 +98,7 @@
     return '<div class="metals-widget" data-metals-version="'+VERSION+'">'
       +'<div class="metals-status"><span class="metals-dot '+(lastQuotes.ok?'ok':'')+'"></span><span>'+escape(status)+'</span><button type="button" title="立即刷新" data-metals-refresh>↻</button></div>'
       +'<div class="metals-rows">'+list.map(rowHtml).join("")+'</div>'
-      +'<div class="metals-foot"><span>'+escape(time)+'</span><button type="button" data-metals-open="'+escape(JD_PRO_PAGE)+'">京東詳情</button></div>'
+      +'<div class="metals-foot"><span>'+escape(time)+'</span><span><button type="button" data-metals-open="'+escape(KOUDAI_GOLD_PAGE)+'">口袋金價</button><button type="button" data-metals-open="'+escape(JD_PRO_PAGE)+'">京東</button></span></div>'
       +'</div>';
   }
 
@@ -107,7 +108,8 @@
     if(h<150||w<305)return 3;
     if(h<190)return 4;
     if(h<230)return 5;
-    return 6;
+    if(h<270)return 6;
+    return 7;
   }
 
   function buildRows(){
@@ -115,6 +117,7 @@
     const platformGold=lastQuotes.jdPro||lastQuotes.jdZheshang||lastQuotes.jdMinsheng||emptyRow("平台金價","元/克","京東金價頁/京東金岳公開行情未返回");
     return [
       lastQuotes.hf_XAU||emptyRow("現貨黃金","USD/oz","騰訊行情未返回"),
+      lastQuotes.koudaiCmb||emptyRow("口袋招行金","元/克","口袋實物黃金頁未返回可解析招商/招行條目，請點口袋金價核對"),
       platformGold,
       cmb?.buyRow||emptyRow("招行買入","元/克","招商銀行公開頁未返回可讀買入價"),
       cmb?.sellRow||emptyRow("招行賣出","元/克","招商銀行公開頁未返回可讀賣出價"),
@@ -143,18 +146,20 @@
     pendingRefresh=false;
     if(!options.silent){lastQuotes.status="刷新中…";rerenderMetalsOnly();}
     try{
-      const results=await Promise.allSettled([loadTencent(),loadJdPro(),loadJdZheshang(),loadJdMinsheng(),loadCmbPublic()]);
-      const tencent=results[0].status==="fulfilled"?results[0].value:null;
-      const jdPro=results[1].status==="fulfilled"?results[1].value:null;
-      const jdZ=results[2].status==="fulfilled"?results[2].value:null;
-      const jdM=results[3].status==="fulfilled"?results[3].value:null;
-      const cmb=results[4].status==="fulfilled"?results[4].value:null;
+      const results=await Promise.allSettled([loadTencent(),loadKoudaiCmb(),loadJdPro(),loadJdZheshang(),loadJdMinsheng(),loadCmbPublic()]);
+      const tencent=okValue(results[0]);
+      const koudai=okValue(results[1]);
+      const jdPro=okValue(results[2]);
+      const jdZ=okValue(results[3]);
+      const jdM=okValue(results[4]);
+      const cmb=okValue(results[5]);
       if(tencent)Object.assign(lastQuotes,tencent);
+      if(koudai)lastQuotes.koudaiCmb=koudai;
       if(jdPro)lastQuotes.jdPro=jdPro;
       if(jdZ)lastQuotes.jdZheshang=jdZ;
       if(jdM)lastQuotes.jdMinsheng=jdM;
       if(cmb)lastQuotes.cmbGold=cmb;
-      const ok=!!(lastQuotes.cmbGold||lastQuotes.hf_XAU||lastQuotes.hf_XAG||lastQuotes.hf_GC||lastQuotes.jdPro||lastQuotes.jdZheshang||lastQuotes.jdMinsheng);
+      const ok=!!(lastQuotes.koudaiCmb||lastQuotes.cmbGold||lastQuotes.hf_XAU||lastQuotes.hf_XAG||lastQuotes.hf_GC||lastQuotes.jdPro||lastQuotes.jdZheshang||lastQuotes.jdMinsheng);
       lastQuotes.ok=ok;
       lastQuotes.status=ok?("實時刷新 · "+REFRESH_MS/1000+"秒"):("行情源暫不可用");
       lastQuotes.time=new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(new Date());
@@ -170,11 +175,11 @@
     }
   }
 
+  function okValue(result){return result&&result.status==="fulfilled"?result.value:null;}
+
   function startRealtimeRefresh(){
     clearInterval(refreshTimer);
-    refreshTimer=setInterval(()=>{
-      if(!document.hidden)loadMetals({silent:true});
-    },REFRESH_MS);
+    refreshTimer=setInterval(()=>{if(!document.hidden)loadMetals({silent:true});},REFRESH_MS);
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadMetals({force:true});});
     window.addEventListener('focus',()=>loadMetals({force:true}));
     window.addEventListener('online',()=>loadMetals({force:true}));
@@ -250,6 +255,29 @@
     return {label:labels[code]||code,price,change:Number.isFinite(prev)?price-prev:(Number.isFinite(pct)?price*pct/(100+pct):null),pct:Number.isFinite(pct)?pct:null,unit:'USD/oz',source:'Tencent qt.gtimg.cn '+code,time:[f[12],f[6]].filter(Boolean).join(' ')};
   }
 
+  async function loadKoudaiCmb(){
+    const html=await fetchText(KOUDAI_GOLD_PAGE+'?t='+Date.now());
+    return parseKoudaiCmb(html);
+  }
+
+  function parseKoudaiCmb(html){
+    const source='口袋貴金屬實物黃金 '+KOUDAI_GOLD_PAGE;
+    const raw=String(html||'');
+    const candidates=[];
+    const jsonLike=[...raw.matchAll(/\{[^{}]*(?:招商|招行|cmb|CMB)[^{}]*\}/g)];
+    jsonLike.forEach(m=>candidates.push(m[0]));
+    const plain=raw.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ');
+    const contextMatches=[...plain.matchAll(/.{0,40}(?:招商|招行).{0,80}/g)];
+    contextMatches.forEach(m=>candidates.push(m[0]));
+    for(const text of candidates){
+      const named=[...text.matchAll(/(?:price|價格|价格|金價|金价|最新)[^0-9]{0,20}(\d{2,5}(?:\.\d{1,4})?)/gi)].map(m=>num(m[1])).filter(v=>Number.isFinite(v)&&v>100&&v<3000);
+      const all=[...text.matchAll(/\d{2,5}\.\d{1,4}/g)].map(m=>num(m[0])).filter(v=>Number.isFinite(v)&&v>100&&v<3000);
+      const price=named[0]||all[0];
+      if(Number.isFinite(price))return {label:'口袋招行金',price,change:null,pct:null,unit:'元/克',source};
+    }
+    return null;
+  }
+
   async function loadJdPro(){
     const html=await fetchText(JD_PRO_PAGE+'?t='+Date.now());
     return parseJdText(html,'京東金價');
@@ -302,9 +330,7 @@
         const html=await fetchText(url);
         const parsed=parseCmbHtml(html,url);
         if(parsed)return parsed;
-      }catch(error){
-        console.warn('cmb public quote failed',url,error);
-      }
+      }catch(error){console.warn('cmb public quote failed',url,error);}
     }
     return null;
   }
@@ -334,16 +360,17 @@
       .metals-dot.ok{background:#21d47b;box-shadow:0 0 0 7px rgba(33,212,123,.14)}
       .metals-status button{width:36px;height:30px;border:0;border-radius:999px;background:rgba(255,255,255,.12);color:var(--ink);cursor:pointer;font-weight:800}
       .metals-rows{display:grid;gap:0;overflow:hidden;min-height:0}
-      .metal-row{display:grid;grid-template-columns:minmax(78px,1fr) 88px 74px 68px;align-items:center;gap:10px;height:32px;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px;color:var(--muted)}
+      .metal-row{display:grid;grid-template-columns:minmax(84px,1fr) 88px 74px 68px;align-items:center;gap:10px;height:32px;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px;color:var(--muted)}
       .metal-row b{color:var(--ink);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       .metal-row strong,.metal-row span,.metal-row em{font-style:normal;text-align:right;color:#22d28a;font-weight:850;white-space:nowrap}
       .metal-row.up strong,.metal-row.up span,.metal-row.up em{color:#ff697f}
       .metal-row.down strong,.metal-row.down span,.metal-row.down em{color:#20ce7a}
       .metal-row.flat strong,.metal-row.flat span,.metal-row.flat em{color:#18c98b}
       .metals-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px;min-height:24px}
-      .metals-foot button{border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(255,255,255,.10);color:var(--ink);padding:4px 10px;cursor:pointer}
+      .metals-foot span:last-child{display:flex;gap:6px}
+      .metals-foot button{border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(255,255,255,.10);color:var(--ink);padding:4px 9px;cursor:pointer}
       .desktop-card[data-card-id] .card-body .metals-widget{padding-top:2px}
-      @media(max-width:640px){.metal-row{grid-template-columns:minmax(70px,1fr) 72px 62px 56px;gap:6px;font-size:12px}.metal-row b{font-size:14px}}
+      @media(max-width:640px){.metal-row{grid-template-columns:minmax(78px,1fr) 74px 58px 50px;gap:6px;font-size:12px}.metal-row b{font-size:14px}}
     `;
     document.head.appendChild(css);
   }
@@ -359,8 +386,6 @@
     const sign=v>0?'+':'';
     return sign+v.toFixed(d)+suffix;
   }
-  function escape(s){
-    return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
+  function escape(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   boot();
 })();
