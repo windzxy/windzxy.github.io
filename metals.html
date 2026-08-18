@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>貴金屬看板｜WebDesk</title>
+  <meta name="description" content="WebDesk 貴金屬看板：現貨黃金、紐約金價、現貨白銀、招商銀行黃金賬戶買入/賣出價格接入。">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=metals1">
+  <style>
+    :root{
+      color-scheme:dark;
+      --bg:#070914;
+      --panel:rgba(18,22,35,.72);
+      --panel2:rgba(255,255,255,.08);
+      --line:rgba(255,255,255,.12);
+      --ink:#f8fbff;
+      --muted:#aab3c7;
+      --gold:#f7c96b;
+      --gold2:#ffe6a7;
+      --silver:#c7d4e8;
+      --green:#43e690;
+      --red:#ff6f87;
+      --blue:#6bb8ff;
+      --shadow:0 28px 90px rgba(0,0,0,.36);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:
+      radial-gradient(circle at 12% -8%,rgba(247,201,107,.26),transparent 32rem),
+      radial-gradient(circle at 86% 6%,rgba(107,184,255,.20),transparent 30rem),
+      radial-gradient(circle at 70% 90%,rgba(199,212,232,.13),transparent 32rem),
+      linear-gradient(135deg,#070914 0%,#11182b 46%,#090b14 100%);
+      color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;letter-spacing:-.018em}
+    a{color:inherit}.shell{width:min(1320px,calc(100% - 28px));margin:auto;padding:22px 0 36px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}.back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:9px 13px;backdrop-filter:blur(18px)}
+    .hero{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:34px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.05));box-shadow:var(--shadow);backdrop-filter:blur(26px);padding:26px;margin-bottom:18px}.hero:after{content:"";position:absolute;right:-90px;top:-110px;width:310px;height:310px;border-radius:88px;transform:rotate(22deg);background:linear-gradient(135deg,rgba(247,201,107,.45),rgba(255,255,255,.06));filter:blur(2px)}
+    .hero-main{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:end}.eyebrow{margin:0 0 8px;color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.hero h1{margin:0;font-size:clamp(34px,5vw,64px);line-height:.98;letter-spacing:-.065em}.hero p{margin:13px 0 0;max-width:760px;color:var(--muted)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:0;cursor:pointer;border-radius:999px;min-height:42px;padding:0 16px;color:#15100a;background:linear-gradient(135deg,var(--gold2),var(--gold));font-weight:800;box-shadow:0 14px 34px rgba(247,201,107,.18)}.btn.secondary{color:var(--ink);background:rgba(255,255,255,.10);border:1px solid var(--line);box-shadow:none}.btn:disabled{opacity:.55;cursor:not-allowed}
+    .status-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 20px;color:var(--muted);font-size:13px}.pulse{display:inline-flex;align-items:center;gap:8px}.pulse i{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(67,230,144,.55);animation:pulse 1.8s infinite}@keyframes pulse{70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{grid-column:span 3;min-height:214px;border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.055));box-shadow:0 18px 60px rgba(0,0,0,.22);backdrop-filter:blur(24px);padding:18px;position:relative;overflow:hidden}.card.wide{grid-column:span 6}.card.full{grid-column:span 12}.card:after{content:"";position:absolute;right:-52px;top:-58px;width:150px;height:150px;border-radius:46px;background:linear-gradient(135deg,rgba(247,201,107,.26),rgba(199,212,232,.08));transform:rotate(18deg)}.card>*{position:relative;z-index:1}.card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.tag{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:28px;border-radius:999px;background:rgba(247,201,107,.14);border:1px solid rgba(247,201,107,.20);color:var(--gold);font-weight:850;font-size:12px}.market-title{margin:0;font-size:17px;line-height:1.2}.market-sub{margin:4px 0 0;color:var(--muted);font-size:12px}.price{margin:26px 0 6px;font-size:clamp(30px,4vw,44px);line-height:1;font-weight:850;letter-spacing:-.06em}.unit{color:var(--muted);font-size:13px}.change{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;font-size:13px;font-weight:800;background:rgba(255,255,255,.08);color:var(--muted)}.change.up{color:var(--green);background:rgba(67,230,144,.12)}.change.down{color:var(--red);background:rgba(255,111,135,.12)}.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:18px}.meta span{display:block;border:1px solid var(--line);border-radius:16px;padding:9px;background:rgba(255,255,255,.055);color:var(--muted);font-size:12px}.meta b{display:block;color:var(--ink);font-size:14px;margin-top:2px}.cmb-prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.quote-box{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.06);padding:14px}.quote-box span{color:var(--muted);font-size:12px}.quote-box strong{display:block;margin-top:5px;font-size:34px;line-height:1;letter-spacing:-.05em}.note{margin:14px 0 0;color:var(--muted);font-size:13px}.settings{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin-top:14px}.settings label{grid-column:span 3;display:grid;gap:6px;color:var(--muted);font-size:12px}.settings input,.settings select{width:100%;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.08);color:var(--ink);padding:10px 11px;outline:0}.settings input::placeholder{color:rgba(255,255,255,.42)}.settings .long{grid-column:span 6}.chart-box{min-height:430px;border-radius:24px;overflow:hidden;background:#111827;border:1px solid var(--line)}.source-list{display:grid;gap:9px;margin:0;padding:0;list-style:none;color:var(--muted)}.source-list li{border:1px solid var(--line);border-radius:16px;padding:10px 12px;background:rgba(255,255,255,.045)}.source-list b{color:var(--ink)}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);border:1px solid var(--line);border-radius:18px;background:rgba(12,15,25,.92);backdrop-filter:blur(18px);box-shadow:var(--shadow);padding:12px 15px;color:var(--ink);opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+    @media(max-width:1080px){.card{grid-column:span 6}.card.wide{grid-column:span 12}.hero-main{grid-template-columns:1fr}.actions{justify-content:flex-start}.settings label,.settings .long{grid-column:span 6}}
+    @media(max-width:640px){.shell{width:min(100% - 18px,1320px);padding-top:12px}.topbar{align-items:flex-start}.hero{border-radius:26px;padding:20px}.card,.card.wide{grid-column:span 12}.settings label,.settings .long{grid-column:span 12}.cmb-prices,.meta{grid-template-columns:1fr}.status-row{align-items:flex-start;flex-direction:column}.chart-box{min-height:360px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <a class="back" href="./">← 返回 WebDesk</a>
+      <span class="pulse"><i></i><span id="marketState">行情待刷新</span></span>
+    </div>
+
+    <section class="hero">
+      <div class="hero-main">
+        <div>
+          <p class="eyebrow">REALTIME PRECIOUS METALS</p>
+          <h1>貴金屬實時看板</h1>
+          <p>集中追蹤現貨黃金、紐約 COMEX 金價、現貨白銀、紐約白銀與招商銀行黃金賬戶買入/賣出價位。國際行情使用前端直連行情腳本，自動刷新；招行官方成交價支持接入自有/代理 API。</p>
+        </div>
+        <div class="actions">
+          <button id="refreshNow" class="btn" type="button">立即刷新</button>
+          <button id="toggleAuto" class="btn secondary" type="button">自動刷新：開</button>
+          <button id="copySnapshot" class="btn secondary" type="button">複製快照</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="status-row">
+      <span id="lastUpdated">尚未更新</span>
+      <span>默認 15 秒刷新一次；交易休市時顯示最後行情。</span>
+    </div>
+
+    <section class="grid" id="quoteGrid" aria-live="polite"></section>
+
+    <section class="grid" style="margin-top:16px">
+      <article class="card wide" id="cmbCard">
+        <div class="card-head">
+          <div>
+            <h2 class="market-title">招商銀行黃金賬戶</h2>
+            <p class="market-sub">官方實時買入/賣出價接入位；未配置官方 API 時使用國際金價折算作參考估算。</p>
+          </div>
+          <span class="tag">CMB</span>
+        </div>
+        <div class="cmb-prices">
+          <div class="quote-box"><span>銀行買入價 / 客戶賣出參考</span><strong id="cmbBid">--</strong><small class="unit">元/克</small></div>
+          <div class="quote-box"><span>銀行賣出價 / 客戶買入參考</span><strong id="cmbAsk">--</strong><small class="unit">元/克</small></div>
+        </div>
+        <p class="note" id="cmbStatus">等待行情。招商銀行官方 OpenAPI 需要 appid/apisign，公開靜態頁不能直接保存私鑰；可在下方接入自己的安全代理 API。</p>
+        <details style="margin-top:14px">
+          <summary style="cursor:pointer;color:var(--gold);font-weight:800">招行 API / 估算參數</summary>
+          <div class="settings">
+            <label class="long"><span>招行代理 API URL（JSON，可選）</span><input id="cmbApiUrl" placeholder="https://your-proxy.example.com/cmb-gold"></label>
+            <label><span>買入價 JSON 路徑</span><input id="cmbBidPath" value="bid" placeholder="data.bid"></label>
+            <label><span>賣出價 JSON 路徑</span><input id="cmbAskPath" value="ask" placeholder="data.ask"></label>
+            <label><span>時間 JSON 路徑</span><input id="cmbTimePath" value="time" placeholder="data.time"></label>
+            <label><span>估算點差（元/克）</span><input id="cmbSpread" type="number" step="0.01" value="3"></label>
+            <label><span>估算加點（元/克）</span><input id="cmbPremium" type="number" step="0.01" value="0"></label>
+            <label><span>USD/CNY 手動備用</span><input id="usdCnyFallback" type="number" step="0.0001" value="7.10"></label>
+            <label><span>代理模式</span><select id="cmbProxyMode"><option value="direct">直接請求</option><option value="allorigins">AllOrigins 代理</option></select></label>
+          </div>
+        </details>
+      </article>
+
+      <article class="card wide">
+        <div class="card-head">
+          <div>
+            <h2 class="market-title">行情圖表</h2>
+            <p class="market-sub">TradingView 國際黃金/白銀概覽，作為行情腳本的可視化補充。</p>
+          </div>
+          <span class="tag">TV</span>
+        </div>
+        <div class="chart-box">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+            {
+              "symbols": [["Gold Spot", "OANDA:XAUUSD|1D"], ["COMEX Gold", "COMEX:GC1!|1D"], ["Silver Spot", "OANDA:XAGUSD|1D"], ["COMEX Silver", "COMEX:SI1!|1D"]],
+              "chartOnly": false,
+              "width": "100%",
+              "height": "430",
+              "locale": "zh_TW",
+              "colorTheme": "dark",
+              "autosize": true,
+              "showVolume": false,
+              "showMA": false,
+              "hideDateRanges": false,
+              "hideMarketStatus": false,
+              "hideSymbolLogo": true,
+              "scalePosition": "right",
+              "scaleMode": "Normal",
+              "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+              "fontSize": "12",
+              "noTimeScale": false,
+              "valuesTracking": "1",
+              "changeMode": "price-and-percent"
+            }
+            </script>
+          </div>
+        </div>
+      </article>
+
+      <article class="card full">
+        <div class="card-head">
+          <div>
+            <h2 class="market-title">數據源狀態</h2>
+            <p class="market-sub">行情僅作觀察與提醒，不構成投資建議；銀行最終成交價以官方渠道顯示為準。</p>
+          </div>
+          <span class="tag">SRC</span>
+        </div>
+        <ul class="source-list" id="sourceList"></ul>
+      </article>
+    </section>
+  </main>
+  <div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const OUNCE_TO_GRAM=31.1034768;
+  const symbols=[
+    {code:"hf_XAU",title:"現貨黃金",sub:"London Spot Gold / XAUUSD",tag:"XAU",unit:"USD/oz"},
+    {code:"hf_GC",title:"紐約金價",sub:"COMEX Gold Futures / GC",tag:"GC",unit:"USD/oz"},
+    {code:"hf_XAG",title:"現貨白銀",sub:"London Spot Silver / XAGUSD",tag:"XAG",unit:"USD/oz"},
+    {code:"hf_SI",title:"紐約白銀",sub:"COMEX Silver Futures / SI",tag:"SI",unit:"USD/oz"}
+  ];
+  const els={grid:document.getElementById("quoteGrid"),last:document.getElementById("lastUpdated"),state:document.getElementById("marketState"),source:document.getElementById("sourceList"),toast:document.getElementById("toast")};
+  let quotes={};
+  let auto=true;
+  let timer=null;
+  function n(v){const x=parseFloat(String(v??"").replace(/[%,$\s]/g,""));return Number.isFinite(x)?x:null}
+  function fmt(v,d=2){return Number.isFinite(v)?v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}):"--"}
+  function pct(v){if(!Number.isFinite(v))return "--";return (v>0?"+":"")+v.toFixed(2)+"%"}
+  function cls(v){return v>0?"up":v<0?"down":""}
+  function toast(msg){els.toast.textContent=msg;els.toast.classList.add("show");setTimeout(()=>els.toast.classList.remove("show"),2200)}
+  function parseSina(code){
+    const raw=window["hq_str_"+code]||"";
+    const f=String(raw).split(",").map(x=>x.trim());
+    const nums=f.map(n).filter(x=>x!==null);
+    const time=f.find(x=>/^\d{1,2}:\d{2}:\d{2}$/.test(x))||"";
+    const date=f.find(x=>/^\d{4}-\d{1,2}-\d{1,2}/.test(x))||"";
+    const last=n(f[1]);
+    const change=n(f[2]);
+    const hi=Math.max(...nums.slice(1,8));
+    const lo=Math.min(...nums.slice(1,8));
+    return {raw,fields:f,name:f[0]||code,last,change,high:Number.isFinite(hi)?hi:null,low:Number.isFinite(lo)?lo:null,time,date};
+  }
+  function renderCards(){
+    els.grid.innerHTML=symbols.map(s=>{
+      const q=quotes[s.code]||{};
+      const dateTime=[q.date,q.time].filter(Boolean).join(" ")||"--";
+      return `<article class="card">
+        <div class="card-head"><div><h2 class="market-title">${s.title}</h2><p class="market-sub">${s.sub}</p></div><span class="tag">${s.tag}</span></div>
+        <div class="price">${fmt(q.last)}</div><span class="unit">${s.unit}</span>
+        <div style="margin-top:10px"><span class="change ${cls(q.change)}">${q.change>0?"▲":q.change<0?"▼":"—"} ${pct(q.change)}</span></div>
+        <div class="meta"><span>高位<b>${fmt(q.high)}</b></span><span>低位<b>${fmt(q.low)}</b></span><span>來源<b>新浪外盤</b></span><span>時間<b>${dateTime}</b></span></div>
+      </article>`;
+    }).join("");
+  }
+  function readPath(obj,path){return String(path||"").split(".").filter(Boolean).reduce((o,k)=>o&&o[k]!==undefined?o[k]:undefined,obj)}
+  function saveSettings(){["cmbApiUrl","cmbBidPath","cmbAskPath","cmbTimePath","cmbSpread","cmbPremium","usdCnyFallback","cmbProxyMode"].forEach(id=>localStorage.setItem("metals-"+id,document.getElementById(id).value))}
+  function loadSettings(){["cmbApiUrl","cmbBidPath","cmbAskPath","cmbTimePath","cmbSpread","cmbPremium","usdCnyFallback","cmbProxyMode"].forEach(id=>{const v=localStorage.getItem("metals-"+id);if(v!==null)document.getElementById(id).value=v;document.getElementById(id).addEventListener("input",saveSettings)})}
+  function calcCmbEstimate(){
+    const xau=quotes.hf_XAU?.last;
+    const fxRaw=window.hq_str_fx_susdcny||"";
+    const fxFields=String(fxRaw).split(",");
+    const fx=n(fxFields[1])||n(fxFields[8])||n(document.getElementById("usdCnyFallback").value)||7.10;
+    const spread=n(document.getElementById("cmbSpread").value)||0;
+    const premium=n(document.getElementById("cmbPremium").value)||0;
+    if(!Number.isFinite(xau))return null;
+    const base=xau*fx/OUNCE_TO_GRAM+premium;
+    return {bid:base-spread/2,ask:base+spread/2,time:new Date().toLocaleString(),fx,mode:"estimate"};
+  }
+  async function loadCmb(){
+    const url=document.getElementById("cmbApiUrl").value.trim();
+    const bidEl=document.getElementById("cmbBid");
+    const askEl=document.getElementById("cmbAsk");
+    const status=document.getElementById("cmbStatus");
+    if(url){
+      try{
+        const proxy=document.getElementById("cmbProxyMode").value;
+        const req=proxy==="allorigins"?"https://api.allorigins.win/raw?url="+encodeURIComponent(url):url;
+        const res=await fetch(req,{cache:"no-store"});
+        if(!res.ok)throw new Error("HTTP "+res.status);
+        const json=await res.json();
+        const bid=n(readPath(json,document.getElementById("cmbBidPath").value));
+        const ask=n(readPath(json,document.getElementById("cmbAskPath").value));
+        const time=readPath(json,document.getElementById("cmbTimePath").value)||new Date().toLocaleString();
+        if(!Number.isFinite(bid)||!Number.isFinite(ask))throw new Error("JSON 路徑未讀到買入/賣出價");
+        bidEl.textContent=fmt(bid);askEl.textContent=fmt(ask);status.textContent="已讀取招行代理 API："+time;return {ok:true,mode:"api",time};
+      }catch(err){status.textContent="招行代理 API 讀取失敗："+err.message+"；暫以國際金價折算估算。";}
+    }
+    const est=calcCmbEstimate();
+    if(est){bidEl.textContent=fmt(est.bid);askEl.textContent=fmt(est.ask);status.textContent="未配置招行官方代理 API；目前為 XAUUSD × USD/CNY ÷ 31.1034768 ± 點差的參考估算，非銀行官方成交價。USD/CNY≈"+fmt(est.fx,4);return {ok:true,mode:"estimate",time:est.time}}
+    bidEl.textContent="--";askEl.textContent="--";status.textContent="尚未取得現貨黃金行情，無法生成招行參考估算。";return {ok:false,mode:"empty"};
+  }
+  function renderSources(sinaOk,cmbState){
+    els.source.innerHTML=[
+      `<li><b>現貨黃金 / 現貨白銀 / 紐約金銀：</b>${sinaOk?"已由新浪外盤行情腳本更新。":"行情腳本未返回數據，可能是網絡、跨域或行情源限制。"}</li>`,
+      `<li><b>招商銀行黃金賬戶：</b>${cmbState?.mode==="api"?"已使用你配置的安全代理 API。":cmbState?.mode==="estimate"?"使用折算估算；官方成交價需接入 CMB OpenAPI 或你自己的後端代理。":"尚未可用。"}</li>`,
+      `<li><b>刷新策略：</b>默認 15 秒自動刷新；休市或源不可用時保留最後一次成功行情。</li>`,
+      `<li><b>風險提示：</b>本頁只作行情觀察，不構成投資建議；實際交易請以交易所、券商或銀行官方成交頁為準。</li>`
+    ].join("");
+  }
+  async function refresh(){
+    els.state.textContent="刷新中…";
+    await new Promise(resolve=>{
+      const old=document.getElementById("sinaMetalsScript");if(old)old.remove();
+      const script=document.createElement("script");
+      script.id="sinaMetalsScript";script.charset="gb2312";
+      script.src="https://hq.sinajs.cn/rn="+Date.now()+"&list=hf_XAU,hf_GC,hf_XAG,hf_SI,fx_susdcny";
+      script.onload=()=>resolve(true);script.onerror=()=>resolve(false);
+      document.head.appendChild(script);
+      setTimeout(()=>resolve(false),6000);
+    });
+    symbols.forEach(s=>quotes[s.code]=parseSina(s.code));
+    const sinaOk=symbols.some(s=>Number.isFinite(quotes[s.code]?.last));
+    renderCards();
+    const cmbState=await loadCmb();
+    const now=new Date();
+    els.last.textContent="最後刷新："+now.toLocaleString();
+    els.state.textContent=sinaOk?"行情已更新":"行情源暫不可用";
+    renderSources(sinaOk,cmbState);
+    if(!sinaOk)toast("行情源暫未返回數據");
+  }
+  function schedule(){clearInterval(timer);if(auto)timer=setInterval(refresh,15000)}
+  document.getElementById("refreshNow").addEventListener("click",refresh);
+  document.getElementById("toggleAuto").addEventListener("click",e=>{auto=!auto;e.currentTarget.textContent="自動刷新："+(auto?"開":"關");schedule();toast(auto?"已開啟自動刷新":"已關閉自動刷新")});
+  document.getElementById("copySnapshot").addEventListener("click",async()=>{
+    const text=symbols.map(s=>`${s.title} ${fmt(quotes[s.code]?.last)} ${s.unit} ${pct(quotes[s.code]?.change)}`).join("\n")+`\n招行參考 買入 ${document.getElementById("cmbBid").textContent} / 賣出 ${document.getElementById("cmbAsk").textContent} 元/克\n${els.last.textContent}`;
+    try{await navigator.clipboard.writeText(text);toast("快照已複製")}catch(e){toast("複製失敗")}
+  });
+  loadSettings();renderCards();renderSources(false,{mode:"empty"});refresh();schedule();
+})();
+</script>
+</body>
+</html>
