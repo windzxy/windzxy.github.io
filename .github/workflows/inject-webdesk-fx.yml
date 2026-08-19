@@ -34,7 +34,7 @@ jobs:
           layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist7-calendar"></script>'
           gap_tag = '<script src="Html_tools/card-gap-fix.js?v=20260819-card-gap1-5px"></script>'
           fx_tag = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
-          calendar_tag = '<script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget1-cn-hk-holidays"></script>'
+          calendar_tag = '<script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget2-pm-polished"></script>'
           finance_i18n_tag = '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n2-calendar"></script>'
           metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>'
 
@@ -84,5 +84,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk calendar widget"
+          git commit -m "Inject polished WebDesk calendar widget"
           git push
