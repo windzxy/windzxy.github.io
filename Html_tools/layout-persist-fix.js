@@ -1,17 +1,18 @@
 (function(){
   if(window.__windzxyLayoutPersistFixLoaded)return;
   window.__windzxyLayoutPersistFixLoaded=1;
-  const VER='20260819-layout-persist5-plugin-refresh-fix';
+  const VER='20260819-layout-persist6-relaxed-bottom-bounds';
   const GEO_KEY='windzxy-web-desktop-card-geometry-v4';
   const OLD_KEYS=['windzxy-web-desktop-card-geometry-v3','windzxy-web-desktop-card-geometry-v2','windzxy-web-desktop-card-geometry-v1'];
   const STORE_KEY='windzxy-web-desktop-workspaces';
   const PLUGIN_APPS=new Set(['metals','fx-rates']);
-  let saving=false,patched=false;
+  let saving=false,patched=false,boundsPatched=false;
 
   function wsList(){try{return Array.isArray(workspaces)?workspaces:[];}catch(e){return [];}}
   function currentWorkspace(){try{return typeof activeWorkspace==='function'?activeWorkspace():wsList()[0];}catch(e){return null;}}
   function activeWorkspaceId(){try{return activeId||currentWorkspace()?.id||'daily';}catch(e){return 'daily';}}
   function px(value){const n=parseFloat(String(value||'').replace('px',''));return Number.isFinite(n)?n:null;}
+  function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
   function readJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'')||fallback;}catch(e){return fallback;}}
   function readGeo(){
     let geo=readJSON(GEO_KEY,{});
@@ -60,17 +61,12 @@
       if(!g||!card.appId)return;
       const ik=idKey(ws,card),ak=appKey(ws,card);
       geo[ik]=mergeGeo(geo[ik],g,true);
-      // 關鍵修復：appId 備援位置不能被刷新時重新生成的默認卡覆蓋。
-      // 只有第一次沒有 app 備援時才從原始 store 補一份。
       if(!geo[ak])geo[ak]=mergeGeo(null,g,true);
       changed=true;
     }));
     if(changed)writeGeo(geo);
   }
-  function geoFor(ws,card){
-    const geo=readGeo();
-    return geo[idKey(ws,card)]||geo[appKey(ws,card)]||null;
-  }
+  function geoFor(ws,card){const geo=readGeo();return geo[idKey(ws,card)]||geo[appKey(ws,card)]||null;}
   function setGeo(ws,card,g){
     if(!card||!card.appId)return;
     const geo=readGeo();
@@ -107,9 +103,7 @@
     wsList().forEach(ws=>(ws.cards||[]).forEach(card=>{
       const g=geoFor(ws,card);
       if(!g)return;
-      ['x','y','w','h'].forEach(k=>{
-        if(Number.isFinite(g[k])&&card[k]!==g[k]){card[k]=g[k];changed=true;}
-      });
+      ['x','y','w','h'].forEach(k=>{if(Number.isFinite(g[k])&&card[k]!==g[k]){card[k]=g[k];changed=true;}});
       if(typeof g.collapsed==='boolean'&&card.collapsed!==g.collapsed){card.collapsed=g.collapsed;changed=true;}
     }));
     if(changed)rawSave();
@@ -145,11 +139,40 @@
       });
     }catch(e){console.warn('plugin layout restore failed',e);}
   }
+  function patchBottomBounds(){
+    if(boundsPatched)return;boundsPatched=true;
+    // 主程序原本為 taskbar 預留 62px，導致卡片明明還有空間卻不能往下放。
+    // 這裡在原 pointermove 後重新套用更合理的邊界，只保留 10px 安全邊距。
+    document.addEventListener('pointermove',event=>{
+      try{
+        if(typeof drag!=='undefined'&&drag&&drag.item&&drag.el){
+          const canvas=document.getElementById('desktopCanvas');
+          if(!canvas)return;
+          const rect=canvas.getBoundingClientRect();
+          const item=drag.item,el=drag.el;
+          const w=item.w||el.offsetWidth||300;
+          const h=item.collapsed?46:(item.h||el.offsetHeight||150);
+          const nextX=clamp(drag.origX+event.clientX-drag.startX,0,Math.max(0,rect.width-w-10));
+          const nextY=clamp(drag.origY+event.clientY-drag.startY,0,Math.max(0,rect.height-h-10));
+          item.x=nextX;item.y=nextY;
+          el.style.left=nextX+'px';el.style.top=nextY+'px';
+        }
+        if(typeof windowDrag!=='undefined'&&windowDrag&&windowDrag.win){
+          const canvas=document.getElementById('desktopCanvas');
+          if(!canvas)return;
+          const rect=canvas.getBoundingClientRect();
+          const win=windowDrag.win;
+          const nextX=clamp(windowDrag.origX+event.clientX-windowDrag.startX,0,Math.max(0,rect.width-win.offsetWidth-10));
+          const nextY=clamp(windowDrag.origY+event.clientY-windowDrag.startY,0,Math.max(0,rect.height-win.offsetHeight-10));
+          win.style.left=nextX+'px';win.style.top=nextY+'px';
+        }
+      }catch(e){}
+    },false);
+  }
   function patch(){
     if(patched)return;patched=true;
     try{
-      captureRawStoreGeometry();
-      protectPluginCards();
+      captureRawStoreGeometry();protectPluginCards();patchBottomBounds();
       if(typeof save==='function'&&!window.__windzxyRawSave){
         window.__windzxyRawSave=save;
         save=function(){persistGeometry({noSave:true});return window.__windzxyRawSave.apply(this,arguments);};
@@ -167,7 +190,7 @@
     }catch(e){console.warn('layout patch failed',e);}
   }
   function bind(){
-    patch();protectPluginCards();restoreGeometryToModel();applyGeometryToDom();
+    patch();protectPluginCards();restoreGeometryToModel();applyGeometryToDom();patchBottomBounds();
     window.addEventListener('pagehide',()=>persistGeometry({force:true}),{capture:true});
     window.addEventListener('beforeunload',()=>persistGeometry({force:true}),{capture:true});
     document.addEventListener('visibilitychange',()=>{if(document.hidden)persistGeometry({force:true});},{passive:true});
