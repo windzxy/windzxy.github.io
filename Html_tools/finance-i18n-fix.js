@@ -2,7 +2,7 @@
   if(window.__windzxyFinanceI18nFixLoaded)return;
   window.__windzxyFinanceI18nFixLoaded=1;
 
-  const VER='20260819-finance-i18n1';
+  const VER='20260819-finance-i18n2-calendar';
   const REGISTRY={
     metals:{
       title:{'zh-CN':'金价','zh-HK':'金價',en:'Metals'},
@@ -11,17 +11,25 @@
     'fx-rates':{
       title:{'zh-CN':'汇率','zh-HK':'匯率',en:'FX rates'},
       desc:{'zh-CN':'中国银行外汇牌价与互换式换算。','zh-HK':'中國銀行外匯牌價與互換式換算。',en:'Bank of China FX rates and swap converter.'}
+    },
+    calendar:{
+      title:{'zh-CN':'万年历','zh-HK':'萬年曆',en:'Calendar'},
+      desc:{'zh-CN':'农历、公历、中国内地节假日调休与香港公众假期。','zh-HK':'農曆、公曆、中國內地節假日調休與香港公眾假期。',en:'Lunar calendar, Gregorian dates, Mainland China holiday transfers and Hong Kong public holidays.'}
     }
   };
   const TERMS={
     '金價':REGISTRY.metals.title,'金价':REGISTRY.metals.title,'Metals':REGISTRY.metals.title,
     '匯率':REGISTRY['fx-rates'].title,'汇率':REGISTRY['fx-rates'].title,'FX rates':REGISTRY['fx-rates'].title,
+    '萬年曆':REGISTRY.calendar.title,'万年历':REGISTRY.calendar.title,'Calendar':REGISTRY.calendar.title,
     '貴金屬行情與 TradingView 圖表。':REGISTRY.metals.desc,
     '贵金属行情与 TradingView 图表。':REGISTRY.metals.desc,
     'Precious metals quotes and TradingView chart.':REGISTRY.metals.desc,
     '中國銀行外匯牌價與互換式換算。':REGISTRY['fx-rates'].desc,
     '中国银行外汇牌价与互换式换算。':REGISTRY['fx-rates'].desc,
-    'Bank of China FX rates and swap converter.':REGISTRY['fx-rates'].desc
+    'Bank of China FX rates and swap converter.':REGISTRY['fx-rates'].desc,
+    '農曆、公曆、中國內地節假日調休與香港公眾假期。':REGISTRY.calendar.desc,
+    '农历、公历、中国内地节假日调休与香港公众假期。':REGISTRY.calendar.desc,
+    'Lunar calendar, Gregorian dates, Mainland China holiday transfers and Hong Kong public holidays.':REGISTRY.calendar.desc
   };
 
   function lang(){
@@ -90,7 +98,7 @@
     document.addEventListener('change',e=>{if(e.target&&e.target.matches('.lang-select'))setTimeout(syncDom,80);},true);
     const mo=new MutationObserver(()=>{clearTimeout(boot._t);boot._t=setTimeout(syncDom,40);});
     mo.observe(document.body,{childList:true,subtree:true,characterData:true});
-    window.windzxyRegisterI18n=function(id,meta){REGISTRY[id]=meta;syncDom();};
+    window.windzxyRegisterI18n=function(id,meta){REGISTRY[id]=meta;Object.keys(meta||{}).forEach(k=>{});syncDom();};
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
