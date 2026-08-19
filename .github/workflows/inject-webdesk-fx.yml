@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'Html_tools/fx-widget.js'
+      - 'Html_tools/layout-persist-fix.js'
       - '.github/workflows/inject-webdesk-fx.yml'
   workflow_dispatch:
 
@@ -21,31 +22,37 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Inject or update FX widget script
+      - name: Inject or update FX and layout scripts
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          version = '20260819-fx-widget1-pboc-safe'
+          tags = [
+              '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget2-boc-table"></script>',
+              '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist1"></script>',
+          ]
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
-          tag = f'<script src="Html_tools/fx-widget.js?v={version}"></script>'
-          pattern = r'<script\s+src="Html_tools/fx-widget\.js\?v=[^"]+"\s*>\s*</script>'
-          if re.search(pattern, html):
-              html = re.sub(pattern, tag, html, count=1)
-          else:
-              html = html.replace('</body>', tag + '\n</body>', 1)
+          replacements = {
+              r'<script\s+src="Html_tools/fx-widget\.js\?v=[^"]+"\s*>\s*</script>': tags[0],
+              r'<script\s+src="Html_tools/layout-persist-fix\.js\?v=[^"]+"\s*>\s*</script>': tags[1],
+          }
+          for pattern, tag in replacements.items():
+              if re.search(pattern, html):
+                  html = re.sub(pattern, tag, html, count=1)
+              else:
+                  html = html.replace('</body>', tag + '\n</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit FX widget script tag
+      - name: Commit FX widget script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has current FX widget script."
+            echo "index.html already has current FX/layout scripts."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk FX widget script"
+          git commit -m "Inject WebDesk FX BOC widget scripts"
           git push
