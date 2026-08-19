@@ -21,31 +21,60 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Inject or update metals widget script
+      - name: Apply PM-reviewed metals widget patch
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
+
           version = '20260819-gold-widget28-pm-reviewed'
-          path = Path('index.html')
-          html = path.read_text(encoding='utf-8')
+          js_path = Path('Html_tools/metals-widget.js')
+          js = js_path.read_text(encoding='utf-8')
+
+          js = re.sub(r"const VER='[^']+';", f"const VER='{version}';", js, count=1)
+          js = js.replace(
+              "const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=560,CHART_H=340;",
+              "const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=580,CHART_H=350;",
+          )
+          js = js.replace(
+              "緊湊貴金屬盯盤：大窗顯示 TradingView，小窗顯示交易讀數。",
+              "PM 審核版貴金屬盯盤：大窗只看圖，小窗只看數，來源與刷新邊界清晰。",
+          )
+          js = js.replace(
+              "<b>${feed==='api'?'口袋 API':'200ms 快照'}</b>",
+              "<b>${feed==='api'?'口袋 API':'高速快照'}</b>",
+          )
+          js = js.replace("'公開行情快照'", "'公開快照，非口袋同步'")
+          js = js.replace(
+              "'快照 '+E(q.sourceTime||q.t||'--')+' · 圖表由 TradingView 自動刷新'",
+              "'快照 '+E(q.sourceTime||q.t||'--')+' · 200ms節流 · 圖表由 TradingView 刷新'",
+          )
+          js = js.replace(
+              "<span>TradingView · 1m</span>",
+              "<span>TradingView · 1m · 圖表為準</span>",
+          )
+
+          js_path.write_text(js, encoding='utf-8')
+
+          index_path = Path('index.html')
+          html = index_path.read_text(encoding='utf-8')
           tag = f'<script src="Html_tools/metals-widget.js?v={version}"></script>'
           pattern = r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>'
           if re.search(pattern, html):
               html = re.sub(pattern, tag, html, count=1)
           else:
               html = html.replace('</body>', tag + '\n</body>', 1)
-          path.write_text(html, encoding='utf-8')
+          index_path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit injected script tag
+      - name: Commit metals widget PM review patch
         run: |
-          if git diff --quiet -- index.html; then
-            echo "index.html already has current metals widget script."
+          if git diff --quiet -- Html_tools/metals-widget.js index.html; then
+            echo "Metals widget already PM-reviewed."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "Update WebDesk metals widget cache version"
+          git add Html_tools/metals-widget.js index.html
+          git commit -m "Apply PM review to WebDesk metals widget"
           git push
