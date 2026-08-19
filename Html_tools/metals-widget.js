@@ -9,8 +9,8 @@
   const PRODUCTS=[
     ['xau','現貨黃金','黃金','XAU','hf_XAU','OANDA:XAUUSD','https://www.gkoudai.com/quotesTrend/12.html'],
     ['xag','現貨白銀','白銀','XAG','hf_XAG','OANDA:XAGUSD','https://www.gkoudai.com/quotesTrend/13.html'],
-    ['xpt','現貨鉑金','鉑金','XPT','OANDA:XPTUSD','https://www.gkoudai.com/quotesTrend/74.html'],
-    ['xpd','現貨鈀金','鈀金','XPD','OANDA:XPDUSD','https://www.gkoudai.com/quotesTrend/75.html']
+    ['xpt','現貨鉑金','鉑金','XPT','hf_XPT','OANDA:XPTUSD','https://www.gkoudai.com/quotesTrend/74.html'],
+    ['xpd','現貨鈀金','鈀金','XPD','hf_XPD','OANDA:XPDUSD','https://www.gkoudai.com/quotesTrend/75.html']
   ].map(a=>({id:a[0],name:a[1],short:a[2],sym:a[3],code:a[4],tv:a[5],url:a[6],unit:'USD/oz'}));
 
   let active=localStorage.getItem('windzxy-metals-active')||'xau';
