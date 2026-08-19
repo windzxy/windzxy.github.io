@@ -28,12 +28,25 @@ jobs:
           from pathlib import Path
           import re
 
-          layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist4-plugin-geometry"></script>'
+          layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist5-plugin-refresh-fix"></script>'
           fx_tag = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget29-portrait-chart"></script>'
 
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
+
+          stubs = [
+              '{id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"Au",tone:"t-metals"}',
+              '{id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"FX",tone:"t-fx"}',
+          ]
+          if 'id:"metals"' not in html or 'id:"fx-rates"' not in html:
+              marker = '  {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}'
+              insert = ''
+              if 'id:"metals"' not in html:
+                  insert += '  ' + stubs[0] + ',\n'
+              if 'id:"fx-rates"' not in html:
+                  insert += '  ' + stubs[1] + ',\n'
+              html = html.replace(marker, insert + marker, 1)
 
           metals_match = re.search(r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>', html)
           metals_tag = metals_match.group(0) if metals_match else metals_fallback
@@ -59,5 +72,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk FX custom dropdown scripts"
+          git commit -m "Inject WebDesk finance widget layout fix"
           git push
