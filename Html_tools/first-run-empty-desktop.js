@@ -1,11 +1,12 @@
 (function(){
-  if(window.__windzxyFirstRunEmptyDesktopLoaded)return;
-  window.__windzxyFirstRunEmptyDesktopLoaded=1;
+  if(window.__windzxyFirstRunEmptyDesktopV2Loaded)return;
+  window.__windzxyFirstRunEmptyDesktopV2Loaded=1;
 
-  const VER='20260819-first-run-empty1';
+  const VER='20260819-first-run-empty2-keep-bg';
   const STORE='windzxy-web-desktop-workspaces';
   const LEGACY=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
   const ACTIVE='windzxy-active-workspace';
+  const BG='windzxy-desktop-bg';
   const hadSaved=!!(localStorage.getItem(STORE)||LEGACY.some(k=>localStorage.getItem(k)));
 
   window.__windzxyFirstRunEmptyDesktop=!hadSaved;
@@ -25,6 +26,41 @@
     }catch(e){}
   }
 
+  function hasBg(){
+    const app=document.getElementById('desktopApp');
+    return !!(app&&(app.dataset.background||app.style.backgroundImage));
+  }
+
+  function ensureBackground(){
+    try{
+      if(hasBg())return;
+      if(typeof loadBackgrounds==='function'){
+        const r=loadBackgrounds();
+        if(r&&typeof r.catch==='function')r.catch(()=>{});
+      }
+    }catch(e){}
+    setTimeout(()=>{
+      try{
+        if(hasBg())return;
+        if(typeof randomBackground==='function')randomBackground();
+        else if(typeof applyBackground==='function'&&Array.isArray(backgrounds)&&backgrounds[0])applyBackground(backgrounds[0].file);
+      }catch(e){}
+    },500);
+    setTimeout(()=>{
+      try{
+        if(hasBg())return;
+        const app=document.getElementById('desktopApp');
+        const saved=localStorage.getItem(BG);
+        if(app&&saved){
+          app.style.backgroundImage='url("'+saved+'")';
+          app.style.backgroundPosition='center';
+          app.style.backgroundRepeat='no-repeat';
+          app.style.backgroundSize='cover';
+        }
+      }catch(e){}
+    },1300);
+  }
+
   function saveEmpty(){
     try{
       if(Array.isArray(workspaces)){
@@ -42,6 +78,7 @@
   function renderEmpty(){
     try{ if(typeof renderAll==='function')renderAll(); }catch(e){}
     openTools();
+    ensureBackground();
   }
 
   function markUserChoice(){
@@ -65,6 +102,7 @@
 
   function run(){
     patchAddCard();
+    ensureBackground();
     if(!window.__windzxyFirstRunEmptyDesktop)return;
     saveEmpty();
     renderEmpty();
@@ -75,13 +113,15 @@
     run();
     setTimeout(run,0);
     setTimeout(run,120);
+    setTimeout(run,450);
     setTimeout(()=>{
       if(window.__windzxyFirstRunEmptyDesktop){
         saveEmpty();
         renderEmpty();
-      }
-    },450);
+      }else ensureBackground();
+    },1200);
   }else{
     patchAddCard();
+    ensureBackground();
   }
 })();
