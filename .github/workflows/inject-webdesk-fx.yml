@@ -1,4 +1,4 @@
-name: Inject WebDesk Widget Scripts
+name: Inject WebDesk FX Widget
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
       - master
     paths:
       - 'Html_tools/fx-widget.js'
-      - 'Html_tools/metals-widget.js'
       - 'Html_tools/calendar-widget.js'
       - 'Html_tools/calendar-perpetual-fix.js'
       - 'Html_tools/theme-contrast-fix.js'
@@ -41,7 +40,7 @@ jobs:
           metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>'
           fx_tag = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           calendar_tag = '<script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget2-pm-polished"></script>'
-          calendar_clean_tag = '<script src="Html_tools/calendar-perpetual-fix.js?v=20260819-calendar-fold-rebuild1"></script>'
+          calendar_clean_tag = '<script src="Html_tools/calendar-perpetual-fix.js?v=20260819-calendar-adaptive-full1"></script>'
           theme_contrast_tag = '<script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>'
           finance_i18n_tag = '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n2-calendar"></script>'
 
@@ -88,17 +87,7 @@ jobs:
           ]:
               html = re.sub(pattern, '', html)
 
-          bundle = '\n'.join([
-              layout_tag,
-              gap_tag,
-              fold_tag,
-              metals_tag,
-              fx_tag,
-              calendar_tag,
-              calendar_clean_tag,
-              theme_contrast_tag,
-              finance_i18n_tag,
-          ]) + '\n'
+          bundle = '\n'.join([layout_tag, gap_tag, fold_tag, metals_tag, fx_tag, calendar_tag, calendar_clean_tag, theme_contrast_tag, finance_i18n_tag]) + '\n'
           html = html.replace('</body>', bundle + '</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
@@ -112,5 +101,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject preserved-body card fold fix"
+          git commit -m "Inject adaptive full calendar controls"
           git push
