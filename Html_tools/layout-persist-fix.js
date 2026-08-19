@@ -1,19 +1,42 @@
 (function(){
   if(window.__windzxyLayoutPersistFixLoaded)return;
   window.__windzxyLayoutPersistFixLoaded=1;
-  const VER='20260819-layout-persist2';
-  const GEO_KEY='windzxy-web-desktop-card-geometry-v2';
+  const VER='20260819-layout-persist3';
+  const GEO_KEY='windzxy-web-desktop-card-geometry-v3';
+  const OLD_KEYS=['windzxy-web-desktop-card-geometry-v2','windzxy-web-desktop-card-geometry-v1'];
   const STORE_KEY='windzxy-web-desktop-workspaces';
-  let saving=false;
-  let patched=false;
+  let saving=false,patched=false,scheduled=false;
 
   function wsList(){try{return Array.isArray(workspaces)?workspaces:[];}catch(e){return [];}}
   function currentWorkspace(){try{return typeof activeWorkspace==='function'?activeWorkspace():wsList()[0];}catch(e){return null;}}
   function activeWorkspaceId(){try{return activeId||currentWorkspace()?.id||'daily';}catch(e){return 'daily';}}
   function px(value){const n=parseFloat(String(value||'').replace('px',''));return Number.isFinite(n)?n:null;}
-  function readGeo(){try{return JSON.parse(localStorage.getItem(GEO_KEY)||'{}')||{};}catch(e){return {};}}
+  function readGeo(){
+    try{
+      let geo=JSON.parse(localStorage.getItem(GEO_KEY)||'{}')||{};
+      if(!Object.keys(geo).length){
+        for(const key of OLD_KEYS){
+          const old=JSON.parse(localStorage.getItem(key)||'{}')||{};
+          if(Object.keys(old).length){geo=old;localStorage.setItem(GEO_KEY,JSON.stringify(geo));break;}
+        }
+      }
+      return geo;
+    }catch(e){return {};}
+  }
   function writeGeo(geo){try{localStorage.setItem(GEO_KEY,JSON.stringify(geo));}catch(e){}}
-  function cardKey(ws,card){return String(ws?.id||activeWorkspaceId())+'::'+String(card?.id||'');}
+  function exactKey(ws,card){return String(ws?.id||activeWorkspaceId())+'::id::'+String(card?.id||'');}
+  function appKey(ws,card){return String(ws?.id||activeWorkspaceId())+'::app::'+String(card?.appId||card?.id||'');}
+  function keys(ws,card){return [exactKey(ws,card),appKey(ws,card)];}
+  function lookup(geo,ws,card){return geo[exactKey(ws,card)]||geo[appKey(ws,card)]||null;}
+
+  function rawSave(){
+    if(saving)return;
+    saving=true;
+    try{
+      if(typeof window.__windzxyRawSave==='function')window.__windzxyRawSave();
+      else if(typeof workspaces!=='undefined')localStorage.setItem(STORE_KEY,JSON.stringify(workspaces));
+    }catch(e){console.warn('raw layout save failed',e);}finally{saving=false;}
+  }
 
   function persistGeometry(options={}){
     if(saving)return;
@@ -24,7 +47,7 @@
     document.querySelectorAll('.desktop-card[data-card-id]').forEach(el=>{
       const card=ws.cards.find(x=>String(x.id)===String(el.dataset.cardId));
       if(!card)return;
-      const g=geo[cardKey(ws,card)]||{};
+      const g=Object.assign({},lookup(geo,ws,card)||{});
       const x=px(el.style.left),y=px(el.style.top),w=px(el.style.width),h=px(el.style.height);
       if(Number.isFinite(x)){const v=Math.max(0,Math.round(x));if(card.x!==v){card.x=v;changed=true;}g.x=v;}
       if(Number.isFinite(y)){const v=Math.max(0,Math.round(y));if(card.y!==v){card.y=v;changed=true;}g.y=v;}
@@ -34,7 +57,8 @@
         if(Number.isFinite(w)){const v=Math.max(1,Math.round(w));if(card.w!==v){card.w=v;changed=true;}g.w=v;}
         if(Number.isFinite(h)){const v=Math.max(1,Math.round(h));if(card.h!==v){card.h=v;changed=true;}g.h=v;}
       }
-      geo[cardKey(ws,card)]=g;
+      g.appId=card.appId||'';g.id=card.id||'';g.updatedAt=Date.now();
+      keys(ws,card).forEach(k=>geo[k]=g);
     });
     writeGeo(geo);
     if((changed||options.force)&&!options.noSave)rawSave();
@@ -44,7 +68,7 @@
     const geo=readGeo();
     let changed=false;
     wsList().forEach(ws=>(ws.cards||[]).forEach(card=>{
-      const g=geo[cardKey(ws,card)];
+      const g=lookup(geo,ws,card);
       if(!g)return;
       ['x','y','w','h'].forEach(k=>{
         if(Number.isFinite(g[k])&&card[k]!==g[k]){card[k]=g[k];changed=true;}
@@ -60,7 +84,7 @@
     const geo=readGeo();
     document.querySelectorAll('.desktop-card[data-card-id]').forEach(el=>{
       const card=ws.cards.find(x=>String(x.id)===String(el.dataset.cardId));
-      const g=card&&geo[cardKey(ws,card)];
+      const g=card&&lookup(geo,ws,card);
       if(!g)return;
       if(Number.isFinite(g.x))el.style.left=g.x+'px';
       if(Number.isFinite(g.y))el.style.top=g.y+'px';
@@ -69,13 +93,10 @@
     });
   }
 
-  function rawSave(){
-    if(saving)return;
-    saving=true;
-    try{
-      if(typeof window.__windzxyRawSave==='function')window.__windzxyRawSave();
-      else if(typeof workspaces!=='undefined')localStorage.setItem(STORE_KEY,JSON.stringify(workspaces));
-    }catch(e){console.warn('raw layout save failed',e);}finally{saving=false;}
+  function schedulePersist(force=false){
+    if(scheduled)return;
+    scheduled=true;
+    requestAnimationFrame(()=>{scheduled=false;persistGeometry({force});});
   }
 
   function patch(){
@@ -88,7 +109,7 @@
       if(typeof renderDesktop==='function'&&!window.__windzxyRenderDesktopLayoutPatched){
         window.__windzxyRenderDesktopLayoutPatched=1;
         const oldRenderDesktop=renderDesktop;
-        renderDesktop=function(){restoreGeometryToModel();const out=oldRenderDesktop.apply(this,arguments);setTimeout(applyGeometryToDom,0);return out;};
+        renderDesktop=function(){restoreGeometryToModel();const out=oldRenderDesktop.apply(this,arguments);setTimeout(()=>{applyGeometryToDom();schedulePersist(false);},0);return out;};
       }
       if(typeof renderAll==='function'&&!window.__windzxyRenderAllLayoutPatched){
         window.__windzxyRenderAllLayoutPatched=1;
@@ -107,7 +128,11 @@
     document.addEventListener('visibilitychange',()=>{if(document.hidden)persistGeometry({force:true});},{passive:true});
     document.addEventListener('pointerup',()=>setTimeout(()=>persistGeometry({force:true}),0),true);
     document.addEventListener('mouseup',()=>setTimeout(()=>persistGeometry({force:true}),0),true);
-    setInterval(()=>persistGeometry({force:false}),2000);
+    const canvas=document.getElementById('desktopCanvas');
+    if(canvas&&window.MutationObserver){
+      new MutationObserver(()=>{applyGeometryToDom();schedulePersist(false);}).observe(canvas,{childList:true,subtree:false});
+    }
+    setInterval(()=>persistGeometry({force:false}),1500);
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});
