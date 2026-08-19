@@ -28,7 +28,7 @@ jobs:
           from pathlib import Path
           import re
 
-          layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist5-plugin-refresh-fix"></script>'
+          layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist6-relaxed-bottom-bounds"></script>'
           fx_tag = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget29-portrait-chart"></script>'
 
@@ -72,5 +72,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk finance widget layout fix"
+          git commit -m "Inject relaxed WebDesk bottom drag bounds"
           git push
