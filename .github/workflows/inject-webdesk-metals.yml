@@ -21,13 +21,27 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Inject or update metals widget script
+      - name: Patch and inject metals widget script
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
           version = '20260819-gold-widget31-medium-chart'
+          js_path = Path('Html_tools/metals-widget.js')
+          if js_path.exists():
+              js = js_path.read_text(encoding='utf-8')
+              js = re.sub(r"const VER='[^']+';", f"const VER='{version}';", js, count=1)
+              js = re.sub(
+                  r"const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=\d+,CHART_H=\d+;",
+                  "const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=310,CHART_H=260;",
+                  js,
+                  count=1,
+              )
+              js = js.replace("['xpt','現貨鉑金','鉑金','XPT','OANDA:XPTUSD','https://www.gkoudai.com/quotesTrend/74.html']", "['xpt','現貨鉑金','鉑金','XPT','hf_XPT','OANDA:XPTUSD','https://www.gkoudai.com/quotesTrend/74.html']")
+              js = js.replace("['xpd','現貨鈀金','鈀金','XPD','OANDA:XPDUSD','https://www.gkoudai.com/quotesTrend/75.html']", "['xpd','現貨鈀金','鈀金','XPD','hf_XPD','OANDA:XPDUSD','https://www.gkoudai.com/quotesTrend/75.html']")
+              js_path.write_text(js, encoding='utf-8')
+
           index_path = Path('index.html')
           html = index_path.read_text(encoding='utf-8')
           tag = f'<script src="Html_tools/metals-widget.js?v={version}"></script>'
@@ -39,14 +53,14 @@ jobs:
           index_path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit metals widget script tag
+      - name: Commit metals widget updates
         run: |
-          if git diff --quiet -- index.html; then
-            echo "index.html already has current metals widget script."
+          if git diff --quiet -- Html_tools/metals-widget.js index.html; then
+            echo "Metals widget already has medium chart patch."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "Inject medium chart WebDesk metals widget"
+          git add Html_tools/metals-widget.js index.html
+          git commit -m "Patch WebDesk metals medium chart mode"
           git push
