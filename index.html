@@ -102,6 +102,8 @@ const apps=[
   {id:"color",kind:"widget",title:"色板",desc:"挑選並複製顏色。",icon:"◉",tone:"t-color"},
   {id:"link",kind:"widget",title:"快速連結",desc:"保存常用網址。",icon:"↗",tone:"t-link"},
   {id:"memo",kind:"widget",title:"小抄",desc:"保存常用片段。",icon:"⌘",tone:"t-memo"},
+  {id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"Au",tone:"t-metals"},
+  {id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"FX",tone:"t-fx"},
   {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}
 ];
 const seeds={
@@ -1383,7 +1385,7 @@ $("deskSearch").addEventListener("input",renderShelf);
 setInterval(()=>{renderClock();tickWidgets()},1000);
 try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error(error);loadBackgrounds()}
 </script>
-<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist4-plugin-geometry"></script>
+<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist5-plugin-refresh-fix"></script>
 <script src="Html_tools/metals-widget.js?v=20260819-gold-widget29-portrait-chart"></script>
 <script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>
 </body>
