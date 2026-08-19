@@ -1,8 +1,8 @@
 (function(){
-  if(window.__windzxyFirstRunEmptyDesktopV2Loaded)return;
-  window.__windzxyFirstRunEmptyDesktopV2Loaded=1;
+  if(window.__windzxyFirstRunEmptyDesktopV3Loaded)return;
+  window.__windzxyFirstRunEmptyDesktopV3Loaded=1;
 
-  const VER='20260819-first-run-empty2-keep-bg';
+  const VER='20260819-first-run-empty3-keep-bg-fit';
   const STORE='windzxy-web-desktop-workspaces';
   const LEGACY=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
   const ACTIVE='windzxy-active-workspace';
@@ -12,28 +12,37 @@
   window.__windzxyFirstRunEmptyDesktop=!hadSaved;
   window.__windzxyFirstRunEmptyDesktopVersion=VER;
 
+  function cssUrl(src){return 'url("'+String(src||'').replace(/["\\\n\r]/g,m=>m==='"'?'%22':m==='\\'?'%5C':'')+'")';}
+  function fitBackground(file,src){
+    const app=document.getElementById('desktopApp');
+    if(!app||!src)return;
+    const u=cssUrl(src);
+    app.style.backgroundImage=u+', '+u;
+    app.style.backgroundPosition='center center, center center';
+    app.style.backgroundRepeat='no-repeat, no-repeat';
+    app.style.backgroundSize='contain, cover';
+    app.style.backgroundColor='#0b1020';
+    app.dataset.backgroundFit='full-image';
+    if(file)app.dataset.background=file;
+  }
   function emptyWorkspace(ws){
     if(!ws)return ws;
     ws.cards=[];
     if(ws.id==='daily')ws.hint='從右側功能中心選擇需要的卡片。';
     return ws;
   }
-
   function openTools(){
     try{
       if(typeof openDrawer==='function')openDrawer('tools');
       else document.getElementById('desktopDrawer')?.classList.add('is-open');
     }catch(e){}
   }
-
   function hasBg(){
     const app=document.getElementById('desktopApp');
     return !!(app&&(app.dataset.background||app.style.backgroundImage));
   }
-
   function ensureBackground(){
     try{
-      if(hasBg())return;
       if(typeof loadBackgrounds==='function'){
         const r=loadBackgrounds();
         if(r&&typeof r.catch==='function')r.catch(()=>{});
@@ -48,19 +57,17 @@
     },500);
     setTimeout(()=>{
       try{
-        if(hasBg())return;
         const app=document.getElementById('desktopApp');
-        const saved=localStorage.getItem(BG);
-        if(app&&saved){
-          app.style.backgroundImage='url("'+saved+'")';
-          app.style.backgroundPosition='center';
-          app.style.backgroundRepeat='no-repeat';
-          app.style.backgroundSize='cover';
+        const file=app?.dataset.background||localStorage.getItem(BG);
+        if(!app||!file)return;
+        if(typeof resolveBackgroundSource==='function'){
+          const r=resolveBackgroundSource(file);
+          if(r&&typeof r.then==='function')r.then(src=>fitBackground(file,src)).catch(()=>{});
+          else if(r)fitBackground(file,r);
         }
       }catch(e){}
     },1300);
   }
-
   function saveEmpty(){
     try{
       if(Array.isArray(workspaces)){
@@ -74,17 +81,12 @@
       else if(Array.isArray(workspaces))localStorage.setItem(STORE,JSON.stringify(workspaces));
     }catch(e){}
   }
-
   function renderEmpty(){
     try{ if(typeof renderAll==='function')renderAll(); }catch(e){}
     openTools();
     ensureBackground();
   }
-
-  function markUserChoice(){
-    window.__windzxyFirstRunEmptyDesktop=false;
-  }
-
+  function markUserChoice(){window.__windzxyFirstRunEmptyDesktop=false;}
   function patchAddCard(){
     try{
       if(typeof addCard==='function'&&!window.__windzxyFirstRunAddCardPatched){
@@ -99,7 +101,6 @@
       }
     }catch(e){}
   }
-
   function run(){
     patchAddCard();
     ensureBackground();
@@ -107,7 +108,6 @@
     saveEmpty();
     renderEmpty();
   }
-
   if(!hadSaved){
     document.documentElement.dataset.firstRunEmpty='1';
     run();
@@ -115,10 +115,8 @@
     setTimeout(run,120);
     setTimeout(run,450);
     setTimeout(()=>{
-      if(window.__windzxyFirstRunEmptyDesktop){
-        saveEmpty();
-        renderEmpty();
-      }else ensureBackground();
+      if(window.__windzxyFirstRunEmptyDesktop){saveEmpty();renderEmpty();}
+      else ensureBackground();
     },1200);
   }else{
     patchAddCard();
