@@ -3,23 +3,20 @@
   window.__windzxyFxWidgetLoaded=1;
 
   const APP='fx-rates';
-  const VER='20260819-fx-widget2-boc-table';
+  const VER='20260819-fx-widget3-boc-json';
   const DEFAULT_W=460,DEFAULT_H=318,MIN_W=300,MIN_H=220;
   const REFRESH_MS=30*1000;
   const BOC_URL='https://www.boc.cn/sourcedb/whpj/';
-  const READ_URLS=[
-    {name:'中國銀行外匯牌價',url:BOC_URL},
-    {name:'中國銀行外匯牌價代理',url:'https://api.allorigins.win/raw?url='+encodeURIComponent(BOC_URL)}
-  ];
+  const JSON_URL='data/boc-fx.json';
   const WATCH=[
-    {name:'港幣',code:'HKD',flag:'🇭🇰'},
-    {name:'美元',code:'USD',flag:'🇺🇸'},
-    {name:'日元',code:'JPY',flag:'🇯🇵'},
-    {name:'韓國元',code:'KRW',flag:'🇰🇷'},
-    {name:'土耳其里拉',code:'TRY',flag:'🇹🇷'}
+    {name:'港币',display:'港幣',code:'HKD',flag:'HK'},
+    {name:'美元',display:'美元',code:'USD',flag:'US'},
+    {name:'日元',display:'日元',code:'JPY',flag:'JP'},
+    {name:'韩国元',display:'韓國元',code:'KRW',flag:'KR'},
+    {name:'土耳其里拉',display:'土耳其里拉',code:'TRY',flag:'TR'}
   ];
 
-  let state={rows:[],date:'--',time:'--',source:'中國銀行',status:'等待牌價',ok:false,ts:0,error:''};
+  let state={rows:[],prevRows:[],date:'--',time:'--',source:'中國銀行',status:'等待牌價快照',ok:false,ts:0,error:'',fetchedAt:''};
   let timer=null,busy=false,patched=false;
 
   function boot(){
@@ -30,37 +27,19 @@
   }
 
   function installApp(){
-    const info={id:APP,kind:'widget',title:'匯率',desc:'中國銀行外匯牌價：三欄表格，30 秒自動刷新。',icon:'FX',tone:'t-fx'};
+    const info={id:APP,kind:'widget',title:'匯率',desc:'中國銀行外匯牌價：三欄表格，讀取本地快照避免跨域失敗。',icon:'FX',tone:'t-fx'};
     const old=apps.find(a=>a.id===APP);old?Object.assign(old,info):apps.push(info);
     if(typeof defaults!=='undefined')defaults.forEach(ws=>{
-      if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP)){
-        ws.cards.push({id:'daily-fx-0',appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
-      }
+      if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP))ws.cards.push({id:'daily-fx-0',appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
     });
   }
-
-  function ensureCard(){
-    try{
-      const ws=activeWorkspace();
-      if(ws&&!ws.cards.some(c=>c.appId===APP)){
-        ws.cards.push({id:'card-fx-'+Date.now(),appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
-        save();
-      }
-    }catch(e){}
-  }
-
+  function ensureCard(){try{const ws=activeWorkspace();if(ws&&!ws.cards.some(c=>c.appId===APP)){ws.cards.push({id:'card-fx-'+Date.now(),appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});save();}}catch(e){}}
   function patch(){
-    if(patched||window.__windzxyFxWidgetPatched)return;
-    patched=window.__windzxyFxWidgetPatched=1;
-    const oldBody=bodyHtml;
-    bodyHtml=(card,info)=>card&&card.appId===APP?render(card):oldBody(card,info);
-    if(typeof renderDesktop==='function'){
-      const oldRender=renderDesktop;
-      renderDesktop=function(){oldRender();afterRender();};
-    }
+    if(patched||window.__windzxyFxWidgetPatched)return;patched=window.__windzxyFxWidgetPatched=1;
+    const oldBody=bodyHtml;bodyHtml=(card,info)=>card&&card.appId===APP?render(card):oldBody(card,info);
+    if(typeof renderDesktop==='function'){const oldRender=renderDesktop;renderDesktop=function(){oldRender();afterRender();};}
     if(typeof addCard==='function'){
-      const oldAdd=addCard;
-      addCard=function(appId){
+      const oldAdd=addCard;addCard=function(appId){
         if(appId!==APP)return oldAdd(appId);
         const n=activeWorkspace().cards.length;
         activeWorkspace().cards.push({id:'card-'+Date.now(),appId:APP,x:80+(n%4)*36,y:86+(n%5)*30,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
@@ -73,7 +52,7 @@
     const compact=(card.w||DEFAULT_W)<380||(card.h||DEFAULT_H)<260;
     return `<div class="fx-widget fxdesk ${compact?'compact':''}" data-fx-version="${E(VER)}">
       <header class="fx-head">
-        <div class="fx-status"><i class="${state.ok?'on':''}"></i><b>BOC 牌價</b><span data-fx-status>${E(state.status)}</span></div>
+        <div class="fx-status"><i class="${state.ok?'on':''}"></i><b>BOC 快照</b><span data-fx-status>${E(state.status)}</span></div>
         <button data-fx-refresh title="刷新">↻</button>
       </header>
       <section class="fx-title">
@@ -95,85 +74,41 @@
     const chg=is(mid)&&is(pmid)?mid-pmid:null;
     const cls=is(chg)?(chg>0?'up':chg<0?'down':'flat'):'flat';
     return `<div class="fx-tr ${cls}" role="row" data-fx-row="${E(c.code)}">
-      <span class="fx-currency"><b>${c.flag} ${E(c.name)}</b><small>${E(c.code)}</small></span>
+      <span class="fx-currency"><b>${E(c.flag)} ${E(c.display)}</b><small>${E(c.code)}</small></span>
       <span><b data-fx-buy="${E(c.code)}">${fmt(buy)}</b></span>
       <span><b data-fx-sell="${E(c.code)}">${fmt(sell)}</b></span>
     </div>`;
   }
   function pubLabel(){return state.date&&state.time&&state.date!=='--'?`${state.date} ${state.time}`:'--';}
-  function footText(){return state.ok?`更新 ${clock(new Date(state.ts||Date.now()))} · 30s自動刷新 · 來源：${state.source}`:`${state.status}${state.error?' · '+state.error:''}`;}
+  function footText(){
+    if(state.ok)return `快照 ${state.fetchedAt?shortTime(state.fetchedAt):clock(new Date(state.ts||Date.now()))} · 30s檢查本地JSON · 來源：${state.source}`;
+    return `${state.status}${state.error?' · '+state.error:''}`;
+  }
   function rowOf(name){return state.rows.find(r=>r.name===name)||null;}
   function prevRowOf(name){return state.prevRows?.find(r=>r.name===name)||null;}
 
   function start(){clearInterval(timer);refresh(true);timer=setInterval(()=>refresh(false),REFRESH_MS);}
   async function refresh(force){
-    if(busy)return;
-    busy=true;
-    if(force){state.status='讀取中國銀行牌價…';paint();}
+    if(busy)return;busy=true;
+    if(force){state.status='讀取本地牌價快照…';paint();}
     try{
-      const result=await loadBoc();
-      state={rows:result.rows,prevRows:state.rows||[],date:result.date,time:result.time,source:result.source,status:'已同步中國銀行外匯牌價',ok:true,ts:Date.now(),error:''};
+      const result=await loadSnapshot();
+      state={rows:result.rows,prevRows:state.rows||[],date:result.date||'--',time:result.time||'--',source:result.source||'中國銀行外匯牌價',status:'已同步中國銀行快照',ok:true,ts:Date.now(),error:'',fetchedAt:result.fetchedAt||''};
     }catch(e){
-      console.warn(e);
-      state=Object.assign({},state,{status:'中國銀行牌價讀取失敗',ok:false,error:e.message||String(e),ts:Date.now()});
+      console.warn(e);state=Object.assign({},state,{status:'本地牌價快照讀取失敗',ok:false,error:e.message||String(e),ts:Date.now()});
     }
     busy=false;paint();
   }
-
-  async function loadBoc(){
-    let lastErr=null;
-    for(const src of READ_URLS){
-      try{
-        const html=await fetchText(src.url);
-        const rows=parseBocRows(html);
-        const filtered=WATCH.map(c=>rows.find(r=>r.name===c.name)).filter(Boolean);
-        if(filtered.length>=3){
-          const latest=filtered.find(r=>r.date||r.time)||filtered[0];
-          return {rows:filtered,date:latest.date||'--',time:latest.time||'--',source:src.name};
-        }
-        lastErr=new Error('未解析到目標貨幣');
-      }catch(e){lastErr=e;}
-    }
-    throw lastErr||new Error('無法讀取中國銀行牌價');
+  async function loadSnapshot(){
+    const r=await fetch(JSON_URL+'?v='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('JSON HTTP '+r.status);
+    const data=await r.json();
+    const rows=Array.isArray(data.rows)?data.rows.filter(r=>WATCH.some(c=>c.name===r.name)):[];
+    if(rows.length<3)throw new Error('JSON 未包含目標貨幣');
+    rows.sort((a,b)=>WATCH.findIndex(c=>c.name===a.name)-WATCH.findIndex(c=>c.name===b.name));
+    return Object.assign({},data,{rows});
   }
 
-  async function fetchText(url){
-    const ac=new AbortController();const t=setTimeout(()=>ac.abort(),9000);
-    try{
-      const r=await fetch(url,{cache:'no-store',signal:ac.signal});
-      if(!r.ok)throw new Error('HTTP '+r.status);
-      return await r.text();
-    }finally{clearTimeout(t);}
-  }
-
-  function parseBocRows(html){
-    const rows=[];
-    const trs=String(html||'').match(/<tr[\s\S]*?<\/tr>/gi)||[];
-    trs.forEach(tr=>{
-      const cells=(tr.match(/<t[dh][^>]*>[\s\S]*?<\/t[dh]>/gi)||[]).map(cleanCell);
-      if(cells.length<8)return;
-      const name=cells[0];
-      if(!WATCH.some(c=>c.name===name))return;
-      rows.push({name,buy:cells[1],cashBuy:cells[2],sell:cells[3],cashSell:cells[4],mid:cells[5],date:normalizeDate(cells[6]),time:normalizeTime(cells[7]||cells[6])});
-    });
-    if(rows.length)return rows;
-    const text=cleanCell(String(html||'')).replace(/\s+/g,' ');
-    const names=WATCH.map(c=>c.name);
-    names.forEach(name=>{
-      const idx=text.indexOf(name);
-      if(idx<0)return;
-      const part=text.slice(idx+name.length,idx+name.length+220);
-      const nums=part.match(/\d+(?:\.\d+)?/g)||[];
-      const dt=part.match(/\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/)?.[0]||'';
-      const tm=part.match(/\d{1,2}:\d{2}:\d{2}/)?.[0]||'';
-      if(nums.length>=5)rows.push({name,buy:nums[0],cashBuy:nums[1],sell:nums[2],cashSell:nums[3],mid:nums[4],date:normalizeDate(dt),time:normalizeTime(tm)});
-    });
-    return rows;
-  }
-
-  function cleanCell(s){return String(s||'').replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;|&#160;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\s+/g,' ').trim();}
-  function normalizeDate(s){const m=String(s||'').match(/\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/);return m?m[0].replace(/-/g,'/'):'--';}
-  function normalizeTime(s){const m=String(s||'').match(/\d{1,2}:\d{2}:\d{2}/);return m?m[0]:'--';}
   function afterRender(){bind();paint();}
   function bind(){
     document.querySelectorAll('[data-fx-refresh]').forEach(b=>{if(b.dataset.ready)return;b.dataset.ready='1';b.onclick=e=>{e.preventDefault();e.stopPropagation();refresh(true);};b.onpointerdown=e=>e.stopPropagation();});
@@ -184,11 +119,7 @@
     document.querySelectorAll('[data-fx-date]').forEach(e=>e.textContent=pubLabel());
     document.querySelectorAll('[data-fx-time]').forEach(e=>e.textContent=footText());
     document.querySelectorAll('.fx-status i').forEach(e=>e.classList.toggle('on',!!state.ok));
-    WATCH.forEach(c=>{
-      const r=rowOf(c.name);
-      document.querySelectorAll(`[data-fx-buy="${c.code}"]`).forEach(e=>e.textContent=fmt(num(r?.buy)));
-      document.querySelectorAll(`[data-fx-sell="${c.code}"]`).forEach(e=>e.textContent=fmt(num(r?.sell)));
-    });
+    WATCH.forEach(c=>{const r=rowOf(c.name);document.querySelectorAll(`[data-fx-buy="${c.code}"]`).forEach(e=>e.textContent=fmt(num(r?.buy)));document.querySelectorAll(`[data-fx-sell="${c.code}"]`).forEach(e=>e.textContent=fmt(num(r?.sell)));});
   }
 
   function installStyle(){
@@ -203,6 +134,7 @@
   function is(v){return Number.isFinite(v);}
   function fmt(v){return is(v)?v.toFixed(v<10?4:2):'--';}
   function clock(d){return new Intl.DateTimeFormat(undefined,{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(d);}
+  function shortTime(value){const d=new Date(value);return Number.isNaN(d.getTime())?String(value).replace('T',' ').slice(0,19):clock(d);}
   function E(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 
   boot();
