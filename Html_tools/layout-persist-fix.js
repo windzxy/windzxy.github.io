@@ -1,11 +1,11 @@
 (function(){
   if(window.__windzxyLayoutPersistFixLoaded)return;
   window.__windzxyLayoutPersistFixLoaded=1;
-  const VER='20260819-layout-persist6-relaxed-bottom-bounds';
+  const VER='20260819-layout-persist7-calendar';
   const GEO_KEY='windzxy-web-desktop-card-geometry-v4';
   const OLD_KEYS=['windzxy-web-desktop-card-geometry-v3','windzxy-web-desktop-card-geometry-v2','windzxy-web-desktop-card-geometry-v1'];
   const STORE_KEY='windzxy-web-desktop-workspaces';
-  const PLUGIN_APPS=new Set(['metals','fx-rates']);
+  const PLUGIN_APPS=new Set(['metals','fx-rates','calendar']);
   let saving=false,patched=false,boundsPatched=false;
 
   function wsList(){try{return Array.isArray(workspaces)?workspaces:[];}catch(e){return [];}}
@@ -141,8 +141,6 @@
   }
   function patchBottomBounds(){
     if(boundsPatched)return;boundsPatched=true;
-    // 主程序原本為 taskbar 預留 62px，導致卡片明明還有空間卻不能往下放。
-    // 這裡在原 pointermove 後重新套用更合理的邊界，只保留 10px 安全邊距。
     document.addEventListener('pointermove',event=>{
       try{
         if(typeof drag!=='undefined'&&drag&&drag.item&&drag.el){
