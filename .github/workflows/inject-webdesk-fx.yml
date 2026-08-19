@@ -40,7 +40,7 @@ jobs:
 
           first_run_tag = '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>'
           bg_fit_tag = '<script src="Html_tools/background-fit-fix.js?v=20260819-bg-fit2-stable-one-image"></script>'
-          icon_edge_tag = '<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge2-calendar-header-stable"></script>'
+          icon_edge_tag = '<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge3-minimal-arrow-shift"></script>'
           layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist7-calendar"></script>'
           gap_tag = '<script src="Html_tools/card-gap-fix.js?v=20260819-card-gap2-new-card-only"></script>'
           fold_tag = '<script src="Html_tools/card-fold-fix.js?v=20260819-card-fold4-preserve-body"></script>'
@@ -113,5 +113,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject fixed icon edge version"
+          git commit -m "Inject minimal calendar arrow alignment fix"
           git push
