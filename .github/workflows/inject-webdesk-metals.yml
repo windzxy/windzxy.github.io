@@ -26,7 +26,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
-          version = '20260819-gold-widget25-tvjs-professional'
+          version = '20260819-gold-widget26-polished-tv'
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
           tag = f'<script src="Html_tools/metals-widget.js?v={version}"></script>'
