@@ -3,9 +3,9 @@
   window.__windzxyMetalsWidgetLoaded=1;
 
   const APP='metals';
-  const VER='20260819-gold-widget28-pm-reviewed';
+  const VER='20260819-gold-widget29-portrait-chart';
   const SNAP_MS=200;
-  const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=580,CHART_H=350;
+  const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=460,CHART_H=320;
   const PRODUCTS=[
     ['xau','現貨黃金','黃金','XAU','hf_XAU','OANDA:XAUUSD','https://www.gkoudai.com/quotesTrend/12.html'],
     ['xag','現貨白銀','白銀','XAG','hf_XAG','OANDA:XAGUSD','https://www.gkoudai.com/quotesTrend/13.html'],
@@ -25,7 +25,7 @@
   }
 
   function install(){
-    const info={id:APP,kind:'widget',title:'金價',desc:'PM 審核版貴金屬盯盤：大窗只看圖，小窗只看數，來源與刷新邊界清晰。',icon:'Au',tone:'t-metals'};
+    const info={id:APP,kind:'widget',title:'金價',desc:'智能貴金屬盯盤：中高窗口顯示圖表，真正小窗才顯示交易讀數。',icon:'Au',tone:'t-metals'};
     const old=apps.find(a=>a.id===APP);old?Object.assign(old,info):apps.push(info);
     if(typeof defaults!=='undefined')defaults.forEach(ws=>{
       if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP))ws.cards.push({id:'daily-metals-0',appId:APP,x:300,y:440,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
