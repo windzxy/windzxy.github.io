@@ -13,6 +13,7 @@ on:
       - 'Html_tools/layout-persist-fix.js'
       - 'Html_tools/card-gap-fix.js'
       - 'Html_tools/card-fold-fix.js'
+      - 'Html_tools/background-fit-fix.js'
       - 'Html_tools/first-run-empty-desktop.js'
       - 'Html_tools/finance-i18n-fix.js'
       - '.github/workflows/inject-webdesk-fx.yml'
@@ -36,7 +37,8 @@ jobs:
           from pathlib import Path
           import re
 
-          first_run_tag = '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty1"></script>'
+          first_run_tag = '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty3-keep-bg-fit"></script>'
+          bg_fit_tag = '<script src="Html_tools/background-fit-fix.js?v=20260819-bg-fit1-no-crop"></script>'
           layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist7-calendar"></script>'
           gap_tag = '<script src="Html_tools/card-gap-fix.js?v=20260819-card-gap2-new-card-only"></script>'
           fold_tag = '<script src="Html_tools/card-fold-fix.js?v=20260819-card-fold4-preserve-body"></script>'
@@ -76,6 +78,7 @@ jobs:
 
           for pattern in [
               r'<script\s+src="Html_tools/first-run-empty-desktop\.js\?v=[^"]+"\s*>\s*</script>\s*',
+              r'<script\s+src="Html_tools/background-fit-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/layout-persist-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/card-gap-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/card-fold-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
@@ -93,7 +96,7 @@ jobs:
           ]:
               html = re.sub(pattern, '', html)
 
-          bundle = '\n'.join([first_run_tag, layout_tag, gap_tag, fold_tag, metals_tag, fx_tag, calendar_tag, calendar_clean_tag, theme_contrast_tag, calendar_pm_tag, finance_i18n_tag]) + '\n'
+          bundle = '\n'.join([first_run_tag, bg_fit_tag, layout_tag, gap_tag, fold_tag, metals_tag, fx_tag, calendar_tag, calendar_clean_tag, theme_contrast_tag, calendar_pm_tag, finance_i18n_tag]) + '\n'
           html = html.replace('</body>', bundle + '</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
@@ -107,5 +110,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject first-run empty desktop behavior"
+          git commit -m "Inject background fit and first-run v3 scripts"
           git push
