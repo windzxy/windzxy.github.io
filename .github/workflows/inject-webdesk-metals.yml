@@ -27,7 +27,7 @@ jobs:
           from pathlib import Path
           import re
 
-          version = '20260819-gold-widget31-medium-chart'
+          version = '20260819-gold-widget32-refresh-button-fix'
           js_path = Path('Html_tools/metals-widget.js')
           if js_path.exists():
               js = js_path.read_text(encoding='utf-8')
@@ -40,6 +40,13 @@ jobs:
               )
               js = js.replace("['xpt','現貨鉑金','鉑金','XPT','OANDA:XPTUSD','https://www.gkoudai.com/quotesTrend/74.html']", "['xpt','現貨鉑金','鉑金','XPT','hf_XPT','OANDA:XPTUSD','https://www.gkoudai.com/quotesTrend/74.html']")
               js = js.replace("['xpd','現貨鈀金','鈀金','XPD','OANDA:XPDUSD','https://www.gkoudai.com/quotesTrend/75.html']", "['xpd','現貨鈀金','鈀金','XPD','hf_XPD','OANDA:XPDUSD','https://www.gkoudai.com/quotesTrend/75.html']")
+              js = re.sub(
+                  r"(\.md-refresh,\.md-foot button\{[^}]*\})",
+                  r"\1.md-refresh{width:34px;min-width:34px;padding:0;justify-self:end;align-self:center}",
+                  js,
+                  count=1,
+              )
+              js = js.replace("@container (max-width:340px){.md-head{grid-template-columns:1fr}", "@container (max-width:340px){")
               js_path.write_text(js, encoding='utf-8')
 
           index_path = Path('index.html')
@@ -56,11 +63,11 @@ jobs:
       - name: Commit metals widget updates
         run: |
           if git diff --quiet -- Html_tools/metals-widget.js index.html; then
-            echo "Metals widget already has medium chart patch."
+            echo "Metals widget already has refresh button layout fix."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Html_tools/metals-widget.js index.html
-          git commit -m "Patch WebDesk metals medium chart mode"
+          git commit -m "Fix WebDesk metals refresh button layout"
           git push
