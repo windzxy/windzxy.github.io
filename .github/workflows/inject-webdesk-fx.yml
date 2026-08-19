@@ -7,6 +7,7 @@ on:
     paths:
       - 'Html_tools/fx-widget.js'
       - 'Html_tools/layout-persist-fix.js'
+      - 'Html_tools/finance-i18n-fix.js'
       - '.github/workflows/inject-webdesk-fx.yml'
   workflow_dispatch:
 
@@ -22,7 +23,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Inject or update FX, layout and metals scripts
+      - name: Inject or update FX, layout, metals and i18n scripts
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -30,7 +31,8 @@ jobs:
 
           layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist6-relaxed-bottom-bounds"></script>'
           fx_tag = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
-          metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget29-portrait-chart"></script>'
+          finance_i18n_tag = '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n1"></script>'
+          metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>'
 
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
@@ -55,10 +57,11 @@ jobs:
               r'<script\s+src="Html_tools/layout-persist-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/fx-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
+              r'<script\s+src="Html_tools/finance-i18n-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
           ]:
               html = re.sub(pattern, '', html)
 
-          bundle = layout_tag + '\n' + metals_tag + '\n' + fx_tag + '\n'
+          bundle = layout_tag + '\n' + metals_tag + '\n' + fx_tag + '\n' + finance_i18n_tag + '\n'
           html = html.replace('</body>', bundle + '</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
@@ -66,11 +69,11 @@ jobs:
       - name: Commit FX widget script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has current FX/layout scripts."
+            echo "index.html already has current FX/layout/i18n scripts."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject relaxed WebDesk bottom drag bounds"
+          git commit -m "Inject WebDesk finance i18n script"
           git push
