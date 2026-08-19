@@ -1,154 +1,23 @@
 (function(){
-  if(window.__windzxyFxWidgetLoaded)return;
-  window.__windzxyFxWidgetLoaded=1;
-
-  const APP='fx-rates';
-  const VER='20260819-fx-widget4-boc-compact-converter';
-  const DEFAULT_W=460,DEFAULT_H=300,MIN_W=300,MIN_H=210;
-  const REFRESH_MS=30*1000;
-  const BOC_URL='https://www.boc.cn/sourcedb/whpj/';
-  const JSON_URL='data/boc-fx.json';
-  const AMOUNT_KEY='windzxy-fx-cny-amount';
-  const WATCH=[
-    {name:'港币',display:'港幣',code:'HKD',flag:'HK'},
-    {name:'美元',display:'美元',code:'USD',flag:'US'},
-    {name:'日元',display:'日元',code:'JPY',flag:'JP'},
-    {name:'韩国元',display:'韓國元',code:'KRW',flag:'KR'},
-    {name:'土耳其里拉',display:'土耳其里拉',code:'TRY',flag:'TR'}
-  ];
-
-  let state={rows:[],prevRows:[],date:'--',time:'--',source:'中國銀行',status:'等待牌價快照',ok:false,ts:0,error:'',fetchedAt:''};
-  let amount=readAmount();
-  let timer=null,busy=false,patched=false;
-
-  function boot(){
-    if(typeof apps==='undefined'||typeof renderAll==='undefined'||typeof bodyHtml==='undefined'||typeof save==='undefined'){
-      setTimeout(boot,80);return;
-    }
-    installStyle();installApp();patch();ensureCard();renderAll();afterRender();start();window.windzxyRefreshFx=()=>refresh(true);
-  }
-
-  function installApp(){
-    const info={id:APP,kind:'widget',title:'匯率',desc:'中國銀行外匯牌價：緊湊三欄表格 + 人民幣換算。',icon:'FX',tone:'t-fx'};
-    const old=apps.find(a=>a.id===APP);old?Object.assign(old,info):apps.push(info);
-    if(typeof defaults!=='undefined')defaults.forEach(ws=>{
-      if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP))ws.cards.push({id:'daily-fx-0',appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
-    });
-  }
-  function ensureCard(){try{const ws=activeWorkspace();if(ws&&!ws.cards.some(c=>c.appId===APP)){ws.cards.push({id:'card-fx-'+Date.now(),appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});save();}}catch(e){}}
-  function patch(){
-    if(patched||window.__windzxyFxWidgetPatched)return;patched=window.__windzxyFxWidgetPatched=1;
-    const oldBody=bodyHtml;bodyHtml=(card,info)=>card&&card.appId===APP?render(card):oldBody(card,info);
-    if(typeof renderDesktop==='function'){const oldRender=renderDesktop;renderDesktop=function(){oldRender();afterRender();};}
-    if(typeof addCard==='function'){
-      const oldAdd=addCard;addCard=function(appId){
-        if(appId!==APP)return oldAdd(appId);
-        const n=activeWorkspace().cards.length;
-        activeWorkspace().cards.push({id:'card-'+Date.now(),appId:APP,x:80+(n%4)*36,y:86+(n%5)*30,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
-        save();renderAll();start();
-      };
-    }
-  }
-
-  function render(card={}){
-    const compact=(card.w||DEFAULT_W)<380||(card.h||DEFAULT_H)<250;
-    return `<div class="fx-widget fxdesk ${compact?'compact':''}" data-fx-version="${E(VER)}">
-      <header class="fx-head">
-        <div class="fx-status"><i class="${state.ok?'on':''}"></i><b>BOC</b><span data-fx-status>${E(statusLine())}</span></div>
-        <button data-fx-refresh title="刷新">↻</button>
-      </header>
-      <section class="fx-converter" aria-label="人民幣換算">
-        <label class="fx-amount"><span>CNY</span><input data-fx-amount type="number" min="0" step="1" value="${E(amount)}"><small>按現匯賣出換算</small></label>
-        <div class="fx-chips">${WATCH.map(chipHtml).join('')}</div>
-      </section>
-      <section class="fx-table" role="table" aria-label="中國銀行外匯牌價">
-        <div class="fx-tr fx-th" role="row"><span>貨幣</span><span>現匯買入</span><span>現匯賣出</span></div>
-        ${WATCH.map(rowHtml).join('')}
-      </section>
-      <footer class="fx-foot"><span data-fx-time>${E(footText())}</span><button data-fx-open>源頁</button></footer>
-    </div>`;
-  }
-
-  function chipHtml(c){
-    const v=convertToForeign(rowOf(c.name));
-    return `<div class="fx-chip"><span>${E(c.code)}</span><b data-fx-conv="${E(c.code)}">${fmtForeign(v,c)}</b></div>`;
-  }
-  function rowHtml(c){
-    const r=rowOf(c.name),prev=prevRowOf(c.name);
-    const buy=num(r?.buy),sell=num(r?.sell),pbuy=num(prev?.buy),psell=num(prev?.sell);
-    const mid=is(buy)&&is(sell)?(buy+sell)/2:null,pmid=is(pbuy)&&is(psell)?(pbuy+psell)/2:null;
-    const chg=is(mid)&&is(pmid)?mid-pmid:null;
-    const cls=is(chg)?(chg>0?'up':chg<0?'down':'flat'):'flat';
-    return `<div class="fx-tr ${cls}" role="row" data-fx-row="${E(c.code)}">
-      <span class="fx-currency"><b>${E(c.flag)} ${E(c.display)}</b><small>${E(c.code)}</small></span>
-      <span><b data-fx-buy="${E(c.code)}">${fmt(buy)}</b></span>
-      <span><b data-fx-sell="${E(c.code)}">${fmt(sell)}</b></span>
-    </div>`;
-  }
-  function statusLine(){return state.ok?`已同步 · ${pubLabel()}`:state.status;}
-  function pubLabel(){return state.date&&state.time&&state.date!=='--'?`${state.date} ${state.time}`:'--';}
-  function footText(){
-    if(state.ok)return `BOC · ${pubLabel()} · 30s檢查`;
-    return `${state.status}${state.error?' · '+state.error:''}`;
-  }
-  function rowOf(name){return state.rows.find(r=>r.name===name)||null;}
-  function prevRowOf(name){return state.prevRows?.find(r=>r.name===name)||null;}
-  function convertToForeign(row){const sell=num(row?.sell),a=num(amount);return is(sell)&&sell>0&&is(a)?a*100/sell:null;}
-
-  function start(){clearInterval(timer);refresh(true);timer=setInterval(()=>refresh(false),REFRESH_MS);}
-  async function refresh(force){
-    if(busy)return;busy=true;
-    if(force){state.status='讀取 BOC 快照…';paint();}
-    try{
-      const result=await loadSnapshot();
-      state={rows:result.rows,prevRows:state.rows||[],date:result.date||'--',time:result.time||'--',source:result.source||'中國銀行外匯牌價',status:'已同步中國銀行快照',ok:true,ts:Date.now(),error:'',fetchedAt:result.fetchedAt||''};
-    }catch(e){
-      console.warn(e);state=Object.assign({},state,{status:'本地牌價快照讀取失敗',ok:false,error:e.message||String(e),ts:Date.now()});
-    }
-    busy=false;paint();
-  }
-  async function loadSnapshot(){
-    const r=await fetch(JSON_URL+'?v='+Date.now(),{cache:'no-store'});
-    if(!r.ok)throw new Error('JSON HTTP '+r.status);
-    const data=await r.json();
-    const rows=Array.isArray(data.rows)?data.rows.filter(r=>WATCH.some(c=>c.name===r.name)):[];
-    if(rows.length<3)throw new Error('JSON 未包含目標貨幣');
-    rows.sort((a,b)=>WATCH.findIndex(c=>c.name===a.name)-WATCH.findIndex(c=>c.name===b.name));
-    return Object.assign({},data,{rows});
-  }
-
-  function afterRender(){bind();paint();}
-  function bind(){
-    document.querySelectorAll('[data-fx-refresh]').forEach(b=>{if(b.dataset.ready)return;b.dataset.ready='1';b.onclick=e=>{e.preventDefault();e.stopPropagation();refresh(true);};b.onpointerdown=e=>e.stopPropagation();});
-    document.querySelectorAll('[data-fx-open]').forEach(b=>{if(b.dataset.ready)return;b.dataset.ready='1';b.onclick=e=>{e.preventDefault();e.stopPropagation();window.open(BOC_URL,'_blank','noopener,noreferrer');};b.onpointerdown=e=>e.stopPropagation();});
-    document.querySelectorAll('[data-fx-amount]').forEach(input=>{if(input.dataset.ready)return;input.dataset.ready='1';input.oninput=e=>{amount=String(e.target.value||'0');localStorage.setItem(AMOUNT_KEY,amount);paint();};input.onpointerdown=e=>e.stopPropagation();});
-  }
-  function paint(){
-    document.querySelectorAll('[data-fx-status]').forEach(e=>e.textContent=statusLine());
-    document.querySelectorAll('[data-fx-time]').forEach(e=>e.textContent=footText());
-    document.querySelectorAll('.fx-status i').forEach(e=>e.classList.toggle('on',!!state.ok));
-    WATCH.forEach(c=>{
-      const r=rowOf(c.name);
-      document.querySelectorAll(`[data-fx-buy="${c.code}"]`).forEach(e=>e.textContent=fmt(num(r?.buy)));
-      document.querySelectorAll(`[data-fx-sell="${c.code}"]`).forEach(e=>e.textContent=fmt(num(r?.sell)));
-      document.querySelectorAll(`[data-fx-conv="${c.code}"]`).forEach(e=>e.textContent=fmtForeign(convertToForeign(r),c));
-    });
-  }
-
-  function installStyle(){
-    if(document.getElementById('fxWidgetStyle'))return;
-    const s=document.createElement('style');s.id='fxWidgetStyle';s.textContent=`
-.t-fx{--icon:linear-gradient(145deg,#f6d365,#22d3ee);--glow:linear-gradient(135deg,#f6d365,#22c55e)}
-.fxdesk{height:100%;display:flex;flex-direction:column;gap:7px;overflow:hidden;color:var(--ink);font-variant-numeric:tabular-nums}.fxdesk *{box-sizing:border-box;min-width:0}.fx-head{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.fx-status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;min-width:0}.fx-status i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.18);box-shadow:0 0 0 7px rgba(255,255,255,.05);flex:0 0 auto}.fx-status i.on{background:#22d47b;box-shadow:0 0 0 7px rgba(34,212,123,.13),0 0 16px rgba(34,212,123,.32)}.fx-status b{font-size:11px;color:var(--ink);padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);white-space:nowrap}.fx-status span,.fx-foot span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fx-head button,.fx-foot button{height:30px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(255,255,255,.09);color:var(--ink);font-weight:850;padding:0 12px;cursor:pointer}.fx-converter{border:1px solid rgba(255,255,255,.10);border-radius:15px;background:linear-gradient(135deg,rgba(246,211,101,.12),rgba(34,211,238,.07));padding:8px;display:grid;grid-template-columns:128px 1fr;gap:8px;align-items:stretch}.fx-amount{display:grid;grid-template-columns:auto 1fr;gap:4px 6px;align-items:center;background:rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:7px 8px}.fx-amount span{font-size:11px;color:#f6d365;font-weight:950;letter-spacing:.12em}.fx-amount input{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font-size:18px;font-weight:950;text-align:right}.fx-amount small{grid-column:1/3;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fx-chips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.fx-chip{border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(255,255,255,.045);padding:6px 7px;overflow:hidden}.fx-chip span{display:block;color:var(--muted);font-size:10px;font-weight:900}.fx-chip b{display:block;margin-top:2px;color:#22d47b;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fx-table{flex:1 1 auto;min-height:0;display:grid;grid-template-rows:30px repeat(5,minmax(29px,1fr));border:1px solid rgba(255,255,255,.10);border-radius:15px;overflow:hidden;background:rgba(255,255,255,.035)}.fx-tr{display:grid;grid-template-columns:1.15fr .9fr .9fr;gap:7px;align-items:center;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.065)}.fx-tr:last-child{border-bottom:0}.fx-th{background:rgba(255,255,255,.075);color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.04em}.fx-currency{display:flex;align-items:center;gap:7px}.fx-currency b{font-size:13px;color:var(--ink);white-space:nowrap}.fx-currency small{font-size:10px;color:var(--muted);font-weight:900}.fx-tr span:not(.fx-currency) b{font-size:14px;color:var(--ink);font-weight:950}.fx-tr.up span:not(.fx-currency) b{color:#22d47b}.fx-tr.down span:not(.fx-currency) b{color:#ff667c}.fx-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px}.fx-foot button{height:auto;padding:5px 12px}.fxdesk.compact{gap:6px}.fxdesk.compact .fx-converter{grid-template-columns:1fr;padding:7px}.fxdesk.compact .fx-chips{grid-template-columns:repeat(3,1fr)}.fxdesk.compact .fx-table{grid-template-rows:28px repeat(5,minmax(27px,1fr))}.fxdesk.compact .fx-tr{grid-template-columns:1fr .82fr .82fr;padding:5px 8px}.fxdesk.compact .fx-currency{display:block}.fxdesk.compact .fx-currency b{font-size:12px}.fxdesk.compact .fx-tr span:not(.fx-currency) b{font-size:13px}@container (max-width:340px){.fx-chips{grid-template-columns:repeat(2,1fr)}.fx-tr{grid-template-columns:1fr .8fr .8fr;gap:5px}.fx-foot{font-size:10px}}
-    `;document.head.appendChild(s);
-  }
-
-  function readAmount(){const v=localStorage.getItem(AMOUNT_KEY);return String(num(v)||100);}
-  function num(v){const x=parseFloat(String(v??'').replace(/,/g,''));return Number.isFinite(x)?x:null;}
-  function is(v){return Number.isFinite(v);}
-  function fmt(v){return is(v)?v.toFixed(v<10?4:2):'--';}
-  function fmtForeign(v,c){if(!is(v))return '--';if(c.code==='JPY'||c.code==='KRW')return v.toFixed(0);if(c.code==='TRY')return v.toFixed(2);return v.toFixed(4);}
-  function E(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-
-  boot();
+if(window.__windzxyFxWidgetLoaded)return;window.__windzxyFxWidgetLoaded=1;
+const APP='fx-rates',VER='20260819-fx-widget5-swap-converter',BOC='https://www.boc.cn/sourcedb/whpj/',JSON_URL='data/boc-fx.json',MS=30000;
+const CNY={name:'人民币',display:'人民幣',code:'CNY',flag:'CN'},FX=[{name:'港币',display:'港幣',code:'HKD',flag:'HK'},{name:'美元',display:'美元',code:'USD',flag:'US'},{name:'日元',display:'日元',code:'JPY',flag:'JP'},{name:'韩国元',display:'韓國元',code:'KRW',flag:'KR'},{name:'土耳其里拉',display:'土耳其里拉',code:'TRY',flag:'TR'}],ALL=[CNY,...FX];
+const K={amt:'windzxy-fx-amount',from:'windzxy-fx-from',to:'windzxy-fx-to'};let st={rows:[],prev:[],date:'--',time:'--',ok:false,status:'等待牌價',err:'',fetchedAt:''},busy=false,timer=null,patched=false;
+function boot(){if(typeof apps==='undefined'||typeof bodyHtml==='undefined'||typeof renderAll==='undefined'||typeof save==='undefined'){setTimeout(boot,80);return}style();app();patch();ensure();renderAll();after();start();window.windzxyRefreshFx=()=>load(1)}
+function app(){const info={id:APP,kind:'widget',title:'匯率',desc:'中國銀行外匯牌價，互換式匯率換算與三欄牌價表。',icon:'FX',tone:'t-fx'};let old=apps.find(x=>x.id===APP);old?Object.assign(old,info):apps.push(info);if(typeof defaults!=='undefined')defaults.forEach(w=>{if(w.id==='daily'&&!w.cards.some(c=>c.appId===APP))w.cards.push({id:'daily-fx-0',appId:APP,x:60,y:420,w:390,h:286,collapsed:false,data:{}})})}
+function ensure(){try{let w=activeWorkspace();if(w&&!w.cards.some(c=>c.appId===APP)){w.cards.push({id:'card-fx-'+Date.now(),appId:APP,x:60,y:420,w:390,h:286,collapsed:false,data:{}});save()}}catch(e){}}
+function patch(){if(patched||window.__windzxyFxWidgetPatched)return;patched=window.__windzxyFxWidgetPatched=1;const ob=bodyHtml;bodyHtml=(c,i)=>c&&c.appId===APP?html(c):ob(c,i);if(typeof renderDesktop==='function'){const or=renderDesktop;renderDesktop=function(){or();after()}}if(typeof addCard==='function'){const oa=addCard;addCard=function(id){if(id!==APP)return oa(id);let n=activeWorkspace().cards.length;activeWorkspace().cards.push({id:'card-'+Date.now(),appId:APP,x:80+(n%4)*36,y:86+(n%5)*30,w:390,h:286,collapsed:false,data:{}});save();renderAll();start()}}}
+function html(card={}){let small=(card.w||390)<340||(card.h||286)<242,a=amt(),f=cur(localStorage.getItem(K.from)||'CNY'),to=cur(localStorage.getItem(K.to)||'USD'),out=conv(a,f.code,to.code);return `<div class="fxdesk ${small?'compact':''}" data-fx-version="${E(VER)}"><header class="fx-head"><div class="fx-status"><i class="${st.ok?'on':''}"></i><b>BOC</b><span data-fx-status>${E(status())}</span></div><button data-fx-refresh>↻</button></header><section class="fx-conv"><div class="fx-row"><label><span>金額</span><input data-fx-amt type="number" min="0" step="0.01" value="${E(a)}"></label><label><span>From</span><select data-fx-from>${opts(f.code)}</select></label><button class="fx-swap" data-fx-swap>⇄</button><label><span>To</span><select data-fx-to>${opts(to.code)}</select></label></div><div class="fx-result"><small>${E(f.code)} → ${E(to.code)}</small><strong data-fx-result>${fmtOut(out,to.code)}</strong></div></section><section class="fx-table"><div class="fx-tr fx-th"><span>貨幣</span><span>現匯買入</span><span>現匯賣出</span></div>${FX.map(row).join('')}</section><footer class="fx-foot"><span data-fx-time>${E(foot())}</span><button data-fx-open>源頁</button></footer></div>`}
+function opts(sel){return ALL.map(c=>`<option value="${c.code}" ${c.code===sel?'selected':''}>${c.code} ${E(c.display)}</option>`).join('')}
+function row(c){let r=rowOf(c.name),p=prevOf(c.name),b=num(r?.buy),s=num(r?.sell),pb=num(p?.buy),ps=num(p?.sell),m=is(b)&&is(s)?(b+s)/2:null,pm=is(pb)&&is(ps)?(pb+ps)/2:null,d=is(m)&&is(pm)?m-pm:null,cl=is(d)?(d>0?'up':d<0?'down':'flat'):'flat';return `<div class="fx-tr ${cl}"><span class="fx-cur"><b>${c.flag} ${E(c.display)}</b><small>${c.code}</small></span><span><b data-fx-buy="${c.code}">${fmt(b)}</b></span><span><b data-fx-sell="${c.code}">${fmt(s)}</b></span></div>`}
+function status(){return st.ok?`已同步 · ${st.date} ${st.time}`:st.status}function foot(){return st.ok?`BOC · ${st.time||'--'} · 30s檢查`:`${st.status}${st.err?' · '+st.err:''}`}
+function cur(c){return ALL.find(x=>x.code===c)||CNY}function rowOf(n){return st.rows.find(r=>r.name===n)||null}function prevOf(n){return st.prev?.find(r=>r.name===n)||null}function amt(){let v=num(localStorage.getItem(K.amt));return is(v)&&v>0?v:100}
+function rate(code,side){if(code==='CNY')return 1;let c=FX.find(x=>x.code===code),r=c&&rowOf(c.name),v=side==='sell'?num(r?.sell):num(r?.buy);return is(v)?v/100:null}
+function conv(a,from,to){if(!is(a))return null;if(from===to)return a;let sf=rate(from,'buy'),tt=rate(to,'sell');return is(sf)&&is(tt)&&tt?a*sf/tt:null}
+function start(){clearInterval(timer);load(1);timer=setInterval(()=>load(0),MS)}async function load(force){if(busy)return;busy=true;if(force){st.status='讀取快照…';paint()}try{let r=await fetch(JSON_URL+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('JSON '+r.status);let d=await r.json(),rows=(d.rows||[]).filter(x=>FX.some(c=>c.name===x.name));if(rows.length<3)throw Error('缺少目標貨幣');rows.sort((a,b)=>FX.findIndex(c=>c.name===a.name)-FX.findIndex(c=>c.name===b.name));st={rows,prev:st.rows||[],date:d.date||'--',time:d.time||'--',ok:true,status:'已同步',err:'',fetchedAt:d.fetchedAt||''}}catch(e){console.warn(e);st=Object.assign({},st,{ok:false,status:'快照讀取失敗',err:e.message||String(e)})}busy=false;paint()}
+function after(){bind();paint()}function bind(){q('[data-fx-refresh]',b=>{if(b.dataset.ready)return;b.dataset.ready=1;b.onclick=e=>{e.preventDefault();e.stopPropagation();load(1)};b.onpointerdown=e=>e.stopPropagation()});q('[data-fx-open]',b=>{if(b.dataset.ready)return;b.dataset.ready=1;b.onclick=e=>{e.preventDefault();e.stopPropagation();window.open(BOC,'_blank','noopener,noreferrer')};b.onpointerdown=e=>e.stopPropagation()});q('[data-fx-amt]',i=>{if(i.dataset.ready)return;i.dataset.ready=1;i.oninput=()=>{localStorage.setItem(K.amt,String(Math.max(0,num(i.value)||0)));paint()};i.onpointerdown=e=>e.stopPropagation()});q('[data-fx-from]',s=>{if(s.dataset.ready)return;s.dataset.ready=1;s.onchange=()=>{localStorage.setItem(K.from,s.value);paint()};s.onpointerdown=e=>e.stopPropagation()});q('[data-fx-to]',s=>{if(s.dataset.ready)return;s.dataset.ready=1;s.onchange=()=>{localStorage.setItem(K.to,s.value);paint()};s.onpointerdown=e=>e.stopPropagation()});q('[data-fx-swap]',b=>{if(b.dataset.ready)return;b.dataset.ready=1;b.onclick=e=>{e.preventDefault();e.stopPropagation();let f=localStorage.getItem(K.from)||'CNY',t=localStorage.getItem(K.to)||'USD';localStorage.setItem(K.from,t);localStorage.setItem(K.to,f);redraw()};b.onpointerdown=e=>e.stopPropagation()})}
+function redraw(){document.querySelectorAll('[data-card-id]').forEach(el=>{let ws=activeWorkspace(),c=ws.cards.find(x=>String(x.id)===String(el.dataset.cardId));if(c?.appId===APP){let body=el.querySelector('.card-body');if(body)body.innerHTML=html(c)}});after()}function paint(){q('[data-fx-status]',e=>e.textContent=status());q('[data-fx-time]',e=>e.textContent=foot());q('.fx-status i',e=>e.classList.toggle('on',!!st.ok));FX.forEach(c=>{let r=rowOf(c.name);q(`[data-fx-buy="${c.code}"]`,e=>e.textContent=fmt(num(r?.buy)));q(`[data-fx-sell="${c.code}"]`,e=>e.textContent=fmt(num(r?.sell)))});let a=amt(),f=cur(localStorage.getItem(K.from)||'CNY'),t=cur(localStorage.getItem(K.to)||'USD'),out=conv(a,f.code,t.code);q('[data-fx-result]',e=>e.textContent=fmtOut(out,t.code))}
+function style(){if(document.getElementById('fxWidgetStyle'))return;let s=document.createElement('style');s.id='fxWidgetStyle';s.textContent=`.t-fx{--icon:linear-gradient(145deg,#f6d365,#22d3ee);--glow:linear-gradient(135deg,#f6d365,#22c55e)}.fxdesk{height:100%;display:flex;flex-direction:column;gap:7px;overflow:hidden;color:var(--ink);font-variant-numeric:tabular-nums}.fxdesk *{box-sizing:border-box;min-width:0}.fx-head{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}.fx-status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;min-width:0}.fx-status i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.18);box-shadow:0 0 0 7px rgba(255,255,255,.05);flex:0 0 auto}.fx-status i.on{background:#22d47b;box-shadow:0 0 0 7px rgba(34,212,123,.13),0 0 16px rgba(34,212,123,.32)}.fx-status b{font-size:11px;color:var(--ink);padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);white-space:nowrap}.fx-status span,.fx-foot span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fx-head button,.fx-foot button{height:28px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(255,255,255,.09);color:var(--ink);font-weight:850;padding:0 10px;cursor:pointer}.fx-conv{border:1px solid rgba(255,255,255,.10);border-radius:15px;background:linear-gradient(135deg,rgba(246,211,101,.12),rgba(34,211,238,.07));padding:8px}.fx-row{display:grid;grid-template-columns:minmax(70px,.8fr) minmax(80px,1fr) 28px minmax(80px,1fr);gap:6px;align-items:end}.fx-conv label{display:grid;gap:3px}.fx-conv label span{font-size:10px;color:var(--muted);font-weight:850}.fx-conv input,.fx-conv select{height:30px;width:100%;border:1px solid rgba(255,255,255,.10);border-radius:10px;background:rgba(0,0,0,.18);color:var(--ink);font-weight:850;padding:0 8px;outline:none}.fx-swap{height:30px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.10);color:var(--ink);font-weight:950;cursor:pointer}.fx-result{margin-top:7px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}.fx-result small{color:var(--muted);font-size:10px;font-weight:850}.fx-result strong{font-size:clamp(18px,5cqw,25px);line-height:1;color:#22d47b;font-weight:950;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fx-table{flex:1 1 auto;min-height:0;display:grid;grid-template-rows:28px repeat(5,minmax(24px,1fr));border:1px solid rgba(255,255,255,.10);border-radius:15px;overflow:hidden;background:rgba(255,255,255,.035)}.fx-tr{display:grid;grid-template-columns:1.05fr .85fr .85fr;gap:6px;align-items:center;padding:5px 10px;border-bottom:1px solid rgba(255,255,255,.065)}.fx-tr:last-child{border-bottom:0}.fx-th{background:rgba(255,255,255,.075);color:var(--muted);font-size:10px;font-weight:900}.fx-cur{display:flex;align-items:center;gap:6px}.fx-cur b{font-size:13px;color:var(--ink);white-space:nowrap}.fx-cur small{font-size:9px;color:var(--muted);font-weight:900}.fx-tr span:not(.fx-cur) b{font-size:13px;color:var(--ink);font-weight:950}.fx-tr.up span:not(.fx-cur) b{color:#22d47b}.fx-tr.down span:not(.fx-cur) b{color:#ff667c}.fx-foot{display:flex;justify-content:space-between;align-items:center;gap:6px;color:var(--muted);font-size:11px}.fx-foot button{height:auto;padding:4px 10px}.fxdesk.compact{gap:6px}.fxdesk.compact .fx-row{grid-template-columns:1fr 1fr;gap:5px}.fxdesk.compact .fx-swap{grid-column:1/2}.fxdesk.compact .fx-row label:last-child{grid-column:2/3}.fxdesk.compact .fx-table{grid-template-rows:24px repeat(5,minmax(23px,1fr))}.fxdesk.compact .fx-tr{padding:4px 8px;grid-template-columns:1fr .75fr .75fr}.fxdesk.compact .fx-cur{display:block}.fxdesk.compact .fx-cur b,.fxdesk.compact .fx-tr span:not(.fx-cur) b{font-size:12px}.fxdesk.compact .fx-result strong{font-size:19px}@container (max-width:315px){.fx-status span{display:none}.fx-foot{font-size:10px}}`;document.head.appendChild(s)}
+function q(sel,fn){document.querySelectorAll(sel).forEach(fn)}function num(v){let x=parseFloat(String(v??'').replace(/,/g,''));return Number.isFinite(x)?x:null}function is(v){return Number.isFinite(v)}function fmt(v){return is(v)?v.toFixed(v<10?4:2):'--'}function fmtOut(v,c){if(!is(v))return'--';if(c==='JPY'||c==='KRW')return v>=1000?Math.round(v).toLocaleString():v.toFixed(2);if(v>=1000)return v.toLocaleString(undefined,{maximumFractionDigits:2});if(v>=100)return v.toFixed(2);return v.toFixed(4)}function E(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+boot();
 })();
