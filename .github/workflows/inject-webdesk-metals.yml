@@ -21,35 +21,13 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Apply portrait chart breakpoint patch
+      - name: Inject or update metals widget script
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
-          version = '20260819-gold-widget29-portrait-chart'
-          js_path = Path('Html_tools/metals-widget.js')
-          js = js_path.read_text(encoding='utf-8')
-
-          js = re.sub(r"const VER='[^']+';", f"const VER='{version}';", js, count=1)
-          js = re.sub(
-              r"const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=\d+,CHART_H=\d+;",
-              "const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=460,CHART_H=320;",
-              js,
-              count=1,
-          )
-          js = js.replace(
-              "PM 審核版貴金屬盯盤：大窗只看圖，小窗只看數，來源與刷新邊界清晰。",
-              "智能貴金屬盯盤：中高窗口顯示圖表，真正小窗才顯示交易讀數。",
-          )
-          js = js.replace(
-              "緊湊貴金屬盯盤：大窗顯示 TradingView，小窗顯示交易讀數。",
-              "智能貴金屬盯盤：中高窗口顯示圖表，真正小窗才顯示交易讀數。",
-          )
-          js = js.replace("w.clientWidth<CHART_W||w.clientHeight<CHART_H", "w.clientWidth<CHART_W||w.clientHeight<CHART_H")
-
-          js_path.write_text(js, encoding='utf-8')
-
+          version = '20260819-gold-widget30-clean-trading'
           index_path = Path('index.html')
           html = index_path.read_text(encoding='utf-8')
           tag = f'<script src="Html_tools/metals-widget.js?v={version}"></script>'
@@ -61,14 +39,14 @@ jobs:
           index_path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit metals widget breakpoint patch
+      - name: Commit metals widget script tag
         run: |
-          if git diff --quiet -- Html_tools/metals-widget.js index.html; then
-            echo "Metals widget already has portrait chart breakpoint."
+          if git diff --quiet -- index.html; then
+            echo "index.html already has current metals widget script."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Html_tools/metals-widget.js index.html
-          git commit -m "Tune WebDesk metals chart breakpoint"
+          git add index.html
+          git commit -m "Inject clean WebDesk metals widget"
           git push
