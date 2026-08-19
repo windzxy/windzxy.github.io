@@ -28,8 +28,8 @@ jobs:
           from pathlib import Path
           import re
           tags = [
-              '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget2-boc-table"></script>',
-              '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist1"></script>',
+              '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget3-boc-json"></script>',
+              '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist2"></script>',
           ]
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
