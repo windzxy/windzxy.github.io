@@ -1,0 +1,55 @@
+name: Inject WebDesk UI Hotfixes
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'Html_tools/icon-edge-fix.js'
+      - 'Html_tools/background-fit-fix.js'
+      - 'Html_tools/market-color-fix.js'
+      - '.github/workflows/inject-webdesk-ui-hotfixes.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Inject UI hotfix scripts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          path=Path('index.html')
+          html=path.read_text(encoding='utf-8')
+          tags=[
+            '<script src="Html_tools/background-fit-fix.js?v=20260819-bg-fit2-stable-one-image"></script>',
+            '<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge3-minimal-arrow-shift"></script>',
+            '<script src="Html_tools/market-color-fix.js?v=20260819-market-color1-red-up-green-down"></script>',
+          ]
+          for name in ['background-fit-fix','icon-edge-fix','market-color-fix']:
+            html=re.sub(r'<script\s+src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"\s*>\s*</script>\s*','',html)
+          bundle='\n'.join(tags)+'\n'
+          html=html.replace('</body>',bundle+'</body>',1)
+          path.write_text(html,encoding='utf-8')
+          PY
+
+      - name: Commit UI hotfix script tags
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "index.html already has UI hotfix scripts."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Inject UI hotfix scripts"
+          git push
