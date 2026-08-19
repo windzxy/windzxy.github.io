@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'Html_tools/fx-widget.js'
+      - 'Html_tools/calendar-widget.js'
       - 'Html_tools/layout-persist-fix.js'
       - 'Html_tools/card-gap-fix.js'
       - 'Html_tools/finance-i18n-fix.js'
@@ -24,7 +25,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Inject or update FX, layout, card gap, metals and i18n scripts
+      - name: Inject or update FX, calendar, layout, card gap, metals and i18n scripts
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -33,7 +34,8 @@ jobs:
           layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist6-relaxed-bottom-bounds"></script>'
           gap_tag = '<script src="Html_tools/card-gap-fix.js?v=20260819-card-gap1-5px"></script>'
           fx_tag = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
-          finance_i18n_tag = '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n1"></script>'
+          calendar_tag = '<script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget1-cn-hk-holidays"></script>'
+          finance_i18n_tag = '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n2-calendar"></script>'
           metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>'
 
           path = Path('index.html')
@@ -42,14 +44,17 @@ jobs:
           stubs = [
               '{id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"Au",tone:"t-metals"}',
               '{id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"FX",tone:"t-fx"}',
+              '{id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、中國內地節假日調休與香港公眾假期。",icon:"Cal",tone:"t-calendar"}',
           ]
-          if 'id:"metals"' not in html or 'id:"fx-rates"' not in html:
+          if 'id:"metals"' not in html or 'id:"fx-rates"' not in html or 'id:"calendar"' not in html:
               marker = '  {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}'
               insert = ''
               if 'id:"metals"' not in html:
                   insert += '  ' + stubs[0] + ',\n'
               if 'id:"fx-rates"' not in html:
                   insert += '  ' + stubs[1] + ',\n'
+              if 'id:"calendar"' not in html:
+                  insert += '  ' + stubs[2] + ',\n'
               html = html.replace(marker, insert + marker, 1)
 
           metals_match = re.search(r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>', html)
@@ -59,24 +64,25 @@ jobs:
               r'<script\s+src="Html_tools/layout-persist-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/card-gap-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/fx-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
+              r'<script\s+src="Html_tools/calendar-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/finance-i18n-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
           ]:
               html = re.sub(pattern, '', html)
 
-          bundle = layout_tag + '\n' + gap_tag + '\n' + metals_tag + '\n' + fx_tag + '\n' + finance_i18n_tag + '\n'
+          bundle = layout_tag + '\n' + gap_tag + '\n' + metals_tag + '\n' + fx_tag + '\n' + calendar_tag + '\n' + finance_i18n_tag + '\n'
           html = html.replace('</body>', bundle + '</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit FX widget script tags
+      - name: Commit widget script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has current FX/layout/card-gap/i18n scripts."
+            echo "index.html already has current FX/calendar/layout/card-gap/i18n scripts."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk card gap script"
+          git commit -m "Inject WebDesk calendar widget"
           git push
