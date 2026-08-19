@@ -3,9 +3,9 @@
   window.__windzxyMetalsWidgetLoaded=1;
 
   const APP='metals';
-  const VER='20260819-gold-widget27-compact-numeric';
+  const VER='20260819-gold-widget28-pm-reviewed';
   const SNAP_MS=200;
-  const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=560,CHART_H=340;
+  const DEFAULT_W=620,DEFAULT_H=410,MIN_W=300,MIN_H=238,CHART_W=580,CHART_H=350;
   const PRODUCTS=[
     ['xau','現貨黃金','黃金','XAU','hf_XAU','OANDA:XAUUSD','https://www.gkoudai.com/quotesTrend/12.html'],
     ['xag','現貨白銀','白銀','XAG','hf_XAG','OANDA:XAGUSD','https://www.gkoudai.com/quotesTrend/13.html'],
@@ -25,7 +25,7 @@
   }
 
   function install(){
-    const info={id:APP,kind:'widget',title:'金價',desc:'緊湊貴金屬盯盤：大窗顯示 TradingView，小窗顯示交易讀數。',icon:'Au',tone:'t-metals'};
+    const info={id:APP,kind:'widget',title:'金價',desc:'PM 審核版貴金屬盯盤：大窗只看圖，小窗只看數，來源與刷新邊界清晰。',icon:'Au',tone:'t-metals'};
     const old=apps.find(a=>a.id===APP);old?Object.assign(old,info):apps.push(info);
     if(typeof defaults!=='undefined')defaults.forEach(ws=>{
       if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP))ws.cards.push({id:'daily-metals-0',appId:APP,x:300,y:440,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
@@ -53,9 +53,9 @@
     const p=product(),q=quotes[p.id]||blank(p),chart=isChart(card),stale=q.ts&&Date.now()-q.ts>45000;
     const cls=[chart?'chart-mode':'num-mode',(card.w||DEFAULT_W)<360?'tiny':'',(card.h||DEFAULT_H)<285?'short':'',trend(q)].join(' ');
     return `<div class="metals-widget mdesk ${cls}" data-version="${E(VER)}" data-product="${E(p.id)}">
-      <header class="md-head"><div class="md-feed"><i class="${q.ok&&!stale?'on':''}"></i><b>${feed==='api'?'口袋 API':'200ms 快照'}</b><span data-metals-status>${E(q.status||'等待行情')}</span></div><button data-metals-refresh title="刷新">↻</button></header>
+      <header class="md-head"><div class="md-feed"><i class="${q.ok&&!stale?'on':''}"></i><b>${feed==='api'?'口袋 API':'高速快照'}</b><span data-metals-status>${E(q.status||'等待行情')}</span></div><button data-metals-refresh title="刷新">↻</button></header>
       <nav class="md-tabs">${PRODUCTS.map(tab).join('')}</nav>
-      <section class="md-chart"><div class="md-title"><em>${E(p.sym)}</em><b>${E(p.name)} K線</b><span>TradingView · 1m</span></div><div class="md-tv" data-tv-symbol="${E(p.tv)}"><div class="md-loading">TradingView 圖表載入中…</div></div></section>
+      <section class="md-chart"><div class="md-title"><em>${E(p.sym)}</em><b>${E(p.name)} K線</b><span>TradingView · 1m · 圖表為準</span></div><div class="md-tv" data-tv-symbol="${E(p.tv)}"><div class="md-loading">TradingView 圖表載入中…</div></div></section>
       <section class="md-quote ${trend(q)}">
         <div class="md-quote-top"><div class="md-title compact"><em>${E(p.sym)}</em><b>${E(p.name)}</b><span>${E(p.unit)}</span></div><div class="md-change"><b data-active-change>${S(q.change)}</b><b data-active-pct>${S(q.pct,'%')}</b></div></div>
         <div class="md-price"><strong data-active-price>${F(q.price)}</strong></div>
@@ -71,7 +71,7 @@
   function stat(icon,label,value,key){return `<div><i>${E(icon)}</i><span>${E(label)}</span><b data-active-${key}>${F(value)}</b></div>`;}
   function spread(q){return is(q.buy)&&is(q.sell)?Math.abs(q.sell-q.buy):null;}
   function range(q){const ok=is(q.price)&&is(q.low)&&is(q.high)&&q.high>q.low,pc=ok?Math.max(0,Math.min(100,(q.price-q.low)/(q.high-q.low)*100)):50;return `<div class="md-range"><span data-active-low2>${F(q.low)}</span><div><i data-active-range style="left:${pc}%"></i></div><span data-active-high2>${F(q.high)}</span></div>`;}
-  function timeLabel(q){return feed==='api'?'口袋行情時間 '+E(q.sourceTime||q.t||'--'):'快照 '+E(q.sourceTime||q.t||'--')+' · 圖表由 TradingView 自動刷新';}
+  function timeLabel(q){return feed==='api'?'口袋行情時間 '+E(q.sourceTime||q.t||'--'):'快照 '+E(q.sourceTime||q.t||'--')+' · 200ms節流 · 圖表由 TradingView 刷新';}
 
   function start(){
     clearInterval(timer);if(initApi())return;feed='snapshot';refresh(true);timer=setInterval(()=>{if(!document.hidden)refresh(false);},SNAP_MS);
@@ -84,7 +84,7 @@
   }
   async function refresh(force){
     if(feed==='api'&&!force)return;if(busy){pending=!!force;return;}busy=true;if(force){Object.values(quotes).forEach(q=>q.status='讀取行情中…');paint();}
-    try{const data=await loadQuotes();PRODUCTS.forEach(p=>data[p.code]?put(p,data[p.code],'公開行情快照','snapshot'):Object.assign(quotes[p.id],{ok:false,status:'快照未返回',t:clock(),ts:Date.now()}));}
+    try{const data=await loadQuotes();PRODUCTS.forEach(p=>data[p.code]?put(p,data[p.code],'公開快照，非口袋同步','snapshot'):Object.assign(quotes[p.id],{ok:false,status:'快照未返回',t:clock(),ts:Date.now()}));}
     catch(e){console.warn(e);PRODUCTS.forEach(p=>Object.assign(quotes[p.id],{ok:false,status:'快照源暫不可用',t:clock(),ts:Date.now()}));}
     busy=false;paint();if(pending){pending=false;refresh(true);}
   }
