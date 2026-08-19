@@ -21,33 +21,124 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Inject or update metals widget script
+      - name: Patch metals widget and update script tag
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          path = Path('index.html')
-          html = path.read_text(encoding='utf-8')
-          version = '20260819-gold-widget17-terminal-responsive'
+
+          version = '20260819-gold-widget18-koudai-kline-time'
+          js_path = Path('Html_tools/metals-widget.js')
+          text = js_path.read_text(encoding='utf-8')
+
+          text = re.sub(r"const VERSION='[^']+';", f"const VERSION='{version}';", text, count=1)
+          text = text.replace("const FALLBACK_MS=500;", "const FALLBACK_MS=300;\n  const KOUDAI_KLINE_REFRESH_MS=30000;")
+          text = text.replace("let ticks=Object.fromEntries(PRODUCTS.map(p=>[p.id,[]]));", "let ticks=Object.fromEntries(PRODUCTS.map(p=>[p.id,[]]));\n  let koudaiKlines=Object.fromEntries(PRODUCTS.map(p=>[p.id,[]]));\n  let klineState=Object.fromEntries(PRODUCTS.map(p=>[p.id,{source:'等待口袋K線',time:0,busy:false}]));")
+          text = text.replace("const feed=feedMode==='api'?'API PUSH':'0.5s BACKUP';", "const feed=feedMode==='api'?'KOUDAI PUSH':'0.3s BACKUP';")
+          text = text.replace("${stale?'行情可能已過期':'更新'} ${esc(q.t||'--')}", "${stale?'行情可能已過期':'行情時間'} ${esc(q.sourceTime||q.t||'--')}")
+          text = text.replace("${chartSvg(p,q)}", "${koudaiChartPanel(p,q)}")
+          text = text.replace("<b>${esc(p.name)} K線</b>", "<b>${esc(p.name)} 口袋K線</b>")
+          text = text.replace("Object.values(quotes).forEach(q=>q.status='等待 API 推送…');draw();return true;", "Object.values(quotes).forEach(q=>q.status='等待口袋推送…');draw();return true;")
+          text = text.replace("const data=await loadTencent();", "if(viewMode==='chart')loadKoudaiKline(PRODUCTS.find(x=>x.id===active)||PRODUCTS[0],false);\n      const data=await loadTencent();")
+          text = text.replace("quotes[p.id]=Object.assign(blank(p),old,m,{ok:is(m.price),status:source,t:now(),ts:Date.now()});", "const sourceTime=extractSourceTime(m)||old.sourceTime||now();\n    quotes[p.id]=Object.assign(blank(p),old,m,{ok:is(m.price),status:source,sourceTime,t:sourceTime,ts:Date.now()});")
+          text = text.replace("function parseText(raw,p){\n    const t=String(raw||'').replace(/^.*?=\"|\";?$/g,'');if(!t)return null;", "function parseText(raw,p){\n    const t=String(raw||'').replace(/^.*?=\\\"|\\\";?$/g,'');if(!t)return null;\n    const srcTime=extractSourceTime(t);")
+          text = text.replace("return normalize({price:f[3],prev:f[4],open:f[5],buy:f[9],sell:f[19],change:f[31],pct:f[32],high:f[33],low:f[34]},p);", "return normalize({price:f[3],prev:f[4],open:f[5],buy:f[9],sell:f[19],change:f[31],pct:f[32],high:f[33],low:f[34],sourceTime:srcTime},p);")
+          text = text.replace("return sanitize({price,buy:good(v[2],p,price)?v[2]:price,sell:good(v[3],p,price)?v[3]:price,open:good(v[4],p,price)?v[4]:null,prev:good(v[7],p,price)?v[7]:null,high:good(high,p,price)?high:(pool.length?Math.max(...pool):null),low:good(low,p,price)?low:(pool.length?Math.min(...pool):null),pct:Math.abs(num(parts[1]))<50?num(parts[1]):Math.abs(num(parts[32]))<50?num(parts[32]):null,change:Math.abs(num(parts[2]))<Math.max(price*.2,10)?num(parts[2]):Math.abs(num(parts[31]))<Math.max(price*.2,10)?num(parts[31]):null},p,null);", "return sanitize({price,buy:good(v[2],p,price)?v[2]:price,sell:good(v[3],p,price)?v[3]:price,open:good(v[4],p,price)?v[4]:null,prev:good(v[7],p,price)?v[7]:null,high:good(high,p,price)?high:(pool.length?Math.max(...pool):null),low:good(low,p,price)?low:(pool.length?Math.min(...pool):null),pct:Math.abs(num(parts[1]))<50?num(parts[1]):Math.abs(num(parts[32]))<50?num(parts[32]):null,change:Math.abs(num(parts[2]))<Math.max(price*.2,10)?num(parts[2]):Math.abs(num(parts[31]))<Math.max(price*.2,10)?num(parts[31]):null,sourceTime:srcTime},p,null);")
+          text = text.replace("return sanitize({price:pick(o,['price','last','lastPrice','latest','latestPrice','now','close','current','newPrice']),buy:pick(o,['buy','bid','buyPrice','bidPrice','buyOne','bid1']),sell:pick(o,['sell','ask','sellPrice','askPrice','sellOne','ask1']),high:pick(o,['high','highest','highPrice','max','maxPrice']),low:pick(o,['low','lowest','lowPrice','min','minPrice']),open:pick(o,['open','openPrice','todayOpen','opening']),prev:pick(o,['prev','prevClose','preClose','yesterdayClose','lastClose','yesClose']),change:pick(o,['change','chg','upDown','priceChange','riseFall','diff']),pct:pick(o,['pct','changePct','changeRate','upDownRate','percent','rate'])},p,null);}", "return sanitize({price:pick(o,['price','last','lastPrice','latest','latestPrice','now','close','current','newPrice']),buy:pick(o,['buy','bid','buyPrice','bidPrice','buyOne','bid1']),sell:pick(o,['sell','ask','sellPrice','askPrice','sellOne','ask1']),high:pick(o,['high','highest','highPrice','max','maxPrice']),low:pick(o,['low','lowest','lowPrice','min','minPrice']),open:pick(o,['open','openPrice','todayOpen','opening']),prev:pick(o,['prev','prevClose','preClose','yesterdayClose','lastClose','yesClose']),change:pick(o,['change','chg','upDown','priceChange','riseFall','diff']),pct:pick(o,['pct','changePct','changeRate','upDownRate','percent','rate']),sourceTime:extractSourceTime(o)},p,null);}")
+          text = text.replace("return {id:p.id,name:p.name,short:p.short,url:p.url,unit:p.unit,ok:false,status:'等待行情讀數',price:null,change:null,pct:null,buy:null,sell:null,high:null,low:null,prev:null,open:null,t:'--',ts:0};", "return {id:p.id,name:p.name,short:p.short,url:p.url,unit:p.unit,ok:false,status:'等待行情讀數',price:null,change:null,pct:null,buy:null,sell:null,high:null,low:null,prev:null,open:null,sourceTime:null,t:'--',ts:0};")
+
+          insert = r'''
+  function koudaiChartPanel(p,q){
+    const state=klineState[p.id]||{};
+    if(viewMode==='chart')loadKoudaiKline(p,false);
+    if((koudaiKlines[p.id]||[]).length>=2){
+      return '<div class="tm-kline-head"><span>'+esc(state.source||'口袋K線')+'</span><button data-koudai-kline-refresh>更新K線</button></div>'+drawKoudaiKline(p,q);
+    }
+    return '<div class="tm-kline-head"><span>'+esc(state.source||'等待口袋K線')+'</span><button data-koudai-kline-refresh>讀取K線</button></div>'+chartSvg(p,q);
+  }
+
+  async function loadKoudaiKline(p,force){
+    const st=klineState[p.id]||(klineState[p.id]={source:'等待口袋K線',time:0,busy:false});
+    if(st.busy)return;
+    if(!force&&Date.now()-st.time<KOUDAI_KLINE_REFRESH_MS)return;
+    st.busy=true;
+    try{
+      const fromApi=await readKoudaiKlineFromSdk(p);
+      if(fromApi&&fromApi.length){koudaiKlines[p.id]=fromApi.slice(-80);st.source='口袋K線 API';st.time=Date.now();st.busy=false;draw();return;}
+      st.source='未開通口袋K線 API，顯示備援走勢';
+      st.time=Date.now();
+    }catch(e){console.warn('koudai kline unavailable',e);st.source='口袋K線暫不可用，顯示備援走勢';st.time=Date.now();}
+    st.busy=false;
+  }
+
+  function readKoudaiKlineFromSdk(p){
+    return new Promise(resolve=>{
+      const sdk=window.socketSdk||window.koudaiSocketSdk||window.koudaiQuoteSdk;
+      const fn=sdk&&(sdk.kline||sdk.getKline||sdk.queryKline||sdk.historyKline||sdk.history);
+      if(typeof fn!=='function'){resolve(null);return;}
+      let done=false;
+      const cb=data=>{if(done)return;done=true;resolve(parseKoudaiKline(data,p));};
+      try{
+        const ret=fn.call(sdk,{quoteParam:p.symbol,period,limit:80},cb);
+        if(ret&&typeof ret.then==='function')ret.then(cb).catch(()=>resolve(null));
+        else if(ret&&!done)cb(ret);
+      }catch(e){resolve(null);}
+      setTimeout(()=>{if(!done){done=true;resolve(null)}},3500);
+    });
+  }
+
+  function parseKoudaiKline(data,p){
+    let raw=data;
+    if(typeof raw==='string'){try{raw=JSON.parse(raw)}catch(e){return null}}
+    raw=raw&&(raw.data||raw.list||raw.rows||raw.kline||raw.result||raw.payload||raw);
+    if(!Array.isArray(raw))return null;
+    const out=[];
+    raw.forEach(item=>{
+      let o,h,l,c,t;
+      if(Array.isArray(item)){t=item[0];o=num(item[1]);h=num(item[2]);l=num(item[3]);c=num(item[4]);}
+      else{t=item.time||item.datetime||item.date||item.t;o=pick(item,['open','o','openPrice']);h=pick(item,['high','h','highest']);l=pick(item,['low','l','lowest']);c=pick(item,['close','c','price','last','latest']);}
+      if(good(o,p,null)&&good(h,p,o)&&good(l,p,o)&&good(c,p,o))out.push({o,h,l,c,t});
+    });
+    return out;
+  }
+
+  function drawKoudaiKline(p,q){
+    const data=(koudaiKlines[p.id]||[]).slice(-60);
+    if(data.length<2)return '<div class="tm-chart-empty">等待口袋K線數據</div>';
+    let vals=[];data.forEach(c=>vals.push(c.o,c.h,c.l,c.c));
+    let lo=Math.min(...vals),hi=Math.max(...vals);if(hi<=lo){hi+=1;lo-=1;}
+    const w=520,h=142,pad=12,step=(w-pad*2)/Math.max(1,data.length-1),y=v=>pad+(hi-v)/(hi-lo)*(h-pad*2);
+    const bodies=data.map((c,i)=>{const x=pad+i*step,up=c.c>=c.o,top=Math.min(y(c.o),y(c.c)),bot=Math.max(y(c.o),y(c.c)),cw=Math.max(3,Math.min(9,step*.52)),bh=Math.max(2,bot-top);return `<g class="c ${up?'up':'down'}"><line x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="${y(c.h).toFixed(1)}" y2="${y(c.l).toFixed(1)}"/><rect x="${(x-cw/2).toFixed(1)}" y="${top.toFixed(1)}" width="${cw.toFixed(1)}" height="${bh.toFixed(1)}" rx="1.5"/></g>`}).join('');
+    return `<svg class="tm-chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path class="grid" d="M0 ${pad}H${w}M0 ${h/2}H${w}M0 ${h-pad}H${w}"/>${bodies}</svg>`;
+  }
+
+'''
+          text = text.replace("  function startFeed(){", insert + "  function startFeed(){")
+          text = text.replace("document.querySelectorAll('[data-metals-view]').forEach(b=>{if(b.dataset.ready)return;b.dataset.ready='1';b.onclick=e=>{e.preventDefault();e.stopPropagation();viewMode=b.dataset.metalsView;localStorage.setItem('windzxy-metals-view',viewMode);draw();};b.onpointerdown=e=>e.stopPropagation();});", "document.querySelectorAll('[data-metals-view]').forEach(b=>{if(b.dataset.ready)return;b.dataset.ready='1';b.onclick=e=>{e.preventDefault();e.stopPropagation();viewMode=b.dataset.metalsView;localStorage.setItem('windzxy-metals-view',viewMode);if(viewMode==='chart')loadKoudaiKline(PRODUCTS.find(p=>p.id===active)||PRODUCTS[0],true);draw();};b.onpointerdown=e=>e.stopPropagation();});\n    document.querySelectorAll('[data-koudai-kline-refresh]').forEach(b=>{if(b.dataset.ready)return;b.dataset.ready='1';b.onclick=e=>{e.preventDefault();e.stopPropagation();loadKoudaiKline(PRODUCTS.find(p=>p.id===active)||PRODUCTS[0],true);};b.onpointerdown=e=>e.stopPropagation();});")
+          text = text.replace(".tm-chart-empty{display:grid;place-items:center;min-height:110px;color:var(--muted);font-size:13px;border:1px dashed rgba(255,255,255,.13);border-radius:14px;margin-top:8px}", ".tm-chart-empty{display:grid;place-items:center;min-height:110px;color:var(--muted);font-size:13px;border:1px dashed rgba(255,255,255,.13);border-radius:14px;margin-top:8px}.tm-kline-head{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px;margin-top:6px}.tm-kline-head button{border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(255,255,255,.08);color:var(--ink);padding:3px 9px;cursor:pointer;font-size:11px}")
+          text = text.replace("function pick(o,keys){for(const k of keys){const x=num(o&&o[k]);if(is(x))return x;}return null;}", "function pick(o,keys){for(const k of keys){const x=num(o&&o[k]);if(is(x))return x;}return null;}\n  function extractSourceTime(o){if(!o)return null;if(typeof o==='string'){let m=o.match(/(?:20\\d{2}[-\\/]\\d{1,2}[-\\/]\\d{1,2}\\s*)?\\d{1,2}:\\d{2}:\\d{2}(?:\\.\\d+)?/);return m?m[0]:null;}for(const k of ['time','quoteTime','tradeTime','updateTime','datetime','dateTime','timestamp','ts']){if(o&&o[k]!=null){let v=o[k];if(typeof v==='number'&&v>1000000000)return new Date(v>1e12?v:v*1000).toLocaleTimeString();return String(v);}}return null;}")
+
+          js_path.write_text(text, encoding='utf-8')
+
+          html_path = Path('index.html')
+          html = html_path.read_text(encoding='utf-8')
           tag = f'<script src="Html_tools/metals-widget.js?v={version}"></script>'
           pattern = r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>'
           if re.search(pattern, html):
               html = re.sub(pattern, tag, html, count=1)
           else:
-              if '</body>' not in html:
-                  raise SystemExit('index.html missing </body>')
               html = html.replace('</body>', tag + '\n</body>', 1)
-          path.write_text(html, encoding='utf-8')
+          html_path.write_text(html, encoding='utf-8')
           PY
 
       - name: Commit injected script tag
         run: |
-          if git diff --quiet -- index.html; then
-            echo "index.html already has current metals widget script."
+          if git diff --quiet -- index.html Html_tools/metals-widget.js; then
+            echo "metals widget already patched."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "Update WebDesk metals widget cache version"
+          git add index.html Html_tools/metals-widget.js
+          git commit -m "Use Koudai kline and source timestamps for metals widget"
           git push
