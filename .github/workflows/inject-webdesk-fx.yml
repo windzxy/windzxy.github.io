@@ -10,6 +10,7 @@ on:
       - 'Html_tools/calendar-polish-fix.js'
       - 'Html_tools/calendar-lunar-ui-fix.js'
       - 'Html_tools/calendar-perpetual-fix.js'
+      - 'Html_tools/calendar-product-redesign.js'
       - 'Html_tools/theme-contrast-fix.js'
       - 'Html_tools/layout-persist-fix.js'
       - 'Html_tools/card-gap-fix.js'
@@ -43,6 +44,7 @@ jobs:
           calendar_lunar_ui_tag = '<script src="Html_tools/calendar-lunar-ui-fix.js?v=20260819-calendar-core3-lunar-native"></script>'
           calendar_perpetual_tag = '<script src="Html_tools/calendar-perpetual-fix.js?v=20260819-calendar-perpetual1"></script>'
           theme_contrast_tag = '<script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>'
+          calendar_product_tag = '<script src="Html_tools/calendar-product-redesign.js?v=20260819-calendar-product2-balanced"></script>'
           finance_i18n_tag = '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n2-calendar"></script>'
           metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>'
 
@@ -80,6 +82,7 @@ jobs:
               r'<script\s+src="Html_tools/calendar-polish-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/calendar-lunar-ui-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/calendar-perpetual-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
+              r'<script\s+src="Html_tools/calendar-product-redesign\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/theme-contrast-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
               r'<script\s+src="Html_tools/finance-i18n-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
@@ -96,6 +99,7 @@ jobs:
               calendar_lunar_ui_tag,
               calendar_perpetual_tag,
               theme_contrast_tag,
+              calendar_product_tag,
               finance_i18n_tag,
           ]) + '\n'
           html = html.replace('</body>', bundle + '</body>', 1)
@@ -111,5 +115,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk calendar density and contrast fixes"
+          git commit -m "Inject balanced WebDesk calendar product layout"
           git push
