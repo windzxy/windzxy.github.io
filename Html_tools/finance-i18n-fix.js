@@ -2,7 +2,7 @@
   if(window.__windzxyFinanceI18nFixLoaded)return;
   window.__windzxyFinanceI18nFixLoaded=1;
 
-  const VER='20260819-finance-i18n3-final-calendar-header';
+  const VER='20260819-finance-i18n4-remove-today-row';
   const REGISTRY={
     metals:{
       title:{'zh-CN':'金价','zh-HK':'金價',en:'Metals'},
@@ -40,32 +40,19 @@
   }
   function pick(map){return map?.[lang()]||map?.['zh-HK']||'';}
   function addI18n(){
-    try{
-      if(typeof I18N==='undefined')return;
-      Object.entries(TERMS).forEach(([key,val])=>{I18N[key]=Object.assign({},I18N[key]||{},val);});
-    }catch(e){}
+    try{if(typeof I18N==='undefined')return;Object.entries(TERMS).forEach(([key,val])=>{I18N[key]=Object.assign({},I18N[key]||{},val);});}catch(e){}
   }
   function syncApps(){
-    try{
-      if(typeof apps==='undefined'||!Array.isArray(apps))return;
-      apps.forEach(app=>{
-        const meta=REGISTRY[app.id];
-        if(!meta)return;
-        app.title=pick(meta.title);
-        app.desc=pick(meta.desc);
-      });
-    }catch(e){}
+    try{if(typeof apps==='undefined'||!Array.isArray(apps))return;apps.forEach(app=>{const meta=REGISTRY[app.id];if(!meta)return;app.title=pick(meta.title);app.desc=pick(meta.desc);});}catch(e){}
   }
   function replaceTextIn(root){
     const lc=lang();
-    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
-      const s=node.nodeValue.trim();
-      if(!s)return NodeFilter.FILTER_REJECT;
-      return TERMS[s]?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
-    }});
-    const nodes=[];
-    while(walker.nextNode())nodes.push(walker.currentNode);
-    nodes.forEach(n=>{const raw=n.nodeValue;const left=raw.match(/^\s*/)?.[0]||'';const right=raw.match(/\s*$/)?.[0]||'';const key=raw.trim();n.nodeValue=left+(TERMS[key][lc]||TERMS[key]['zh-HK']||key)+right;});
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){const s=node.nodeValue.trim();if(!s)return NodeFilter.FILTER_REJECT;return TERMS[s]?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;}});
+    const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+    nodes.forEach(n=>{const raw=n.nodeValue,left=raw.match(/^\s*/)?.[0]||'',right=raw.match(/\s*$/)?.[0]||'',key=raw.trim();n.nodeValue=left+(TERMS[key][lc]||TERMS[key]['zh-HK']||key)+right;});
+  }
+  function removeTodayNodes(){
+    document.querySelectorAll('.calendar-widget.calx .calx-today,[data-calx-today]').forEach(el=>el.remove());
   }
   function installFinalCalendarHeaderStyle(){
     const old=document.getElementById('windzxyFinalCalendarHeaderFix');
@@ -73,8 +60,12 @@
     const s=document.createElement('style');
     s.id='windzxyFinalCalendarHeaderFix';
     s.textContent=`
-/* Final override: Calendar header left / center / right alignment. Loaded last. */
-.calendar-widget.calx .calx-today{display:none!important;visibility:hidden!important;pointer-events:none!important}
+/* Final override: remove Today row, compact vertical rhythm, keep left / center / right header. */
+.calendar-widget.calx .calx-today,[data-calx-today]{display:none!important;visibility:hidden!important;pointer-events:none!important;width:0!important;height:0!important;margin:0!important;padding:0!important;border:0!important;position:absolute!important;overflow:hidden!important}
+.calendar-widget.calx{
+  gap:7px!important;
+  padding-top:0!important;
+}
 .calendar-widget.calx .calx-top{
   display:grid!important;
   grid-template-columns:38px 38px minmax(0,1fr) 38px 38px!important;
@@ -82,108 +73,46 @@
   align-items:center!important;
   justify-items:center!important;
   column-gap:8px!important;
-  padding:0 18px 0 0!important;
-  margin:0!important;
+  padding:0 14px 0 0!important;
+  margin:0 0 4px 0!important;
+  min-height:44px!important;
   overflow:visible!important;
   box-sizing:border-box!important;
 }
 .calendar-widget.calx .calx-top [data-calx-shift="-12"]{grid-area:cy!important;transform:none!important;position:static!important}
 .calendar-widget.calx .calx-top [data-calx-shift="-1"]{grid-area:cm!important;transform:none!important;position:static!important}
-.calendar-widget.calx .calx-title{
-  grid-area:title!important;
-  justify-self:start!important;
-  align-self:center!important;
-  min-width:0!important;
-  width:100%!important;
-  overflow:hidden!important;
-  padding:0!important;
-  margin:0!important;
-}
+.calendar-widget.calx .calx-title{grid-area:title!important;justify-self:start!important;align-self:center!important;min-width:0!important;width:100%!important;overflow:hidden!important;padding:0!important;margin:0!important}
 .calendar-widget.calx .calx-top [data-calx-shift="1"]{grid-area:nm!important;transform:none!important;position:static!important}
 .calendar-widget.calx .calx-top [data-calx-shift="12"]{grid-area:ny!important;transform:none!important;position:static!important}
-.calendar-widget.calx .calx-top button{
-  width:34px!important;
-  min-width:34px!important;
-  max-width:34px!important;
-  height:34px!important;
-  min-height:34px!important;
-  max-height:34px!important;
-  padding:0!important;
-  margin:0!important;
-  display:grid!important;
-  place-items:center!important;
-  line-height:1!important;
-  border-radius:999px!important;
-  align-self:center!important;
-  justify-self:center!important;
-  overflow:visible!important;
-  box-sizing:border-box!important;
-}
-.calendar-widget.calx .calx-title h3,
-.calendar-widget.calx .calx-title p{
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-}
-@container (max-width:360px){
-  .calendar-widget.calx .calx-top{
-    grid-template-columns:34px 34px minmax(0,1fr) 34px 34px!important;
-    column-gap:6px!important;
-    padding-right:14px!important;
-  }
-  .calendar-widget.calx .calx-top button{width:32px!important;min-width:32px!important;max-width:32px!important;height:32px!important;min-height:32px!important;max-height:32px!important}
-}
-@container (max-width:300px){
-  .calendar-widget.calx .calx-top{
-    grid-template-columns:32px minmax(0,1fr) 32px!important;
-    grid-template-areas:"cm title nm"!important;
-    column-gap:6px!important;
-    padding-right:12px!important;
-  }
-  .calendar-widget.calx .calx-top [data-calx-shift="-12"],
-  .calendar-widget.calx .calx-top [data-calx-shift="12"]{display:none!important}
-}
+.calendar-widget.calx .calx-top button{width:34px!important;min-width:34px!important;max-width:34px!important;height:34px!important;min-height:34px!important;max-height:34px!important;padding:0!important;margin:0!important;display:grid!important;place-items:center!important;line-height:1!important;border-radius:999px!important;align-self:center!important;justify-self:center!important;overflow:visible!important;box-sizing:border-box!important}
+.calendar-widget.calx .calx-title h3,.calendar-widget.calx .calx-title p{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.calendar-widget.calx .calx-tools{margin-top:0!important;display:grid!important;align-items:end!important;gap:6px!important}
+.calendar-widget.calx .calx-hero{margin-top:0!important}
+@container (max-width:360px){.calendar-widget.calx .calx-top{grid-template-columns:34px 34px minmax(0,1fr) 34px 34px!important;column-gap:6px!important;padding-right:12px!important}.calendar-widget.calx .calx-top button{width:32px!important;min-width:32px!important;max-width:32px!important;height:32px!important;min-height:32px!important;max-height:32px!important}}
+@container (max-width:300px){.calendar-widget.calx .calx-top{grid-template-columns:32px minmax(0,1fr) 32px!important;grid-template-areas:"cm title nm"!important;column-gap:6px!important;padding-right:10px!important}.calendar-widget.calx .calx-top [data-calx-shift="-12"],.calendar-widget.calx .calx-top [data-calx-shift="12"]{display:none!important}}
     `;
     document.head.appendChild(s);
   }
   function syncDom(){
-    syncApps();
-    addI18n();
-    installFinalCalendarHeaderStyle();
+    syncApps();addI18n();installFinalCalendarHeaderStyle();removeTodayNodes();
     const roots=[document.getElementById('toolShelf'),document.getElementById('desktopDrawer'),document.getElementById('desktopCanvas'),document.getElementById('windowLayer')].filter(Boolean);
     roots.forEach(replaceTextIn);
-    document.querySelectorAll('.desktop-card,.dock-tool-list,.desktop-drawer').forEach(el=>{
-      ['title','aria-label'].forEach(attr=>{
-        const val=el.getAttribute(attr);
-        if(val&&TERMS[val])el.setAttribute(attr,pick(TERMS[val]));
-      });
-    });
+    document.querySelectorAll('.desktop-card,.dock-tool-list,.desktop-drawer').forEach(el=>{['title','aria-label'].forEach(attr=>{const val=el.getAttribute(attr);if(val&&TERMS[val])el.setAttribute(attr,pick(TERMS[val]));});});
   }
   function patchRenderers(){
     try{
-      if(typeof renderAll==='function'&&!window.__windzxyFinanceI18nRenderAllPatched){
-        window.__windzxyFinanceI18nRenderAllPatched=1;
-        const old=renderAll;
-        renderAll=function(){syncApps();const out=old.apply(this,arguments);setTimeout(syncDom,0);setTimeout(installFinalCalendarHeaderStyle,80);return out;};
-      }
-      if(typeof renderDesktop==='function'&&!window.__windzxyFinanceI18nRenderDesktopPatched){
-        window.__windzxyFinanceI18nRenderDesktopPatched=1;
-        const old=renderDesktop;
-        renderDesktop=function(){syncApps();const out=old.apply(this,arguments);setTimeout(syncDom,0);setTimeout(installFinalCalendarHeaderStyle,80);return out;};
-      }
+      if(typeof renderAll==='function'&&!window.__windzxyFinanceI18nRenderAllPatched){window.__windzxyFinanceI18nRenderAllPatched=1;const old=renderAll;renderAll=function(){syncApps();const out=old.apply(this,arguments);setTimeout(syncDom,0);setTimeout(syncDom,80);return out;};}
+      if(typeof renderDesktop==='function'&&!window.__windzxyFinanceI18nRenderDesktopPatched){window.__windzxyFinanceI18nRenderDesktopPatched=1;const old=renderDesktop;renderDesktop=function(){syncApps();const out=old.apply(this,arguments);setTimeout(syncDom,0);setTimeout(syncDom,80);return out;};}
     }catch(e){}
   }
   function boot(){
     addI18n();syncApps();patchRenderers();syncDom();
-    setTimeout(installFinalCalendarHeaderStyle,0);
-    setTimeout(installFinalCalendarHeaderStyle,250);
-    setTimeout(installFinalCalendarHeaderStyle,1000);
+    setTimeout(syncDom,0);setTimeout(syncDom,250);setTimeout(syncDom,1000);
     document.addEventListener('change',e=>{if(e.target&&e.target.matches('.lang-select'))setTimeout(syncDom,80);},true);
-    const mo=new MutationObserver(()=>{clearTimeout(boot._t);boot._t=setTimeout(syncDom,40);});
+    const mo=new MutationObserver(()=>{clearTimeout(boot._t);boot._t=setTimeout(syncDom,30);});
     mo.observe(document.body,{childList:true,subtree:true,characterData:true});
-    window.windzxyRegisterI18n=function(id,meta){REGISTRY[id]=meta;Object.keys(meta||{}).forEach(k=>{});syncDom();};
+    window.windzxyRegisterI18n=function(id,meta){REGISTRY[id]=meta;syncDom();};
     window.windzxyFinalCalendarHeaderFixVersion=VER;
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
-  else boot();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
