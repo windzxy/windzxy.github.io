@@ -1,27 +1,27 @@
 (function(){
   if(window.__windzxyLayoutPersistFixLoaded)return;
   window.__windzxyLayoutPersistFixLoaded=1;
-  const VER='20260819-layout-persist4-plugin-geometry';
+  const VER='20260819-layout-persist5-plugin-refresh-fix';
   const GEO_KEY='windzxy-web-desktop-card-geometry-v4';
   const OLD_KEYS=['windzxy-web-desktop-card-geometry-v3','windzxy-web-desktop-card-geometry-v2','windzxy-web-desktop-card-geometry-v1'];
   const STORE_KEY='windzxy-web-desktop-workspaces';
+  const PLUGIN_APPS=new Set(['metals','fx-rates']);
   let saving=false,patched=false;
 
   function wsList(){try{return Array.isArray(workspaces)?workspaces:[];}catch(e){return [];}}
   function currentWorkspace(){try{return typeof activeWorkspace==='function'?activeWorkspace():wsList()[0];}catch(e){return null;}}
   function activeWorkspaceId(){try{return activeId||currentWorkspace()?.id||'daily';}catch(e){return 'daily';}}
   function px(value){const n=parseFloat(String(value||'').replace('px',''));return Number.isFinite(n)?n:null;}
+  function readJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'')||fallback;}catch(e){return fallback;}}
   function readGeo(){
-    try{
-      let geo=JSON.parse(localStorage.getItem(GEO_KEY)||'{}')||{};
-      if(!Object.keys(geo).length){
-        for(const key of OLD_KEYS){
-          const old=JSON.parse(localStorage.getItem(key)||'{}')||{};
-          if(Object.keys(old).length){geo=old;break;}
-        }
+    let geo=readJSON(GEO_KEY,{});
+    if(!Object.keys(geo).length){
+      for(const key of OLD_KEYS){
+        const old=readJSON(key,{});
+        if(Object.keys(old).length){geo=old;writeGeo(geo);break;}
       }
-      return geo;
-    }catch(e){return {};}
+    }
+    return geo;
   }
   function writeGeo(geo){try{localStorage.setItem(GEO_KEY,JSON.stringify(geo));}catch(e){}}
   function idKey(ws,card){return `${ws?.id||activeWorkspaceId()}::id::${card?.id||''}`;}
@@ -42,21 +42,30 @@
     if(card.appId)g.appId=card.appId;
     return Object.keys(g).length?g:null;
   }
+  function mergeGeo(base,next,overwrite=true){
+    const out=Object.assign({},base||{});
+    ['x','y','w','h'].forEach(k=>{if(Number.isFinite(next?.[k])&&(overwrite||!Number.isFinite(out[k])))out[k]=next[k];});
+    if(typeof next?.collapsed==='boolean'&&(overwrite||typeof out.collapsed!=='boolean'))out.collapsed=next.collapsed;
+    if(next?.appId)out.appId=next.appId;
+    out.savedAt=overwrite?Date.now():(out.savedAt||Date.now());
+    return out;
+  }
   function captureRawStoreGeometry(){
-    try{
-      const raw=JSON.parse(localStorage.getItem(STORE_KEY)||'[]');
-      if(!Array.isArray(raw))return;
-      const geo=readGeo();
-      let changed=false;
-      raw.forEach(ws=>(ws.cards||[]).forEach(card=>{
-        const g=geoFromCard(card);
-        if(!g||!card.appId)return;
-        geo[idKey(ws,card)]=Object.assign({},geo[idKey(ws,card)]||{},g);
-        geo[appKey(ws,card)]=Object.assign({},geo[appKey(ws,card)]||{},g);
-        changed=true;
-      }));
-      if(changed)writeGeo(geo);
-    }catch(e){}
+    const raw=readJSON(STORE_KEY,[]);
+    if(!Array.isArray(raw))return;
+    const geo=readGeo();
+    let changed=false;
+    raw.forEach(ws=>(ws.cards||[]).forEach(card=>{
+      const g=geoFromCard(card);
+      if(!g||!card.appId)return;
+      const ik=idKey(ws,card),ak=appKey(ws,card);
+      geo[ik]=mergeGeo(geo[ik],g,true);
+      // 關鍵修復：appId 備援位置不能被刷新時重新生成的默認卡覆蓋。
+      // 只有第一次沒有 app 備援時才從原始 store 補一份。
+      if(!geo[ak])geo[ak]=mergeGeo(null,g,true);
+      changed=true;
+    }));
+    if(changed)writeGeo(geo);
   }
   function geoFor(ws,card){
     const geo=readGeo();
@@ -65,9 +74,9 @@
   function setGeo(ws,card,g){
     if(!card||!card.appId)return;
     const geo=readGeo();
-    const clean=Object.assign({},g,{appId:card.appId});
-    geo[idKey(ws,card)]=Object.assign({},geo[idKey(ws,card)]||{},clean);
-    geo[appKey(ws,card)]=Object.assign({},geo[appKey(ws,card)]||{},clean);
+    const clean=Object.assign({},g,{appId:card.appId,savedAt:Date.now()});
+    geo[idKey(ws,card)]=mergeGeo(geo[idKey(ws,card)],clean,true);
+    geo[appKey(ws,card)]=mergeGeo(geo[appKey(ws,card)],clean,true);
     writeGeo(geo);
   }
   function persistGeometry(options={}){
@@ -118,10 +127,29 @@
       if(!g.collapsed&&Number.isFinite(g.h))el.style.height=g.h+'px';
     });
   }
+  function protectPluginCards(){
+    try{
+      const raw=readJSON(STORE_KEY,[]);
+      if(!Array.isArray(raw))return;
+      const geo=readGeo();
+      wsList().forEach(ws=>{
+        const rawWs=raw.find(x=>x.id===ws.id);
+        if(!rawWs||!Array.isArray(rawWs.cards))return;
+        rawWs.cards.forEach(oldCard=>{
+          if(!PLUGIN_APPS.has(oldCard.appId))return;
+          if((ws.cards||[]).some(c=>c.appId===oldCard.appId))return;
+          const g=geo[appKey(ws,oldCard)]||geoFromCard(oldCard)||{};
+          const restored=Object.assign({},oldCard,g,{id:oldCard.id||`restored-${oldCard.appId}-${Date.now()}`,appId:oldCard.appId,collapsed:!!g.collapsed});
+          ws.cards.push(restored);
+        });
+      });
+    }catch(e){console.warn('plugin layout restore failed',e);}
+  }
   function patch(){
     if(patched)return;patched=true;
     try{
       captureRawStoreGeometry();
+      protectPluginCards();
       if(typeof save==='function'&&!window.__windzxyRawSave){
         window.__windzxyRawSave=save;
         save=function(){persistGeometry({noSave:true});return window.__windzxyRawSave.apply(this,arguments);};
@@ -129,23 +157,23 @@
       if(typeof renderDesktop==='function'&&!window.__windzxyRenderDesktopLayoutPatched){
         window.__windzxyRenderDesktopLayoutPatched=1;
         const oldRenderDesktop=renderDesktop;
-        renderDesktop=function(){restoreGeometryToModel();const out=oldRenderDesktop.apply(this,arguments);setTimeout(applyGeometryToDom,0);return out;};
+        renderDesktop=function(){protectPluginCards();restoreGeometryToModel();const out=oldRenderDesktop.apply(this,arguments);setTimeout(applyGeometryToDom,0);return out;};
       }
       if(typeof renderAll==='function'&&!window.__windzxyRenderAllLayoutPatched){
         window.__windzxyRenderAllLayoutPatched=1;
         const oldRenderAll=renderAll;
-        renderAll=function(){persistGeometry({noSave:true});restoreGeometryToModel();return oldRenderAll.apply(this,arguments);};
+        renderAll=function(){persistGeometry({noSave:true});protectPluginCards();restoreGeometryToModel();return oldRenderAll.apply(this,arguments);};
       }
     }catch(e){console.warn('layout patch failed',e);}
   }
   function bind(){
-    patch();restoreGeometryToModel();applyGeometryToDom();
+    patch();protectPluginCards();restoreGeometryToModel();applyGeometryToDom();
     window.addEventListener('pagehide',()=>persistGeometry({force:true}),{capture:true});
     window.addEventListener('beforeunload',()=>persistGeometry({force:true}),{capture:true});
     document.addEventListener('visibilitychange',()=>{if(document.hidden)persistGeometry({force:true});},{passive:true});
     document.addEventListener('pointerup',()=>setTimeout(()=>persistGeometry({force:true}),0),true);
     document.addEventListener('mouseup',()=>setTimeout(()=>persistGeometry({force:true}),0),true);
-    setInterval(()=>persistGeometry({force:false}),1500);
+    setInterval(()=>persistGeometry({force:false}),1200);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});
   else bind();
