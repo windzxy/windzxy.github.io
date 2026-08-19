@@ -31,7 +31,7 @@ jobs:
           from pathlib import Path
           import re
 
-          layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist6-relaxed-bottom-bounds"></script>'
+          layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist7-calendar"></script>'
           gap_tag = '<script src="Html_tools/card-gap-fix.js?v=20260819-card-gap1-5px"></script>'
           fx_tag = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           calendar_tag = '<script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget1-cn-hk-holidays"></script>'
