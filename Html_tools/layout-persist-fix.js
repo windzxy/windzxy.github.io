@@ -1,12 +1,13 @@
 (function(){
   if(window.__windzxyLayoutPersistFixLoaded)return;
   window.__windzxyLayoutPersistFixLoaded=1;
-  const VER='20260819-layout-persist7-calendar';
+  const VER='20260819-layout-persist8-cross-browser-sync';
   const GEO_KEY='windzxy-web-desktop-card-geometry-v4';
   const OLD_KEYS=['windzxy-web-desktop-card-geometry-v3','windzxy-web-desktop-card-geometry-v2','windzxy-web-desktop-card-geometry-v1'];
   const STORE_KEY='windzxy-web-desktop-workspaces';
+  const SYNC_KEYS=[STORE_KEY,GEO_KEY,'windzxy-active-workspace','windzxy-desktop-bg','windzxy-theme','windzxy-lang','windzxy-metals-active'];
   const PLUGIN_APPS=new Set(['metals','fx-rates','calendar']);
-  let saving=false,patched=false,boundsPatched=false;
+  let saving=false,patched=false,boundsPatched=false,syncUiReady=false;
 
   function wsList(){try{return Array.isArray(workspaces)?workspaces:[];}catch(e){return [];}}
   function currentWorkspace(){try{return typeof activeWorkspace==='function'?activeWorkspace():wsList()[0];}catch(e){return null;}}
@@ -167,6 +168,77 @@
       }catch(e){}
     },false);
   }
+
+  function encodeSync(payload){return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));}
+  function decodeSync(code){
+    const raw=String(code||'').trim().replace(/^#?layout=/,'').replace(/^layout:/,'');
+    if(!raw)throw new Error('empty layout code');
+    try{return JSON.parse(decodeURIComponent(escape(atob(raw))));}
+    catch(e){return JSON.parse(raw);}
+  }
+  function makeLayoutPayload(){
+    persistGeometry({force:true});
+    const data={};
+    SYNC_KEYS.forEach(key=>{const v=localStorage.getItem(key);if(v!==null)data[key]=v;});
+    return {type:'windzxy-webdesk-layout',version:VER,createdAt:new Date().toISOString(),data};
+  }
+  function applyLayoutPayload(payload){
+    if(!payload||payload.type!=='windzxy-webdesk-layout'||!payload.data)throw new Error('invalid layout payload');
+    Object.entries(payload.data).forEach(([key,value])=>{if(SYNC_KEYS.includes(key))localStorage.setItem(key,String(value));});
+    location.reload();
+  }
+  async function copyText(text){
+    try{await navigator.clipboard.writeText(text);return true;}
+    catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();return true;}
+  }
+  function downloadLayout(){
+    const blob=new Blob([JSON.stringify(makeLayoutPayload(),null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='webdesk-layout-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }
+  function installLayoutSyncStyle(){
+    if(document.getElementById('windzxyLayoutSyncStyle'))return;
+    const s=document.createElement('style');
+    s.id='windzxyLayoutSyncStyle';
+    s.textContent=`
+.layout-sync-panel{margin-top:14px;padding:12px;border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(255,255,255,.045);display:grid;gap:9px}
+.layout-sync-panel strong{font-size:13px}.layout-sync-panel p{margin:0;color:var(--muted);font-size:11px;line-height:1.45}.layout-sync-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.layout-sync-actions button,.layout-sync-panel label{min-height:34px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.08);color:var(--ink);font-weight:850;cursor:pointer;display:grid;place-items:center;text-align:center}.layout-sync-panel label input{display:none}.layout-sync-status{min-height:16px;color:#38d99a;font-size:11px}.layout-sync-status.err{color:#ff6b88}@media(max-width:520px){.layout-sync-actions{grid-template-columns:1fr}}
+    `;
+    document.head.appendChild(s);
+  }
+  function setSyncStatus(text,err=false){const el=document.querySelector('[data-layout-sync-status]');if(el){el.textContent=text;el.classList.toggle('err',!!err);}}
+  function installLayoutSyncUi(){
+    if(syncUiReady&&document.getElementById('layoutSyncPanel'))return;
+    const panel=document.querySelector('[data-panel="settings"]');
+    if(!panel)return;
+    installLayoutSyncStyle();
+    const old=document.getElementById('layoutSyncPanel');
+    if(old)old.remove();
+    const box=document.createElement('div');
+    box.id='layoutSyncPanel';
+    box.className='layout-sync-panel';
+    box.innerHTML=`<strong>佈局同步</strong><p>目前佈局仍保存在本瀏覽器 localStorage。用同步碼/同步連結可在其他瀏覽器恢復同一套卡片位置、大小、背景與主題。</p><div class="layout-sync-actions"><button type="button" data-layout-copy-code>複製同步碼</button><button type="button" data-layout-copy-link>複製同步連結</button><button type="button" data-layout-import>貼上恢復</button><button type="button" data-layout-download>下載備份</button><label>從文件恢復<input type="file" accept="application/json" data-layout-file></label></div><small class="layout-sync-status" data-layout-sync-status></small>`;
+    panel.appendChild(box);
+    box.querySelector('[data-layout-copy-code]').onclick=async()=>{await copyText(encodeSync(makeLayoutPayload()));setSyncStatus('已複製同步碼。');};
+    box.querySelector('[data-layout-copy-link]').onclick=async()=>{const code=encodeSync(makeLayoutPayload());await copyText(location.origin+location.pathname+'#layout='+code);setSyncStatus('已複製同步連結。');};
+    box.querySelector('[data-layout-import]').onclick=()=>{const code=prompt('貼上同步碼、同步連結或 JSON 備份內容');if(!code)return;try{const m=String(code).match(/[#?&]layout=([^&]+)/);applyLayoutPayload(decodeSync(m?decodeURIComponent(m[1]):code));}catch(e){setSyncStatus('恢復失敗：同步碼格式不對。',true);}};
+    box.querySelector('[data-layout-download]').onclick=downloadLayout;
+    box.querySelector('[data-layout-file]').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{applyLayoutPayload(JSON.parse(String(r.result||'')));}catch(err){setSyncStatus('恢復失敗：文件格式不對。',true);}};r.readAsText(f);};
+    syncUiReady=true;
+  }
+  function importFromHashOnce(){
+    const hash=location.hash||'';
+    const m=hash.match(/layout=([^&]+)/);
+    if(!m||sessionStorage.getItem('windzxy-layout-hash-imported')===m[1])return;
+    if(confirm('檢測到 WebDesk 佈局同步連結，是否恢復到本瀏覽器？')){
+      sessionStorage.setItem('windzxy-layout-hash-imported',m[1]);
+      try{applyLayoutPayload(decodeSync(decodeURIComponent(m[1])));}catch(e){alert('佈局同步連結無效。');}
+    }
+  }
+
   function patch(){
     if(patched)return;patched=true;
     try{
@@ -178,25 +250,29 @@
       if(typeof renderDesktop==='function'&&!window.__windzxyRenderDesktopLayoutPatched){
         window.__windzxyRenderDesktopLayoutPatched=1;
         const oldRenderDesktop=renderDesktop;
-        renderDesktop=function(){protectPluginCards();restoreGeometryToModel();const out=oldRenderDesktop.apply(this,arguments);setTimeout(applyGeometryToDom,0);return out;};
+        renderDesktop=function(){protectPluginCards();restoreGeometryToModel();const out=oldRenderDesktop.apply(this,arguments);setTimeout(applyGeometryToDom,0);setTimeout(installLayoutSyncUi,0);return out;};
       }
       if(typeof renderAll==='function'&&!window.__windzxyRenderAllLayoutPatched){
         window.__windzxyRenderAllLayoutPatched=1;
         const oldRenderAll=renderAll;
-        renderAll=function(){persistGeometry({noSave:true});protectPluginCards();restoreGeometryToModel();return oldRenderAll.apply(this,arguments);};
+        renderAll=function(){persistGeometry({noSave:true});protectPluginCards();restoreGeometryToModel();const out=oldRenderAll.apply(this,arguments);setTimeout(installLayoutSyncUi,0);return out;};
       }
     }catch(e){console.warn('layout patch failed',e);}
   }
   function bind(){
-    patch();protectPluginCards();restoreGeometryToModel();applyGeometryToDom();patchBottomBounds();
+    patch();protectPluginCards();restoreGeometryToModel();applyGeometryToDom();patchBottomBounds();installLayoutSyncUi();importFromHashOnce();
+    window.addEventListener('hashchange',importFromHashOnce);
     window.addEventListener('pagehide',()=>persistGeometry({force:true}),{capture:true});
     window.addEventListener('beforeunload',()=>persistGeometry({force:true}),{capture:true});
     document.addEventListener('visibilitychange',()=>{if(document.hidden)persistGeometry({force:true});},{passive:true});
     document.addEventListener('pointerup',()=>setTimeout(()=>persistGeometry({force:true}),0),true);
     document.addEventListener('mouseup',()=>setTimeout(()=>persistGeometry({force:true}),0),true);
     setInterval(()=>persistGeometry({force:false}),1200);
+    setInterval(installLayoutSyncUi,1800);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});
   else bind();
   window.windzxyPersistLayoutNow=()=>persistGeometry({force:true});
+  window.windzxyExportLayout=()=>encodeSync(makeLayoutPayload());
+  window.windzxyImportLayout=code=>applyLayoutPayload(decodeSync(code));
 })();
