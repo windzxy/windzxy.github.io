@@ -21,115 +21,14 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Patch metals widget and update script tag
+      - name: Inject or update metals widget script
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-
-          version = '20260819-gold-widget15-highlow-sanity'
-          js_path = Path('Html_tools/metals-widget.js')
-          text = js_path.read_text(encoding='utf-8')
-          text = re.sub(r"const VERSION='[^']+';", f"const VERSION='{version}';", text, count=1)
-
-          new_update = r'''function updateQuote(p,x,source){
-    const old=quotes[p.id]||emptyQuote(p);
-    const merged=sanitizeQuote(Object.assign({},old,x),p,old);
-    if(!merged)return;
-    quotes[p.id]=Object.assign(emptyQuote(p),old,merged,{ok:Number.isFinite(merged.price),status:source,t:now(),ts:Date.now()});
-  }'''
-          text = re.sub(r"function updateQuote\(p,x,source\)\{[\s\S]*?\n  \}\n\n  function loadTencent", new_update + "\n\n  function loadTencent", text, count=1)
-
-          new_parse = r'''function parseText(raw,p){
-    const t=String(raw||'').replace(/^.*?=\"|\";?$/g,'');
-    if(!t)return null;
-    if(t.includes('~')){
-      const f=t.split('~');
-      return normalize({price:f[3],prev:f[4],open:f[5],buy:f[9],sell:f[19],change:f[31],pct:f[32],high:f[33],low:f[34]},p);
-    }
-    if(t.includes(',')){
-      const parts=t.split(',');
-      const vals=parts.map(strictNum);
-      const seed=firstReasonable(vals,p,null);
-      const price=reasonable(vals[0],p,seed)?vals[0]:reasonable(vals[3],p,seed)?vals[3]:seed;
-      if(!reasonable(price,p,null))return null;
-      const candidates=vals.filter(v=>reasonable(v,p,price));
-      const buy=reasonable(vals[2],p,price)?vals[2]:price;
-      const sell=reasonable(vals[3],p,price)?vals[3]:price;
-      const open=reasonable(vals[4],p,price)?vals[4]:null;
-      const prev=reasonable(vals[7],p,price)?vals[7]:null;
-      const preferredHigh=firstReasonable([vals[33],vals[41],vals[6]],p,price);
-      const preferredLow=firstReasonable([vals[34],vals[42],vals[5]],p,price);
-      const high=reasonable(preferredHigh,p,price)?preferredHigh:(candidates.length?Math.max(...candidates):null);
-      const low=reasonable(preferredLow,p,price)?preferredLow:(candidates.length?Math.min(...candidates):null);
-      const pct=Math.abs(num(parts[1]))<50?num(parts[1]):Math.abs(num(parts[32]))<50?num(parts[32]):null;
-      const change=Math.abs(num(parts[2]))<Math.max(price*0.2,10)?num(parts[2]):Math.abs(num(parts[31]))<Math.max(price*0.2,10)?num(parts[31]):null;
-      return sanitizeQuote({price,buy,sell,open,prev,high,low,pct,change},p,null);
-    }
-    return null;
-  }
-
-  function normalize'''
-          text = re.sub(r"function parseText\(raw,p\)\{[\s\S]*?\n  \}\n\n  function normalize", new_parse, text, count=1)
-
-          new_normalize = r'''function normalize(o,p){
-    const x={
-      price:pick(o,['price','last','lastPrice','latest','latestPrice','now','close','current','newPrice']),
-      buy:pick(o,['buy','bid','buyPrice','bidPrice','buyOne','bid1']),
-      sell:pick(o,['sell','ask','sellPrice','askPrice','sellOne','ask1']),
-      high:pick(o,['high','highest','highPrice','max','maxPrice']),
-      low:pick(o,['low','lowest','lowPrice','min','minPrice']),
-      open:pick(o,['open','openPrice','todayOpen','opening']),
-      prev:pick(o,['prev','prevClose','preClose','yesterdayClose','lastClose','yesClose']),
-      change:pick(o,['change','chg','upDown','priceChange','riseFall','diff']),
-      pct:pick(o,['pct','changePct','changeRate','upDownRate','percent','rate'])
-    };
-    return sanitizeQuote(x,p,null);
-  }
-
-  function sanitizeQuote(input,p,old){
-    const x=Object.assign({},input);
-    x.price=firstNum(x.price,old&&old.price);
-    if(!reasonable(x.price,p,null))return null;
-    ['buy','sell','high','low','open','prev'].forEach(k=>{
-      x[k]=firstNum(x[k],old&&old[k]);
-      if(!reasonable(x[k],p,x.price))x[k]=null;
-    });
-    if(!reasonable(x.buy,p,x.price))x.buy=x.price;
-    if(!reasonable(x.sell,p,x.price))x.sell=x.price;
-    x.change=firstNum(x.change,old&&old.change);
-    x.pct=firstNum(x.pct,old&&old.pct);
-    const core=[x.price,x.buy,x.sell,x.open,x.prev].filter(v=>reasonable(v,p,x.price));
-    const cmax=core.length?Math.max(...core):x.price;
-    const cmin=core.length?Math.min(...core):x.price;
-    if(!reasonable(x.high,p,x.price)||x.high<cmax)x.high=cmax;
-    if(!reasonable(x.low,p,x.price)||x.low>cmin)x.low=cmin;
-    if(Number.isFinite(x.high)&&Number.isFinite(x.low)&&x.high<x.low){const hi=x.high;x.high=x.low;x.low=hi;}
-    if(Number.isFinite(x.price)&&Number.isFinite(x.high)&&x.price>x.high)x.high=x.price;
-    if(Number.isFinite(x.price)&&Number.isFinite(x.low)&&x.price<x.low)x.low=x.price;
-    if(!Number.isFinite(x.change)&&Number.isFinite(x.price)&&Number.isFinite(x.prev))x.change=x.price-x.prev;
-    if(!Number.isFinite(x.pct)&&Number.isFinite(x.change)&&Number.isFinite(x.prev)&&x.prev)x.pct=x.change/x.prev*100;
-    return x;
-  }
-
-  function draw'''
-          text = re.sub(r"function normalize\(o,p\)\{[\s\S]*?\n  \}\n\n  function draw", new_normalize, text, count=1)
-
-          if 'function strictNum' not in text:
-              text = text.replace(
-                  "function num(v){const x=parseFloat(String(v??'').replace(/[,%+\\s]/g,''));return Number.isFinite(x)?x:null;}",
-                  "function num(v){const x=parseFloat(String(v??'').replace(/[,%+\\s]/g,''));return Number.isFinite(x)?x:null;}\n  function strictNum(v){const s=String(v??'').trim();if(!/^[+-]?\\d{1,5}(?:\\.\\d{1,4})?$/.test(s))return null;return num(s);}"
-              )
-          if 'function firstReasonable' not in text:
-              text = text.replace(
-                  "function firstNum(){for(const v of arguments)if(Number.isFinite(v))return v;return null;}",
-                  "function firstNum(){for(const v of arguments)if(Number.isFinite(v))return v;return null;}\n  function firstReasonable(values,p,anchor){for(const v of values){if(reasonable(v,p,anchor))return v;}return null;}\n  function reasonable(v,p,anchor){if(!Number.isFinite(v))return false;const base=p.id==='xag'?(v>5&&v<200):(v>100&&v<10000);if(!base)return false;if(Number.isFinite(anchor)&&anchor>0){const band=p.id==='xag'?0.5:0.25;if(Math.abs(v-anchor)/anchor>band)return false;}return true;}"
-              )
-
-          js_path.write_text(text, encoding='utf-8')
-
-          html_path = Path('index.html')
-          html = html_path.read_text(encoding='utf-8')
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+          version = '20260819-gold-widget16-responsive-chart'
           tag = f'<script src="Html_tools/metals-widget.js?v={version}"></script>'
           pattern = r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>'
           if re.search(pattern, html):
@@ -138,21 +37,17 @@ jobs:
               if '</body>' not in html:
                   raise SystemExit('index.html missing </body>')
               html = html.replace('</body>', tag + '\n</body>', 1)
-          html_path.write_text(html, encoding='utf-8')
+          path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Validate widget syntax
+      - name: Commit injected script tag
         run: |
-          node --check Html_tools/metals-widget.js
-
-      - name: Commit patched widget
-        run: |
-          if git diff --quiet -- index.html Html_tools/metals-widget.js; then
-            echo "Metals widget and script tag already current."
+          if git diff --quiet -- index.html; then
+            echo "index.html already has current metals widget script."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html Html_tools/metals-widget.js
-          git commit -m "Fix metals high low parsing and cache version"
+          git add index.html
+          git commit -m "Update WebDesk metals widget cache version"
           git push
