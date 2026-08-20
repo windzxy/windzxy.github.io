@@ -38,68 +38,57 @@ jobs:
           from pathlib import Path
           import re
 
-          first_run_tag = '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>'
-          bg_fit_tag = '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit3-single-no-tile"></script>'
-          icon_edge_tag = '<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>'
-          layout_tag = '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist7-calendar"></script>'
-          gap_tag = '<script src="Html_tools/card-gap-fix.js?v=20260819-card-gap2-new-card-only"></script>'
-          fold_tag = '<script src="Html_tools/card-fold-fix.js?v=20260819-card-fold4-preserve-body"></script>'
-          metals_fallback = '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>'
-          fx_tag = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
-          calendar_tag = '<script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget2-pm-polished"></script>'
-          calendar_clean_tag = '<script src="Html_tools/calendar-perpetual-fix.js?v=20260819-calendar-adaptive-full1"></script>'
-          theme_contrast_tag = '<script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>'
-          calendar_pm_tag = '<script src="Html_tools/calendar-pm-polish.js?v=20260819-calendar-pm-polish1"></script>'
-          finance_i18n_tag = '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n2-calendar"></script>'
+          tags = [
+            '<script src="Html_tools/market-color-fix.js?v=20260819-market-color1-red-up-green-down"></script>',
+            '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
+            '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>',
+            '<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>',
+            '<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist7-calendar"></script>',
+            '<script src="Html_tools/card-gap-fix.js?v=20260819-card-gap2-new-card-only"></script>',
+            '<script src="Html_tools/card-fold-fix.js?v=20260819-card-fold4-preserve-body"></script>',
+            '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>',
+            '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>',
+            '<script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget2-pm-polished"></script>',
+            '<script src="Html_tools/calendar-perpetual-fix.js?v=20260819-calendar-adaptive-full1"></script>',
+            '<script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>',
+            '<script src="Html_tools/calendar-pm-polish.js?v=20260819-calendar-pm-polish1"></script>',
+            '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n3-final-calendar-header"></script>',
+          ]
 
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
 
           stubs = [
-              '{id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"}',
-              '{id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"}',
-              '{id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"}',
+            '{id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"}',
+            '{id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"}',
+            '{id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"}',
           ]
           marker = '  {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}'
           insert = ''
-          if 'id:"metals"' not in html:
-              insert += '  ' + stubs[0] + ',\n'
-          if 'id:"fx-rates"' not in html:
-              insert += '  ' + stubs[1] + ',\n'
-          if 'id:"calendar"' not in html:
-              insert += '  ' + stubs[2] + ',\n'
+          if 'id:"metals"' not in html: insert += '  ' + stubs[0] + ',\n'
+          if 'id:"fx-rates"' not in html: insert += '  ' + stubs[1] + ',\n'
+          if 'id:"calendar"' not in html: insert += '  ' + stubs[2] + ',\n'
           if insert and marker in html:
-              html = html.replace(marker, insert + marker, 1)
+            html = html.replace(marker, insert + marker, 1)
 
-          html = re.sub(r'id:"metals",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-metals"', 'id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"', html)
-          html = re.sub(r'id:"fx-rates",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-fx"', 'id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"', html)
-          html = re.sub(r'id:"calendar",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-calendar"', 'id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"', html)
+          replacements = {
+            'metals': 'id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"',
+            'fx-rates': 'id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"',
+            'calendar': 'id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"',
+          }
+          html = re.sub(r'id:"metals",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-metals"', replacements['metals'], html)
+          html = re.sub(r'id:"fx-rates",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-fx"', replacements['fx-rates'], html)
+          html = re.sub(r'id:"calendar",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-calendar"', replacements['calendar'], html)
 
-          metals_match = re.search(r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>', html)
-          metals_tag = metals_match.group(0) if metals_match else metals_fallback
-
-          for pattern in [
-              r'<script\s+src="Html_tools/first-run-empty-desktop\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/background-fit-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/icon-edge-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/layout-persist-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/card-gap-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/card-fold-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/fx-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/calendar-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/calendar-polish-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/calendar-lunar-ui-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/calendar-perpetual-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/calendar-pm-polish\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/calendar-product-redesign\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/calendar-ux-cleanup\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/theme-contrast-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/metals-widget\.js\?v=[^"]+"\s*>\s*</script>\s*',
-              r'<script\s+src="Html_tools/finance-i18n-fix\.js\?v=[^"]+"\s*>\s*</script>\s*',
-          ]:
-              html = re.sub(pattern, '', html)
-
-          bundle = '\n'.join([first_run_tag, bg_fit_tag, icon_edge_tag, layout_tag, gap_tag, fold_tag, metals_tag, fx_tag, calendar_tag, calendar_clean_tag, theme_contrast_tag, calendar_pm_tag, finance_i18n_tag]) + '\n'
+          script_names = [
+            'market-color-fix','first-run-empty-desktop','background-fit-fix','icon-edge-fix',
+            'layout-persist-fix','card-gap-fix','card-fold-fix','metals-widget','fx-widget',
+            'calendar-widget','calendar-polish-fix','calendar-lunar-ui-fix','calendar-perpetual-fix',
+            'calendar-pm-polish','calendar-product-redesign','calendar-ux-cleanup','theme-contrast-fix','finance-i18n-fix'
+          ]
+          for name in script_names:
+            html = re.sub(rf'<script\s+src="Html_tools/{re.escape(name)}\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
+          bundle = '\n'.join(tags) + '\n'
           html = html.replace('</body>', bundle + '</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
@@ -113,5 +102,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject single background fit version"
+          git commit -m "Inject single cover background version"
           git push
