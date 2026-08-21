@@ -1,7 +1,7 @@
 (function(){
   if(window.__windzxyMarketColorFixLoaded)return;
   window.__windzxyMarketColorFixLoaded=1;
-  const VER='20260819-market-color1-red-up-green-down';
+  const VER='20260821-market-color2-load-typhoon';
 
   function num(text){
     const v=parseFloat(String(text||'').replace(/[,%+\s]/g,''));
@@ -28,6 +28,14 @@
   }
   function scan(){
     document.querySelectorAll('.metals-widget.mdesk').forEach(scanOne);
+  }
+  function ensureTyphoonLoader(){
+    if(window.__windzxyTyphoonWidgetLoaded||document.querySelector('script[data-windzxy-typhoon-loader]'))return;
+    const s=document.createElement('script');
+    s.src='Html_tools/typhoon-widget.js?v=20260821-typhoon-widget1-hko-track';
+    s.async=false;
+    s.dataset.windzxyTyphoonLoader='1';
+    document.body.appendChild(s);
   }
   function install(){
     if(!document.getElementById('windzxyMarketColorFixStyle')){
@@ -63,6 +71,7 @@
       `;
       document.head.appendChild(s);
     }
+    ensureTyphoonLoader();
     scan();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
