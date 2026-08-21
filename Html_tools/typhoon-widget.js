@@ -3,8 +3,8 @@
   window.__windzxyTyphoonWidgetLoaded=1;
 
   const APP='typhoon';
-  const VER='20260821-typhoon-widget1-hko-track';
-  const XML_URL='https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml';
+  const VER='20260821-typhoon-widget2-pm-polished-snapshot';
+  const DATA_URL='data/typhoon.json';
   const OFFICIAL_URL={
     'zh-CN':'https://www.hko.gov.hk/sc/wxinfo/currwx/tc_gis.htm',
     'zh-HK':'https://www.hko.gov.hk/tc/wxinfo/currwx/tc_gis.htm',
@@ -15,20 +15,25 @@
     desc:{'zh-CN':'香港天文台热带气旋路径、实况与官方地图。','zh-HK':'香港天文台熱帶氣旋路徑、實況與官方地圖。',en:'HKO tropical cyclone track, positions and official map.'}
   };
   const TEXT={
-    live:{'zh-CN':'实时','zh-HK':'即時',en:'Live'},
+    live:{'zh-CN':'官方快照','zh-HK':'官方快照',en:'Official snapshot'},
     source:{'zh-CN':'HKO','zh-HK':'HKO',en:'HKO'},
     refresh:{'zh-CN':'刷新','zh-HK':'刷新',en:'Refresh'},
-    official:{'zh-CN':'官方','zh-HK':'官方',en:'Official'},
-    loading:{'zh-CN':'正在读取香港天文台热带气旋路径…','zh-HK':'正在讀取香港天文台熱帶氣旋路徑…',en:'Loading HKO tropical cyclone track…'},
-    none:{'zh-CN':'暂未读取到活跃热带气旋路径。','zh-HK':'暫未讀取到活躍熱帶氣旋路徑。',en:'No active tropical cyclone track was found.'},
-    blocked:{'zh-CN':'实时资料读取受浏览器跨域限制，可打开官方地图查看。','zh-HK':'即時資料讀取受瀏覽器跨域限制，可打開官方地圖查看。',en:'Live data may be blocked by browser CORS. Open the official map.'},
-    map:{'zh-CN':'路径图','zh-HK':'路徑圖',en:'Track'},
-    list:{'zh-CN':'详情','zh-HK':'詳情',en:'Details'},
-    updated:{'zh-CN':'更新','zh-HK':'更新',en:'Updated'},
+    official:{'zh-CN':'官方地图','zh-HK':'官方地圖',en:'Official map'},
+    loading:{'zh-CN':'正在同步香港天文台资料…','zh-HK':'正在同步香港天文台資料…',en:'Syncing HKO data…'},
+    noActive:{'zh-CN':'暂无活跃热带气旋','zh-HK':'暫無活躍熱帶氣旋',en:'No active tropical cyclone'},
+    noActiveSub:{'zh-CN':'如有新风暴，卡片会随官方资料自动更新。','zh-HK':'如有新風暴，卡片會隨官方資料自動更新。',en:'This card updates when HKO publishes a new active system.'},
+    syncPending:{'zh-CN':'官方资料同步中','zh-HK':'官方資料同步中',en:'Official data sync pending'},
+    syncPendingSub:{'zh-CN':'暂未读到本地快照，请稍后刷新或打开官方地图。','zh-HK':'暫未讀到本地快照，請稍後刷新或打開官方地圖。',en:'Local snapshot is not ready. Refresh later or open the official map.'},
+    systems:{'zh-CN':'系统','zh-HK':'系統',en:'Systems'},
+    trackPoints:{'zh-CN':'路径点','zh-HK':'路徑點',en:'Track points'},
+    latest:{'zh-CN':'最新位置','zh-HK':'最新位置',en:'Latest position'},
+    movement:{'zh-CN':'移动','zh-HK':'移動',en:'Movement'},
     wind:{'zh-CN':'风速','zh-HK':'風速',en:'Wind'},
     pressure:{'zh-CN':'气压','zh-HK':'氣壓',en:'Pressure'},
-    latlon:{'zh-CN':'位置','zh-HK':'位置',en:'Position'},
-    noData:{'zh-CN':'没有路径点','zh-HK':'沒有路徑點',en:'No track points'}
+    intensity:{'zh-CN':'强度','zh-HK':'強度',en:'Intensity'},
+    updated:{'zh-CN':'更新','zh-HK':'更新',en:'Updated'},
+    sourceNote:{'zh-CN':'资料源：香港天文台 / DATA.GOV.HK','zh-HK':'資料源：香港天文台 / DATA.GOV.HK',en:'Source: HKO / DATA.GOV.HK'},
+    mapHint:{'zh-CN':'西北太平洋路径视图','zh-HK':'西北太平洋路徑視圖',en:'NW Pacific track view'}
   };
   let patched=false;
 
@@ -43,6 +48,12 @@
   function metaDesc(){return META.desc[lang()]||META.desc['zh-HK'];}
   function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function officialUrl(){return OFFICIAL_URL[lang()]||OFFICIAL_URL['zh-HK'];}
+  function dateText(v){
+    if(!v)return '--';
+    const d=new Date(v);
+    if(!Number.isFinite(+d))return String(v);
+    return new Intl.DateTimeFormat(undefined,{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(d);
+  }
 
   function ensureMeta(){
     try{
@@ -59,172 +70,144 @@
   }
 
   function body(card){
-    const stamp=Date.now();
-    return `<div class="typhoon-widget" data-typhoon-root data-typhoon-version="${VER}">
-      <div class="tp-top">
-        <span class="tp-dot"></span><b>${t('source')}</b><i>${t('live')}</i>
-        <button type="button" data-tp-refresh title="${esc(t('refresh'))}">↻</button>
-        <a href="${esc(officialUrl())}" target="_blank" rel="noopener noreferrer">${t('official')}</a>
-      </div>
-      <section class="tp-hero">
-        <div><strong data-tp-title>${t('loading')}</strong><span data-tp-sub>tc_list.xml · HKO</span></div>
+    return `<div class="typhoon-widget tpx is-loading" data-typhoon-root data-typhoon-version="${VER}">
+      <header class="tpx-head">
+        <div class="tpx-source"><span class="tpx-pulse"></span><b>${t('source')}</b><em data-tpx-mode>${t('live')}</em></div>
+        <nav><button type="button" data-tpx-refresh title="${esc(t('refresh'))}">↻</button><a href="${esc(officialUrl())}" target="_blank" rel="noopener noreferrer">${t('official')}</a></nav>
+      </header>
+      <section class="tpx-summary">
+        <div><small>${t('mapHint')}</small><strong data-tpx-title>${t('loading')}</strong><span data-tpx-sub>${t('sourceNote')}</span></div>
+        <aside><b data-tpx-count>--</b><span>${t('systems')}</span></aside>
       </section>
-      <section class="tp-map" data-tp-map>${svgMap([],[])}</section>
-      <section class="tp-list" data-tp-list><p>${t('loading')}</p></section>
-      <span class="tp-time" data-tp-time>${t('updated')} --</span>
+      <section class="tpx-map" data-tpx-map>${svgMap([])}</section>
+      <section class="tpx-detail" data-tpx-detail><p>${t('loading')}</p></section>
+      <footer><span data-tpx-foot>${t('updated')} --</span><span>${t('sourceNote')}</span></footer>
     </div>`;
   }
 
   function project(lon,lat){
     const minLon=95,maxLon=155,minLat=0,maxLat=40;
     const x=(Number(lon)-minLon)/(maxLon-minLon)*1000;
-    const y=(maxLat-Number(lat))/(maxLat-minLat)*600;
-    return [Math.max(0,Math.min(1000,x)),Math.max(0,Math.min(600,y))];
+    const y=(maxLat-Number(lat))/(maxLat-minLat)*620;
+    return [Math.max(0,Math.min(1000,x)),Math.max(0,Math.min(620,y))];
   }
   function svgMap(storms){
-    const labels=[['HK',114.17,22.32],['TW',121.0,23.8],['PH',122.8,13.5],['JP',139.7,35.7],['CN',113.3,23.1]];
+    const labels=[['HK',114.17,22.32],['TW',121.0,23.8],['PH',122.8,13.5],['JP',139.7,35.7],['CN',113.3,23.1],['VN',106.7,10.8]];
     const grid=[];
-    for(let lon=100;lon<=150;lon+=10){const [x]=project(lon,20);grid.push(`<path d="M${x} 0V600"/>`);grid.push(`<text x="${x+4}" y="594">${lon}E</text>`)}
-    for(let lat=5;lat<=35;lat+=5){const [,y]=project(120,lat);grid.push(`<path d="M0 ${y}H1000"/>`);grid.push(`<text x="6" y="${y-5}">${lat}N</text>`)}
-    const coast=`<path class="tp-coast" d="M260 105L295 145L300 220L338 270L335 345L390 406L455 472L520 520M420 205L470 240L525 270L585 325L655 390M520 140L560 175L600 205M710 80L760 120L790 185L825 230M455 348L490 370L510 405M315 315L350 340L390 365M395 260L430 278"/>`;
-    const stormLayers=(storms||[]).map((s,si)=>{
+    for(let lon=100;lon<=150;lon+=10){const [x]=project(lon,20);grid.push(`<path d="M${x} 0V620"/>`);grid.push(`<text x="${x+5}" y="604">${lon}E</text>`);}
+    for(let lat=5;lat<=35;lat+=5){const [,y]=project(120,lat);grid.push(`<path d="M0 ${y}H1000"/>`);grid.push(`<text x="8" y="${y-6}">${lat}N</text>`);}
+    const coast=`<path class="tpx-coast" d="M254 70L292 112L304 178L330 222L330 295L374 350L423 405L481 454L525 486M420 170L468 207L528 240L590 302L660 367M520 105L566 142L615 178M716 56L763 98L790 158L833 217M388 220L428 244M318 305L360 328L402 356M438 342L482 370L508 409M182 460L230 496L268 548"/>`;
+    const stormsSafe=(storms||[]).filter(s=>(s.points||[]).length);
+    const stormLayers=stormsSafe.map((s,si)=>{
       const pts=(s.points||[]).filter(p=>Number.isFinite(+p.lat)&&Number.isFinite(+p.lon));
-      if(!pts.length)return '';
       const coords=pts.map(p=>project(p.lon,p.lat));
       const d=coords.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join('');
-      const dots=coords.map((p,i)=>`<circle class="tp-point ${i===coords.length-1?'last':''}" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${i===coords.length-1?8:4}"/>`).join('');
+      const dots=coords.map((p,i)=>`<circle class="tpx-point ${i===coords.length-1?'last':''}" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${i===coords.length-1?8:4}"/>`).join('');
       const last=coords[coords.length-1];
-      return `<g class="tp-storm s${si}"><path class="tp-track" d="${d}"/>${dots}<text class="tp-label" x="${Math.min(945,last[0]+12)}" y="${Math.max(24,last[1]-10)}">${esc(s.name||'TC')}</text></g>`;
+      return `<g class="tpx-storm s${si}"><path class="tpx-track" d="${d}"/>${dots}<text class="tpx-label" x="${Math.min(940,last[0]+14)}" y="${Math.max(28,last[1]-12)}">${esc(s.name||'TC')}</text></g>`;
     }).join('');
-    return `<svg viewBox="0 0 1000 600" role="img" aria-label="Typhoon track map">
-      <defs><radialGradient id="tpSea" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="rgba(56,189,248,.16)"/><stop offset="1" stop-color="rgba(15,23,42,.96)"/></radialGradient></defs>
-      <rect width="1000" height="600" rx="28" fill="url(#tpSea)"/>
-      <g class="tp-grid">${grid.join('')}</g>
+    const empty=`<g class="tpx-empty"><circle cx="500" cy="310" r="62"/><circle cx="500" cy="310" r="36"/><path d="M500 267c26 20 30 53 8 78-20 22-54 21-76 1 30 9 59-4 71-29 9-20 5-37-3-50Z"/><text x="500" y="404" text-anchor="middle">${esc(t('noActive'))}</text></g>`;
+    return `<svg viewBox="0 0 1000 620" role="img" aria-label="Typhoon track map">
+      <defs>
+        <radialGradient id="tpxSea" cx="56%" cy="48%" r="72%"><stop offset="0" stop-color="#155e75"/><stop offset="0.55" stop-color="#0f3b57"/><stop offset="1" stop-color="#07111f"/></radialGradient>
+        <linearGradient id="tpxTrack" x1="0" x2="1"><stop offset="0" stop-color="#facc15"/><stop offset=".52" stop-color="#fb923c"/><stop offset="1" stop-color="#fb7185"/></linearGradient>
+      </defs>
+      <rect width="1000" height="620" rx="30" fill="url(#tpxSea)"/>
+      <g class="tpx-grid">${grid.join('')}</g>
       ${coast}
-      ${labels.map(([name,lon,lat])=>{const [x,y]=project(lon,lat);return `<g class="tp-city"><circle cx="${x}" cy="${y}" r="4"/><text x="${x+8}" y="${y-8}">${name}</text></g>`}).join('')}
-      ${stormLayers||`<text class="tp-empty-map" x="500" y="300" text-anchor="middle">${esc(t('noData'))}</text>`}
+      ${labels.map(([name,lon,lat])=>{const [x,y]=project(lon,lat);return `<g class="tpx-city"><circle cx="${x}" cy="${y}" r="4"/><text x="${x+8}" y="${y-8}">${name}</text></g>`;}).join('')}
+      ${stormLayers||empty}
     </svg>`;
   }
 
-  function textOf(el,names){
-    if(!el)return '';
-    const wanted=names.map(x=>x.toLowerCase());
-    for(const n of Array.from(el.children||[])){
-      const name=(n.localName||n.nodeName||'').toLowerCase();
-      if(wanted.some(w=>name===w||name.includes(w)))return (n.textContent||'').trim();
-    }
-    for(const attr of Array.from(el.attributes||[])){
-      const name=attr.name.toLowerCase();
-      if(wanted.some(w=>name===w||name.includes(w)))return String(attr.value||'').trim();
-    }
-    return '';
-  }
-  function numberFrom(v){const m=String(v||'').match(/-?\d+(?:\.\d+)?/);return m?+m[0]:NaN;}
-  function pointFrom(el){
-    const lat=numberFrom(textOf(el,['lat','latitude','緯度','纬度']));
-    const lon=numberFrom(textOf(el,['lon','lng','longitude','經度','经度']));
-    if(!Number.isFinite(lat)||!Number.isFinite(lon))return null;
-    return {
-      lat,lon,
-      time:textOf(el,['time','datetime','obsTime','forecastTime','validtime','date'])||'',
-      wind:textOf(el,['wind','maxwind','windspeed','windSpeed'])||'',
-      pressure:textOf(el,['pressure','centralPressure','minimumPressure','pres'])||'',
-      intensity:textOf(el,['intensity','class','type','category'])||''
-    };
-  }
-  function nameFrom(el){
-    return textOf(el,['tcname','name','cname','ename','tropicalcyclonename','cyclonename','stormname'])||'';
-  }
-  function parseStormsFromXml(xml){
-    const doc=new DOMParser().parseFromString(xml,'application/xml');
-    if(doc.querySelector('parsererror'))return {storms:[],links:[]};
-    const all=Array.from(doc.querySelectorAll('*'));
-    const pointNodes=all.filter(n=>pointFrom(n));
-    const links=all.map(n=>(n.textContent||'').trim()).filter(v=>/\.xml(?:\?|$)/i.test(v)||/tc_.*\d+/i.test(v)).map(v=>{
-      try{return new URL(v,XML_URL).href;}catch(e){return ''}
-    }).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).slice(0,4);
-    if(!pointNodes.length)return {storms:[],links};
-
-    const stormMap=new Map();
-    pointNodes.forEach((node,idx)=>{
-      let p=pointFrom(node);if(!p)return;
-      let parent=node.parentElement,root=node;
-      while(parent&&parent!==doc.documentElement){
-        const lname=(parent.localName||'').toLowerCase();
-        if(/cyclone|typhoon|storm|tc|tropical/.test(lname)){root=parent;break;}
-        parent=parent.parentElement;
-      }
-      const name=nameFrom(root)||nameFrom(node.parentElement)||nameFrom(doc.documentElement)||'TC';
-      const key=name+'-'+(textOf(root,['tcid','id','identifier'])||0);
-      if(!stormMap.has(key))stormMap.set(key,{name,points:[]});
-      stormMap.get(key).points.push(p);
-    });
-    const storms=Array.from(stormMap.values()).map(s=>{
-      s.points=s.points.filter((p,i,a)=>a.findIndex(x=>x.lat===p.lat&&x.lon===p.lon&&x.time===p.time)===i);
-      return s;
+  function normalizeData(data){
+    const storms=Array.isArray(data?.storms)?data.storms:[];
+    return storms.map((s,i)=>{
+      const points=(Array.isArray(s.points)?s.points:[]).map(p=>({
+        lat:+p.lat,lon:+p.lon,time:p.time||p.datetime||p.validTime||'',
+        wind:p.wind||p.windSpeed||'',pressure:p.pressure||p.centralPressure||'',
+        movement:p.movement||'',intensity:p.intensity||p.category||''
+      })).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon));
+      return {id:s.id||s.tcid||String(i),name:s.name||s.tcName||s.ename||s.cname||'TC',points};
     }).filter(s=>s.points.length);
-    return {storms,links};
   }
-  async function fetchText(url){
-    const res=await fetch(url+(url.includes('?')?'&':'?')+'_='+(Date.now()),{cache:'no-store'});
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    return await res.text();
+  async function getSnapshot(){
+    const url=DATA_URL+'?v='+Date.now();
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok)throw new Error('snapshot '+res.status);
+    const data=await res.json();
+    return data;
   }
-  async function load(root){
-    const title=root.querySelector('[data-tp-title]'),sub=root.querySelector('[data-tp-sub]'),map=root.querySelector('[data-tp-map]'),list=root.querySelector('[data-tp-list]'),time=root.querySelector('[data-tp-time]');
-    if(title)title.textContent=t('loading');
-    try{
-      let first=await fetchText(XML_URL);
-      let parsed=parseStormsFromXml(first);
-      let storms=parsed.storms;
-      if(!storms.length&&parsed.links.length){
-        const extras=await Promise.allSettled(parsed.links.map(fetchText));
-        storms=extras.flatMap(r=>r.status==='fulfilled'?parseStormsFromXml(r.value).storms:[]);
-      }
-      renderData(root,storms,null);
-    }catch(error){
-      renderData(root,[],error);
-    }
-  }
-  function renderData(root,storms,error){
-    const title=root.querySelector('[data-tp-title]'),sub=root.querySelector('[data-tp-sub]'),map=root.querySelector('[data-tp-map]'),list=root.querySelector('[data-tp-list]'),time=root.querySelector('[data-tp-time]');
-    if(map)map.innerHTML=svgMap(storms||[]);
-    if(time)time.textContent=t('updated')+' '+new Intl.DateTimeFormat(undefined,{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date());
+  function latestOf(storm){return storm.points[storm.points.length-1]||{};}
+  function renderData(root,data,error){
+    const title=root.querySelector('[data-tpx-title]'),sub=root.querySelector('[data-tpx-sub]'),map=root.querySelector('[data-tpx-map]'),detail=root.querySelector('[data-tpx-detail]'),foot=root.querySelector('[data-tpx-foot]'),count=root.querySelector('[data-tpx-count]'),mode=root.querySelector('[data-tpx-mode]');
+    const storms=normalizeData(data);
+    root.classList.toggle('is-empty',!storms.length&&!error);
+    root.classList.toggle('is-error',!!error);
+    root.classList.toggle('is-active',!!storms.length);
+    root.classList.remove('is-loading');
+    if(map)map.innerHTML=svgMap(storms);
+    if(foot)foot.textContent=t('updated')+' '+dateText(data?.updatedAt||new Date());
+    if(mode)mode.textContent=error?t('syncPending'):t('live');
+    if(count)count.textContent=String(storms.length||0);
     if(error){
-      if(title)title.textContent=t('blocked');
-      if(sub)sub.textContent='tc_list.xml · '+String(error.message||error);
-      if(list)list.innerHTML=`<p>${esc(t('blocked'))}</p><a class="tp-open" target="_blank" rel="noopener noreferrer" href="${esc(officialUrl())}">${esc(t('official'))}</a>`;
+      if(title)title.textContent=t('syncPending');
+      if(sub)sub.textContent=t('syncPendingSub');
+      if(detail)detail.innerHTML=`<p>${esc(t('syncPendingSub'))}</p><a class="tpx-open" target="_blank" rel="noopener noreferrer" href="${esc(officialUrl())}">${esc(t('official'))}</a>`;
       return;
     }
-    if(!storms||!storms.length){
-      if(title)title.textContent=t('none');
-      if(sub)sub.textContent='tc_list.xml · HKO';
-      if(list)list.innerHTML=`<p>${esc(t('none'))}</p>`;
+    if(!storms.length){
+      if(title)title.textContent=t('noActive');
+      if(sub)sub.textContent=t('noActiveSub');
+      if(detail)detail.innerHTML=`<article class="tpx-empty-card"><b>${esc(t('noActive'))}</b><span>${esc(t('noActiveSub'))}</span></article>`;
       return;
     }
-    const latest=storms.map(s=>Object.assign({},s,{last:s.points[s.points.length-1]}));
+    const latest=storms.map(s=>Object.assign({},s,{last:latestOf(s)}));
     if(title)title.textContent=latest.map(s=>s.name).join(' / ');
     if(sub)sub.textContent=latest.map(s=>`${Number(s.last.lat).toFixed(1)}N ${Number(s.last.lon).toFixed(1)}E`).join(' · ');
-    if(list)list.innerHTML=latest.map(s=>`<article class="tp-storm-card"><b>${esc(s.name||'TC')}</b><span>${esc(t('latlon'))}: ${Number(s.last.lat).toFixed(1)}N ${Number(s.last.lon).toFixed(1)}E</span>${s.last.wind?`<span>${esc(t('wind'))}: ${esc(s.last.wind)}</span>`:''}${s.last.pressure?`<span>${esc(t('pressure'))}: ${esc(s.last.pressure)}</span>`:''}${s.last.time?`<em>${esc(s.last.time)}</em>`:''}</article>`).join('');
+    if(detail)detail.innerHTML=latest.map(s=>{
+      const p=s.last;
+      const chips=[
+        `${t('latest')}: ${Number(p.lat).toFixed(1)}N ${Number(p.lon).toFixed(1)}E`,
+        p.intensity?`${t('intensity')}: ${p.intensity}`:'',
+        p.wind?`${t('wind')}: ${p.wind}`:'',
+        p.pressure?`${t('pressure')}: ${p.pressure}`:'',
+        p.movement?`${t('movement')}: ${p.movement}`:'',
+        `${t('trackPoints')}: ${s.points.length}`
+      ].filter(Boolean);
+      return `<article class="tpx-card"><b>${esc(s.name)}</b>${chips.map(x=>`<span>${esc(x)}</span>`).join('')}${p.time?`<em>${esc(p.time)}</em>`:''}</article>`;
+    }).join('');
+  }
+  async function load(root){
+    const title=root.querySelector('[data-tpx-title]'),sub=root.querySelector('[data-tpx-sub]'),mode=root.querySelector('[data-tpx-mode]');
+    root.classList.add('is-loading');
+    if(title)title.textContent=t('loading');
+    if(sub)sub.textContent=t('sourceNote');
+    if(mode)mode.textContent=t('live');
+    try{
+      const data=await getSnapshot();
+      renderData(root,data,null);
+    }catch(error){
+      renderData(root,{updatedAt:new Date().toISOString(),storms:[]},error);
+    }
   }
 
   function installStyle(){
-    if(document.getElementById('typhoonWidgetStyle'))return;
-    const s=document.createElement('style');s.id='typhoonWidgetStyle';s.textContent=`
+    if(document.getElementById('typhoonWidgetStyleV2'))return;
+    const s=document.createElement('style');
+    s.id='typhoonWidgetStyleV2';
+    s.textContent=`
 .t-typhoon{--icon:linear-gradient(145deg,#38bdf8,#0ea5e9);--glow:linear-gradient(135deg,#38bdf8,#0ea5e9)}
-.typhoon-widget{height:100%;container-type:inline-size;display:flex;flex-direction:column;gap:8px;overflow:hidden;color:var(--wd-widget-ink,var(--ink));font-variant-numeric:tabular-nums}.typhoon-widget *{box-sizing:border-box}.tp-top{height:30px;display:flex;align-items:center;gap:7px}.tp-dot{width:9px;height:9px;border-radius:999px;background:#22c55e;box-shadow:0 0 12px rgba(34,197,94,.75)}.tp-top b{font-size:11px}.tp-top i{font-style:normal;font-size:10px;border:1px solid var(--wd-widget-line,var(--line));border-radius:999px;padding:3px 7px;background:var(--wd-widget-control,rgba(255,255,255,.07));color:var(--wd-widget-muted,var(--muted))}.tp-top button,.tp-top a{margin-left:auto;width:30px;height:30px;border:1px solid var(--wd-widget-line,var(--line));border-radius:999px;background:var(--wd-widget-control,rgba(255,255,255,.08));color:var(--wd-widget-ink,var(--ink));display:grid;place-items:center;text-decoration:none;font-weight:900;cursor:pointer}.tp-top a{width:auto;padding:0 10px;font-size:11px}.tp-top button+a{margin-left:0}.tp-hero{padding:10px 12px;border:1px solid var(--wd-widget-line,var(--line));border-radius:15px;background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(45,212,191,.08),var(--wd-widget-surface-3,rgba(255,255,255,.04)))}.tp-hero strong{display:block;font-size:14px;line-height:1.2}.tp-hero span{display:block;margin-top:3px;color:var(--wd-widget-muted,var(--muted));font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tp-map{flex:1;min-height:140px;border:1px solid var(--wd-widget-line,var(--line));border-radius:16px;overflow:hidden;background:#07111f}.tp-map svg{width:100%;height:100%;display:block}.tp-grid path{stroke:rgba(148,163,184,.18);stroke-width:1}.tp-grid text{fill:rgba(148,163,184,.6);font-size:16px}.tp-coast{fill:none;stroke:rgba(203,213,225,.38);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}.tp-city circle{fill:#f8fafc}.tp-city text{fill:#cbd5e1;font-size:17px;font-weight:800}.tp-track{fill:none;stroke:#f97316;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(249,115,22,.55))}.tp-point{fill:#fde68a;stroke:#7c2d12;stroke-width:2}.tp-point.last{fill:#fb7185;stroke:#fff;stroke-width:3}.tp-label{fill:#fff;font-size:22px;font-weight:950;text-shadow:0 2px 8px rgba(0,0,0,.7)}.tp-empty-map{fill:rgba(226,232,240,.65);font-size:25px;font-weight:850}.tp-list{max-height:88px;overflow:auto;display:grid;gap:6px}.tp-list p{margin:0;padding:8px 10px;border:1px solid var(--wd-widget-line,var(--line));border-radius:12px;color:var(--wd-widget-muted,var(--muted));font-size:11px;background:var(--wd-widget-surface-2,rgba(255,255,255,.04))}.tp-open{display:inline-flex;align-items:center;justify-content:center;height:28px;border-radius:999px;background:rgba(56,189,248,.15);color:#38bdf8;text-decoration:none;font-size:11px;font-weight:900}.tp-storm-card{display:grid;gap:2px;padding:7px 9px;border:1px solid var(--wd-widget-line,var(--line));border-radius:12px;background:var(--wd-widget-surface-2,rgba(255,255,255,.05))}.tp-storm-card b{font-size:12px}.tp-storm-card span,.tp-storm-card em{font-size:10px;color:var(--wd-widget-muted,var(--muted));font-style:normal}.tp-time{font-size:10px;color:var(--wd-widget-muted,var(--muted));text-align:right}@container (max-width:330px){.tp-top a{display:none}.tp-hero{padding:8px}.tp-list{display:none}.tp-map{min-height:120px}.tp-time{text-align:left}}@container (max-height:360px){.tp-list,.tp-time{display:none}.tp-hero{padding:7px 9px}.tp-map{min-height:110px}}
-`;
+.typhoon-widget.tpx{height:100%;container-type:inline-size;display:flex;flex-direction:column;gap:9px;overflow:hidden;color:var(--wd-widget-ink,var(--ink));font-variant-numeric:tabular-nums}.tpx *{box-sizing:border-box;min-width:0}.tpx-head{height:34px;display:flex;align-items:center;justify-content:space-between;gap:10px}.tpx-source{display:flex;align-items:center;gap:8px}.tpx-pulse{width:10px;height:10px;border-radius:999px;background:#22c55e;box-shadow:0 0 14px rgba(34,197,94,.85)}.is-empty .tpx-pulse{background:#38bdf8;box-shadow:0 0 14px rgba(56,189,248,.65)}.is-error .tpx-pulse{background:#f59e0b;box-shadow:0 0 14px rgba(245,158,11,.65)}.tpx-source b{font-size:12px}.tpx-source em{font-style:normal;font-size:10px;border:1px solid var(--wd-widget-line,var(--line));border-radius:999px;padding:3px 8px;background:var(--wd-widget-control,rgba(255,255,255,.08));color:var(--wd-widget-muted,var(--muted));white-space:nowrap}.tpx-head nav{display:flex;align-items:center;gap:7px}.tpx-head button,.tpx-head a{height:32px;border:1px solid var(--wd-widget-line,var(--line));border-radius:999px;background:var(--wd-widget-control,rgba(255,255,255,.09));color:var(--wd-widget-ink,var(--ink));display:grid;place-items:center;text-decoration:none;font-weight:900;cursor:pointer}.tpx-head button{width:32px}.tpx-head a{padding:0 13px;font-size:12px}.tpx-summary{display:grid;grid-template-columns:minmax(0,1fr) 66px;gap:10px;align-items:stretch;padding:12px 14px;border:1px solid var(--wd-widget-line,var(--line));border-radius:18px;background:linear-gradient(135deg,rgba(14,165,233,.20),rgba(45,212,191,.08),var(--wd-widget-surface-3,rgba(255,255,255,.045)))}.tpx-summary small{display:block;color:#7dd3fc;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.tpx-summary strong{display:block;margin-top:2px;font-size:18px;line-height:1.16;letter-spacing:-.02em}.tpx-summary span{display:block;margin-top:4px;color:var(--wd-widget-muted,var(--muted));font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tpx-summary aside{border-left:1px solid var(--wd-widget-line-soft,var(--line));display:grid;place-items:center;text-align:center}.tpx-summary aside b{font-size:24px;line-height:1;color:#38bdf8}.tpx-summary aside span{margin:0;font-size:10px}.tpx-map{flex:1;min-height:170px;border:1px solid var(--wd-widget-line,var(--line));border-radius:20px;overflow:hidden;background:#06101f;position:relative}.tpx-map svg{width:100%;height:100%;display:block}.tpx-grid path{stroke:rgba(148,163,184,.16);stroke-width:1}.tpx-grid text{fill:rgba(203,213,225,.55);font-size:16px}.tpx-coast{fill:none;stroke:rgba(226,232,240,.35);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}.tpx-city circle{fill:#e0f2fe;filter:drop-shadow(0 0 5px rgba(125,211,252,.75))}.tpx-city text{fill:#cbd5e1;font-size:17px;font-weight:900}.tpx-track{fill:none;stroke:url(#tpxTrack);stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(249,115,22,.58))}.tpx-point{fill:#fde68a;stroke:#7c2d12;stroke-width:2}.tpx-point.last{fill:#fb7185;stroke:#fff;stroke-width:3}.tpx-label{fill:#fff;font-size:23px;font-weight:950;text-shadow:0 2px 10px rgba(0,0,0,.75)}.tpx-empty circle{fill:none;stroke:rgba(56,189,248,.26);stroke-width:3}.tpx-empty path{fill:rgba(125,211,252,.64)}.tpx-empty text{fill:rgba(226,232,240,.76);font-size:24px;font-weight:900}.tpx-detail{max-height:104px;overflow:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:7px}.tpx-detail p,.tpx-card,.tpx-empty-card{margin:0;padding:9px 11px;border:1px solid var(--wd-widget-line,var(--line));border-radius:14px;background:var(--wd-widget-surface-2,rgba(255,255,255,.045));font-size:11px;color:var(--wd-widget-muted,var(--muted))}.tpx-card,.tpx-empty-card{display:grid;gap:3px;color:var(--wd-widget-ink,var(--ink))}.tpx-card b,.tpx-empty-card b{font-size:12px}.tpx-card span,.tpx-empty-card span,.tpx-card em{font-size:10px;color:var(--wd-widget-muted,var(--muted));font-style:normal}.tpx-open{display:inline-flex;align-items:center;justify-content:center;min-height:30px;border-radius:999px;background:rgba(56,189,248,.16);color:#38bdf8;text-decoration:none;font-size:12px;font-weight:900}.tpx footer{display:flex;justify-content:space-between;gap:8px;color:var(--wd-widget-muted,var(--muted));font-size:10px;white-space:nowrap;overflow:hidden}.tpx footer span{overflow:hidden;text-overflow:ellipsis}@container (max-width:360px){.tpx-summary{grid-template-columns:1fr;padding:10px}.tpx-summary aside{display:none}.tpx-head a{display:none}.tpx-detail{display:none}.tpx-map{min-height:145px}.tpx footer{display:none}.tpx-summary strong{font-size:15px}}@container (max-height:380px){.tpx-detail,.tpx footer{display:none}.tpx-summary{padding:8px 10px}.tpx-summary strong{font-size:15px}.tpx-map{min-height:120px}}`;
     document.head.appendChild(s);
   }
-
   function bind(root){
-    if(!root||root.dataset.tpBound)return;
-    root.dataset.tpBound='1';
-    root.querySelector('[data-tp-refresh]')?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();root.dataset.tpBound='';bind(root);load(root);});
+    if(!root||root.dataset.tpxBound)return;
+    root.dataset.tpxBound='1';
+    root.querySelector('[data-tpx-refresh]')?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();load(root);});
     load(root);
   }
   function bindAll(){document.querySelectorAll('[data-typhoon-root]').forEach(bind);}
-
   function patch(){
     if(patched)return;patched=true;
     installStyle();ensureMeta();
@@ -239,22 +222,13 @@
       addCard=function(appId){
         if(appId!==APP)return oldAdd.apply(this,arguments);
         const ws=activeWorkspace(),n=ws.cards.length;
-        ws.cards.push({id:'card-typhoon-'+Date.now(),appId:APP,x:88+(n%4)*38,y:90+(n%5)*30,w:560,h:470,collapsed:false,data:{}});
+        ws.cards.push({id:'card-typhoon-'+Date.now(),appId:APP,x:90+(n%4)*38,y:92+(n%5)*30,w:620,h:500,collapsed:false,data:{}});
         save();renderAll();
       };
     }
-    if(typeof renderShelf==='function'&&!window.__windzxyTyphoonShelfPatched){
-      window.__windzxyTyphoonShelfPatched=1;
-      const old=renderShelf;renderShelf=function(){ensureMeta();return old.apply(this,arguments);};
-    }
-    if(typeof renderAll==='function'&&!window.__windzxyTyphoonRenderAllPatched){
-      window.__windzxyTyphoonRenderAllPatched=1;
-      const old=renderAll;renderAll=function(){ensureMeta();const out=old.apply(this,arguments);setTimeout(bindAll,0);return out;};
-    }
-    if(typeof renderDesktop==='function'&&!window.__windzxyTyphoonRenderDesktopPatched){
-      window.__windzxyTyphoonRenderDesktopPatched=1;
-      const old=renderDesktop;renderDesktop=function(){ensureMeta();const out=old.apply(this,arguments);setTimeout(bindAll,0);return out;};
-    }
+    if(typeof renderShelf==='function'&&!window.__windzxyTyphoonShelfPatched){window.__windzxyTyphoonShelfPatched=1;const old=renderShelf;renderShelf=function(){ensureMeta();return old.apply(this,arguments);};}
+    if(typeof renderAll==='function'&&!window.__windzxyTyphoonRenderAllPatched){window.__windzxyTyphoonRenderAllPatched=1;const old=renderAll;renderAll=function(){ensureMeta();const out=old.apply(this,arguments);setTimeout(bindAll,0);return out;};}
+    if(typeof renderDesktop==='function'&&!window.__windzxyTyphoonRenderDesktopPatched){window.__windzxyTyphoonRenderDesktopPatched=1;const old=renderDesktop;renderDesktop=function(){ensureMeta();const out=old.apply(this,arguments);setTimeout(bindAll,0);return out;};}
     try{renderShelf();renderAll();}catch(e){try{renderShelf();}catch(_){}}
     setTimeout(bindAll,0);
   }
