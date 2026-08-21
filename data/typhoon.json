@@ -2,7 +2,7 @@
   "type": "hko-typhoon-track",
   "version": 1,
   "source": "https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml",
-  "updatedAt": "2026-08-21T11:52:09.526768+00:00",
+  "updatedAt": "2026-08-21T12:41:30.396388+00:00",
   "status": "active",
   "storms": [
     {
