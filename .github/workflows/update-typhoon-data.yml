@@ -1,0 +1,169 @@
+name: Update HKO Typhoon Data
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch and normalize HKO tropical cyclone track
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import json, re, urllib.request, xml.etree.ElementTree as ET
+
+          SOURCE = 'https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml'
+          OUT = Path('data/typhoon.json')
+          OUT.parent.mkdir(parents=True, exist_ok=True)
+
+          def fetch(url):
+              req = urllib.request.Request(url, headers={'User-Agent': 'windzxy-webdesk/1.0'})
+              with urllib.request.urlopen(req, timeout=20) as r:
+                  return r.read().decode('utf-8', 'ignore')
+
+          def local_name(tag):
+              return str(tag).split('}', 1)[-1].lower()
+
+          def text(el):
+              return ''.join(el.itertext()).strip() if el is not None else ''
+
+          def num(value):
+              m = re.search(r'-?\d+(?:\.\d+)?', str(value or ''))
+              return float(m.group(0)) if m else None
+
+          def child_text(el, names):
+              names = [n.lower() for n in names]
+              for k, v in el.attrib.items():
+                  lk = local_name(k)
+                  if any(n == lk or n in lk for n in names):
+                      return str(v).strip()
+              for c in list(el):
+                  lc = local_name(c.tag)
+                  if any(n == lc or n in lc for n in names):
+                      val = text(c)
+                      if val:
+                          return val
+              return ''
+
+          def point_from(el):
+              lat = num(child_text(el, ['lat','latitude','緯度','纬度']))
+              lon = num(child_text(el, ['lon','lng','longitude','經度','经度']))
+              if lat is None or lon is None:
+                  return None
+              return {
+                  'lat': lat,
+                  'lon': lon,
+                  'time': child_text(el, ['time','datetime','obsTime','forecastTime','validtime','date']),
+                  'wind': child_text(el, ['wind','maxwind','windspeed','windSpeed']),
+                  'pressure': child_text(el, ['pressure','centralPressure','minimumPressure','pres']),
+                  'movement': child_text(el, ['movement','move','direction','speed']),
+                  'intensity': child_text(el, ['intensity','class','type','category'])
+              }
+
+          def name_from(el):
+              for names in [
+                  ['tcname','tropicalcyclonename','cyclonename','stormname','name'],
+                  ['cname','ename','chiName','engName']
+              ]:
+                  val = child_text(el, names)
+                  if val:
+                      return val
+              return ''
+
+          def parse_xml(xml_text, source_url):
+              try:
+                  root = ET.fromstring(xml_text.encode('utf-8'))
+              except Exception:
+                  return [], []
+              parent = {c: p for p in root.iter() for c in list(p)}
+              links = []
+              for el in root.iter():
+                  val = text(el)
+                  if re.search(r'\.xml(?:\?|$)', val, re.I):
+                      if not re.match(r'https?://', val):
+                          from urllib.parse import urljoin
+                          val = urljoin(source_url, val)
+                      links.append(val)
+              links = list(dict.fromkeys(links))[:6]
+              groups = {}
+              for el in root.iter():
+                  p = point_from(el)
+                  if not p:
+                      continue
+                  holder = el
+                  cur = el
+                  while cur in parent:
+                      cur = parent[cur]
+                      lname = local_name(cur.tag)
+                      if re.search(r'(cyclone|typhoon|storm|tc|tropical)', lname):
+                          holder = cur
+                          break
+                  name = name_from(holder) or name_from(parent.get(el)) or name_from(root) or 'TC'
+                  sid = child_text(holder, ['tcid','id','identifier','stormid']) or name
+                  key = f'{sid}-{name}'
+                  groups.setdefault(key, {'id': sid, 'name': name, 'points': []})['points'].append(p)
+              storms = []
+              for s in groups.values():
+                  seen = set(); pts = []
+                  for p in s['points']:
+                      key = (round(p['lat'], 3), round(p['lon'], 3), p.get('time',''))
+                      if key in seen:
+                          continue
+                      seen.add(key)
+                      pts.append({k: v for k, v in p.items() if v not in ('', None)})
+                  if pts:
+                      s['points'] = pts
+                      storms.append(s)
+              return storms, links
+
+          errors = []
+          storms = []
+          try:
+              raw = fetch(SOURCE)
+              storms, links = parse_xml(raw, SOURCE)
+              if not storms and links:
+                  for link in links:
+                      try:
+                          extra = fetch(link)
+                          more, _ = parse_xml(extra, link)
+                          storms.extend(more)
+                      except Exception as e:
+                          errors.append(f'{link}: {e}')
+          except Exception as e:
+              errors.append(str(e))
+
+          payload = {
+              'type': 'hko-typhoon-track',
+              'version': 1,
+              'source': SOURCE,
+              'updatedAt': datetime.now(timezone.utc).isoformat(),
+              'status': 'active' if storms else 'no-active-system',
+              'storms': storms,
+              'errors': errors[:5]
+          }
+          OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Commit snapshot
+        run: |
+          if git diff --quiet -- data/typhoon.json; then
+            echo "Typhoon data unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/typhoon.json
+          git commit -m "Update HKO typhoon data snapshot"
+          git push
