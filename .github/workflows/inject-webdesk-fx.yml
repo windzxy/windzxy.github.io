@@ -6,7 +6,6 @@ on:
       - master
     paths:
       - 'Html_tools/fx-widget.js'
-      - 'Html_tools/typhoon-widget.js'
       - 'Html_tools/calendar-widget.js'
       - 'Html_tools/calendar-perpetual-fix.js'
       - 'Html_tools/calendar-pm-polish.js'
@@ -17,8 +16,9 @@ on:
       - 'Html_tools/background-fit-fix.js'
       - 'Html_tools/icon-edge-fix.js'
       - 'Html_tools/first-run-empty-desktop.js'
-      - 'Html_tools/market-color-fix.js'
       - 'Html_tools/finance-i18n-fix.js'
+      - 'Html_tools/market-color-fix.js'
+      - 'Html_tools/typhoon-widget.js'
       - '.github/workflows/inject-webdesk-fx.yml'
   workflow_dispatch:
 
@@ -41,7 +41,7 @@ jobs:
           import re
 
           tags = [
-            '<script src="Html_tools/market-color-fix.js?v=20260821-market-color2-load-typhoon"></script>',
+            '<script src="Html_tools/market-color-fix.js?v=20260821-market-color3-load-typhoon-v2"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
             '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>',
             '<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>',
@@ -50,7 +50,7 @@ jobs:
             '<script src="Html_tools/card-fold-fix.js?v=20260819-card-fold4-preserve-body"></script>',
             '<script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>',
             '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>',
-            '<script src="Html_tools/typhoon-widget.js?v=20260821-typhoon-widget1-hko-track"></script>',
+            '<script src="Html_tools/typhoon-widget.js?v=20260821-typhoon-widget2-pm-polished-snapshot"></script>',
             '<script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget2-pm-polished"></script>',
             '<script src="Html_tools/calendar-perpetual-fix.js?v=20260819-calendar-adaptive-full1"></script>',
             '<script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>',
@@ -64,33 +64,32 @@ jobs:
           stubs = [
             '{id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"}',
             '{id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"}',
-            '{id:"typhoon",kind:"widget",title:"颱風路徑",desc:"香港天文台熱帶氣旋路徑、實況與官方地圖。",icon:"🌀",tone:"t-typhoon"}',
             '{id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"}',
+            '{id:"typhoon",kind:"widget",title:"颱風路徑",desc:"香港天文台熱帶氣旋路徑、實況與官方地圖。",icon:"🌀",tone:"t-typhoon"}',
           ]
           marker = '  {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}'
           insert = ''
-          if 'id:"metals"' not in html: insert += '  ' + stubs[0] + ',\n'
-          if 'id:"fx-rates"' not in html: insert += '  ' + stubs[1] + ',\n'
-          if 'id:"typhoon"' not in html: insert += '  ' + stubs[2] + ',\n'
-          if 'id:"calendar"' not in html: insert += '  ' + stubs[3] + ',\n'
+          for app_id, stub in [('metals',stubs[0]),('fx-rates',stubs[1]),('calendar',stubs[2]),('typhoon',stubs[3])]:
+            if f'id:"{app_id}"' not in html:
+              insert += '  ' + stub + ',\n'
           if insert and marker in html:
             html = html.replace(marker, insert + marker, 1)
 
           replacements = {
             'metals': 'id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"',
             'fx-rates': 'id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"',
-            'typhoon': 'id:"typhoon",kind:"widget",title:"颱風路徑",desc:"香港天文台熱帶氣旋路徑、實況與官方地圖。",icon:"🌀",tone:"t-typhoon"',
             'calendar': 'id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"',
+            'typhoon': 'id:"typhoon",kind:"widget",title:"颱風路徑",desc:"香港天文台熱帶氣旋路徑、實況與官方地圖。",icon:"🌀",tone:"t-typhoon"',
           }
           html = re.sub(r'id:"metals",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-metals"', replacements['metals'], html)
           html = re.sub(r'id:"fx-rates",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-fx"', replacements['fx-rates'], html)
-          html = re.sub(r'id:"typhoon",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-typhoon"', replacements['typhoon'], html)
           html = re.sub(r'id:"calendar",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-calendar"', replacements['calendar'], html)
+          html = re.sub(r'id:"typhoon",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-typhoon"', replacements['typhoon'], html)
 
           script_names = [
             'market-color-fix','first-run-empty-desktop','background-fit-fix','icon-edge-fix',
-            'layout-persist-fix','card-gap-fix','card-fold-fix','metals-widget','fx-widget','typhoon-widget',
-            'calendar-widget','calendar-polish-fix','calendar-lunar-ui-fix','calendar-perpetual-fix',
+            'layout-persist-fix','card-gap-fix','card-fold-fix','metals-widget','fx-widget',
+            'typhoon-widget','calendar-widget','calendar-polish-fix','calendar-lunar-ui-fix','calendar-perpetual-fix',
             'calendar-pm-polish','calendar-product-redesign','calendar-ux-cleanup','theme-contrast-fix','finance-i18n-fix'
           ]
           for name in script_names:
@@ -109,5 +108,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject typhoon track widget"
+          git commit -m "Inject polished typhoon widget version"
           git push
