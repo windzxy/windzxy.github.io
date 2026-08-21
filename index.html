@@ -105,7 +105,7 @@ const apps=[
   {id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"},
   {id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"},
   {id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"},
-  {id:"typhoon",kind:"widget",title:"颱風路徑",desc:"香港天文台熱帶氣旋路徑、實況與官方地圖。",icon:"🌀",tone:"t-typhoon"},
+  {id:"typhoon",kind:"widget",title:"颱風路徑",desc:"官方快照、地圖路徑、實況與預測。",icon:"🌀",tone:"t-typhoon"},
   {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}
 ];
 const seeds={
@@ -1387,20 +1387,20 @@ $("deskSearch").addEventListener("input",renderShelf);
 setInterval(()=>{renderClock();tickWidgets()},1000);
 try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error(error);loadBackgrounds()}
 </script>
+<script src="Html_tools/market-color-fix.js?v=20260821-market-color4-load-typhoon-v3"></script>
 <script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>
+<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>
+<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>
 <script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist8-cross-browser-sync"></script>
 <script src="Html_tools/card-gap-fix.js?v=20260819-card-gap2-new-card-only"></script>
 <script src="Html_tools/card-fold-fix.js?v=20260819-card-fold4-preserve-body"></script>
 <script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>
 <script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>
-<script src="Html_tools/typhoon-widget.js?v=20260821-typhoon-widget2-pm-polished-snapshot"></script>
+<script src="Html_tools/typhoon-widget.js?v=20260821-typhoon-widget3-map-first-pm"></script>
 <script src="Html_tools/calendar-widget.js?v=20260819-calendar-widget2-pm-polished"></script>
 <script src="Html_tools/calendar-perpetual-fix.js?v=20260819-calendar-adaptive-full1"></script>
 <script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>
 <script src="Html_tools/calendar-pm-polish.js?v=20260819-calendar-pm-polish1"></script>
 <script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n4-remove-today-row"></script>
-<script src="Html_tools/background-fit-fix.js?v=20260819-bg-fit2-stable-one-image"></script>
-<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge3-minimal-arrow-shift"></script>
-<script src="Html_tools/market-color-fix.js?v=20260819-market-color1-red-up-green-down"></script>
 </body>
 </html>
