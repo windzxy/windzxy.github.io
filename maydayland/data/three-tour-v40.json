@@ -1,0 +1,31 @@
+{
+  "version": "40.0.0",
+  "updatedAt": "2026-08-21",
+  "engine": "Three.js r128 native static build",
+  "principle": "Use local data and rights-safe generated geometry first; later replace stylized base with real GeoJSON extrusion.",
+  "center": {"lng": 112.5, "lat": 28.5},
+  "scale": 1.18,
+  "hubCityId": "taipei",
+  "themes": {
+    "teal": {"bg":"#050912","land":"#112b3a","top":"#1de3ff","side":"#0a5268","line":"#ffc040","label":"#dffaff"},
+    "gold": {"bg":"#09070f","land":"#3a2a13","top":"#ffd36a","side":"#76511c","line":"#ff7ab6","label":"#fff3cf"},
+    "red": {"bg":"#0b0508","land":"#381421","top":"#ff5f8f","side":"#731b35","line":"#ffd36a","label":"#ffe7ef"}
+  },
+  "cities": [
+    {"id":"taipei","name":"台北","lng":121.565,"lat":25.037,"visits":26,"level":"核心主場","venue":"台北大巨蛋 / 台北小巨蛋","score":84,"tone":"#ff70b7","summary":"主場敘事核心，5525+2 與大型場館記憶。"},
+    {"id":"taichung","name":"台中","lng":120.646,"lat":24.179,"visits":14,"level":"起跑 / 跨年","venue":"台中洲際棒球場","score":78,"tone":"#ffd36a","summary":"5525 起跑與跨年線。"},
+    {"id":"kaohsiung","name":"高雄","lng":120.310,"lat":22.755,"visits":12,"level":"戶外大場","venue":"高雄世運主場館","score":72,"tone":"#ff9a56","summary":"港都戶外舞台與大型場館。"},
+    {"id":"hongkong","name":"香港","lng":114.158,"lat":22.282,"visits":10,"level":"海港海外線","venue":"中環海濱 / 紅磡","score":70,"tone":"#8f7dff","summary":"維港與海外華語城市節點。"},
+    {"id":"shanghai","name":"上海","lng":121.474,"lat":31.230,"visits":9,"level":"連場都市","venue":"上海體育場","score":68,"tone":"#64e8ff","summary":"都市高密度連場演出線。"},
+    {"id":"beijing","name":"北京","lng":116.407,"lat":39.904,"visits":8,"level":"超大型場","venue":"國家體育場 鳥巢","score":67,"tone":"#c96dff","summary":"鳥巢與北方大型場節點。"},
+    {"id":"shenzhen","name":"深圳","lng":114.057,"lat":22.543,"visits":5,"level":"霓虹城市","venue":"深圳大運中心","score":61,"tone":"#35d0ff","summary":"科技霓虹與年輕市場線。"},
+    {"id":"singapore","name":"新加坡","lng":103.820,"lat":1.352,"visits":3,"level":"東南亞節點","venue":"國家體育場 / 室內館","score":58,"tone":"#72ffc9","summary":"海外巡演節點。"},
+    {"id":"tokyo","name":"東京","lng":139.691,"lat":35.689,"visits":2,"level":"日本資料節點","venue":"日本官方資料支線","score":56,"tone":"#a6f0ff","summary":"日文作品與海外資料入口。"}
+  ],
+  "milestones": [
+    "v40 先完成 3D 巡演星圖：光柱、飛線、主題切換、城市選中。",
+    "v41 接入 GeoJSON 並做 ExtrudeGeometry 拉伸輪廓。",
+    "v42 重寫全局 UV 與貼圖系統。",
+    "v43 接入 Bloom 後期與性能面板。"
+  ]
+}
