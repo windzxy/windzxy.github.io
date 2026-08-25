@@ -2,7 +2,7 @@
   "type": "hko-typhoon-track",
   "version": 1,
   "source": "https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml",
-  "updatedAt": "2026-08-25T19:29:31.064026+00:00",
+  "updatedAt": "2026-08-25T19:57:19.862103+00:00",
   "status": "active",
   "storms": [
     {
@@ -304,77 +304,60 @@
           "intensity": "Tropical Depression"
         },
         {
-          "lat": 19.8,
-          "lon": 109.39
+          "lat": 20.0,
+          "lon": 109.8,
+          "time": "2026-08-25T18:00:00+00:00",
+          "wind": "55km/h",
+          "intensity": "Tropical Depression"
         },
         {
-          "lat": 19.94,
-          "lon": 109.52
+          "lat": 20.07,
+          "lon": 109.87
         },
         {
-          "lat": 20.1,
-          "lon": 109.67
+          "lat": 20.16,
+          "lon": 109.96
         },
         {
           "lat": 20.27,
-          "lon": 109.83
+          "lon": 110.08
         },
         {
-          "lat": 20.45,
-          "lon": 109.97
+          "lat": 20.4,
+          "lon": 110.19
         },
         {
-          "lat": 20.6,
-          "lon": 110.1
-        },
-        {
-          "lat": 20.74,
-          "lon": 110.2
-        },
-        {
-          "lat": 20.88,
+          "lat": 20.55,
           "lon": 110.3
         },
         {
-          "lat": 21.02,
-          "lon": 110.39
+          "lat": 20.7,
+          "lon": 110.4
         },
         {
-          "lat": 21.15,
-          "lon": 110.47
+          "lat": 20.88,
+          "lon": 110.48
         },
         {
-          "lat": 21.28,
-          "lon": 110.54
+          "lat": 21.11,
+          "lon": 110.56
         },
         {
-          "lat": 21.4,
-          "lon": 110.6
+          "lat": 21.34,
+          "lon": 110.64
         },
         {
-          "lat": 21.52,
-          "lon": 110.65
-        },
-        {
-          "lat": 21.64,
+          "lat": 21.57,
           "lon": 110.7
         },
         {
-          "lat": 21.75,
-          "lon": 110.73
-        },
-        {
-          "lat": 21.85,
+          "lat": 21.76,
           "lon": 110.76
         },
         {
-          "lat": 21.94,
-          "lon": 110.78
-        },
-        {
-          "lat": 22.0,
+          "lat": 21.9,
           "lon": 110.8,
-          "time": "2026-08-26T09:00:00+00:00",
+          "time": "2026-08-26T06:00:00+00:00",
           "wind": "40km/h",
           "intensity": "Low Pressure Area"
         }
