@@ -2,7 +2,7 @@
   "type": "hko-typhoon-track",
   "version": 1,
   "source": "https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml",
-  "updatedAt": "2026-08-25T22:24:15.427602+00:00",
+  "updatedAt": "2026-08-25T22:54:53.539127+00:00",
   "status": "active",
   "storms": [
     {
@@ -311,53 +311,60 @@
           "intensity": "Tropical Depression"
         },
         {
-          "lat": 20.07,
-          "lon": 109.87
-        },
-        {
-          "lat": 20.16,
-          "lon": 109.96
-        },
-        {
-          "lat": 20.27,
-          "lon": 110.08
-        },
-        {
           "lat": 20.4,
-          "lon": 110.19
+          "lon": 110.3,
+          "time": "2026-08-25T21:00:00+00:00",
+          "wind": "55km/h",
+          "intensity": "Tropical Depression"
         },
         {
-          "lat": 20.55,
-          "lon": 110.3
+          "lat": 20.5,
+          "lon": 110.35
         },
         {
-          "lat": 20.7,
-          "lon": 110.4
+          "lat": 20.64,
+          "lon": 110.41
         },
         {
-          "lat": 20.88,
-          "lon": 110.48
+          "lat": 20.8,
+          "lon": 110.49
         },
         {
-          "lat": 21.11,
-          "lon": 110.56
+          "lat": 20.97,
+          "lon": 110.57
         },
         {
-          "lat": 21.34,
-          "lon": 110.64
+          "lat": 21.15,
+          "lon": 110.65
         },
         {
-          "lat": 21.57,
+          "lat": 21.3,
           "lon": 110.7
         },
         {
-          "lat": 21.76,
+          "lat": 21.45,
+          "lon": 110.74
+        },
+        {
+          "lat": 21.6,
           "lon": 110.76
         },
         {
+          "lat": 21.76,
+          "lon": 110.78
+        },
+        {
           "lat": 21.9,
+          "lon": 110.79
+        },
+        {
+          "lat": 22.01,
+          "lon": 110.79
+        },
+        {
+          "lat": 22.1,
           "lon": 110.8,
-          "time": "2026-08-26T06:00:00+00:00",
+          "time": "2026-08-26T09:00:00+00:00",
           "wind": "40km/h",
           "intensity": "Low Pressure Area"
         }
