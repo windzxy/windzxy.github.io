@@ -2,7 +2,7 @@
   "type": "hko-typhoon-track",
   "version": 1,
   "source": "https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml",
-  "updatedAt": "2026-08-25T12:42:33.426667+00:00",
+  "updatedAt": "2026-08-25T13:48:01.724059+00:00",
   "status": "active",
   "storms": [
     {
@@ -290,152 +290,108 @@
           "intensity": "Tropical Depression"
         },
         {
-          "lat": 19.51,
-          "lon": 108.59
-        },
-        {
-          "lat": 19.53,
-          "lon": 108.71
-        },
-        {
-          "lat": 19.54,
-          "lon": 108.85
-        },
-        {
-          "lat": 19.57,
-          "lon": 109.0
-        },
-        {
-          "lat": 19.62,
-          "lon": 109.16
-        },
-        {
-          "lat": 19.7,
-          "lon": 109.3
-        },
-        {
-          "lat": 19.81,
-          "lon": 109.44
-        },
-        {
-          "lat": 19.95,
-          "lon": 109.58
-        },
-        {
-          "lat": 20.11,
-          "lon": 109.72
-        },
-        {
-          "lat": 20.28,
-          "lon": 109.86
-        },
-        {
-          "lat": 20.45,
-          "lon": 109.98
-        },
-        {
-          "lat": 20.6,
-          "lon": 110.1
-        },
-        {
-          "lat": 20.74,
-          "lon": 110.2
-        },
-        {
-          "lat": 20.88,
-          "lon": 110.3
-        },
-        {
-          "lat": 21.02,
-          "lon": 110.39
-        },
-        {
-          "lat": 21.15,
-          "lon": 110.47
-        },
-        {
-          "lat": 21.28,
-          "lon": 110.54
-        },
-        {
-          "lat": 21.4,
-          "lon": 110.6
-        },
-        {
-          "lat": 21.51,
-          "lon": 110.65
-        },
-        {
-          "lat": 21.62,
-          "lon": 110.69
-        },
-        {
-          "lat": 21.72,
-          "lon": 110.72
-        },
-        {
-          "lat": 21.82,
-          "lon": 110.75
-        },
-        {
-          "lat": 21.91,
-          "lon": 110.78
-        },
-        {
-          "lat": 22.0,
-          "lon": 110.8,
-          "time": "2026-08-26T09:00:00+00:00",
-          "wind": "45km/h",
+          "lat": 19.5,
+          "lon": 109.0,
+          "time": "2026-08-25T12:00:00+00:00",
+          "wind": "55km/h",
           "intensity": "Tropical Depression"
         },
         {
-          "lat": 22.08,
+          "lat": 19.56,
+          "lon": 109.08
+        },
+        {
+          "lat": 19.64,
+          "lon": 109.18
+        },
+        {
+          "lat": 19.74,
+          "lon": 109.31
+        },
+        {
+          "lat": 19.86,
+          "lon": 109.44
+        },
+        {
+          "lat": 19.98,
+          "lon": 109.58
+        },
+        {
+          "lat": 20.1,
+          "lon": 109.7
+        },
+        {
+          "lat": 20.23,
+          "lon": 109.82
+        },
+        {
+          "lat": 20.39,
+          "lon": 109.95
+        },
+        {
+          "lat": 20.54,
+          "lon": 110.08
+        },
+        {
+          "lat": 20.7,
+          "lon": 110.2
+        },
+        {
+          "lat": 20.86,
+          "lon": 110.31
+        },
+        {
+          "lat": 21.0,
+          "lon": 110.4
+        },
+        {
+          "lat": 21.13,
+          "lon": 110.47
+        },
+        {
+          "lat": 21.25,
+          "lon": 110.53
+        },
+        {
+          "lat": 21.37,
+          "lon": 110.58
+        },
+        {
+          "lat": 21.48,
+          "lon": 110.62
+        },
+        {
+          "lat": 21.59,
+          "lon": 110.66
+        },
+        {
+          "lat": 21.7,
+          "lon": 110.7
+        },
+        {
+          "lat": 21.81,
+          "lon": 110.74
+        },
+        {
+          "lat": 21.93,
+          "lon": 110.78
+        },
+        {
+          "lat": 22.04,
           "lon": 110.82
         },
         {
-          "lat": 22.14,
+          "lat": 22.15,
           "lon": 110.85
         },
         {
-          "lat": 22.21,
-          "lon": 110.87
-        },
-        {
-          "lat": 22.27,
-          "lon": 110.89
-        },
-        {
-          "lat": 22.33,
-          "lon": 110.9
-        },
-        {
-          "lat": 22.4,
-          "lon": 110.9
-        },
-        {
-          "lat": 22.48,
-          "lon": 110.89
-        },
-        {
-          "lat": 22.58,
+          "lat": 22.24,
           "lon": 110.88
         },
         {
-          "lat": 22.67,
-          "lon": 110.86
-        },
-        {
-          "lat": 22.77,
-          "lon": 110.83
-        },
-        {
-          "lat": 22.84,
-          "lon": 110.81
-        },
-        {
-          "lat": 22.9,
-          "lon": 110.8,
-          "time": "2026-08-26T21:00:00+00:00",
+          "lat": 22.3,
+          "lon": 110.9,
+          "time": "2026-08-26T12:00:00+00:00",
           "wind": "40km/h",
           "intensity": "Low Pressure Area"
         }
@@ -526,9 +482,9 @@
     }
   ],
   "errors": [
-    "https://www.weather.gov.hk/wxinfo/currwx/2629紫檀NARRAhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2629.xml2632艾莎尼ATSANIhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2632.xml2631簡拉維GAENARIhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2631.xml2630沙德爾SAUDELhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2630.xml: 'ascii' codec can't encode characters in position 23-24: ordinal not in range(128)",
+    "https://www.weather.gov.hk/wxinfo/currwx/2629紫檀NARRAhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2629.xml2632艾莎尼ATSANIhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2632.xml2630沙德爾SAUDELhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2630.xml: 'ascii' codec can't encode characters in position 23-24: ordinal not in range(128)",
     "https://www.weather.gov.hk/wxinfo/currwx/2629紫檀NARRAhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2629.xml: 'ascii' codec can't encode characters in position 23-24: ordinal not in range(128)",
     "https://www.weather.gov.hk/wxinfo/currwx/2632艾莎尼ATSANIhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2632.xml: 'ascii' codec can't encode characters in position 23-25: ordinal not in range(128)",
-    "https://www.weather.gov.hk/wxinfo/currwx/2631簡拉維GAENARIhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2631.xml: 'ascii' codec can't encode characters in position 23-25: ordinal not in range(128)"
+    "https://www.weather.gov.hk/wxinfo/currwx/2630沙德爾SAUDELhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2630.xml: 'ascii' codec can't encode characters in position 23-25: ordinal not in range(128)"
   ]
 }
