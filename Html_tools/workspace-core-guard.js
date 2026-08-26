@@ -2,7 +2,7 @@
   if(window.__windzxyWorkspaceCoreGuardLoaded)return;
   window.__windzxyWorkspaceCoreGuardLoaded=1;
 
-  const VER='20260826-workspace-core-guard1-no-auto-cards';
+  const VER='20260826-workspace-core-guard2-no-unapproved-cards';
   const STORE_KEY='windzxy-web-desktop-workspaces';
   const ACTIVE_KEY='windzxy-active-workspace';
   const INIT_KEY='windzxy-webdesk-core-initialized-v2';
@@ -44,14 +44,22 @@
     }
     return count>0;
   }
-  function savedCardKeys(){
-    const saved=readStore()||[];
+  function savedCardKeys(store){
+    const saved=Array.isArray(store)?store:(readStore()||[]);
     const keys=new Set();
     saved.forEach(ws=>(ws.cards||[]).forEach(card=>{
       if(card&&card.id)keys.add(ws.id+'::id::'+card.id);
       if(card&&card.appId)keys.add(ws.id+'::app::'+card.appId+'::'+(card.id||''));
     }));
     return keys;
+  }
+  function cardAllowed(card,ws,keys){
+    if(!card)return false;
+    if(isSeedCard(card,ws))return false;
+    if(Date.now()<manualAddUntil)return true;
+    if(card.id&&keys.has(ws.id+'::id::'+card.id))return true;
+    if(card.appId&&keys.has(ws.id+'::app::'+card.appId+'::'+(card.id||'')))return true;
+    return false;
   }
   function normalizeInitialState(){
     const saved=readStore();
@@ -78,6 +86,7 @@
       if(!list.length)return;
       let changed=false;
       const store=readStore();
+      const keys=savedCardKeys(store);
       const storeHasReal=Array.isArray(store)&&store.some(ws=>(ws.cards||[]).some(card=>!isSeedCard(card,ws)));
       list.forEach(ws=>{
         if(!Array.isArray(ws.cards)){ws.cards=[];changed=true;return;}
@@ -85,11 +94,7 @@
         if(!storeHasReal&&isPureSeedLayout(list)){
           ws.cards=[];
         }else{
-          ws.cards=ws.cards.filter(card=>{
-            if(!card)return false;
-            if(isSeedCard(card,ws)&&!localStorage.getItem(INIT_KEY))return false;
-            return true;
-          });
+          ws.cards=ws.cards.filter(card=>cardAllowed(card,ws,keys));
         }
         if(ws.cards.length!==before)changed=true;
       });
@@ -126,10 +131,11 @@
         window.__windzxyAddCardGuarded=1;
         const oldAdd=addCard;
         addCard=function(appId){
-          manualAddUntil=Date.now()+1200;
+          manualAddUntil=Date.now()+1500;
           try{localStorage.setItem(ADD_MARK_KEY,String(Date.now()));localStorage.setItem(INIT_KEY,'1');}catch(e){}
           const out=oldAdd.apply(this,arguments);
           setTimeout(()=>{try{if(typeof save==='function')save();}catch(e){}sanitize('manual-add');},0);
+          setTimeout(()=>{manualAddUntil=0;sanitize('manual-add-end');},1600);
           return out;
         };
       }
