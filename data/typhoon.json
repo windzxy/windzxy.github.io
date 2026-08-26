@@ -2,7 +2,7 @@
   "type": "hko-typhoon-track",
   "version": 1,
   "source": "https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml",
-  "updatedAt": "2026-08-26T01:09:29.251010+00:00",
+  "updatedAt": "2026-08-26T02:46:17.160606+00:00",
   "status": "active",
   "storms": [
     {
@@ -318,136 +318,567 @@
           "intensity": "Tropical Depression"
         },
         {
-          "lat": 20.5,
-          "lon": 110.35
+          "lat": 21.0,
+          "lon": 110.6,
+          "time": "2026-08-26T00:00:00+00:00",
+          "wind": "45km/h",
+          "intensity": "Tropical Depression"
         },
         {
-          "lat": 20.64,
-          "lon": 110.41
+          "lat": 21.1,
+          "lon": 110.62
         },
         {
-          "lat": 20.8,
-          "lon": 110.49
-        },
-        {
-          "lat": 20.97,
-          "lon": 110.57
-        },
-        {
-          "lat": 21.15,
+          "lat": 21.25,
           "lon": 110.65
         },
         {
-          "lat": 21.3,
-          "lon": 110.7
-        },
-        {
-          "lat": 21.45,
-          "lon": 110.74
+          "lat": 21.43,
+          "lon": 110.69
         },
         {
           "lat": 21.6,
+          "lon": 110.73
+        },
+        {
+          "lat": 21.77,
           "lon": 110.76
         },
         {
-          "lat": 21.76,
-          "lon": 110.78
-        },
-        {
           "lat": 21.9,
-          "lon": 110.79
+          "lon": 110.8
         },
         {
-          "lat": 22.01,
-          "lon": 110.79
+          "lat": 22.0,
+          "lon": 110.84
         },
         {
-          "lat": 22.1,
-          "lon": 110.8,
-          "time": "2026-08-26T09:00:00+00:00",
+          "lat": 22.09,
+          "lon": 110.87
+        },
+        {
+          "lat": 22.16,
+          "lon": 110.91
+        },
+        {
+          "lat": 22.21,
+          "lon": 110.95
+        },
+        {
+          "lat": 22.26,
+          "lon": 110.98
+        },
+        {
+          "lat": 22.3,
+          "lon": 111.0,
+          "time": "2026-08-26T12:00:00+00:00",
           "wind": "40km/h",
           "intensity": "Low Pressure Area"
         }
       ]
     },
     {
-      "id": "2632",
+      "id": "2630",
       "name": "tc_track.xsd",
       "points": [
         {
-          "lat": 12.1,
-          "lon": 135.1,
+          "lat": 19.5,
+          "lon": 144.9,
           "time": "2026-08-22T12:00:00+00:00",
-          "wind": "45km/h",
-          "intensity": "Tropical Depression"
+          "wind": "175km/h",
+          "intensity": "Severe Typhoon"
         },
         {
-          "lat": 12.4,
-          "lon": 135.0,
+          "lat": 20.4,
+          "lon": 143.7,
           "time": "2026-08-22T18:00:00+00:00",
-          "wind": "55km/h",
-          "intensity": "Tropical Depression"
+          "wind": "185km/h",
+          "intensity": "Super Typhoon"
         },
         {
-          "lat": 13.0,
-          "lon": 135.2,
+          "lat": 21.0,
+          "lon": 142.4,
           "time": "2026-08-23T00:00:00+00:00",
-          "wind": "55km/h",
-          "intensity": "Tropical Depression"
+          "wind": "185km/h",
+          "intensity": "Super Typhoon"
         },
         {
-          "lat": 13.4,
-          "lon": 135.9,
+          "lat": 21.8,
+          "lon": 141.0,
           "time": "2026-08-23T06:00:00+00:00",
-          "wind": "55km/h",
-          "intensity": "Tropical Depression"
+          "wind": "185km/h",
+          "intensity": "Super Typhoon"
         },
         {
-          "lat": 13.7,
-          "lon": 136.2,
+          "lat": 22.5,
+          "lon": 139.5,
           "time": "2026-08-23T12:00:00+00:00",
-          "wind": "55km/h",
-          "intensity": "Tropical Depression"
+          "wind": "185km/h",
+          "intensity": "Super Typhoon"
         },
         {
-          "lat": 14.0,
-          "lon": 136.5,
+          "lat": 23.2,
+          "lon": 137.9,
           "time": "2026-08-23T18:00:00+00:00",
-          "wind": "55km/h",
-          "intensity": "Tropical Depression"
+          "wind": "185km/h",
+          "intensity": "Super Typhoon"
         },
         {
-          "lat": 15.0,
-          "lon": 137.0,
+          "lat": 24.0,
+          "lon": 136.5,
           "time": "2026-08-24T00:00:00+00:00",
-          "wind": "55km/h",
-          "intensity": "Tropical Depression"
+          "wind": "185km/h",
+          "intensity": "Super Typhoon"
         },
         {
-          "lat": 16.1,
-          "lon": 138.0,
+          "lat": 24.5,
+          "lon": 134.8,
           "time": "2026-08-24T06:00:00+00:00",
-          "wind": "55km/h",
-          "intensity": "Tropical Depression"
+          "wind": "185km/h",
+          "intensity": "Super Typhoon"
         },
         {
-          "lat": 16.6,
-          "lon": 138.1,
+          "lat": 24.9,
+          "lon": 133.5,
           "time": "2026-08-24T12:00:00+00:00",
-          "wind": "55km/h",
-          "intensity": "Tropical Depression"
+          "wind": "185km/h",
+          "intensity": "Super Typhoon"
         },
         {
-          "lat": 18.0,
-          "lon": 138.0,
+          "lat": 25.5,
+          "lon": 132.2,
           "time": "2026-08-24T18:00:00+00:00",
+          "wind": "175km/h",
+          "intensity": "Severe Typhoon"
+        },
+        {
+          "lat": 26.1,
+          "lon": 131.2,
+          "time": "2026-08-25T00:00:00+00:00",
+          "wind": "165km/h",
+          "intensity": "Severe Typhoon"
+        },
+        {
+          "lat": 26.8,
+          "lon": 130.1,
+          "time": "2026-08-25T06:00:00+00:00",
+          "wind": "155km/h",
+          "intensity": "Severe Typhoon"
+        },
+        {
+          "lat": 27.1,
+          "lon": 129.1,
+          "time": "2026-08-25T12:00:00+00:00",
+          "wind": "155km/h",
+          "intensity": "Severe Typhoon"
+        },
+        {
+          "lat": 27.5,
+          "lon": 128.1,
+          "time": "2026-08-25T18:00:00+00:00",
+          "wind": "155km/h",
+          "intensity": "Severe Typhoon"
+        },
+        {
+          "lat": 27.9,
+          "lon": 127.2,
+          "time": "2026-08-26T00:00:00+00:00",
+          "wind": "155km/h",
+          "intensity": "Severe Typhoon"
+        },
+        {
+          "lat": 27.96,
+          "lon": 127.11
+        },
+        {
+          "lat": 28.04,
+          "lon": 126.99
+        },
+        {
+          "lat": 28.14,
+          "lon": 126.84
+        },
+        {
+          "lat": 28.24,
+          "lon": 126.68
+        },
+        {
+          "lat": 28.33,
+          "lon": 126.53
+        },
+        {
+          "lat": 28.4,
+          "lon": 126.4
+        },
+        {
+          "lat": 28.45,
+          "lon": 126.29
+        },
+        {
+          "lat": 28.49,
+          "lon": 126.19
+        },
+        {
+          "lat": 28.52,
+          "lon": 126.09
+        },
+        {
+          "lat": 28.55,
+          "lon": 125.99
+        },
+        {
+          "lat": 28.58,
+          "lon": 125.9
+        },
+        {
+          "lat": 28.6,
+          "lon": 125.8
+        },
+        {
+          "lat": 28.62,
+          "lon": 125.7
+        },
+        {
+          "lat": 28.65,
+          "lon": 125.6
+        },
+        {
+          "lat": 28.67,
+          "lon": 125.49
+        },
+        {
+          "lat": 28.69,
+          "lon": 125.39
+        },
+        {
+          "lat": 28.7,
+          "lon": 125.29
+        },
+        {
+          "lat": 28.7,
+          "lon": 125.2
+        },
+        {
+          "lat": 28.69,
+          "lon": 125.11
+        },
+        {
+          "lat": 28.68,
+          "lon": 125.03
+        },
+        {
+          "lat": 28.66,
+          "lon": 124.95
+        },
+        {
+          "lat": 28.64,
+          "lon": 124.87
+        },
+        {
+          "lat": 28.62,
+          "lon": 124.79
+        },
+        {
+          "lat": 28.6,
+          "lon": 124.7,
+          "time": "2026-08-27T00:00:00+00:00",
+          "wind": "145km/h",
+          "intensity": "Typhoon"
+        },
+        {
+          "lat": 28.58,
+          "lon": 124.61
+        },
+        {
+          "lat": 28.57,
+          "lon": 124.51
+        },
+        {
+          "lat": 28.56,
+          "lon": 124.41
+        },
+        {
+          "lat": 28.54,
+          "lon": 124.31
+        },
+        {
+          "lat": 28.52,
+          "lon": 124.21
+        },
+        {
+          "lat": 28.5,
+          "lon": 124.1
+        },
+        {
+          "lat": 28.47,
+          "lon": 123.99
+        },
+        {
+          "lat": 28.44,
+          "lon": 123.88
+        },
+        {
+          "lat": 28.4,
+          "lon": 123.77
+        },
+        {
+          "lat": 28.36,
+          "lon": 123.65
+        },
+        {
+          "lat": 28.33,
+          "lon": 123.53
+        },
+        {
+          "lat": 28.3,
+          "lon": 123.4
+        },
+        {
+          "lat": 28.28,
+          "lon": 123.26
+        },
+        {
+          "lat": 28.26,
+          "lon": 123.12
+        },
+        {
+          "lat": 28.24,
+          "lon": 122.97
+        },
+        {
+          "lat": 28.23,
+          "lon": 122.81
+        },
+        {
+          "lat": 28.22,
+          "lon": 122.66
+        },
+        {
+          "lat": 28.2,
+          "lon": 122.5
+        },
+        {
+          "lat": 28.19,
+          "lon": 122.34
+        },
+        {
+          "lat": 28.17,
+          "lon": 122.19
+        },
+        {
+          "lat": 28.16,
+          "lon": 122.03
+        },
+        {
+          "lat": 28.15,
+          "lon": 121.87
+        },
+        {
+          "lat": 28.13,
+          "lon": 121.69
+        },
+        {
+          "lat": 28.1,
+          "lon": 121.5,
+          "time": "2026-08-28T00:00:00+00:00",
+          "wind": "140km/h",
+          "intensity": "Typhoon"
+        },
+        {
+          "lat": 28.06,
+          "lon": 121.29
+        },
+        {
+          "lat": 28.01,
+          "lon": 121.07
+        },
+        {
+          "lat": 27.96,
+          "lon": 120.84
+        },
+        {
+          "lat": 27.91,
+          "lon": 120.6
+        },
+        {
+          "lat": 27.85,
+          "lon": 120.35
+        },
+        {
+          "lat": 27.8,
+          "lon": 120.1
+        },
+        {
+          "lat": 27.75,
+          "lon": 119.84
+        },
+        {
+          "lat": 27.7,
+          "lon": 119.57
+        },
+        {
+          "lat": 27.65,
+          "lon": 119.3
+        },
+        {
+          "lat": 27.6,
+          "lon": 119.03
+        },
+        {
+          "lat": 27.55,
+          "lon": 118.76
+        },
+        {
+          "lat": 27.5,
+          "lon": 118.5
+        },
+        {
+          "lat": 27.45,
+          "lon": 118.25
+        },
+        {
+          "lat": 27.4,
+          "lon": 118.0
+        },
+        {
+          "lat": 27.35,
+          "lon": 117.76
+        },
+        {
+          "lat": 27.3,
+          "lon": 117.53
+        },
+        {
+          "lat": 27.25,
+          "lon": 117.31
+        },
+        {
+          "lat": 27.2,
+          "lon": 117.1
+        },
+        {
+          "lat": 27.15,
+          "lon": 116.91
+        },
+        {
+          "lat": 27.1,
+          "lon": 116.74
+        },
+        {
+          "lat": 27.04,
+          "lon": 116.57
+        },
+        {
+          "lat": 26.99,
+          "lon": 116.42
+        },
+        {
+          "lat": 26.94,
+          "lon": 116.26
+        },
+        {
+          "lat": 26.9,
+          "lon": 116.1,
+          "time": "2026-08-29T00:00:00+00:00",
           "wind": "55km/h",
           "intensity": "Tropical Depression"
         },
         {
-          "lat": 19.2,
-          "lon": 138.0,
-          "time": "2026-08-25T00:00:00+00:00",
+          "lat": 26.86,
+          "lon": 115.94
+        },
+        {
+          "lat": 26.84,
+          "lon": 115.77
+        },
+        {
+          "lat": 26.81,
+          "lon": 115.61
+        },
+        {
+          "lat": 26.79,
+          "lon": 115.45
+        },
+        {
+          "lat": 26.75,
+          "lon": 115.28
+        },
+        {
+          "lat": 26.7,
+          "lon": 115.1
+        },
+        {
+          "lat": 26.63,
+          "lon": 114.91
+        },
+        {
+          "lat": 26.55,
+          "lon": 114.71
+        },
+        {
+          "lat": 26.46,
+          "lon": 114.51
+        },
+        {
+          "lat": 26.36,
+          "lon": 114.31
+        },
+        {
+          "lat": 26.28,
+          "lon": 114.1
+        },
+        {
+          "lat": 26.2,
+          "lon": 113.9
+        },
+        {
+          "lat": 26.14,
+          "lon": 113.7
+        },
+        {
+          "lat": 26.1,
+          "lon": 113.49
+        },
+        {
+          "lat": 26.06,
+          "lon": 113.28
+        },
+        {
+          "lat": 26.02,
+          "lon": 113.08
+        },
+        {
+          "lat": 25.97,
+          "lon": 112.88
+        },
+        {
+          "lat": 25.9,
+          "lon": 112.7
+        },
+        {
+          "lat": 25.8,
+          "lon": 112.52
+        },
+        {
+          "lat": 25.67,
+          "lon": 112.34
+        },
+        {
+          "lat": 25.53,
+          "lon": 112.17
+        },
+        {
+          "lat": 25.4,
+          "lon": 112.02
+        },
+        {
+          "lat": 25.28,
+          "lon": 111.89
+        },
+        {
+          "lat": 25.2,
+          "lon": 111.8,
+          "time": "2026-08-30T00:00:00+00:00",
           "wind": "40km/h",
           "intensity": "Low Pressure Area"
         }
@@ -455,9 +886,8 @@
     }
   ],
   "errors": [
-    "https://www.weather.gov.hk/wxinfo/currwx/2629紫檀NARRAhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2629.xml2632艾莎尼ATSANIhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2632.xml2630沙德爾SAUDELhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2630.xml: 'ascii' codec can't encode characters in position 23-24: ordinal not in range(128)",
+    "https://www.weather.gov.hk/wxinfo/currwx/2629紫檀NARRAhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2629.xml2630沙德爾SAUDELhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2630.xml: 'ascii' codec can't encode characters in position 23-24: ordinal not in range(128)",
     "https://www.weather.gov.hk/wxinfo/currwx/2629紫檀NARRAhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2629.xml: 'ascii' codec can't encode characters in position 23-24: ordinal not in range(128)",
-    "https://www.weather.gov.hk/wxinfo/currwx/2632艾莎尼ATSANIhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2632.xml: 'ascii' codec can't encode characters in position 23-25: ordinal not in range(128)",
     "https://www.weather.gov.hk/wxinfo/currwx/2630沙德爾SAUDELhttp:/www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2630.xml: 'ascii' codec can't encode characters in position 23-25: ordinal not in range(128)"
   ]
 }
