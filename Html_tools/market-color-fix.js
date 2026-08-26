@@ -1,7 +1,7 @@
 (function(){
   if(window.__windzxyMarketColorFixLoaded)return;
   window.__windzxyMarketColorFixLoaded=1;
-  const VER='20260826-market-color5-load-workspace-guard';
+  const VER='20260826-market-color6-load-workspace-guard2';
 
   function loadScriptOnce(src,attr){
     if(document.querySelector('script['+attr+']'))return;
@@ -13,7 +13,7 @@
   }
   function ensureWorkspaceGuard(){
     if(window.__windzxyWorkspaceCoreGuardLoaded)return;
-    loadScriptOnce('Html_tools/workspace-core-guard.js?v=20260826-workspace-core-guard1-no-auto-cards','data-windzxy-workspace-guard-loader');
+    loadScriptOnce('Html_tools/workspace-core-guard.js?v=20260826-workspace-core-guard2-no-unapproved-cards','data-windzxy-workspace-guard-loader');
   }
   function ensureTyphoonLoader(){
     if(window.__windzxyTyphoonWidgetLoaded)return;
