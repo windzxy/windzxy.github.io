@@ -2,7 +2,7 @@
   "type": "hko-typhoon-track",
   "version": 1,
   "source": "https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml",
-  "updatedAt": "2026-08-26T03:51:37.408588+00:00",
+  "updatedAt": "2026-08-26T04:37:18.999614+00:00",
   "status": "active",
   "storms": [
     {
@@ -325,53 +325,36 @@
           "intensity": "Tropical Depression"
         },
         {
-          "lat": 21.1,
-          "lon": 110.62
+          "lat": 21.4,
+          "lon": 110.7,
+          "time": "2026-08-26T03:00:00+00:00",
+          "wind": "45km/h",
+          "intensity": "Tropical Depression"
         },
         {
-          "lat": 21.25,
-          "lon": 110.65
+          "lat": 21.51,
+          "lon": 110.72
         },
         {
-          "lat": 21.43,
-          "lon": 110.69
-        },
-        {
-          "lat": 21.6,
-          "lon": 110.73
-        },
-        {
-          "lat": 21.77,
+          "lat": 21.67,
           "lon": 110.76
         },
         {
-          "lat": 21.9,
+          "lat": 21.85,
           "lon": 110.8
         },
         {
-          "lat": 22.0,
+          "lat": 22.03,
           "lon": 110.84
         },
         {
-          "lat": 22.09,
-          "lon": 110.87
-        },
-        {
-          "lat": 22.16,
-          "lon": 110.91
-        },
-        {
-          "lat": 22.21,
-          "lon": 110.95
-        },
-        {
-          "lat": 22.26,
-          "lon": 110.98
+          "lat": 22.19,
+          "lon": 110.88
         },
         {
           "lat": 22.3,
-          "lon": 111.0,
-          "time": "2026-08-26T12:00:00+00:00",
+          "lon": 110.9,
+          "time": "2026-08-26T09:00:00+00:00",
           "wind": "40km/h",
           "intensity": "Low Pressure Area"
         }
