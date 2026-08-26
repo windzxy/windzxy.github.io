@@ -1,21 +1,30 @@
 (function(){
   if(window.__windzxyMarketColorFixLoaded)return;
   window.__windzxyMarketColorFixLoaded=1;
-  const VER='20260821-market-color4-load-typhoon-v3';
+  const VER='20260826-market-color5-load-workspace-guard';
 
+  function loadScriptOnce(src,attr){
+    if(document.querySelector('script['+attr+']'))return;
+    const s=document.createElement('script');
+    s.src=src;
+    s.async=false;
+    s.setAttribute(attr,'1');
+    document.body.appendChild(s);
+  }
+  function ensureWorkspaceGuard(){
+    if(window.__windzxyWorkspaceCoreGuardLoaded)return;
+    loadScriptOnce('Html_tools/workspace-core-guard.js?v=20260826-workspace-core-guard1-no-auto-cards','data-windzxy-workspace-guard-loader');
+  }
+  function ensureTyphoonLoader(){
+    if(window.__windzxyTyphoonWidgetLoaded)return;
+    loadScriptOnce('Html_tools/typhoon-widget.js?v=20260821-typhoon-widget3-map-first-pm','data-windzxy-typhoon-loader');
+  }
   function num(text){const v=parseFloat(String(text||'').replace(/[,%+\s]/g,''));return Number.isFinite(v)?v:null;}
   function setTrend(el,trend){if(!el)return;el.classList.toggle('market-up',trend==='up');el.classList.toggle('market-down',trend==='down');el.classList.toggle('market-flat',trend==='flat');}
   function scanOne(widget){const pct=num(widget.querySelector('[data-active-pct]')?.textContent);const chg=num(widget.querySelector('[data-active-change]')?.textContent);const v=Number.isFinite(pct)?pct:chg;const trend=v>0?'up':v<0?'down':'flat';setTrend(widget,trend);widget.classList.toggle('up',trend==='up');widget.classList.toggle('down',trend==='down');widget.classList.toggle('flat',trend==='flat');const active=widget.querySelector('.md-tabs button.on');setTrend(active,trend);widget.querySelectorAll('[data-active-price],[data-active-change],[data-active-pct]').forEach(el=>setTrend(el,trend));}
   function scan(){document.querySelectorAll('.metals-widget.mdesk').forEach(scanOne);}
-  function ensureTyphoonLoader(){
-    if(window.__windzxyTyphoonWidgetLoaded||document.querySelector('script[data-windzxy-typhoon-loader]'))return;
-    const s=document.createElement('script');
-    s.src='Html_tools/typhoon-widget.js?v=20260821-typhoon-widget3-map-first-pm';
-    s.async=false;
-    s.dataset.windzxyTyphoonLoader='1';
-    document.body.appendChild(s);
-  }
   function install(){
+    ensureWorkspaceGuard();
     if(!document.getElementById('windzxyMarketColorFixStyle')){
       const s=document.createElement('style');s.id='windzxyMarketColorFixStyle';s.textContent=`
 /* CN/HK market convention: red = up, green = down. */
@@ -31,5 +40,5 @@
     ensureTyphoonLoader();scan();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
-  setInterval(scan,350);window.addEventListener('focus',scan,{passive:true});document.addEventListener('click',e=>{if(e.target.closest('.metals-widget'))setTimeout(scan,40);},true);window.windzxyMarketColorFixVersion=VER;
+  setTimeout(ensureWorkspaceGuard,120);setTimeout(ensureWorkspaceGuard,800);setInterval(scan,350);window.addEventListener('focus',scan,{passive:true});document.addEventListener('click',e=>{if(e.target.closest('.metals-widget'))setTimeout(scan,40);},true);window.windzxyMarketColorFixVersion=VER;
 })();
