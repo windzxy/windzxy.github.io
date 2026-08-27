@@ -41,7 +41,7 @@ jobs:
 
           tags = [
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
-            '<script src="Html_tools/calendar-widget-v4.js?v=20260827-calendar-widget-v4-unified-clean"></script>',
+            '<script src="Html_tools/calendar-widget-v4.js?v=20260827-calendar-widget-v4-compact-professional"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260826-workspace-core-guard2-no-unapproved-cards"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
             '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>',
@@ -98,11 +98,11 @@ jobs:
       - name: Commit lean script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has unified Calendar V4 scripts."
+            echo "index.html already has compact Calendar V4 scripts."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject unified Calendar V4"
+          git commit -m "Inject compact professional Calendar V4"
           git push
