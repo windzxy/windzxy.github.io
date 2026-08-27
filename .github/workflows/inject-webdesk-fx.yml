@@ -7,6 +7,7 @@ on:
     paths:
       - 'Html_tools/fx-widget.js'
       - 'Html_tools/calendar-widget-v3.js'
+      - 'Html_tools/calendar-v3-responsive-fix.js'
       - 'Html_tools/image-studio-v2.js'
       - 'Html_tools/calendar-widget.js'
       - 'Html_tools/calendar-perpetual-fix.js'
@@ -44,8 +45,9 @@ jobs:
           import re
 
           tags = [
-            '<script src="Html_tools/market-color-fix.js?v=20260827-market-color9-load-image-studio-v3"></script>',
+            '<script src="Html_tools/market-color-fix.js?v=20260827-market-color10-load-calendar-responsive-fix"></script>',
             '<script src="Html_tools/calendar-widget-v3.js?v=20260826-calendar-widget-v3-unified-product"></script>',
+            '<script src="Html_tools/calendar-v3-responsive-fix.js?v=20260827-calendar-v3-responsive-fix1-narrow-card"></script>',
             '<script src="Html_tools/image-studio-v2.js?v=20260827-image-studio-v3-studio-shell"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260826-workspace-core-guard2-no-unapproved-cards"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
@@ -88,7 +90,7 @@ jobs:
             html = re.sub(rf'id:"{re.escape(app_id)}",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-[^"]+"', repl, html)
 
           script_names = [
-            'market-color-fix','calendar-widget-v3','image-studio-v2','workspace-core-guard','first-run-empty-desktop','background-fit-fix','icon-edge-fix',
+            'market-color-fix','calendar-widget-v3','calendar-v3-responsive-fix','image-studio-v2','workspace-core-guard','first-run-empty-desktop','background-fit-fix','icon-edge-fix',
             'layout-persist-fix','card-gap-fix','card-fold-fix','metals-widget','fx-widget',
             'typhoon-widget','calendar-widget','calendar-polish-fix','calendar-lunar-ui-fix','calendar-perpetual-fix',
             'calendar-pm-polish','calendar-product-redesign','calendar-ux-cleanup','theme-contrast-fix','finance-i18n-fix'
@@ -109,5 +111,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject Image Studio V3 widget"
+          git commit -m "Inject Calendar V3 responsive fix"
           git push
