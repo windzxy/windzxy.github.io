@@ -1,59 +1,97 @@
 (function(){
   'use strict';
-  if(window.__windzxyCalendarV3LunarLabelFixLoaded)return;
-  window.__windzxyCalendarV3LunarLabelFixLoaded=1;
-  const VER='20260827-calendar-v3-lunar-label-fix1';
-  const CN_NUM=['零','一','二','三','四','五','六','七','八','九','十'];
-  const MONTHS=['正月','二月','三月','四月','五月','六月','七月','八月','九月','十月','冬月','臘月'];
-  function toCnDay(n){
-    n=Number(n)||1;
-    if(n<=10)return '初'+CN_NUM[n];
-    if(n<20)return '十'+(n===10?'':CN_NUM[n-10]);
-    if(n===20)return '二十';
-    if(n<30)return '廿'+CN_NUM[n-20];
-    return '三十';
+  if(window.__windzxyCalendarV3LunarLabelFixLoadedV2)return;
+  window.__windzxyCalendarV3LunarLabelFixLoadedV2=1;
+  const VER='20260827-calendar-v3-lunar-label-fix2-force-dom';
+
+  function lang(){
+    const v=document.querySelector('.lang-select')?.value||localStorage.getItem('windzxy-lang')||document.documentElement.lang||'zh-HK';
+    if(/^en/i.test(v))return 'en';
+    if(/^zh-CN/i.test(v)||/Hans/i.test(v))return 'zh-CN';
+    return 'zh-HK';
   }
-  function normalize(text){
-    let s=String(text||'').trim().replace(/\s+/g,'');
-    if(!s)return s;
-    s=s.replace(/^農曆|^农历|^Lunar\s*·?\s*/i,'');
-    s=s.replace(/(闰|閏)/g,'閏');
-    s=s.replace(/腊月/g,'臘月');
-    s=s.replace(/十一月/g,'冬月').replace(/十二月/g,'臘月');
-    s=s.replace(/(正月|[一二三四五六七八九十冬臘]+月)(\d{1,2})日?/,(_,m,d)=>m+toCnDay(d));
-    s=s.replace(/(\d{1,2})月(\d{1,2})日?/,(_,m,d)=>{const mi=Math.max(1,Math.min(12,Number(m)));return MONTHS[mi-1]+toCnDay(d);});
-    s=s.replace(/(正月|[一二三四五六七八九十冬臘]+月)(初?\d{1,2}|\d{1,2}日?)/,(_,m,d)=>m+toCnDay(String(d).replace(/\D/g,'')));
-    return s;
+  function isZh(){return lang()!=='en';}
+  const lunarDays=['','初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+  const cnNum={'0':'零','1':'一','2':'二','3':'三','4':'四','5':'五','6':'六','7':'七','8':'八','9':'九','10':'十','11':'十一','12':'十二'};
+  function dayCn(n){n=parseInt(n,10);return lunarDays[n]||String(n||'');}
+  function monthCn(n){n=parseInt(n,10);if(!n)return '';if(n===1)return '正月';if(n===11)return '冬月';if(n===12)return '臘月';return (cnNum[String(n)]||String(n))+'月';}
+  function normalizeMonth(s){
+    s=String(s||'').trim();
+    const arab=s.match(/(^|[^0-9])([1-9]|1[0-2])月/);
+    if(arab)return monthCn(arab[2]);
+    return s.replace('腊月','臘月');
   }
-  function shortDay(text){
-    const s=normalize(text);
-    const day=s.match(/(初[一二三四五六七八九十]|十[一二三四五六七八九]?|二十|廿[一二三四五六七八九十]?|三十)$/);
-    return day?day[1]:s.replace(/^.*月/,'');
+  function normalizeLunar(raw,full){
+    let text=String(raw||'').trim();
+    text=text.replace(/^(Lunar|農曆|农历)\s*[·:：-]?\s*/i,'').trim();
+    text=text.replace(/\s+/g,'');
+    text=text.replace(/([0-9]{1,2})日/g,(_,n)=>dayCn(n));
+    text=text.replace(/(^|[月\s])([0-9]{1,2})(?![0-9])/g,(m,p,n)=>p+dayCn(n));
+    text=text.replace(/([1-9]|1[0-2])月/g,(_,n)=>monthCn(n));
+    text=text.replace('腊月','臘月');
+    const month=(text.match(/(閏)?(正月|[一二三四五六七八九十冬臘腊]+月)/)||[]).slice(1).join('').replace('腊','臘');
+    const day=(text.match(/(初[一二三四五六七八九十]|十[一二三四五六七八九]?|二十|廿[一二三四五六七八九十]?|三十)$/)||[])[1];
+    if(full&&month&&day)return month+day;
+    if(full&&month)return month;
+    if(day)return day;
+    return text;
   }
-  function fixRoot(root){
-    if(!root||!root.isConnected)return;
+  function labelFor(type){
+    const l=lang();
+    if(type==='year')return l==='en'?'Year':'年';
+    if(type==='month')return l==='en'?'Month':'月';
+    if(type==='date')return l==='en'?'Date':'日';
+    if(type==='go')return l==='en'?'Go':'定位';
+    if(type==='monthMode')return l==='en'?'Month':'月';
+    if(type==='yearMode')return l==='en'?'Year':'年';
+    return type;
+  }
+  function fixLabels(root){
+    const y=root.querySelector('[data-cv3-year]')?.closest('label')?.querySelector('span');
+    const m=root.querySelector('select[data-cv3-month]')?.closest('label')?.querySelector('span');
+    const d=root.querySelector('[data-cv3-date]')?.closest('label')?.querySelector('span');
+    if(y)y.textContent=labelFor('year');
+    if(m)m.textContent=labelFor('month');
+    if(d)d.textContent=labelFor('date');
+    const go=root.querySelector('[data-cv3-act="jump"]');if(go)go.textContent=labelFor('go');
+    const mb=root.querySelector('[data-cv3-mode="month"]');if(mb)mb.textContent=labelFor('monthMode');
+    const yb=root.querySelector('[data-cv3-mode="year"]');if(yb)yb.textContent=labelFor('yearMode');
+  }
+  function fixLunar(root){
     root.querySelectorAll('.cv3-title em,.cv3-hero span').forEach(el=>{
-      const raw=el.textContent||'';
-      if(!/(Lunar|農曆|农历|月\d{1,2}日|\d{1,2}月\d{1,2})/i.test(raw))return;
-      const parts=raw.split('·');
-      if(parts.length>1){
-        const last=normalize(parts.pop());
-        el.textContent=parts.join('·').replace(/\s+$/,'')+' · '+last;
-      }else{
-        el.textContent=raw.replace(/(Lunar|農曆|农历)\s*·?\s*(.+)$/i,(m,p,v)=>p+' · '+normalize(v));
+      const old=el.textContent||'';
+      const parts=old.split('·');
+      if(parts.length>=2){
+        const prefix=parts.slice(0,-1).join('·').trim();
+        const lunar=normalizeLunar(parts[parts.length-1],true);
+        if(/lunar|農曆|农历/i.test(prefix))el.textContent=(isZh()?'農曆':'Lunar')+' · '+lunar;
+        else el.textContent=prefix+' · '+lunar;
+      }else if(/lunar|農曆|农历/i.test(old)){
+        el.textContent=(isZh()?'農曆':'Lunar')+' · '+normalizeLunar(old,true);
       }
     });
-    root.querySelectorAll('.cv3-day span').forEach(el=>{
-      const raw=el.textContent||'';
-      if(/\d/.test(raw)||/月/.test(raw))el.textContent=shortDay(raw);
+    root.querySelectorAll('.cv3-day span').forEach(span=>{
+      const next=normalizeLunar(span.textContent,false);
+      if(next)span.textContent=next;
     });
   }
+  function fixOne(root){
+    if(!root||!root.isConnected)return;
+    root.dataset.calendarLunarFix='2';
+    fixLabels(root);
+    fixLunar(root);
+  }
   let timer=0;
-  function scan(delay=0){clearTimeout(timer);timer=setTimeout(()=>document.querySelectorAll('.calendar-v3').forEach(fixRoot),delay);}
-  document.addEventListener('click',e=>{if(e.target.closest('.calendar-v3'))scan(80);},true);
-  document.addEventListener('change',e=>{if(e.target.closest('.calendar-v3'))scan(80);},true);
-  new MutationObserver(()=>scan(120)).observe(document.getElementById('desktopCanvas')||document.body,{childList:true,subtree:true});
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>scan(0),{once:true});else scan(0);
-  setTimeout(()=>scan(0),300);setTimeout(()=>scan(0),1000);
+  function scan(){document.querySelectorAll('.calendar-v3').forEach(fixOne);}
+  function schedule(delay=80){clearTimeout(timer);timer=setTimeout(scan,delay);}
+  function boot(){
+    scan();
+    const target=document.getElementById('desktopCanvas')||document.body;
+    new MutationObserver(()=>schedule(40)).observe(target,{childList:true,subtree:true,characterData:true});
+    document.addEventListener('click',e=>{if(e.target.closest('.calendar-v3'))schedule(60);},true);
+    document.addEventListener('change',e=>{if(e.target.closest('.calendar-v3')||e.target.matches('.lang-select'))schedule(80);},true);
+    setTimeout(scan,250);setTimeout(scan,900);setTimeout(scan,1800);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
   window.windzxyCalendarV3LunarLabelFixVersion=VER;
 })();
