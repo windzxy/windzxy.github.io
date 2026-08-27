@@ -9,6 +9,7 @@ on:
       - 'Html_tools/calendar-widget-v3.js'
       - 'Html_tools/calendar-v3-lite-polish.js'
       - 'Html_tools/calendar-v3-lunar-label-fix.js'
+      - 'Html_tools/calendar-v3-day-picker-fix.js'
       - 'Html_tools/workspace-core-guard.js'
       - 'Html_tools/first-run-empty-desktop.js'
       - 'Html_tools/background-fit-fix.js'
@@ -46,6 +47,7 @@ jobs:
             '<script src="Html_tools/calendar-widget-v3.js?v=20260826-calendar-widget-v3-unified-product"></script>',
             '<script src="Html_tools/calendar-v3-lite-polish.js?v=20260827-calendar-v3-lite-polish2-grid-nav"></script>',
             '<script src="Html_tools/calendar-v3-lunar-label-fix.js?v=20260827-calendar-v3-lunar-label-fix2-force-dom"></script>',
+            '<script src="Html_tools/calendar-v3-day-picker-fix.js?v=20260827-calendar-v3-day-picker1-auto-jump"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260826-workspace-core-guard2-no-unapproved-cards"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
             '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>',
@@ -86,7 +88,7 @@ jobs:
             html = re.sub(rf'id:"{re.escape(app_id)}",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-[^"]+"', repl, html)
 
           script_names = [
-            'market-color-fix','calendar-widget-v3','calendar-v3-lite-polish','calendar-v3-lunar-label-fix','calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix',
+            'market-color-fix','calendar-widget-v3','calendar-v3-lite-polish','calendar-v3-lunar-label-fix','calendar-v3-day-picker-fix','calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix',
             'image-studio-v2','workspace-core-guard','first-run-empty-desktop','background-fit-fix','icon-edge-fix',
             'layout-persist-fix','card-gap-fix','card-fold-fix','metals-widget','fx-widget','typhoon-widget',
             'calendar-widget','calendar-polish-fix','calendar-lunar-ui-fix','calendar-perpetual-fix','calendar-pm-polish',
@@ -108,5 +110,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject forced Calendar label formatting"
+          git commit -m "Inject Calendar day picker auto jump"
           git push
