@@ -1,7 +1,7 @@
 (function(){
   if(window.__windzxyMarketColorFixLoaded)return;
   window.__windzxyMarketColorFixLoaded=1;
-  const VER='20260826-market-color7-load-calendar-v3';
+  const VER='20260827-market-color8-load-image-studio-v2';
 
   function loadScriptOnce(src,attr){
     if(document.querySelector('script['+attr+']'))return;
@@ -14,6 +14,10 @@
   function ensureCalendarV3(){
     if(window.__windzxyCalendarWidgetV3Loaded)return;
     loadScriptOnce('Html_tools/calendar-widget-v3.js?v=20260826-calendar-widget-v3-unified-product','data-windzxy-calendar-v3-loader');
+  }
+  function ensureImageStudioV2(){
+    if(window.__windzxyImageStudioV2Loaded)return;
+    loadScriptOnce('Html_tools/image-studio-v2.js?v=20260827-image-studio-v2-product-workflow','data-windzxy-image-studio-v2-loader');
   }
   function ensureWorkspaceGuard(){
     if(window.__windzxyWorkspaceCoreGuardLoaded)return;
@@ -29,6 +33,7 @@
   function scan(){document.querySelectorAll('.metals-widget.mdesk').forEach(scanOne);}
   function install(){
     ensureCalendarV3();
+    ensureImageStudioV2();
     ensureWorkspaceGuard();
     if(!document.getElementById('windzxyMarketColorFixStyle')){
       const s=document.createElement('style');s.id='windzxyMarketColorFixStyle';s.textContent=`
@@ -46,6 +51,7 @@
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
   setTimeout(ensureCalendarV3,80);setTimeout(ensureCalendarV3,600);
+  setTimeout(ensureImageStudioV2,100);setTimeout(ensureImageStudioV2,700);
   setTimeout(ensureWorkspaceGuard,120);setTimeout(ensureWorkspaceGuard,800);
   setInterval(scan,350);window.addEventListener('focus',scan,{passive:true});document.addEventListener('click',e=>{if(e.target.closest('.metals-widget'))setTimeout(scan,40);},true);window.windzxyMarketColorFixVersion=VER;
 })();
