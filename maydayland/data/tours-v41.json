@@ -1,0 +1,33 @@
+{
+  "version":"41.0.0",
+  "updatedAt":"2026-08-27",
+  "principle":"Each tour owns one route color. UI supports single-tour mode and all-tours overlay mode. Route order is a product model and must be verified before official labeling.",
+  "map":{"center":{"lng":116.0,"lat":24.0},"scale":1.12,"hubCityId":"taipei"},
+  "cities":[
+    {"id":"taipei","name":"台北","lng":121.565,"lat":25.037,"visits":26,"level":"核心主場","venue":"台北大巨蛋 / 台北小巨蛋","summary":"主場敘事核心，5525+2 與大型場館記憶。","tone":"#ff70b7"},
+    {"id":"taichung","name":"台中","lng":120.646,"lat":24.179,"visits":14,"level":"起跑 / 跨年","venue":"台中洲際棒球場","summary":"起跑、跨年與台灣中部大型場館線。","tone":"#ffd36a"},
+    {"id":"kaohsiung","name":"高雄","lng":120.310,"lat":22.755,"visits":12,"level":"戶外大場","venue":"高雄世運主場館","summary":"港都戶外舞台與大型場館。","tone":"#ff9a56"},
+    {"id":"hongkong","name":"香港","lng":114.158,"lat":22.282,"visits":10,"level":"海港海外線","venue":"中環海濱 / 紅磡","summary":"維港與海外華語城市節點。","tone":"#8f7dff"},
+    {"id":"shanghai","name":"上海","lng":121.474,"lat":31.230,"visits":9,"level":"連場都市","venue":"上海體育場","summary":"都市高密度連場演出線。","tone":"#64e8ff"},
+    {"id":"beijing","name":"北京","lng":116.407,"lat":39.904,"visits":8,"level":"超大型場","venue":"國家體育場 鳥巢","summary":"鳥巢與北方大型場節點。","tone":"#c96dff"},
+    {"id":"shenzhen","name":"深圳","lng":114.057,"lat":22.543,"visits":5,"level":"霓虹城市","venue":"深圳大運中心","summary":"科技霓虹與年輕市場線。","tone":"#35d0ff"},
+    {"id":"singapore","name":"新加坡","lng":103.820,"lat":1.352,"visits":3,"level":"東南亞節點","venue":"國家體育場 / 室內館","summary":"海外巡演節點。","tone":"#72ffc9"},
+    {"id":"tokyo","name":"東京","lng":139.691,"lat":35.689,"visits":2,"level":"日本資料節點","venue":"日本官方資料支線","summary":"日文作品與海外資料入口。","tone":"#a6f0ff"}
+  ],
+  "tours":[
+    {"id":"t5525","name":"5525 回到那一天","years":"2023–2026","color":"#28d7ff","status":"route-model / needs day-by-day verification","route":["taichung","kaohsiung","hongkong","beijing","shanghai","taipei"],"note":"產品路線模型：先做巡演分色與切換，逐日官方場次後續核對。"},
+    {"id":"wantsee","name":"好好好想見到你","years":"2020–2024","color":"#f7c65b","status":"route-model / needs verification","route":["kaohsiung","taichung","taipei","hongkong","shenzhen","shanghai"],"note":"產品路線模型，避免假裝完整官方順序。"},
+    {"id":"life","name":"LIFE 人生無限公司","years":"2017–2019","color":"#9b84ff","status":"route-model / needs verification","route":["taipei","hongkong","shanghai","beijing","kaohsiung"],"note":"後續補官方城市與日期。"},
+    {"id":"ark","name":"諾亞方舟","years":"2011–2014","color":"#ff7ea9","status":"route-model / needs verification","route":["taipei","kaohsiung","hongkong","shanghai","beijing"],"note":"後續補完整巡演路線、票務與場刊資料。"},
+    {"id":"dna","name":"DNA 創造","years":"2009–2010","color":"#72f5c6","status":"route-model / needs verification","route":["taipei","hongkong","shanghai","singapore","tokyo"],"note":"早期海外線資料待補。"}
+  ],
+  "pages":[
+    {"id":"home","label":"Tour Atlas / Home","readiness":84},
+    {"id":"city","label":"City Dossier","readiness":78},
+    {"id":"album","label":"Album Room","readiness":74},
+    {"id":"songs","label":"Songs Universe","readiness":72},
+    {"id":"books","label":"Books & Publications","readiness":65},
+    {"id":"timeline","label":"Timeline / Archive","readiness":70}
+  ],
+  "next":["v42: GeoJSON ExtrudeGeometry base map","v43: Shader route flow and bloom switch","v44: product-page split for A-F pages"]
+}
