@@ -1,7 +1,7 @@
 (function(){
   if(window.__windzxyMarketColorFixLoaded)return;
   window.__windzxyMarketColorFixLoaded=1;
-  const VER='20260827-market-color10-load-calendar-responsive-fix';
+  const VER='20260827-market-color11-load-calendar-product-polish';
 
   function loadScriptOnce(src,attr){
     if(document.querySelector('script['+attr+']'))return;
@@ -18,6 +18,10 @@
   function ensureCalendarResponsiveFix(){
     if(window.__windzxyCalendarV3ResponsiveFixLoaded)return;
     loadScriptOnce('Html_tools/calendar-v3-responsive-fix.js?v=20260827-calendar-v3-responsive-fix1-narrow-card','data-windzxy-calendar-v3-responsive-loader');
+  }
+  function ensureCalendarProductPolish(){
+    if(window.__windzxyCalendarV3ProductPolishLoaded)return;
+    loadScriptOnce('Html_tools/calendar-v3-product-polish.js?v=20260827-calendar-v3-product-polish1','data-windzxy-calendar-v3-product-polish-loader');
   }
   function ensureImageStudioV3(){
     if(window.__windzxyImageStudioV3Loaded)return;
@@ -38,6 +42,7 @@
   function install(){
     ensureCalendarV3();
     ensureCalendarResponsiveFix();
+    ensureCalendarProductPolish();
     ensureImageStudioV3();
     ensureWorkspaceGuard();
     if(!document.getElementById('windzxyMarketColorFixStyle')){
@@ -57,6 +62,7 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
   setTimeout(ensureCalendarV3,80);setTimeout(ensureCalendarV3,600);
   setTimeout(ensureCalendarResponsiveFix,90);setTimeout(ensureCalendarResponsiveFix,220);setTimeout(ensureCalendarResponsiveFix,900);
+  setTimeout(ensureCalendarProductPolish,100);setTimeout(ensureCalendarProductPolish,260);setTimeout(ensureCalendarProductPolish,980);
   setTimeout(ensureImageStudioV3,40);setTimeout(ensureImageStudioV3,140);setTimeout(ensureImageStudioV3,800);
   setTimeout(ensureWorkspaceGuard,120);setTimeout(ensureWorkspaceGuard,800);
   setInterval(scan,350);window.addEventListener('focus',scan,{passive:true});document.addEventListener('click',e=>{if(e.target.closest('.metals-widget'))setTimeout(scan,40);},true);window.windzxyMarketColorFixVersion=VER;
