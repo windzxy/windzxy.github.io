@@ -1,7 +1,7 @@
 (function(){
-  if(window.__windzxyCalendarV3SelectYearFixLoaded)return;
-  window.__windzxyCalendarV3SelectYearFixLoaded=1;
-  const VER='20260827-calendar-v3-select-year-fix1';
+  if(window.__windzxyCalendarV3SelectYearFixLoadedV2)return;
+  window.__windzxyCalendarV3SelectYearFixLoadedV2=1;
+  const VER='20260827-calendar-v3-select-year-fix2-perf';
   const MONTHS={
     'zh-CN':['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
     'zh-HK':['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
@@ -33,88 +33,49 @@
 
   function enhanceSelect(select){
     if(!select||select.dataset.cv3CustomMonth==='1')return;
-    const parent=select.parentElement;
-    if(!parent)return;
+    const parent=select.parentElement;if(!parent)return;
     select.dataset.cv3CustomMonth='1';
-    const shell=document.createElement('div');
-    shell.className='cv3-month-select-shell';
-    parent.insertBefore(shell,select);
-    shell.appendChild(select);
-    select.classList.add('cv3-native-month-hidden');
-    const button=document.createElement('button');
-    button.type='button';
-    button.className='cv3-month-display';
-    const menu=document.createElement('div');
-    menu.className='cv3-month-menu';
-    menu.hidden=true;
-    shell.appendChild(button);
-    shell.appendChild(menu);
-    function paint(){
-      const list=months();
-      const value=Number(select.value||0);
-      button.textContent=list[value]||select.options[select.selectedIndex]?.textContent||'';
+    const shell=document.createElement('div');shell.className='cv3-month-select-shell';
+    parent.insertBefore(shell,select);shell.appendChild(select);select.classList.add('cv3-native-month-hidden');
+    const button=document.createElement('button');button.type='button';button.className='cv3-month-display';
+    const menu=document.createElement('div');menu.className='cv3-month-menu';menu.hidden=true;
+    shell.appendChild(button);shell.appendChild(menu);
+    function paint(force){
+      const list=months();const value=Number(select.value||0);
+      const key=list.join('|')+'|'+value;if(!force&&menu.dataset.key===key)return;
+      menu.dataset.key=key;button.textContent=list[value]||select.options[select.selectedIndex]?.textContent||'';
       menu.innerHTML=list.map((name,i)=>`<button type="button" data-cv3-custom-month="${i}" class="${i===value?'on':''}">${E(name)}</button>`).join('');
     }
-    paint();
+    paint(true);
     button.addEventListener('pointerdown',e=>e.stopPropagation(),true);
     menu.addEventListener('pointerdown',e=>e.stopPropagation(),true);
-    button.addEventListener('click',e=>{
-      e.preventDefault();e.stopPropagation();
-      const opened=!menu.hidden;
-      closeAllMenus();
-      menu.hidden=opened;
-      button.classList.toggle('is-open',!opened);
-      paint();
-    },true);
-    menu.addEventListener('click',e=>{
-      const item=e.target.closest('[data-cv3-custom-month]');
-      if(!item)return;
-      e.preventDefault();e.stopPropagation();
-      select.value=item.dataset.cv3CustomMonth;
-      select.dispatchEvent(new Event('change',{bubbles:true}));
-      menu.hidden=true;button.classList.remove('is-open');
-      setTimeout(scan,40);
-    },true);
-    select.addEventListener('change',()=>{paint();setTimeout(scan,30);},true);
+    button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const opened=!menu.hidden;closeAllMenus();menu.hidden=opened;button.classList.toggle('is-open',!opened);paint(true);},true);
+    menu.addEventListener('click',e=>{const item=e.target.closest('[data-cv3-custom-month]');if(!item)return;e.preventDefault();e.stopPropagation();select.value=item.dataset.cv3CustomMonth;select.dispatchEvent(new Event('change',{bubbles:true}));menu.hidden=true;button.classList.remove('is-open');schedule();},true);
+    select.addEventListener('change',()=>{paint(true);schedule();},true);
   }
-  function closeAllMenus(){
-    document.querySelectorAll('.cv3-month-menu').forEach(m=>m.hidden=true);
-    document.querySelectorAll('.cv3-month-display.is-open').forEach(b=>b.classList.remove('is-open'));
-  }
+  function closeAllMenus(){document.querySelectorAll('.cv3-month-menu').forEach(m=>m.hidden=true);document.querySelectorAll('.cv3-month-display.is-open').forEach(b=>b.classList.remove('is-open'));}
 
   function reorderYear(root){
-    const grid=root.querySelector('.cv3-year-view .cv3-year-grid');
-    if(!grid)return;
-    const select=root.querySelector('select[data-cv3-month]');
-    let start=Number(select?.value);
-    if(!Number.isFinite(start)){
-      const selected=root.querySelector('.cv3-mini .selected')?.closest('.cv3-mini')?.querySelector('[data-cv3-month-pick]');
-      start=Number(selected?.dataset.cv3MonthPick||0);
-    }
+    const grid=root.querySelector('.cv3-year-view .cv3-year-grid');if(!grid)return;
+    const select=root.querySelector('select[data-cv3-month]');let start=Number(select?.value);
     if(!Number.isFinite(start))start=0;
-    const cards=Array.from(grid.querySelectorAll(':scope > .cv3-mini'));
-    if(!cards.length)return;
+    if(grid.dataset.startMonth===String(start)&&grid.dataset.ordered==='1')return;
+    const cards=Array.from(grid.querySelectorAll(':scope > .cv3-mini'));if(!cards.length)return;
     cards.sort((a,b)=>rank(a,start)-rank(b,start));
-    cards.forEach(card=>{
-      const m=monthOf(card);
-      card.classList.toggle('is-start-month',m===start);
-      grid.appendChild(card);
-    });
-    grid.dataset.startMonth=String(start);
+    const frag=document.createDocumentFragment();
+    cards.forEach(card=>{const m=monthOf(card);card.classList.toggle('is-start-month',m===start);frag.appendChild(card);});
+    grid.appendChild(frag);grid.dataset.startMonth=String(start);grid.dataset.ordered='1';
   }
   function monthOf(card){return Number(card.querySelector('[data-cv3-month-pick]')?.dataset.cv3MonthPick??999);}
   function rank(card,start){const m=monthOf(card);return Number.isFinite(m)?(m-start+12)%12:99;}
 
   function scan(){
     installStyle();
-    document.querySelectorAll('.calendar-v3').forEach(root=>{
-      root.setAttribute('lang',lang()==='en'?'en':'zh');
-      root.querySelectorAll('select[data-cv3-month]').forEach(enhanceSelect);
-      reorderYear(root);
-    });
+    document.querySelectorAll('.calendar-v3').forEach(root=>{root.setAttribute('lang',lang()==='en'?'en':'zh');root.querySelectorAll('select[data-cv3-month]').forEach(enhanceSelect);reorderYear(root);});
   }
-  const mo=new MutationObserver(()=>scan());
-  function boot(){scan();mo.observe(document.documentElement,{childList:true,subtree:true});document.addEventListener('click',e=>{if(!e.target.closest('.cv3-month-select-shell'))closeAllMenus();},true);setTimeout(scan,120);setTimeout(scan,600);setInterval(scan,1200);}
+  let pending=false;
+  function schedule(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;scan();});}
+  function boot(){installStyle();scan();const layer=document.getElementById('windowLayer')||document.getElementById('desktopCanvas')||document.body;if(window.MutationObserver)new MutationObserver(schedule).observe(layer,{childList:true,subtree:true});document.addEventListener('click',e=>{if(!e.target.closest('.cv3-month-select-shell'))closeAllMenus();},true);setTimeout(scan,180);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
   window.windzxyCalendarV3SelectYearFixVersion=VER;
 })();
