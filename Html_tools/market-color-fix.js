@@ -1,7 +1,7 @@
 (function(){
   if(window.__windzxyMarketColorFixLoaded)return;
   window.__windzxyMarketColorFixLoaded=1;
-  const VER='20260827-market-color11-load-calendar-product-polish';
+  const VER='20260827-market-color12-load-calendar-select-year-fix';
 
   function loadScriptOnce(src,attr){
     if(document.querySelector('script['+attr+']'))return;
@@ -23,6 +23,10 @@
     if(window.__windzxyCalendarV3ProductPolishLoaded)return;
     loadScriptOnce('Html_tools/calendar-v3-product-polish.js?v=20260827-calendar-v3-product-polish1','data-windzxy-calendar-v3-product-polish-loader');
   }
+  function ensureCalendarSelectYearFix(){
+    if(window.__windzxyCalendarV3SelectYearFixLoaded)return;
+    loadScriptOnce('Html_tools/calendar-v3-select-year-fix.js?v=20260827-calendar-v3-select-year-fix1','data-windzxy-calendar-v3-select-year-fix-loader');
+  }
   function ensureImageStudioV3(){
     if(window.__windzxyImageStudioV3Loaded)return;
     loadScriptOnce('Html_tools/image-studio-v2.js?v=20260827-image-studio-v3-studio-shell','data-windzxy-image-studio-v3-loader');
@@ -43,6 +47,7 @@
     ensureCalendarV3();
     ensureCalendarResponsiveFix();
     ensureCalendarProductPolish();
+    ensureCalendarSelectYearFix();
     ensureImageStudioV3();
     ensureWorkspaceGuard();
     if(!document.getElementById('windzxyMarketColorFixStyle')){
@@ -63,6 +68,7 @@
   setTimeout(ensureCalendarV3,80);setTimeout(ensureCalendarV3,600);
   setTimeout(ensureCalendarResponsiveFix,90);setTimeout(ensureCalendarResponsiveFix,220);setTimeout(ensureCalendarResponsiveFix,900);
   setTimeout(ensureCalendarProductPolish,100);setTimeout(ensureCalendarProductPolish,260);setTimeout(ensureCalendarProductPolish,980);
+  setTimeout(ensureCalendarSelectYearFix,110);setTimeout(ensureCalendarSelectYearFix,300);setTimeout(ensureCalendarSelectYearFix,1100);
   setTimeout(ensureImageStudioV3,40);setTimeout(ensureImageStudioV3,140);setTimeout(ensureImageStudioV3,800);
   setTimeout(ensureWorkspaceGuard,120);setTimeout(ensureWorkspaceGuard,800);
   setInterval(scan,350);window.addEventListener('focus',scan,{passive:true});document.addEventListener('click',e=>{if(e.target.closest('.metals-widget'))setTimeout(scan,40);},true);window.windzxyMarketColorFixVersion=VER;
