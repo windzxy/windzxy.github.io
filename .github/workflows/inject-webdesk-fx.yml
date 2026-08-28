@@ -52,7 +52,7 @@ jobs:
           from pathlib import Path
           import re
 
-          preload_tag = '<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner3-block-widget-autocards"></script>'
+          preload_tag = '<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner4-save-manual-cards"></script>'
           tags = [
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
             '<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>',
@@ -147,11 +147,11 @@ jobs:
       - name: Commit lean script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has Image Studio crop overlay."
+            echo "index.html already has manual card save cleaner."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject Image Studio crop overlay"
+          git commit -m "Inject manual card save cleaner"
           git push
