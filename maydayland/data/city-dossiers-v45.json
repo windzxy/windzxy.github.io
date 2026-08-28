@@ -1,97 +1,17 @@
 {
-  "version":"45.0.0",
+  "version":"58.0.0",
   "updatedAt":"2026-08-28",
-  "notice":"City dossier structure is production UI data. Visit counts and route relations are product-model values inherited from earlier prototypes and require source-by-source verification before being labeled as official historical totals.",
+  "notice":"City dossier structure is production UI data. Counts, venue/tour relations and editorial descriptors are archive-product values and must not be read as official historical totals unless explicitly marked verified.",
   "cities":[
-    {
-      "id":"taipei","name":"台北","en":"Taipei","tag":"核心主場","accent":"#ff70b7","visits":26,
-      "summary":"把主場記憶做成可探索的城市檔案：大型場館、巡演時期、安可記憶、照片與來源集中在同一頁。",
-      "hero":"TAIPEI · HOME FIELD",
-      "venues":[
-        {"name":"台北大巨蛋","type":"大型室內場館","role":"5525+2 主場敘事核心","status":"資料持續核對"},
-        {"name":"台北小巨蛋","type":"室內場館","role":"歷年台北演出節點","status":"待補逐場資料"}
-      ],
-      "tourLinks":["5525 回到那一天","好好好想見到你","LIFE 人生無限公司","諾亞方舟","DNA 創造"],
-      "moments":[
-        {"label":"主場","title":"大型場館回歸","meta":"venue story / fan memory"},
-        {"label":"安可","title":"主場歌單與安可段落","meta":"setlist relation / encore archive"},
-        {"label":"城市","title":"從捷運到場館的演出日動線","meta":"arrival / transport / venue guide"}
-      ],
-      "transport":["捷運與步行動線","散場分流提示","場館周邊集合點"],
-      "sourceStatus":"來源牆框架完成；正式場次、日期、票務、照片來源待逐筆驗證"
-    },
-    {
-      "id":"taichung","name":"台中","en":"Taichung","tag":"起跑 / 跨年","accent":"#ffd36a","visits":14,
-      "summary":"以起跑與跨年作為城市敘事主軸，突出洲際大型戶外演出的時間感。",
-      "hero":"TAICHUNG · TOUR START",
-      "venues":[{"name":"台中洲際棒球場","type":"大型戶外場館","role":"起跑 / 跨年重要節點","status":"待補逐場資料"}],
-      "tourLinks":["5525 回到那一天","好好好想見到你"],
-      "moments":[
-        {"label":"起跑","title":"新巡演的第一個夜晚","meta":"opening night / production debut"},
-        {"label":"跨年","title":"倒數與跨年場記憶","meta":"countdown / encore archive"},
-        {"label":"城市","title":"洲際場館進退場路線","meta":"transport / crowd flow"}
-      ],
-      "transport":["接駁與大眾運輸","散場分流","戶外場天候提示"],
-      "sourceStatus":"城市模組完成；逐場官方資料待核對"
-    },
-    {
-      "id":"kaohsiung","name":"高雄","en":"Kaohsiung","tag":"戶外大場","accent":"#ff9a56","visits":12,
-      "summary":"港都、戶外大場與夜色作為視覺主題，讓場館、歌單與城市風景形成同一條故事線。",
-      "hero":"KAOHSIUNG · OPEN AIR",
-      "venues":[{"name":"高雄世運主場館","type":"大型戶外場館","role":"港都大型演出代表節點","status":"待補逐場資料"}],
-      "tourLinks":["5525 回到那一天","好好好想見到你","LIFE 人生無限公司","諾亞方舟"],
-      "moments":[
-        {"label":"場館","title":"世運主場館大型戶外舞台","meta":"open-air / stadium scale"},
-        {"label":"夜景","title":"港都夜色與演出散場","meta":"city mood / photo wall"},
-        {"label":"交通","title":"大型散場人流指引","meta":"transport / exit strategy"}
-      ],
-      "transport":["捷運與接駁","戶外場防曬 / 雨備","散場後交通"],
-      "sourceStatus":"Venue Board 完成；歷年日期與票務來源待核對"
-    },
-    {
-      "id":"hongkong","name":"香港","en":"Hong Kong","tag":"海港海外線","accent":"#8f7dff","visits":10,
-      "summary":"把維港、紅磡與海濱演出的記憶放進海外城市專題，並保留場館照片與來源牆位置。",
-      "hero":"HONG KONG · HARBOUR LINE",
-      "venues":[
-        {"name":"中環海濱","type":"戶外海濱場地","role":"海港城市敘事","status":"待補逐場資料"},
-        {"name":"紅磡體育館","type":"室內場館","role":"香港演出重要節點","status":"待補逐場資料"}
-      ],
-      "tourLinks":["5525 回到那一天","好好好想見到你","LIFE 人生無限公司","諾亞方舟","DNA 創造"],
-      "moments":[
-        {"label":"海港","title":"維港夜景與戶外舞台","meta":"harbour / open-air"},
-        {"label":"紅館","title":"室內場館年代記憶","meta":"archive / venue history"},
-        {"label":"照片","title":"城市照片牆與地標","meta":"photo wall / landmarks"}
-      ],
-      "transport":["港鐵到場館","海濱步行線","散場交通"],
-      "sourceStatus":"雙場館結構完成；歷史演出來源待補"
-    },
-    {
-      "id":"beijing","name":"北京","en":"Beijing","tag":"超大型場","accent":"#c96dff","visits":8,
-      "summary":"以鳥巢的大尺度作為城市主視覺，把超大型場館製作與巡演節點單獨展示。",
-      "hero":"BEIJING · STADIUM SCALE",
-      "venues":[{"name":"國家體育場 · 鳥巢","type":"超大型體育場","role":"北方大型場代表節點","status":"待補逐場資料"}],
-      "tourLinks":["5525 回到那一天","LIFE 人生無限公司","諾亞方舟"],
-      "moments":[
-        {"label":"尺度","title":"超大型場館製作","meta":"stadium production / scale"},
-        {"label":"北方線","title":"北方城市巡演節點","meta":"tour relation / chronology"},
-        {"label":"入場","title":"大型場館入退場指南","meta":"arrival / crowd flow"}
-      ],
-      "transport":["地鐵到場","分區入口","散場分流"],
-      "sourceStatus":"大型場 Venue Board 完成；逐場官方資料待核對"
-    },
-    {
-      "id":"shanghai","name":"上海","en":"Shanghai","tag":"連場都市","accent":"#64e8ff","visits":9,
-      "summary":"把高密度連場與都市節奏作為主題，強化巡演連續日期、場館與城市夜景之間的關聯。",
-      "hero":"SHANGHAI · CITY RUN",
-      "venues":[{"name":"上海體育場","type":"大型體育場","role":"華東連場都市節點","status":"待補逐場資料"}],
-      "tourLinks":["5525 回到那一天","好好好想見到你","LIFE 人生無限公司","諾亞方舟","DNA 創造"],
-      "moments":[
-        {"label":"連場","title":"高密度連續演出","meta":"multi-night / date strip"},
-        {"label":"都市","title":"城市夜景與演出日","meta":"city mood / photo wall"},
-        {"label":"場館","title":"體育場入場分區","meta":"venue guide / access"}
-      ],
-      "transport":["地鐵與步行","分區入口提示","散場後城市交通"],
-      "sourceStatus":"城市連場模組完成；逐日場次待核對"
-    }
+    {"id":"taipei","name":"台北","en":"Taipei","tag":"核心主場","accent":"#ff70b7","visits":26,"summary":"把主場記憶做成可探索的城市檔案：大型場館、巡演時期、安可記憶、交通與媒體入口集中在同一頁。","hero":"TAIPEI · HOME FIELD","venues":[{"name":"台北大巨蛋","type":"大型室內場館","role":"5525+2 主場敘事核心","status":"資料持續核對","district":"信義","capacity":"大型場","access":"捷運板南線 / 步行","format":"indoor stadium"},{"name":"台北小巨蛋","type":"室內場館","role":"歷年台北演出節點","status":"待補逐場資料","district":"松山","capacity":"大型場","access":"捷運松山新店線","format":"arena"}],"tourLinks":["5525 回到那一天","好好好想見到你","LIFE 人生無限公司","諾亞方舟","DNA 創造"],"moments":[{"label":"主場","title":"大型場館回歸","meta":"venue story / fan memory"},{"label":"安可","title":"主場歌單與安可段落","meta":"setlist relation / encore archive"},{"label":"城市","title":"從捷運到場館的演出日動線","meta":"arrival / transport / venue guide"}],"transport":["捷運與步行動線","散場分流提示","場館周邊集合點"],"citySignals":["home field","encore memory","night transit"],"sourceStatus":"來源牆框架完成；正式場次、日期、票務、照片來源待逐筆驗證"},
+    {"id":"taichung","name":"台中","en":"Taichung","tag":"起跑 / 跨年","accent":"#ffd36a","visits":14,"summary":"以起跑與跨年作為城市敘事主軸，突出洲際大型戶外演出的時間感。","hero":"TAICHUNG · TOUR START","venues":[{"name":"台中洲際棒球場","type":"大型戶外場館","role":"起跑 / 跨年重要節點","status":"待補逐場資料","district":"北屯","capacity":"大型場","access":"接駁 / 大眾運輸","format":"open-air stadium"}],"tourLinks":["5525 回到那一天","好好好想見到你"],"moments":[{"label":"起跑","title":"新巡演的第一個夜晚","meta":"opening night / production debut"},{"label":"跨年","title":"倒數與跨年場記憶","meta":"countdown / encore archive"},{"label":"城市","title":"洲際場館進退場路線","meta":"transport / crowd flow"}],"transport":["接駁與大眾運輸","散場分流","戶外場天候提示"],"citySignals":["opening night","countdown","open air"],"sourceStatus":"城市模組完成；逐場官方資料待核對"},
+    {"id":"kaohsiung","name":"高雄","en":"Kaohsiung","tag":"戶外大場","accent":"#ff9a56","visits":12,"summary":"港都、戶外大場與夜色作為視覺主題，讓場館、歌單與城市風景形成同一條故事線。","hero":"KAOHSIUNG · OPEN AIR","venues":[{"name":"高雄世運主場館","type":"大型戶外場館","role":"港都大型演出代表節點","status":"待補逐場資料","district":"左營","capacity":"超大型場","access":"捷運 / 接駁","format":"open-air stadium"}],"tourLinks":["5525 回到那一天","好好好想見到你","LIFE 人生無限公司","諾亞方舟"],"moments":[{"label":"場館","title":"世運主場館大型戶外舞台","meta":"open-air / stadium scale"},{"label":"夜景","title":"港都夜色與演出散場","meta":"city mood / photo wall"},{"label":"交通","title":"大型散場人流指引","meta":"transport / exit strategy"}],"transport":["捷運與接駁","戶外場防曬 / 雨備","散場後交通"],"citySignals":["harbour night","stadium scale","open air"],"sourceStatus":"Venue Board 完成；歷年日期與票務來源待核對"},
+    {"id":"hongkong","name":"香港","en":"Hong Kong","tag":"海港海外線","accent":"#8f7dff","visits":10,"summary":"把維港、紅磡與海濱演出的記憶放進海外城市專題，並保留場館照片與來源牆位置。","hero":"HONG KONG · HARBOUR LINE","venues":[{"name":"中環海濱","type":"戶外海濱場地","role":"海港城市敘事","status":"待補逐場資料","district":"Central","capacity":"大型戶外場","access":"港鐵 / 海濱步行","format":"harbour open-air"},{"name":"紅磡體育館","type":"室內場館","role":"香港演出重要節點","status":"待補逐場資料","district":"Hung Hom","capacity":"大型場","access":"港鐵紅磡站","format":"arena"}],"tourLinks":["5525 回到那一天","好好好想見到你","LIFE 人生無限公司","諾亞方舟","DNA 創造"],"moments":[{"label":"海港","title":"維港夜景與戶外舞台","meta":"harbour / open-air"},{"label":"紅館","title":"室內場館年代記憶","meta":"archive / venue history"},{"label":"照片","title":"城市照片牆與地標","meta":"photo wall / landmarks"}],"transport":["港鐵到場館","海濱步行線","散場交通"],"citySignals":["harbour","arena history","overseas line"],"sourceStatus":"雙場館結構完成；歷史演出來源待補"},
+    {"id":"beijing","name":"北京","en":"Beijing","tag":"超大型場","accent":"#c96dff","visits":8,"summary":"以鳥巢的大尺度作為城市主視覺，把超大型場館製作與巡演節點單獨展示。","hero":"BEIJING · STADIUM SCALE","venues":[{"name":"國家體育場 · 鳥巢","type":"超大型體育場","role":"北方大型場代表節點","status":"待補逐場資料","district":"朝陽","capacity":"超大型場","access":"地鐵 / 分區步行","format":"stadium"}],"tourLinks":["5525 回到那一天","LIFE 人生無限公司","諾亞方舟"],"moments":[{"label":"尺度","title":"超大型場館製作","meta":"stadium production / scale"},{"label":"北方線","title":"北方城市巡演節點","meta":"tour relation / chronology"},{"label":"入場","title":"大型場館入退場指南","meta":"arrival / crowd flow"}],"transport":["地鐵到場","分區入口","散場分流"],"citySignals":["stadium scale","north route","production"],"sourceStatus":"大型場 Venue Board 完成；逐場官方資料待核對"},
+    {"id":"shanghai","name":"上海","en":"Shanghai","tag":"連場都市","accent":"#64e8ff","visits":9,"summary":"把高密度連場與都市節奏作為主題，強化巡演連續日期、場館與城市夜景之間的關聯。","hero":"SHANGHAI · CITY RUN","venues":[{"name":"上海體育場","type":"大型體育場","role":"華東連場都市節點","status":"待補逐場資料","district":"徐匯","capacity":"超大型場","access":"地鐵 / 步行","format":"stadium"}],"tourLinks":["5525 回到那一天","好好好想見到你","LIFE 人生無限公司","諾亞方舟","DNA 創造"],"moments":[{"label":"連場","title":"高密度連續演出","meta":"multi-night / date strip"},{"label":"都市","title":"城市夜景與演出日","meta":"city mood / photo wall"},{"label":"場館","title":"體育場入場分區","meta":"venue guide / access"}],"transport":["地鐵與步行","分區入口提示","散場後城市交通"],"citySignals":["multi-night","city run","night skyline"],"sourceStatus":"城市連場模組完成；逐日場次待核對"},
+    {"id":"guangzhou","name":"廣州","en":"Guangzhou","tag":"華南節點","accent":"#55f0c7","visits":6,"summary":"以華南城市節奏、體育場規模和巡演轉場為核心，補足南中國巡演網路的城市節點。","hero":"GUANGZHOU · SOUTH LINE","venues":[{"name":"廣州天河體育中心","type":"大型體育場","role":"華南巡演城市代表節點","status":"待補逐場資料","district":"天河","capacity":"大型場","access":"地鐵 / 步行","format":"stadium"}],"tourLinks":["5525 回到那一天","LIFE 人生無限公司","諾亞方舟"],"moments":[{"label":"華南","title":"南線巡演節點","meta":"south route / tour relation"},{"label":"場館","title":"城市核心大型場","meta":"venue / city core"},{"label":"散場","title":"夜間交通節奏","meta":"night transit / crowd flow"}],"transport":["地鐵到場","城市核心步行","散場分流"],"citySignals":["south route","city core","stadium"],"sourceStatus":"v58 新增城市檔案；逐場來源待核對"},
+    {"id":"xiamen","name":"廈門","en":"Xiamen","tag":"海岸線","accent":"#53b8ff","visits":4,"summary":"用海岸城市的空氣感建立較輕的巡演節點，讓大型場館之外也有不同城市情緒。","hero":"XIAMEN · COAST LINE","venues":[{"name":"廈門體育中心","type":"城市體育場館","role":"東南沿海巡演節點","status":"待補逐場資料","district":"思明","capacity":"大型場","access":"公交 / 步行","format":"stadium complex"}],"tourLinks":["LIFE 人生無限公司","諾亞方舟"],"moments":[{"label":"海岸","title":"海風城市情緒","meta":"coast / city mood"},{"label":"巡演","title":"東南線轉場","meta":"tour routing"},{"label":"照片","title":"城市地標媒體槽","meta":"media / landmarks"}],"transport":["城市公共交通","場館步行動線","散場交通"],"citySignals":["coast line","city mood","south-east route"],"sourceStatus":"v58 新增城市檔案；場館與日期待核對"},
+    {"id":"singapore","name":"新加坡","en":"Singapore","tag":"海外樞紐","accent":"#6bf08b","visits":5,"summary":"把東南亞海外演出作為獨立樞紐，呈現跨境巡演、室內場館與城市旅行感。","hero":"SINGAPORE · OVERSEAS HUB","venues":[{"name":"Singapore Indoor Stadium","type":"大型室內場館","role":"東南亞海外巡演節點","status":"待補逐場資料","district":"Kallang","capacity":"大型場","access":"MRT / walk","format":"arena"}],"tourLinks":["5525 回到那一天","LIFE 人生無限公司","諾亞方舟"],"moments":[{"label":"海外","title":"東南亞巡演樞紐","meta":"overseas / hub"},{"label":"旅程","title":"演唱會旅行城市","meta":"travel / fan route"},{"label":"場館","title":"室內大型製作","meta":"arena production"}],"transport":["MRT 到場","步行連接","散場公共交通"],"citySignals":["overseas hub","arena","fan travel"],"sourceStatus":"v58 新增海外城市檔案；逐場來源待核對"},
+    {"id":"tokyo","name":"東京","en":"Tokyo","tag":"日本節點","accent":"#ff6e7b","visits":3,"summary":"以日本城市節點補足亞洲巡演網路，保留場館、語言版本與旅程型內容的延展空間。","hero":"TOKYO · ASIA NODE","venues":[{"name":"日本公演場館節點","type":"城市演出場館","role":"日本巡演檔案入口","status":"場館逐場核對中","district":"Tokyo","capacity":"待核對","access":"rail / metro","format":"archive node"}],"tourLinks":["海外巡演節點"],"moments":[{"label":"日本","title":"亞洲巡演城市節點","meta":"asia route / archive"},{"label":"語言","title":"日文資料與媒體入口","meta":"localization / source"},{"label":"旅程","title":"粉絲旅行路線","meta":"travel / city guide"}],"transport":["鐵路與地鐵","場館逐場導航","夜間返程"],"citySignals":["asia node","localization","travel"],"sourceStatus":"v58 新增城市檔案；避免在未核實前指定歷史場館"}
   ]
 }
