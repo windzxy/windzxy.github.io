@@ -51,7 +51,7 @@ jobs:
           from pathlib import Path
           import re
 
-          preload_tag = '<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner2-kill-legacy-autocards"></script>'
+          preload_tag = '<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner3-block-widget-autocards"></script>'
           tags = [
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
             '<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>',
@@ -145,11 +145,11 @@ jobs:
       - name: Commit lean script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has no auto-restore scripts."
+            echo "index.html already has widget autocard blocker."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Remove auto-restoring WebDesk cards"
+          git commit -m "Inject widget autocard blocker"
           git push
