@@ -1,0 +1,34 @@
+{
+  "version":"48.0.0",
+  "updatedAt":"2026-08-28",
+  "principle":"Archive-first publication model. Items that still need bibliographic verification are explicitly marked and are not presented as authoritative editions.",
+  "types":[
+    {"id":"all","label":"全部"},
+    {"id":"book","label":"書籍"},
+    {"id":"tourbook","label":"巡演場刊"},
+    {"id":"ticket","label":"票根 / 紙本"},
+    {"id":"score","label":"樂譜"},
+    {"id":"liner","label":"專輯內頁"},
+    {"id":"press","label":"媒體專訪"}
+  ],
+  "eras":[
+    {"id":"1997-2003","label":"1997–2003 · 成軍與出發"},
+    {"id":"2004-2010","label":"2004–2010 · 青春與擴張"},
+    {"id":"2011-2019","label":"2011–2019 · 世界巡演"},
+    {"id":"2020-now","label":"2020–至今 · 回到那一天"}
+  ],
+  "items":[
+    {"id":"band-story","title":"成軍與樂團故事檔案","en":"Band Origin Archive","type":"book","era":"1997-2003","year":"1997–1999","publisher":"archive index","status":"curated / source verification ongoing","accent":"#ff7ea9","summary":"把成軍、早期校園演出、首張作品前後的訪談與文字資料整理為可追溯索引。","links":["Timeline / Archive","早期照片索引","訪談來源牆"]},
+    {"id":"first-album-liner","title":"首張創作專輯內頁研究","en":"Debut Album Liner Notes","type":"liner","era":"1997-2003","year":"1999","publisher":"album archive","status":"metadata model","accent":"#f7c65b","summary":"用版面、曲序、文字與視覺語言研究首張作品的完整發行敘事；正式內頁圖像需確認權利後接入。","links":["Album Room","Songs Universe","發行資料"]},
+    {"id":"early-tourbook","title":"早期巡演場刊索引","en":"Early Tourbook Index","type":"tourbook","era":"1997-2003","year":"1999–2003","publisher":"tour archive","status":"edition verification required","accent":"#72f5c6","summary":"集中整理早期巡演場刊、節目冊與現場紙本的版次與場次關係。","links":["Tour Atlas","City Dossier","場次索引"]},
+    {"id":"loveborn-score","title":"創作樂譜 / 吉他譜索引","en":"Score & Guitar Archive","type":"score","era":"2004-2010","year":"2004–2010","publisher":"music archive","status":"catalogue model","accent":"#64e8ff","summary":"以歌曲為核心串接樂譜版本、吉他譜與演奏資料；不直接重製受版權保護譜面。","links":["Songs Universe","Album Room","演奏索引"]},
+    {"id":"dna-tourbook","title":"DNA 創造巡演紙本檔案","en":"DNA Tour Print Archive","type":"tourbook","era":"2004-2010","year":"2009–2010","publisher":"tour archive","status":"route-linked model","accent":"#72f5c6","summary":"以巡演城市與場次為主軸整理場刊、宣傳紙本與紀念資料。","links":["Tour Atlas","City Dossier","DNA route"]},
+    {"id":"ticket-archive","title":"演唱會票根集","en":"Ticket Stub Archive","type":"ticket","era":"2011-2019","year":"2011–2019","publisher":"fan ephemera archive","status":"visual slots pending rights-safe assets","accent":"#9b84ff","summary":"按巡演、城市、日期整理票根與紙本紀念物，建立與城市頁、巡演頁互通的收藏入口。","links":["Tour Atlas","City Dossier","收藏索引"]},
+    {"id":"ark-tourbook","title":"諾亞方舟巡演場刊索引","en":"Noah's Ark Tourbook Index","type":"tourbook","era":"2011-2019","year":"2011–2014","publisher":"tour archive","status":"edition verification required","accent":"#ff7ea9","summary":"整理不同城市、不同場次版本的場刊與官方紙本資料關係。","links":["Tour Atlas","Timeline","巡演版本"]},
+    {"id":"life-press","title":"LIFE 時期媒體專訪索引","en":"LIFE Press Index","type":"press","era":"2011-2019","year":"2017–2019","publisher":"press archive","status":"source wall model","accent":"#28d7ff","summary":"把重要長訪、巡演訪談、舞台與製作報導按來源、日期和主題整理。","links":["Timeline","Tour Atlas","Source Wall"]},
+    {"id":"autobiography-liner","title":"《自傳》專輯內頁研究","en":"History of Tomorrow Liner Study","type":"liner","era":"2011-2019","year":"2016","publisher":"album archive","status":"metadata model","accent":"#f7c65b","summary":"聚焦專輯視覺、曲序與文字敘事，與 Album Room 的自傳專輯抽屜互相連結。","links":["Album Room","Songs Universe","專輯資料"]},
+    {"id":"5525-tourbook","title":"5525 回到那一天巡演紙本索引","en":"5525 Print Archive","type":"tourbook","era":"2020-now","year":"2023–2026","publisher":"tour archive","status":"active / ongoing","accent":"#28d7ff","summary":"持續整理 5525 巡演場刊、宣傳視覺、場次紙本與城市版本，並與最新巡演路線同步。","links":["Tour Atlas","City Dossier","5525 route"]},
+    {"id":"recent-press","title":"近年長訪與製作專題","en":"Recent Longform Press","type":"press","era":"2020-now","year":"2020–2026","publisher":"press archive","status":"source verification ongoing","accent":"#64e8ff","summary":"收納近年大型巡演、舞台製作、專輯與樂團長訪，避免只做零散新聞卡片。","links":["Timeline","Source Wall","Tour Atlas"]},
+    {"id":"recent-tickets","title":"近年票根與城市紀念紙本","en":"Recent Ticket & City Ephemera","type":"ticket","era":"2020-now","year":"2020–2026","publisher":"fan ephemera archive","status":"collection model","accent":"#9b84ff","summary":"按城市與巡演建立近年票根、紀念卡、紙本小物的收藏櫃。","links":["City Dossier","Tour Atlas","收藏索引"]}
+  ]
+}
