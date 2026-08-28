@@ -16,6 +16,7 @@ on:
       - 'Html_tools/calendar-widget-v6.js'
       - 'Html_tools/calendar-widget-v5.js'
       - 'Html_tools/calendar-widget-v4.js'
+      - 'Html_tools/image-studio-v2.js'
       - 'Html_tools/workspace-core-guard.js'
       - 'Html_tools/first-run-empty-desktop.js'
       - 'Html_tools/background-fit-fix.js'
@@ -52,6 +53,7 @@ jobs:
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
             '<script src="Html_tools/calendar-widget-v11.js?v=20260828-calendar-widget-v11-readable-compact"></script>',
             '<script src="Html_tools/calendar-day-detail-card.js?v=20260828-calendar-day-detail-card1-lunar-holiday-solar"></script>',
+            '<script src="Html_tools/image-studio-v2.js?v=20260828-image-studio-v3-product-shell-active"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260826-workspace-core-guard2-no-unapproved-cards"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
             '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>',
@@ -110,11 +112,11 @@ jobs:
       - name: Commit lean script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has Calendar date detail scripts."
+            echo "index.html already has Image Studio scripts."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject Calendar date detail popup"
+          git commit -m "Inject Image Studio workflow"
           git push
