@@ -6,9 +6,12 @@ on:
       - master
     paths:
       - 'Html_tools/market-color-fix.js'
+      - 'Html_tools/workspace-default-cleaner.js'
       - 'Html_tools/workspace-core-guard.js'
       - 'Html_tools/calendar-widget-v11.js'
       - 'Html_tools/calendar-day-detail-card.js'
+      - 'Html_tools/image-studio-v4.js'
+      - 'Html_tools/image-studio-v2.js'
       - 'Html_tools/calendar-widget-v10.js'
       - 'Html_tools/metals-calendar-restore-guard.js'
       - 'Html_tools/calendar-widget-v9.js'
@@ -17,7 +20,6 @@ on:
       - 'Html_tools/calendar-widget-v6.js'
       - 'Html_tools/calendar-widget-v5.js'
       - 'Html_tools/calendar-widget-v4.js'
-      - 'Html_tools/image-studio-v2.js'
       - 'Html_tools/first-run-empty-desktop.js'
       - 'Html_tools/background-fit-fix.js'
       - 'Html_tools/icon-edge-fix.js'
@@ -51,10 +53,11 @@ jobs:
 
           tags = [
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
+            '<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260828-workspace-core-guard3-preserve-active-empty"></script>',
             '<script src="Html_tools/calendar-widget-v11.js?v=20260828-calendar-widget-v11-readable-compact"></script>',
             '<script src="Html_tools/calendar-day-detail-card.js?v=20260828-calendar-day-detail-card1-lunar-holiday-solar"></script>',
-            '<script src="Html_tools/image-studio-v2.js?v=20260828-image-studio-v3-product-shell-active"></script>',
+            '<script src="Html_tools/image-studio-v4.js?v=20260828-image-studio-v4-safe-crop-output"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
             '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>',
             '<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>',
@@ -70,6 +73,31 @@ jobs:
 
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
+
+          # Source-level fix: default workspaces must be empty. No seed card can revive after refresh.
+          html = re.sub(
+            r'const defaults=\[.*?\];\nconst storeKey=',
+            'const defaults=[\n'
+            '  {id:"daily",name:"日常工作區",hint:"從右側功能中心選擇需要的卡片。",cards:[]},\n'
+            '  {id:"office",name:"辦公整理",hint:"文字、表格、日期與 JSON 放在一起。",cards:[]},\n'
+            '  {id:"imageDesk",name:"圖片工作台",hint:"圖片處理與 OCR 優先。",cards:[]},\n'
+            '  {id:"data",name:"資料處理",hint:"整理表格、JSON 和日期資料。",cards:[]}\n'
+            '];\nconst storeKey=',
+            html,
+            flags=re.S
+          )
+          html = re.sub(
+            r'function resetLayout\(\)\{.*?\n\}',
+            'function resetLayout(){\n'
+            '  const ws=activeWorkspace();\n'
+            '  ws.cards=[];\n'
+            '  save();\n'
+            '  renderAll();\n'
+            '}',
+            html,
+            count=1,
+            flags=re.S
+          )
 
           stubs = [
             '{id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"}',
@@ -95,9 +123,10 @@ jobs:
             html = re.sub(rf'id:"{re.escape(app_id)}",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-[^"]+"', repl, html)
 
           script_names = [
-            'market-color-fix','workspace-core-guard','calendar-widget-v11','calendar-day-detail-card','calendar-widget-v10','metals-calendar-restore-guard','calendar-widget-v9','calendar-widget-v8','calendar-widget-v7','calendar-widget-v6','calendar-widget-v5','calendar-widget-v4','calendar-widget-v3',
+            'market-color-fix','workspace-default-cleaner','workspace-core-guard','calendar-widget-v11','calendar-day-detail-card','image-studio-v4','image-studio-v2',
+            'calendar-widget-v10','metals-calendar-restore-guard','calendar-widget-v9','calendar-widget-v8','calendar-widget-v7','calendar-widget-v6','calendar-widget-v5','calendar-widget-v4','calendar-widget-v3',
             'calendar-v3-lite-polish','calendar-v3-lunar-label-fix','calendar-v3-day-picker-fix',
-            'calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix','image-studio-v2',
+            'calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix',
             'first-run-empty-desktop','background-fit-fix','icon-edge-fix',
             'layout-persist-fix','card-gap-fix','card-fold-fix','metals-widget','fx-widget','typhoon-widget',
             'calendar-widget','calendar-polish-fix','calendar-lunar-ui-fix','calendar-perpetual-fix','calendar-pm-polish',
@@ -112,11 +141,11 @@ jobs:
       - name: Commit lean script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has guarded WebDesk scripts."
+            echo "index.html already has PM cleanup scripts."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject guarded WebDesk scripts"
+          git commit -m "Inject PM cleanup WebDesk scripts"
           git push
