@@ -1,0 +1,26 @@
+{
+  "version":"44.0.0",
+  "updatedAt":"2026-08-28",
+  "pages":[
+    {"id":"home","label":"Tour Atlas / Home","eyebrow":"A","title":"巡演星圖","subtitle":"多巡演分色路線、3D 地圖與城市入口","accent":"#28d7ff"},
+    {"id":"city","label":"City Dossier","eyebrow":"B","title":"城市專題","subtitle":"場館、逐站演出、照片、交通與來源牆","accent":"#72f5c6"},
+    {"id":"album","label":"Album Room","eyebrow":"C","title":"時光唱片室","subtitle":"專輯、時期、封面、曲目與收藏敘事","accent":"#f7c65b"},
+    {"id":"songs","label":"Songs Universe","eyebrow":"D","title":"歌曲宇宙","subtitle":"按巡演、專輯、情緒、現場與 OST 探索","accent":"#9b84ff"},
+    {"id":"books","label":"Books & Publications","eyebrow":"E","title":"書籍與出版物","subtitle":"書籍、場刊、票根、樂譜與展覽資料","accent":"#ff7ea9"},
+    {"id":"timeline","label":"Timeline / Archive","eyebrow":"F","title":"歷程與檔案館","subtitle":"成團、大事記、巡演、作品與年代索引","accent":"#64e8ff"}
+  ],
+  "cityCards":[
+    {"name":"台北","tag":"核心主場","venue":"台北大巨蛋 / 小巨蛋","visits":26},
+    {"name":"台中","tag":"起跑 / 跨年","venue":"台中洲際棒球場","visits":14},
+    {"name":"高雄","tag":"戶外大場","venue":"高雄世運主場館","visits":12},
+    {"name":"香港","tag":"海港海外線","venue":"中環海濱 / 紅磡","visits":10},
+    {"name":"北京","tag":"超大型場","venue":"國家體育場 鳥巢","visits":8},
+    {"name":"上海","tag":"連場都市","venue":"上海體育場","visits":9}
+  ],
+  "albums":["第一張創作專輯","愛情萬歲","人生海海","時光機","神的孩子都在跳舞","為愛而生","後青春期的詩","第二人生","自傳"],
+  "songGroups":["巡演精選","主場安可","經典抒情","熱血現場","電影 / 戲劇 OST","深夜歌單"],
+  "publications":["成軍與樂團故事","巡演場刊","演唱會票根集","樂譜 / 吉他譜","專輯內頁研究","媒體專訪索引"],
+  "timeline":[
+    {"year":"1997","title":"成軍"},{"year":"1999","title":"首張創作專輯"},{"year":"2001","title":"人生海海"},{"year":"2011","title":"第二人生 / 諾亞方舟"},{"year":"2017","title":"LIFE 人生無限公司"},{"year":"2023","title":"5525 回到那一天"}
+  ]
+}
