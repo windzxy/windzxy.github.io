@@ -6,6 +6,8 @@ on:
       - master
     paths:
       - 'Html_tools/market-color-fix.js'
+      - 'Html_tools/calendar-widget-v10.js'
+      - 'Html_tools/metals-calendar-restore-guard.js'
       - 'Html_tools/calendar-widget-v9.js'
       - 'Html_tools/calendar-widget-v8.js'
       - 'Html_tools/calendar-widget-v7.js'
@@ -46,7 +48,7 @@ jobs:
 
           tags = [
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
-            '<script src="Html_tools/calendar-widget-v9.js?v=20260828-calendar-widget-v9-holiday-merged-clean"></script>',
+            '<script src="Html_tools/calendar-widget-v10.js?v=20260828-calendar-widget-v10-strict-card-scope"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260826-workspace-core-guard2-no-unapproved-cards"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
             '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>',
@@ -58,6 +60,7 @@ jobs:
             '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>',
             '<script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>',
             '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n4-remove-today-row"></script>',
+            '<script src="Html_tools/metals-calendar-restore-guard.js?v=20260828-metals-calendar-restore-guard1"></script>',
           ]
 
           path = Path('index.html')
@@ -87,7 +90,7 @@ jobs:
             html = re.sub(rf'id:"{re.escape(app_id)}",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-[^"]+"', repl, html)
 
           script_names = [
-            'market-color-fix','calendar-widget-v9','calendar-widget-v8','calendar-widget-v7','calendar-widget-v6','calendar-widget-v5','calendar-widget-v4','calendar-widget-v3',
+            'market-color-fix','calendar-widget-v10','metals-calendar-restore-guard','calendar-widget-v9','calendar-widget-v8','calendar-widget-v7','calendar-widget-v6','calendar-widget-v5','calendar-widget-v4','calendar-widget-v3',
             'calendar-v3-lite-polish','calendar-v3-lunar-label-fix','calendar-v3-day-picker-fix',
             'calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix','image-studio-v2',
             'workspace-core-guard','first-run-empty-desktop','background-fit-fix','icon-edge-fix',
@@ -104,11 +107,11 @@ jobs:
       - name: Commit lean script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has merged holiday Calendar V9 scripts."
+            echo "index.html already has strict Calendar V10 scripts."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject merged holiday Calendar V9"
+          git commit -m "Inject strict scoped Calendar V10"
           git push
