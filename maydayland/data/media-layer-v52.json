@@ -1,0 +1,20 @@
+{
+  "version":"52.0.0",
+  "principle":"Rights-safe visual layer: generated local thumbnails by default; external official media is only linked after source and reuse status are verified.",
+  "lazyLoading":true,
+  "fallback":"generated-svg",
+  "items":[
+    {"id":"taipei-skyline","page":"city","entity":"taipei","kind":"city","title":"台北夜色","subtitle":"City atmosphere study","tone":"#31d7ff"},
+    {"id":"taipei-venue","page":"city","entity":"taipei","kind":"venue","title":"台北場館板","subtitle":"Venue memory board","tone":"#ff70b7"},
+    {"id":"hongkong-harbour","page":"city","entity":"hongkong","kind":"city","title":"維港舞台記憶","subtitle":"Harbour night study","tone":"#8f7dff"},
+    {"id":"shanghai-night","page":"city","entity":"shanghai","kind":"city","title":"上海連場都市","subtitle":"Metropolitan concert study","tone":"#64e8ff"},
+    {"id":"album-first","page":"album","entity":"first-album","kind":"album","title":"第一張創作專輯","subtitle":"1999 archive sleeve","tone":"#54d9ff"},
+    {"id":"album-time-machine","page":"album","entity":"time-machine","kind":"album","title":"時光機","subtitle":"2003 archive sleeve","tone":"#f5b85b"},
+    {"id":"album-poetry","page":"album","entity":"poetry","kind":"album","title":"後青春期的詩","subtitle":"2008 archive sleeve","tone":"#ff7ea9"},
+    {"id":"album-history","page":"album","entity":"history-of-tomorrow","kind":"album","title":"自傳","subtitle":"2016 archive sleeve","tone":"#9b84ff"},
+    {"id":"pub-book","page":"books","entity":"book","kind":"publication","title":"五月天紙本檔案","subtitle":"Publication shelf study","tone":"#72f5c6"},
+    {"id":"pub-tourbook","page":"books","entity":"tourbook","kind":"publication","title":"巡演場刊","subtitle":"Tour publication study","tone":"#ffd36a"},
+    {"id":"pub-ticket","page":"books","entity":"ticket","kind":"publication","title":"票根與紙本","subtitle":"Ephemera archive study","tone":"#ff8d8d"},
+    {"id":"timeline-archive","page":"timeline","entity":"archive","kind":"archive","title":"歷程檔案牆","subtitle":"Cross-era visual index","tone":"#7fd4ff"}
+  ]
+}
