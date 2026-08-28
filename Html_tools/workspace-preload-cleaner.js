@@ -1,16 +1,16 @@
 (function(){
-  if(window.__windzxyWorkspacePreloadCleanerLoaded)return;
+  if(window.__windzxyWorkspacePreloadCleanerLoadedV4)return;
+  window.__windzxyWorkspacePreloadCleanerLoadedV4=1;
   window.__windzxyWorkspacePreloadCleanerLoaded=1;
 
-  const VER='20260828-workspace-preload-cleaner3-block-widget-autocards';
+  const VER='20260828-workspace-preload-cleaner4-save-manual-cards';
   const STORE='windzxy-web-desktop-workspaces';
   const LEGACY=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
   const GEO='windzxy-web-desktop-card-geometry-v4';
   const KEYS=new Set([STORE,...LEGACY]);
-  const DEFAULT_IDS=new Set(['daily','office','imageDesk','data']);
   const SEED_ID_RE=/^(daily|office|imageDesk|data)-[^\s]+-\d+$/i;
-  const AUTO_ID_RE=/^(card-(metals|fx)-|daily-(metals|fx-rates)-\d+$|imageDesk-(image|color|note)-\d+$)/i;
-  const IMAGE_DESK_AUTO=new Set(['image','color','note']);
+  const AUTO_WIDGET_ID_RE=/^(card-(metals|fx)-|daily-(metals|fx-rates)-\d+$)/i;
+  const OLD_IMAGE_SEED_RE=/^imageDesk-(image|color|note)-\d+$/i;
   const EMPTY_DEFAULTS=[
     {id:'daily',name:'日常工作區',hint:'從右側功能中心選擇需要的卡片。',cards:[]},
     {id:'office',name:'辦公整理',hint:'文字、表格、日期與 JSON 放在一起。',cards:[]},
@@ -20,17 +20,18 @@
 
   function clone(v){try{return JSON.parse(JSON.stringify(v));}catch(e){return v;}}
   function safeParse(text){try{const v=JSON.parse(text||'null');return Array.isArray(v)?v:null;}catch(e){return null;}}
-  function isManual(card){return !!card&&(card.source==='manual'||card.manual===true||String(card.id||'').startsWith('custom-'));}
   function appOf(card){return String(card?.appId||card?.toolId||'');}
-  function isAutoCard(card,ws){
+  function idOf(card){return String(card?.id||'');}
+  function isManual(card){return !!card&&(card.source==='manual'||card.manual===true||card.userCreated===true||idOf(card).startsWith('custom-'));}
+  function isLegacyAutoCard(card,ws){
     if(!card)return false;
-    const id=String(card.id||'');
-    const appId=appOf(card);
+    const id=idOf(card);
+    if(isManual(card))return false;
+    if(AUTO_WIDGET_ID_RE.test(id))return true;
+    if(OLD_IMAGE_SEED_RE.test(id))return true;
     if(SEED_ID_RE.test(id))return true;
-    if(AUTO_ID_RE.test(id))return true;
     if(card.source==='system')return true;
-    if(ws&&DEFAULT_IDS.has(ws.id)&&id.startsWith(ws.id+'-')&&!id.startsWith('card-')&&!id.startsWith('custom-'))return true;
-    if(ws&&ws.id==='imageDesk'&&IMAGE_DESK_AUTO.has(appId)&&!isManual(card))return true;
+    if(ws&&/^(daily|office|imageDesk|data)$/i.test(String(ws.id||''))&&id.startsWith(ws.id+'-')&&!id.startsWith('card-')&&!id.startsWith('custom-'))return true;
     return false;
   }
   function normalizeCard(card,i){
@@ -45,7 +46,7 @@
     EMPTY_DEFAULTS.forEach(def=>{if(!byId.has(def.id))byId.set(def.id,Object.assign({},def));});
     return [...byId.values()].map(ws=>{
       const cards=(Array.isArray(ws.cards)?ws.cards:[]).map(normalizeCard);
-      const kept=cards.filter(card=>!isAutoCard(card,ws));
+      const kept=cards.filter(card=>!isLegacyAutoCard(card,ws));
       return Object.assign({},ws,{cards:kept});
     });
   }
@@ -62,7 +63,7 @@
       if(!geo||typeof geo!=='object')return;
       let changed=false;
       Object.keys(geo).forEach(key=>{
-        if(/::app::(metals|fx-rates|image|color|note)$/.test(key)||/::id::(card-(metals|fx)-|daily-(metals|fx-rates)-|imageDesk-(image|color|note)-)/.test(key)){
+        if(/::id::(card-(metals|fx)-|daily-(metals|fx-rates)-|imageDesk-(image|color|note)-)/.test(key)){
           delete geo[key];
           changed=true;
         }
@@ -87,12 +88,12 @@
 
   function shouldBlockPush(item){
     if(!item||typeof item!=='object'||Array.isArray(item))return false;
-    const id=String(item.id||'');
+    if(isManual(item))return false;
+    const id=idOf(item);
     const appId=appOf(item);
-    if(AUTO_ID_RE.test(id))return true;
-    if(SEED_ID_RE.test(id)&&!isManual(item))return true;
-    if((id==='daily-metals-0'||id==='daily-fx-0'||id==='daily-fx-rates-0')&&!isManual(item))return true;
-    if((appId==='metals'||appId==='fx-rates')&&/^card-(metals|fx)-/i.test(id)&&!isManual(item))return true;
+    if(AUTO_WIDGET_ID_RE.test(id))return true;
+    if((id==='daily-metals-0'||id==='daily-fx-0'||id==='daily-fx-rates-0'))return true;
+    if((appId==='metals'||appId==='fx-rates')&&/^card-(metals|fx)-/i.test(id))return true;
     return false;
   }
   Array.prototype.push=function(){
