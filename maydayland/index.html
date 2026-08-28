@@ -4,17 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#050912">
-  <meta name="description" content="Maydayland 五月天 Three.js 3D 巡演地圖、GeoJSON 拉伸地圖塊、多巡演分色飛線、城市光柱與資料庫。">
-  <title>Maydayland · Geo Tour Atlas</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=42.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=42.0.0">
-  <link rel="stylesheet" href="./app-v42.css?v=42.0.0">
+  <meta name="description" content="Maydayland 五月天 Three.js 3D 巡演地圖、GeoJSON 拉伸地圖塊、Shader 流光飛線、Bloom 開關、多巡演分色路線與性能面板。">
+  <title>Maydayland · Shader Geo Tour Atlas</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=43.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=43.0.0">
+  <link rel="stylesheet" href="./app-v43.css?v=43.0.0">
 </head>
 <body>
   <div id="app"></div>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js" defer></script>
-  <script src="./app-v42.js?v=42.0.0" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/Pass.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js" defer></script>
+  <script src="./app-v43.js?v=43.0.0" defer></script>
 </body>
 </html>
