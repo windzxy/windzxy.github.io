@@ -1,0 +1,28 @@
+{
+  "version":"59.0.0",
+  "updatedAt":"2026-08-29",
+  "notice":"Tour-date evidence matrix. verified rows require at least two independent published sources or an official/organizer source. archive-model rows intentionally omit dates until checked.",
+  "evidenceLevels":{
+    "verified-published":"Date and venue cross-checked against multiple published sources; source links retained.",
+    "archive-model":"Entity relation is useful for navigation but date is intentionally withheld pending source verification."
+  },
+  "events":[
+    {"id":"taipei-5525-20250627","cityId":"taipei","city":"台北","date":"2025-06-27","venue":"台北大巨蛋","tour":"5525 回到那一天","theme":"5525｜回到最初 順時光之旅","status":"verified-published","sources":["https://www.cna.com.tw/news/amov/202504290127.aspx","https://news.ttv.com.tw/news/11403300001800W"]},
+    {"id":"taipei-5525-20250628","cityId":"taipei","city":"台北","date":"2025-06-28","venue":"台北大巨蛋","tour":"5525 回到那一天","theme":"5525+1｜倒轉時間 逆時光之行","status":"verified-published","sources":["https://www.cna.com.tw/news/amov/202504290127.aspx","https://news.ttv.com.tw/news/11403300001800W"]},
+    {"id":"taipei-5525-20250629","cityId":"taipei","city":"台北","date":"2025-06-29","venue":"台北大巨蛋","tour":"5525 回到那一天","theme":"5525｜回到最初 順時光之旅","status":"verified-published","sources":["https://www.cna.com.tw/news/amov/202504290127.aspx","https://news.ttv.com.tw/news/11403300001800W"]},
+    {"id":"taipei-5525-20250704","cityId":"taipei","city":"台北","date":"2025-07-04","venue":"台北大巨蛋","tour":"5525 回到那一天","theme":"5525+1｜倒轉時間 逆時光之行","status":"verified-published","sources":["https://www.cna.com.tw/news/amov/202504290127.aspx","https://news.ttv.com.tw/news/11403300001800W"]},
+    {"id":"taipei-5525-20250705","cityId":"taipei","city":"台北","date":"2025-07-05","venue":"台北大巨蛋","tour":"5525 回到那一天","theme":"5525｜回到最初 順時光之旅","status":"verified-published","sources":["https://www.cna.com.tw/news/amov/202504290127.aspx","https://news.ttv.com.tw/news/11403300001800W"]},
+    {"id":"taipei-5525-20250706","cityId":"taipei","city":"台北","date":"2025-07-06","venue":"台北大巨蛋","tour":"5525 回到那一天","theme":"5525+1｜倒轉時間 逆時光之行","status":"verified-published","sources":["https://www.cna.com.tw/news/amov/202504290127.aspx","https://news.ttv.com.tw/news/11403300001800W"]},
+    {"id":"taipei-5525-20250711","cityId":"taipei","city":"台北","date":"2025-07-11","venue":"台北大巨蛋","tour":"5525 回到那一天","theme":"5525｜回到最初 順時光之旅","status":"verified-published","sources":["https://www.cna.com.tw/news/amov/202504290127.aspx","https://news.ttv.com.tw/news/11403300001800W"]},
+    {"id":"taipei-5525-20250712","cityId":"taipei","city":"台北","date":"2025-07-12","venue":"台北大巨蛋","tour":"5525 回到那一天","theme":"5525+1｜倒轉時間 逆時光之行","status":"verified-published","sources":["https://www.cna.com.tw/news/amov/202504290127.aspx","https://news.ttv.com.tw/news/11403300001800W"]},
+    {"id":"taichung-pending","cityId":"taichung","city":"台中","date":null,"venue":"台中洲際棒球場","tour":"5525 回到那一天","theme":"逐場資料待核實","status":"archive-model","sources":[]},
+    {"id":"kaohsiung-pending","cityId":"kaohsiung","city":"高雄","date":null,"venue":"高雄世運主場館","tour":"5525 回到那一天","theme":"逐場資料待核實","status":"archive-model","sources":[]},
+    {"id":"hongkong-pending","cityId":"hongkong","city":"香港","date":null,"venue":"中環海濱 / 紅磡體育館","tour":"5525 回到那一天","theme":"逐場資料待核實","status":"archive-model","sources":[]},
+    {"id":"beijing-pending","cityId":"beijing","city":"北京","date":null,"venue":"國家體育場 · 鳥巢","tour":"5525 回到那一天","theme":"逐場資料待核實","status":"archive-model","sources":[]},
+    {"id":"shanghai-pending","cityId":"shanghai","city":"上海","date":null,"venue":"上海體育場","tour":"5525 回到那一天","theme":"逐場資料待核實","status":"archive-model","sources":[]},
+    {"id":"guangzhou-pending","cityId":"guangzhou","city":"廣州","date":null,"venue":"廣州天河體育中心","tour":"5525 回到那一天","theme":"逐場資料待核實","status":"archive-model","sources":[]},
+    {"id":"xiamen-pending","cityId":"xiamen","city":"廈門","date":null,"venue":"廈門體育中心","tour":"LIFE 人生無限公司 / 諾亞方舟","theme":"逐場資料待核實","status":"archive-model","sources":[]},
+    {"id":"singapore-pending","cityId":"singapore","city":"新加坡","date":null,"venue":"Singapore Indoor Stadium","tour":"5525 回到那一天","theme":"逐場資料待核實","status":"archive-model","sources":[]},
+    {"id":"tokyo-pending","cityId":"tokyo","city":"東京","date":null,"venue":"場館待核實","tour":"海外巡演節點","theme":"逐場資料待核實","status":"archive-model","sources":[]}
+  ]
+}
