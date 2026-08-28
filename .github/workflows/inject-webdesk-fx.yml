@@ -9,6 +9,7 @@ on:
       - 'Html_tools/workspace-preload-cleaner.js'
       - 'Html_tools/workspace-default-cleaner.js'
       - 'Html_tools/workspace-core-guard.js'
+      - 'Html_tools/toolbox-categorized-shelf.js'
       - 'Html_tools/calendar-widget-v11.js'
       - 'Html_tools/calendar-day-detail-card.js'
       - 'Html_tools/image-studio-v4.js'
@@ -57,6 +58,7 @@ jobs:
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
             '<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260828-workspace-core-guard3-preserve-active-empty"></script>',
+            '<script src="Html_tools/toolbox-categorized-shelf.js?v=20260828-toolbox-categorized-shelf1-search-groups"></script>',
             '<script src="Html_tools/calendar-widget-v11.js?v=20260828-calendar-widget-v11-readable-compact"></script>',
             '<script src="Html_tools/calendar-day-detail-card.js?v=20260828-calendar-day-detail-card1-lunar-holiday-solar"></script>',
             '<script src="Html_tools/image-studio-v4.js?v=20260828-image-studio-v4-safe-crop-output"></script>',
@@ -100,46 +102,23 @@ jobs:
             flags=re.S
           )
 
-          stubs = [
-            '{id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"}',
-            '{id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"}',
-            '{id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"}',
-            '{id:"typhoon",kind:"widget",title:"颱風路徑",desc:"官方快照、地圖路徑、實況與預測。",icon:"🌀",tone:"t-typhoon"}',
-          ]
-          marker = '  {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}'
-          insert = ''
-          for app_id, stub in [('metals',stubs[0]),('fx-rates',stubs[1]),('calendar',stubs[2]),('typhoon',stubs[3])]:
-            if f'id:"{app_id}"' not in html:
-              insert += '  ' + stub + ',\n'
-          if insert and marker in html:
-            html = html.replace(marker, insert + marker, 1)
-
-          replacements = {
-            'metals': 'id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"',
-            'fx-rates': 'id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"',
-            'calendar': 'id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"',
-            'typhoon': 'id:"typhoon",kind:"widget",title:"颱風路徑",desc:"官方快照、地圖路徑、實況與預測。",icon:"🌀",tone:"t-typhoon"',
-          }
-          for app_id, repl in replacements.items():
-            html = re.sub(rf'id:"{re.escape(app_id)}",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-[^"]+"', repl, html)
-
           script_names = [
-            'workspace-preload-cleaner','market-color-fix','workspace-default-cleaner','workspace-core-guard','calendar-widget-v11','calendar-day-detail-card','image-studio-v5-crop-overlay','image-studio-v4','image-studio-v2',
+            'workspace-preload-cleaner','market-color-fix','workspace-default-cleaner','workspace-core-guard','toolbox-categorized-shelf',
+            'calendar-widget-v11','calendar-day-detail-card','image-studio-v5-crop-overlay','image-studio-v4','image-studio-v2',
             'layout-persist-fix','calendar-widget-v10','metals-calendar-restore-guard','calendar-widget-v9','calendar-widget-v8','calendar-widget-v7','calendar-widget-v6','calendar-widget-v5','calendar-widget-v4','calendar-widget-v3',
-            'calendar-v3-lite-polish','calendar-v3-lunar-label-fix','calendar-v3-day-picker-fix',
-            'calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix',
-            'first-run-empty-desktop','background-fit-fix','icon-edge-fix',
-            'card-gap-fix','card-fold-fix','metals-widget','fx-widget','typhoon-widget',
-            'calendar-widget','calendar-polish-fix','calendar-lunar-ui-fix','calendar-perpetual-fix','calendar-pm-polish',
-            'calendar-product-redesign','calendar-ux-cleanup','theme-contrast-fix','finance-i18n-fix'
+            'calendar-v3-lite-polish','calendar-v3-lunar-label-fix','calendar-v3-day-picker-fix','calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix',
+            'first-run-empty-desktop','background-fit-fix','icon-edge-fix','card-gap-fix','card-fold-fix','metals-widget','fx-widget','typhoon-widget',
+            'calendar-widget','calendar-polish-fix','calendar-lunar-ui-fix','calendar-perpetual-fix','calendar-pm-polish','calendar-product-redesign','calendar-ux-cleanup','theme-contrast-fix','finance-i18n-fix'
           ]
           for name in script_names:
             html = re.sub(rf'<script\s+src="Html_tools/{re.escape(name)}\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
 
           if '<script>\nconst apps=[' in html:
             html = html.replace('<script>\nconst apps=[', preload_tag + '\n<script>\nconst apps=[', 1)
-          else:
+          elif '<script>\r\nconst apps=[' in html:
             html = html.replace('<script>\r\nconst apps=[', preload_tag + '\n<script>\r\nconst apps=[', 1)
+          elif preload_tag not in html:
+            html = html.replace('</head>', preload_tag + '\n</head>', 1)
           html = html.replace('</body>', '\n'.join(tags) + '\n</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
@@ -147,11 +126,11 @@ jobs:
       - name: Commit lean script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has manual card save cleaner."
+            echo "index.html already has categorized toolbox shelf."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject manual card save cleaner"
+          git commit -m "Inject categorized toolbox shelf"
           git push
