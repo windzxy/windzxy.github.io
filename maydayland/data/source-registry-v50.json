@@ -1,0 +1,32 @@
+{
+  "version":"50.0.0",
+  "updatedAt":"2026-08-28",
+  "principle":"Maydayland distinguishes verified facts, structured editorial models, and placeholders. Search results must expose confidence instead of flattening all records into equal authority.",
+  "levels":[
+    {"id":"verified","label":"已核驗","score":100,"note":"可追溯至官方或一手公開來源。"},
+    {"id":"editorial","label":"編輯模型","score":70,"note":"用於產品敘事與關聯探索，尚未逐項官方核對。"},
+    {"id":"needs-source","label":"待補來源","score":40,"note":"保留資料槽位，但不應被視為權威事實。"}
+  ],
+  "sources":[
+    {"id":"official-mayday","name":"五月天官方公開資料","type":"official","confidence":"verified","scope":["timeline","album","tour"]},
+    {"id":"official-venue","name":"場館／主辦公開資料","type":"official","confidence":"verified","scope":["city","tour"]},
+    {"id":"editorial-model","name":"Maydayland 編輯模型","type":"editorial","confidence":"editorial","scope":["home","city","album","songs","books","timeline"]},
+    {"id":"archive-pending","name":"檔案待核對來源","type":"archive","confidence":"needs-source","scope":["books","timeline"]}
+  ],
+  "index":[
+    {"id":"tour-5525","type":"tour","page":"home","title":"5525 回到那一天","subtitle":"2023–2026 · 巡演路線","keywords":["5525","回到那一天","巡演","tour"],"confidence":"editorial","sourceId":"editorial-model","target":"#home"},
+    {"id":"city-taipei","type":"city","page":"city","title":"台北","subtitle":"核心主場 · 城市專題","keywords":["台北","taipei","大巨蛋","小巨蛋"],"confidence":"editorial","sourceId":"editorial-model","target":"#city/taipei"},
+    {"id":"city-hongkong","type":"city","page":"city","title":"香港","subtitle":"海港海外線 · 城市專題","keywords":["香港","hong kong","紅磡","中環海濱"],"confidence":"editorial","sourceId":"editorial-model","target":"#city/hongkong"},
+    {"id":"city-shanghai","type":"city","page":"city","title":"上海","subtitle":"連場都市 · 城市專題","keywords":["上海","shanghai","上海體育場"],"confidence":"editorial","sourceId":"editorial-model","target":"#city/shanghai"},
+    {"id":"album-first","type":"album","page":"album","title":"第一張創作專輯","subtitle":"1999 · Album Room","keywords":["第一張創作專輯","1999","album"],"confidence":"editorial","sourceId":"editorial-model","target":"#album/first"},
+    {"id":"album-time-machine","type":"album","page":"album","title":"時光機","subtitle":"2003 · Album Room","keywords":["時光機","2003","time machine"],"confidence":"editorial","sourceId":"editorial-model","target":"#album/timemachine"},
+    {"id":"album-history","type":"album","page":"album","title":"自傳","subtitle":"2016 · Album Room","keywords":["自傳","2016","history of tomorrow"],"confidence":"editorial","sourceId":"editorial-model","target":"#album/history"},
+    {"id":"song-stubborn","type":"song","page":"songs","title":"倔強","subtitle":"Songs Universe · 青春成長","keywords":["倔強","stubborn","歌曲"],"confidence":"editorial","sourceId":"editorial-model","target":"#songs/stubborn"},
+    {"id":"song-tender","type":"song","page":"songs","title":"溫柔","subtitle":"Songs Universe · 溫柔治癒","keywords":["溫柔","tender","歌曲"],"confidence":"editorial","sourceId":"editorial-model","target":"#songs/tender"},
+    {"id":"song-contentment","type":"song","page":"songs","title":"知足","subtitle":"Songs Universe · 溫柔治癒","keywords":["知足","contentment","歌曲"],"confidence":"editorial","sourceId":"editorial-model","target":"#songs/contentment"},
+    {"id":"book-tour-program","type":"publication","page":"books","title":"巡演場刊檔案","subtitle":"Publications Archive","keywords":["場刊","巡演場刊","publication"],"confidence":"needs-source","sourceId":"archive-pending","target":"#books"},
+    {"id":"book-ticket","type":"publication","page":"books","title":"票根與紙本收藏","subtitle":"Publications Archive","keywords":["票根","紙本","收藏"],"confidence":"needs-source","sourceId":"archive-pending","target":"#books"},
+    {"id":"timeline-1997","type":"timeline","page":"timeline","title":"成團起點","subtitle":"1997 · Timeline Archive","keywords":["1997","成團","五月天","timeline"],"confidence":"editorial","sourceId":"editorial-model","target":"#timeline"},
+    {"id":"timeline-2017","type":"timeline","page":"timeline","title":"LIFE 人生無限公司時期","subtitle":"2017–2019 · Timeline Archive","keywords":["life","人生無限公司","2017","巡演"],"confidence":"editorial","sourceId":"editorial-model","target":"#timeline"}
+  ]
+}
