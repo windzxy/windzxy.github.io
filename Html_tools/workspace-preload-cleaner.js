@@ -2,19 +2,15 @@
   if(window.__windzxyWorkspacePreloadCleanerLoaded)return;
   window.__windzxyWorkspacePreloadCleanerLoaded=1;
 
-  const VER='20260828-workspace-preload-cleaner2-kill-legacy-autocards';
+  const VER='20260828-workspace-preload-cleaner3-block-widget-autocards';
   const STORE='windzxy-web-desktop-workspaces';
   const LEGACY=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
   const GEO='windzxy-web-desktop-card-geometry-v4';
   const KEYS=new Set([STORE,...LEGACY]);
   const DEFAULT_IDS=new Set(['daily','office','imageDesk','data']);
   const SEED_ID_RE=/^(daily|office|imageDesk|data)-[^\s]+-\d+$/i;
-  const AUTO_APPS={
-    daily:new Set(['weather','note','todo','clock','image','calc','metals','fx-rates']),
-    office:new Set(['weather','text','table','date','todo','memo','metals','fx-rates']),
-    imageDesk:new Set(['image','color','note','metals','fx-rates']),
-    data:new Set(['weather','table','json','date','calc','memo','metals','fx-rates'])
-  };
+  const AUTO_ID_RE=/^(card-(metals|fx)-|daily-(metals|fx-rates)-\d+$|imageDesk-(image|color|note)-\d+$)/i;
+  const IMAGE_DESK_AUTO=new Set(['image','color','note']);
   const EMPTY_DEFAULTS=[
     {id:'daily',name:'日常工作區',hint:'從右側功能中心選擇需要的卡片。',cards:[]},
     {id:'office',name:'辦公整理',hint:'文字、表格、日期與 JSON 放在一起。',cards:[]},
@@ -25,14 +21,16 @@
   function clone(v){try{return JSON.parse(JSON.stringify(v));}catch(e){return v;}}
   function safeParse(text){try{const v=JSON.parse(text||'null');return Array.isArray(v)?v:null;}catch(e){return null;}}
   function isManual(card){return !!card&&(card.source==='manual'||card.manual===true||String(card.id||'').startsWith('custom-'));}
+  function appOf(card){return String(card?.appId||card?.toolId||'');}
   function isAutoCard(card,ws){
     if(!card)return false;
     const id=String(card.id||'');
-    const appId=card.appId||card.toolId||'';
+    const appId=appOf(card);
     if(SEED_ID_RE.test(id))return true;
+    if(AUTO_ID_RE.test(id))return true;
     if(card.source==='system')return true;
     if(ws&&DEFAULT_IDS.has(ws.id)&&id.startsWith(ws.id+'-')&&!id.startsWith('card-')&&!id.startsWith('custom-'))return true;
-    if(ws&&AUTO_APPS[ws.id]?.has(appId)&&!isManual(card))return true;
+    if(ws&&ws.id==='imageDesk'&&IMAGE_DESK_AUTO.has(appId)&&!isManual(card))return true;
     return false;
   }
   function normalizeCard(card,i){
@@ -64,7 +62,7 @@
       if(!geo||typeof geo!=='object')return;
       let changed=false;
       Object.keys(geo).forEach(key=>{
-        if(/::app::(metals|fx-rates|image|color|note|weather|todo|clock|calc|table|json|date|memo|text)$/.test(key)){
+        if(/::app::(metals|fx-rates|image|color|note)$/.test(key)||/::id::(card-(metals|fx)-|daily-(metals|fx-rates)-|imageDesk-(image|color|note)-)/.test(key)){
           delete geo[key];
           changed=true;
         }
@@ -85,6 +83,24 @@
 
   const rawGet=Storage.prototype.getItem;
   const rawSet=Storage.prototype.setItem;
+  const rawPush=Array.prototype.push;
+
+  function shouldBlockPush(item){
+    if(!item||typeof item!=='object'||Array.isArray(item))return false;
+    const id=String(item.id||'');
+    const appId=appOf(item);
+    if(AUTO_ID_RE.test(id))return true;
+    if(SEED_ID_RE.test(id)&&!isManual(item))return true;
+    if((id==='daily-metals-0'||id==='daily-fx-0'||id==='daily-fx-rates-0')&&!isManual(item))return true;
+    if((appId==='metals'||appId==='fx-rates')&&/^card-(metals|fx)-/i.test(id)&&!isManual(item))return true;
+    return false;
+  }
+  Array.prototype.push=function(){
+    const args=[...arguments].filter(item=>!shouldBlockPush(item));
+    if(!args.length)return this.length;
+    return rawPush.apply(this,args);
+  };
+
   Storage.prototype.getItem=function(key){
     const value=rawGet.call(this,key);
     if(this===localStorage&&KEYS.has(String(key))&&value){
@@ -105,6 +121,10 @@
   window.__windzxyCleanDefaultWorkspaces=function(){
     try{
       forceCleanStorage();
+      if(typeof workspaces!=='undefined'&&Array.isArray(workspaces)){
+        workspaces=ensureWorkspaces(workspaces);
+        rawSet.call(localStorage,STORE,JSON.stringify(workspaces));
+      }
       if(Array.isArray(window.workspaces)){
         window.workspaces=ensureWorkspaces(window.workspaces);
         rawSet.call(localStorage,STORE,JSON.stringify(window.workspaces));
