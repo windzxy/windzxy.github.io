@@ -88,7 +88,7 @@
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
-<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner1-before-core"></script>
+<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner2-kill-legacy-autocards"></script>
 <script>
 const apps=[
   {id:"image",kind:"tool",title:"圖片處理",desc:"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。",icon:"◎",tone:"t-image"},
@@ -1396,7 +1396,6 @@ try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error
 <script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>
 <script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>
 <script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>
-<script src="Html_tools/layout-persist-fix.js?v=20260819-layout-persist8-cross-browser-sync"></script>
 <script src="Html_tools/card-gap-fix.js?v=20260819-card-gap2-new-card-only"></script>
 <script src="Html_tools/card-fold-fix.js?v=20260819-card-fold4-preserve-body"></script>
 <script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>
