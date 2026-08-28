@@ -1,0 +1,27 @@
+{
+  "version": "43.0.0",
+  "updatedAt": "2026-08-28",
+  "purpose": "Shader route flow, bloom toggle and performance controls for Maydayland Geo Tour Atlas.",
+  "defaults": {
+    "bloomEnabled": true,
+    "routeFxEnabled": true,
+    "lowPower": false,
+    "autoRotate": true,
+    "pixelRatioCap": 1.5,
+    "bloomStrength": 0.38,
+    "bloomRadius": 0.42,
+    "bloomThreshold": 0.56
+  },
+  "implemented": [
+    "TubeGeometry route ShaderMaterial with aProgress attribute",
+    "animated route draw head and flowing sine waves",
+    "UnrealBloomPass optional post-processing with safe fallback",
+    "performance control panel: bloom, route FX, low power, auto rotate, pixel ratio cap",
+    "rebuild/dispose discipline for route geometry and materials"
+  ],
+  "next": [
+    "v44 split A-F product pages according to approved product mockup",
+    "v45 city landing pages and venue boards",
+    "v46 richer verified tour datasets"
+  ]
+}
