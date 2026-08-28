@@ -1,0 +1,35 @@
+{
+  "version":"47.0.0",
+  "updatedAt":"2026-08-28",
+  "principle":"Curated song exploration model. Song titles and relationship tags are navigational metadata; detailed release dates, live counts, lyrics and audio sources require source verification before being presented as authoritative.",
+  "moods":[
+    {"id":"all","label":"全部"},
+    {"id":"anthem","label":"現場大合唱"},
+    {"id":"warm","label":"溫柔治癒"},
+    {"id":"youth","label":"青春成長"},
+    {"id":"rock","label":"搖滾能量"},
+    {"id":"night","label":"深夜情緒"}
+  ],
+  "songs":[
+    {"id":"stubborn","title":"倔強","album":"神的孩子都在跳舞","year":"2004","mood":"anthem","energy":96,"accent":"#28d7ff","tours":["LIFE 人生無限公司","5525 回到那一天"],"note":"以高能量與全場合唱感作為探索入口。"},
+    {"id":"gentle","title":"溫柔","album":"愛情萬歲","year":"2000","mood":"warm","energy":62,"accent":"#72f5c6","tours":["經典曲目索引"],"note":"偏向柔和、陪伴感與現場情緒延伸。"},
+    {"id":"contentment","title":"知足","album":"知足 just my pride 最真傑作選","year":"2005","mood":"warm","energy":58,"accent":"#f7c65b","tours":["經典曲目索引","LIFE 人生無限公司"],"note":"適合作為溫柔線與回憶線的節點。"},
+    {"id":"suddenly","title":"突然好想你","album":"後青春期的詩","year":"2008","mood":"night","energy":76,"accent":"#9b84ff","tours":["諾亞方舟","LIFE 人生無限公司"],"note":"深夜情緒、回望與大型現場合唱的交叉節點。"},
+    {"id":"youarenotalone","title":"你不是真正的快樂","album":"後青春期的詩","year":"2008","mood":"night","energy":72,"accent":"#ff7ea9","tours":["諾亞方舟","LIFE 人生無限公司"],"note":"情緒強度與現場共感兼具。"},
+    {"id":"onion","title":"離開地球表面","album":"離開地球表面 JUMP!","year":"2007","mood":"rock","energy":100,"accent":"#ff9a56","tours":["DNA 創造","LIFE 人生無限公司"],"note":"高 BPM 感知與舞台爆發力入口。"},
+    {"id":"cheers","title":"乾杯","album":"第二人生","year":"2011","mood":"youth","energy":82,"accent":"#64e8ff","tours":["諾亞方舟","5525 回到那一天"],"note":"青春、友情、時間與回望的主題節點。"},
+    {"id":"secondlife","title":"第二人生","album":"第二人生","year":"2011","mood":"rock","energy":88,"accent":"#35d0ff","tours":["諾亞方舟"],"note":"末日想像與重新選擇人生的敘事入口。"},
+    {"id":"party","title":"派對動物","album":"自傳","year":"2016","mood":"rock","energy":98,"accent":"#ff5f8f","tours":["LIFE 人生無限公司"],"note":"大型舞台節奏與視覺爆發節點。"},
+    {"id":"laterus","title":"後來的我們","album":"自傳","year":"2016","mood":"night","energy":67,"accent":"#8f7dff","tours":["LIFE 人生無限公司"],"note":"回憶、遺憾與成熟敘事節點。"},
+    {"id":"life","title":"人生有限公司","album":"自傳","year":"2016","mood":"youth","energy":84,"accent":"#c96dff","tours":["LIFE 人生無限公司"],"note":"人生選擇與成長敘事入口。"},
+    {"id":"bestday","title":"最好的一天","album":"自傳","year":"2016","mood":"warm","energy":70,"accent":"#ffd36a","tours":["LIFE 人生無限公司","5525 回到那一天"],"note":"溫暖收束、日常幸福與回望感。"}
+  ],
+  "relations":[
+    {"from":"stubborn","to":"cheers","label":"成長 / 青春"},
+    {"from":"cheers","to":"bestday","label":"時間 / 回望"},
+    {"from":"suddenly","to":"youarenotalone","label":"深夜 / 共感"},
+    {"from":"party","to":"onion","label":"舞台 / 爆發"},
+    {"from":"laterus","to":"gentle","label":"遺憾 / 溫柔"},
+    {"from":"life","to":"secondlife","label":"人生 / 選擇"}
+  ]
+}
