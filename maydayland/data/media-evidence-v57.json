@@ -1,0 +1,28 @@
+{
+  "version":"57.0.0",
+  "policy":{
+    "purpose":"Separate technical asset integrity from editorial/source evidence. A local file may be verified technically without implying official provenance.",
+    "levels":[
+      {"id":"E3","label":"LOCAL ORIGINAL VERIFIED","meaning":"Maydayland-created local asset; file integrity and ownership declaration recorded."},
+      {"id":"E2","label":"SOURCE RECORDED","meaning":"External source URL/owner recorded; reuse status still requires case-by-case review."},
+      {"id":"E1","label":"REFERENCE ONLY","meaning":"Reference metadata only; never treated as reusable media."}
+    ],
+    "requiredFields":["assetId","evidenceLevel","creator","ownershipBasis","createdFor","reviewStatus","reviewedAt","technicalRegistry"],
+    "externalMediaRule":"No external photo, cover, logo or scan is promoted to reusable media unless provenance and reuse status are separately recorded."
+  },
+  "summary":{"assets":12,"e3":12,"e2":0,"e1":0,"editorialCoveragePercent":100,"externalReusableAssets":0},
+  "assets":[
+    {"assetId":"media-taipei-skyline","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"city-atmosphere-index","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Original abstract city visual; not an official Taipei or Mayday photograph."},
+    {"assetId":"media-taipei-venue","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"venue-memory-board","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Original venue-board visual; no claim of depicting a specific official venue photograph."},
+    {"assetId":"media-hongkong-harbour","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"city-atmosphere-index","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Original harbour-themed city visual; not an official concert photograph."},
+    {"assetId":"media-shanghai-night","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"city-atmosphere-index","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Original metropolitan visual; not an official concert photograph."},
+    {"assetId":"media-album-first","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"album-archive-sleeve","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Archive sleeve inspired only by metadata; not a reproduction of copyrighted cover art."},
+    {"assetId":"media-album-time-machine","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"album-archive-sleeve","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Archive sleeve inspired only by metadata; not a reproduction of copyrighted cover art."},
+    {"assetId":"media-album-poetry","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"album-archive-sleeve","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Archive sleeve inspired only by metadata; not a reproduction of copyrighted cover art."},
+    {"assetId":"media-album-history","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"album-archive-sleeve","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Archive sleeve inspired only by metadata; not a reproduction of copyrighted cover art."},
+    {"assetId":"media-pub-book","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"publication-archive","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Original publication-category visual; not a scan of a commercial book."},
+    {"assetId":"media-pub-tourbook","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"publication-archive","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Original tourbook-category visual; not a scan of an official programme."},
+    {"assetId":"media-pub-ticket","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"publication-archive","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Original ephemera visual; not a reproduction of a ticket."},
+    {"assetId":"media-timeline-archive","evidenceLevel":"E3","creator":"Maydayland","ownershipBasis":"local-original","createdFor":"timeline-archive","reviewStatus":"reviewed","reviewedAt":"2026-08-28","technicalRegistry":"media-registry-v56.json","note":"Original archive-index visual."}
+  ]
+}
