@@ -175,10 +175,10 @@ function preferredCardSize(appId,w,h){
 }
 function seedCards(key){return (seeds[key]||[]).map(([appId,x,y,w,h],i)=>{const size=preferredCardSize(appId,w,h);return {id:key+"-"+appId+"-"+i,appId,x,y,w:size.w,h:size.h,collapsed:false,data:{}}})}
 const defaults=[
-  {id:"daily",name:"日常工作區",hint:"拖拽卡片可任意擺放；點擊卡片打開工具。",cards:seedCards("daily")},
-  {id:"office",name:"辦公整理",hint:"文字、表格、日期與 JSON 放在一起。",cards:seedCards("office")},
-  {id:"imageDesk",name:"圖片工作台",hint:"圖片處理與 OCR 優先。",cards:seedCards("imageDesk")},
-  {id:"data",name:"資料處理",hint:"整理表格、JSON 和日期資料。",cards:seedCards("data")}
+  {id:"daily",name:"日常工作區",hint:"從右側功能中心選擇需要的卡片。",cards:[]},
+  {id:"office",name:"辦公整理",hint:"文字、表格、日期與 JSON 放在一起。",cards:[]},
+  {id:"imageDesk",name:"圖片工作台",hint:"圖片處理與 OCR 優先。",cards:[]},
+  {id:"data",name:"資料處理",hint:"整理表格、JSON 和日期資料。",cards:[]}
 ];
 const storeKey="windzxy-web-desktop-workspaces";
 const legacyKeys=["windzxy-desktop-workspaces","windzxy-dashboard-workspaces"];
@@ -380,8 +380,7 @@ function toggleFold(id){
 }
 function resetLayout(){
   const ws=activeWorkspace();
-  const def=defaults.find(x=>x.id===ws.id);
-  ws.cards=def?clone(def.cards):[];
+  ws.cards=[];
   save();
   renderAll();
 }
@@ -1388,10 +1387,11 @@ setInterval(()=>{renderClock();tickWidgets()},1000);
 try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error(error);loadBackgrounds()}
 </script>
 <script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>
+<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>
 <script src="Html_tools/workspace-core-guard.js?v=20260828-workspace-core-guard3-preserve-active-empty"></script>
 <script src="Html_tools/calendar-widget-v11.js?v=20260828-calendar-widget-v11-readable-compact"></script>
 <script src="Html_tools/calendar-day-detail-card.js?v=20260828-calendar-day-detail-card1-lunar-holiday-solar"></script>
-<script src="Html_tools/image-studio-v2.js?v=20260828-image-studio-v3-product-shell-active"></script>
+<script src="Html_tools/image-studio-v4.js?v=20260828-image-studio-v4-safe-crop-output"></script>
 <script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>
 <script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>
 <script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>
