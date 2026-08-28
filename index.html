@@ -88,7 +88,7 @@
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
-<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner3-block-widget-autocards"></script>
+<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner4-save-manual-cards"></script>
 <script>
 const apps=[
   {id:"image",kind:"tool",title:"圖片處理",desc:"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。",icon:"◎",tone:"t-image"},
