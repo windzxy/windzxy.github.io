@@ -1,0 +1,22 @@
+{
+  "version":"46.0.0",
+  "updatedAt":"2026-08-28",
+  "principle":"Studio-album room for product navigation. Years and album titles are treated as catalogue metadata; cover-art slots stay rights-safe until approved assets are attached.",
+  "eras":[
+    {"id":"origin","label":"1999–2001 · 青春原點","note":"從首張專輯到《人生海海》，建立樂團最早期的城市、青春與現場語氣。"},
+    {"id":"machine","label":"2003–2006 · 時光與轉身","note":"復出後進入《時光機》《神的孩子都在跳舞》《為愛而生》的擴張期。"},
+    {"id":"poem","label":"2008–2011 · 後青春宇宙","note":"《後青春期的詩》與《第二人生》把個人生命感推向大型巡演敘事。"},
+    {"id":"history","label":"2016–至今 · 自傳之後","note":"《自傳》成為後期作品與大型巡演回望過去的重要索引。"}
+  ],
+  "albums":[
+    {"id":"mayday1","era":"origin","year":"1999","title":"第一張創作專輯","en":"Mayday's First Album","catalogue":"Studio 01","accent":"#47d7ff","mood":"青春 / 城市 / 初始現場","story":"把最早期的樂團能量、城市生活與青春口吻放進第一個正式專輯節點。","tracks":["瘋狂世界","擁抱","志明與春嬌"]},
+    {"id":"love","era":"origin","year":"2000","title":"愛情萬歲","en":"Viva Love","catalogue":"Studio 02","accent":"#ff6b92","mood":"愛情 / 青春 / 搖滾","story":"更成熟的編曲與情緒密度，成為早期現場常被回望的核心專輯。","tracks":["愛情萬歲","溫柔","終結孤單"]},
+    {"id":"peoplelife","era":"origin","year":"2001","title":"人生海海","en":"People Life, Ocean Wild","catalogue":"Studio 03","accent":"#6de4c7","mood":"人生 / 離別 / 海洋感","story":"在暫別前完成一個具有強烈人生感與告別意味的早期階段。","tracks":["人生海海","一顆蘋果","借問眾神明"]},
+    {"id":"timemachine","era":"machine","year":"2003","title":"時光機","en":"Time Machine","catalogue":"Studio 04","accent":"#f8c75d","mood":"復出 / 時間 / 記憶","story":"復出後以時間、回望與重新出發構成新的樂團章節，也成為唱片室空間意象的核心。","tracks":["時光機","而我知道","九號球"]},
+    {"id":"godchildren","era":"machine","year":"2004","title":"神的孩子都在跳舞","en":"God's Children Are All Dancing","catalogue":"Studio 05","accent":"#9b84ff","mood":"舞台 / 能量 / 速度","story":"高密度樂團演奏與現場能量，適合以唱片架和舞台燈光感呈現。","tracks":["倔強","孫悟空","垃圾車"]},
+    {"id":"bornlove","era":"machine","year":"2006","title":"為愛而生","en":"Born to Love","catalogue":"Studio 06","accent":"#ff8b63","mood":"愛 / 世界 / 大型敘事","story":"從個人情感延伸到更大的世界觀，為後來大型巡演敘事打開尺度。","tracks":["為愛而生","天使","香水"]},
+    {"id":"poetry","era":"poem","year":"2008","title":"後青春期的詩","en":"Poetry of the Day After","catalogue":"Studio 07","accent":"#70a7ff","mood":"成長 / 回望 / 青春後段","story":"用成年後的視角重新凝視青春，是唱片室年代切換最清晰的一個節點。","tracks":["你不是真正的快樂","突然好想你","如煙"]},
+    {"id":"secondlife","era":"poem","year":"2011","title":"第二人生","en":"Second Round","catalogue":"Studio 08","accent":"#ffc857","mood":"末日 / 選擇 / 第二人生","story":"專輯概念和諾亞方舟巡演高度互相映照，適合與 Tour Atlas 建立雙向入口。","tracks":["第二人生","星空","我不願讓你一個人"]},
+    {"id":"historyof","era":"history","year":"2016","title":"自傳","en":"History of Tomorrow","catalogue":"Studio 09","accent":"#ff77b7","mood":"自傳 / 回望 / 未來","story":"以自我回望連接未來，後續 LIFE 與 5525 等巡演可以從這裡向外延伸。","tracks":["如果我們不曾相遇","後來的我們","頑固"]}
+  ]
+}
