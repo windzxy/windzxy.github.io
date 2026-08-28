@@ -1,0 +1,35 @@
+{
+  "version":"49.0.0",
+  "updatedAt":"2026-08-28",
+  "principle":"Timeline items are product-model archive nodes. Items marked verification-required must not be presented as exhaustive official chronology until source review is complete.",
+  "categories":[
+    {"id":"all","label":"全部事件"},
+    {"id":"band","label":"樂團歷程"},
+    {"id":"album","label":"專輯"},
+    {"id":"tour","label":"巡演"},
+    {"id":"city","label":"城市節點"},
+    {"id":"archive","label":"檔案收藏"}
+  ],
+  "eras":[
+    {"id":"origin","label":"1997–2002","note":"成團與早期作品"},
+    {"id":"growth","label":"2003–2010","note":"復出、專輯與大型巡演成長"},
+    {"id":"stadium","label":"2011–2019","note":"體育場巡演與大型製作"},
+    {"id":"present","label":"2020–至今","note":"新世代巡演與數位檔案"}
+  ],
+  "events":[
+    {"id":"origin-1997","year":"1997","dateLabel":"1997","era":"origin","category":"band","title":"Mayday origin node","subtitle":"成團年代索引","summary":"將成團、團名與早期校園活動整理成時間軸入口；正式細節需由可信來源逐項補證。","accent":"#28d7ff","status":"verification-required","links":["Timeline","Books & Publications"]},
+    {"id":"album-1999","year":"1999","dateLabel":"1999","era":"origin","category":"album","title":"第一張創作專輯","subtitle":"Studio album node","summary":"作為 Album Room 與 Timeline 的第一個正式交叉入口，後續補發行版本、曲目與實體收藏資料。","accent":"#72f5c6","status":"product-model","links":["Album Room","Songs Universe"]},
+    {"id":"album-2000","year":"2000","dateLabel":"2000","era":"origin","category":"album","title":"愛情萬歲","subtitle":"Studio album node","summary":"把早期專輯年代與歌曲宇宙、出版物及演出歷程連接起來。","accent":"#f7c65b","status":"product-model","links":["Album Room","Songs Universe"]},
+    {"id":"album-2001","year":"2001","dateLabel":"2001","era":"origin","category":"album","title":"人生海海","subtitle":"Studio album node","summary":"早期作品時代的收束節點；完整時間、版本與演出關聯仍需來源核驗。","accent":"#ff8aa8","status":"verification-required","links":["Album Room","Songs Universe","Publications"]},
+    {"id":"album-2003","year":"2003","dateLabel":"2003","era":"growth","category":"album","title":"時光機","subtitle":"Return-era album node","summary":"Album Room 的核心年代轉折之一，用於串接唱片室、歌曲宇宙與復出時期檔案。","accent":"#9b84ff","status":"product-model","links":["Album Room","Songs Universe","Publications"]},
+    {"id":"tour-finalhome","year":"2004","dateLabel":"2004–2006","era":"growth","category":"tour","title":"Final Home 巡演年代","subtitle":"Tour archive node","summary":"巡演檔案節點；逐場城市、日期、場館與票務資料需另行建立官方核驗表。","accent":"#35d0ff","status":"verification-required","links":["Tour Atlas","City Dossier","Publications"]},
+    {"id":"album-2006","year":"2006","dateLabel":"2006","era":"growth","category":"album","title":"為愛而生","subtitle":"Studio album node","summary":"中期錄音室作品節點，連接專輯、歌曲與巡演年代。","accent":"#ff9a56","status":"product-model","links":["Album Room","Songs Universe"]},
+    {"id":"tour-dna","year":"2009","dateLabel":"2009–2010","era":"growth","category":"tour","title":"DNA 創造巡演年代","subtitle":"Tour archive node","summary":"將 DNA 巡演作為全球城市路線檔案入口；目前路線順序仍標示為待逐場核驗。","accent":"#72f5c6","status":"verification-required","links":["Tour Atlas","City Dossier"]},
+    {"id":"tour-ark","year":"2011","dateLabel":"2011–2014","era":"stadium","category":"tour","title":"諾亞方舟巡演年代","subtitle":"Stadium tour node","summary":"大型體育場時代的重要巡演節點，用於串接城市、場館、票根與影像資料。","accent":"#ff7ea9","status":"verification-required","links":["Tour Atlas","City Dossier","Publications"]},
+    {"id":"album-2011","year":"2011","dateLabel":"2011","era":"stadium","category":"album","title":"第二人生","subtitle":"Studio album node","summary":"與諾亞方舟時期高度關聯的專輯索引，承接 Album Room 與 Songs Universe。","accent":"#8f7dff","status":"product-model","links":["Album Room","Songs Universe","Tour Atlas"]},
+    {"id":"album-2016","year":"2016","dateLabel":"2016","era":"stadium","category":"album","title":"自傳","subtitle":"Studio album node","summary":"近代錄音室專輯入口，後續加入版本、封面權利狀態、曲目資料與演出關聯。","accent":"#28d7ff","status":"product-model","links":["Album Room","Songs Universe"]},
+    {"id":"tour-life","year":"2017","dateLabel":"2017–2019","era":"stadium","category":"tour","title":"LIFE 人生無限公司巡演年代","subtitle":"Tour archive node","summary":"大型巡演年代節點；城市順序、演出場次與場館資料將由 Tour Atlas 的正式資料表統一管理。","accent":"#9b84ff","status":"verification-required","links":["Tour Atlas","City Dossier","Songs Universe"]},
+    {"id":"tour-wantsee","year":"2020","dateLabel":"2020–2024","era":"present","category":"tour","title":"好好好想見到你巡演年代","subtitle":"Tour archive node","summary":"疫情後演出年代的重要索引，後續補逐場場次、城市與票務紙本。","accent":"#f7c65b","status":"verification-required","links":["Tour Atlas","City Dossier","Publications"]},
+    {"id":"tour-5525","year":"2023","dateLabel":"2023–至今","era":"present","category":"tour","title":"5525 回到那一天巡演年代","subtitle":"Current tour archive node","summary":"目前巡演資料主線，將逐步與城市專題、場館板、飛線地圖及收藏檔案連成同一資料網。","accent":"#28d7ff","status":"verification-required","links":["Tour Atlas","City Dossier","Songs Universe","Publications"]}
+  ]
+}
