@@ -1,0 +1,30 @@
+{
+  "version": "v85",
+  "release": "unified-a-f-core-runtime",
+  "homeLocalRequestBudget": {
+    "css": 6,
+    "js": 6,
+    "total": 12,
+    "cssImports": 0
+  },
+  "core": {
+    "runtime": "app-v85-core.js",
+    "replaces": ["app-v47.js", "app-v84-archives.js"],
+    "pages": ["home", "city", "album", "songs", "books", "timeline"],
+    "lifecycle": "native-render",
+    "atlas": "atlas-v74.html"
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "qualityGates": [
+    "no legacy core runtime in production",
+    "zero CSS imports",
+    "Atlas v74 loaded directly by core",
+    "shell lifecycle emitted by core render",
+    "chronology, media assurance, registry, health and search remain mounted"
+  ]
+}
