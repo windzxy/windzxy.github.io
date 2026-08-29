@@ -1,0 +1,39 @@
+{
+  "version": "v88",
+  "release": "core-native-route-controller",
+  "homeLocalRequestBudget": {
+    "css": 6,
+    "js": 6,
+    "total": 12,
+    "cssImports": 0
+  },
+  "core": {
+    "runtime": "app-v88-core.js",
+    "pages": ["home", "city", "album", "songs", "books", "timeline"],
+    "lifecycle": "core-native-route+atlas+webgl-release",
+    "atlas": "atlas-v74.html",
+    "atlasMount": "home-only",
+    "routeHistory": "page and entity-detail navigation are owned by the unified core and use real hash history for browser Back/Forward",
+    "routeValidation": "unknown top-level hashes normalize to #home during core initialization",
+    "webglRelease": "leaving Home blanks and removes any existing Atlas iframe before the next shell render; pagehide also releases the iframe"
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "qualityGates": [
+    "v87 Pages deployment completed successfully before v88 work",
+    "zero CSS imports",
+    "production CSS/JS request budget remains 6 + 6",
+    "v85 core is no longer loaded in production",
+    "entry-level capture route interception and Atlas guard are removed",
+    "entity-detail navigation is owned by the unified v88 core",
+    "Back/Forward remains driven by one core hashchange lifecycle",
+    "invalid top-level hashes normalize to Home",
+    "Atlas v74 is created only while Home is rendered",
+    "leaving Home explicitly releases the Atlas iframe/WebGL browsing context",
+    "chronology, media assurance, registry, health and search remain mounted"
+  ]
+}
