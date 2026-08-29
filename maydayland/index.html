@@ -1,72 +1,72 @@
 <!doctype html>
-<html lang="zh-Hant" data-maydayland-release="v77">
+<html lang="zh-Hant" data-maydayland-release="v78">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#050912">
-  <meta name="description" content="Maydayland v77：將 v58–v60 的 Venue Intelligence、Tour-Date Evidence Matrix、Verified Route Chronology 合併為單一 production content runtime，首頁本地樣式/腳本預算降至 10 CSS + 11 JS；保留 58 個已核實巡演日期、9 個城市、8 段 route geometry、Tokyo evidence gate，以及 Atlas Shader/Bloom/performance/resilience/accessibility stack。">
-  <title>Maydayland · Consolidated Content Runtime v77</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=77.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=77.0.0">
-  <link rel="stylesheet" href="./app-v49.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v50.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v51.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v52.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v53.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v54.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v56.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v57.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v77.css?v=77.0.0">
-  <link rel="stylesheet" href="./app-v73.css?v=77.0.0">
+  <meta name="description" content="Maydayland v78：將 v56 Asset Integrity 與 v57 Media Evidence 合併為單一 media assurance bundle，保留 SHA-256、解碼/尺寸驗證、duplicate hash、editorial provenance 與 evidence chips；首頁本地樣式/腳本預算降至 9 CSS + 10 JS，並修正兩個右下角 assurance controls 的重疊問題。">
+  <title>Maydayland · Media Assurance Consolidation v78</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=78.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=78.0.0">
+  <link rel="stylesheet" href="./app-v49.css?v=78.0.0">
+  <link rel="stylesheet" href="./app-v50.css?v=78.0.0">
+  <link rel="stylesheet" href="./app-v51.css?v=78.0.0">
+  <link rel="stylesheet" href="./app-v52.css?v=78.0.0">
+  <link rel="stylesheet" href="./app-v53.css?v=78.0.0">
+  <link rel="stylesheet" href="./app-v54.css?v=78.0.0">
+  <link rel="stylesheet" href="./app-v78-media.css?v=78.0.0">
+  <link rel="stylesheet" href="./app-v77.css?v=78.0.0">
+  <link rel="stylesheet" href="./app-v73.css?v=78.0.0">
   <style>
-    .v77-budget{position:fixed;left:14px;bottom:14px;z-index:9998;display:grid;gap:3px;min-width:226px;padding:10px 12px;border:1px solid rgba(125,230,189,.2);border-radius:12px;background:rgba(4,10,20,.84);backdrop-filter:blur(14px);box-shadow:0 12px 36px rgba(0,0,0,.22);font:11px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b8cadb;pointer-events:none}.v77-budget small{letter-spacing:.12em;color:#6f8aa2}.v77-budget b{font-size:13px;color:#eafff7}.v77-budget strong{color:#7de6bd}.v77-budget.is-warn strong{color:#ffb57d}@media(max-width:720px){.v77-budget{left:8px;bottom:8px;min-width:0;max-width:calc(100vw - 16px);padding:8px 10px}}
+    .v78-budget{position:fixed;left:14px;bottom:14px;z-index:9998;display:grid;gap:3px;min-width:226px;padding:10px 12px;border:1px solid rgba(125,230,189,.2);border-radius:12px;background:rgba(4,10,20,.84);backdrop-filter:blur(14px);box-shadow:0 12px 36px rgba(0,0,0,.22);font:11px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b8cadb;pointer-events:none}.v78-budget small{letter-spacing:.12em;color:#6f8aa2}.v78-budget b{font-size:13px;color:#eafff7}.v78-budget strong{color:#7de6bd}.v78-budget.is-warn strong{color:#ffb57d}@media(max-width:720px){.v78-budget{left:8px;bottom:8px;min-width:0;max-width:calc(100vw - 16px);padding:8px 10px}}
   </style>
 </head>
 <body>
   <div id="app"></div>
-  <script>window.MAYDAYLAND_BUILD={version:'v77',release:'chronology-content-runtime-consolidation',events:58,cities:9,segments:8,pending:['tokyo'],homeLocalRequestBudget:{css:10,js:11},atlas:'v74'};</script>
-  <script src="./app-v47.js?v=77.0.0" defer></script>
-  <script src="./app-v48.js?v=77.0.0" defer></script>
-  <script src="./app-v49.js?v=77.0.0" defer></script>
-  <script src="./app-v51.js?v=77.0.0" defer></script>
-  <script src="./app-v52.js?v=77.0.0" defer></script>
-  <script src="./app-v53.js?v=77.0.0" defer></script>
-  <script src="./app-v54.js?v=77.0.0" defer></script>
-  <script src="./app-v56.js?v=77.0.0" defer></script>
-  <script src="./app-v57.js?v=77.0.0" defer></script>
-  <script src="./app-v77.js?v=77.0.0" defer></script>
-  <script src="./app-v73.js?v=77.0.0" defer></script>
+  <script>window.MAYDAYLAND_BUILD={version:'v78',release:'media-assurance-consolidation',events:58,cities:9,segments:8,pending:['tokyo'],homeLocalRequestBudget:{css:9,js:10},atlas:'v74'};</script>
+  <script src="./app-v47.js?v=78.0.0" defer></script>
+  <script src="./app-v48.js?v=78.0.0" defer></script>
+  <script src="./app-v49.js?v=78.0.0" defer></script>
+  <script src="./app-v51.js?v=78.0.0" defer></script>
+  <script src="./app-v52.js?v=78.0.0" defer></script>
+  <script src="./app-v53.js?v=78.0.0" defer></script>
+  <script src="./app-v54.js?v=78.0.0" defer></script>
+  <script src="./app-v78-media.js?v=78.0.0" defer></script>
+  <script src="./app-v77.js?v=78.0.0" defer></script>
+  <script src="./app-v73.js?v=78.0.0" defer></script>
   <script>
   (()=>{
     'use strict';
     const ATLAS='./atlas-v74.html';
-    const EXPECT={css:10,js:11};
+    const EXPECT={css:9,js:10};
     const rewrite=()=>{
       document.querySelectorAll('a[href*="atlas-v61.html"],a[href*="atlas-v62.html"],a[href*="atlas-v63.html"],a[href*="atlas-v64.html"],a[href*="atlas-v69.html"],a[href*="atlas-v70.html"],a[href*="atlas-v71.html"],a[href*="atlas-v72.html"],a[href*="atlas-v73.html"]').forEach(a=>a.setAttribute('href',ATLAS));
-      const live=document.querySelector('.v45-live b');if(live)live.textContent='v77 LIVE';
-      const brand=document.querySelector('.v45-brand small');if(brand)brand.textContent='PRODUCT SYSTEM · v77.0.0';
-      const foot=document.querySelector('.v45-footer');if(foot)foot.textContent='Maydayland v77 · consolidated content runtime · 10 CSS / 11 JS budget';
-      document.documentElement.dataset.maydaylandRelease='v77';
+      const live=document.querySelector('.v45-live b');if(live)live.textContent='v78 LIVE';
+      const brand=document.querySelector('.v45-brand small');if(brand)brand.textContent='PRODUCT SYSTEM · v78.0.0';
+      const foot=document.querySelector('.v45-footer');if(foot)foot.textContent='Maydayland v78 · consolidated media assurance · 9 CSS / 10 JS budget';
+      document.documentElement.dataset.maydaylandRelease='v78';
     };
     const audit=()=>{
-      document.querySelector('.v77-budget')?.remove();
+      document.querySelector('.v78-budget')?.remove();
       const res=performance.getEntriesByType?.('resource')||[];
       const local=res.filter(r=>{try{return new URL(r.name).origin===location.origin}catch{return false}});
-      const css=local.filter(r=>/\/app-v(?:49|50|51|52|53|54|56|57|73|77)\.css(?:\?|$)/.test(r.name)).length;
-      const js=local.filter(r=>/\/app-v(?:47|48|49|51|52|53|54|56|57|73|77)\.js(?:\?|$)/.test(r.name)).length;
-      const obsolete=local.some(r=>/\/app-v(?:58|59|60|61|62|63|64|65|66|67)\.(?:css|js)(?:\?|$)/.test(r.name));
-      const core=document.querySelector('.v60-chronology');
-      const pass=css<=EXPECT.css&&js<=EXPECT.js&&!obsolete&&!!core;
-      const el=document.createElement('aside');el.className='v77-budget'+(pass?'':' is-warn');el.setAttribute('role','status');el.innerHTML=`<small>V77 · CONTENT RUNTIME AUDIT</small><b>${css} CSS · ${js} JS LOCAL</b><strong>${pass?'CONSOLIDATION PASS':'CHECK'}</strong><span>${obsolete?'legacy v58–v67 detected':'v58–v60 merged into app-v77'} · chronology ${core?'mounted':'waiting'}</span>`;document.body.append(el);
-      document.body.dataset.v77HomeAudit=pass?'pass':'check';
+      const css=local.filter(r=>/\/app-v(?:49|50|51|52|53|54|73|77|78-media)\.css(?:\?|$)/.test(r.name)).length;
+      const js=local.filter(r=>/\/app-v(?:47|48|49|51|52|53|54|73|77|78-media)\.js(?:\?|$)/.test(r.name)).length;
+      const obsolete=local.some(r=>/\/app-v(?:56|57|58|59|60|61|62|63|64|65|66|67)\.(?:css|js)(?:\?|$)/.test(r.name));
+      const chronology=document.querySelector('.v60-chronology');
+      const integrity=document.querySelector('#v56Integrity');
+      const evidence=document.querySelector('#v57Evidence');
+      const pass=css<=EXPECT.css&&js<=EXPECT.js&&!obsolete&&!!chronology&&!!integrity&&!!evidence;
+      const el=document.createElement('aside');el.className='v78-budget'+(pass?'':' is-warn');el.setAttribute('role','status');el.innerHTML=`<small>V78 · MEDIA ASSURANCE AUDIT</small><b>${css} CSS · ${js} JS LOCAL</b><strong>${pass?'CONSOLIDATION PASS':'CHECK'}</strong><span>${obsolete?'legacy v56–v67 detected':'v56/v57 merged'} · integrity ${integrity?'ready':'waiting'} · evidence ${evidence?'ready':'waiting'}</span>`;document.body.append(el);
+      document.body.dataset.v78HomeAudit=pass?'pass':'check';
     };
     document.addEventListener('DOMContentLoaded',()=>{
-      setTimeout(()=>{rewrite();document.title='Maydayland · Consolidated Content Runtime v77';},1750);
-      setTimeout(audit,2300);
+      setTimeout(()=>{rewrite();document.title='Maydayland · Media Assurance Consolidation v78';},1750);
+      setTimeout(audit,2600);
       const app=document.querySelector('#app');if(app)new MutationObserver(()=>requestAnimationFrame(rewrite)).observe(app,{childList:true,subtree:true});
-      addEventListener('maydayland:chronology-ready',()=>setTimeout(audit,120));
+      addEventListener('maydayland:chronology-ready',()=>setTimeout(audit,180));
     },{once:true});
-    addEventListener('load',()=>setTimeout(audit,320),{once:true});
+    addEventListener('load',()=>setTimeout(audit,520),{once:true});
   })();
   </script>
 </body>
