@@ -1,0 +1,10 @@
+{
+  "version": "v77",
+  "release": "chronology-content-runtime-consolidation",
+  "baseline": {"css": 12, "js": 13, "total": 25},
+  "production": {"css": 10, "js": 11, "total": 21},
+  "removed": ["app-v58.css", "app-v58.js", "app-v59.css", "app-v59.js", "app-v60.css", "app-v60.js"],
+  "replacement": ["app-v77.css", "app-v77.js"],
+  "preservedCapabilities": ["city venue intelligence", "tour-date evidence matrix", "verified route chronology", "58 verified dates", "9 verified cities", "Tokyo evidence gate"],
+  "notes": "v58-v60 contained real City Dossier and chronology behavior, so v77 consolidates them rather than deleting functionality. Chronology now reads route-chronology-v69.json."
+}
