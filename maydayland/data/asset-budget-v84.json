@@ -1,0 +1,44 @@
+{
+  "version": "v84",
+  "release": "shell-lifecycle-convergence",
+  "home": {
+    "css": 6,
+    "js": 7,
+    "totalCssJs": 13,
+    "cssImports": 0,
+    "coreCss": "app-v82-core.css",
+    "archiveRuntime": "app-v84-archives.js",
+    "shellRuntime": "app-v47.js",
+    "lifecycle": "maydayland:shell-rendered",
+    "observerScope": "#app direct childList only",
+    "retiredFromProduction": [
+      "app-v48.js",
+      "app-v49.js",
+      "app-v83-archives.js"
+    ],
+    "performanceChange": {
+      "before": "Two archive modules each watched document.body subtree mutations.",
+      "after": "One scoped #app childList observer emits a shell-rendered event consumed by both archive modules."
+    },
+    "functionalJsPreserved": [
+      "app-v47.js",
+      "app-v84-archives.js"
+    ],
+    "archiveModules": [
+      "books-publications",
+      "timeline-archive"
+    ]
+  },
+  "atlas": {
+    "entry": "atlas-v74.html",
+    "homeIframeTarget": "atlas-v74.html",
+    "rewriteGuard": true
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "principle": "Converge render lifecycle before attempting a physical JS bundle: reduce broad DOM observation and make enhancement timing explicit without regressing A-F, Books or Timeline behavior."
+}
