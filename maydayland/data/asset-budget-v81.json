@@ -1,0 +1,43 @@
+{
+  "version": "v81",
+  "title": "Cross-Page Service Bundle + CSS Import Waterfall Removal",
+  "homepage": {
+    "cssRequests": 8,
+    "jsRequests": 8,
+    "totalLocalCssJs": 16,
+    "imports": 0,
+    "retiredProductionAssets": [
+      "app-v51.css",
+      "app-v51.js",
+      "app-v52.css",
+      "app-v52.js"
+    ],
+    "replacementAssets": [
+      "app-v81-services.css",
+      "app-v81-services.js"
+    ],
+    "explicitCoreCss": [
+      "app-v47.css",
+      "app-v48.css",
+      "app-v49.css"
+    ]
+  },
+  "preservedCapabilities": [
+    "v47 core product shell",
+    "v48 books and publications",
+    "v49 timeline and archive",
+    "v51 entity network search and related-entity rail",
+    "v52 rights-safe media rail",
+    "v77 venue intelligence, evidence matrix and chronology",
+    "v78 media assurance",
+    "v79 media registry and health",
+    "v73 release and adaptive delivery runtime"
+  ],
+  "dataCoverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "notes": "v80 undercounted the CSS load graph because app-v49.css imported app-v48.css and app-v48.css in turn imported app-v47.css. v81 removes both @import hops, links the three core CSS files explicitly for parallel discovery, and converges v51/v52 into one service bundle."
+}
