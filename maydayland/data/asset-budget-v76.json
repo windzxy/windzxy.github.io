@@ -1,0 +1,45 @@
+{
+  "version": "v76",
+  "release": "homepage-core-layer-consolidation",
+  "baseline": {
+    "version": "v75",
+    "homeCss": 16,
+    "homeJs": 17,
+    "homeLocalAssetRequests": 33,
+    "atlasVersion": "v74",
+    "atlasLocalRequests": 13
+  },
+  "productionBudget": {
+    "homeCss": 12,
+    "homeJs": 13,
+    "homeLocalAssetRequests": 25,
+    "atlasVersion": "v74",
+    "atlasLocalRequests": 13
+  },
+  "removedFromHomeEntry": [
+    "app-v61.css",
+    "app-v61.js",
+    "app-v62.css",
+    "app-v62.js",
+    "app-v63.css",
+    "app-v63.js",
+    "app-v64.css",
+    "app-v64.js"
+  ],
+  "rationale": {
+    "app-v61": "Homepage-only synchronized-Atlas launch card and release labels; no chronology or Shader runtime lives here.",
+    "app-v62": "Homepage-only evidence/playback launch card replacing v61; underlying evidence and route playback remain in later consolidated/Atlas assets.",
+    "app-v63": "Homepage-only verified-segment launch card replacing v62; route segment rendering remains in Atlas stack.",
+    "app-v64": "Homepage-only chronology-geometry launch card replacing v63; actual chronology-driven map geometry remains in app-v64-atlas.* retained by atlas-v74.html."
+  },
+  "retainedCapabilities": [
+    "58 verified chronology dates",
+    "9 verified cities",
+    "8 route geometry segments",
+    "Tokyo evidence gate",
+    "v73 consolidated evidence/integrity/adaptive-delivery runtime",
+    "v74 Atlas Shader route/Bloom/performance/resilience/accessibility stack",
+    "app-v64-atlas.* chronology-driven geometry"
+  ],
+  "nextAudit": "Review v58-v60 homepage layers, especially v60 chronology host, and only remove presentation wrappers that are proven superseded without deleting the chronology mount point."
+}
