@@ -1,0 +1,9 @@
+{
+  "version":"70.0.0",
+  "release":"Final Release Integrity",
+  "updatedAt":"2026-08-29",
+  "dataset":{"route":"./data/route-chronology-v69.json","provenance":"./data/provenance-v69.json","expectedEvents":58,"expectedVerifiedCities":9,"expectedPendingCities":1,"expectedGeometrySegments":8,"requiredPending":["tokyo"]},
+  "surfaces":{"home":"./index.html","atlas":"./atlas-v70.html"},
+  "coreAssets":["./app-v69-route-bridge.js","./app-v43.js","./app-v64-atlas.js","./app-v65-atlas.js","./app-v66-atlas.js","./app-v67-atlas.js"],
+  "policy":"A release is internally consistent only when chronology totals, provenance city states, pending policy and required surface/assets agree. Tokyo remains pending until date-level 5525 evidence can be cross-verified."
+}
