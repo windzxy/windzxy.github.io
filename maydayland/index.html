@@ -1,62 +1,78 @@
 <!doctype html>
-<html lang="zh-Hant" data-maydayland-release="v86">
+<html lang="zh-Hant" data-maydayland-release="v87">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#050912">
-  <meta name="description" content="Maydayland v86：在 v85 unified A–F core 上加入 Atlas lifecycle performance guard；只有 Home 掛載 Atlas v74，City、Album、Songs、Books、Timeline 會立即卸載背景 WebGL iframe，降低 GPU、記憶體與行動裝置耗電。">
-  <title>Maydayland · Atlas Lifecycle Performance v86</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=86.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=86.0.0">
-  <link rel="stylesheet" href="./app-v82-core.css?v=86.0.0">
-  <link rel="stylesheet" href="./app-v81-services.css?v=86.0.0">
-  <link rel="stylesheet" href="./app-v79-media-core.css?v=86.0.0">
-  <link rel="stylesheet" href="./app-v78-media.css?v=86.0.0">
-  <link rel="stylesheet" href="./app-v77.css?v=86.0.0">
-  <link rel="stylesheet" href="./app-v73.css?v=86.0.0">
+  <meta name="description" content="Maydayland v87：在 v86 Home-only Atlas lifecycle 上加入 route-state regression hardening；城市、專輯、歌曲、出版物與時間軸明細改用可回退的 hash history，並驗證 A–F route 後再決定 Atlas 掛載狀態。">
+  <title>Maydayland · Route-State Hardening v87</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=87.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=87.0.0">
+  <link rel="stylesheet" href="./app-v82-core.css?v=87.0.0">
+  <link rel="stylesheet" href="./app-v81-services.css?v=87.0.0">
+  <link rel="stylesheet" href="./app-v79-media-core.css?v=87.0.0">
+  <link rel="stylesheet" href="./app-v78-media.css?v=87.0.0">
+  <link rel="stylesheet" href="./app-v77.css?v=87.0.0">
+  <link rel="stylesheet" href="./app-v73.css?v=87.0.0">
   <style>
-    .v86-budget{position:fixed;left:14px;bottom:14px;z-index:9998;display:grid;gap:3px;min-width:290px;padding:10px 12px;border:1px solid rgba(125,230,189,.2);border-radius:12px;background:rgba(4,10,20,.84);backdrop-filter:blur(14px);box-shadow:0 12px 36px rgba(0,0,0,.22);font:11px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b8cadb;pointer-events:none}.v86-budget small{letter-spacing:.12em;color:#6f8aa2}.v86-budget b{font-size:13px;color:#eafff7}.v86-budget strong{color:#7de6bd}.v86-budget.is-warn strong{color:#ffb57d}@media(max-width:720px){.v86-budget{left:8px;bottom:8px;min-width:0;max-width:calc(100vw - 16px);padding:8px 10px}}
+    .v87-budget{position:fixed;left:14px;bottom:14px;z-index:9998;display:grid;gap:3px;min-width:310px;padding:10px 12px;border:1px solid rgba(125,230,189,.2);border-radius:12px;background:rgba(4,10,20,.84);backdrop-filter:blur(14px);box-shadow:0 12px 36px rgba(0,0,0,.22);font:11px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b8cadb;pointer-events:none}.v87-budget small{letter-spacing:.12em;color:#6f8aa2}.v87-budget b{font-size:13px;color:#eafff7}.v87-budget strong{color:#7de6bd}.v87-budget.is-warn strong{color:#ffb57d}@media(max-width:720px){.v87-budget{left:8px;bottom:8px;min-width:0;max-width:calc(100vw - 16px);padding:8px 10px}}
   </style>
 </head>
 <body>
   <div id="app"></div>
   <script>
-    window.MAYDAYLAND_BUILD={version:'v86',release:'atlas-lifecycle-performance',events:58,cities:9,segments:8,pending:['tokyo'],homeLocalRequestBudget:{css:6,js:6,total:12,imports:0},atlas:'v74',atlasMount:'home-only',lifecycle:'native-render+atlas-guard'};
+    window.MAYDAYLAND_BUILD={version:'v87',release:'route-state-regression-hardening',events:58,cities:9,segments:8,pending:['tokyo'],homeLocalRequestBudget:{css:6,js:6,total:12,imports:0},atlas:'v74',atlasMount:'home-only',lifecycle:'native-render+validated-route-atlas-guard+history-hardening'};
     (()=>{
       'use strict';
-      const pageFromHash=()=>location.hash.replace(/^#/,'').split('/')[0]||'home';
+      const VALID_PAGES=new Set(['home','city','album','songs','books','timeline']);
+      const ENTITY_ROUTES=[['[data-city]','city','city'],['[data-album]','album','album'],['[data-song]','songs','song'],['[data-book]','books','book'],['[data-event]','timeline','event']];
+      const rawPage=()=>location.hash.replace(/^#/,'').split('/')[0]||'home';
+      const pageFromHash=()=>VALID_PAGES.has(rawPage())?rawPage():'home';
       const stamp=()=>{
-        document.documentElement.dataset.maydaylandRelease='v86';
-        const live=document.querySelector('.v45-live b');if(live)live.textContent='v86 LIVE';
-        const product=document.querySelector('.v45-brand small');if(product)product.textContent='PRODUCT SYSTEM · v86.0.0';
-        const footer=document.querySelector('.v45-footer');if(footer)footer.textContent='Maydayland v86 · unified A–F core · home-only Atlas v74';
-        document.querySelectorAll('.v48-archive-head small,.v49-head small').forEach(el=>{el.textContent=el.textContent.replace(/v85/g,'v86')});
+        document.documentElement.dataset.maydaylandRelease='v87';
+        document.documentElement.dataset.v87RouteHistory='ready';
+        const live=document.querySelector('.v45-live b');if(live)live.textContent='v87 LIVE';
+        const product=document.querySelector('.v45-brand small');if(product)product.textContent='PRODUCT SYSTEM · v87.0.0';
+        const footer=document.querySelector('.v45-footer');if(footer)footer.textContent='Maydayland v87 · route-state hardened · home-only Atlas v74';
+        document.querySelectorAll('.v48-archive-head small,.v49-head small').forEach(el=>{el.textContent=el.textContent.replace(/v85|v86/g,'v87')});
       };
       const syncAtlas=()=>{
         const home=pageFromHash()==='home';
         const host=document.querySelector('.v45-atlas');
         if(!host)return;
         let frame=host.querySelector('iframe');
-        if(!home&&frame){frame.remove();frame=null;}
+        if(!home&&frame){frame.src='about:blank';frame.remove();frame=null;}
         if(home&&!frame){frame=document.createElement('iframe');frame.src='./atlas-v74.html';frame.title='Maydayland Shader Tour Atlas';frame.loading='eager';host.append(frame);}
-        document.documentElement.dataset.v86AtlasLifecycle=home?'mounted':'unmounted';
+        document.documentElement.dataset.v87AtlasLifecycle=home?'mounted':'unmounted';
       };
+      document.addEventListener('click',e=>{
+        for(const [selector,prefix,key] of ENTITY_ROUTES){
+          const node=e.target.closest?.(selector);if(!node)continue;
+          const id=node.dataset[key];if(!id)return;
+          const next=`#${prefix}/${encodeURIComponent(id)}`;
+          if(location.hash!==next){e.preventDefault();e.stopImmediatePropagation();location.hash=next;}
+          return;
+        }
+      },true);
+      addEventListener('hashchange',()=>{document.documentElement.dataset.v87LastRoute=pageFromHash();});
       addEventListener('maydayland:shell-rendered',()=>{stamp();syncAtlas();});
     })();
   </script>
-  <script src="./app-v85-core.js?v=86.0.0" defer></script>
-  <script src="./app-v81-services.js?v=86.0.0" defer></script>
-  <script src="./app-v79-media-core.js?v=86.0.0" defer></script>
-  <script src="./app-v78-media.js?v=86.0.0" defer></script>
-  <script src="./app-v77.js?v=86.0.0" defer></script>
-  <script src="./app-v73.js?v=86.0.0" defer></script>
+  <script src="./app-v85-core.js?v=87.0.0" defer></script>
+  <script src="./app-v81-services.js?v=87.0.0" defer></script>
+  <script src="./app-v79-media-core.js?v=87.0.0" defer></script>
+  <script src="./app-v78-media.js?v=87.0.0" defer></script>
+  <script src="./app-v77.js?v=87.0.0" defer></script>
+  <script src="./app-v73.js?v=87.0.0" defer></script>
   <script>
   (()=>{
     'use strict';
     const EXPECT={css:6,js:6};
-    const pageFromHash=()=>location.hash.replace(/^#/,'').split('/')[0]||'home';
+    const VALID_PAGES=new Set(['home','city','album','songs','books','timeline']);
+    const rawPage=()=>location.hash.replace(/^#/,'').split('/')[0]||'home';
+    const pageFromHash=()=>VALID_PAGES.has(rawPage())?rawPage():'home';
     const audit=()=>{
-      document.querySelector('.v86-budget')?.remove();
+      document.querySelector('.v87-budget')?.remove();
       const res=performance.getEntriesByType?.('resource')||[];
       const local=res.filter(r=>{try{return new URL(r.name).origin===location.origin}catch{return false}});
       const css=local.filter(r=>/\/app-v(?:82-core|81-services|79-media-core|78-media|77|73)\.css(?:\?|$)/.test(r.name)).length;
@@ -71,7 +87,8 @@
       const atlasLifecycle=home?atlasV74:!frame;
       const coreReady=document.documentElement.dataset.v85Core==='ready';
       const lifecycleReady=document.documentElement.dataset.v85ShellLifecycle==='ready';
-      const guardReady=document.documentElement.dataset.v86AtlasLifecycle===(home?'mounted':'unmounted');
+      const guardReady=document.documentElement.dataset.v87AtlasLifecycle===(home?'mounted':'unmounted');
+      const routeReady=document.documentElement.dataset.v87RouteHistory==='ready';
       const chronology=document.querySelector('.v60-chronology');
       const integrity=document.querySelector('#v56Integrity');
       const evidence=document.querySelector('#v57Evidence');
@@ -79,11 +96,12 @@
       const registry=document.querySelector('#v79Registry');
       const health=document.querySelector('#v79Health');
       const search=document.querySelector('#v51SearchLauncher');
-      const pass=css<=EXPECT.css&&js<=EXPECT.js&&!oldCore&&!oldServices&&!obsolete&&!imported&&atlasLifecycle&&coreReady&&lifecycleReady&&guardReady&&!!chronology&&!!integrity&&!!evidence&&mediaCore&&!!registry&&!!health&&!!search;
-      const el=document.createElement('aside');el.className='v86-budget'+(pass?'':' is-warn');el.setAttribute('role','status');el.innerHTML=`<small>V86 · ATLAS LIFECYCLE PERFORMANCE</small><b>${css} CSS · ${js} JS RUNTIME</b><strong>${pass?'PERFORMANCE PASS':'CHECK'}</strong><span>imports ${imported?'check':'0'} · Atlas ${home?(atlasV74?'v74 mounted':'check'):(frame?'check':'unmounted')} · lifecycle ${guardReady?'guarded':'waiting'} · legacy ${oldCore||oldServices||obsolete?'check':'0'}</span>`;document.body.append(el);
-      document.body.dataset.v86HomeAudit=pass?'pass':'check';
+      const pass=css<=EXPECT.css&&js<=EXPECT.js&&!oldCore&&!oldServices&&!obsolete&&!imported&&atlasLifecycle&&coreReady&&lifecycleReady&&guardReady&&routeReady&&!!chronology&&!!integrity&&!!evidence&&mediaCore&&!!registry&&!!health&&!!search;
+      const el=document.createElement('aside');el.className='v87-budget'+(pass?'':' is-warn');el.setAttribute('role','status');el.innerHTML=`<small>V87 · ROUTE-STATE HARDENING</small><b>${css} CSS · ${js} JS RUNTIME</b><strong>${pass?'ROUTE PASS':'CHECK'}</strong><span>imports ${imported?'check':'0'} · route ${pageFromHash()} · history ${routeReady?'push':'check'} · Atlas ${home?(atlasV74?'v74 mounted':'check'):(frame?'check':'unmounted')} · legacy ${oldCore||oldServices||obsolete?'check':'0'}</span>`;document.body.append(el);
+      document.body.dataset.v87HomeAudit=pass?'pass':'check';
     };
     document.addEventListener('DOMContentLoaded',()=>{setTimeout(audit,2800);addEventListener('maydayland:core-ready',()=>setTimeout(audit,220));addEventListener('maydayland:shell-rendered',()=>setTimeout(audit,240));addEventListener('maydayland:chronology-ready',()=>setTimeout(audit,180));addEventListener('maydayland:media-core-ready',()=>setTimeout(audit,180));addEventListener('maydayland:services-ready',()=>setTimeout(audit,220));},{once:true});
+    addEventListener('hashchange',()=>setTimeout(audit,260));
     addEventListener('load',()=>setTimeout(audit,760),{once:true});
   })();
   </script>
