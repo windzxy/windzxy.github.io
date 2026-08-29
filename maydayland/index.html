@@ -1,37 +1,36 @@
 <!doctype html>
-<html lang="zh-Hant" data-maydayland-release="v79">
+<html lang="zh-Hant" data-maydayland-release="v80">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#050912">
-  <meta name="description" content="Maydayland v79：將 v53 Media Registry 與 v54 Asset Health 收斂為單一 media core runtime，共用 registry data、卡片掛載與狀態同步；首頁本地樣式/腳本預算降至 8 CSS + 9 JS，同時保留 rights/provenance 與 asset health 能力。">
-  <title>Maydayland · Media Core Convergence v79</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=79.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=79.0.0">
-  <link rel="stylesheet" href="./app-v49.css?v=79.0.0">
-  <link rel="stylesheet" href="./app-v50.css?v=79.0.0">
-  <link rel="stylesheet" href="./app-v51.css?v=79.0.0">
-  <link rel="stylesheet" href="./app-v52.css?v=79.0.0">
-  <link rel="stylesheet" href="./app-v79-media-core.css?v=79.0.0">
-  <link rel="stylesheet" href="./app-v78-media.css?v=79.0.0">
-  <link rel="stylesheet" href="./app-v77.css?v=79.0.0">
-  <link rel="stylesheet" href="./app-v73.css?v=79.0.0">
+  <meta name="description" content="Maydayland v80：清理已被 v51 完全取代的 v50 dead CSS，並修正 production request audit，將 app-v49.css 隱含載入的 app-v48.css 納入真實瀏覽器資源預算；保留 Timeline、Entity Network、Media Rail、Media Core 與 verified chronology 全部能力。">
+  <title>Maydayland · Production Load Graph Audit v80</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=80.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=80.0.0">
+  <link rel="stylesheet" href="./app-v49.css?v=80.0.0">
+  <link rel="stylesheet" href="./app-v51.css?v=80.0.0">
+  <link rel="stylesheet" href="./app-v52.css?v=80.0.0">
+  <link rel="stylesheet" href="./app-v79-media-core.css?v=80.0.0">
+  <link rel="stylesheet" href="./app-v78-media.css?v=80.0.0">
+  <link rel="stylesheet" href="./app-v77.css?v=80.0.0">
+  <link rel="stylesheet" href="./app-v73.css?v=80.0.0">
   <style>
-    .v79-budget{position:fixed;left:14px;bottom:14px;z-index:9998;display:grid;gap:3px;min-width:226px;padding:10px 12px;border:1px solid rgba(125,230,189,.2);border-radius:12px;background:rgba(4,10,20,.84);backdrop-filter:blur(14px);box-shadow:0 12px 36px rgba(0,0,0,.22);font:11px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b8cadb;pointer-events:none}.v79-budget small{letter-spacing:.12em;color:#6f8aa2}.v79-budget b{font-size:13px;color:#eafff7}.v79-budget strong{color:#7de6bd}.v79-budget.is-warn strong{color:#ffb57d}@media(max-width:720px){.v79-budget{left:8px;bottom:8px;min-width:0;max-width:calc(100vw - 16px);padding:8px 10px}}
+    .v80-budget{position:fixed;left:14px;bottom:14px;z-index:9998;display:grid;gap:3px;min-width:236px;padding:10px 12px;border:1px solid rgba(125,230,189,.2);border-radius:12px;background:rgba(4,10,20,.84);backdrop-filter:blur(14px);box-shadow:0 12px 36px rgba(0,0,0,.22);font:11px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b8cadb;pointer-events:none}.v80-budget small{letter-spacing:.12em;color:#6f8aa2}.v80-budget b{font-size:13px;color:#eafff7}.v80-budget strong{color:#7de6bd}.v80-budget.is-warn strong{color:#ffb57d}@media(max-width:720px){.v80-budget{left:8px;bottom:8px;min-width:0;max-width:calc(100vw - 16px);padding:8px 10px}}
   </style>
 </head>
 <body>
   <div id="app"></div>
-  <script>window.MAYDAYLAND_BUILD={version:'v79',release:'media-core-convergence',events:58,cities:9,segments:8,pending:['tokyo'],homeLocalRequestBudget:{css:8,js:9},atlas:'v74'};</script>
-  <script src="./app-v47.js?v=79.0.0" defer></script>
-  <script src="./app-v48.js?v=79.0.0" defer></script>
-  <script src="./app-v49.js?v=79.0.0" defer></script>
-  <script src="./app-v51.js?v=79.0.0" defer></script>
-  <script src="./app-v52.js?v=79.0.0" defer></script>
-  <script src="./app-v79-media-core.js?v=79.0.0" defer></script>
-  <script src="./app-v78-media.js?v=79.0.0" defer></script>
-  <script src="./app-v77.js?v=79.0.0" defer></script>
-  <script src="./app-v73.js?v=79.0.0" defer></script>
+  <script>window.MAYDAYLAND_BUILD={version:'v80',release:'production-load-graph-audit',events:58,cities:9,segments:8,pending:['tokyo'],homeLocalRequestBudget:{linkedCss:7,runtimeCss:8,js:9},atlas:'v74'};</script>
+  <script src="./app-v47.js?v=80.0.0" defer></script>
+  <script src="./app-v48.js?v=80.0.0" defer></script>
+  <script src="./app-v49.js?v=80.0.0" defer></script>
+  <script src="./app-v51.js?v=80.0.0" defer></script>
+  <script src="./app-v52.js?v=80.0.0" defer></script>
+  <script src="./app-v79-media-core.js?v=80.0.0" defer></script>
+  <script src="./app-v78-media.js?v=80.0.0" defer></script>
+  <script src="./app-v77.js?v=80.0.0" defer></script>
+  <script src="./app-v73.js?v=80.0.0" defer></script>
   <script>
   (()=>{
     'use strict';
@@ -39,17 +38,18 @@
     const EXPECT={css:8,js:9};
     const rewrite=()=>{
       document.querySelectorAll('a[href*="atlas-v61.html"],a[href*="atlas-v62.html"],a[href*="atlas-v63.html"],a[href*="atlas-v64.html"],a[href*="atlas-v69.html"],a[href*="atlas-v70.html"],a[href*="atlas-v71.html"],a[href*="atlas-v72.html"],a[href*="atlas-v73.html"]').forEach(a=>a.setAttribute('href',ATLAS));
-      const live=document.querySelector('.v45-live b');if(live)live.textContent='v79 LIVE';
-      const brand=document.querySelector('.v45-brand small');if(brand)brand.textContent='PRODUCT SYSTEM · v79.0.0';
-      const foot=document.querySelector('.v45-footer');if(foot)foot.textContent='Maydayland v79 · converged media core · 8 CSS / 9 JS budget';
-      document.documentElement.dataset.maydaylandRelease='v79';
+      const live=document.querySelector('.v45-live b');if(live)live.textContent='v80 LIVE';
+      const brand=document.querySelector('.v45-brand small');if(brand)brand.textContent='PRODUCT SYSTEM · v80.0.0';
+      const foot=document.querySelector('.v45-footer');if(foot)foot.textContent='Maydayland v80 · truthful runtime budget · dead v50 CSS retired';
+      document.documentElement.dataset.maydaylandRelease='v80';
     };
     const audit=()=>{
-      document.querySelector('.v79-budget')?.remove();
+      document.querySelector('.v80-budget')?.remove();
       const res=performance.getEntriesByType?.('resource')||[];
       const local=res.filter(r=>{try{return new URL(r.name).origin===location.origin}catch{return false}});
-      const css=local.filter(r=>/\/app-v(?:49|50|51|52|73|77|78-media|79-media-core)\.css(?:\?|$)/.test(r.name)).length;
+      const css=local.filter(r=>/\/app-v(?:48|49|51|52|73|77|78-media|79-media-core)\.css(?:\?|$)/.test(r.name)).length;
       const js=local.filter(r=>/\/app-v(?:47|48|49|51|52|73|77|78-media|79-media-core)\.js(?:\?|$)/.test(r.name)).length;
+      const deadV50=local.some(r=>/\/app-v50\.css(?:\?|$)/.test(r.name));
       const obsolete=local.some(r=>/\/app-v(?:53|54|56|57|58|59|60|61|62|63|64|65|66|67)\.(?:css|js)(?:\?|$)/.test(r.name));
       const chronology=document.querySelector('.v60-chronology');
       const integrity=document.querySelector('#v56Integrity');
@@ -57,12 +57,13 @@
       const mediaCore=document.body.dataset.v79MediaCore==='ready';
       const registry=document.querySelector('#v79Registry');
       const health=document.querySelector('#v79Health');
-      const pass=css<=EXPECT.css&&js<=EXPECT.js&&!obsolete&&!!chronology&&!!integrity&&!!evidence&&mediaCore&&!!registry&&!!health;
-      const el=document.createElement('aside');el.className='v79-budget'+(pass?'':' is-warn');el.setAttribute('role','status');el.innerHTML=`<small>V79 · MEDIA CORE AUDIT</small><b>${css} CSS · ${js} JS LOCAL</b><strong>${pass?'CONVERGENCE PASS':'CHECK'}</strong><span>${obsolete?'legacy v53–v67 detected':'v53/v54 merged'} · registry ${registry?'ready':'waiting'} · health ${health?'ready':'waiting'}</span>`;document.body.append(el);
-      document.body.dataset.v79HomeAudit=pass?'pass':'check';
+      const search=document.querySelector('#v51SearchLauncher');
+      const pass=css<=EXPECT.css&&js<=EXPECT.js&&!deadV50&&!obsolete&&!!chronology&&!!integrity&&!!evidence&&mediaCore&&!!registry&&!!health&&!!search;
+      const el=document.createElement('aside');el.className='v80-budget'+(pass?'':' is-warn');el.setAttribute('role','status');el.innerHTML=`<small>V80 · LOAD GRAPH AUDIT</small><b>${css} CSS · ${js} JS RUNTIME</b><strong>${pass?'AUDIT PASS':'CHECK'}</strong><span>${deadV50?'v50 CSS still loaded':'v50 CSS retired'} · imported v48 counted · search ${search?'ready':'waiting'}</span>`;document.body.append(el);
+      document.body.dataset.v80HomeAudit=pass?'pass':'check';
     };
     document.addEventListener('DOMContentLoaded',()=>{
-      setTimeout(()=>{rewrite();document.title='Maydayland · Media Core Convergence v79';},1750);
+      setTimeout(()=>{rewrite();document.title='Maydayland · Production Load Graph Audit v80';},1750);
       setTimeout(audit,2800);
       const app=document.querySelector('#app');if(app)new MutationObserver(()=>requestAnimationFrame(rewrite)).observe(app,{childList:true,subtree:true});
       addEventListener('maydayland:chronology-ready',()=>setTimeout(audit,180));
