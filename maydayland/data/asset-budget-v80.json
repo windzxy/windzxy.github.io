@@ -1,0 +1,44 @@
+{
+  "version": "v80",
+  "release": "production-load-graph-audit",
+  "baseline": "v79",
+  "baselinePages": {
+    "headSha": "fccb7f938f898f3d6993d779e6492ff5b6d63868",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "home": {
+    "before": {
+      "linkedCss": 8,
+      "runtimeCss": 9,
+      "js": 9,
+      "note": "v79 linked eight stylesheets, while app-v49.css also imported app-v48.css at runtime."
+    },
+    "after": {
+      "linkedCss": 7,
+      "runtimeCss": 8,
+      "js": 9
+    },
+    "retired": [
+      "app-v50.css"
+    ],
+    "retirementReason": "v51 owns the live search/trust UI and removes legacy v50 nodes; app-v50.css only targets v50 selectors.",
+    "preserved": [
+      "app-v49.js Timeline / Archive",
+      "app-v51.js Entity Network search and related entity rail",
+      "app-v52.js rights-safe media rail",
+      "app-v79-media-core.js Media Registry + Asset Health",
+      "app-v78-media.js Media Integrity + Evidence",
+      "app-v77.js Venue / Evidence / Chronology runtime",
+      "app-v73.js release runtime"
+    ],
+    "auditPolicy": "Count imported app-v48.css as a real browser resource instead of only counting link elements."
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "atlas": "v74"
+}
