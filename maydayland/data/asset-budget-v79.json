@@ -1,0 +1,26 @@
+{
+  "version": "79.0.0",
+  "release": "media-core-convergence",
+  "homeLocalRequestBudget": {"css": 8, "js": 9},
+  "changes": {
+    "removedFromProduction": ["app-v53.css", "app-v53.js", "app-v54.css", "app-v54.js"],
+    "replacement": ["app-v79-media-core.css", "app-v79-media-core.js"],
+    "netRequestReduction": 2,
+    "previousBudget": 19,
+    "newBudget": 17,
+    "reductionPercent": 10.5
+  },
+  "preservedCapabilities": [
+    "media registry",
+    "rights and provenance metadata",
+    "asset dimensions and aspect metadata",
+    "alt labels",
+    "schema health validation",
+    "asset health score",
+    "per-card health state",
+    "source and local-path policy checks"
+  ],
+  "dataSource": "data/media-registry-v54.json",
+  "coverage": {"events": 58, "cities": 9, "segments": 8, "pending": ["tokyo"]},
+  "atlasRelease": "v74"
+}
