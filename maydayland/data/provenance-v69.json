@@ -1,0 +1,26 @@
+{
+  "version":"69.0.0",
+  "updatedAt":"2026-08-29",
+  "policy":"Verified chronology only publishes dates supported by at least two public evidence references. Source classes describe provenance strength, not absolute truth. Pending cities remain unpublished until equivalent evidence is available.",
+  "coverage":{"verifiedEvents":58,"verifiedCities":9,"pendingCities":1,"citiesWithOrganizerOrOfficialSource":6,"citiesWithCrossSourceEvidence":9},
+  "sourceClasses":[
+    {"id":"organizer","label":"ORGANIZER","rank":1,"description":"相信音樂或巡演主辦方公開頁面"},
+    {"id":"government","label":"OFFICIAL / GOV","rank":1,"description":"政府、公共資訊或官方交通／城市平台"},
+    {"id":"wire","label":"NEWS WIRE","rank":2,"description":"中央社等具編採責任的通訊／新聞機構"},
+    {"id":"media","label":"MEDIA","rank":2,"description":"具公開編採資訊的媒體報導"},
+    {"id":"guide","label":"LOCAL GUIDE","rank":3,"description":"地方活動資訊／生活服務平台，用於日期交叉核對"},
+    {"id":"social","label":"OFFICIAL SOCIAL","rank":3,"description":"官方或主辦單位社交平台貼文；保留作輔助證據"}
+  ],
+  "cities":[
+    {"id":"kaohsiung","status":"verified","confidence":"high","evidence":[{"url":"https://www.cna.com.tw/news/afe/202403290083.aspx","class":"wire","label":"中央社"},{"url":"https://www.ftnn.com.tw/news/161454","class":"media","label":"FTNN 新聞網"}]},
+    {"id":"shanghai","status":"verified","confidence":"high","evidence":[{"url":"https://www.bin-music.com.tw/news/1972","class":"organizer","label":"相信音樂"},{"url":"https://www.bin-music.com.tw/news/1987","class":"organizer","label":"相信音樂"},{"url":"https://sh.bendibao.com/xiuxian/20241015/291901.shtm","class":"guide","label":"上海本地寶"}]},
+    {"id":"singapore","status":"verified","confidence":"medium-high","evidence":[{"url":"https://www.bandwagon.asia/articles/mayday-to-bring-25th-anniversary-tour-concert-singapore-national-stadium-live-nation-tickets-ticketmaster-january-2025","class":"media","label":"Bandwagon Asia"},{"url":"https://mothership.sg/2024/07/mayday-in-singapore-2025/index.html","class":"media","label":"Mothership"}]},
+    {"id":"hongkong","status":"verified","confidence":"high","evidence":[{"url":"https://www.bin-music.com.tw/news/2132","class":"organizer","label":"相信音樂"},{"url":"https://www.am730.com.hk/article/549022","class":"media","label":"am730"}]},
+    {"id":"taipei","status":"verified","confidence":"high","evidence":[{"url":"https://www.bin-music.com.tw/news/2162","class":"organizer","label":"相信音樂"},{"url":"https://www.cna.com.tw/news/amov/202504290127.aspx","class":"wire","label":"中央社"}]},
+    {"id":"beijing","status":"verified","confidence":"medium-high","evidence":[{"url":"https://www.weibo.com/2488102813/PEhRS6ISB","class":"social","label":"官方社交貼文"},{"url":"https://bj.bendibao.com/xiuxian/202573/373983.shtm","class":"guide","label":"北京本地寶"}]},
+    {"id":"xiamen","status":"verified","confidence":"high","evidence":[{"url":"https://www.weibo.com/2488102813/QaCdspX2M","class":"organizer","label":"相信音樂官方微博"},{"url":"https://m.xm.bendibao.com/news/94194.shtm","class":"guide","label":"廈門本地寶"}]},
+    {"id":"guangzhou","status":"verified","confidence":"high","evidence":[{"url":"https://info.newsgd.com/node_f5302f2a31/7bea6f38c8.shtml","class":"government","label":"南方網／廣東資訊"},{"url":"https://huacheng.gz-cmc.com/pages/2025/12/03/ce4d62d288f340cd840a9560b3b82b5b.html","class":"media","label":"花城／廣州日報系"}]},
+    {"id":"taichung","status":"verified","confidence":"high","evidence":[{"url":"https://www.bin-music.com.tw/news/2282","class":"organizer","label":"相信音樂"},{"url":"https://www.thenewslens.com/article/260879","class":"media","label":"The News Lens"}]},
+    {"id":"tokyo","status":"pending","confidence":"pending","reason":"尚未取得足以和現有 5525 chronology 明確對應、且可交叉核實的逐場公開證據。"}
+  ]
+}
