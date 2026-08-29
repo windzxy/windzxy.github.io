@@ -1,0 +1,35 @@
+{
+  "version": "v82",
+  "release": "core-css-convergence-live-atlas",
+  "home": {
+    "css": 6,
+    "js": 8,
+    "totalCssJs": 14,
+    "cssImports": 0,
+    "coreCss": "app-v82-core.css",
+    "retiredFromProduction": [
+      "app-v45.css",
+      "app-v46.css",
+      "app-v47.css",
+      "app-v48.css",
+      "app-v49.css"
+    ],
+    "functionalJsPreserved": [
+      "app-v47.js",
+      "app-v48.js",
+      "app-v49.js"
+    ]
+  },
+  "atlas": {
+    "entry": "atlas-v74.html",
+    "homeIframeTarget": "atlas-v74.html",
+    "legacyIframeTargetRetired": "atlas-v43.html"
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "principle": "Consolidate presentation assets without removing A-F, Books, Timeline, City, Album, Songs, evidence, media assurance, or chronology functionality."
+}
