@@ -1,0 +1,20 @@
+{
+  "release": "v78",
+  "scope": "homepage production CSS/JS",
+  "previous": {"css": 10, "js": 11, "total": 21},
+  "current": {"css": 9, "js": 10, "total": 19},
+  "delta": {"requests": -2, "percent": -9.5},
+  "consolidated": ["app-v56.css", "app-v57.css", "app-v56.js", "app-v57.js"],
+  "replacement": ["app-v78-media.css", "app-v78-media.js"],
+  "preservedCapabilities": [
+    "local media SHA-256 verification",
+    "image decode and minimum-dimension verification",
+    "duplicate hash detection",
+    "media evidence registry",
+    "editorial provenance levels",
+    "per-card integrity and evidence chips"
+  ],
+  "uxFix": "Integrity and editorial evidence controls are vertically docked instead of occupying the same bottom-right position.",
+  "chronology": {"verifiedDates": 58, "verifiedCities": 9, "routeSegments": 8, "pending": ["tokyo"]},
+  "atlas": "v74"
+}
