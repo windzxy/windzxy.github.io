@@ -1,0 +1,35 @@
+{
+  "version": "v83",
+  "release": "archive-runtime-convergence",
+  "home": {
+    "css": 6,
+    "js": 7,
+    "totalCssJs": 13,
+    "cssImports": 0,
+    "coreCss": "app-v82-core.css",
+    "archiveRuntime": "app-v83-archives.js",
+    "retiredFromProduction": [
+      "app-v48.js",
+      "app-v49.js"
+    ],
+    "functionalJsPreserved": [
+      "app-v47.js",
+      "app-v83-archives.js"
+    ],
+    "archiveModules": [
+      "books-publications",
+      "timeline-archive"
+    ]
+  },
+  "atlas": {
+    "entry": "atlas-v74.html",
+    "homeIframeTarget": "atlas-v74.html"
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "principle": "Converge only lifecycle-compatible archive enhancements; keep the A-F product shell isolated until its render lifecycle can be merged without regressions."
+}
