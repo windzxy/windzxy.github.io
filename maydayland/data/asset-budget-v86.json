@@ -1,0 +1,33 @@
+{
+  "version": "v86",
+  "release": "atlas-lifecycle-performance",
+  "homeLocalRequestBudget": {
+    "css": 6,
+    "js": 6,
+    "total": 12,
+    "cssImports": 0
+  },
+  "core": {
+    "runtime": "app-v85-core.js",
+    "pages": ["home", "city", "album", "songs", "books", "timeline"],
+    "lifecycle": "native-render+atlas-guard",
+    "atlas": "atlas-v74.html",
+    "atlasMount": "home-only",
+    "offHomeBehavior": "unmount iframe immediately after shell render to release background WebGL/GPU work"
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "qualityGates": [
+    "v85 Pages deployment completed successfully before v86 work",
+    "zero CSS imports",
+    "Atlas v74 mounted on Home only",
+    "Atlas iframe absent from City, Album, Songs, Books and Timeline after render",
+    "production CSS/JS request budget remains 6 + 6",
+    "chronology, media assurance, registry, health and search remain mounted",
+    "page-aware runtime audit distinguishes Home mounted state from off-Home unmounted state"
+  ]
+}
