@@ -1,0 +1,59 @@
+{
+  "version": "v89",
+  "release": "served-regression-telemetry",
+  "homeLocalRequestBudget": {
+    "css": 6,
+    "js": 6,
+    "total": 12,
+    "cssImports": 0
+  },
+  "core": {
+    "runtime": "app-v88-core.js",
+    "pages": ["home", "city", "album", "songs", "books", "timeline"],
+    "atlas": "atlas-v74.html",
+    "atlasMount": "home-only"
+  },
+  "regression": {
+    "mode": "passive served-page matrix",
+    "routes": ["home", "city", "album", "songs", "books", "timeline"],
+    "checks": [
+      "active A-F section matches the core route",
+      "Home owns exactly one Atlas v74 iframe",
+      "non-Home routes own no Atlas iframe",
+      "core, route controller and shell lifecycle datasets remain ready",
+      "chronology, media assurance, registry, health and search remain mounted",
+      "legacy core/service assets stay outside production",
+      "zero CSS imports and 6 CSS + 6 JS budget"
+    ],
+    "persistence": "per-session route results stored in sessionStorage so Back/Forward and cross-page visits accumulate evidence without synthetic navigation"
+  },
+  "telemetry": {
+    "exposedAs": "window.MAYDAYLAND_TELEMETRY_V89.snapshot()",
+    "signals": [
+      "current route and hash",
+      "render sequence",
+      "Atlas mount state and iframe source",
+      "route-by-route regression result",
+      "navigation transitions",
+      "resource count",
+      "first-contentful-paint when supported",
+      "long-task count and maximum duration when supported"
+    ],
+    "privacy": "local runtime diagnostics only; no network beacon or analytics upload"
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "qualityGates": [
+    "v88 Pages deployment completed successfully before v89 work",
+    "production request budget remains 6 CSS + 6 JS with zero CSS imports",
+    "regression matrix observes the real served route lifecycle instead of synthetic hidden navigation",
+    "Atlas v74 is required on Home and forbidden on B-F routes",
+    "telemetry is local-only and does not add a network request",
+    "Back/Forward evidence accumulates naturally through shell-rendered and hashchange events",
+    "chronology, media assurance, registry, health and search remain required gates"
+  ]
+}
