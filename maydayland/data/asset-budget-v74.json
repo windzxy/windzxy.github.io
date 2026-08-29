@@ -1,0 +1,44 @@
+{
+  "version": "74.0.0",
+  "release": "atlas-dependency-pruning",
+  "baseline": {
+    "atlasLocalCss": 8,
+    "atlasLocalJs": 10,
+    "atlasLocalRequests": 18
+  },
+  "target": {
+    "atlasLocalCss": 6,
+    "atlasLocalJs": 7,
+    "atlasLocalRequests": 13,
+    "requestReduction": 5,
+    "requestReductionPercent": 27.8
+  },
+  "retained": [
+    "app-v43.css",
+    "app-v43.js",
+    "app-v64-atlas.css/js",
+    "app-v65-atlas.css/js",
+    "app-v66-atlas.css/js",
+    "app-v67-atlas.css/js",
+    "app-v69-route-bridge.js",
+    "app-v72-atlas.css/js"
+  ],
+  "pruned": [
+    "app-v69-atlas.js",
+    "app-v70-atlas.css",
+    "app-v70-atlas.js",
+    "app-v71-atlas.css",
+    "app-v71-atlas.js"
+  ],
+  "rationale": {
+    "v69Atlas": "presentation-only release stamping is folded into v74 inline audit",
+    "v70Atlas": "release integrity badge duplicated by v73/v74 runtime integrity checks",
+    "v71Atlas": "live release badge duplicated by v73/v74 served-asset audit"
+  },
+  "dataContract": {
+    "verifiedEvents": 58,
+    "verifiedCities": 9,
+    "geometrySegments": 8,
+    "requiredPending": ["tokyo"]
+  }
+}
