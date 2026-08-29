@@ -1,20 +1,17 @@
 {
-  "version": "64.0.0",
-  "updatedAt": "2026-08-29",
-  "principle": "Rights-safe simplified concept polygons. v64 aligns the 5525 atlas graph with the verified chronology while unresolved cities remain non-chronology nodes.",
-  "map": {"center": {"lng": 116.0, "lat": 24.0}, "scale": 1.12, "extrudeHeight": 0.42, "hubCityId": "taipei"},
-  "regions": {
-    "type":"FeatureCollection",
-    "features":[
-      {"type":"Feature","id":"taiwan","properties":{"name":"台灣主場帶","heat":100,"tone":"#1de3ff"},"geometry":{"type":"Polygon","coordinates":[[[121.9,25.5],[121.2,25.1],[120.4,24.3],[120.1,23.2],[120.6,22.2],[121.2,22.0],[121.8,23.2],[122.1,24.4],[121.9,25.5]]]}},
-      {"type":"Feature","id":"north-china","properties":{"name":"華北大型場","heat":62,"tone":"#c96dff"},"geometry":{"type":"Polygon","coordinates":[[[114.0,41.0],[118.8,41.1],[120.4,38.4],[117.8,36.4],[113.7,37.0],[112.8,39.4],[114.0,41.0]]]}},
-      {"type":"Feature","id":"east-china","properties":{"name":"華東連場都市","heat":70,"tone":"#64e8ff"},"geometry":{"type":"Polygon","coordinates":[[[119.2,32.5],[122.6,31.9],[123.0,29.2],[121.4,28.1],[118.6,29.0],[117.8,31.0],[119.2,32.5]]]}},
-      {"type":"Feature","id":"south-china","properties":{"name":"華南霓虹線","heat":58,"tone":"#35d0ff"},"geometry":{"type":"Polygon","coordinates":[[[112.0,24.5],[115.5,24.0],[116.0,21.8],[113.8,20.8],[110.7,23.5],[112.0,24.5]]]}},
-      {"type":"Feature","id":"hongkong","properties":{"name":"香港海港線","heat":75,"tone":"#8f7dff"},"geometry":{"type":"Polygon","coordinates":[[[113.7,22.6],[114.6,22.55],[114.55,22.05],[113.75,22.05],[113.7,22.6]]]}},
-      {"type":"Feature","id":"singapore","properties":{"name":"東南亞節點","heat":34,"tone":"#72f5c6"},"geometry":{"type":"Polygon","coordinates":[[[103.2,1.9],[104.3,1.8],[104.5,0.9],[103.4,0.7],[103.0,1.2],[103.2,1.9]]]}},
-      {"type":"Feature","id":"japan","properties":{"name":"日本資料支線","heat":28,"tone":"#a6f0ff"},"geometry":{"type":"Polygon","coordinates":[[[137.8,36.5],[141.7,36.1],[142.4,33.7],[139.8,32.8],[137.2,34.2],[137.8,36.5]]]}}
-    ]
-  },
+  "version":"69.0.0",
+  "updatedAt":"2026-08-29",
+  "principle":"Rights-safe simplified concept polygons. v69 aligns the 5525 atlas graph with verified chronology; Tokyo remains a non-chronology pending node.",
+  "map":{"center":{"lng":116.0,"lat":24.0},"scale":1.12,"extrudeHeight":0.42,"hubCityId":"taipei"},
+  "regions":{"type":"FeatureCollection","features":[
+    {"type":"Feature","id":"taiwan","properties":{"name":"台灣主場帶","heat":100,"tone":"#1de3ff"},"geometry":{"type":"Polygon","coordinates":[[[121.9,25.5],[121.2,25.1],[120.4,24.3],[120.1,23.2],[120.6,22.2],[121.2,22.0],[121.8,23.2],[122.1,24.4],[121.9,25.5]]]}},
+    {"type":"Feature","id":"north-china","properties":{"name":"華北大型場","heat":62,"tone":"#c96dff"},"geometry":{"type":"Polygon","coordinates":[[[114.0,41.0],[118.8,41.1],[120.4,38.4],[117.8,36.4],[113.7,37.0],[112.8,39.4],[114.0,41.0]]]}},
+    {"type":"Feature","id":"east-china","properties":{"name":"華東連場都市","heat":70,"tone":"#64e8ff"},"geometry":{"type":"Polygon","coordinates":[[[117.6,32.5],[122.6,31.9],[123.0,23.0],[118.1,23.3],[117.2,27.0],[117.6,32.5]]]}},
+    {"type":"Feature","id":"south-china","properties":{"name":"華南霓虹線","heat":58,"tone":"#35d0ff"},"geometry":{"type":"Polygon","coordinates":[[[112.0,24.5],[115.5,24.0],[116.0,21.8],[113.8,20.8],[110.7,23.5],[112.0,24.5]]]}},
+    {"type":"Feature","id":"hongkong","properties":{"name":"香港海港線","heat":75,"tone":"#8f7dff"},"geometry":{"type":"Polygon","coordinates":[[[113.7,22.6],[114.6,22.55],[114.55,22.05],[113.75,22.05],[113.7,22.6]]]}},
+    {"type":"Feature","id":"singapore","properties":{"name":"東南亞節點","heat":34,"tone":"#72f5c6"},"geometry":{"type":"Polygon","coordinates":[[[103.2,1.9],[104.3,1.8],[104.5,0.9],[103.4,0.7],[103.0,1.2],[103.2,1.9]]]}},
+    {"type":"Feature","id":"japan","properties":{"name":"日本資料支線","heat":28,"tone":"#a6f0ff"},"geometry":{"type":"Polygon","coordinates":[[[137.8,36.5],[141.7,36.1],[142.4,33.7],[139.8,32.8],[137.2,34.2],[137.8,36.5]]]}}
+  ]},
   "cities":[
     {"id":"taipei","regionId":"taiwan","name":"台北","lng":121.565,"lat":25.037,"visits":26,"level":"核心主場","venue":"台北大巨蛋 / 台北小巨蛋","summary":"主場敘事核心。","tone":"#ff70b7"},
     {"id":"taichung","regionId":"taiwan","name":"台中","lng":120.646,"lat":24.179,"visits":14,"level":"起跑 / 跨年","venue":"台中洲際棒球場","summary":"起跑、跨年與台灣中部大型場館線。","tone":"#ffd36a"},
@@ -22,20 +19,21 @@
     {"id":"hongkong","regionId":"hongkong","name":"香港","lng":114.158,"lat":22.282,"visits":10,"level":"海港海外線","venue":"啟德主場館","summary":"維港大型場館節點。","tone":"#8f7dff"},
     {"id":"shanghai","regionId":"east-china","name":"上海","lng":121.474,"lat":31.230,"visits":11,"level":"連場都市","venue":"上海體育場","summary":"都市高密度連場演出線。","tone":"#64e8ff"},
     {"id":"beijing","regionId":"north-china","name":"北京","lng":116.407,"lat":39.904,"visits":13,"level":"超大型場","venue":"國家體育場 · 鳥巢","summary":"鳥巢大型場節點。","tone":"#c96dff"},
+    {"id":"xiamen","regionId":"east-china","name":"廈門","lng":118.089,"lat":24.479,"visits":3,"level":"白鷺環場版","venue":"廈門奧林匹克體育中心 · 白鷺體育場","summary":"5525 廈門三場 verified chronology 節點。","tone":"#57dcff"},
     {"id":"guangzhou","regionId":"south-china","name":"廣州","lng":113.264,"lat":23.129,"visits":6,"level":"大灣區大型場","venue":"大灣區文化體育中心體育場","summary":"5525 大灣區六場 verified chronology 節點。","tone":"#35d0ff"},
     {"id":"shenzhen","regionId":"south-china","name":"深圳","lng":114.057,"lat":22.543,"visits":5,"level":"霓虹城市","venue":"深圳大運中心","summary":"科技霓虹與年輕市場線。","tone":"#35d0ff"},
     {"id":"singapore","regionId":"singapore","name":"新加坡","lng":103.820,"lat":1.352,"visits":2,"level":"東南亞節點","venue":"National Stadium","summary":"5525 新加坡兩場 verified chronology 節點。","tone":"#72f5c6"},
     {"id":"tokyo","regionId":"japan","name":"東京","lng":139.691,"lat":35.689,"visits":2,"level":"日本資料節點","venue":"日本官方資料支線","summary":"日期仍待核實，不加入 5525 chronology。","tone":"#a6f0ff"}
   ],
   "tours":[
-    {"id":"t5525","name":"5525 回到那一天","years":"2023–2026","color":"#28d7ff","status":"55 verified dates / 8 chronology cities","route":["kaohsiung","shanghai","singapore","hongkong","taipei","beijing","guangzhou","taichung"],"note":"v64 route order follows the currently verified chronology dataset; unresolved Xiamen/Tokyo are excluded."},
+    {"id":"t5525","name":"5525 回到那一天","years":"2023–2026","color":"#28d7ff","status":"58 verified dates / 9 chronology cities","route":["kaohsiung","shanghai","singapore","hongkong","taipei","beijing","xiamen","guangzhou","taichung"],"note":"v69 route order follows the verified chronology dataset; Tokyo remains excluded pending evidence."},
     {"id":"wantsee","name":"好好好想見到你","years":"2020–2024","color":"#f7c65b","status":"route-model / needs verification","route":["kaohsiung","taichung","taipei","hongkong","shenzhen","shanghai"],"note":"產品路線模型。"},
     {"id":"life","name":"LIFE 人生無限公司","years":"2017–2019","color":"#9b84ff","status":"route-model / needs verification","route":["taipei","hongkong","shanghai","beijing","kaohsiung"],"note":"後續補官方城市與日期。"},
     {"id":"ark","name":"諾亞方舟","years":"2011–2014","color":"#ff7ea9","status":"route-model / needs verification","route":["taipei","kaohsiung","hongkong","shanghai","beijing"],"note":"後續補完整巡演路線。"},
     {"id":"dna","name":"DNA 創造","years":"2009–2010","color":"#72f5c6","status":"route-model / needs verification","route":["taipei","hongkong","shanghai","singapore","tokyo"],"note":"早期海外線資料待補。"}
   ],
   "pages":[
-    {"id":"home","label":"Tour Atlas / Home","readiness":96},{"id":"city","label":"City Dossier","readiness":96},{"id":"album","label":"Album Room","readiness":95},{"id":"songs","label":"Songs Universe","readiness":95},{"id":"books","label":"Books & Publications","readiness":94},{"id":"timeline","label":"Timeline / Archive","readiness":96}
+    {"id":"home","label":"Tour Atlas / Home","readiness":97},{"id":"city","label":"City Dossier","readiness":97},{"id":"album","label":"Album Room","readiness":95},{"id":"songs","label":"Songs Universe","readiness":95},{"id":"books","label":"Books & Publications","readiness":94},{"id":"timeline","label":"Timeline / Archive","readiness":97}
   ],
-  "next":["v64: chronology-driven route geometry", "v65: unresolved city evidence and final interaction QA"]
+  "next":["v69: Xiamen evidence closure + release consistency", "v70: Tokyo evidence / final release integrity"]
 }
