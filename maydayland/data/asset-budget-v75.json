@@ -1,0 +1,40 @@
+{
+  "version": "v75",
+  "release": "homepage-legacy-consolidation",
+  "baseline": {
+    "version": "v74",
+    "homeCss": 19,
+    "homeJs": 20,
+    "atlasVersion": "v74",
+    "atlasLocalRequests": 13
+  },
+  "productionBudget": {
+    "homeCss": 16,
+    "homeJs": 17,
+    "homeLocalAssetRequests": 33,
+    "atlasVersion": "v74",
+    "atlasLocalRequests": 13
+  },
+  "removedFromHomeEntry": [
+    "app-v65.css",
+    "app-v65.js",
+    "app-v66.css",
+    "app-v66.js",
+    "app-v67.css",
+    "app-v67.js"
+  ],
+  "rationale": {
+    "app-v65": "Homepage-only FINAL INTERACTION QA launch card; Atlas performance controls remain in app-v65-atlas.* and were not removed.",
+    "app-v66": "Homepage-only RELEASE RESILIENCE launch card; WebGL recovery and touch guards remain in app-v66-atlas.* and were not removed.",
+    "app-v67": "Homepage-only ACCESSIBILITY AUDIT launch card; Atlas keyboard/focus/fallback behavior remains in app-v67-atlas.* and was not removed. Its homepage CSS only styled the removed launch card."
+  },
+  "retainedCapabilities": [
+    "58 verified chronology dates",
+    "9 verified cities",
+    "8 route geometry segments",
+    "Tokyo evidence gate",
+    "v73 consolidated evidence/integrity/adaptive-delivery runtime",
+    "v74 Atlas Shader route/Bloom/performance/resilience/accessibility stack"
+  ],
+  "nextAudit": "Review v61-v64 homepage release layers for superseded presentation-only behavior before any further removal."
+}
