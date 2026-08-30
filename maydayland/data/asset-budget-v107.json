@@ -1,0 +1,60 @@
+{
+  "version": "v107",
+  "release": "Flattened Atlas Base CSS",
+  "scope": "Remove the remaining app-v43.css -> app-v42.css @import boundary by inlining the v42 base layer into app-v43.css, eliminating one hidden production CSS request without changing Atlas behavior.",
+  "baseline": {
+    "v106Pages": "completed/success",
+    "v106Commit": "5e63195e1da98f2314f7fe39fe22e5a1c567af42",
+    "latestBaselineHead": "54971244ae0ec2600520196c8aea95dc341d68e0",
+    "note": "latest head only updates data/typhoon.json and directly descends from v106"
+  },
+  "files": {
+    "flattenedCss": "app-v43.css",
+    "inlinedLegacyBase": "app-v42.css",
+    "atlasEntry": "atlas-v102.html",
+    "runtimeCss": "app-v106-atlas-runtime.css",
+    "foundationJs": "app-v103-atlas-foundation.js",
+    "guardrailsJs": "app-v104-atlas-guardrails.js",
+    "focusJs": "app-v105-atlas-focus.js"
+  },
+  "requestBudget": {
+    "productionLinkedCss": 2,
+    "productionImportedCss": 0,
+    "productionCssNetworkTotal": 2,
+    "productionLocalJs": 4,
+    "productionLocalNetworkTotal": 6,
+    "previousCssNetworkTotal": 3,
+    "previousLocalJs": 4,
+    "previousLocalNetworkTotal": 7,
+    "deltaNetworkRequests": -1,
+    "removedProductionCssRequests": ["app-v42.css"]
+  },
+  "preservedBehavior": [
+    "Shader route flow and Three.js map remain active",
+    "Bloom toggle, pixel-ratio controls and ECO/BALANCED/QUALITY profiles remain active",
+    "5525 chronology remains 58 verified dates / 9 cities / 8 geometry segments",
+    "tour selector and Show All remain available",
+    "Tokyo-only 2015 and 2017 evidence focus remains available with zero fabricated inter-city segments",
+    "WebGL context recovery, touch intent guard, keyboard navigation and text fallback remain active",
+    "accessibility focus-visible and reduced-motion rules remain present",
+    "parent-to-Atlas adaptive profile messaging remains available",
+    "A-F route controller remains home/city/album/songs/books/timeline"
+  ],
+  "regressionGates": [
+    "app-v43.css must contain no @import statement",
+    "app-v42.css must not be requested by production Atlas",
+    "production CSS network requests must remain <= 2",
+    "production local JS must remain <= 4",
+    "v103 foundation, v104 guardrails and v105 focus modules must each report ready",
+    "58 verified dates / 9 cities / 8 segments must remain intact",
+    "single-city evidence layers must continue to create zero fabricated inter-city segments",
+    "A-F static route controller must continue to expose home/city/album/songs/books/timeline"
+  ],
+  "remaining": [
+    "Shell production core remains app-v101-core.js",
+    "Atlas entry filename remains atlas-v102.html",
+    "Atlas release metadata still reports v106 and should be synchronized after served v107 deployment verification",
+    "A-F served-route certification should be repeated against the final v107 Pages deployment"
+  ],
+  "next": "v108 · synchronize shell/Atlas production release naming and run served A-F certification after v107 Pages succeeds"
+}
