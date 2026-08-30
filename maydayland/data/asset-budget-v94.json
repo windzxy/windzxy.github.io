@@ -1,0 +1,23 @@
+{
+  "version":"v94",
+  "release":"evidence-first-city-data",
+  "homeLocalRequestBudget":{"css":6,"js":6,"total":12,"cssImports":0},
+  "core":{"entry":"app-v93-core.js","routing":"A-F core-native hash routing","atlasReference":"atlas-v92.html","changedThisRelease":false},
+  "servedBaseline":{"v93Commit":"47a4f342eaf98e8aa1889f0ff3319b1a0cdbe760","githubPages":"completed/success before v94 changes"},
+  "dataQuality":{
+    "productData":"product-pages-v44.json now carries v94 evidence policy",
+    "evidenceRegistry":"city-evidence-v94.json",
+    "tokyo":{"status":"verified-primary","venue":"日本武道館","verifiedDates":["2015-08-28","2015-08-29","2017-02-03","2017-02-04"],"officialSources":2},
+    "visitCountPolicy":"archive-product display values are not official historical totals"
+  },
+  "coverage":{"verifiedCityEvidence":10,"geometrySegments":8,"pending":["integrate Tokyo evidence into City Dossier venue board","Tokyo route geometry"]},
+  "qualityGates":[
+    "v93 served baseline verified successful before release",
+    "No new homepage CSS/JS request",
+    "No CSS @import regression",
+    "Tokyo venue/date facts use official Mayday Japan sources",
+    "No venue capacity or historical transport facts inferred",
+    "City product subtitle explicitly prioritizes official verification",
+    "Editorial visit counts remain separated from verified historical totals"
+  ]
+}
