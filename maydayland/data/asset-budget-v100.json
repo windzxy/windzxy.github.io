@@ -1,0 +1,23 @@
+{
+  "version":"100.0.0",
+  "release":"atlas-provenance-hardening",
+  "updatedAt":"2026-08-30",
+  "scope":"Active Atlas data-quality pass without adding runtime CSS/JS requests.",
+  "baseline":{"core":"app-v93-core.js","atlas":"atlas-v92.html","homeLocalRequestBudget":{"css":6,"js":6,"total":12,"imports":0}},
+  "changedFiles":["maydayland/data/geo-tour-v42.json","maydayland/data/asset-budget-v100.json"],
+  "atlasData":{"source":"geo-tour-v42.json","version":"100.0.0","activeTours":3,"verifiedMultiCityLayers":1,"officialPrimarySingleCityLayers":2,"verifiedDates":{"tokyo":4},"geometry":{"t5525Segments":8,"justRockIt2015Segments":0,"reDNA2017Segments":0}},
+  "provenanceGates":[
+    "Every active tour has evidenceLevel and evidenceRef.",
+    "Tokyo carries four verified dates and official-primary evidence metadata.",
+    "City visits values are explicitly editorial-model weights, not official historical totals.",
+    "Single-city verified tours remain zero-segment layers until multi-city evidence exists.",
+    "No legacy unverified route-model tour is reintroduced."
+  ],
+  "requestBudgetChange":{"css":0,"js":0},
+  "remainingDebt":[
+    "Production entry names still reference app-v93-core.js and atlas-v92.html.",
+    "Legacy Atlas implementation files remain version-fragmented even though the active data contract is evidence-native.",
+    "Served v100 data should be verified after GitHub Pages completes."
+  ],
+  "nextTarget":"v101 unified production entry naming and runtime consolidation, preserving the 6 CSS / 6 JS home budget."
+}
