@@ -1,5 +1,5 @@
 {
-  "version":"109.0.0",
+  "version":"110.0.0",
   "updatedAt":"2026-08-31",
   "principle":"Only promote city/venue/date facts to verified when an official or first-party public source directly supports them. Editorial visit counts remain separate from verified historical totals.",
   "presentationContract":{
@@ -47,15 +47,15 @@
     },
     "beijing":{
       "status":"official-primary","city":"北京","venue":"國家體育場 · 鳥巢",
-      "presentation":{"venueBoardBadge":"OFFICIAL PRIMARY","verifiedDateCount":0,"confidence":"high for venue and cumulative Bird's Nest show-count claim","verifiedHistoricalTotal":43,"historicalTotalScope":"北京國家體育場（鳥巢） cumulative shows through the cited 2025 run","visitKpi":"EDITORIAL MODEL unless UI explicitly renders the scoped 43-show official record"},
-      "verifiedDates":[],
+      "presentation":{"venueBoardBadge":"OFFICIAL PRIMARY","verifiedDateCount":1,"confidence":"43 cumulative Bird's Nest shows through the cited 2025 run","verifiedHistoricalTotal":43,"historicalTotalScope":"北京國家體育場（鳥巢） cumulative shows through the cited 2025 run","visitKpi":"EDITORIAL MODEL unless UI explicitly renders the scoped 43-show official record"},
+      "verifiedDates":["2025-07-25"],
       "verifiedEvents":[{"date":"2025-07-25","event":"《回到那一天》25週年巡迴演唱會 · 北京鳥巢 2025 run begins","evidence":"B'in Music states the 2025 Bird's Nest run began July 25 and comprised 13 shows, bringing Mayday's cumulative Bird's Nest record to 43 shows."}],
       "sources":[{"type":"official-primary","publisher":"相信音樂 B'in Music","url":"https://bin-music.com/news/2199","supports":["北京國家體育場（鳥巢）","2025 run begins 2025-07-25","13-show 2025 run","43 cumulative Bird's Nest shows","4.3 million cumulative audience claim as stated by publisher"]}],
       "notAsserted":["complete 13-show date list","official Beijing city-wide total across other venues","venue capacity"]
     },
     "shanghai":{
       "status":"official-primary","city":"上海","venue":"上海體育場",
-      "presentation":{"venueBoardBadge":"OFFICIAL PRIMARY","verifiedDateCount":1,"confidence":"high for venue, 2025 six-show run and final-night date","historicalVisitTotal":"not asserted","visitKpi":"EDITORIAL MODEL · historical total not asserted"},
+      "presentation":{"venueBoardBadge":"OFFICIAL PRIMARY","verifiedDateCount":1,"confidence":"2025 six-show Shanghai Stadium run; final-night date verified","historicalVisitTotal":"not asserted","visitKpi":"EDITORIAL MODEL · historical total not asserted"},
       "verifiedDates":["2025-11-16"],
       "verifiedEvents":[{"date":"2025-11-16","event":"5525+1《回到那一天》25週年巡迴演唱會 · 上海最終場","evidence":"B'in Music official recap identifies Nov 16 as the final night of a six-show Shanghai Stadium run attended by 360,000 people in aggregate."}],
       "sources":[
