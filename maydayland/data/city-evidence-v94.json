@@ -1,6 +1,6 @@
 {
-  "version":"96.0.0",
-  "updatedAt":"2026-08-30",
+  "version":"108.0.0",
+  "updatedAt":"2026-08-31",
   "principle":"Only promote city/venue/date facts to verified when an official or first-party public source directly supports them. Editorial visit counts remain separate from verified historical totals.",
   "presentationContract":{
     "levels":[
@@ -30,6 +30,26 @@
         {"type":"official-primary","publisher":"Mayday Japanese Official Website","url":"https://www.mayday.jp/live/","supports":["2017 venue and show dates"]}
       ],
       "notAsserted":["official historical visit total","venue capacity","historical transport arrangements"]
+    },
+    "hongkong":{
+      "status":"official-primary",
+      "city":"香港",
+      "venue":"中環海濱",
+      "presentation":{"venueBoardBadge":"OFFICIAL PRIMARY","verifiedDateCount":7,"confidence":"high for 5525 venue/date claims only","historicalVisitTotal":"not asserted","visitKpi":"EDITORIAL MODEL · historical total not asserted"},
+      "verifiedDates":["2024-04-30","2024-05-03","2024-05-04","2024-05-05","2024-05-07","2024-05-08","2024-05-09"],
+      "verifiedEvents":[
+        {"date":"2024-04-30","event":"5525《回到那一天》25週年巡迴演唱會 · 香港","evidence":"B'in Music official recap lists the Hong Kong Central Harbourfront run and dates."},
+        {"date":"2024-05-03","event":"5525《回到那一天》25週年巡迴演唱會 · 香港","evidence":"B'in Music official recap."},
+        {"date":"2024-05-04","event":"5525《回到那一天》25週年巡迴演唱會 · 香港","evidence":"B'in Music official recap."},
+        {"date":"2024-05-05","event":"5525《回到那一天》25週年巡迴演唱會 · 香港","evidence":"B'in Music official recap."},
+        {"date":"2024-05-07","event":"5525《回到那一天》25週年巡迴演唱會 · 香港","evidence":"B'in Music official recap."},
+        {"date":"2024-05-08","event":"5525《回到那一天》25週年巡迴演唱會 · 香港","evidence":"B'in Music official recap."},
+        {"date":"2024-05-09","event":"5525《回到那一天》25週年巡迴演唱會 · 香港","evidence":"B'in Music official recap; the article also documents weather disruption/postponement within the run."}
+      ],
+      "sources":[
+        {"type":"official-primary","publisher":"相信音樂 B'in Music","url":"https://bin-music.com/news/1845","supports":["中環海濱活動空間","5525 Hong Kong run","2024-04-30 / 05-03 / 05-04 / 05-05 / 05-07 / 05-08 / 05-09 dates","seven-show run"]}
+      ],
+      "notAsserted":["official historical Hong Kong visit total","紅磡體育館 historical date set","venue capacity","ticketing totals beyond the cited 5525 recap"]
     }
   }
 }
