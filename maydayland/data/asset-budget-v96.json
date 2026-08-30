@@ -1,0 +1,27 @@
+{
+  "version":"v96",
+  "release":"evidence-status-and-tour-layer-contract",
+  "servedBaseline":{"v95Commit":"1aca1cb91c49c9f96b0262b3c44734b168ecb44f","latestPagesBaseline":"completed/success before v96 changes"},
+  "homeLocalRequestBudget":{"css":6,"js":6,"total":12,"cssImports":0,"changedThisRelease":false},
+  "core":{"entry":"app-v93-core.js","atlas":"atlas-v92.html","changedThisRelease":false},
+  "dataQuality":{
+    "cityEvidence":"city-evidence-v94.json upgraded to v96 presentation contract",
+    "routeLayers":"tour-route-layers-v96.json added",
+    "evidenceLevels":["official-primary","verified","editorial","pending"],
+    "visitKpiRule":"archive-product visit counts must not be described as verified historical totals",
+    "tourColorRule":"each tour owns a distinct route color; show-all preserves tour identity",
+    "tokyoPolicy":"2015 and 2017 Budokan events are official-primary dated Tokyo nodes and remain separate from 5525 chronology"
+  },
+  "coverage":{"t5525":{"verifiedDates":58,"verifiedCities":9,"geometrySegments":8},"tokyo":{"verifiedDates":4,"verifiedVenue":"日本武道館","layers":2,"intercitySegmentsInvented":0}},
+  "qualityGates":[
+    "v95 Pages baseline verified completed/success before release",
+    "Evidence status has a machine-readable presentation contract",
+    "Archive-model VISITS is explicitly prohibited from being labelled a verified historical total",
+    "5525 and Tokyo historical events are split into separate tour layers",
+    "Every route layer has its own color",
+    "No Tokyo inter-city route geometry is fabricated from single-city evidence",
+    "No homepage CSS/JS request added",
+    "No CSS @import regression"
+  ],
+  "next":"v97 integrate evidence badges/KPI wording and tour-layer selector into served City Dossier and Atlas UI"
+}
