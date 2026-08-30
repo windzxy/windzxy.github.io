@@ -1,13 +1,23 @@
 {
-  "version":"95.0.0",
+  "version":"96.0.0",
   "updatedAt":"2026-08-30",
   "principle":"Only promote city/venue/date facts to verified when an official or first-party public source directly supports them. Editorial visit counts remain separate from verified historical totals.",
+  "presentationContract":{
+    "levels":[
+      {"id":"official-primary","label":"OFFICIAL PRIMARY","meaning":"first-party or official source directly supports the displayed venue/date claim","priority":1},
+      {"id":"verified","label":"VERIFIED","meaning":"claim is supported by a reliable cited public source","priority":2},
+      {"id":"editorial","label":"EDITORIAL MODEL","meaning":"product/editorial structure; do not read as an official historical total","priority":3},
+      {"id":"pending","label":"PENDING EVIDENCE","meaning":"placeholder or relationship awaiting source-level verification","priority":4}
+    ],
+    "visitKpiPolicy":"VISITS is an archive-product model unless an explicit verifiedHistoricalTotal field exists. UI must not label archive-model counts as verified.",
+    "venueBoardPolicy":"Every venue card should expose one evidence level; official-primary and pending must be visually distinguishable without relying on color alone."
+  },
   "cities":{
     "tokyo":{
-      "status":"verified-primary",
+      "status":"official-primary",
       "city":"東京",
       "venue":"日本武道館",
-      "presentation":{"venueBoardBadge":"OFFICIAL PRIMARY","verifiedDateCount":4,"confidence":"high for venue/date claims only","historicalVisitTotal":"not asserted"},
+      "presentation":{"venueBoardBadge":"OFFICIAL PRIMARY","verifiedDateCount":4,"confidence":"high for venue/date claims only","historicalVisitTotal":"not asserted","visitKpi":"EDITORIAL MODEL · historical total not asserted"},
       "verifiedDates":["2015-08-28","2015-08-29","2017-02-03","2017-02-04"],
       "verifiedEvents":[
         {"date":"2015-08-28","event":"Just Rock It! @ 日本武道館","evidence":"Mayday Japanese Official Website states the 2015-08-28/29 Budokan 2Days were Mayday's first solo performances at that stage."},
