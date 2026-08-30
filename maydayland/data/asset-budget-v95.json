@@ -1,0 +1,25 @@
+{
+  "version":"v95",
+  "release":"evidence-native-tokyo-venue-board",
+  "homeLocalRequestBudget":{"css":6,"js":6,"total":12,"cssImports":0},
+  "core":{"entry":"app-v93-core.js","routing":"A-F core-native hash routing","atlasReference":"atlas-v92.html","changedThisRelease":false},
+  "servedBaseline":{"v94Commit":"bb95a7774d4b1bf67e511e84c330ed6d57269f7f","latestPagesBaseline":"completed/success before v95 changes"},
+  "dataQuality":{
+    "productData":"product-pages-v44.json upgraded to v95 City Dossier evidence language",
+    "cityDossier":"city-dossiers-v45.json upgraded to v95 with Tokyo visible Venue Board promotion",
+    "evidenceRegistry":"city-evidence-v94.json upgraded internally to v95 schema/content",
+    "tokyo":{"status":"verified-primary","venue":"日本武道館","verifiedDates":["2015-08-28","2015-08-29","2017-02-03","2017-02-04"],"officialSources":2,"visibleVenueBoard":true},
+    "visitCountPolicy":"archive-product display values remain non-historical unless explicitly verified"
+  },
+  "coverage":{"verifiedCityEvidence":10,"geometrySegments":8,"pending":["Tokyo route geometry remains separate because current route chronology is 5525-specific while verified Tokyo dates are 2015/2017","expand official evidence to other city Venue Boards"]},
+  "qualityGates":[
+    "v94 served baseline verified successful before release",
+    "Tokyo Venue Board now shows Nippon Budokan instead of a generic placeholder",
+    "Four verified Tokyo dates are exposed in city storyline metadata",
+    "Official-primary status is visible at venue level",
+    "No new homepage CSS/JS request",
+    "No CSS @import regression",
+    "No venue capacity or historical transport facts inferred",
+    "Tokyo is not incorrectly injected into the 5525 route chronology"
+  ]
+}
