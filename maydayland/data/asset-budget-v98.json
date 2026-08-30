@@ -1,0 +1,40 @@
+{
+  "version":"98.0.0",
+  "updatedAt":"2026-08-30",
+  "release":"atlas-native-tour-layer-selector",
+  "scope":[
+    "Connect the served Three.js Atlas selector to the evidence-backed tour layer contract.",
+    "Remove unverified legacy route-model tours from the active Atlas filter until evidence is closed.",
+    "Preserve per-tour color identity in Show All and single-tour modes.",
+    "Represent 2015 and 2017 Budokan evidence as Tokyo single-city nodes without fabricating flight geometry."
+  ],
+  "runtime":{
+    "core":"app-v93-core.js",
+    "atlas":"atlas-v92.html",
+    "atlasEngine":"app-v43.js",
+    "atlasData":"geo-tour-v42.json@98.0.0",
+    "routeLayerContract":"tour-route-layers-v96.json",
+    "homeOnlyAtlas":true,
+    "homeCssRequests":6,
+    "homeJsRequests":6,
+    "cssImports":0,
+    "newAtlasJsRequests":0
+  },
+  "layers":[
+    {"id":"t5525","kind":"multi-city-route","color":"#28d7ff","verifiedDates":58,"verifiedCities":9,"geometrySegments":8},
+    {"id":"just-rock-it-2015-budokan","kind":"verified-single-city-node","color":"#ff7a8a","city":"tokyo","verifiedDates":2,"geometrySegments":0},
+    {"id":"redna-2017-budokan","kind":"verified-single-city-node","color":"#ffb45d","city":"tokyo","verifiedDates":2,"geometrySegments":0}
+  ],
+  "qualityGates":[
+    "Existing app-v43.js data-driven Tour Filters render exactly the three evidence-backed v98 layers plus Show All.",
+    "Selecting 5525 rebuilds only its 8 Three.js TubeGeometry route segments.",
+    "Selecting either Budokan layer produces no inter-city TubeGeometry because the verified route array contains one Tokyo node only.",
+    "Show All preserves #28d7ff, #ff7a8a and #ffb45d as distinct tour colors.",
+    "No unverified Want See, LIFE, Ark or DNA route-model remains selectable in the served Atlas.",
+    "No extra Atlas JavaScript request is introduced."
+  ],
+  "remaining":[
+    "Improve single-city layer focus so selecting a Budokan layer visually dims unrelated city nodes and surfaces its verified dates inside Atlas.",
+    "Move the v98 data contract into a dedicated versioned Atlas entry/core name instead of retaining historical app-v43/atlas-v92 filenames."
+  ]
+}
