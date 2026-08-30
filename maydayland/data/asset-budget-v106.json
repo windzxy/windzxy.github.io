@@ -1,0 +1,60 @@
+{
+  "version": "v106",
+  "release": "Atlas CSS Delivery Consolidation",
+  "scope": "Replace five historical Atlas-only stylesheet requests with one consolidated v106 runtime stylesheet while preserving the approved Shader/Bloom, chronology, resilience, accessibility and single-city focus behavior.",
+  "baseline": {
+    "v105Pages": "completed/success",
+    "v105Commit": "269caa01daf0d240de8976ed232e2f8c01775d11"
+  },
+  "files": {
+    "atlasEntry": "atlas-v102.html",
+    "baseCss": "app-v43.css",
+    "runtimeCss": "app-v106-atlas-runtime.css",
+    "foundationJs": "app-v103-atlas-foundation.js",
+    "guardrailsJs": "app-v104-atlas-guardrails.js",
+    "focusJs": "app-v105-atlas-focus.js"
+  },
+  "requestBudget": {
+    "productionLinkedCss": 2,
+    "productionLocalJs": 4,
+    "productionLinkedLocalTotal": 6,
+    "previousLinkedCss": 6,
+    "previousLocalJs": 4,
+    "previousLinkedLocalTotal": 10,
+    "deltaLinkedLocalRequests": -4,
+    "note": "app-v43.css retains its existing app-v42.css import; v106 specifically consolidates the five Atlas-only CSS requests v64/v65/v66/v67/v72 into one request.",
+    "removedProductionCssRequests": [
+      "app-v64-atlas.css",
+      "app-v65-atlas.css",
+      "app-v66-atlas.css",
+      "app-v67-atlas.css",
+      "app-v72-atlas.css"
+    ]
+  },
+  "preservedBehavior": [
+    "Shader route flow and Three.js map remain active",
+    "Bloom toggle, pixel-ratio controls and ECO/BALANCED/QUALITY profiles remain active",
+    "5525 chronology remains 58 verified dates / 9 cities / 8 geometry segments",
+    "tour selector and Show All remain available",
+    "Tokyo-only 2015 and 2017 evidence focus remains available with zero fabricated inter-city segments",
+    "WebGL context recovery, touch intent guard, keyboard navigation and text fallback remain active",
+    "accessibility focus-visible and reduced-motion rules remain present",
+    "parent-to-Atlas adaptive profile messaging remains available"
+  ],
+  "regressionGates": [
+    "Production Atlas must link no more than 2 local CSS files",
+    "app-v64-atlas.css, app-v65-atlas.css, app-v66-atlas.css, app-v67-atlas.css and app-v72-atlas.css must not be requested directly",
+    "production local JS must remain <= 4",
+    "v103 foundation, v104 guardrails and v105 focus modules must each report ready",
+    "58 verified dates / 9 cities / 8 segments must remain intact",
+    "single-city evidence layers must continue to create zero fabricated inter-city segments",
+    "A-F static route controller must continue to expose home/city/album/songs/books/timeline"
+  ],
+  "remaining": [
+    "app-v43.css still imports the legacy app-v42.css base layer",
+    "Shell production core remains app-v101-core.js",
+    "Shell/index release metadata remains older than the Atlas runtime release",
+    "A-F served-route certification should be repeated after final v106 Pages deployment succeeds"
+  ],
+  "next": "v107 · flatten the app-v43 -> app-v42 CSS import boundary or consolidate shell production naming after v106 Pages success and served A-F regression checks"
+}
