@@ -1,0 +1,15 @@
+{
+  "version":"112.0.0",
+  "updatedAt":"2026-08-31",
+  "release":"kaohsiung-official-evidence-expansion",
+  "baseline":{"previousVersion":"v111","previousMaster":"dd2d1cb33657607ac3369c25bd6088d999322ba1"},
+  "changes":[
+    "Promote Kaohsiung National Stadium from editorial-only venue data to official-primary evidence using B'in Music first-party sources.",
+    "Record the official 2024 5525 Kaohsiung five-show run and 250,000 aggregate audience claim without inventing the complete date list.",
+    "Record the first-party scoped cumulative venue record of 29 Mayday shows at Kaohsiung National Stadium as stated on 2024-11-25.",
+    "Keep the City VISITS KPI editorial unless the UI explicitly renders the scoped 29-show venue record."
+  ],
+  "cityEvidence":{"dataset":"city-evidence-v94.json","officialPrimaryCities":["tokyo","hongkong","beijing","shanghai","taichung","kaohsiung"],"newCity":"kaohsiung","verifiedDateCount":1,"scopedHistoricalVenueTotal":29},
+  "regressionGates":{"routes":["home","city","album","songs","books","timeline"],"shaderRouteFlow":true,"bloomPerformanceControls":true,"homeAtlas":"atlas-v102.html home-only","shellLocalRequestBudget":{"css":6,"js":6,"total":12,"imports":0},"atlasEffectiveLocalNetwork":{"css":2,"js":4,"total":6,"imports":0},"requestDelta":0},
+  "remaining":["served browser 6/6 A-F route traversal certification","shell/core release naming convergence","additional first-party city evidence including Taipei and remaining venue/date sets"]
+}
