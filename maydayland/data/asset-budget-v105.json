@@ -1,0 +1,61 @@
+{
+  "version": "v105",
+  "release": "Atlas Single-City Focus Runtime Consolidation",
+  "scope": "Replace the historical app-v72-atlas.js production request with a named v105 evidence-focus module while preserving Shader/Bloom, route geometry, guardrails and the A-F shell contract.",
+  "baseline": {
+    "v104Pages": "completed/success",
+    "v104Commit": "d5bb0a64e664cf675543c291d94d93a7f4549de5"
+  },
+  "productionEntry": {
+    "shellCore": "app-v101-core.js",
+    "atlasEntry": "atlas-v102.html",
+    "atlasRuntimeVersion": "v105",
+    "atlasFoundation": "app-v103-atlas-foundation.js",
+    "atlasGuardrails": "app-v104-atlas-guardrails.js",
+    "atlasFocus": "app-v105-atlas-focus.js"
+  },
+  "requestBudget": {
+    "localCss": 6,
+    "localJs": 4,
+    "localTotal": 10,
+    "previousLocalTotal": 10,
+    "delta": 0,
+    "removedProductionRequest": "app-v72-atlas.js",
+    "rule": "Production Atlas must remain <= 10 local CSS/JS requests and must not request app-v72-atlas.js or the previously consolidated v64-v69 modules."
+  },
+  "routeCertification": {
+    "controller": "app-v101-core.js",
+    "staticRoutes": ["home", "city", "album", "songs", "books", "timeline"],
+    "routeCount": 6,
+    "homeOnlyAtlasLifecycle": true,
+    "servedV104PagesBuild": "success",
+    "servedV105Certification": "pending final Pages deployment"
+  },
+  "preservedBehavior": [
+    "Shader route flow and Three.js map remain active",
+    "Bloom toggle, pixel-ratio controls and ECO/BALANCED/QUALITY profiles remain active",
+    "low-FPS auto guard remains active",
+    "5525 chronology remains 58 verified dates / 9 cities / 8 geometry segments",
+    "tour layer selector and Show All remain available",
+    "Just Rock It! 2015 and Re:DNA 2017 keep Tokyo-only verified focus with zero fabricated inter-city segments",
+    "Tokyo evidence panel keeps the four verified Budokan dates across the two tour layers",
+    "WebGL context recovery, touch intent guard, keyboard navigation and text fallback remain active",
+    "MAYDAYLAND_ATLAS_FOCUS_V99 remains as a compatibility alias to the v105 focus API",
+    "parent-to-Atlas adaptive profile messaging remains available"
+  ],
+  "regressionGates": [
+    "Production Atlas local request budget must remain <= 10",
+    "app-v72-atlas.js must not be requested",
+    "app-v64-atlas.js, app-v65-atlas.js, app-v66-atlas.js, app-v67-atlas.js and app-v69-route-bridge.js must remain absent",
+    "v103 foundation, v104 guardrails and v105 focus modules must each report ready",
+    "58 verified dates / 9 cities / 8 segments must remain intact",
+    "single-city evidence layers must continue to create zero fabricated inter-city segments",
+    "A-F static route controller must continue to expose home/city/album/songs/books/timeline"
+  ],
+  "remaining": [
+    "Legacy Atlas CSS filenames remain split across v43/v64/v65/v66/v67/v72",
+    "Shell production core remains app-v101-core.js",
+    "A-F served-route certification should be repeated after final v105 Pages deployment succeeds"
+  ],
+  "next": "v106 · consolidate Atlas CSS delivery or shell production naming only after final v105 Pages success and A-F served regression checks"
+}
