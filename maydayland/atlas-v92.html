@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant" data-maydayland-atlas="v92">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050912">
+  <meta name="description" content="Maydayland v92 Atlas：正式獨立 Atlas entry，保留 Shader route flow、Bloom/performance、chronology geometry、WebGL resilience、accessibility 與 Atlas-native adaptive performance API。">
+  <title>Maydayland · Dedicated Adaptive Atlas v92</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=92.0.0">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="./app-v43.css?v=92.0.0">
+  <link rel="stylesheet" href="./app-v64-atlas.css?v=92.0.0">
+  <link rel="stylesheet" href="./app-v65-atlas.css?v=92.0.0">
+  <link rel="stylesheet" href="./app-v66-atlas.css?v=92.0.0">
+  <link rel="stylesheet" href="./app-v67-atlas.css?v=92.0.0">
+  <link rel="stylesheet" href="./app-v72-atlas.css?v=92.0.0">
+  <style>.v92-audit{position:fixed;right:14px;bottom:14px;z-index:9999;display:grid;gap:3px;min-width:210px;padding:10px 12px;border:1px solid rgba(132,214,255,.22);border-radius:12px;background:rgba(4,10,20,.82);backdrop-filter:blur(14px);box-shadow:0 12px 36px rgba(0,0,0,.24);font:11px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b8cadb;pointer-events:none}.v92-audit small{letter-spacing:.12em;color:#6f8aa2}.v92-audit b{font-size:13px;color:#eaf8ff}.v92-audit strong{color:#7de6bd}.v92-audit.is-warn strong{color:#ffb57d}@media(max-width:720px){.v92-audit{right:8px;bottom:8px;min-width:0;max-width:calc(100vw - 16px);padding:8px 10px}}</style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>window.MAYDAYLAND_ATLAS_BUILD={version:'v92',release:'dedicated-atlas-entry',events:58,cities:9,segments:8,pending:['tokyo'],localRequestBudget:13,api:'postMessage:v92'};</script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+  <script src="./app-v69-route-bridge.js?v=92.0.0"></script>
+  <script src="./app-v43.js?v=92.0.0"></script>
+  <script src="./app-v64-atlas.js?v=92.0.0"></script>
+  <script src="./app-v65-atlas.js?v=92.0.0"></script>
+  <script src="./app-v66-atlas.js?v=92.0.0"></script>
+  <script src="./app-v67-atlas.js?v=92.0.0"></script>
+  <script src="./app-v72-atlas.js?v=92.0.0"></script>
+  <script>
+  (()=>{'use strict';
+    const EXPECT={css:6,js:7,events:58,cities:9,segments:8};
+    const stamp=()=>{const badge=document.querySelector('.v64-badge');if(badge)badge.textContent='ROUTE GEOMETRY · 92 · 58 DATES / 9 CITIES';const top=document.querySelector('.v64-top small');if(top)top.textContent='V92 · SHADER ROUTE · NATIVE ADAPTIVE API';const title=document.querySelector('.v64-top h3');if(title)title.textContent='58 verified dates · 9 cities · 8 live map segments';const access=document.querySelector('.v67-head small');if(access)access.textContent='V92 · ACCESSIBILITY + RESILIENCE QA';document.documentElement.dataset.maydaylandVersion='92';};
+    const audit=async()=>{const res=performance.getEntriesByType?.('resource')||[];const local=res.filter(r=>{try{return new URL(r.name).origin===location.origin}catch{return false}});const css=local.filter(r=>/\/app-v(?:43|64-atlas|65-atlas|66-atlas|67-atlas|72-atlas)\.css(?:\?|$)/.test(r.name)).length;const js=local.filter(r=>/\/(?:app-v69-route-bridge|app-v43|app-v64-atlas|app-v65-atlas|app-v66-atlas|app-v67-atlas|app-v72-atlas)\.js(?:\?|$)/.test(r.name)).length;let dataPass=false;try{const[r,p]=await Promise.all([fetch('./data/route-chronology-v69.json?v=92',{cache:'no-store'}).then(x=>x.json()),fetch('./data/provenance-v69.json?v=92',{cache:'no-store'}).then(x=>x.json())]);const events=(r.cities||[]).reduce((n,c)=>n+(c.events?.length||0),0);const verified=(p.cities||[]).filter(c=>c.status==='verified').length;const pending=(p.cities||[]).filter(c=>c.status==='pending').map(c=>c.id);dataPass=events===EXPECT.events&&verified===EXPECT.cities&&r.coverage?.geometrySegments===EXPECT.segments&&pending.includes('tokyo')}catch{}const webgl=!!window.THREE&&!!document.querySelector('#threeStage canvas');const pass=css<=EXPECT.css&&js<=EXPECT.js&&dataPass&&webgl;const el=document.createElement('aside');el.className='v92-audit'+(pass?'':' is-warn');el.setAttribute('role','status');el.innerHTML=`<small>V92 · ATLAS REQUEST AUDIT</small><b>${css} CSS · ${js} JS LOCAL</b><strong>${pass?'DEDICATED ENTRY PASS':'CHECK'}</strong><span>${webgl?'WebGL active':'WebGL pending'} · 58 dates · Tokyo evidence gate</span>`;document.body.append(el);document.body.dataset.v92AtlasAudit=pass?'pass':'check';};
+    const rank={full:0,balanced:1,eco:2},state={profile:'full',level:0,reason:'baseline',applied:0,ready:false};
+    const emit=(type='maydayland:atlas-profile-ack')=>{try{parent.postMessage({type,version:'v92',profile:state.profile,level:state.level,reason:state.reason,applied:state.applied,ready:state.ready},location.origin)}catch{}};
+    const applyProfile=(profile='full',reason='parent')=>{if(!(profile in rank))profile='full';const next=rank[profile];if(next<state.level)return {...state,ignored:'upshift-blocked'};state.profile=profile;state.level=next;state.reason=reason||'parent';const ratio=document.querySelector('#ratioCap'),bloom=document.querySelector('#bloomText'),bloomBtn=document.querySelector('[data-fx="bloom"]');if(profile==='balanced'||profile==='eco'){const cap=profile==='eco'?'1':'1.2';if(ratio){ratio.value=cap;ratio.dispatchEvent(new Event('input',{bubbles:true}))}if((bloom?.textContent||'').trim().toUpperCase()==='ON')bloomBtn?.click();}document.documentElement.dataset.v92AdaptiveProfile=profile;state.applied++;emit();return {...state};};
+    window.MAYDAYLAND_ATLAS_CONTROL_V92={applyProfile,getState:()=>({...state})};
+    addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==parent)return;const m=e.data||{};if(m.type==='maydayland:atlas-profile')applyProfile(m.profile,m.reason);if(m.type==='maydayland:atlas-state-request')emit('maydayland:atlas-state')});
+    addEventListener('DOMContentLoaded',()=>{setTimeout(stamp,1500);setTimeout(audit,1900);setTimeout(()=>{state.ready=true;document.documentElement.dataset.v92AdaptiveApi='ready';emit('maydayland:atlas-ready')},2100)},{once:true});
+  })();
+  </script>
+</body>
+</html>
