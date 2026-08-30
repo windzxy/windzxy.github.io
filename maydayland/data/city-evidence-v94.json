@@ -1,5 +1,5 @@
 {
-  "version":"94.0.0",
+  "version":"95.0.0",
   "updatedAt":"2026-08-30",
   "principle":"Only promote city/venue/date facts to verified when an official or first-party public source directly supports them. Editorial visit counts remain separate from verified historical totals.",
   "cities":{
@@ -7,6 +7,7 @@
       "status":"verified-primary",
       "city":"東京",
       "venue":"日本武道館",
+      "presentation":{"venueBoardBadge":"OFFICIAL PRIMARY","verifiedDateCount":4,"confidence":"high for venue/date claims only","historicalVisitTotal":"not asserted"},
       "verifiedDates":["2015-08-28","2015-08-29","2017-02-03","2017-02-04"],
       "verifiedEvents":[
         {"date":"2015-08-28","event":"Just Rock It! @ 日本武道館","evidence":"Mayday Japanese Official Website states the 2015-08-28/29 Budokan 2Days were Mayday's first solo performances at that stage."},
