@@ -1,0 +1,31 @@
+{
+  "version":"111.0.0",
+  "updatedAt":"2026-08-31",
+  "release":"served-atlas-certification",
+  "baseline":{"masterParent":"fa748f12f469c9dee2b3524e67e40aa8a905ca29","previousMaydayland":"507f66eb45b2f7b4650d1f610e0ffeef46675863","previousVersion":"v110"},
+  "changes":[
+    "Upgrade the production Atlas runtime certification metadata to v111 without adding any local CSS or JS request.",
+    "Add a hard regression gate proving the v107 CSS flatten remains effective: app-v42.css must not be requested through an import.",
+    "Certify WebGL, 58-date/9-city/8-segment route data, foundation runtime, guardrails, single-city focus, and Bloom/pixel-ratio controls as one served gate set.",
+    "Expose MAYDAYLAND_ATLAS_CONTROL_V111 while preserving v106/v105/v104 compatibility aliases for the existing shell profile messaging."
+  ],
+  "servedCertification":{
+    "entry":"atlas-v102.html",
+    "releaseIdentity":"v111 internal certified runtime",
+    "gates":["flattened-css","webgl","58-9-8-data","foundation","guardrails","single-city-focus","bloom-profile"],
+    "adaptiveProfiles":["full","balanced","eco"],
+    "legacyImportForbidden":"app-v42.css",
+    "legacyRuntimeRequestsForbidden":["app-v64-atlas.js","app-v65-atlas.js","app-v66-atlas.js","app-v67-atlas.js","app-v69-route-bridge.js","app-v72-atlas.js"]
+  },
+  "regressionGates":{
+    "routes":["home","city","album","songs","books","timeline"],
+    "homeAtlas":"atlas-v102.html home-only",
+    "shaderRouteFlow":true,
+    "bloomPerformanceControls":true,
+    "cityEvidenceDataset":"city-evidence-v94.json",
+    "shellLocalRequestBudget":{"css":6,"js":6,"total":12,"imports":0},
+    "atlasEffectiveLocalNetwork":{"css":2,"js":4,"total":6,"imports":0},
+    "requestDelta":0
+  },
+  "remaining":["served browser 6/6 A-F route traversal certification","shell/core release naming convergence","additional first-party city evidence"]
+}
