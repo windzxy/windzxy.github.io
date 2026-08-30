@@ -1,0 +1,17 @@
+{
+  "version":"109.0.0",
+  "release":"city-evidence-expansion-ii",
+  "date":"2026-08-31",
+  "baseline":{"previousVersion":"108.0.0","previousMaydaylandCommit":"910775d4617093b58e40958b932007c86bb613f5","productionEntry":"index.html","shellCore":"app-v101-core.js","atlasEntry":"atlas-v102.html"},
+  "changes":[
+    "Expand first-party City evidence beyond Tokyo and Hong Kong to Beijing, Shanghai and Taichung.",
+    "Record B'in Music's official 43-show cumulative Bird's Nest record for Beijing with explicit scope, without replacing the editorial VISITS KPI.",
+    "Record Shanghai Stadium's official 2025 six-show run evidence and verified 2025-11-16 final-night date while leaving the incomplete six-date list unasserted.",
+    "Record the full six-date 2025-12-27 through 2026-01-04 Taichung New Year edition at Taichung Intercontinental Baseball Stadium from the first-party announcement.",
+    "Add no production JS/CSS requests and preserve all existing route, Atlas, Shader, Bloom and evidence guardrails."
+  ],
+  "evidence":{"beijing":{"venue":"國家體育場 · 鳥巢","evidenceLevel":"official-primary","verifiedHistoricalTotal":43,"scope":"cumulative Bird's Nest shows through cited 2025 run","source":"https://bin-music.com/news/2199"},"shanghai":{"venue":"上海體育場","evidenceLevel":"official-primary","verifiedDates":["2025-11-16"],"sixShowRunVerified":true,"source":"https://bin-music.com/news/2296"},"taichung":{"venue":"台中洲際棒球場","evidenceLevel":"official-primary","verifiedDates":["2025-12-27","2025-12-28","2025-12-31","2026-01-01","2026-01-03","2026-01-04"],"source":"https://bin-music.com/news/2282"}},
+  "requestBudget":{"shell":{"css":6,"js":6,"total":12},"atlasEffectiveLocalNetwork":{"css":2,"js":4,"total":6},"deltaFromV108":0},
+  "regressionGates":["A-F route set remains home/city/album/songs/books/timeline","Atlas remains Home-only and WebGL is released off Home","Shader route flow and Bloom/performance controls unchanged","Editorial VISITS KPI must not be replaced by scoped official venue totals","No incomplete Shanghai six-date list may be inferred or displayed as verified","Only source-supported venue/date/count claims receive OFFICIAL PRIMARY status"],
+  "remaining":["served A-F browser certification","shell/atlas release naming consolidation","surface additional City evidence directly in venue cards where UI coverage remains partial","continue first-party verification for Taipei, Kaohsiung, Guangzhou, Xiamen and Singapore"]
+}
