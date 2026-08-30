@@ -1,130 +1,54 @@
 <!doctype html>
-<html lang="zh-Hant" data-maydayland-release="v90">
+<html lang="zh-Hant" data-maydayland-release="v91">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#050912">
-  <meta name="description" content="Maydayland v90：在 v88 core-native A–F routing 上加入可收起的 regression evidence UI 與 Atlas 自適應性能層；依裝置、Save-Data、reduced-motion 與 long-task 訊號向下調整 Bloom / pixel ratio，維持本地診斷與零新增請求。">
-  <title>Maydayland · Adaptive Atlas Evidence v90</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=90.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=90.0.0">
-  <link rel="stylesheet" href="./app-v82-core.css?v=90.0.0">
-  <link rel="stylesheet" href="./app-v81-services.css?v=90.0.0">
-  <link rel="stylesheet" href="./app-v79-media-core.css?v=90.0.0">
-  <link rel="stylesheet" href="./app-v78-media.css?v=90.0.0">
-  <link rel="stylesheet" href="./app-v77.css?v=90.0.0">
-  <link rel="stylesheet" href="./app-v73.css?v=90.0.0">
+  <meta name="description" content="Maydayland v91：在 v88 core-native A–F routing 與 Home-only Atlas lifecycle 上，把 adaptive performance control 下沉為 Atlas-native postMessage API；父頁不再直接操作 iframe DOM，並保留本地 regression evidence。">
+  <title>Maydayland · Atlas Native Adaptive Control v91</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=91.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=91.0.0">
+  <link rel="stylesheet" href="./app-v82-core.css?v=91.0.0">
+  <link rel="stylesheet" href="./app-v81-services.css?v=91.0.0">
+  <link rel="stylesheet" href="./app-v79-media-core.css?v=91.0.0">
+  <link rel="stylesheet" href="./app-v78-media.css?v=91.0.0">
+  <link rel="stylesheet" href="./app-v77.css?v=91.0.0">
+  <link rel="stylesheet" href="./app-v73.css?v=91.0.0">
   <style>
-    .v90-diag{position:fixed;left:14px;bottom:14px;z-index:9998;font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;color:#bdd0df}
-    .v90-diag button{font:inherit;color:inherit}
-    .v90-diag-toggle{display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid rgba(125,230,189,.2);border-radius:999px;background:rgba(4,10,20,.82);backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,.2);cursor:pointer}
-    .v90-dot{width:7px;height:7px;border-radius:50%;background:#7de6bd;box-shadow:0 0 10px rgba(125,230,189,.6)}.v90-diag.is-warn .v90-dot{background:#ffb57d}
-    .v90-diag-panel{display:none;width:min(420px,calc(100vw - 28px));margin-top:8px;padding:12px;border:1px solid rgba(125,230,189,.2);border-radius:14px;background:rgba(4,10,20,.92);backdrop-filter:blur(18px);box-shadow:0 16px 44px rgba(0,0,0,.3)}
-    .v90-diag.is-open .v90-diag-panel{display:grid;gap:8px}.v90-diag-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.v90-diag-head b{font-size:13px;color:#effff9}
-    .v90-diag-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.v90-diag-grid span{padding:7px 8px;border-radius:9px;background:rgba(255,255,255,.035)}.v90-diag-grid small{display:block;color:#708ba0}.v90-diag-grid strong{color:#dff9ef;font-weight:650}
-    .v90-routes{display:flex;flex-wrap:wrap;gap:5px}.v90-route{padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.04);color:#7890a3}.v90-route.pass{color:#7de6bd;background:rgba(125,230,189,.08)}.v90-route.fail{color:#ffb57d;background:rgba(255,181,125,.08)}
-    .v90-note{color:#7890a3}.v90-actions{display:flex;justify-content:flex-end}.v90-actions button{border:0;background:transparent;color:#8fa8bb;cursor:pointer;padding:2px 0}
-    @media(max-width:720px){.v90-diag{left:8px;bottom:8px}.v90-diag-panel{width:calc(100vw - 16px)}}
+    .v91-diag{position:fixed;left:14px;bottom:14px;z-index:9998;font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;color:#bdd0df}.v91-diag button{font:inherit;color:inherit}.v91-diag-toggle{display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid rgba(125,230,189,.2);border-radius:999px;background:rgba(4,10,20,.82);backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,.2);cursor:pointer}.v91-dot{width:7px;height:7px;border-radius:50%;background:#7de6bd;box-shadow:0 0 10px rgba(125,230,189,.6)}.v91-diag.is-warn .v91-dot{background:#ffb57d}.v91-diag-panel{display:none;width:min(430px,calc(100vw - 28px));margin-top:8px;padding:12px;border:1px solid rgba(125,230,189,.2);border-radius:14px;background:rgba(4,10,20,.92);backdrop-filter:blur(18px);box-shadow:0 16px 44px rgba(0,0,0,.3)}.v91-diag.is-open .v91-diag-panel{display:grid;gap:8px}.v91-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.v91-head b{font-size:13px;color:#effff9}.v91-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.v91-grid span{padding:7px 8px;border-radius:9px;background:rgba(255,255,255,.035)}.v91-grid small{display:block;color:#708ba0}.v91-grid strong{color:#dff9ef;font-weight:650}.v91-routes{display:flex;flex-wrap:wrap;gap:5px}.v91-route{padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.04);color:#7890a3}.v91-route.pass{color:#7de6bd;background:rgba(125,230,189,.08)}.v91-route.fail{color:#ffb57d;background:rgba(255,181,125,.08)}.v91-note{color:#7890a3}.v91-actions{display:flex;justify-content:flex-end}.v91-actions button{border:0;background:transparent;color:#8fa8bb;cursor:pointer;padding:2px 0}@media(max-width:720px){.v91-diag{left:8px;bottom:8px}.v91-diag-panel{width:calc(100vw - 16px)}}
   </style>
 </head>
 <body>
   <div id="app"></div>
-  <script>
-    window.MAYDAYLAND_BUILD={version:'v90',release:'adaptive-atlas-evidence',events:58,cities:9,segments:8,pending:['tokyo'],homeLocalRequestBudget:{css:6,js:6,total:12,imports:0},core:'v88',atlas:'v74',atlasMount:'home-only',lifecycle:'core-native-route+atlas+adaptive-evidence'};
-  </script>
-  <script src="./app-v88-core.js?v=90.0.0" defer></script>
-  <script src="./app-v81-services.js?v=90.0.0" defer></script>
-  <script src="./app-v79-media-core.js?v=90.0.0" defer></script>
-  <script src="./app-v78-media.js?v=90.0.0" defer></script>
-  <script src="./app-v77.js?v=90.0.0" defer></script>
-  <script src="./app-v73.js?v=90.0.0" defer></script>
+  <script>window.MAYDAYLAND_BUILD={version:'v91',release:'atlas-native-adaptive-control',events:58,cities:9,segments:8,pending:['tokyo'],homeLocalRequestBudget:{css:6,js:6,total:12,imports:0},core:'v88',atlas:'v91-native-on-v74-path',atlasMount:'home-only',lifecycle:'core-native-route+atlas-native-message-api+regression-evidence'};</script>
+  <script src="./app-v88-core.js?v=91.0.0" defer></script>
+  <script src="./app-v81-services.js?v=91.0.0" defer></script>
+  <script src="./app-v79-media-core.js?v=91.0.0" defer></script>
+  <script src="./app-v78-media.js?v=91.0.0" defer></script>
+  <script src="./app-v77.js?v=91.0.0" defer></script>
+  <script src="./app-v73.js?v=91.0.0" defer></script>
   <script>
   (()=>{'use strict';
-    const EXPECT={css:6,js:6},ROUTES=['home','city','album','songs','books','timeline'],VALID=new Set(ROUTES),STORE='maydayland:v90:regression';
-    const T={started:performance.now(),renders:0,transitions:0,lastPage:null,lastHash:null,longTasks:0,maxLongTask:0,matrix:{},profile:'full',reason:'baseline',adaptations:0};
+    const ROUTES=['home','city','album','songs','books','timeline'],VALID=new Set(ROUTES),STORE='maydayland:v91:regression',EXPECT={css:6,js:6};
+    const rank={full:0,balanced:1,eco:2};
+    const T={started:performance.now(),renders:0,transitions:0,lastPage:null,lastHash:null,longTasks:0,maxLongTask:0,matrix:{},profile:'full',reason:'baseline',sent:0,acks:0,atlasReady:false,atlasState:null};
     try{T.matrix=JSON.parse(sessionStorage.getItem(STORE)||'{}')||{}}catch{}
     const page=()=>{const p=location.hash.replace(/^#/,'').split('/')[0]||'home';return VALID.has(p)?p:'home'};
-    const atlas=()=>{const frame=document.querySelector('.v45-atlas iframe'),src=frame?.getAttribute('src')||'';return{frame,src,mounted:!!frame,v74:!!frame&&/atlas-v74\.html(?:\?|$)/.test(src)}};
+    const atlas=()=>{const frame=document.querySelector('.v45-atlas iframe'),src=frame?.getAttribute('src')||'';return{frame,src,mounted:!!frame,pathOK:!!frame&&/atlas-v74\.html(?:\?|$)/.test(src)}};
     const activeOK=()=>{const s=[...document.querySelectorAll('.v45-section')];return s.length>0&&s.filter(x=>x.classList.contains('active')).length===1};
-    const baseProfile=()=>{
-      const reduced=matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-      const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-      const save=!!conn?.saveData,slow=/2g/.test(conn?.effectiveType||''),mem=Number(navigator.deviceMemory||8),cores=Number(navigator.hardwareConcurrency||8);
-      if(reduced||save||slow||mem<=2||cores<=2)return['eco',reduced?'reduced-motion':save?'save-data':slow?'slow-network':'low-device'];
-      if(mem<=4||cores<=4)return['balanced','mid-device'];
-      return['full','baseline'];
-    };
-    const rank={full:0,balanced:1,eco:2};
-    const chooseProfile=()=>{
-      let [p,r]=baseProfile();
-      if(T.maxLongTask>=180||T.longTasks>=4){p='eco';r='long-task-pressure'}
-      else if((T.maxLongTask>=110||T.longTasks>=2)&&rank[p]<rank.balanced){p='balanced';r='runtime-pressure'}
-      if(rank[p]>=rank[T.profile]){T.profile=p;T.reason=r}
-      return T.profile;
-    };
-    const adaptAtlas=()=>{
-      if(page()!=='home')return;
-      const a=atlas();if(!a.frame)return;
-      const profile=chooseProfile(),level=String(rank[profile]),prev=a.frame.dataset.v90AdaptLevel;
-      if(prev!=null&&Number(prev)>=rank[profile])return;
-      const apply=()=>{
-        try{
-          const d=a.frame.contentDocument;if(!d)return;
-          const ratio=d.querySelector('#ratioCap'),bloom=d.querySelector('#bloomText'),bloomBtn=d.querySelector('[data-fx="bloom"]');
-          if(profile==='balanced'||profile==='eco'){
-            const cap=profile==='eco'?'1':'1.2';
-            if(ratio){ratio.value=cap;ratio.dispatchEvent(new Event('input',{bubbles:true}))}
-            if((bloom?.textContent||'').trim().toUpperCase()==='ON')bloomBtn?.click();
-            a.frame.dataset.v90AdaptLevel=level;a.frame.dataset.v90AdaptProfile=profile;T.adaptations++;
-          }else{a.frame.dataset.v90AdaptLevel='0';a.frame.dataset.v90AdaptProfile='full'}
-          renderDiag();
-        }catch{}
-      };
-      try{if(a.frame.contentDocument?.readyState==='complete')apply();else a.frame.addEventListener('load',apply,{once:true})}catch{}
-    };
-    const probe=()=>{
-      const p=page(),a=atlas(),core=document.documentElement.dataset.v88Core==='ready',route=document.documentElement.dataset.v88RouteController==='ready',life=document.documentElement.dataset.v88ShellLifecycle==='ready';
-      const atlasLife=document.documentElement.dataset.v88AtlasLifecycle===(p==='home'?'mounted':'unmounted'),atlasOK=p==='home'?(a.mounted&&a.v74):!a.mounted,pass=core&&route&&life&&atlasLife&&atlasOK&&activeOK();
-      T.matrix[p]={pass,hash:location.hash||'#home',atlas:p==='home'?'mounted-v74':'unmounted',profile:T.profile,at:new Date().toISOString()};
-      try{sessionStorage.setItem(STORE,JSON.stringify(T.matrix))}catch{}
-      return{p,a,pass};
-    };
-    try{new PerformanceObserver(list=>{for(const e of list.getEntries()){T.longTasks++;T.maxLongTask=Math.max(T.maxLongTask,e.duration||0)}chooseProfile();adaptAtlas();renderDiag()}).observe({type:'longtask',buffered:true})}catch{}
-    const snapshot=()=>{
-      const q=probe(),fcp=(performance.getEntriesByName?.('first-contentful-paint')||[])[0]?.startTime||null;
-      return{version:'v90',route:q.p,hash:location.hash||'#home',renders:T.renders,transitions:T.transitions,atlas:{mounted:q.a.mounted,v74:q.a.v74,src:q.a.src,profile:q.a.frame?.dataset.v90AdaptProfile||T.profile},performanceProfile:T.profile,profileReason:T.reason,adaptations:T.adaptations,matrix:{...T.matrix},observedRoutes:ROUTES.filter(r=>T.matrix[r]),passedRoutes:ROUTES.filter(r=>T.matrix[r]?.pass),resources:(performance.getEntriesByType?.('resource')||[]).length,fcpMs:fcp?Math.round(fcp):null,longTasks:T.longTasks,maxLongTaskMs:T.maxLongTask?Math.round(T.maxLongTask):0,uptimeMs:Math.round(performance.now()-T.started)};
-    };
-    window.MAYDAYLAND_TELEMETRY_V90={snapshot,clear(){T.matrix={};try{sessionStorage.removeItem(STORE)}catch{}renderDiag();return snapshot()}};
-    const runtimeAudit=()=>{
-      const res=performance.getEntriesByType?.('resource')||[],local=res.filter(r=>{try{return new URL(r.name).origin===location.origin}catch{return false}});
-      const css=local.filter(r=>/\/app-v(?:82-core|81-services|79-media-core|78-media|77|73)\.css(?:\?|$)/.test(r.name)).length;
-      const js=local.filter(r=>/\/app-v(?:88-core|81-services|79-media-core|78-media|77|73)\.js(?:\?|$)/.test(r.name)).length;
-      const legacy=local.some(r=>/\/app-v(?:47|48|49|50|51|52|83-archives|84-archives|85-core)\.(?:css|js)(?:\?|$)/.test(r.name));
-      const imported=[...document.styleSheets].some(s=>{try{return[...s.cssRules].some(r=>r.type===CSSRule.IMPORT_RULE)}catch{return false}});
-      const q=probe(),services=!!document.querySelector('#v51SearchLauncher'),chronology=!!document.querySelector('.v60-chronology'),media=document.body.dataset.v79MediaCore==='ready';
-      return{css,js,pass:css<=EXPECT.css&&js<=EXPECT.js&&!legacy&&!imported&&q.pass&&services&&chronology&&media,legacy,imported,q};
-    };
-    const ensureDiag=()=>{
-      let el=document.querySelector('.v90-diag');if(el)return el;
-      el=document.createElement('aside');el.className='v90-diag';el.innerHTML='<button class="v90-diag-toggle" type="button" aria-expanded="false"><i class="v90-dot"></i><span>V90 · Quality evidence</span></button><section class="v90-diag-panel" aria-label="Maydayland quality evidence"></section>';
-      document.body.append(el);
-      el.querySelector('.v90-diag-toggle').addEventListener('click',()=>{el.classList.toggle('is-open');el.querySelector('button').setAttribute('aria-expanded',String(el.classList.contains('is-open')))});
-      return el;
-    };
-    const renderDiag=()=>{
-      if(!document.body)return;chooseProfile();const el=ensureDiag(),a=runtimeAudit(),s=snapshot(),observed=s.observedRoutes.length,passed=s.passedRoutes.length;
-      el.classList.toggle('is-warn',!a.pass);
-      el.querySelector('.v90-diag-toggle span').textContent=`V90 · ${a.pass?'PASS':'CHECK'} · ${T.profile.toUpperCase()}`;
-      el.querySelector('.v90-diag-panel').innerHTML=`<div class="v90-diag-head"><b>Regression evidence</b><span>${passed}/${observed} passed · ${observed}/6 observed</span></div><div class="v90-routes">${ROUTES.map(r=>`<span class="v90-route ${T.matrix[r]?(T.matrix[r].pass?'pass':'fail'):''}">${r}</span>`).join('')}</div><div class="v90-diag-grid"><span><small>Current route</small><strong>${a.q.p}</strong></span><span><small>Atlas</small><strong>${a.q.p==='home'?(a.q.a.v74?'v74 mounted':'check'):'unmounted'}</strong></span><span><small>Runtime budget</small><strong>${a.css} CSS · ${a.js} JS</strong></span><span><small>Adaptive profile</small><strong>${T.profile} · ${T.reason}</strong></span><span><small>Long tasks</small><strong>${T.longTasks} · max ${Math.round(T.maxLongTask||0)}ms</strong></span><span><small>Adaptations</small><strong>${T.adaptations}</strong></span></div><div class="v90-note">Local-only diagnostics. Atlas adaptation only reduces cost; it never raises quality over a user choice.</div><div class="v90-actions"><button type="button" data-clear>Clear session evidence</button></div>`;
-      el.querySelector('[data-clear]')?.addEventListener('click',()=>window.MAYDAYLAND_TELEMETRY_V90.clear(),{once:true});
-      document.body.dataset.v90CurrentRouteAudit=a.pass?'pass':'check';document.documentElement.dataset.v90Telemetry='ready';document.documentElement.dataset.v90PerformanceProfile=T.profile;
-      adaptAtlas();
-    };
+    const baseProfile=()=>{const reduced=matchMedia?.('(prefers-reduced-motion: reduce)').matches,conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection,save=!!conn?.saveData,slow=/2g/.test(conn?.effectiveType||''),mem=Number(navigator.deviceMemory||8),cores=Number(navigator.hardwareConcurrency||8);if(reduced||save||slow||mem<=2||cores<=2)return['eco',reduced?'reduced-motion':save?'save-data':slow?'slow-network':'low-device'];if(mem<=4||cores<=4)return['balanced','mid-device'];return['full','baseline']};
+    const chooseProfile=()=>{let[p,r]=baseProfile();if(T.maxLongTask>=180||T.longTasks>=4){p='eco';r='long-task-pressure'}else if((T.maxLongTask>=110||T.longTasks>=2)&&rank[p]<rank.balanced){p='balanced';r='runtime-pressure'}if(rank[p]>=rank[T.profile]){T.profile=p;T.reason=r}return T.profile};
+    const sendProfile=()=>{if(page()!=='home')return;const a=atlas();if(!a.frame?.contentWindow)return;chooseProfile();try{a.frame.contentWindow.postMessage({type:'maydayland:atlas-profile',profile:T.profile,reason:T.reason,source:'maydayland-v91'},location.origin);T.sent++}catch{}};
+    const probe=()=>{const p=page(),a=atlas(),core=document.documentElement.dataset.v88Core==='ready',route=document.documentElement.dataset.v88RouteController==='ready',life=document.documentElement.dataset.v88ShellLifecycle==='ready',atlasLife=document.documentElement.dataset.v88AtlasLifecycle===(p==='home'?'mounted':'unmounted'),atlasOK=p==='home'?(a.mounted&&a.pathOK):!a.mounted,nativeOK=p==='home'?(T.atlasReady||T.acks>0):true,pass=core&&route&&life&&atlasLife&&atlasOK&&nativeOK&&activeOK();T.matrix[p]={pass,hash:location.hash||'#home',atlas:p==='home'?'mounted-native-v91':'unmounted',profile:T.profile,nativeAck:T.acks>0,at:new Date().toISOString()};try{sessionStorage.setItem(STORE,JSON.stringify(T.matrix))}catch{}return{p,a,pass,nativeOK}};
+    const runtimeAudit=()=>{const res=performance.getEntriesByType?.('resource')||[],local=res.filter(r=>{try{return new URL(r.name).origin===location.origin}catch{return false}}),css=local.filter(r=>/\/app-v(?:82-core|81-services|79-media-core|78-media|77|73)\.css(?:\?|$)/.test(r.name)).length,js=local.filter(r=>/\/app-v(?:88-core|81-services|79-media-core|78-media|77|73)\.js(?:\?|$)/.test(r.name)).length,legacy=local.some(r=>/\/app-v(?:47|48|49|50|51|52|83-archives|84-archives|85-core)\.(?:css|js)(?:\?|$)/.test(r.name)),imported=[...document.styleSheets].some(s=>{try{return[...s.cssRules].some(r=>r.type===CSSRule.IMPORT_RULE)}catch{return false}}),q=probe(),services=!!document.querySelector('#v51SearchLauncher'),chronology=!!document.querySelector('.v60-chronology'),media=document.body.dataset.v79MediaCore==='ready';return{css,js,pass:css<=EXPECT.css&&js<=EXPECT.js&&!legacy&&!imported&&q.pass&&services&&chronology&&media,q}};
+    const snapshot=()=>{const q=probe(),fcp=(performance.getEntriesByName?.('first-contentful-paint')||[])[0]?.startTime||null;return{version:'v91',route:q.p,hash:location.hash||'#home',renders:T.renders,transitions:T.transitions,performanceProfile:T.profile,profileReason:T.reason,profileMessagesSent:T.sent,atlasAcks:T.acks,atlasReady:T.atlasReady,atlasState:T.atlasState,matrix:{...T.matrix},observedRoutes:ROUTES.filter(r=>T.matrix[r]),passedRoutes:ROUTES.filter(r=>T.matrix[r]?.pass),resources:(performance.getEntriesByType?.('resource')||[]).length,fcpMs:fcp?Math.round(fcp):null,longTasks:T.longTasks,maxLongTaskMs:T.maxLongTask?Math.round(T.maxLongTask):0,uptimeMs:Math.round(performance.now()-T.started)}};
+    window.MAYDAYLAND_TELEMETRY_V91={snapshot,clear(){T.matrix={};try{sessionStorage.removeItem(STORE)}catch{}renderDiag();return snapshot()}};
+    const ensureDiag=()=>{let el=document.querySelector('.v91-diag');if(el)return el;el=document.createElement('aside');el.className='v91-diag';el.innerHTML='<button class="v91-diag-toggle" type="button" aria-expanded="false"><i class="v91-dot"></i><span>V91 · Quality evidence</span></button><section class="v91-diag-panel" aria-label="Maydayland quality evidence"></section>';document.body.append(el);el.querySelector('.v91-diag-toggle').addEventListener('click',()=>{el.classList.toggle('is-open');el.querySelector('button').setAttribute('aria-expanded',String(el.classList.contains('is-open')))});return el};
+    const renderDiag=()=>{if(!document.body)return;chooseProfile();const el=ensureDiag(),a=runtimeAudit(),s=snapshot(),observed=s.observedRoutes.length,passed=s.passedRoutes.length;el.classList.toggle('is-warn',!a.pass);el.querySelector('.v91-diag-toggle span').textContent=`V91 · ${a.pass?'PASS':'CHECK'} · ${T.profile.toUpperCase()}`;el.querySelector('.v91-diag-panel').innerHTML=`<div class="v91-head"><b>Served regression evidence</b><span>${passed}/${observed} passed · ${observed}/6 observed</span></div><div class="v91-routes">${ROUTES.map(r=>`<span class="v91-route ${T.matrix[r]?(T.matrix[r].pass?'pass':'fail'):''}">${r}</span>`).join('')}</div><div class="v91-grid"><span><small>Current route</small><strong>${a.q.p}</strong></span><span><small>Atlas API</small><strong>${a.q.p==='home'?(T.atlasReady?'v91 ready':T.acks?'v91 ack':'pending'):'unmounted'}</strong></span><span><small>Runtime budget</small><strong>${a.css} CSS · ${a.js} JS</strong></span><span><small>Adaptive profile</small><strong>${T.profile} · ${T.reason}</strong></span><span><small>Long tasks</small><strong>${T.longTasks} · max ${Math.round(T.maxLongTask||0)}ms</strong></span><span><small>Native control</small><strong>${T.sent} sent · ${T.acks} ack</strong></span></div><div class="v91-note">Parent page sends a profile message only. Bloom / pixel ratio changes are owned by the Atlas runtime; no parent contentDocument access.</div><div class="v91-actions"><button type="button" data-clear>Clear session evidence</button></div>`;el.querySelector('[data-clear]')?.addEventListener('click',()=>window.MAYDAYLAND_TELEMETRY_V91.clear(),{once:true});document.body.dataset.v91CurrentRouteAudit=a.pass?'pass':'check';document.documentElement.dataset.v91Telemetry='ready';document.documentElement.dataset.v91PerformanceProfile=T.profile;sendProfile()};
     const transition=()=>{const p=page(),h=location.hash||'#home';if(T.lastPage!==null&&(T.lastPage!==p||T.lastHash!==h))T.transitions++;T.lastPage=p;T.lastHash=h};
-    addEventListener('maydayland:shell-rendered',()=>{T.renders++;transition();setTimeout(renderDiag,160)});
-    addEventListener('hashchange',()=>{transition();setTimeout(renderDiag,260)});
-    document.addEventListener('DOMContentLoaded',()=>{transition();setTimeout(renderDiag,2200);['maydayland:core-ready','maydayland:chronology-ready','maydayland:media-core-ready','maydayland:services-ready'].forEach(n=>addEventListener(n,()=>setTimeout(renderDiag,220)))},{once:true});
-    addEventListener('pageshow',()=>setTimeout(renderDiag,360));addEventListener('load',()=>setTimeout(renderDiag,760),{once:true});
+    addEventListener('message',e=>{if(e.origin!==location.origin)return;const m=e.data||{};if(!/^maydayland:atlas-/.test(m.type||''))return;if(m.type==='maydayland:atlas-ready')T.atlasReady=true;if(m.type==='maydayland:atlas-profile-ack'||m.type==='maydayland:atlas-state'){T.acks++;T.atlasState=m}if(m.type==='maydayland:atlas-ready')sendProfile();setTimeout(renderDiag,40)});
+    try{new PerformanceObserver(list=>{for(const e of list.getEntries()){T.longTasks++;T.maxLongTask=Math.max(T.maxLongTask,e.duration||0)}chooseProfile();sendProfile();renderDiag()}).observe({type:'longtask',buffered:true})}catch{}
+    addEventListener('maydayland:shell-rendered',()=>{T.renders++;transition();setTimeout(()=>{sendProfile();renderDiag()},180)});addEventListener('hashchange',()=>{transition();setTimeout(renderDiag,260)});document.addEventListener('DOMContentLoaded',()=>{transition();setTimeout(renderDiag,2200);['maydayland:core-ready','maydayland:chronology-ready','maydayland:media-core-ready','maydayland:services-ready'].forEach(n=>addEventListener(n,()=>setTimeout(renderDiag,220)))},{once:true});addEventListener('pageshow',()=>setTimeout(renderDiag,360));addEventListener('load',()=>setTimeout(renderDiag,760),{once:true});
   })();
   </script>
 </body>
