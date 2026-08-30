@@ -1,0 +1,70 @@
+{
+  "version": "v90",
+  "release": "adaptive-atlas-evidence",
+  "homeLocalRequestBudget": {
+    "css": 6,
+    "js": 6,
+    "total": 12,
+    "cssImports": 0
+  },
+  "core": {
+    "runtime": "app-v88-core.js",
+    "pages": ["home", "city", "album", "songs", "books", "timeline"],
+    "atlas": "atlas-v74.html",
+    "atlasMount": "home-only"
+  },
+  "regression": {
+    "mode": "passive served-page matrix with collapsible evidence UI",
+    "routes": ["home", "city", "album", "songs", "books", "timeline"],
+    "persistence": "per-session route results in sessionStorage",
+    "ui": "collapsed by default; exposes current route, Atlas lifecycle, observed route matrix, request budget and runtime pressure without covering the product surface"
+  },
+  "adaptiveAtlas": {
+    "profiles": ["full", "balanced", "eco"],
+    "signals": [
+      "prefers-reduced-motion",
+      "Save-Data",
+      "effective connection type",
+      "deviceMemory when available",
+      "hardwareConcurrency when available",
+      "Long Tasks API when available"
+    ],
+    "balanced": {
+      "pixelRatioCap": 1.2,
+      "bloom": "off"
+    },
+    "eco": {
+      "pixelRatioCap": 1.0,
+      "bloom": "off"
+    },
+    "policy": "downshift only; automatic adaptation never raises quality over a user choice and only runs while the Home Atlas iframe is mounted"
+  },
+  "telemetry": {
+    "exposedAs": "window.MAYDAYLAND_TELEMETRY_V90.snapshot()",
+    "privacy": "local-only runtime diagnostics; no beacon, analytics upload or additional network request",
+    "signals": [
+      "route and hash",
+      "render and transition counts",
+      "Atlas mount/source/adaptive profile",
+      "route regression matrix",
+      "FCP when available",
+      "long-task count and maximum duration",
+      "adaptive profile reason and adaptation count"
+    ]
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "routeSegments": 8,
+    "pending": ["tokyo"]
+  },
+  "qualityGates": [
+    "v89 Pages deployment completed successfully before v90 work",
+    "production request budget remains 6 CSS + 6 JS with zero CSS imports",
+    "A-F regression evidence remains passive and based on real served navigation",
+    "Atlas v74 is mounted only on Home and absent on B-F routes",
+    "balanced and eco profiles can reduce pixel ratio and disable Bloom without adding a runtime request",
+    "automatic performance adaptation is downshift-only",
+    "diagnostics remain local-only and collapsible"
+  ]
+}
