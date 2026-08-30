@@ -1,0 +1,49 @@
+{
+  "version": "v104",
+  "release": "Atlas Guardrail Consolidation",
+  "scope": "Merge WebGL resilience/touch-intent and accessibility/fallback runtimes into one Atlas guardrail module while preserving the v103 foundation and A-F shell contract.",
+  "productionEntry": {
+    "shellCore": "app-v101-core.js",
+    "atlasEntry": "atlas-v102.html",
+    "atlasRuntimeVersion": "v104",
+    "atlasFoundation": "app-v103-atlas-foundation.js",
+    "atlasGuardrails": "app-v104-atlas-guardrails.js"
+  },
+  "requestBudget": {
+    "localCss": 6,
+    "localJs": 4,
+    "localTotal": 10,
+    "previousLocalTotal": 11,
+    "delta": -1,
+    "rule": "A regression is any return of app-v64-atlas.js, app-v65-atlas.js, app-v66-atlas.js, app-v67-atlas.js or app-v69-route-bridge.js as a production network request."
+  },
+  "preservedBehavior": [
+    "Shader route flow and Three.js map remain active",
+    "Bloom toggle and pixel-ratio controls remain available",
+    "ECO / BALANCED / QUALITY presets and low-FPS auto guard remain active",
+    "5525 chronology remains 58 verified dates / 9 cities / 8 geometry segments",
+    "tour layer selector and Show All remain available",
+    "Tokyo verified single-city focus remains available with zero fabricated inter-city segments",
+    "WebGL context loss/recovery handling remains active",
+    "touch intent guard remains scroll-safe outside direct Atlas interaction",
+    "keyboard navigation, visible focus, screen-reader live region and text chronology fallback remain available",
+    "parent-to-Atlas adaptive profile messaging remains available"
+  ],
+  "regressionGates": [
+    "Production Atlas local request budget must remain <= 10",
+    "app-v66-atlas.js and app-v67-atlas.js must not be requested",
+    "app-v64-atlas.js, app-v65-atlas.js and app-v69-route-bridge.js must remain absent",
+    "v103 Atlas foundation must report ready",
+    "v104 Atlas guardrails must report ready",
+    "58 verified dates / 9 cities / 8 segments must remain intact",
+    "single-city evidence layers must continue to create zero fabricated inter-city segments",
+    "WebGL fallback and keyboard chronology access must remain available"
+  ],
+  "remaining": [
+    "Legacy Atlas CSS filenames remain split across v43/v64/v65/v66/v67/v72",
+    "Single-city focus runtime still uses historical filename app-v72-atlas.js",
+    "Shell production core remains app-v101-core.js",
+    "A-F served-route certification should be repeated against deployed v104 runtime"
+  ],
+  "next": "v105 · consolidate the single-city focus runtime boundary or CSS delivery only after served v104 Home/City/Album/Songs/Books/Timeline certification passes without increasing request count"
+}
