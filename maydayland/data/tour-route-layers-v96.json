@@ -1,0 +1,55 @@
+{
+  "version":"96.0.0",
+  "updatedAt":"2026-08-30",
+  "principle":"Route layers are tour-scoped. Verified historical events must not be merged into the 5525 chronology merely because they share a city.",
+  "display":{"mode":"tour-scoped","showAllSupported":true,"colorPerTour":true,"defaultLayer":"t5525","legendRequired":true},
+  "layers":[
+    {
+      "id":"t5525",
+      "name":"5525 回到那一天",
+      "years":"2023–2026",
+      "color":"#28d7ff",
+      "kind":"multi-city-route",
+      "evidence":"verified chronology",
+      "sourceData":"route-chronology-v69.json",
+      "verifiedDates":58,
+      "verifiedCities":9,
+      "geometrySegments":8,
+      "route":["kaohsiung","shanghai","singapore","hongkong","taipei","beijing","xiamen","guangzhou","taichung"]
+    },
+    {
+      "id":"just-rock-it-2015-budokan",
+      "name":"Just Rock It! 2015 · 日本武道館",
+      "years":"2015",
+      "color":"#ff7a8a",
+      "kind":"verified-single-city-node",
+      "evidence":"official-primary",
+      "city":"tokyo",
+      "venue":"日本武道館",
+      "point":{"lng":139.691,"lat":35.689,"precision":"city-level atlas node"},
+      "events":["2015-08-28","2015-08-29"],
+      "sources":["https://www.mayday.jp/redna2017/"],
+      "geometryPolicy":"Render as a dated Tokyo node, not a fabricated inter-city flight segment."
+    },
+    {
+      "id":"redna-2017-budokan",
+      "name":"Re:DNA 〜2017 復刻版〜 · 日本武道館",
+      "years":"2017",
+      "color":"#ffb45d",
+      "kind":"verified-single-city-node",
+      "evidence":"official-primary",
+      "city":"tokyo",
+      "venue":"日本武道館",
+      "point":{"lng":139.691,"lat":35.689,"precision":"city-level atlas node"},
+      "events":["2017-02-03","2017-02-04"],
+      "sources":["https://www.mayday.jp/redna2017/","https://www.mayday.jp/live/"],
+      "geometryPolicy":"Render as a dated Tokyo node, not a fabricated inter-city flight segment."
+    }
+  ],
+  "qualityGates":[
+    "Each tour owns a distinct display color.",
+    "Show-all mode may compose layers but must preserve tour identity.",
+    "Tokyo 2015/2017 dates remain separate from the 5525 chronology.",
+    "No route segment is invented when only a single verified city is known."
+  ]
+}
