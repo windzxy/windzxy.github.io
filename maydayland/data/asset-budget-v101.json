@@ -1,0 +1,31 @@
+{
+  "version":"101.0.0",
+  "release":"unified-production-runtime",
+  "updatedAt":"2026-08-30",
+  "scope":"Unify the served Maydayland production shell, core entry, and Atlas entry without increasing the home request budget or changing A–F routing behavior.",
+  "baseline":{"previousCore":"app-v93-core.js","previousAtlas":"atlas-v92.html","core":"app-v101-core.js","atlas":"atlas-v101.html","homeLocalRequestBudget":{"css":6,"js":6,"total":12,"imports":0}},
+  "changedFiles":["maydayland/index.html","maydayland/app-v101-core.js","maydayland/atlas-v101.html","maydayland/data/asset-budget-v101.json"],
+  "preservedCapabilities":[
+    "A–F hash routing and Back/Forward-compatible render lifecycle.",
+    "Home-only Atlas mount and WebGL release on non-Home routes.",
+    "Shader route flow and Bloom/pixel-ratio adaptive profiles.",
+    "Evidence-native tour selector with 5525 plus two verified Tokyo single-city layers.",
+    "Single-city Tokyo focus and verified-date surface from the existing Atlas modules.",
+    "Evidence-native City Dossier badges and editorial VISITS semantics."
+  ],
+  "productionIdentity":{"shell":"v101","core":"v101","atlas":"v101","coreDirectAtlasMount":true,"legacyCoreEntryExpected":false,"legacyAtlasEntryExpected":false},
+  "requestBudgetChange":{"css":0,"js":0},
+  "qualityGates":[
+    "index.html loads app-v101-core.js directly.",
+    "app-v101-core.js mounts atlas-v101.html directly on Home.",
+    "No app-v93-core.js or atlas-v92.html request is allowed by v101 telemetry.",
+    "Home remains at six local CSS and six local JS requests.",
+    "Leaving Home removes the Atlas iframe and releases its WebGL context."
+  ],
+  "remainingDebt":[
+    "Atlas internal implementation files still retain historical filenames such as app-v43.js and app-v72-atlas.js.",
+    "Served v101 A–F regression evidence should be accumulated after GitHub Pages completes.",
+    "Data coverage can continue beyond the current 58-date / 9-city verified 5525 chronology."
+  ],
+  "nextTarget":"v102 Atlas internal module consolidation and served A–F regression certification, keeping behavior and request counts unchanged."
+}
