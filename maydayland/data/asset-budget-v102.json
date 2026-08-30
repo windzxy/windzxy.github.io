@@ -1,0 +1,49 @@
+{
+  "version":"102.0.0",
+  "release":"atlas-module-consolidation",
+  "updatedAt":"2026-08-30",
+  "scope":"Reduce Atlas runtime fragmentation without changing A–F routing, tour evidence semantics, Shader route flow, Bloom controls, or Home-only WebGL lifecycle.",
+  "baseline":{
+    "previousAtlas":"atlas-v101.html",
+    "atlas":"atlas-v102.html",
+    "shellCore":"app-v101-core.js",
+    "homeLocalRequestBudget":{"css":6,"js":6,"total":12,"imports":0},
+    "previousAtlasLocalRequestBudget":{"css":6,"js":7,"total":13},
+    "atlasLocalRequestBudget":{"css":6,"js":6,"total":12}
+  },
+  "changedFiles":[
+    "maydayland/atlas-v102.html",
+    "maydayland/app-v101-core.js",
+    "maydayland/index.html",
+    "maydayland/data/asset-budget-v102.json"
+  ],
+  "consolidation":{
+    "inlinedModule":"app-v69-route-bridge.js",
+    "removedRuntimeRequest":1,
+    "bridgeBehavior":"Requests for route-chronology-v64.json are redirected to route-chronology-v69.json before legacy Atlas modules execute.",
+    "regressionGate":"atlas-v102 audit fails if app-v69-route-bridge.js appears as a runtime request."
+  },
+  "preservedCapabilities":[
+    "A–F hash routing and Back/Forward-compatible render lifecycle.",
+    "Home-only Atlas mount and WebGL release on non-Home routes.",
+    "ShaderMaterial route flow and Bloom/pixel-ratio controls.",
+    "Adaptive full / balanced / eco profile messaging.",
+    "5525 verified chronology plus two Tokyo evidence-native single-city layers.",
+    "Tokyo single-city focus and verified-date evidence surface.",
+    "Evidence-native City Dossier badges and editorial VISITS semantics."
+  ],
+  "qualityGates":[
+    "Production core mounts atlas-v102.html directly on Home.",
+    "Shell telemetry accepts only atlas-v102.html as the current Atlas entry.",
+    "Atlas local requests do not exceed six CSS plus six JS.",
+    "app-v69-route-bridge.js must not be requested at runtime.",
+    "Existing 58-date / 9-city / 8-segment evidence checks continue to pass."
+  ],
+  "remainingDebt":[
+    "The stable shell core filename remains app-v101-core.js and can be renamed only with a zero-regression migration.",
+    "Atlas still loads historical implementation filenames app-v43.js and app-v64/65/66/67/72-atlas.js.",
+    "Served A–F regression evidence still needs to accumulate after GitHub Pages completes this release.",
+    "Verified city and tour data coverage can continue beyond the current evidence set."
+  ],
+  "nextTarget":"v103 consolidate the next safe Atlas module boundary, or move the stable shell core to a v103 production name only if served v102 regression evidence is clean."
+}
