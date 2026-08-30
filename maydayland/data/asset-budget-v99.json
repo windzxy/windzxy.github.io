@@ -1,0 +1,41 @@
+{
+  "version":"99.0.0",
+  "updatedAt":"2026-08-30",
+  "release":"single-city-atlas-focus-and-verified-date-surface",
+  "scope":[
+    "Turn verified Budokan single-city tour layers into an intentional Atlas focus mode rather than an empty-route state.",
+    "Visually de-emphasize unrelated city labels while keeping Tokyo prominent for the 2015 and 2017 Budokan layers.",
+    "Surface the exact verified dates and venue inside Atlas with an explicit OFFICIAL PRIMARY evidence label.",
+    "Preserve the evidence boundary: single-city layers never fabricate cross-city TubeGeometry."
+  ],
+  "runtime":{
+    "core":"app-v93-core.js",
+    "atlas":"atlas-v92.html",
+    "atlasEngine":"app-v43.js",
+    "atlasFocusLayer":"app-v72-atlas.js@99",
+    "atlasData":"geo-tour-v42.json@98.0.0",
+    "routeLayerContract":"tour-route-layers-v96.json",
+    "homeOnlyAtlas":true,
+    "homeCssRequests":6,
+    "homeJsRequests":6,
+    "cssImports":0,
+    "newAtlasJsRequests":0
+  },
+  "singleCityFocus":[
+    {"id":"just-rock-it-2015-budokan","city":"tokyo","venue":"日本武道館","dates":["2015-08-28","2015-08-29"],"evidence":"official-primary","geometrySegments":0},
+    {"id":"redna-2017-budokan","city":"tokyo","venue":"日本武道館","dates":["2017-02-03","2017-02-04"],"evidence":"official-primary","geometrySegments":0}
+  ],
+  "qualityGates":[
+    "Selecting either Budokan layer applies data-tour-focus=single-city and data-focus-city=tokyo on the served Atlas stage.",
+    "Unrelated .v43-city-label nodes are visually de-emphasized while the Tokyo label remains fully prominent.",
+    "An in-Atlas evidence panel displays the tour, 日本武道館, Tokyo, the two verified dates and OFFICIAL PRIMARY status.",
+    "Returning to Show All or 5525 restores the ordinary overview without stale focus styling or evidence content.",
+    "Accessibility live text includes the selected single-city venue and verified dates.",
+    "window.MAYDAYLAND_ATLAS_FOCUS_V99 exposes a refresh and snapshot surface for runtime verification.",
+    "No extra Atlas JavaScript or CSS request is introduced and 2015/2017 geometry remains zero segments."
+  ],
+  "remaining":[
+    "Rename the historical app-v43.js/app-v72-atlas.js/atlas-v92.html runtime files into a dedicated current Atlas entry without increasing request count.",
+    "Extend official-primary route evidence beyond Tokyo before enabling any additional multi-city tour geometry."
+  ]
+}
