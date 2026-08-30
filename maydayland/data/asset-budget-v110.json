@@ -1,0 +1,27 @@
+{
+  "version":"110.0.0",
+  "updatedAt":"2026-08-31",
+  "release":"served-city-evidence-surface",
+  "baseline":{"masterParent":"5b2f8cdeb1b0ac5cc3b82940206361f80e72b735","previousMaydayland":"825406d92579bb7afbbbff33771b525e1c42182b","previousVersion":"v109"},
+  "changes":[
+    "Correct Beijing official evidence surface so 2025-07-25 is rendered as a verified date instead of an empty date strip.",
+    "Expose the scoped official record of 43 cumulative Bird's Nest shows through the existing Venue Board evidence note without changing the editorial VISITS KPI.",
+    "Keep Shanghai and Taichung first-party evidence presentation explicit while avoiding unsupported complete date lists."
+  ],
+  "servedSurfaceContract":{
+    "beijing":{"venue":"國家體育場 · 鳥巢","status":"official-primary","verifiedDates":["2025-07-25"],"verifiedHistoricalTotal":43,"scope":"Bird's Nest cumulative shows through cited 2025 run","mustNotClaim":["complete 13-show date list","Beijing city-wide historical total"]},
+    "shanghai":{"venue":"上海體育場","status":"official-primary","verifiedDates":["2025-11-16"],"runClaim":"2025 six-show run; only final-night date verified in current dataset"},
+    "taichung":{"venue":"台中洲際棒球場","status":"official-primary","verifiedDateCount":6}
+  },
+  "regressionGates":{
+    "routes":["home","city","album","songs","books","timeline"],
+    "homeAtlas":"atlas-v102.html home-only",
+    "shaderRouteFlow":true,
+    "bloomPerformanceControls":true,
+    "cityEvidenceDataset":"city-evidence-v94.json",
+    "shellLocalRequestBudget":{"css":6,"js":6,"total":12,"imports":0},
+    "atlasEffectiveLocalNetwork":{"css":2,"js":4,"total":6},
+    "requestDelta":0
+  },
+  "remaining":["served browser 6/6 A-F certification","release naming convergence","additional first-party city evidence"]
+}
