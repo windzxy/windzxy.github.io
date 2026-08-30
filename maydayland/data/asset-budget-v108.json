@@ -1,0 +1,16 @@
+{
+  "version":"108.0.0",
+  "release":"city-evidence-expansion",
+  "date":"2026-08-31",
+  "baseline":{"previousVersion":"107.0.0","previousMaydaylandCommit":"17749299f08fc3535b126984f89f137bc5343e9a","productionEntry":"index.html","shellCore":"app-v101-core.js","atlasEntry":"atlas-v102.html"},
+  "changes":[
+    "Promote Hong Kong Central Harbourfront 5525 venue/date evidence to official-primary using first-party B'in Music source.",
+    "Expose seven verified 2024 Hong Kong dates through the existing City Dossier evidence enhancement without adding JS or CSS requests.",
+    "Keep Hong Kong archive VISITS count explicitly editorial; no official historical total is asserted.",
+    "Keep Hung Hom Coliseum historical dates pending until first-party evidence is added."
+  ],
+  "hongkong":{"venue":"中環海濱","evidenceLevel":"official-primary","verifiedDates":["2024-04-30","2024-05-03","2024-05-04","2024-05-05","2024-05-07","2024-05-08","2024-05-09"],"verifiedDateCount":7,"source":"https://bin-music.com/news/1845","historicalVisitTotal":"not asserted"},
+  "requestBudget":{"shell":{"css":6,"js":6,"total":12},"atlasEffectiveLocalNetwork":{"css":2,"js":4,"total":6},"deltaFromV107":0},
+  "regressionGates":["A-F route set remains home/city/album/songs/books/timeline","Atlas remains Home-only and WebGL is released off Home","Shader route flow and Bloom/performance controls unchanged","Hong Kong official-primary badge must only attach to venue name 中環海濱","Editorial visit KPI must not be promoted to verified historical total"],
+  "remaining":["served A-F browser certification","shell/atlas release naming consolidation","expand official-primary City evidence beyond Tokyo and Hong Kong"]
+}
