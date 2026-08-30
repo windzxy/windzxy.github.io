@@ -1,0 +1,24 @@
+{
+  "version":"97.0.0",
+  "updatedAt":"2026-08-30",
+  "release":"evidence-native-city-ui",
+  "scope":[
+    "Map the v96 evidence contract into the served City Dossier UI.",
+    "Stop presenting archive-model VISITS as verified history.",
+    "Expose evidence level on every venue card without relying on color alone.",
+    "Render Tokyo Budokan's four officially verified dates and first-party source link in the venue board."
+  ],
+  "runtime":{"core":"app-v93-core.js","atlas":"atlas-v92.html","homeOnlyAtlas":true,"homeCssRequests":6,"homeJsRequests":6,"cssImports":0,"cityEvidenceRequest":"lazy on city route only"},
+  "evidence":{"registry":"city-evidence-v94.json","levels":["official-primary","verified","editorial","pending"],"visitKpiPolicy":"ARCHIVE VISITS is editorial unless verifiedHistoricalTotal exists","tokyo":{"venue":"日本武道館","verifiedDates":4,"status":"official-primary"}},
+  "qualityGates":[
+    "City route must mark the archive visit KPI as EDITORIAL MODEL unless an explicit verifiedHistoricalTotal exists.",
+    "Every rendered venue card receives a text evidence badge.",
+    "Tokyo 日本武道館 displays 2015-08-28, 2015-08-29, 2017-02-03 and 2017-02-04 plus a first-party source link.",
+    "No unverified venue capacity, transport history or official historical visit total is introduced.",
+    "Home CSS/JS request budget remains 6 + 6; the evidence JSON is route-lazy and does not affect Home startup."
+  ],
+  "remaining":[
+    "Connect tour-route-layers-v96.json to an Atlas-native selector and real per-tour geometry visibility.",
+    "Represent Tokyo verified single-city nodes in Atlas without inventing inter-city segments."
+  ]
+}
