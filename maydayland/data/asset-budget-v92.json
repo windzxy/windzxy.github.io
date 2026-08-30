@@ -1,0 +1,49 @@
+{
+  "version": "v92",
+  "release": "dedicated-atlas-entry",
+  "homeLocalRequestBudget": {
+    "css": 6,
+    "js": 6,
+    "total": 12,
+    "cssImports": 0
+  },
+  "atlas": {
+    "entry": "atlas-v92.html",
+    "legacySourceInCore": "atlas-v74.html",
+    "entryUpgrade": "parent shell-render lifecycle rewrites Home iframe to atlas-v92.html",
+    "mount": "home-only",
+    "runtimeVersion": "v92",
+    "control": "same-origin postMessage API",
+    "profiles": {
+      "full": {"pixelRatioCap": "user/default", "bloom": "user/default"},
+      "balanced": {"pixelRatioCap": 1.2, "bloom": false},
+      "eco": {"pixelRatioCap": 1.0, "bloom": false}
+    },
+    "policy": "downshift-only",
+    "parentContentDocumentAccess": false
+  },
+  "regressionEvidence": {
+    "routes": ["home", "city", "album", "songs", "books", "timeline"],
+    "sessionLocalOnly": true,
+    "telemetryExport": "window.MAYDAYLAND_TELEMETRY_V92.snapshot()",
+    "requiresAtlasNativeAckOnHome": true,
+    "analyticsOrBeacon": false
+  },
+  "coverage": {
+    "verifiedDates": 58,
+    "verifiedCities": 9,
+    "geometrySegments": 8,
+    "pending": ["tokyo"]
+  },
+  "qualityGates": [
+    "A-F routing remains core-native",
+    "Dedicated atlas-v92.html is the served Home Atlas target",
+    "Atlas remains Home-only and releases off Home",
+    "Adaptive profile is applied inside Atlas runtime",
+    "No parent iframe contentDocument access",
+    "Atlas acknowledges ready/profile state to parent",
+    "Session regression matrix covers six product routes",
+    "No new homepage CSS/JS request",
+    "No CSS @import regression"
+  ]
+}
