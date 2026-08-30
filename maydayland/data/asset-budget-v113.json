@@ -1,0 +1,20 @@
+{
+  "version":"113.0.0",
+  "updatedAt":"2026-08-31",
+  "release":"taipei-official-evidence-expansion",
+  "baseline":{"previousVersion":"v112","previousMaster":"5596509bf96e55e4662c83e4a1b0d30b350e0e16","servedBaseline":"5d1a361765c9d4894807fb2643912c518c0fa84f"},
+  "changes":[
+    "Promote Taipei Dome to official-primary evidence using B'in Music first-party sources.",
+    "Record the complete eight-show 2025 Taipei Dome date set: 2025-06-27, 06-28, 06-29, 07-04, 07-05, 07-06, 07-11 and 07-12.",
+    "Expose the scoped official eight-show Taipei Dome record without conflating it with the editorial city VISITS KPI.",
+    "Keep production CSS/JS request budgets unchanged and preserve A-F routing, Shader route flow, Bloom controls and Home-only Atlas lifecycle."
+  ],
+  "cityEvidence":{"dataset":"city-evidence-v94.json","officialPrimaryCities":["tokyo","hongkong","beijing","shanghai","taichung","kaohsiung","taipei"],"newCity":"taipei","verifiedDateCount":8,"scopedHistoricalVenueTotal":8,"scope":"2025 Taipei Dome run"},
+  "sources":[
+    {"publisher":"相信音樂 B'in Music","url":"https://bin-music.com/news/2162","supports":"complete eight-show Taipei Dome dates and venue"},
+    {"publisher":"相信音樂 B'in Music","url":"https://bin-music.com/news/2183","supports":"final two shows and eight-show record"},
+    {"publisher":"相信音樂 B'in Music","url":"https://bin-music.com/news/2199","supports":"eight-show Taipei Dome record"}
+  ],
+  "regressionGates":{"routes":["home","city","album","songs","books","timeline"],"shaderRouteFlow":true,"bloomPerformanceControls":true,"homeAtlas":"atlas-v102.html home-only","shellLocalRequestBudget":{"css":6,"js":6,"total":12,"imports":0},"atlasEffectiveLocalNetwork":{"css":2,"js":4,"total":6,"imports":0},"requestDelta":0},
+  "remaining":["served browser 6/6 A-F route traversal certification","shell/core release naming convergence","additional first-party venue/date evidence for remaining city cards"]
+}
