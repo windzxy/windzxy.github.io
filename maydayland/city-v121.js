@@ -20,6 +20,7 @@ function decorateCityBox(){const box=$('#cityBox');if(!box||!registry)return;con
 function decorate(){decorateCityCards();decorateCityBox()}
 async function load(){try{const r=await fetch('./data/city-evidence-v94.json?v=121.0.0',{cache:'no-cache'});if(!r.ok)throw new Error(`HTTP ${r.status}`);registry=await r.json();decorate();observer=new MutationObserver(()=>queueMicrotask(decorate));const box=$('#cityBox');if(box)observer.observe(box,{childList:true,subtree:true});window.MAYDAYLAND_CITY_EVIDENCE={version:'v121',registryVersion:registry.version,cities:Object.keys(registry.cities||{}).length,status:'ready'}}catch(err){console.warn('[Maydayland v121] city evidence unavailable',err);window.MAYDAYLAND_CITY_EVIDENCE={version:'v121',status:'degraded',error:String(err)}}}
 function polish(){const brand=$('.brand small');if(brand)brand.textContent='v121 · City Evidence';const perf=$('.perf span');if(perf)perf.textContent='lightweight shell · evidence + media on demand';const footer=$('.footer .wrap');if(footer)footer.textContent='Maydayland v121 · evidence-native City Dossier + Album Room + Songs Universe · external media stays on demand.';document.documentElement.dataset.maydaylandRelease='v121';document.documentElement.dataset.maydaylandRuntime='v121-ready'}
-function init(){injectCss();polish();load()}
+function activateV122(){if(document.querySelector('script[data-books-v122]'))return;const s=document.createElement('script');s.src='./books-v122.js?v=122.0.0';s.defer=true;s.dataset.booksV122='1';document.head.appendChild(s)}
+function init(){injectCss();polish();load();activateV122()}
 if(document.readyState==='complete')setTimeout(init,0);else addEventListener('load',()=>setTimeout(init,0),{once:true});
 })();
