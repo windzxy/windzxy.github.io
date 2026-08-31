@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'Html_tools/basic-tools-ux-v7.js'
+      - 'Html_tools/basic-tools-ux-v9.js'
       - '.github/workflows/inject-webdesk-basic-tools.yml'
   workflow_dispatch:
 
@@ -28,8 +28,8 @@ jobs:
           import re
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
-          html = re.sub(r'<script\s+src="Html_tools/basic-tools-ux-v(?:1|7)\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
-          tag = '<script src="Html_tools/basic-tools-ux-v7.js?v=20260901-basic-tools-ux7-listener-fix"></script>'
+          html = re.sub(r'<script\s+src="Html_tools/basic-tools-ux-v(?:1|7|8|9)\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
+          tag = '<script src="Html_tools/basic-tools-ux-v9.js?v=20260901-basic-tools-ux9-stable-listeners"></script>'
           html = html.replace('</body>', tag + '\n</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
@@ -43,5 +43,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk basic tools UX helper v7"
+          git commit -m "Inject WebDesk basic tools UX helper v9"
           git push
