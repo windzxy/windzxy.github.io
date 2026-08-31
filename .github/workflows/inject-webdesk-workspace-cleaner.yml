@@ -1,0 +1,47 @@
+name: Inject WebDesk Workspace Cleaner
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/workspace-preload-cleaner.js'
+      - '.github/workflows/inject-webdesk-workspace-cleaner.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Refresh workspace cleaner cache key
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = 'Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner4-save-manual-cards'
+          new = 'Html_tools/workspace-preload-cleaner.js?v=20260901-workspace-preload-cleaner5-storage-only'
+          if new in s:
+              print('workspace cleaner v5 cache key already present')
+          elif old in s:
+              p.write_text(s.replace(old, new, 1), encoding='utf-8')
+              print('updated workspace cleaner cache key to v5')
+          else:
+              raise SystemExit('workspace cleaner script tag not found; refusing unsafe rewrite')
+          PY
+      - name: Commit injected entry update
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'No index change required'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Inject WebDesk workspace cleaner v5 cache key'
+          git push
