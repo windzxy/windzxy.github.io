@@ -1,77 +1,18 @@
 <!doctype html>
-<html lang="zh-Hant" data-maydayland-release="v102">
+<html lang="zh-Hant" data-maydayland-release="v115">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#050912">
-  <meta name="description" content="Maydayland v102：Atlas route bridge 已收斂進 production entry，保留 A–F 路由、Shader route flow、Bloom/performance、evidence-native City UI、巡演 layer selector 與 single-city focus。">
-  <title>Maydayland · Atlas Module Consolidation v102</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=102.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=102.0.0">
-  <link rel="stylesheet" href="./app-v82-core.css?v=102.0.0">
-  <link rel="stylesheet" href="./app-v81-services.css?v=102.0.0">
-  <link rel="stylesheet" href="./app-v79-media-core.css?v=102.0.0">
-  <link rel="stylesheet" href="./app-v78-media.css?v=102.0.0">
-  <link rel="stylesheet" href="./app-v77.css?v=102.0.0">
-  <link rel="stylesheet" href="./app-v73.css?v=102.0.0">
-  <style>
-    .v93-diag{position:fixed;left:12px;bottom:12px;z-index:9998;font:11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:#bdd0df}.v93-diag button{font:inherit;color:inherit}.v93-toggle{display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid rgba(125,230,189,.2);border-radius:999px;background:rgba(4,10,20,.84);backdrop-filter:blur(14px);cursor:pointer}.v93-dot{width:7px;height:7px;border-radius:50%;background:#7de6bd;box-shadow:0 0 10px rgba(125,230,189,.55)}.v93-diag.warn .v93-dot{background:#ffb57d}.v93-panel{display:none;width:min(420px,calc(100vw - 24px));margin-top:8px;padding:12px;border:1px solid rgba(125,230,189,.2);border-radius:14px;background:rgba(4,10,20,.94);backdrop-filter:blur(18px)}.v93-diag.open .v93-panel{display:grid;gap:9px}.v93-routes{display:flex;gap:5px;flex-wrap:wrap}.v93-routes span{padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.04);color:#7890a3}.v93-routes .pass{color:#7de6bd;background:rgba(125,230,189,.08)}.v93-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.v93-grid span{padding:7px 8px;border-radius:9px;background:rgba(255,255,255,.035)}.v93-grid small{display:block;color:#708ba0}.v93-grid strong{color:#e7fff5}
-    .v97-evidence{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-top:8px;padding:5px 8px;border:1px solid rgba(255,255,255,.12);border-radius:999px;font:700 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em}.v97-evidence::before{content:'';width:7px;height:7px;border-radius:2px;background:currentColor}.v97-evidence[data-level="official-primary"]{color:#7de6bd;background:rgba(125,230,189,.08)}.v97-evidence[data-level="verified"]{color:#8ad8ff;background:rgba(138,216,255,.08)}.v97-evidence[data-level="editorial"]{color:#ffd37d;background:rgba(255,211,125,.08)}.v97-evidence[data-level="pending"]{color:#ff9a9a;background:rgba(255,154,154,.08)}.v97-evidence-note{display:block;margin-top:6px;color:#7890a3;font-size:11px;line-height:1.45}.v97-date-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}.v97-date-list span{padding:4px 7px;border-radius:999px;background:rgba(125,230,189,.07);border:1px solid rgba(125,230,189,.14);color:#bdebd7;font:10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}.v97-source{display:inline-flex;margin-top:8px;color:#8ad8ff;font-size:11px;text-decoration:none}.v97-source:hover{text-decoration:underline}.v45-city-kpi[data-evidence="editorial"] em{color:#ffd37d}
-    @media(max-width:720px){.v93-diag{left:8px;bottom:8px}}
-  </style>
+  <meta name="description" content="Maydayland v115 production shell：乾淨入口、A–F 分頁、巡演分色路線、城市專題、時光唱片室、歌曲宇宙、書籍出版與歷程檔案。">
+  <title>Maydayland · Production Shell v115</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=115.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=115.0.0">
+  <link rel="stylesheet" href="./app-v115.css?v=115.0.0">
 </head>
 <body>
   <div id="app"></div>
-  <script>window.MAYDAYLAND_BUILD={version:'v102',release:'atlas-module-consolidation',events:58,cities:9,segments:8,tourLayers:3,pending:['legacy-atlas-module-filenames'],homeLocalRequestBudget:{css:6,js:6,total:12,imports:0},atlasLocalRequestBudget:{css:6,js:6,total:12},core:'app-v101-core.js',atlas:'atlas-v102.html',atlasMount:'home-only',cityEvidence:'city-evidence-v94.json',routeLayers:'geo-tour-v42.json',lifecycle:'core-native-route+direct-atlas-v102+evidence-native-city'};</script>
-  <script src="./app-v101-core.js?v=102.0.0" defer></script>
-  <script src="./app-v81-services.js?v=102.0.0" defer></script>
-  <script src="./app-v79-media-core.js?v=102.0.0" defer></script>
-  <script src="./app-v78-media.js?v=102.0.0" defer></script>
-  <script src="./app-v77.js?v=102.0.0" defer></script>
-  <script src="./app-v73.js?v=102.0.0" defer></script>
-  <script>
-  (()=>{'use strict';
-    const ROUTES=['home','city','album','songs','books','timeline'],VALID=new Set(ROUTES),STORE='maydayland:v102:regression';
-    const T={matrix:{},profile:'full',reason:'baseline',sent:0,acks:0,atlasReady:false,longTasks:0,maxLongTask:0};
-    try{T.matrix=JSON.parse(sessionStorage.getItem(STORE)||'{}')||{}}catch{}
-    const page=()=>{const p=location.hash.replace(/^#/,'').split('/')[0]||'home';return VALID.has(p)?p:'home'};
-    const atlas=()=>{const frame=document.querySelector('.v45-atlas iframe'),src=frame?.getAttribute('src')||'';return{frame,src,mounted:!!frame,pathOK:!!frame&&/atlas-v102\.html(?:\?|$)/.test(src)}};
-    const chooseProfile=()=>{const reduced=matchMedia?.('(prefers-reduced-motion: reduce)').matches,conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection,save=!!conn?.saveData,slow=/2g/.test(conn?.effectiveType||''),mem=Number(navigator.deviceMemory||8),cores=Number(navigator.hardwareConcurrency||8);let p='full',r='baseline';if(reduced||save||slow||mem<=2||cores<=2){p='eco';r=reduced?'reduced-motion':save?'save-data':slow?'slow-network':'low-device'}else if(mem<=4||cores<=4){p='balanced';r='mid-device'}if(T.maxLongTask>=180||T.longTasks>=4){p='eco';r='long-task-pressure'}else if((T.maxLongTask>=110||T.longTasks>=2)&&p==='full'){p='balanced';r='runtime-pressure'}T.profile=p;T.reason=r;return p};
-    const sendProfile=()=>{if(page()!=='home')return;const a=atlas();if(!a.frame?.contentWindow||!a.pathOK)return;chooseProfile();try{a.frame.contentWindow.postMessage({type:'maydayland:atlas-profile',profile:T.profile,reason:T.reason,source:'maydayland-v102'},location.origin);T.sent++}catch{}};
-    const probe=()=>{const p=page(),a=atlas(),core=document.documentElement.dataset.v101Core==='ready',route=document.documentElement.dataset.v101RouteController==='ready',life=document.documentElement.dataset.v101ShellLifecycle==='ready',atlasLife=document.documentElement.dataset.v101AtlasLifecycle===(p==='home'?'mounted':'unmounted'),atlasOK=p==='home'?(a.mounted&&a.pathOK):!a.mounted,nativeOK=p==='home'?(T.atlasReady||T.acks>0):true,sections=[...document.querySelectorAll('.v45-section')],active=sections.length>0&&sections.filter(x=>x.classList.contains('active')).length===1,cityEvidenceOK=p!=='city'||document.documentElement.dataset.v97CityEvidence==='ready',pass=core&&route&&life&&atlasLife&&atlasOK&&nativeOK&&active&&cityEvidenceOK;T.matrix[p]={pass,hash:location.hash||'#home',atlas:p==='home'?'atlas-v102-native':'unmounted',nativeAck:T.acks>0,cityEvidence:cityEvidenceOK,profile:T.profile,at:new Date().toISOString()};try{sessionStorage.setItem(STORE,JSON.stringify(T.matrix))}catch{}return{p,a,pass}};
-    const audit=()=>{const q=probe(),res=performance.getEntriesByType?.('resource')||[],local=res.filter(r=>{try{return new URL(r.name).origin===location.origin}catch{return false}}),css=local.filter(r=>/\/app-v(?:82-core|81-services|79-media-core|78-media|77|73)\.css(?:\?|$)/.test(r.name)).length,js=local.filter(r=>/\/app-v(?:101-core|81-services|79-media-core|78-media|77|73)\.js(?:\?|$)/.test(r.name)).length,legacyCore=local.some(r=>/\/app-v(?:47|48|49|83-archives|84-archives|85-core|88-core|93-core)\.js(?:\?|$)/.test(r.name)),legacyAtlas=local.some(r=>/\/atlas-v(?:74|92|101)\.html(?:\?|$)/.test(r.name));return{q,css,js,pass:q.pass&&css<=6&&js<=6&&!legacyCore&&!legacyAtlas,legacyCore,legacyAtlas}};
-    const snapshot=()=>{const a=audit();return{version:'v102',route:a.q.p,hash:location.hash||'#home',atlasEntry:a.q.a.src,atlasReady:T.atlasReady,atlasAcks:T.acks,performanceProfile:T.profile,profileReason:T.reason,observedRoutes:ROUTES.filter(r=>T.matrix[r]),passedRoutes:ROUTES.filter(r=>T.matrix[r]?.pass),matrix:{...T.matrix},localCss:a.css,localJs:a.js,legacyCoreLoaded:a.legacyCore,legacyAtlasRequested:a.legacyAtlas,longTasks:T.longTasks,maxLongTaskMs:Math.round(T.maxLongTask||0)}};
-    window.MAYDAYLAND_TELEMETRY_V102={snapshot,clear(){T.matrix={};try{sessionStorage.removeItem(STORE)}catch{}render();return snapshot()}};
-    const ui=()=>{let e=document.querySelector('.v93-diag');if(e)return e;e=document.createElement('aside');e.className='v93-diag';e.innerHTML='<button class="v93-toggle" type="button" aria-expanded="false"><i class="v93-dot"></i><span>V102 · Quality evidence</span></button><section class="v93-panel"></section>';document.body.append(e);e.querySelector('.v93-toggle').onclick=()=>{e.classList.toggle('open');e.querySelector('button').setAttribute('aria-expanded',String(e.classList.contains('open')))};return e};
-    const render=()=>{if(!document.body)return;chooseProfile();const a=audit(),s=snapshot(),e=ui(),observed=s.observedRoutes.length,passed=s.passedRoutes.length;e.classList.toggle('warn',!a.pass);e.querySelector('.v93-toggle span').textContent=`V102 · ${a.pass?'PASS':'CHECK'} · ${T.profile.toUpperCase()}`;e.querySelector('.v93-panel').innerHTML=`<b>Served regression evidence · ${passed}/${observed} passed</b><div class="v93-routes">${ROUTES.map(r=>`<span class="${T.matrix[r]?.pass?'pass':''}">${r}</span>`).join('')}</div><div class="v93-grid"><span><small>Atlas entry</small><strong>${a.q.p==='home'?(a.q.a.pathOK?'v102 direct':'pending'):'unmounted'}</strong></span><span><small>Native API</small><strong>${T.atlasReady?'ready':T.acks?'ack':'pending'}</strong></span><span><small>Shell budget</small><strong>${a.css} CSS · ${a.js} JS</strong></span><span><small>City evidence</small><strong>${document.documentElement.dataset.v97CityEvidence||'route-lazy'}</strong></span></div>`;document.documentElement.dataset.v102Telemetry='ready';sendProfile();};
-    addEventListener('message',e=>{if(e.origin!==location.origin)return;const m=e.data||{};if(!/^maydayland:atlas-/.test(m.type||''))return;if(m.type==='maydayland:atlas-ready')T.atlasReady=true;if(m.type==='maydayland:atlas-profile-ack'||m.type==='maydayland:atlas-state')T.acks++;setTimeout(render,40)});
-    try{new PerformanceObserver(list=>{for(const e of list.getEntries()){T.longTasks++;T.maxLongTask=Math.max(T.maxLongTask,e.duration||0)}sendProfile();}).observe({type:'longtask',buffered:true})}catch{}
-    addEventListener('maydayland:shell-rendered',()=>setTimeout(render,160));addEventListener('hashchange',()=>setTimeout(render,260));document.addEventListener('DOMContentLoaded',()=>setTimeout(render,1800),{once:true});addEventListener('pageshow',()=>setTimeout(render,360));addEventListener('load',()=>setTimeout(render,700),{once:true});
-  })();
-  </script>
-  <script>
-  (()=>{'use strict';
-    let evidence=null,loading=null;
-    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const route=()=>{const p=location.hash.replace(/^#/,'').split('/');return{page:p[0]||'home',id:decodeURIComponent(p[1]||'')}};
-    const load=()=>evidence?Promise.resolve(evidence):(loading||(loading=fetch('./data/city-evidence-v94.json?v=102.0.0',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error('evidence unavailable'))).then(x=>(evidence=x,x)).catch(()=>null)));
-    const badge=(level,label)=>`<span class="v97-evidence" data-level="${esc(level)}" aria-label="Evidence level: ${esc(label)}">${esc(label)}</span>`;
-    const enhance=async()=>{
-      const r=route();if(r.page!=='city')return;
-      const data=await load();if(!data)return;
-      const levels=Object.fromEntries((data.presentationContract?.levels||[]).map(x=>[x.id,x]));
-      const cityEvidence=data.cities?.[r.id]||null;
-      const kpi=document.querySelector('.v45-city-kpi');
-      if(kpi){kpi.dataset.evidence='editorial';const label=kpi.querySelector('span'),em=kpi.querySelector('em');if(label)label.textContent='ARCHIVE VISITS';if(em)em.textContent=cityEvidence?.presentation?.visitKpi||'EDITORIAL MODEL · not an official historical total';if(!kpi.querySelector('.v97-evidence'))kpi.insertAdjacentHTML('beforeend',badge('editorial',levels.editorial?.label||'EDITORIAL MODEL'));}
-      document.querySelectorAll('.v45-venue-board article').forEach(card=>{
-        const name=(card.querySelector('b')?.textContent||'').trim();const official=cityEvidence&&name===cityEvidence.venue;const level=official?(cityEvidence.status||'official-primary'):'editorial';const label=levels[level]?.label||(official?'OFFICIAL PRIMARY':'EDITORIAL MODEL');card.dataset.evidence=level;card.querySelector('.v97-evidence')?.remove();card.insertAdjacentHTML('beforeend',badge(level,label));
-        if(official&&!card.querySelector('.v97-date-list')){const dates=(cityEvidence.verifiedDates||[]).map(d=>`<span>${esc(d)}</span>`).join('');const source=cityEvidence.sources?.[0];card.insertAdjacentHTML('beforeend',`<small class="v97-evidence-note">${esc(cityEvidence.presentation?.verifiedDateCount||0)} dates verified · ${esc(cityEvidence.presentation?.confidence||'')}</small><div class="v97-date-list">${dates}</div>${source?`<a class="v97-source" href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">Source · ${esc(source.publisher)}</a>`:''}`);}
-      });
-      document.documentElement.dataset.v97CityEvidence='ready';
-      window.dispatchEvent(new CustomEvent('maydayland:city-evidence-ready',{detail:{version:'v102',city:r.id,status:cityEvidence?.status||'editorial'}}));
-    };
-    addEventListener('maydayland:shell-rendered',()=>setTimeout(enhance,40));addEventListener('hashchange',()=>setTimeout(enhance,120));document.addEventListener('DOMContentLoaded',()=>setTimeout(enhance,500),{once:true});
-  })();
-  </script>
+  <script>window.MAYDAYLAND_BUILD={version:'v115',release:'production-shell-reset',legacyStack:false,pages:['home','city','album','songs','books','timeline'],data:'product-v115.json'};</script>
+  <script src="./app-v115.js?v=115.0.0" defer></script>
 </body>
 </html>
