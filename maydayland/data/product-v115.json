@@ -1,0 +1,35 @@
+{
+  "version":"115.0.0",
+  "updatedAt":"2026-08-31",
+  "purpose":"Visible production reset: one clean entry, A-F pages, tour-colored routes, product-grade layout. Advanced Three.js atlas remains a later enhancement instead of blocking the main user-facing site.",
+  "brand":{"title":"Maydayland","subtitle":"五月天巡演地圖 · 城市專題 · 時光唱片室","score":"visual-reset"},
+  "cities":[
+    {"id":"taipei","name":"台北","x":78,"y":42,"visits":26,"venue":"台北大巨蛋 / 台北小巨蛋","tag":"核心主場","summary":"主場記憶、台北大巨蛋、台北小巨蛋與 5525+2 的核心敘事。"},
+    {"id":"taichung","name":"台中","x":72,"y":50,"visits":14,"venue":"台中洲際棒球場","tag":"起跑 / 跨年","summary":"5525 起跑與跨年線，適合做成場館攻略與倒數頁。"},
+    {"id":"kaohsiung","name":"高雄","x":69,"y":62,"visits":12,"venue":"高雄世運主場館","tag":"戶外大場","summary":"港都戶外大場、世運主場館與大型合唱氛圍。"},
+    {"id":"hongkong","name":"香港","x":56,"y":64,"visits":10,"venue":"中環海濱 / 紅磡","tag":"海港海外線","summary":"維港海風、海外華語城市節點與海濱演唱會氣質。"},
+    {"id":"shanghai","name":"上海","x":74,"y":28,"visits":9,"venue":"上海體育場","tag":"連場都市","summary":"華東高密度都市連場路線。"},
+    {"id":"beijing","name":"北京","x":60,"y":14,"visits":8,"venue":"國家體育場 · 鳥巢","tag":"超大型場","summary":"鳥巢大型場記憶與北方巡演節點。"},
+    {"id":"shenzhen","name":"深圳","x":55,"y":60,"visits":5,"venue":"深圳大運中心","tag":"霓虹城市","summary":"大灣區霓虹節點與年輕城市線。"},
+    {"id":"singapore","name":"新加坡","x":38,"y":84,"visits":3,"venue":"國家體育場 / 室內館","tag":"東南亞節點","summary":"東南亞巡演節點，後續可補交通與入場指南。"},
+    {"id":"tokyo","name":"東京","x":92,"y":18,"visits":2,"venue":"日本武道館等","tag":"日本資料線","summary":"日文資料、海外作品與武道館記憶。"}
+  ],
+  "tours":[
+    {"id":"t5525","name":"5525 回到那一天","years":"2023–2026","color":"#28d7ff","route":["taichung","kaohsiung","hongkong","beijing","shanghai","taipei"],"summary":"目前主推層。以青藍飛線表示，城市詳情優先補 5525 相關證據。"},
+    {"id":"wantsee","name":"好好好想見到你","years":"2020–2024","color":"#f7c65b","route":["kaohsiung","taichung","taipei","hongkong","shenzhen","shanghai"],"summary":"金色路線，代表疫情後重逢與大規模回歸。"},
+    {"id":"life","name":"LIFE 人生無限公司","years":"2017–2019","color":"#9b84ff","route":["taipei","hongkong","shanghai","beijing","kaohsiung"],"summary":"紫色路線，偏科幻與大型裝置感。"},
+    {"id":"ark","name":"諾亞方舟","years":"2011–2014","color":"#ff7ea9","route":["taipei","kaohsiung","hongkong","shanghai","beijing"],"summary":"粉色路線，作為經典巡演記憶層。"},
+    {"id":"dna","name":"DNA 創造","years":"2009–2010","color":"#72f5c6","route":["taipei","hongkong","shanghai","singapore","tokyo"],"summary":"薄荷色路線，早期海外線待補資料。"}
+  ],
+  "albums":["第一張創作專輯","愛情萬歲","人生海海","時光機","神的孩子都在跳舞","為愛而生","後青春期的詩","第二人生","自傳"],
+  "songCollections":["Live 現場心跳精選","巡演安可歌單","城市夜行歌單","親子出遊清新版","五月天入坑 30 首","深夜電台慢歌"],
+  "books":["演唱會場刊","專輯內頁","票根收藏","樂譜與文字作品","展覽小誌","官方新聞剪報"],
+  "timeline":[
+    {"year":"1997","title":"成軍","body":"建立故事起點。"},
+    {"year":"1999","title":"首張創作專輯","body":"專輯資料與作品索引入口。"},
+    {"year":"2011","title":"第二人生 / 諾亞方舟","body":"大型巡演記憶層。"},
+    {"year":"2017","title":"LIFE 人生無限公司","body":"科技感與大型場館階段。"},
+    {"year":"2023","title":"5525 起跑","body":"目前主巡演資料主線。"},
+    {"year":"2026","title":"5525+2","body":"台北大巨蛋與城市專題升級。"}
+  ]
+}
