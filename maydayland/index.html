@@ -1,18 +1,18 @@
 <!doctype html>
-<html lang="zh-Hant" data-maydayland-release="v115">
+<html lang="zh-Hant" data-maydayland-release="v116">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#050912">
-  <meta name="description" content="Maydayland v115 production shell：乾淨入口、A–F 分頁、巡演分色路線、城市專題、時光唱片室、歌曲宇宙、書籍出版與歷程檔案。">
-  <title>Maydayland · Production Shell v115</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=115.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=115.0.0">
-  <link rel="stylesheet" href="./app-v115.css?v=115.0.0">
+  <meta name="description" content="Maydayland v116：保留乾淨 A–F production shell，恢復 Home-only adaptive Shader Atlas、Bloom/performance profile 與 Lite SVG fallback。">
+  <title>Maydayland · Adaptive Atlas Shell v116</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=116.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=116.0.0">
+  <link rel="stylesheet" href="./app-v116.css?v=116.0.0">
 </head>
 <body>
   <div id="app"></div>
-  <script>window.MAYDAYLAND_BUILD={version:'v115',release:'production-shell-reset',legacyStack:false,pages:['home','city','album','songs','books','timeline'],data:'product-v115.json'};</script>
-  <script src="./app-v115.js?v=115.0.0" defer></script>
+  <script>window.MAYDAYLAND_BUILD={version:'v116',release:'adaptive-atlas-shell',legacyStack:false,pages:['home','city','album','songs','books','timeline'],shellCss:'app-v116.css',shellJs:'app-v116.js',data:'product-v115.json',atlas:'atlas-v102.html',atlasMount:'home-only',atlasModes:['shader','lite'],performanceProfiles:['full','balanced','eco'],preserves:['shader-route-flow','bloom-control','pixel-ratio-control','reduced-motion','A-F-routes']};</script>
+  <script src="./app-v116.js?v=116.0.0" defer></script>
 </body>
 </html>
