@@ -15,15 +15,17 @@
       .toolbox-category-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 3px}
       .toolbox-category-head strong{font-size:12px;letter-spacing:.04em;opacity:.72}
       .toolbox-category-head small{font-size:11px;opacity:.46}
-      .toolbox-category-list{display:grid;gap:8px}
+      .toolbox-category-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+      .toolbox-category-list .dock-tool{min-width:0}
       .toolbox-search-summary{margin:0 0 10px;padding:0 3px;font-size:11px;opacity:.55}
       .toolbox-empty{padding:18px 12px;border:1px dashed rgba(127,127,127,.25);border-radius:14px;text-align:center;font-size:12px;opacity:.62}
+      @media(max-width:560px){.toolbox-category-list{grid-template-columns:1fr}}
     `;
     document.head.appendChild(style);
   }
 
   function buttonHtml(t){
-    return '<button class="dock-tool '+escapeHtml(t.tone||'')+'" type="button" data-id="'+escapeHtml(t.id)+'"><span class="app-icon">'+escapeHtml(t.icon||'')+'</span><span>'+labelHtml(t.title)+'</span><small>＋</small></button>';
+    return '<button class="dock-tool '+escapeHtml(t.tone||'')+'" type="button" data-id="'+escapeHtml(t.id)+'" aria-label="'+escapeHtml(tr(t.title))+'"><span class="app-icon">'+escapeHtml(t.icon||'')+'</span><span>'+labelHtml(t.title)+'</span><small aria-hidden="true">＋</small></button>';
   }
 
   function groupedRenderShelf(){
@@ -32,13 +34,16 @@
     ensureStyles();
     const q=(document.getElementById('deskSearch')?.value||'').trim().toLowerCase();
     const matches=apps.filter(t=>!q||[t.title,t.desc,tr(t.title),tr(t.desc)].join(' ').toLowerCase().includes(q));
+    shelf.setAttribute('aria-live','polite');
+    shelf.setAttribute('aria-label',q?tr('搜尋結果'):tr('功能庫'));
     if(q){
-      shelf.innerHTML='<div class="toolbox-search-summary">'+escapeHtml(tr('搜尋結果'))+' · '+matches.length+'</div>'+(matches.length?'<div class="toolbox-category-list">'+matches.map(buttonHtml).join('')+'</div>':'<div class="toolbox-empty">'+escapeHtml(tr('沒有符合的工具'))+'</div>');
+      shelf.innerHTML='<div class="toolbox-search-summary" role="status">'+escapeHtml(tr('搜尋結果'))+' · '+matches.length+'</div>'+(matches.length?'<div class="toolbox-category-list">'+matches.map(buttonHtml).join('')+'</div>':'<div class="toolbox-empty" role="status">'+escapeHtml(tr('沒有符合的工具'))+'</div>');
     }else{
       shelf.innerHTML=groups.map(group=>{
         const items=group.items.map(id=>apps.find(app=>app.id===id)).filter(Boolean);
         if(!items.length)return '';
-        return '<section class="toolbox-category" data-toolbox-category="'+group.id+'"><div class="toolbox-category-head"><strong>'+escapeHtml(tr(group.title))+'</strong><small>'+items.length+'</small></div><div class="toolbox-category-list">'+items.map(buttonHtml).join('')+'</div></section>';
+        const title=tr(group.title);
+        return '<section class="toolbox-category" data-toolbox-category="'+group.id+'" aria-label="'+escapeHtml(title)+'"><div class="toolbox-category-head"><strong>'+escapeHtml(title)+'</strong><small aria-label="'+items.length+'">'+items.length+'</small></div><div class="toolbox-category-list">'+items.map(buttonHtml).join('')+'</div></section>';
       }).join('');
     }
     shelf.querySelectorAll('.dock-tool').forEach(btn=>btn.onclick=()=>addCard(btn.dataset.id));
@@ -53,5 +58,5 @@
     search.addEventListener('search',()=>queueMicrotask(groupedRenderShelf));
   }
   groupedRenderShelf();
-  window.WebDeskToolboxCategories={version:'v1',groups:groups.map(g=>g.id),render:groupedRenderShelf};
+  window.WebDeskToolboxCategories={version:'v2',groups:groups.map(g=>g.id),render:groupedRenderShelf};
 })();
