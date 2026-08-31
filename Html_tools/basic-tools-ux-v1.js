@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-if(window.__basicToolsUxV5)return;window.__basicToolsUxV5=1;
+if(window.__basicToolsUxV6)return;window.__basicToolsUxV6=1;
 const css='.basic-tool-status{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;padding:8px 10px;border-radius:12px;background:rgba(127,127,127,.08);font-size:12px;line-height:1.45}.basic-tool-status strong{font-weight:700}.basic-tool-status small{opacity:.72}.basic-tool-status.ok strong{color:#2d9b63}.basic-tool-status.bad strong{color:#d75a5a}.table-app #appTableInput,.json-app #jsonInput,.text-app textarea{min-height:180px;resize:vertical}.table-app #tableOutput,.json-app #jsonOutput{min-height:150px;max-height:40vh;overflow:auto}';
 const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
 function byteSize(v){try{return new Blob([v]).size}catch{return String(v||'').length}}
@@ -11,16 +11,16 @@ function textMeta(value){const text=String(value||'');const chars=text.length;co
 function selectionMeta(input){const a=Number(input.selectionStart)||0,b=Number(input.selectionEnd)||0;if(b<=a)return null;const text=input.value.slice(a,b),m=textMeta(text);return {chars:m.chars,words:m.words}}
 function addStatus(input,html){const s=document.createElement('div');s.className='basic-tool-status';s.setAttribute('role','status');s.setAttribute('aria-live','polite');s.setAttribute('aria-atomic','true');s.innerHTML=html;(input.closest('.app-panel')||input.parentElement)?.appendChild(s);return s}
 function enhance(root){
- if(root.matches?.('.text-app')&&!root.dataset.ux5){
-  const input=root.querySelector('textarea');if(input){root.dataset.ux5='1';const s=addStatus(input,'<strong>等待文字</strong><small>0 B</small>');const refresh=()=>{const m=textMeta(input.value),sel=selectionMeta(input);s.querySelector('strong').textContent=m.chars?`${m.chars} 字符 · ${m.words} 詞/字 · ${m.lines} 行`:'等待文字';s.querySelector('small').textContent=m.chars?`${m.paragraphs} 段 · 約 ${m.minutes} 分鐘閱讀 · ${humanBytes(m.bytes)}${sel?` · 已選 ${sel.chars} 字符/${sel.words} 詞字`:''}`:'0 B'};input.addEventListener('input',refresh);input.addEventListener('select',refresh);input.addEventListener('keyup',refresh);input.addEventListener('mouseup',refresh);refresh()}
+ if(root.matches?.('.text-app')&&!root.dataset.ux6){
+  const input=root.querySelector('textarea');if(input){root.dataset.ux6='1';const s=addStatus(input,'<strong>等待文字</strong><small>0 B</small>');const refresh=()=>{const m=textMeta(input.value),sel=selectionMeta(input);s.querySelector('strong').textContent=m.chars?`${m.chars} 字符 · ${m.words} 詞/字 · ${m.lines} 行`:'等待文字';s.querySelector('small').textContent=m.chars?`${m.paragraphs} 段 · 約 ${m.minutes} 分鐘閱讀 · ${humanBytes(m.bytes)}${sel?` · 已選 ${sel.chars} 字符/${sel.words} 詞字`:''}`:'0 B'};input.addEventListener('input',refresh);input.addEventListener('select',refresh);input.addEventListener('keyup',refresh);input.addEventListener('mouseup',refresh);refresh()}
  }
- if(root.matches?.('.table-app')&&!root.dataset.ux5){
-  const input=root.querySelector('#appTableInput'),preview=root.querySelector('#tablePreview');if(!input||!preview)return;root.dataset.ux5='1';
+ if(root.matches?.('.table-app')&&!root.dataset.ux6){
+  const input=root.querySelector('#appTableInput'),preview=root.querySelector('#tablePreview');if(!input||!preview)return;root.dataset.ux6='1';
   const s=addStatus(input,'<strong>等待資料</strong><small>Ctrl/⌘ + Enter 預覽</small>');
   const refresh=()=>{const m=detectTable(input.value);s.querySelector('strong').textContent=m.rows||input.value.trim()?`${m.rows} data rows × ${m.cols} cols · ${m.sep}`:'等待資料';s.querySelector('small').textContent=input.value.trim()?`${humanBytes(byteSize(input.value))} · Ctrl/⌘ + Enter 預覽`:'Ctrl/⌘ + Enter 預覽'};input.addEventListener('input',refresh);input.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();preview.click();refresh()}});refresh();
  }
- if(root.matches?.('.json-app')&&!root.dataset.ux5){
-  const input=root.querySelector('#jsonInput'),format=root.querySelector('#jsonFormat');if(!input||!format)return;root.dataset.ux5='1';
+ if(root.matches?.('.json-app')&&!root.dataset.ux6){
+  const input=root.querySelector('#jsonInput'),format=root.querySelector('#jsonFormat');if(!input||!format)return;root.dataset.ux6='1';
   const s=addStatus(input,'<strong>等待 JSON</strong><small>Ctrl/⌘ + Enter 格式化</small>');
   const refresh=()=>{const m=jsonMeta(input.value);s.classList.remove('ok','bad');if(m.empty){s.querySelector('strong').textContent='等待 JSON';s.querySelector('small').textContent='Ctrl/⌘ + Enter 格式化';return}if(m.ok){s.querySelector('strong').textContent=`JSON 有效 · ${m.type} · ${m.count} item${m.count===1?'':'s'}`;s.querySelector('small').textContent=`${humanBytes(m.bytes)} · Ctrl/⌘ + Enter 格式化`;s.classList.add('ok')}else{s.querySelector('strong').textContent=m.line?`JSON 錯誤 · L${m.line}:C${m.col}`:'JSON 有錯誤';s.querySelector('small').textContent=m.message;s.classList.add('bad')}};input.addEventListener('input',refresh);input.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();format.click();setTimeout(refresh,0)}});refresh();
  }
