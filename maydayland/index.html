@@ -1,21 +1,18 @@
 <!doctype html>
-<html lang="zh-Hant" data-maydayland-release="v117">
+<html lang="zh-Hant" data-maydayland-release="v118">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#050912">
-  <meta name="description" content="Maydayland v117：Evidence-native City Dossier，保留 adaptive Shader Atlas、Bloom/performance profile、Lite SVG fallback 與 A–F production shell。">
-  <title>Maydayland · Evidence-native City Dossier v117</title>
-  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=117.0.0">
-  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=117.0.0">
-  <link rel="stylesheet" href="./app-v116.css?v=117.0.0">
-  <style>
-    .city-dossier{overflow:hidden}.dossier-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.dossier-head h2{font-size:clamp(38px,5vw,72px);margin:14px 0 8px}.evidence-level{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:1000;letter-spacing:.08em;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06)}.evidence-level.official-primary{color:var(--green);border-color:rgba(114,245,198,.38);background:rgba(114,245,198,.09)}.evidence-level.verified{color:var(--cyan);border-color:rgba(88,230,255,.38);background:rgba(88,230,255,.09)}.evidence-level.pending,.evidence-level.editorial{color:var(--gold);border-color:rgba(255,211,106,.3);background:rgba(255,211,106,.08)}.venue-board{margin-top:22px;display:grid;gap:16px}.venue-hero{display:grid;grid-template-columns:minmax(0,1fr) 180px 220px;gap:12px}.venue-hero>div{padding:20px;border:1px solid rgba(255,255,255,.1);border-radius:22px;background:linear-gradient(145deg,rgba(88,230,255,.08),rgba(255,255,255,.025))}.venue-hero h3{font-size:30px;margin:6px 0 8px}.venue-hero p,.record span{color:var(--muted);margin:0;font-size:12px;line-height:1.55}.record small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em}.record b{display:block;font-size:34px;margin:6px 0}.evidence-note{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:14px 16px;border-radius:18px;border:1px solid rgba(255,211,106,.22);background:rgba(255,211,106,.055)}.evidence-note b{color:var(--gold)}.evidence-note span{color:#c9bfa3;font-size:12px}.date-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}.date-strip time,.date-strip>span{flex:0 0 auto;padding:9px 11px;border-radius:14px;border:1px solid rgba(88,230,255,.18);background:rgba(88,230,255,.06);font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace;color:#ccefff}.sources{display:grid;gap:8px}.sources h3{margin:4px 0}.source{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:center;padding:13px;border-radius:18px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:inherit;text-decoration:none}.source:hover{border-color:rgba(88,230,255,.35);background:rgba(88,230,255,.06)}.source>span{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:rgba(88,230,255,.1);color:var(--cyan);font-weight:900}.source b,.source small{display:block}.source small{margin-top:3px;color:var(--muted);font-size:11px;line-height:1.45}.mini-evidence{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}.mini-evidence small{color:var(--muted)}.pending-board{padding:22px;border:1px dashed rgba(255,211,106,.26);border-radius:22px}.pending-board h3{margin-top:0}@media(max-width:900px){.venue-hero{grid-template-columns:1fr 1fr}.venue-hero>div:first-child{grid-column:1/-1}}@media(max-width:680px){.dossier-head{display:grid}.venue-hero{grid-template-columns:1fr}.venue-hero>div:first-child{grid-column:auto}.evidence-note{grid-template-columns:1fr}.source{grid-template-columns:36px 1fr}}
-  </style>
+  <meta name="description" content="Maydayland v118：Performance-first lightweight product shell，移除首頁 WebGL、iframe、多版本 legacy stack 與重動畫，保留 A–F 分頁、巡演分色 SVG 路線圖與城市專題。">
+  <title>Maydayland · Lightweight Product Shell v118</title>
+  <link rel="icon" type="image/svg+xml" href="./mayday-logo.svg?v=118.0.0">
+  <link rel="apple-touch-icon" href="./mayday-logo.svg?v=118.0.0">
+  <link rel="stylesheet" href="./app-v118.css?v=118.0.0">
 </head>
 <body>
   <div id="app"></div>
-  <script>window.MAYDAYLAND_BUILD={version:'v117',release:'evidence-native-city-dossier',legacyStack:false,pages:['home','city','album','songs','books','timeline'],shellCss:'app-v116.css',shellJs:'app-v117.js',data:'product-v115.json',cityEvidence:'city-evidence-v94.json',atlas:'atlas-v102.html',atlasMount:'home-only',atlasModes:['shader','lite'],performanceProfiles:['full','balanced','eco'],preserves:['shader-route-flow','bloom-control','pixel-ratio-control','reduced-motion','A-F-routes','editorial-vs-verified-evidence-boundary']};</script>
-  <script src="./app-v117.js?v=117.0.0" defer></script>
+  <script>window.MAYDAYLAND_BUILD={version:'v118',release:'lightweight-performance-shell',legacyStack:false,externalLibraries:0,mainWebGL:false,mainIframe:false,pages:['home','city','album','songs','books','timeline'],goal:'fix lag first, then refine visuals'};</script>
+  <script src="./app-v118.js?v=118.0.0" defer></script>
 </body>
 </html>
