@@ -1,0 +1,57 @@
+(function(){
+  const groups=[
+    {id:'image',title:'圖片工具',items:['image']},
+    {id:'data',title:'文字與資料',items:['text','table','date','json']},
+    {id:'utility',title:'實用工具',items:['note','todo','clock','calc','color','link','memo']},
+    {id:'live',title:'即時資訊',items:['metals','fx-rates','calendar','typhoon','weather']}
+  ];
+
+  function ensureStyles(){
+    if(document.getElementById('webdesk-toolbox-category-style'))return;
+    const style=document.createElement('style');
+    style.id='webdesk-toolbox-category-style';
+    style.textContent=`
+      .toolbox-category{display:grid;gap:8px;margin:0 0 18px}
+      .toolbox-category-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 3px}
+      .toolbox-category-head strong{font-size:12px;letter-spacing:.04em;opacity:.72}
+      .toolbox-category-head small{font-size:11px;opacity:.46}
+      .toolbox-category-list{display:grid;gap:8px}
+      .toolbox-search-summary{margin:0 0 10px;padding:0 3px;font-size:11px;opacity:.55}
+      .toolbox-empty{padding:18px 12px;border:1px dashed rgba(127,127,127,.25);border-radius:14px;text-align:center;font-size:12px;opacity:.62}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function buttonHtml(t){
+    return '<button class="dock-tool '+escapeHtml(t.tone||'')+'" type="button" data-id="'+escapeHtml(t.id)+'"><span class="app-icon">'+escapeHtml(t.icon||'')+'</span><span>'+labelHtml(t.title)+'</span><small>＋</small></button>';
+  }
+
+  function groupedRenderShelf(){
+    const shelf=document.getElementById('toolShelf');
+    if(!shelf||typeof apps==='undefined')return;
+    ensureStyles();
+    const q=(document.getElementById('deskSearch')?.value||'').trim().toLowerCase();
+    const matches=apps.filter(t=>!q||[t.title,t.desc,tr(t.title),tr(t.desc)].join(' ').toLowerCase().includes(q));
+    if(q){
+      shelf.innerHTML='<div class="toolbox-search-summary">'+escapeHtml(tr('搜尋結果'))+' · '+matches.length+'</div>'+(matches.length?'<div class="toolbox-category-list">'+matches.map(buttonHtml).join('')+'</div>':'<div class="toolbox-empty">'+escapeHtml(tr('沒有符合的工具'))+'</div>');
+    }else{
+      shelf.innerHTML=groups.map(group=>{
+        const items=group.items.map(id=>apps.find(app=>app.id===id)).filter(Boolean);
+        if(!items.length)return '';
+        return '<section class="toolbox-category" data-toolbox-category="'+group.id+'"><div class="toolbox-category-head"><strong>'+escapeHtml(tr(group.title))+'</strong><small>'+items.length+'</small></div><div class="toolbox-category-list">'+items.map(buttonHtml).join('')+'</div></section>';
+      }).join('');
+    }
+    shelf.querySelectorAll('.dock-tool').forEach(btn=>btn.onclick=()=>addCard(btn.dataset.id));
+    if(window.applyI18n)window.applyI18n(shelf);
+  }
+
+  try{ renderShelf=groupedRenderShelf; }catch(e){}
+  const search=document.getElementById('deskSearch');
+  if(search&&!search.dataset.categoryShelfBound){
+    search.dataset.categoryShelfBound='1';
+    search.addEventListener('input',()=>queueMicrotask(groupedRenderShelf));
+    search.addEventListener('search',()=>queueMicrotask(groupedRenderShelf));
+  }
+  groupedRenderShelf();
+  window.WebDeskToolboxCategories={version:'v1',groups:groups.map(g=>g.id),render:groupedRenderShelf};
+})();
