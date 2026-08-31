@@ -1,0 +1,22 @@
+{
+  "version":"114.0.0",
+  "updatedAt":"2026-08-31",
+  "release":"verified-chronology-city-evidence-expansion",
+  "baseline":{"previousVersion":"v113","previousMaster":"60a24521d60a8d1fe8870ff15bed049695a5c7f4","servedBaseline":"c7ed5199c643c7c7577199da73462e905a42fad1"},
+  "changes":[
+    "Close the Atlas-to-City evidence gap for Xiamen, Guangzhou and Singapore: all three already existed in the verified 5525 chronology but were absent from the City evidence registry.",
+    "Promote Xiamen to VERIFIED with the 2025-10-24 / 10-25 / 10-26 Bailu Stadium date set.",
+    "Promote Guangzhou to VERIFIED with the complete 2025-12-05 / 12-06 / 12-07 / 12-12 / 12-14 / 12-15 Greater Bay Area Culture and Sports Center date set.",
+    "Promote Singapore to VERIFIED with the 2025-01-11 / 01-12 National Stadium date set.",
+    "Keep city VISITS editorial-only; no new city-wide historical total is asserted for the three promoted cities.",
+    "No production CSS/JS request is added; existing City evidence enhancement consumes the expanded registry lazily on city routes."
+  ],
+  "cityEvidence":{"dataset":"city-evidence-v94.json","officialPrimaryCities":["tokyo","hongkong","beijing","shanghai","taichung","kaohsiung","taipei"],"verifiedCitiesAdded":["xiamen","guangzhou","singapore"],"verifiedDatesAdded":11,"chronologyCoverage":{"verified5525Cities":9,"cityRegistryCovered5525Cities":9,"coverage":"9/9"}},
+  "sources":[
+    {"publisher":"廈門本地寶","url":"https://xm.bendibao.com/xiuxian/2025922/93958.shtm","supports":"Xiamen Bailu Stadium and 2025-10-24 through 10-26 dates"},
+    {"publisher":"廣州日報新花城","url":"https://huacheng.gz-cmc.com/pages/2025/12/03/ce4d62d288f340cd840a9560b3b82b5b.html","supports":"Guangzhou venue and complete six-show date set"},
+    {"publisher":"Mothership.SG","url":"https://mothership.sg/2024/07/mayday-in-singapore-2025/","supports":"Singapore National Stadium and 2025-01-11 / 01-12 dates"}
+  ],
+  "regressionGates":{"routes":["home","city","album","songs","books","timeline"],"shaderRouteFlow":true,"bloomPerformanceControls":true,"homeAtlas":"atlas-v102.html home-only","shellLocalRequestBudget":{"css":6,"js":6,"total":12,"imports":0},"atlasEffectiveLocalNetwork":{"css":2,"js":4,"total":6,"imports":0},"requestDelta":0,"cityEvidenceRegistryCoverage":"9/9 verified 5525 chronology cities"},
+  "remaining":["served browser 6/6 A-F route traversal certification","shell/core release naming convergence","first-party promotion opportunities for currently VERIFIED Xiamen, Guangzhou and Singapore evidence"]
+}
