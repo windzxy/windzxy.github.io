@@ -1,9 +1,9 @@
 (function(){
-  if(window.__windzxyWorkspacePreloadCleanerLoadedV4)return;
-  window.__windzxyWorkspacePreloadCleanerLoadedV4=1;
+  if(window.__windzxyWorkspacePreloadCleanerLoadedV5)return;
+  window.__windzxyWorkspacePreloadCleanerLoadedV5=1;
   window.__windzxyWorkspacePreloadCleanerLoaded=1;
 
-  const VER='20260828-workspace-preload-cleaner4-save-manual-cards';
+  const VER='20260901-workspace-preload-cleaner5-storage-only';
   const STORE='windzxy-web-desktop-workspaces';
   const LEGACY=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
   const GEO='windzxy-web-desktop-card-geometry-v4';
@@ -20,7 +20,6 @@
 
   function clone(v){try{return JSON.parse(JSON.stringify(v));}catch(e){return v;}}
   function safeParse(text){try{const v=JSON.parse(text||'null');return Array.isArray(v)?v:null;}catch(e){return null;}}
-  function appOf(card){return String(card?.appId||card?.toolId||'');}
   function idOf(card){return String(card?.id||'');}
   function isManual(card){return !!card&&(card.source==='manual'||card.manual===true||card.userCreated===true||idOf(card).startsWith('custom-'));}
   function isLegacyAutoCard(card,ws){
@@ -55,6 +54,10 @@
     if(!parsed)return text;
     return JSON.stringify(ensureWorkspaces(parsed));
   }
+
+  const rawGet=Storage.prototype.getItem;
+  const rawSet=Storage.prototype.setItem;
+
   function cleanGeo(){
     try{
       const raw=rawGet.call(localStorage,GEO);
@@ -82,26 +85,9 @@
     cleanGeo();
   }
 
-  const rawGet=Storage.prototype.getItem;
-  const rawSet=Storage.prototype.setItem;
-  const rawPush=Array.prototype.push;
-
-  function shouldBlockPush(item){
-    if(!item||typeof item!=='object'||Array.isArray(item))return false;
-    if(isManual(item))return false;
-    const id=idOf(item);
-    const appId=appOf(item);
-    if(AUTO_WIDGET_ID_RE.test(id))return true;
-    if((id==='daily-metals-0'||id==='daily-fx-0'||id==='daily-fx-rates-0'))return true;
-    if((appId==='metals'||appId==='fx-rates')&&/^card-(metals|fx)-/i.test(id))return true;
-    return false;
-  }
-  Array.prototype.push=function(){
-    const args=[...arguments].filter(item=>!shouldBlockPush(item));
-    if(!args.length)return this.length;
-    return rawPush.apply(this,args);
-  };
-
+  // Only sanitize WebDesk workspace storage. Do not monkey-patch Array.prototype:
+  // global array interception can affect unrelated tools/widgets and is unnecessary
+  // because both reads and writes of the workspace keys are already normalized here.
   Storage.prototype.getItem=function(key){
     const value=rawGet.call(this,key);
     if(this===localStorage&&KEYS.has(String(key))&&value){
