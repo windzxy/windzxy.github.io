@@ -31,11 +31,18 @@ jobs:
           if anchor not in s2:
               raise SystemExit('repaired v119 anchor missing; refusing unsafe rewrite')
           s2=s2.replace(anchor,anchor+'\n  '+tag,1)
+
+          # Keep the static source-of-truth aligned with the production runtime.
+          s2=re.sub(r'data-maydayland-release="[^"]+"','data-maydayland-release="v124.2"',s2,count=1)
+          s2=re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="Maydayland v124.2：巡演地圖、城市專題、專輯室、歌曲宇宙、書籍出版與歷程檔案。">',s2,count=1)
+          s2=re.sub(r'<title>[^<]*</title>','<title>Maydayland · Tour Music Time Archive v124.2</title>',s2,count=1)
+          s2=s2.replace("version:'v123-audit',release:'runtime-audit-base-shell'","version:'v124.2',release:'production-polish-stable-core'")
+
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired production polish v124.2')
+              print('wired production polish v124.2 and normalized source metadata')
           else:
-              print('already wired')
+              print('already wired and normalized')
           PY
       - name: Verify stable core remains intact
         run: |
@@ -46,7 +53,10 @@ jobs:
           assert 'app-v119.js?v=20260901-repaired-v119.2' in s
           assert 'production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2' in s
           assert s.index('app-v119.js?v=20260901-repaired-v119.2') < s.index('production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2')
-          print('stable shell + runtime + polish order verified')
+          assert 'data-maydayland-release="v124.2"' in s
+          assert "version:'v124.2',release:'production-polish-stable-core'" in s
+          assert '<title>Maydayland · Tour Music Time Archive v124.2</title>' in s
+          print('stable shell + runtime + polish order + source metadata verified')
           PY
       - name: Commit entry update
         run: |
@@ -57,5 +67,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/index.html
-          git commit -m 'Wire Maydayland production polish v124.2'
+          git commit -m 'Normalize Maydayland v124.2 source metadata'
           git push
