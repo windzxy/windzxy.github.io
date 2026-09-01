@@ -1,9 +1,9 @@
 (function(){
   'use strict';
-  const VER='20260828-workspace-core-guard3-preserve-active-empty';
+  const VER='20260901-workspace-core-guard4-preserve-deleted-workspaces';
   if(window.__windzxyWorkspaceCoreGuardLoaded===VER)return;
   window.__windzxyWorkspaceCoreGuardLoaded=VER;
-  window.__windzxyWorkspaceCoreGuardV3Loaded=1;
+  window.__windzxyWorkspaceCoreGuardV4Loaded=1;
 
   const STORE_KEY='windzxy-web-desktop-workspaces';
   const LEGACY_KEYS=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
@@ -47,9 +47,8 @@
     return base.map(ws=>({id:ws.id,name:ws.name,hint:ws.hint,cards:[]}));
   }
   function ensureWorkspaceShells(list){
-    const byId=new Map((Array.isArray(list)?list:[]).map(ws=>[ws.id,ws]));
-    shellDefaults().forEach(ws=>{if(!byId.has(ws.id))byId.set(ws.id,ws);});
-    const out=Array.from(byId.values()).filter(Boolean);
+    const source=Array.isArray(list)&&list.length?list:shellDefaults();
+    const out=source.filter(Boolean).map(ws=>Object.assign({},ws));
     out.forEach(ws=>{if(!Array.isArray(ws.cards))ws.cards=[];});
     return out;
   }
@@ -80,8 +79,8 @@
     if(patched)return;
     patched=true;
     try{
-      if(typeof loadWorkspaces==='function'&&!window.__windzxyLoadWorkspacesGuardedV3){
-        window.__windzxyLoadWorkspacesGuardedV3=1;
+      if(typeof loadWorkspaces==='function'&&!window.__windzxyLoadWorkspacesGuardedV4){
+        window.__windzxyLoadWorkspacesGuardedV4=1;
         const oldLoad=loadWorkspaces;
         loadWorkspaces=function(){
           let out;
@@ -93,8 +92,8 @@
           return res.list;
         };
       }
-      if(typeof save==='function'&&!window.__windzxySaveGuardedV3){
-        window.__windzxySaveGuardedV3=1;
+      if(typeof save==='function'&&!window.__windzxySaveGuardedV4){
+        window.__windzxySaveGuardedV4=1;
         const oldSave=save;
         save=function(){
           try{localStorage.setItem(INIT_KEY,'1');}catch(e){}
@@ -104,8 +103,8 @@
           return out;
         };
       }
-      if(typeof addCard==='function'&&!window.__windzxyAddCardGuardedV3){
-        window.__windzxyAddCardGuardedV3=1;
+      if(typeof addCard==='function'&&!window.__windzxyAddCardGuardedV4){
+        window.__windzxyAddCardGuardedV4=1;
         const oldAdd=addCard;
         addCard=function(){
           manualAddUntil=Date.now()+1600;
@@ -115,8 +114,8 @@
           return out;
         };
       }
-      if(typeof resetLayout==='function'&&!window.__windzxyResetLayoutGuardedV3){
-        window.__windzxyResetLayoutGuardedV3=1;
+      if(typeof resetLayout==='function'&&!window.__windzxyResetLayoutGuardedV4){
+        window.__windzxyResetLayoutGuardedV4=1;
         resetLayout=function(){
           try{
             const ws=activeWorkspace();
@@ -126,8 +125,8 @@
           }catch(e){}
         };
       }
-      if(typeof renderAll==='function'&&!window.__windzxyRenderAllWorkspaceGuardedV3){
-        window.__windzxyRenderAllWorkspaceGuardedV3=1;
+      if(typeof renderAll==='function'&&!window.__windzxyRenderAllWorkspaceGuardedV4){
+        window.__windzxyRenderAllWorkspaceGuardedV4=1;
         const oldRenderAll=renderAll;
         renderAll=function(){
           rendering=true;
@@ -137,8 +136,8 @@
           return out;
         };
       }
-      if(typeof renderDesktop==='function'&&!window.__windzxyRenderDesktopWorkspaceGuardedV3){
-        window.__windzxyRenderDesktopWorkspaceGuardedV3=1;
+      if(typeof renderDesktop==='function'&&!window.__windzxyRenderDesktopWorkspaceGuardedV4){
+        window.__windzxyRenderDesktopWorkspaceGuardedV4=1;
         const oldRenderDesktop=renderDesktop;
         renderDesktop=function(){
           const out=oldRenderDesktop.apply(this,arguments);
@@ -146,7 +145,7 @@
           return out;
         };
       }
-    }catch(e){console.warn('workspace guard v3 patch failed',e);}
+    }catch(e){console.warn('workspace guard v4 patch failed',e);}
   }
   function sanitize(reason){
     if(sanitizing)return;
