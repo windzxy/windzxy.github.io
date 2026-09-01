@@ -1,0 +1,49 @@
+name: Maydayland Runtime Audit - Base Shell
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/maydayland-runtime-audit-base.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  isolate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Isolate base runtime
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('maydayland/index.html')
+          s=p.read_text(encoding='utf-8')
+          # During the audit, only the base v119 runtime is allowed to enhance the
+          # static first-screen fallback. Optional modules are deliberately isolated.
+          s=re.sub(r'\n\s*<script src="\./timeline-v123\.js\?v=[^"]+" defer></script>','',s)
+          s=re.sub(r'\n\s*<script src="\./timeline-date-precision-v1\.js\?v=[^"]+" defer></script>','',s)
+          s=re.sub(r'\n\s*<script src="\./songs-v120\.js\?v=[^"]+" defer></script>','',s)
+          s=re.sub(r'\n\s*<script src="\./mobile-ux-[^"]+\.js\?v=[^"]+" defer></script>','',s)
+          s=re.sub(r'<script src="\./app-v119\.js\?v=[^"]+" defer></script>', '<script src="./app-v119.js?v=20260901-audit-base-v119.1" defer></script>', s)
+          s=s.replace("release:'timeline-archive'","release:'runtime-audit-base-shell'")
+          s=s.replace("version:'v123'","version:'v123-audit'",1)
+          marker='</body>'
+          diag='''  <script id="maydayland-runtime-audit">\n  (()=>{\n    const paint=(state,detail)=>{const e=document.querySelector('[data-safe-status]');if(!e)return;e.textContent=state+(detail?' · '+detail:'');};\n    addEventListener('error',e=>{const src=e.filename?e.filename.split('/').pop():'';paint('互動層錯誤',src||e.message||'runtime error')},true);\n    addEventListener('unhandledrejection',e=>paint('互動層 Promise 錯誤',String(e.reason||'unknown').slice(0,90)));\n    addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{\n      const ready=document.documentElement.dataset.maydaylandRuntime==='v119-ready';\n      if(!ready&&document.getElementById('maydayland-static-fallback'))paint('BASE AUDIT · v119 未啟動','已隔離 v120/v123/mobile');\n    },2200);},{once:true});\n  })();\n  </script>\n'''
+          if 'id="maydayland-runtime-audit"' not in s:
+              s=s.replace(marker,diag+marker,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit audit entry
+        run: |
+          if git diff --quiet -- maydayland/index.html; then echo 'Base audit entry already isolated'; exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add maydayland/index.html
+          git commit -m 'Isolate Maydayland base v119 runtime for audit'
+          git push origin master
