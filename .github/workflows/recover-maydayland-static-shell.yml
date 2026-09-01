@@ -1,0 +1,46 @@
+name: Recover Maydayland Static Shell
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'maydayland/.recovery-shell-trigger'
+      - '.github/workflows/recover-maydayland-static-shell.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Add JS-independent first-screen fallback
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('maydayland/index.html')
+          s=p.read_text(encoding='utf-8')
+          style='''\n  <style id="maydayland-safe-shell-style">\n    #maydayland-static-fallback{min-height:100vh;padding:28px;color:#f4f8ff;background:radial-gradient(circle at 18% 0%,rgba(43,216,255,.16),transparent 34%),radial-gradient(circle at 82% 4%,rgba(255,196,93,.12),transparent 32%),linear-gradient(180deg,#06101d,#050912 48%,#03060b);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}#maydayland-static-fallback .safe-wrap{width:min(1180px,100%);margin:auto}#maydayland-static-fallback .safe-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0 30px}#maydayland-static-fallback .safe-brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.08em}#maydayland-static-fallback .safe-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#35dcff,#ffd36a);color:#07101a}#maydayland-static-fallback .safe-state{padding:7px 10px;border:1px solid rgba(114,245,198,.24);border-radius:999px;color:#9ee9cb;font-size:11px}#maydayland-static-fallback .safe-hero{padding:38px;border:1px solid rgba(255,255,255,.09);border-radius:28px;background:rgba(255,255,255,.045)}#maydayland-static-fallback .safe-kicker{color:#72f5c6;font-size:11px;font-weight:900;letter-spacing:.14em}#maydayland-static-fallback h1{margin:12px 0 12px;font-size:clamp(40px,7vw,84px);line-height:.96;letter-spacing:-.055em}#maydayland-static-fallback p{color:#aebfd0;max-width:760px}#maydayland-static-fallback .safe-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}#maydayland-static-fallback .safe-nav a{padding:10px 13px;border:1px solid rgba(255,255,255,.11);border-radius:999px;background:rgba(255,255,255,.045);color:#f4f8ff;text-decoration:none}#maydayland-static-fallback .safe-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}#maydayland-static-fallback .safe-card{padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.035)}#maydayland-static-fallback .safe-card b{display:block;margin-bottom:6px}#maydayland-static-fallback .safe-card span{color:#8096aa;font-size:12px}@media(max-width:720px){#maydayland-static-fallback{padding:16px}#maydayland-static-fallback .safe-hero{padding:24px}#maydayland-static-fallback .safe-grid{grid-template-columns:1fr}}\n  </style>'''
+          fallback='''<div id="app"><div id="maydayland-static-fallback"><div class="safe-wrap"><header class="safe-head"><div class="safe-brand"><span class="safe-mark">M</span><span>MAYDAYLAND</span></div><span class="safe-state" data-safe-status>SAFE SHELL · 正在載入互動版</span></header><main><section class="safe-hero"><span class="safe-kicker">MAYDAYLAND · RESILIENT FIRST SCREEN</span><h1>城市在路上，音樂在時間裡。</h1><p>巡演地圖、城市專題、唱片室、歌曲宇宙、出版與歷程檔案。即使互動腳本暫時失敗，首頁也不再黑屏。</p><nav class="safe-nav"><a href="#home">巡演地圖</a><a href="#city">城市專題</a><a href="#album">專輯室</a><a href="#songs">歌曲宇宙</a><a href="#books">書籍出版</a><a href="#timeline">歷程檔案</a></nav></section><section class="safe-grid"><article class="safe-card"><b>巡演地圖</b><span>城市、巡演與路線資料入口</span></article><article class="safe-card"><b>時光唱片室</b><span>錄音室專輯與曲目資料</span></article><article class="safe-card"><b>城市與歷程檔案</b><span>城市 evidence、出版與 Timeline</span></article></section></main></div></div></div>'''
+          if 'maydayland-safe-shell-style' not in s:
+              s=s.replace('</head>',style+'\n</head>',1)
+          import re
+          s=re.sub(r'<div id="app">.*?</div>\s*<script>window\.MAYDAYLAND_BUILD=',fallback+'\n  <script>window.MAYDAYLAND_BUILD=',s,count=1,flags=re.S)
+          guard='''  <script>document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{const f=document.querySelector('#maydayland-static-fallback [data-safe-status]');if(f)f.textContent='互動層未啟動 · 安全模式仍可瀏覽'},1600),{once:true});</script>\n'''
+          marker="  <script>window.MAYDAYLAND_BUILD="
+          if '互動層未啟動 · 安全模式仍可瀏覽' not in s:
+              s=s.replace(marker,guard+marker,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit recovered entry
+        run: |
+          if git diff --quiet -- maydayland/index.html; then echo 'Maydayland safe shell already present'; exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add maydayland/index.html
+          git commit -m 'Make Maydayland first screen resilient to JS failure'
+          git push origin master
