@@ -11,6 +11,7 @@ on:
       - 'Html_tools/typhoon-product-v5-2.js'
       - 'Html_tools/typhoon-layout-v5-3.js'
       - 'Html_tools/typhoon-polish-v5-4.js'
+      - 'Html_tools/typhoon-weather-layers-v5-5.js'
       - '.github/workflows/inject-webdesk-typhoon.yml'
   workflow_dispatch:
 
@@ -38,6 +39,7 @@ jobs:
           runtime = '<script src="Html_tools/typhoon-product-v5-2.js?v=20260901-typhoon-product-v5.2-runtime-hardened"></script>'
           layout = '<script src="Html_tools/typhoon-layout-v5-3.js?v=20260901-typhoon-layout-v5.3-overlay-safe"></script>'
           polish = '<script src="Html_tools/typhoon-polish-v5-4.js?v=20260901-typhoon-polish-v5.4-freshness"></script>'
+          weather = '<script src="Html_tools/typhoon-weather-layers-v5-5.js?v=20260901-typhoon-weather-v5.5-model-layers"></script>'
           patterns = [
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-radar-v4-1\.js\?v=[^"]+"></script>',
@@ -45,7 +47,8 @@ jobs:
             r'\n?<script src="Html_tools/typhoon-atmosphere-v5-1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-v5-2\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-layout-v5-3\.js\?v=[^"]+"></script>',
-            r'\n?<script src="Html_tools/typhoon-polish-v5-4\.js\?v=[^"]+"></script>'
+            r'\n?<script src="Html_tools/typhoon-polish-v5-4\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-weather-layers-v5-5\.js\?v=[^"]+"></script>'
           ]
           s2=s
           for pattern in patterns:
@@ -53,12 +56,12 @@ jobs:
           anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           if anchor not in s2:
               raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
-          s2=s2.replace(anchor,anchor+'\n'+widget+'\n'+radar+'\n'+product+'\n'+atmosphere+'\n'+runtime+'\n'+layout+'\n'+polish,1)
+          s2=s2.replace(anchor,anchor+'\n'+widget+'\n'+radar+'\n'+product+'\n'+atmosphere+'\n'+runtime+'\n'+layout+'\n'+polish+'\n'+weather,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired typhoon through polish v5.4')
+              print('wired typhoon through weather v5.5')
           else:
-              print('typhoon product v5.4 already wired')
+              print('typhoon product v5.5 already wired')
           PY
       - name: Commit injected entry update
         run: |
@@ -69,5 +72,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Wire WebDesk typhoon polish v5.4'
+          git commit -m 'Wire WebDesk typhoon weather layers v5.5'
           git push
