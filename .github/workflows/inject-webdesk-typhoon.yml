@@ -22,17 +22,20 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          tag = '<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-widget3-live-map"></script>'
-          if tag in s:
-              print('typhoon widget already wired')
+          tag = '<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-widget4-interactive-map"></script>'
+          s2 = re.sub(r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>', '', s)
+          anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
+          if anchor not in s2:
+              raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
+          s2 = s2.replace(anchor, anchor + '\n' + tag, 1)
+          if s2 != s:
+              p.write_text(s2, encoding='utf-8')
+              print('wired typhoon widget v4 into WebDesk entry')
           else:
-              anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
-              if anchor not in s:
-                  raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
-              p.write_text(s.replace(anchor, anchor + '\n' + tag, 1), encoding='utf-8')
-              print('wired typhoon widget into WebDesk entry')
+              print('typhoon widget v4 already wired')
           PY
       - name: Commit injected entry update
         run: |
@@ -43,5 +46,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Wire WebDesk typhoon widget into entry'
+          git commit -m 'Wire WebDesk typhoon interactive map v4'
           git push
