@@ -10,6 +10,8 @@ on:
       - 'Html_tools/class-schedule-adaptive-v7.js'
       - 'Html_tools/class-schedule-active-v8.js'
       - 'Html_tools/class-schedule-week-v9.js'
+      - 'Html_tools/class-schedule-mobile-v10.js'
+      - 'Html_tools/kids-workspace-v1.js'
       - 'Html_tools/toolbox-categories-v1.js'
       - '.github/workflows/inject-webdesk-class-schedule.yml'
   workflow_dispatch:
@@ -32,25 +34,22 @@ jobs:
           import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          schedule='<script src="Html_tools/class-schedule-widget-v1.js?v=20260901-class-schedule-v4-product-agenda"></script>'
-          theme='<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v5-visual-polish"></script>'
-          responsive='<script src="Html_tools/class-schedule-responsive-v6.js?v=20260901-class-schedule-responsive-v6"></script>'
-          adaptive='<script src="Html_tools/class-schedule-adaptive-v7.js?v=20260901-class-schedule-adaptive-v7.1-perf"></script>'
-          active='<script src="Html_tools/class-schedule-active-v8.js?v=20260901-class-schedule-active-v8"></script>'
-          week='<script src="Html_tools/class-schedule-week-v9.js?v=20260901-class-schedule-week-v9.2-restore-safe"></script>'
-          for pattern in [
-            r'\n?<script src="Html_tools/class-schedule-widget-v1\.js\?v=[^"]+"></script>',
-            r'\n?<script src="Html_tools/class-schedule-theme-v2\.js\?v=[^"]+"></script>',
-            r'\n?<script src="Html_tools/class-schedule-responsive-v6\.js\?v=[^"]+"></script>',
-            r'\n?<script src="Html_tools/class-schedule-adaptive-v7\.js\?v=[^"]+"></script>',
-            r'\n?<script src="Html_tools/class-schedule-active-v8\.js\?v=[^"]+"></script>',
-            r'\n?<script src="Html_tools/class-schedule-week-v9\.js\?v=[^"]+"></script>'
-          ]:
-            s=re.sub(pattern,'',s)
+          scripts=[
+            '<script src="Html_tools/class-schedule-widget-v1.js?v=20260901-class-schedule-v4-product-agenda"></script>',
+            '<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v5-visual-polish"></script>',
+            '<script src="Html_tools/class-schedule-responsive-v6.js?v=20260901-class-schedule-responsive-v6"></script>',
+            '<script src="Html_tools/class-schedule-adaptive-v7.js?v=20260901-class-schedule-adaptive-v7.1-perf"></script>',
+            '<script src="Html_tools/class-schedule-active-v8.js?v=20260901-class-schedule-active-v8"></script>',
+            '<script src="Html_tools/class-schedule-week-v9.js?v=20260901-class-schedule-week-v9.2-restore-safe"></script>',
+            '<script src="Html_tools/class-schedule-mobile-v10.js?v=20260901-class-schedule-mobile-v10"></script>',
+            '<script src="Html_tools/kids-workspace-v1.js?v=20260901-kids-workspace-v1"></script>'
+          ]
+          for name in ['class-schedule-widget-v1','class-schedule-theme-v2','class-schedule-responsive-v6','class-schedule-adaptive-v7','class-schedule-active-v8','class-schedule-week-v9','class-schedule-mobile-v10','kids-workspace-v1']:
+            s=re.sub(r'\n?<script src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"></script>','',s)
           anchor_re=r'(<script src="Html_tools/toolbox-categories-v1\.js\?v=[^"]+"></script>)'
           m=re.search(anchor_re,s)
           if not m: raise SystemExit('toolbox categories anchor not found')
-          s=s[:m.start()]+schedule+'\n'+theme+'\n'+responsive+'\n'+adaptive+'\n'+active+'\n'+week+'\n'+s[m.start():]
+          s=s[:m.start()]+'\n'.join(scripts)+'\n'+s[m.start():]
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit entry update
@@ -59,5 +58,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Wire WebDesk class schedule weekly restore-safe v9.2'
+          git commit -m 'Wire mobile class schedule and Kids workspace'
           git push origin master
