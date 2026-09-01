@@ -28,8 +28,8 @@ jobs:
           import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          schedule='<script src="Html_tools/class-schedule-widget-v1.js?v=20260901-class-schedule-v1-today-first"></script>'
-          theme='<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v3-premium-agenda"></script>'
+          schedule='<script src="Html_tools/class-schedule-widget-v1.js?v=20260901-class-schedule-v4-product-agenda"></script>'
+          theme='<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v4-approved-design"></script>'
           s=re.sub(r'\n?<script src="Html_tools/class-schedule-widget-v1\.js\?v=[^"]+"></script>', '', s)
           s=re.sub(r'\n?<script src="Html_tools/class-schedule-theme-v2\.js\?v=[^"]+"></script>', '', s)
           anchor_re=r'(<script src="Html_tools/toolbox-categories-v1\.js\?v=[^"]+"></script>)'
@@ -44,5 +44,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Wire WebDesk class schedule premium agenda v3'
+          git commit -m 'Wire approved WebDesk class schedule v4'
           git push origin master
