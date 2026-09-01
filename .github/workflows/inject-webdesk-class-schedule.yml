@@ -29,25 +29,20 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
           schedule='<script src="Html_tools/class-schedule-widget-v1.js?v=20260901-class-schedule-v1-today-first"></script>'
-          theme='<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v2-webdesk-native"></script>'
+          theme='<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v3-premium-agenda"></script>'
           s=re.sub(r'\n?<script src="Html_tools/class-schedule-widget-v1\.js\?v=[^"]+"></script>', '', s)
           s=re.sub(r'\n?<script src="Html_tools/class-schedule-theme-v2\.js\?v=[^"]+"></script>', '', s)
           anchor_re=r'(<script src="Html_tools/toolbox-categories-v1\.js\?v=[^"]+"></script>)'
           m=re.search(anchor_re,s)
-          if not m:
-              raise SystemExit('toolbox categories anchor not found')
+          if not m: raise SystemExit('toolbox categories anchor not found')
           s=s[:m.start()]+schedule+'\n'+theme+'\n'+s[m.start():]
-          s=re.sub(r'Html_tools/toolbox-categories-v1\.js\?v=[^"]+', 'Html_tools/toolbox-categories-v1.js?v=20260901-toolbox-categories5-class-schedule', s)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit entry update
         run: |
-          if git diff --quiet -- index.html; then
-            echo 'No entry change required.'
-            exit 0
-          fi
+          if git diff --quiet -- index.html; then echo 'No entry change required.'; exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Wire WebDesk class schedule theme v2 into entry'
+          git commit -m 'Wire WebDesk class schedule premium agenda v3'
           git push origin master
