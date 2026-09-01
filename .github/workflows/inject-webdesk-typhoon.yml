@@ -69,6 +69,33 @@ jobs:
           else:
               print('typhoon base and weather stack already wired')
           PY
+      - name: Verify typhoon stack order
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          files=[
+            'Html_tools/typhoon-widget.js',
+            'Html_tools/typhoon-radar-v4-1.js',
+            'Html_tools/typhoon-product-v5.js',
+            'Html_tools/typhoon-atmosphere-v5-1.js',
+            'Html_tools/typhoon-product-v5-2.js',
+            'Html_tools/typhoon-layout-v5-3.js',
+            'Html_tools/typhoon-polish-v5-4.js',
+            'Html_tools/typhoon-weather-layers-v5-5.js',
+            'Html_tools/typhoon-weather-layers-v5-6-fix.js',
+            'Html_tools/typhoon-weather-smooth-v5-7.js'
+          ]
+          pos=[]
+          for f in files:
+              count=s.count(f)
+              if count != 1:
+                  raise SystemExit(f'{f}: expected exactly once, got {count}')
+              pos.append(s.index(f))
+          if pos != sorted(pos):
+              raise SystemExit('typhoon stack load order invalid')
+          print('typhoon base -> enhancement stack order verified')
+          PY
       - name: Commit injected entry update
         run: |
           if git diff --quiet -- index.html; then
