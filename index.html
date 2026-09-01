@@ -106,6 +106,7 @@ const apps=[
   {id:"metals",kind:"widget",title:"金價",desc:"貴金屬行情與 TradingView 圖表。",icon:"◉",tone:"t-metals"},
   {id:"fx-rates",kind:"widget",title:"匯率",desc:"中國銀行外匯牌價與互換式換算。",icon:"⇄",tone:"t-fx"},
   {id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"},
+  {id:"class-schedule",kind:"widget",title:"課程表",desc:"今天優先的週課程表，快速查看當前與下一節。",icon:"課",tone:"t-schedule"},
   {id:"typhoon",kind:"widget",title:"颱風路徑",desc:"官方快照、地圖路徑、實況與預測。",icon:"🌀",tone:"t-typhoon"},
   {id:"weather",kind:"widget",title:"天氣",desc:"隨窗口大小自動顯示更多天氣。",icon:"☁",tone:"t-weather"}
 ];
@@ -207,8 +208,11 @@ function loadWorkspaces(){
 }
 function normalizeWorkspace(ws){
   if(!Array.isArray(ws.cards)&&Array.isArray(ws.toolIds))ws.cards=ws.toolIds.map((id,i)=>({id:ws.id+"-"+id+"-"+i,appId:id,x:64+(i%3)*316,y:72+Math.floor(i/3)*170,w:300,h:148,collapsed:false,data:{}}));
-  const allowedApps=new Set(apps.map(app=>app.id));
-  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).filter(card=>!card.custom&&allowedApps.has(card.appId||card.toolId||"note")).map((card,i)=>{
+  // Persist every user-created or dynamically registered card.
+  // Some widgets register after the core workspace loader runs; filtering by the
+  // current apps[] list here caused valid saved cards to disappear on refresh.
+  // Custom cards were also incorrectly discarded by the old !card.custom test.
+  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).filter(card=>card&&(card.custom||card.appId||card.toolId)).map((card,i)=>{
     const next={id:card.id||"card-"+Date.now()+"-"+i,appId:card.appId||card.toolId||"note",x:card.x||72,y:card.y||72,w:card.w||300,h:card.h||148,collapsed:!!card.collapsed,custom:card.custom,title:card.title,desc:card.desc,href:card.href,icon:card.icon,tone:card.tone,data:card.data||{}};
     if(next.appId==="weather"&&next.w<=390&&next.h<=270){
       next.w=430;
