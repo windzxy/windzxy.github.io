@@ -1,0 +1,57 @@
+name: Fix WebDesk Workspace Persistence
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/fix-webdesk-workspace-persistence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Preserve manual and dynamically registered cards across reloads
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          old='''  const allowedApps=new Set(apps.map(app=>app.id));\n  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).filter(card=>!card.custom&&allowedApps.has(card.appId||card.toolId||"note")).map((card,i)=>{'''
+          new='''  // Persist every user-created or dynamically registered card.\n  // Some widgets register after the core workspace loader runs; filtering by the\n  // current apps[] list here caused valid saved cards to disappear on refresh.\n  // Custom cards were also incorrectly discarded by the old !card.custom test.\n  ws.cards=(Array.isArray(ws.cards)?ws.cards:[]).filter(card=>card&&(card.custom||card.appId||card.toolId)).map((card,i)=>{'''
+
+          if old in s:
+              s=s.replace(old,new,1)
+          elif 'filter(card=>!card.custom&&allowedApps.has' in s:
+              raise SystemExit('workspace normalization changed unexpectedly; refusing unsafe patch')
+
+          # Register the current class-schedule card in the core catalog too, so it
+          # has metadata immediately during workspace restoration.
+          schedule='  {id:"class-schedule",kind:"widget",title:"課程表",desc:"今天優先的週課程表，快速查看當前與下一節。",icon:"課",tone:"t-schedule"},\n'
+          if 'id:"class-schedule"' not in s:
+              anchor='  {id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"},\n'
+              if anchor not in s:
+                  raise SystemExit('calendar app anchor not found')
+              s=s.replace(anchor,anchor+schedule,1)
+
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit persistence fix
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'No persistence change required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Fix WebDesk card persistence across refresh'
+          git push origin master
