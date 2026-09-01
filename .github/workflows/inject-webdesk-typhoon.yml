@@ -43,7 +43,7 @@ jobs:
           polish = '<script src="Html_tools/typhoon-polish-v5-4.js?v=20260901-typhoon-polish-v5.4-freshness"></script>'
           weather = '<script src="Html_tools/typhoon-weather-layers-v5-5.js?v=20260901-typhoon-weather-v5.5-model-layers"></script>'
           weatherfix = '<script src="Html_tools/typhoon-weather-layers-v5-6-fix.js?v=20260901-typhoon-weather-v5.6-control-fix"></script>'
-          smooth = '<script src="Html_tools/typhoon-weather-smooth-v5-7.js?v=20260901-typhoon-weather-v5.7-smooth-fields"></script>'
+          smooth = '<script src="Html_tools/typhoon-weather-smooth-v5-7.js?v=20260901-typhoon-weather-v5.8-progressive-fields"></script>'
           patterns = [
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-radar-v4-1\.js\?v=[^"]+"></script>',
@@ -65,9 +65,9 @@ jobs:
           s2=s2.replace(anchor,anchor+'\n'+widget+'\n'+radar+'\n'+product+'\n'+atmosphere+'\n'+runtime+'\n'+layout+'\n'+polish+'\n'+weather+'\n'+weatherfix+'\n'+smooth,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired typhoon through weather v5.7')
+              print('wired typhoon through weather v5.8')
           else:
-              print('typhoon product v5.7 already wired')
+              print('typhoon product v5.8 already wired')
           PY
       - name: Commit injected entry update
         run: |
@@ -78,5 +78,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Wire WebDesk typhoon smooth weather fields v5.7'
+          git commit -m 'Wire WebDesk typhoon progressive weather fields v5.8'
           git push
