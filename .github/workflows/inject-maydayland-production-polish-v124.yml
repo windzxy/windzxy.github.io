@@ -25,7 +25,7 @@ jobs:
           import re
           p=Path('maydayland/index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="./production-polish-v124.js?v=20260901-maydayland-production-polish-v124.1" defer></script>'
+          tag='<script src="./production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2" defer></script>'
           s2=re.sub(r'\n?\s*<script src="\./production-polish-v124\.js\?v=[^"]+" defer></script>','',s)
           anchor='<script src="./app-v119.js?v=20260901-repaired-v119.2" defer></script>'
           if anchor not in s2:
@@ -33,7 +33,7 @@ jobs:
           s2=s2.replace(anchor,anchor+'\n  '+tag,1)
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired production polish v124.1')
+              print('wired production polish v124.2')
           else:
               print('already wired')
           PY
@@ -44,8 +44,8 @@ jobs:
           s=Path('maydayland/index.html').read_text(encoding='utf-8')
           assert 'maydayland-static-fallback' in s
           assert 'app-v119.js?v=20260901-repaired-v119.2' in s
-          assert 'production-polish-v124.js?v=20260901-maydayland-production-polish-v124.1' in s
-          assert s.index('app-v119.js?v=20260901-repaired-v119.2') < s.index('production-polish-v124.js?v=20260901-maydayland-production-polish-v124.1')
+          assert 'production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2' in s
+          assert s.index('app-v119.js?v=20260901-repaired-v119.2') < s.index('production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2')
           print('stable shell + runtime + polish order verified')
           PY
       - name: Commit entry update
@@ -57,5 +57,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/index.html
-          git commit -m 'Wire Maydayland production polish v124.1'
+          git commit -m 'Wire Maydayland production polish v124.2'
           git push
