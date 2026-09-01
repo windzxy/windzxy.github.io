@@ -47,6 +47,9 @@ jobs:
           def text(el):
               return ''.join(el.itertext()).strip() if el is not None else ''
 
+          def direct_text(el):
+              return ''.join(el.itertext()).strip() if el is not None and len(list(el)) == 0 else ''
+
           def num(value):
               m = re.search(r'-?\d+(?:\.\d+)?', str(value or ''))
               return float(m.group(0)) if m else None
@@ -79,7 +82,8 @@ jobs:
                   'wind': child_text(el, ['wind','maxwind','windspeed','windSpeed']),
                   'pressure': child_text(el, ['pressure','centralPressure','minimumPressure','pres']),
                   'movement': child_text(el, ['movement','move','direction','speed']),
-                  'intensity': child_text(el, ['intensity','class','type','category'])
+                  'intensity': child_text(el, ['intensity','class','type','category']),
+                  'kind': local_name(el.tag).replace('information', '') or 'point'
               }
 
           def valid_name(value):
@@ -116,13 +120,15 @@ jobs:
               parent = {c: p for p in root.iter() for c in list(p)}
               links = []
               for el in root.iter():
-                  val = text(el)
+                  val = direct_text(el)
                   if re.search(r'\.xml(?:\?|$)', val, re.I):
                       if not re.match(r'https?://', val):
                           from urllib.parse import urljoin
                           val = urljoin(source_url, val)
+                      val = val.replace('http://www.weather.gov.hk/', 'https://www.weather.gov.hk/')
                       links.append(val)
               links = list(dict.fromkeys(links))[:8]
+              bulletin_time = child_text(root.find('.//BulletinHeader'), ['BulletinTime']) or child_text(root, ['BulletinTime'])
               groups = {}
               for el in root.iter():
                   p = point_from(el)
@@ -141,7 +147,8 @@ jobs:
                   if not name:
                       name = f'Tropical Cyclone {sid}' if sid != 'TC' else 'Tropical Cyclone'
                   key = f'{sid}-{name}'
-                  groups.setdefault(key, {'id': sid, 'name': name, 'points': []})['points'].append(p)
+                  group = groups.setdefault(key, {'id': sid, 'name': name, 'sourceUrl': source_url, 'bulletinTime': bulletin_time, 'points': []})
+                  group['points'].append(p)
               storms = []
               for s in groups.values():
                   seen = set(); pts = []
@@ -179,7 +186,9 @@ jobs:
               'source': SOURCE,
               'status': 'active' if storms else 'no-active-system',
               'storms': storms,
-              'errors': errors[:5]
+              'errors': errors[:5],
+              'ok': not errors,
+              'sourceUpdatedAt': max([s.get('bulletinTime') for s in storms if s.get('bulletinTime')] or [None])
           }
 
           old = {}
