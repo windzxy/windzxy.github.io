@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260901-class-schedule-week-v9.1-perf-fix';
+const VER='20260901-class-schedule-week-v9.2-restore-safe';
 if(window.__windzxyClassScheduleWeekV9===VER)return;
 window.__windzxyClassScheduleWeekV9=VER;
 function installStyle(){
@@ -8,34 +8,67 @@ function installStyle(){
   const s=document.createElement('style');
   s.id='classScheduleWeekV9Style';
   s.textContent=`
-.cs4.cs9-weekview{grid-template-rows:auto auto minmax(0,1fr);gap:11px}
-.cs4.cs9-weekview>.cs4-days{display:none!important}
-.cs4.cs9-weekview .cs4-content.week{padding:1px 2px 5px;overflow:auto;scrollbar-width:thin}
-.cs4.cs9-weekview .cs4-week-grid{min-width:720px;display:grid;grid-template-columns:112px repeat(5,minmax(108px,1fr));gap:0!important;border:1px solid color-mix(in srgb,var(--line) 72%,transparent);border-radius:16px;overflow:hidden;background:color-mix(in srgb,var(--panel) 91%,transparent);box-shadow:0 10px 30px color-mix(in srgb,var(--ink) 5%,transparent),inset 0 1px 0 rgba(255,255,255,.08)}
-.cs4.cs9-weekview .cs4-week-corner,.cs4.cs9-weekview .cs4-week-grid>button,.cs4.cs9-weekview .cs4-week-label,.cs4.cs9-weekview .cs4-week-cell{margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;min-height:54px;padding:9px 11px!important;background:transparent!important;border-right:1px solid color-mix(in srgb,var(--line) 55%,transparent)!important;border-bottom:1px solid color-mix(in srgb,var(--line) 52%,transparent)!important}
-.cs4.cs9-weekview .cs4-week-corner,.cs4.cs9-weekview .cs4-week-grid>button{position:sticky;top:0;z-index:5;min-height:48px;background:color-mix(in srgb,var(--panel2) 88%,var(--panel))!important;backdrop-filter:blur(14px)}
-.cs4.cs9-weekview .cs4-week-corner{display:flex;align-items:center;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.04em}
-.cs4.cs9-weekview .cs4-week-grid>button{display:flex;align-items:center;justify-content:space-between;gap:7px;cursor:pointer;color:var(--muted)}
-.cs4.cs9-weekview .cs4-week-grid>button b{font-size:12px;font-weight:780;color:var(--ink)}
-.cs4.cs9-weekview .cs4-week-grid>button small{font-size:9px;font-weight:680;color:var(--muted)}
-.cs4.cs9-weekview .cs4-week-grid>button.on{background:linear-gradient(180deg,color-mix(in srgb,var(--blue1) 13%,var(--panel)),color-mix(in srgb,var(--blue1) 6%,var(--panel2)))!important}
-.cs4.cs9-weekview .cs4-week-grid>button.on b{color:color-mix(in srgb,var(--blue1) 84%,var(--ink))}
-.cs4.cs9-weekview .cs4-week-label{display:flex;flex-direction:column;justify-content:center;background:color-mix(in srgb,var(--panel2) 54%,transparent)!important}
-.cs4.cs9-weekview .cs4-week-label b{font-size:11px;font-weight:780;color:var(--ink)}
-.cs4.cs9-weekview .cs4-week-label small{margin-top:2px;font-size:9px;color:var(--muted);font-variant-numeric:tabular-nums}
-.cs4.cs9-weekview .cs4-week-cell{position:relative;display:grid;place-items:center;text-align:center;font-size:12px;font-weight:720;color:var(--ink);transition:background .15s ease,color .15s ease}
-.cs4.cs9-weekview .cs4-week-cell::before{content:'';position:absolute;left:7px;top:50%;width:3px;height:18px;border-radius:999px;transform:translateY(-50%);background:var(--sub,#94a3b8);opacity:.34}
-.cs4.cs9-weekview .cs4-week-cell:hover{background:color-mix(in srgb,var(--panel2) 64%,transparent)!important}
-.cs4.cs9-weekview .cs9-selected-col{background:color-mix(in srgb,var(--blue1) 7%,var(--panel))!important}
-.cs4.cs9-weekview .cs4-week-cell.cs9-selected-col::before{opacity:.9;box-shadow:0 0 9px color-mix(in srgb,var(--sub,#4f7cff) 32%,transparent)}
-.cs4.cs9-weekview .cs9-section-start{border-top:2px solid color-mix(in srgb,var(--cs-orange,#f59e0b) 34%,var(--line))!important}
-.cs4.cs9-weekview .cs9-after-start{border-top-color:color-mix(in srgb,var(--cs-violet,#7c5cff) 38%,var(--line))!important}
-.cs4.cs9-weekview .cs9-afternoon-label b{color:color-mix(in srgb,var(--cs-orange,#f59e0b) 82%,var(--ink))}
-.cs4.cs9-weekview .cs9-after-label b{color:color-mix(in srgb,var(--cs-violet,#7c5cff) 84%,var(--ink))}
-.cs4.cs9-weekview .cs4-week-grid>*:nth-child(6n){border-right:0!important}
-.cs4.cs9-weekview .cs4-week-grid>*:nth-last-child(-n+6){border-bottom:0!important}
-:root[data-theme=dark] .cs4.cs9-weekview .cs4-week-grid{background:color-mix(in srgb,var(--panel) 95%,#0b1220 5%);box-shadow:0 12px 32px rgba(0,0,0,.15)}
-@container (max-width:760px){.cs4.cs9-weekview .cs4-week-grid{min-width:660px;grid-template-columns:104px repeat(5,minmax(100px,1fr))}.cs4.cs9-weekview .cs4-week-corner,.cs4.cs9-weekview .cs4-week-grid>button,.cs4.cs9-weekview .cs4-week-label,.cs4.cs9-weekview .cs4-week-cell{min-height:49px;padding:8px 9px!important}.cs4.cs9-weekview .cs4-week-cell{font-size:11px}}
+/* Restore-safe week mode: CSS :has() is the source of truth, so persisted week view
+   is correct even before the JS enhancer has run. */
+.cs4:has(.cs4-content.week){grid-template-rows:auto auto minmax(0,1fr);gap:10px}
+.cs4:has(.cs4-content.week)>.cs4-days{display:none!important}
+.cs4:has(.cs4-content.week) .cs4-head{justify-content:flex-end;min-height:34px}
+.cs4:has(.cs4-content.week) .cs4-title{display:none!important}
+.cs4:has(.cs4-content.week) .cs4-hero{gap:7px}
+.cs4:has(.cs4-content.week) .cs4-stat{min-height:78px;padding:10px 12px;border-radius:14px}
+.cs4:has(.cs4-content.week) .cs4-stat>span{margin-bottom:4px}
+.cs4:has(.cs4-content.week) .cs4-stat>strong{font-size:16px}
+.cs4:has(.cs4-content.week) .cs4-stat>b{margin-top:4px;font-size:10px}
+.cs4:has(.cs4-content.week) .cs4-stat>small{display:none}
+.cs4:has(.cs4-content.week) .cs4-content.week{padding:1px 2px 5px;overflow:auto;scrollbar-width:thin}
+
+/* Week table is one coherent surface, not a grid of floating cards. */
+.cs4:has(.cs4-content.week) .cs4-week-grid{
+  min-width:720px;display:grid;grid-template-columns:112px repeat(5,minmax(108px,1fr));gap:0!important;
+  border:1px solid color-mix(in srgb,var(--line) 72%,transparent);border-radius:15px;overflow:hidden;
+  background:color-mix(in srgb,var(--panel) 94%,transparent);
+  box-shadow:0 10px 28px color-mix(in srgb,var(--ink) 4%,transparent),inset 0 1px 0 rgba(255,255,255,.06)
+}
+.cs4:has(.cs4-content.week) .cs4-week-corner,
+.cs4:has(.cs4-content.week) .cs4-week-grid>button,
+.cs4:has(.cs4-content.week) .cs4-week-label,
+.cs4:has(.cs4-content.week) .cs4-week-cell{
+  margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+  min-height:52px;padding:8px 10px!important;background:transparent!important;
+  border-right:1px solid color-mix(in srgb,var(--line) 50%,transparent)!important;
+  border-bottom:1px solid color-mix(in srgb,var(--line) 48%,transparent)!important
+}
+.cs4:has(.cs4-content.week) .cs4-week-corner,
+.cs4:has(.cs4-content.week) .cs4-week-grid>button{
+  position:sticky;top:0;z-index:5;min-height:46px;
+  background:color-mix(in srgb,var(--panel2) 88%,var(--panel))!important;backdrop-filter:blur(12px)
+}
+.cs4:has(.cs4-content.week) .cs4-week-corner{display:flex;align-items:center;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.04em}
+.cs4:has(.cs4-content.week) .cs4-week-grid>button{display:flex;align-items:center;justify-content:space-between;gap:7px;cursor:pointer;color:var(--muted)}
+.cs4:has(.cs4-content.week) .cs4-week-grid>button b{font-size:12px;font-weight:800;color:var(--ink)}
+.cs4:has(.cs4-content.week) .cs4-week-grid>button small{font-size:9px;font-weight:680;color:var(--muted)}
+.cs4:has(.cs4-content.week) .cs4-week-grid>button.on{background:linear-gradient(180deg,color-mix(in srgb,var(--blue1) 13%,var(--panel)),color-mix(in srgb,var(--blue1) 5%,var(--panel2)))!important}
+.cs4:has(.cs4-content.week) .cs4-week-grid>button.on b{color:color-mix(in srgb,var(--blue1) 84%,var(--ink))}
+.cs4:has(.cs4-content.week) .cs4-week-label{display:flex;flex-direction:column;justify-content:center;background:color-mix(in srgb,var(--panel2) 48%,transparent)!important}
+.cs4:has(.cs4-content.week) .cs4-week-label b{font-size:11px;font-weight:790;color:var(--ink)}
+.cs4:has(.cs4-content.week) .cs4-week-label small{margin-top:2px;font-size:9px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cs4:has(.cs4-content.week) .cs4-week-cell{position:relative;display:grid;place-items:center;text-align:center;font-size:12px;font-weight:720;color:var(--ink);transition:background .15s ease,color .15s ease}
+.cs4:has(.cs4-content.week) .cs4-week-cell::before{content:'';position:absolute;left:7px;top:50%;width:3px;height:17px;border-radius:999px;transform:translateY(-50%);background:var(--sub,#94a3b8);opacity:.28}
+.cs4:has(.cs4-content.week) .cs4-week-cell:hover{background:color-mix(in srgb,var(--panel2) 58%,transparent)!important}
+.cs4:has(.cs4-content.week) .cs9-selected-col{background:color-mix(in srgb,var(--blue1) 6%,var(--panel))!important}
+.cs4:has(.cs4-content.week) .cs4-week-cell.cs9-selected-col::before{opacity:.85;box-shadow:0 0 8px color-mix(in srgb,var(--sub,#4f7cff) 28%,transparent)}
+.cs4:has(.cs4-content.week) .cs9-section-start{border-top:2px solid color-mix(in srgb,var(--cs-orange,#f59e0b) 30%,var(--line))!important}
+.cs4:has(.cs4-content.week) .cs9-after-start{border-top-color:color-mix(in srgb,var(--cs-violet,#7c5cff) 34%,var(--line))!important}
+.cs4:has(.cs4-content.week) .cs9-afternoon-label b{color:color-mix(in srgb,var(--cs-orange,#f59e0b) 82%,var(--ink))}
+.cs4:has(.cs4-content.week) .cs9-after-label b{color:color-mix(in srgb,var(--cs-violet,#7c5cff) 84%,var(--ink))}
+.cs4:has(.cs4-content.week) .cs4-week-grid>*:nth-child(6n){border-right:0!important}
+.cs4:has(.cs4-content.week) .cs4-week-grid>*:nth-last-child(-n+6){border-bottom:0!important}
+:root[data-theme=dark] .cs4:has(.cs4-content.week) .cs4-week-grid{background:color-mix(in srgb,var(--panel) 96%,#0b1220 4%);box-shadow:0 10px 28px rgba(0,0,0,.13)}
+@container (max-width:760px){
+  .cs4:has(.cs4-content.week) .cs4-week-grid{min-width:650px;grid-template-columns:102px repeat(5,minmax(98px,1fr))}
+  .cs4:has(.cs4-content.week) .cs4-week-corner,.cs4:has(.cs4-content.week) .cs4-week-grid>button,.cs4:has(.cs4-content.week) .cs4-week-label,.cs4:has(.cs4-content.week) .cs4-week-cell{min-height:48px;padding:7px 8px!important}
+  .cs4:has(.cs4-content.week) .cs4-week-cell{font-size:11px}
+}
 `;
   document.head.appendChild(s);
 }
@@ -61,17 +94,16 @@ function sync(root){
     if(row===8){label?.classList.add('cs9-section-start','cs9-after-start','cs9-after-label');for(let j=1;j<=5;j++)children[start+j]?.classList.add('cs9-section-start','cs9-after-start');}
   }
 }
-function scan(scope=document){scope.querySelectorAll?.('.class-schedule-v1.cs4').forEach(sync)}
+function scan(){document.querySelectorAll('.class-schedule-v1.cs4').forEach(sync)}
 let pending=false;
 function scheduleScan(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;scan()})}
 function boot(){
   installStyle();scan();
-  /* PERFORMANCE: watch structural changes only. Never observe class attributes here,
-     because sync() itself changes classes and would create an observer feedback loop. */
-  const host=document.getElementById('windowLayer')||document.body;
-  new MutationObserver(muts=>{if(muts.some(m=>m.addedNodes.length||m.removedNodes.length))scheduleScan()}).observe(host,{childList:true,subtree:true});
+  /* Structural-only observer on body is restore-safe and cannot loop on our class updates. */
+  new MutationObserver(muts=>{if(muts.some(m=>m.addedNodes.length||m.removedNodes.length))scheduleScan()}).observe(document.body,{childList:true,subtree:true});
   document.addEventListener('click',e=>{if(e.target.closest('[data-cs4-view],[data-cs4-day]'))requestAnimationFrame(scheduleScan)},true);
+  setTimeout(scan,0);setTimeout(scan,120);setTimeout(scan,500);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskClassScheduleWeek={version:'v9.1',performanceFix:true};
+window.WebDeskClassScheduleWeek={version:'v9.2',performanceFix:true,restoreSafe:true};
 })();
