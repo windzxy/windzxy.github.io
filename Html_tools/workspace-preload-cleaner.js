@@ -1,9 +1,9 @@
 (function(){
-  if(window.__windzxyWorkspacePreloadCleanerLoadedV5)return;
-  window.__windzxyWorkspacePreloadCleanerLoadedV5=1;
+  if(window.__windzxyWorkspacePreloadCleanerLoadedV6)return;
+  window.__windzxyWorkspacePreloadCleanerLoadedV6=1;
   window.__windzxyWorkspacePreloadCleanerLoaded=1;
 
-  const VER='20260901-workspace-preload-cleaner5-storage-only';
+  const VER='20260901-workspace-preload-cleaner6-preserve-deletions';
   const STORE='windzxy-web-desktop-workspaces';
   const LEGACY=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
   const GEO='windzxy-web-desktop-card-geometry-v4';
@@ -41,9 +41,7 @@
   }
   function ensureWorkspaces(list){
     const source=Array.isArray(list)&&list.length?list:clone(EMPTY_DEFAULTS);
-    const byId=new Map(source.map(ws=>[ws.id,Object.assign({},ws)]));
-    EMPTY_DEFAULTS.forEach(def=>{if(!byId.has(def.id))byId.set(def.id,Object.assign({},def));});
-    return [...byId.values()].map(ws=>{
+    return source.filter(Boolean).map(ws=>{
       const cards=(Array.isArray(ws.cards)?ws.cards:[]).map(normalizeCard);
       const kept=cards.filter(card=>!isLegacyAutoCard(card,ws));
       return Object.assign({},ws,{cards:kept});
@@ -85,9 +83,6 @@
     cleanGeo();
   }
 
-  // Only sanitize WebDesk workspace storage. Do not monkey-patch Array.prototype:
-  // global array interception can affect unrelated tools/widgets and is unnecessary
-  // because both reads and writes of the workspace keys are already normalized here.
   Storage.prototype.getItem=function(key){
     const value=rawGet.call(this,key);
     if(this===localStorage&&KEYS.has(String(key))&&value){
