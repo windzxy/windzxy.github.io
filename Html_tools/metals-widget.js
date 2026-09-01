@@ -21,17 +21,13 @@
     if(typeof apps==='undefined'||typeof renderAll==='undefined'||typeof bodyHtml==='undefined'||typeof save==='undefined'){
       setTimeout(boot,80);return;
     }
-    style();install();patch();ensure();fit();renderAll();after();start();window.windzxyRefreshMetals=()=>refresh(true);
+    style();install();patch();fit();renderAll();after();start();window.windzxyRefreshMetals=()=>refresh(true);
   }
 
   function install(){
     const info={id:APP,kind:'widget',title:'金價',desc:'貴金屬行情與 TradingView 圖表。',icon:'Au',tone:'t-metals'};
     const old=apps.find(a=>a.id===APP);old?Object.assign(old,info):apps.push(info);
-    if(typeof defaults!=='undefined')defaults.forEach(ws=>{
-      if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP))ws.cards.push({id:'daily-metals-0',appId:APP,x:300,y:440,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
-    });
   }
-  function ensure(){try{const ws=activeWorkspace();if(ws&&!ws.cards.some(c=>c.appId===APP)){ws.cards.push({id:'card-metals-'+Date.now(),appId:APP,x:300,y:440,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});save();}}catch(e){}}
   function fit(){try{let changed=false;workspaces.forEach(ws=>(ws.cards||[]).forEach(c=>{if(c.appId===APP){if((c.w||0)<MIN_W){c.w=MIN_W;changed=true;}if((c.h||0)<MIN_H){c.h=MIN_H;changed=true;}}}));if(changed)save();}catch(e){}}
   function patch(){
     if(window.__windzxyMetalsWidgetPatched)return;window.__windzxyMetalsWidgetPatched=1;

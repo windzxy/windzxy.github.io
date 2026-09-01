@@ -26,27 +26,12 @@
     if(typeof apps==='undefined'||typeof bodyHtml==='undefined'||typeof renderAll==='undefined'||typeof save==='undefined'){
       setTimeout(boot,80);return;
     }
-    installStyle();installApp();patchRenderers();ensureCard();renderAll();afterRender();start();window.windzxyRefreshFx=()=>load(true);
+    installStyle();installApp();patchRenderers();renderAll();afterRender();start();window.windzxyRefreshFx=()=>load(true);
   }
 
   function installApp(){
     const info={id:APP,kind:'widget',title:'匯率',desc:'中國銀行外匯牌價，自定義下拉與雙向換算。',icon:'FX',tone:'t-fx'};
     const old=apps.find(x=>x.id===APP);old?Object.assign(old,info):apps.push(info);
-    if(typeof defaults!=='undefined')defaults.forEach(ws=>{
-      if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP)){
-        ws.cards.push({id:'daily-fx-0',appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
-      }
-    });
-  }
-
-  function ensureCard(){
-    try{
-      const ws=activeWorkspace();
-      if(ws&&!ws.cards.some(c=>c.appId===APP)){
-        ws.cards.push({id:'card-fx-'+Date.now(),appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});
-        save();
-      }
-    }catch(e){}
   }
 
   function patchRenderers(){
