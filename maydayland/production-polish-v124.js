@@ -1,10 +1,25 @@
 (()=>{
   'use strict';
-  const VERSION='20260901-maydayland-production-polish-v124';
+  const VERSION='20260901-maydayland-production-polish-v124.1';
+  function syncMobileNav(){
+    const active=document.querySelector('.nav [data-page].active,.nav [data-page][aria-current="page"]');
+    if(active&&window.matchMedia('(max-width:760px)').matches){
+      active.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+    }
+  }
   function apply(){
     const shell=document.querySelector('.shell');
     if(!shell||shell.dataset.productionPolish===VERSION)return !!shell;
     shell.dataset.productionPolish=VERSION;
+    document.documentElement.dataset.maydaylandRelease='v124';
+    document.documentElement.dataset.maydaylandProduct='v124-stable';
+    document.title='Maydayland · 五月天巡演與作品資料館';
+    const meta=document.querySelector('meta[name="description"]');
+    if(meta)meta.content='Maydayland：五月天巡演城市、專輯、歌曲、出版與歷程檔案的互動資料館。';
+    if(window.MAYDAYLAND_BUILD){
+      window.MAYDAYLAND_BUILD.version='v124';
+      window.MAYDAYLAND_BUILD.release='stable-recovery-core';
+    }
     const brandSmall=document.querySelector('.brand small');
     if(brandSmall)brandSmall.textContent='Tour · Music · Time Archive';
     const perf=document.querySelector('.perf span');
@@ -34,7 +49,7 @@
     });
     const footer=document.querySelector('.footer .wrap');
     if(footer)footer.textContent='Maydayland · 五月天巡演與作品資料館';
-    document.documentElement.dataset.maydaylandProduct='v124-stable';
+    setTimeout(syncMobileNav,0);
     return true;
   }
   const style=document.createElement('style');
@@ -49,13 +64,24 @@
     .shell[data-production-polish] .score small{letter-spacing:.05em;text-transform:none}
     .shell[data-production-polish] .perf span{color:#a8d9ca}
     @media(max-width:760px){
+      .shell[data-production-polish] .top{padding-top:env(safe-area-inset-top)}
+      .shell[data-production-polish] .top-in{align-items:center;gap:10px;overflow:hidden}
+      .shell[data-production-polish] .brand{flex:0 0 auto}
+      .shell[data-production-polish] .perf{display:none}
+      .shell[data-production-polish] .nav{display:flex;flex:1 1 auto;min-width:0;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 2px}
+      .shell[data-production-polish] .nav::-webkit-scrollbar{display:none}
+      .shell[data-production-polish] .nav [data-page]{flex:0 0 auto;scroll-snap-align:center;white-space:nowrap}
       .shell[data-production-polish] .hero-copy{padding:24px 20px}
       .shell[data-production-polish] .hero-copy h1{font-size:clamp(40px,12vw,58px)}
       .shell[data-production-polish] .score{grid-template-columns:1fr 1fr}
       .shell[data-production-polish] .score>div{min-height:78px}
     }
+    @media(prefers-reduced-motion:reduce){.shell[data-production-polish] *{scroll-behavior:auto!important}}
   `;
   document.head.appendChild(style);
+  addEventListener('hashchange',()=>setTimeout(syncMobileNav,0));
+  addEventListener('resize',()=>setTimeout(syncMobileNav,60),{passive:true});
+  document.addEventListener('click',e=>{if(e.target.closest('.nav [data-page]'))setTimeout(syncMobileNav,80)},true);
   if(!apply()){
     let tries=0;
     const timer=setInterval(()=>{tries++; if(apply()||tries>=24)clearInterval(timer)},80);
