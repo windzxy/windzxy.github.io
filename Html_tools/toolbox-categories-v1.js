@@ -29,12 +29,17 @@
     return '<button class="dock-tool '+escapeHtml(t.tone||'')+'" type="button" data-id="'+escapeHtml(t.id)+'" aria-label="'+escapeHtml(tr(t.title))+'"><span class="app-icon">'+escapeHtml(t.icon||'')+'</span><span>'+labelHtml(t.title)+'</span><small aria-hidden="true">＋</small></button>';
   }
 
+  function categorySearchText(app){
+    const group=groups.find(g=>g.items.includes(app.id));
+    return group?[group.title,tr(group.title),group.id].join(' '):'';
+  }
+
   function groupedRenderShelf(){
     const shelf=document.getElementById('toolShelf');
     if(!shelf||typeof apps==='undefined')return;
     ensureStyles();
     const q=(document.getElementById('deskSearch')?.value||'').trim().toLowerCase();
-    const matches=apps.filter(t=>!q||[t.title,t.desc,tr(t.title),tr(t.desc)].join(' ').toLowerCase().includes(q));
+    const matches=apps.filter(t=>!q||[t.title,t.desc,tr(t.title),tr(t.desc),categorySearchText(t)].join(' ').toLowerCase().includes(q));
     shelf.setAttribute('aria-live','polite');
     shelf.setAttribute('aria-label',q?tr('搜尋結果'):tr('功能庫'));
     if(q){
@@ -77,5 +82,5 @@
     });
   }
   groupedRenderShelf();
-  window.WebDeskToolboxCategories={version:'v3',groups:groups.map(g=>g.id),render:groupedRenderShelf,shortcuts:{focusSearch:'/',clearSearch:'Escape'}};
+  window.WebDeskToolboxCategories={version:'v4',groups:groups.map(g=>g.id),render:groupedRenderShelf,shortcuts:{focusSearch:'/',clearSearch:'Escape'},categorySearch:true};
 })();
