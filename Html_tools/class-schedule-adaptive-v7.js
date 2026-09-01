@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260901-class-schedule-adaptive-v7';
+const VER='20260901-class-schedule-adaptive-v7.1-perf';
 if(window.__windzxyClassScheduleAdaptiveV7===VER)return;
 window.__windzxyClassScheduleAdaptiveV7=VER;
 
@@ -83,8 +83,22 @@ function applyMode(root){
 const observer=new ResizeObserver(entries=>entries.forEach(e=>applyMode(e.target)));
 function bind(root){if(root.dataset.cs7Bound)return;root.dataset.cs7Bound='1';observer.observe(root);applyMode(root)}
 function scan(){document.querySelectorAll('.class-schedule-v1.cs4').forEach(bind)}
-function boot(){installStyle();scan();new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});setInterval(()=>document.querySelectorAll('.class-schedule-v1.cs4').forEach(updatePast),30000)}
+function scanNode(node){
+  if(!node||node.nodeType!==1)return;
+  if(node.matches?.('.class-schedule-v1.cs4'))bind(node);
+  node.querySelectorAll?.('.class-schedule-v1.cs4').forEach(bind);
+}
+function boot(){
+  installStyle();
+  scan();
+  const target=document.getElementById('windowLayer')||document.body;
+  new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(scanNode))).observe(target,{childList:true,subtree:true});
+  setInterval(()=>{
+    if(document.hidden)return;
+    document.querySelectorAll('.class-schedule-v1.cs4').forEach(updatePast);
+  },30000);
+}
 document.addEventListener('click',e=>{const b=e.target.closest('.cs7-past-toggle');if(b){const root=b.closest('.cs4');if(root){root.classList.toggle('cs7-show-past');updatePast(root)}}},true);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskClassScheduleAdaptive={version:'v7',modes:['dashboard','agenda','focus']};
+window.WebDeskClassScheduleAdaptive={version:'v7.1',modes:['dashboard','agenda','focus'],observer:'scoped-incremental'};
 })();
