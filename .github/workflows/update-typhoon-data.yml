@@ -1,12 +1,20 @@
 name: Update HKO Typhoon Data
 
 on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/update-typhoon-data.yml'
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: update-hko-typhoon-data
+  cancel-in-progress: true
 
 jobs:
   update:
@@ -22,14 +30,14 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           from datetime import datetime, timezone
-          import json, re, urllib.request, xml.etree.ElementTree as ET
+          import json, re, sys, urllib.request, xml.etree.ElementTree as ET
 
           SOURCE = 'https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml'
           OUT = Path('data/typhoon.json')
           OUT.parent.mkdir(parents=True, exist_ok=True)
 
           def fetch(url):
-              req = urllib.request.Request(url, headers={'User-Agent': 'windzxy-webdesk/1.0'})
+              req = urllib.request.Request(url, headers={'User-Agent': 'windzxy-webdesk/2.0'})
               with urllib.request.urlopen(req, timeout=20) as r:
                   return r.read().decode('utf-8', 'ignore')
 
@@ -44,6 +52,8 @@ jobs:
               return float(m.group(0)) if m else None
 
           def child_text(el, names):
+              if el is None:
+                  return ''
               names = [n.lower() for n in names]
               for k, v in el.attrib.items():
                   lk = local_name(k)
@@ -81,7 +91,7 @@ jobs:
                   return ''
               if low.startswith(('http://','https://')):
                   return ''
-              if re.search(r'(?:tc[_-]?track|schema)', low) and ('/' in low or '.' in low or '_' in low):
+              if re.search(r'(?:tc[_-]?track|schema)', low):
                   return ''
               return value
 
@@ -112,7 +122,7 @@ jobs:
                           from urllib.parse import urljoin
                           val = urljoin(source_url, val)
                       links.append(val)
-              links = list(dict.fromkeys(links))[:6]
+              links = list(dict.fromkeys(links))[:8]
               groups = {}
               for el in root.iter():
                   p = point_from(el)
@@ -123,7 +133,7 @@ jobs:
                   while cur in parent:
                       cur = parent[cur]
                       lname = local_name(cur.tag)
-                      if re.search(r'(cyclone|typhoon|storm|tc|tropical)', lname):
+                      if re.search(r'(cyclone|typhoon|storm|tropical|^tc$)', lname):
                           holder = cur
                           break
                   sid = child_text(holder, ['tcid','id','identifier','stormid']) or child_text(parent.get(el), ['tcid','id','identifier','stormid']) or 'TC'
@@ -144,6 +154,7 @@ jobs:
                   if pts:
                       s['points'] = pts
                       storms.append(s)
+              storms.sort(key=lambda s: str(s.get('id','')))
               return storms, links
 
           errors = []
@@ -162,16 +173,32 @@ jobs:
           except Exception as e:
               errors.append(str(e))
 
-          payload = {
+          core = {
               'type': 'hko-typhoon-track',
-              'version': 2,
+              'version': 3,
               'source': SOURCE,
-              'updatedAt': datetime.now(timezone.utc).isoformat(),
               'status': 'active' if storms else 'no-active-system',
               'storms': storms,
               'errors': errors[:5]
           }
+
+          old = {}
+          if OUT.exists():
+              try:
+                  old = json.loads(OUT.read_text(encoding='utf-8'))
+              except Exception:
+                  old = {}
+          old_core = {k: old.get(k) for k in core}
+          if old_core == core:
+              print('HKO track content unchanged; no commit required.')
+              sys.exit(0)
+
+          payload = {
+              **core,
+              'updatedAt': datetime.now(timezone.utc).isoformat(),
+          }
           OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          print(f'Normalized {len(storms)} active system(s).')
           PY
 
       - name: Commit snapshot
