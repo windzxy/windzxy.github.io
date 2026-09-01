@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VER='20260828-image-studio-v5-crop-overlay-handles';
+  const VER='20260901-image-studio-v5.1-crop-overlay-efficient-observer';
   if(window.__windzxyImageStudioV5CropOverlay===VER)return;
   window.__windzxyImageStudioV5CropOverlay=VER;
 
@@ -134,7 +134,38 @@
     `;
     document.head.appendChild(s);
   }
-  function boot(){style();schedule();document.addEventListener('pointerdown',startDrag,true);document.addEventListener('click',()=>setTimeout(schedule,40),true);document.addEventListener('input',e=>{if(e.target.closest('[data-is4-root]'))schedule();},true);window.addEventListener('resize',schedule,{passive:true});new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','src']});setInterval(schedule,1200);}
+  function boot(){
+    style();
+    schedule();
+    document.addEventListener('pointerdown',startDrag,true);
+    document.addEventListener('click',()=>setTimeout(schedule,40),true);
+    document.addEventListener('input',e=>{if(e.target.closest('[data-is4-root]'))schedule();},true);
+    document.addEventListener('load',e=>{if(e.target?.matches?.('[data-is4-root] img,[data-is4-original] img'))schedule();},true);
+    window.addEventListener('resize',schedule,{passive:true});
+    const ro=typeof ResizeObserver==='function'?new ResizeObserver(schedule):null;
+    const seen=new WeakSet();
+    function observe(scope=document){
+      const roots=[];
+      if(scope.matches?.('[data-is4-root]'))roots.push(scope);
+      scope.querySelectorAll?.('[data-is4-root]').forEach(root=>roots.push(root));
+      roots.forEach(root=>{
+        if(seen.has(root))return;
+        seen.add(root);
+        ro?.observe(root);
+        const canvas=root.querySelector('[data-is4-original]');
+        const img=canvas?.querySelector('img');
+        if(canvas)ro?.observe(canvas);
+        if(img)ro?.observe(img);
+      });
+    }
+    observe();
+    new MutationObserver(records=>{
+      for(const record of records){
+        for(const node of record.addedNodes){if(node.nodeType===1)observe(node);}
+      }
+      schedule();
+    }).observe(document.body,{childList:true,subtree:true});
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
   window.windzxyImageStudioV5CropOverlayVersion=VER;
 })();
