@@ -1,0 +1,47 @@
+name: Inject WebDesk Typhoon Widget
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/typhoon-widget.js'
+      - '.github/workflows/inject-webdesk-typhoon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Wire typhoon widget into WebDesk entry
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          tag = '<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-widget3-live-map"></script>'
+          if tag in s:
+              print('typhoon widget already wired')
+          else:
+              anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
+              if anchor not in s:
+                  raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
+              p.write_text(s.replace(anchor, anchor + '\n' + tag, 1), encoding='utf-8')
+              print('wired typhoon widget into WebDesk entry')
+          PY
+      - name: Commit injected entry update
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'No index change required'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Wire WebDesk typhoon widget into entry'
+          git push
