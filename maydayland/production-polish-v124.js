@@ -1,10 +1,17 @@
 (()=>{
   'use strict';
-  const VERSION='20260901-maydayland-production-polish-v124.1';
+  const VERSION='20260901-maydayland-production-polish-v124.2';
   function syncMobileNav(){
-    const active=document.querySelector('.nav [data-page].active,.nav [data-page][aria-current="page"]');
+    const buttons=[...document.querySelectorAll('.nav [data-page]')];
+    const active=buttons.find(btn=>btn.classList.contains('active')||btn.getAttribute('aria-current')==='page');
+    buttons.forEach(btn=>{
+      const current=btn===active;
+      if(current)btn.setAttribute('aria-current','page');
+      else btn.removeAttribute('aria-current');
+    });
     if(active&&window.matchMedia('(max-width:760px)').matches){
-      active.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+      const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      active.scrollIntoView({block:'nearest',inline:'center',behavior:reduce?'auto':'smooth'});
     }
   }
   function apply(){
