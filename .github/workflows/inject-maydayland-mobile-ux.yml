@@ -1,45 +1,16 @@
-name: Inject Maydayland Mobile UX
+name: Maydayland Mobile UX Audit Lock
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - 'maydayland/mobile-ux-v123-4.js'
-      - 'maydayland/startup-perf-v123-4.js'
-      - '.github/workflows/inject-maydayland-mobile-ux.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  inject:
+  audit-lock:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: master
-      - name: Wire performance-safe mobile UX into Maydayland
+      - name: Keep production entry frozen during audit
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-          p=Path('maydayland/index.html')
-          s=p.read_text(encoding='utf-8')
-          startup='<script src="./startup-perf-v123-4.js?v=20260901-startup-perf-v123.4" defer></script>'
-          mobile='<script src="./mobile-ux-v123-4.js?v=20260901-mobile-ux-v123.4-perf" defer></script>'
-          s=re.sub(r'\n?<script src="\./mobile-ux-v123-(?:1|4)\.js\?v=[^"]+" defer></script>','',s)
-          s=re.sub(r'\n?<script src="\./startup-perf-v123-4\.js\?v=[^"]+" defer></script>','',s)
-          anchor='<script src="./songs-v120.js?v=123.0.0" defer></script>'
-          if anchor not in s: raise SystemExit('Maydayland songs anchor not found')
-          s=s.replace(anchor,startup+'\n  '+anchor+'\n  '+mobile,1)
-          p.write_text(s,encoding='utf-8')
-          PY
-      - name: Commit entry update
-        run: |
-          if git diff --quiet -- maydayland/index.html; then echo 'No entry change required'; exit 0; fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add maydayland/index.html
-          git commit -m 'Wire Maydayland performance hotfix v123.4'
-          git push origin master
+          echo 'Maydayland automatic mobile-entry mutation is frozen.'
+          echo 'Re-enable only after shell/runtime regression audit passes.'
