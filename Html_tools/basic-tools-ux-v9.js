@@ -47,7 +47,19 @@
       const count = lines[0].split(separator).length;
       if (count > cols) { name = candidate; cols = count; }
     }
-    return { rows: Math.max(0, lines.length - 1), cols, name };
+    return { rows: lines.length, cols, name };
+  }
+
+  function jsonErrorLocation(text, error) {
+    const message = String(error?.message || 'JSON parse error');
+    const match = message.match(/position\s+(\d+)/i);
+    if (!match) return message;
+    const pos = Math.max(0, Math.min(text.length, Number(match[1]) || 0));
+    const before = text.slice(0, pos);
+    const line = before.split(/\r?\n/).length;
+    const lastBreak = Math.max(before.lastIndexOf('\n'), before.lastIndexOf('\r'));
+    const column = pos - lastBreak;
+    return `第 ${line} 行 · 第 ${column} 列 · ${message}`;
   }
 
   function enhanceText(root) {
@@ -79,7 +91,7 @@
     const s = makeStatus(input);
     const refresh = () => {
       const m = tableMeta(input.value);
-      s.children[0].textContent = m ? `${m.rows} data rows × ${m.cols} cols · ${m.name}` : '等待資料';
+      s.children[0].textContent = m ? `${m.rows} rows × ${m.cols} cols · ${m.name}` : '等待資料';
       s.children[1].textContent = input.value.trim() ? `${human(bytes(input.value))} · Ctrl/⌘ + Enter 預覽` : 'Ctrl/⌘ + Enter 預覽';
     };
     input.addEventListener('input', refresh);
@@ -117,7 +129,7 @@
         s.classList.add('ok');
       } catch (error) {
         s.children[0].textContent = 'JSON 有錯誤';
-        s.children[1].textContent = String(error?.message || 'JSON parse error');
+        s.children[1].textContent = jsonErrorLocation(text, error);
         s.classList.add('bad');
       }
     };
