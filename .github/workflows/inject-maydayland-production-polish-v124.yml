@@ -38,9 +38,13 @@ jobs:
           s2=re.sub(r'<title>[^<]*</title>','<title>Maydayland · Tour Music Time Archive v124.2</title>',s2,count=1)
           s2=s2.replace("version:'v123-audit',release:'runtime-audit-base-shell'","version:'v124.2',release:'production-polish-stable-core'")
 
+          # Keep release-specific static assets on the same cache generation.
+          s2=re.sub(r'(mayday-logo\.svg\?v=)[^"\']+',r'\g<1>124.2.0',s2)
+          s2=re.sub(r'(app-v118\.css\?v=)[^"\']+',r'\g<1>124.2.0',s2)
+
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired production polish v124.2 and normalized source metadata')
+              print('wired production polish v124.2 and normalized source metadata/assets')
           else:
               print('already wired and normalized')
           PY
@@ -56,7 +60,9 @@ jobs:
           assert 'data-maydayland-release="v124.2"' in s
           assert "version:'v124.2',release:'production-polish-stable-core'" in s
           assert '<title>Maydayland · Tour Music Time Archive v124.2</title>' in s
-          print('stable shell + runtime + polish order + source metadata verified')
+          assert 'mayday-logo.svg?v=124.2.0' in s
+          assert 'app-v118.css?v=124.2.0' in s
+          print('stable shell + runtime + polish order + source metadata/assets verified')
           PY
       - name: Commit entry update
         run: |
@@ -67,5 +73,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/index.html
-          git commit -m 'Normalize Maydayland v124.2 source metadata'
+          git commit -m 'Align Maydayland v124.2 asset cache versions'
           git push
