@@ -1,0 +1,58 @@
+name: Fix WebDesk Widget Auto Inject
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/fix-webdesk-widget-auto-inject.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Remove automatic metals and FX card injection
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # Metals: widget should register itself, but never auto-add into a workspace.
+          p=Path('Html_tools/metals-widget.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("    style();install();patch();ensure();fit();renderAll();after();start();window.windzxyRefreshMetals=()=>refresh(true);",
+                      "    style();install();patch();fit();renderAll();after();start();window.windzxyRefreshMetals=()=>refresh(true);")
+          s=s.replace("    if(typeof defaults!=='undefined')defaults.forEach(ws=>{\n      if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP))ws.cards.push({id:'daily-metals-0',appId:APP,x:300,y:440,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});\n    });\n","")
+          old="  function ensure(){try{const ws=activeWorkspace();if(ws&&!ws.cards.some(c=>c.appId===APP)){ws.cards.push({id:'card-metals-'+Date.now(),appId:APP,x:300,y:440,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});save();}}catch(e){}}\n"
+          s=s.replace(old,"")
+          p.write_text(s,encoding='utf-8')
+
+          # FX: same rule — register app only, never seed the active workspace.
+          p=Path('Html_tools/fx-widget.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("    installStyle();installApp();patchRenderers();ensureCard();renderAll();afterRender();start();window.windzxyRefreshFx=()=>load(true);",
+                      "    installStyle();installApp();patchRenderers();renderAll();afterRender();start();window.windzxyRefreshFx=()=>load(true);")
+          s=s.replace("    if(typeof defaults!=='undefined')defaults.forEach(ws=>{\n      if(ws.id==='daily'&&!ws.cards.some(c=>c.appId===APP)){\n        ws.cards.push({id:'daily-fx-0',appId:APP,x:60,y:420,w:DEFAULT_W,h:DEFAULT_H,collapsed:false,data:{}});\n      }\n    });\n","")
+          start=s.find("  function ensureCard(){")
+          if start!=-1:
+              end=s.find("\n\n  function patchRenderers()",start)
+              if end!=-1:s=s[:start]+s[end+2:]
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit fixes
+        run: |
+          if git diff --quiet -- Html_tools/metals-widget.js Html_tools/fx-widget.js; then
+            echo 'No changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Html_tools/metals-widget.js Html_tools/fx-widget.js
+          git commit -m 'Stop metals and FX auto-injecting into workspaces'
+          git push origin master
