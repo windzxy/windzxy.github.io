@@ -88,7 +88,7 @@
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
-<script src="Html_tools/workspace-preload-cleaner.js?v=20260901-workspace-preload-cleaner5-storage-only"></script>
+<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner4-save-manual-cards"></script>
 <script>
 const apps=[
   {id:"image",kind:"tool",title:"圖片處理",desc:"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。",icon:"◎",tone:"t-image"},
@@ -1392,6 +1392,9 @@ setInterval(()=>{renderClock();tickWidgets()},1000);
 try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error(error);loadBackgrounds()}
 </script>
 <script src="Html_tools/basic-tools-ux-v9.js?v=20260901-basic-tools-ux9-stable-listeners"></script>
+<script src="Html_tools/class-schedule-widget-v1.js?v=20260901-class-schedule-v1-today-first"></script>
+<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v2-webdesk-native"></script>
+<script src="Html_tools/toolbox-categories-v1.js?v=20260901-toolbox-categories5-class-schedule"></script>
 <script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>
 <script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>
 <script src="Html_tools/workspace-core-guard.js?v=20260828-workspace-core-guard3-preserve-active-empty"></script>
@@ -1407,12 +1410,8 @@ try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error
 <script src="Html_tools/card-fold-fix.js?v=20260819-card-fold4-preserve-body"></script>
 <script src="Html_tools/metals-widget.js?v=20260819-gold-widget32-refresh-button-fix"></script>
 <script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>
-<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-widget3-live-map"></script>
 <script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>
 <script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n4-remove-today-row"></script>
 <script src="Html_tools/metals-calendar-restore-guard.js?v=20260828-metals-calendar-restore-guard1"></script>
-<script src="Html_tools/class-schedule-widget-v1.js?v=20260901-class-schedule-v1-today-first"></script>
-<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v2-webdesk-native"></script>
-<script src="Html_tools/toolbox-categories-v1.js?v=20260901-toolbox-categories5-class-schedule"></script>
 </body>
 </html>
