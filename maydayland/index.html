@@ -18,19 +18,19 @@
   </style>
 </head>
 <body>
-  <div id="app"><div id="maydayland-static-fallback"><div class="safe-wrap"><header class="safe-head"><div class="safe-brand"><span class="safe-mark">M</span><span>MAYDAYLAND</span></div><span class="safe-state" data-safe-status>SAFE SHELL · 正在載入互動版</span></header><main><section class="safe-hero"><span class="safe-kicker">MAYDAYLAND · RESILIENT FIRST SCREEN</span><h1>城市在路上，音樂在時間裡。</h1><p>巡演地圖、城市專題、唱片室、歌曲宇宙、出版與歷程檔案。即使互動腳本暫時失敗，首頁也不再黑屏。</p><nav class="safe-nav"><a href="#home">巡演地圖</a><a href="#city">城市專題</a><a href="#album">專輯室</a><a href="#songs">歌曲宇宙</a><a href="#books">書籍出版</a><a href="#timeline">歷程檔案</a></nav></section><section class="safe-grid"><article class="safe-card"><b>巡演地圖</b><span>城市、巡演與路線資料入口</span></article><article class="safe-card"><b>時光唱片室</b><span>錄音室專輯與曲目資料</span></article><article class="safe-card"><b>城市與歷程檔案</b><span>城市 evidence、出版與 Timeline</span></article></section></main></div></div></div>
-  <script>document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{const f=document.querySelector('#maydayland-static-fallback [data-safe-status]');if(f)f.textContent='互動層未啟動 · 安全模式仍可瀏覽'},1600),{once:true});</script>
+  <div id="app"><div id="maydayland-static-fallback"><div class="safe-wrap"><header class="safe-head"><div class="safe-brand"><span class="safe-mark">M</span><span>MAYDAYLAND</span></div><span class="safe-state" data-safe-status>正在載入互動體驗</span></header><main><section class="safe-hero"><span class="safe-kicker">MAYDAYLAND · TOUR & MUSIC ARCHIVE</span><h1>城市在路上，音樂在時間裡。</h1><p>巡演地圖、城市專題、唱片室、歌曲宇宙、出版與歷程檔案。即使網絡暫時不穩定，主要內容仍可繼續瀏覽。</p><nav class="safe-nav"><a href="#home">巡演地圖</a><a href="#city">城市專題</a><a href="#album">專輯室</a><a href="#songs">歌曲宇宙</a><a href="#books">書籍出版</a><a href="#timeline">歷程檔案</a></nav></section><section class="safe-grid"><article class="safe-card"><b>巡演地圖</b><span>城市、巡演與路線資料入口</span></article><article class="safe-card"><b>時光唱片室</b><span>錄音室專輯與曲目資料</span></article><article class="safe-card"><b>城市與歷程檔案</b><span>城市 evidence、出版與 Timeline</span></article></section></main></div></div></div>
+  <script>document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{const f=document.querySelector('#maydayland-static-fallback [data-safe-status]');if(f)f.textContent='互動內容載入中 · 基本內容已可瀏覽'},1600),{once:true});</script>
   <script>window.MAYDAYLAND_BUILD={version:'v124.2',release:'production-polish-stable-core',legacyStack:false,externalLibraries:0,mainWebGL:false,mainIframe:false,pages:['home','city','album','songs','books','timeline'],shellRequests:3,albumMedia:'on-demand',songMedia:'on-demand',preserves:['lightweight-home','A-F-routes','tour-color-svg','productized-album-room','songs-universe','city-explorer','books-archive','timeline-archive']};</script>
   <script src="./app-v119.js?v=20260901-repaired-v119.2" defer></script>
   <script src="./production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2" defer></script>
   <script id="maydayland-runtime-audit">
   (()=>{
     const paint=(state,detail)=>{const e=document.querySelector('[data-safe-status]');if(!e)return;e.textContent=state+(detail?' · '+detail:'');};
-    addEventListener('error',e=>{const src=e.filename?e.filename.split('/').pop():'';paint('互動層錯誤',src||e.message||'runtime error')},true);
-    addEventListener('unhandledrejection',e=>paint('互動層 Promise 錯誤',String(e.reason||'unknown').slice(0,90)));
+    addEventListener('error',e=>{const src=e.filename?e.filename.split('/').pop():'';paint('互動內容暫時不可用','基本內容仍可瀏覽')},true);
+    addEventListener('unhandledrejection',e=>paint('互動內容暫時不可用','基本內容仍可瀏覽'));
     addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{
       const ready=/^v119-repaired-ready$/.test(document.documentElement.dataset.maydaylandRuntime||'');
-      if(!ready&&document.getElementById('maydayland-static-fallback'))paint('BASE AUDIT · repaired v119 未啟動','已隔離 v120/v123/mobile');
+      if(!ready&&document.getElementById('maydayland-static-fallback'))paint('互動內容載入中','基本內容已可瀏覽');
     },2200);},{once:true});
   })();
   </script>
