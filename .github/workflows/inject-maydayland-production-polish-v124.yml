@@ -42,9 +42,18 @@ jobs:
           s2=re.sub(r'(mayday-logo\.svg\?v=)[^"\']+',r'\g<1>124.2.0',s2)
           s2=re.sub(r'(app-v118\.css\?v=)[^"\']+',r'\g<1>124.2.0',s2)
 
+          # Productize the no-JS / slow-network first screen too, not only the JS polish layer.
+          s2=s2.replace('SAFE SHELL · 正在載入互動版','正在載入互動體驗')
+          s2=s2.replace('MAYDAYLAND · RESILIENT FIRST SCREEN','MAYDAYLAND · TOUR & MUSIC ARCHIVE')
+          s2=s2.replace('巡演地圖、城市專題、唱片室、歌曲宇宙、出版與歷程檔案。即使互動腳本暫時失敗，首頁也不再黑屏。','巡演地圖、城市專題、唱片室、歌曲宇宙、出版與歷程檔案。即使網絡暫時不穩定，主要內容仍可繼續瀏覽。')
+          s2=s2.replace("f.textContent='互動層未啟動 · 安全模式仍可瀏覽'","f.textContent='互動內容載入中 · 基本內容已可瀏覽'")
+          s2=s2.replace("paint('互動層錯誤',src||e.message||'runtime error')","paint('互動內容暫時不可用','基本內容仍可瀏覽')")
+          s2=s2.replace("paint('互動層 Promise 錯誤',String(e.reason||'unknown').slice(0,90))","paint('互動內容暫時不可用','基本內容仍可瀏覽')")
+          s2=s2.replace("paint('BASE AUDIT · repaired v119 未啟動','已隔離 v120/v123/mobile')","paint('互動內容載入中','基本內容已可瀏覽')")
+
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired production polish v124.2 and normalized source metadata/assets')
+              print('wired production polish v124.2 and normalized source metadata/assets/fallback copy')
           else:
               print('already wired and normalized')
           PY
@@ -62,7 +71,12 @@ jobs:
           assert '<title>Maydayland · Tour Music Time Archive v124.2</title>' in s
           assert 'mayday-logo.svg?v=124.2.0' in s
           assert 'app-v118.css?v=124.2.0' in s
-          print('stable shell + runtime + polish order + source metadata/assets verified')
+          assert '正在載入互動體驗' in s
+          assert 'MAYDAYLAND · TOUR & MUSIC ARCHIVE' in s
+          assert 'SAFE SHELL · 正在載入互動版' not in s
+          assert 'MAYDAYLAND · RESILIENT FIRST SCREEN' not in s
+          assert 'BASE AUDIT · repaired v119 未啟動' not in s
+          print('stable shell + runtime + polish order + source metadata/assets/customer fallback verified')
           PY
       - name: Commit entry update
         run: |
@@ -73,5 +87,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/index.html
-          git commit -m 'Align Maydayland v124.2 asset cache versions'
+          git commit -m 'Productize Maydayland static fallback copy'
           git push
