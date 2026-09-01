@@ -1,0 +1,52 @@
+name: Inject WebDesk Workspace Manager
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/workspace-manager-v1.js'
+      - 'Html_tools/workspace-preload-cleaner.js'
+      - 'Html_tools/workspace-core-guard.js'
+      - '.github/workflows/inject-webdesk-workspace-manager.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Wire workspace manager and persistence versions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'Html_tools/workspace-preload-cleaner\.js\?v=[^"]+', 'Html_tools/workspace-preload-cleaner.js?v=20260901-workspace-preload-cleaner6-preserve-deletions', s)
+          s=re.sub(r'Html_tools/workspace-core-guard\.js\?v=[^"]+', 'Html_tools/workspace-core-guard.js?v=20260901-workspace-core-guard4-preserve-deleted-workspaces', s)
+          manager='<script src="Html_tools/workspace-manager-v1.js?v=20260901-workspace-manager-v1-rename-delete"></script>'
+          s=re.sub(r'\n?<script src="Html_tools/workspace-manager-v1\.js\?v=[^"]+"></script>', '', s)
+          anchor_re=r'(<script src="Html_tools/workspace-core-guard\.js\?v=[^"]+"></script>)'
+          m=re.search(anchor_re,s)
+          if not m:
+              raise SystemExit('workspace core guard anchor not found')
+          s=s[:m.end()]+"\n"+manager+s[m.end():]
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit entry update
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'No entry change required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Wire WebDesk workspace rename and delete controls'
+          git push origin master
