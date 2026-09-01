@@ -1,0 +1,48 @@
+name: Deploy repaired Maydayland v119 runtime
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'maydayland/app-v119.js'
+      - '.github/workflows/maydayland-cachebust-v119-repair.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Switch entry to repaired v119 core
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('maydayland/index.html')
+          s=p.read_text(encoding='utf-8')
+          old='./app-v119.js?v=20260901-audit-base-v119.1'
+          new='./app-v119.js?v=20260901-repaired-v119.2'
+          if new not in s:
+              if old not in s:
+                  raise SystemExit('Expected audited v119 tag not found; refusing unsafe rewrite')
+              s=s.replace(old,new,1)
+          s=s.replace("const ready=document.documentElement.dataset.maydaylandRuntime==='v119-ready';","const ready=/^v119-repaired-ready$/.test(document.documentElement.dataset.maydaylandRuntime||'');")
+          s=s.replace("paint('BASE AUDIT · v119 未啟動','已隔離 v120/v123/mobile');","paint('BASE AUDIT · repaired v119 未啟動','已隔離 v120/v123/mobile');")
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit repaired entry
+        run: |
+          if git diff --quiet -- maydayland/index.html; then
+            echo 'Repaired v119 already wired'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add maydayland/index.html
+          git commit -m 'Wire repaired Maydayland v119 runtime'
+          git push origin master
