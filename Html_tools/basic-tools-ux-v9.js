@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  if (window.__basicToolsUxV9) return;
-  window.__basicToolsUxV9 = 1;
+  if (window.__basicToolsUxV91) return;
+  window.__basicToolsUxV91 = 1;
 
   const q = (root, selector) => root.querySelector(selector);
   const bytes = value => {
@@ -52,14 +52,26 @@
 
   function jsonErrorLocation(text, error) {
     const message = String(error?.message || 'JSON parse error');
-    const match = message.match(/position\s+(\d+)/i);
-    if (!match) return message;
-    const pos = Math.max(0, Math.min(text.length, Number(match[1]) || 0));
-    const before = text.slice(0, pos);
-    const line = before.split(/\r?\n/).length;
-    const lastBreak = Math.max(before.lastIndexOf('\n'), before.lastIndexOf('\r'));
-    const column = pos - lastBreak;
-    return `第 ${line} 行 · 第 ${column} 列 · ${message}`;
+    const positionMatch = message.match(/position\s+(\d+)/i);
+    if (positionMatch) {
+      const pos = Math.max(0, Math.min(text.length, Number(positionMatch[1]) || 0));
+      const before = text.slice(0, pos);
+      const line = before.split(/\r?\n/).length;
+      const lastBreak = Math.max(before.lastIndexOf('\n'), before.lastIndexOf('\r'));
+      const column = pos - lastBreak;
+      return `第 ${line} 行 · 第 ${column} 列 · ${message}`;
+    }
+    const lineColumnMatch = message.match(/line\s+(\d+)(?:\s+column\s+(\d+))?/i);
+    if (lineColumnMatch) {
+      const line = Math.max(1, Number(lineColumnMatch[1]) || 1);
+      const column = Math.max(1, Number(lineColumnMatch[2]) || 1);
+      return `第 ${line} 行 · 第 ${column} 列 · ${message}`;
+    }
+    const atMatch = message.match(/at\s+line\s+(\d+)\s+column\s+(\d+)/i);
+    if (atMatch) {
+      return `第 ${Math.max(1, Number(atMatch[1]) || 1)} 行 · 第 ${Math.max(1, Number(atMatch[2]) || 1)} 列 · ${message}`;
+    }
+    return message;
   }
 
   function enhanceText(root) {
@@ -76,9 +88,7 @@
       s.children[0].textContent = m.chars ? `${m.chars} 字符 · ${m.words} 詞/字 · ${m.lines} 行` : '等待文字';
       s.children[1].textContent = m.chars ? `${m.paragraphs} 段 · ${m.compact} 非空白 · 約 ${m.minutes} 分鐘閱讀 · ${human(bytes(input.value))}${selected ? ` · 已選 ${selected.chars} 字符/${selected.words} 詞字` : ''}` : '0 B';
     };
-    for (const eventName of ['input', 'select', 'keyup', 'mouseup']) {
-      input.addEventListener(eventName, refresh);
-    }
+    for (const eventName of ['input', 'select', 'keyup', 'mouseup']) input.addEventListener(eventName, refresh);
     refresh();
   }
 
