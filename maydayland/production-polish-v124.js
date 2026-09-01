@@ -1,6 +1,26 @@
 (()=>{
   'use strict';
-  const VERSION='20260901-maydayland-production-polish-v124.2';
+  const VERSION='20260902-maydayland-production-polish-v124.2.1';
+  function polishFallback(){
+    const fallback=document.getElementById('maydayland-static-fallback');
+    if(!fallback)return;
+    const status=fallback.querySelector('[data-safe-status]');
+    const kicker=fallback.querySelector('.safe-kicker');
+    const copy=fallback.querySelector('.safe-hero p');
+    if(status)status.textContent='正在載入互動體驗';
+    if(kicker)kicker.textContent='MAYDAYLAND · TOUR & MUSIC ARCHIVE';
+    if(copy)copy.textContent='巡演地圖、城市專題、唱片室、歌曲宇宙、出版與歷程檔案。即使網絡暫時不穩定，主要內容仍可繼續瀏覽。';
+    if(status&&!status.dataset.productStatusGuard){
+      status.dataset.productStatusGuard='1';
+      const observer=new MutationObserver(()=>{
+        const text=status.textContent||'';
+        if(/SAFE SHELL|BASE AUDIT|repaired v119|已隔離|runtime error|Promise/i.test(text)){
+          status.textContent=/錯誤|error|Promise/i.test(text)?'互動內容暫時不可用 · 基本內容仍可瀏覽':'互動內容載入中 · 基本內容已可瀏覽';
+        }
+      });
+      observer.observe(status,{childList:true,characterData:true,subtree:true});
+    }
+  }
   function syncMobileNav(){
     const buttons=[...document.querySelectorAll('.nav [data-page]')];
     const active=buttons.find(btn=>btn.classList.contains('active')||btn.getAttribute('aria-current')==='page');
@@ -15,17 +35,18 @@
     }
   }
   function apply(){
+    polishFallback();
     const shell=document.querySelector('.shell');
     if(!shell||shell.dataset.productionPolish===VERSION)return !!shell;
     shell.dataset.productionPolish=VERSION;
-    document.documentElement.dataset.maydaylandRelease='v124';
-    document.documentElement.dataset.maydaylandProduct='v124-stable';
+    document.documentElement.dataset.maydaylandRelease='v124.2';
+    document.documentElement.dataset.maydaylandProduct='v124.2-stable';
     document.title='Maydayland · 五月天巡演與作品資料館';
     const meta=document.querySelector('meta[name="description"]');
     if(meta)meta.content='Maydayland：五月天巡演城市、專輯、歌曲、出版與歷程檔案的互動資料館。';
     if(window.MAYDAYLAND_BUILD){
-      window.MAYDAYLAND_BUILD.version='v124';
-      window.MAYDAYLAND_BUILD.release='stable-recovery-core';
+      window.MAYDAYLAND_BUILD.version='v124.2';
+      window.MAYDAYLAND_BUILD.release='production-polish-stable-core';
     }
     const brandSmall=document.querySelector('.brand small');
     if(brandSmall)brandSmall.textContent='Tour · Music · Time Archive';
@@ -86,6 +107,7 @@
     @media(prefers-reduced-motion:reduce){.shell[data-production-polish] *{scroll-behavior:auto!important}}
   `;
   document.head.appendChild(style);
+  polishFallback();
   addEventListener('hashchange',()=>setTimeout(syncMobileNav,0));
   addEventListener('resize',()=>setTimeout(syncMobileNav,60),{passive:true});
   document.addEventListener('click',e=>{if(e.target.closest('.nav [data-page]'))setTimeout(syncMobileNav,80)},true);
