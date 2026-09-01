@@ -25,7 +25,7 @@ jobs:
           import re
           p=Path('maydayland/index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="./mobile-ux-v123-1.js?v=20260901-mobile-ux-v123.1" defer></script>'
+          tag='<script src="./mobile-ux-v123-1.js?v=20260901-mobile-ux-v123.2" defer></script>'
           s=re.sub(r'\n?<script src="\./mobile-ux-v123-1\.js\?v=[^"]+" defer></script>','',s)
           anchor='<script src="./songs-v120.js?v=123.0.0" defer></script>'
           if anchor not in s: raise SystemExit('Maydayland songs anchor not found')
@@ -38,5 +38,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/index.html
-          git commit -m 'Wire Maydayland mobile UX v123.1'
+          git commit -m 'Wire Maydayland mobile UX v123.2'
           git push origin master
