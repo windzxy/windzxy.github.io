@@ -6,6 +6,7 @@ on:
     paths:
       - 'Html_tools/class-schedule-widget-v1.js'
       - 'Html_tools/class-schedule-theme-v2.js'
+      - 'Html_tools/class-schedule-responsive-v6.js'
       - 'Html_tools/toolbox-categories-v1.js'
       - '.github/workflows/inject-webdesk-class-schedule.yml'
   workflow_dispatch:
@@ -30,12 +31,14 @@ jobs:
           s=p.read_text(encoding='utf-8')
           schedule='<script src="Html_tools/class-schedule-widget-v1.js?v=20260901-class-schedule-v4-product-agenda"></script>'
           theme='<script src="Html_tools/class-schedule-theme-v2.js?v=20260901-class-schedule-theme-v5-visual-polish"></script>'
+          responsive='<script src="Html_tools/class-schedule-responsive-v6.js?v=20260901-class-schedule-responsive-v6"></script>'
           s=re.sub(r'\n?<script src="Html_tools/class-schedule-widget-v1\.js\?v=[^"]+"></script>', '', s)
           s=re.sub(r'\n?<script src="Html_tools/class-schedule-theme-v2\.js\?v=[^"]+"></script>', '', s)
+          s=re.sub(r'\n?<script src="Html_tools/class-schedule-responsive-v6\.js\?v=[^"]+"></script>', '', s)
           anchor_re=r'(<script src="Html_tools/toolbox-categories-v1\.js\?v=[^"]+"></script>)'
           m=re.search(anchor_re,s)
           if not m: raise SystemExit('toolbox categories anchor not found')
-          s=s[:m.start()]+schedule+'\n'+theme+'\n'+s[m.start():]
+          s=s[:m.start()]+schedule+'\n'+theme+'\n'+responsive+'\n'+s[m.start():]
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit entry update
@@ -44,5 +47,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Wire WebDesk class schedule visual-polish v5'
+          git commit -m 'Wire WebDesk class schedule responsive v6'
           git push origin master
