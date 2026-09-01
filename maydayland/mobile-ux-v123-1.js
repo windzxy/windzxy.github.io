@@ -1,13 +1,13 @@
 (()=>{'use strict';
-const VER='20260901-maydayland-mobile-ux-v123.2';
+const VER='20260901-maydayland-mobile-ux-v123.3';
 if(window.__maydaylandMobileUx===VER)return;window.__maydaylandMobileUx=VER;
-function installStyle(){if(document.getElementById('maydaylandMobileUx1232'))return;const s=document.createElement('style');s.id='maydaylandMobileUx1232';s.textContent=`
+function installStyle(){if(document.getElementById('maydaylandMobileUx1233'))return;const s=document.createElement('style');s.id='maydaylandMobileUx1233';s.textContent=`
 @media(max-width:760px){
   html{scroll-padding-top:116px}body{padding-bottom:max(0px,env(safe-area-inset-bottom))}
   .top{position:sticky;top:0;z-index:50;background:rgba(5,9,18,.9);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.055)}
   .top .wrap.top-in{width:100%;padding:8px 12px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:'brand brand' 'nav nav';gap:8px}
   .top .brand{grid-area:brand;min-width:0}.top .brand small{font-size:10px}.top .perf{display:none!important}
-  .top .nav{grid-area:nav;display:flex!important;gap:6px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding:2px 0 5px;-webkit-overflow-scrolling:touch;touch-action:pan-x}
+  .top .nav{grid-area:nav;display:flex!important;gap:6px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding:2px 8px 5px;-webkit-overflow-scrolling:touch;touch-action:pan-x;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
   .top .nav::-webkit-scrollbar{display:none}.top .nav button{flex:0 0 auto;min-height:40px;padding:0 13px;border-radius:999px;scroll-snap-align:center;white-space:nowrap;font-size:12px;transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease}
   .top .nav button.active,.top .nav button[aria-current='page']{background:linear-gradient(135deg,rgba(255,211,106,.2),rgba(65,141,255,.16));border-color:rgba(255,211,106,.32);box-shadow:0 6px 18px rgba(0,0,0,.18),inset 0 0 0 1px rgba(255,255,255,.04);color:#fff}
   .top .nav button:active{transform:scale(.97)}
@@ -17,20 +17,27 @@ function installStyle(){if(document.getElementById('maydaylandMobileUx1232'))ret
   .map-card{overflow:hidden}.map-stage{min-height:430px}.legend{overflow-x:auto;flex-wrap:nowrap!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}.legend::-webkit-scrollbar{display:none}.legend span{flex:0 0 auto}
   .page{scroll-margin-top:116px}.grid{grid-template-columns:1fr!important}
   .record-head{align-items:start}.record-head h2{font-size:clamp(32px,9vw,46px)!important}.room-badge{justify-self:start}
+  .album-drawer.open{overscroll-behavior:contain}.drawer-card{overscroll-behavior:contain}.track-list li{min-height:44px;align-items:center}
 }
-@media(max-width:480px){
+@media(max-width:620px){
   .top .wrap.top-in{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
   .top .brand .mark{width:34px;height:34px}.top .brand b{font-size:13px}
   .hero-actions{display:grid!important;grid-template-columns:1fr 1fr}.hero-actions .primary{grid-column:1/-1}
   .map-stage{min-height:380px}.city-btn{font-size:10px!important;padding:5px 7px!important}
+  .album-drawer{display:flex!important;align-items:flex-end;overflow:hidden;background:rgba(1,4,9,.82)}
+  .drawer-card{width:100%;min-height:0!important;height:min(92dvh,820px);margin:0!important;padding:8px 18px max(28px,calc(env(safe-area-inset-bottom) + 18px))!important;display:block;border-radius:24px 24px 0 0!important;border-top:1px solid rgba(255,255,255,.12);box-shadow:0 -24px 70px rgba(0,0,0,.45);transform:translateY(34px)!important;transition:transform .22s ease!important}
+  .album-drawer.open .drawer-card{transform:none!important}
+  .drawer-card:before{content:'';display:block;width:42px;height:4px;margin:2px auto 8px;border-radius:999px;background:rgba(255,255,255,.2)}
+  .drawer-close{position:sticky!important;top:8px!important;right:auto!important;margin-left:auto!important;display:grid!important;place-items:center!important;z-index:8!important;width:44px!important;height:44px!important;background:rgba(8,16,28,.88)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(0,0,0,.28)}
+  .disc-stage{width:min(58vw,240px)!important;margin:-28px auto 12px!important}.drawer-copy h2{font-size:clamp(31px,9vw,40px)!important;margin-top:6px!important}.drawer-copy>p{font-size:13px;line-height:1.6}.album-meta{margin:12px 0!important}.track-head{margin-top:18px!important}.track-list li{padding:11px 4px!important;font-size:13px!important}
 }
-@media(orientation:landscape) and (max-height:520px){.top .wrap.top-in{grid-template-areas:'brand nav';grid-template-columns:auto minmax(0,1fr);align-items:center}.top .brand{grid-area:brand}.top .nav{grid-area:nav}.hero{padding-top:10px!important}.page{scroll-margin-top:72px}}
+@media(orientation:landscape) and (max-height:520px){.top .wrap.top-in{grid-template-areas:'brand nav';grid-template-columns:auto minmax(0,1fr);align-items:center}.top .brand{grid-area:brand}.top .nav{grid-area:nav}.hero{padding-top:10px!important}.page{scroll-margin-top:72px}.drawer-card{height:94dvh!important}.disc-stage{width:min(30vw,190px)!important;float:left;margin:0 18px 12px 0!important}}
 @media(prefers-reduced-motion:reduce){.top .nav{scroll-behavior:auto!important}.top .nav button,.cd-case,.drawer-card{transition:none!important}}
 `;document.head.appendChild(s)}
 function activeNav(){return document.querySelector('.top .nav [data-page].active')||document.querySelector('.top .nav [data-page][aria-current="page"]')}
 function centerNav(behavior){const el=activeNav();if(!el)return;try{el.scrollIntoView({behavior:behavior||'auto',block:'nearest',inline:'center'})}catch(e){}}
 function syncA11y(behavior){document.querySelectorAll('.top .nav [data-page]').forEach(btn=>{if(btn.classList.contains('active'))btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current')});centerNav(behavior)}
 let syncQueued=false;function scheduleSync(smooth=false){if(syncQueued)return;syncQueued=true;requestAnimationFrame(()=>{syncQueued=false;syncA11y(smooth&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'auto')})}
-function boot(){installStyle();scheduleSync(false);window.addEventListener('hashchange',()=>scheduleSync(true));window.addEventListener('pageshow',()=>scheduleSync(false));window.addEventListener('resize',()=>scheduleSync(false),{passive:true});document.addEventListener('click',e=>{if(e.target.closest('[data-page]'))setTimeout(()=>scheduleSync(true),0)},true);const app=document.getElementById('app');if(app)new MutationObserver(m=>{if(m.some(x=>x.type==='attributes'&&x.attributeName==='class'))scheduleSync(false)}).observe(app,{subtree:true,attributes:true,attributeFilter:['class']});document.documentElement.dataset.maydaylandMobileUx='v123.2'}
+function boot(){installStyle();scheduleSync(false);window.addEventListener('hashchange',()=>scheduleSync(true));window.addEventListener('pageshow',()=>scheduleSync(false));window.addEventListener('resize',()=>scheduleSync(false),{passive:true});document.addEventListener('click',e=>{if(e.target.closest('[data-page]'))setTimeout(()=>scheduleSync(true),0)},true);const app=document.getElementById('app');if(app)new MutationObserver(m=>{if(m.some(x=>x.type==='attributes'&&x.attributeName==='class'))scheduleSync(false)}).observe(app,{subtree:true,attributes:true,attributeFilter:['class']});document.documentElement.dataset.maydaylandMobileUx='v123.3'}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
