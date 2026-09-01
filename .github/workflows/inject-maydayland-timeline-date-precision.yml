@@ -1,0 +1,46 @@
+name: Inject Maydayland Timeline Date Precision
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'maydayland/timeline-date-precision-v1.js'
+      - '.github/workflows/inject-maydayland-timeline-date-precision.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Wire timeline date precision helper
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('maydayland/index.html')
+          s = p.read_text(encoding='utf-8')
+          tag = '  <script src="./timeline-date-precision-v1.js?v=20260901-phase-date-precision1" defer></script>\n'
+          if 'timeline-date-precision-v1.js' not in s:
+              anchor = '  <script src="./timeline-v123.js?v=123.0.1" defer></script>\n'
+              if anchor not in s:
+                  raise SystemExit('Timeline v123 anchor not found; refusing unsafe rewrite')
+              s = s.replace(anchor, anchor + tag, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit entry wiring when changed
+        run: |
+          if git diff --quiet -- maydayland/index.html; then
+            echo "Timeline date precision helper already wired"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add maydayland/index.html
+          git commit -m "Wire Maydayland timeline date precision helper"
+          git push origin master
