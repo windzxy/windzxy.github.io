@@ -72,12 +72,28 @@ jobs:
                   'intensity': child_text(el, ['intensity','class','type','category'])
               }
 
+          def valid_name(value):
+              value = str(value or '').strip()
+              if not value:
+                  return ''
+              low = value.lower()
+              if re.search(r'\.(?:xml|xsd|dtd)(?:\?|$)', low):
+                  return ''
+              if low.startswith(('http://','https://')):
+                  return ''
+              if re.search(r'(?:tc[_-]?track|schema)', low) and ('/' in low or '.' in low or '_' in low):
+                  return ''
+              return value
+
           def name_from(el):
+              if el is None:
+                  return ''
               for names in [
-                  ['tcname','tropicalcyclonename','cyclonename','stormname','name'],
-                  ['cname','ename','chiName','engName']
+                  ['tcname','tropicalcyclonename','cyclonename','stormname'],
+                  ['cname','ename','chiName','engName'],
+                  ['name']
               ]:
-                  val = child_text(el, names)
+                  val = valid_name(child_text(el, names))
                   if val:
                       return val
               return ''
@@ -110,8 +126,10 @@ jobs:
                       if re.search(r'(cyclone|typhoon|storm|tc|tropical)', lname):
                           holder = cur
                           break
-                  name = name_from(holder) or name_from(parent.get(el)) or name_from(root) or 'TC'
-                  sid = child_text(holder, ['tcid','id','identifier','stormid']) or name
+                  sid = child_text(holder, ['tcid','id','identifier','stormid']) or child_text(parent.get(el), ['tcid','id','identifier','stormid']) or 'TC'
+                  name = name_from(holder) or name_from(parent.get(el)) or name_from(root)
+                  if not name:
+                      name = f'Tropical Cyclone {sid}' if sid != 'TC' else 'Tropical Cyclone'
                   key = f'{sid}-{name}'
                   groups.setdefault(key, {'id': sid, 'name': name, 'points': []})['points'].append(p)
               storms = []
@@ -146,7 +164,7 @@ jobs:
 
           payload = {
               'type': 'hko-typhoon-track',
-              'version': 1,
+              'version': 2,
               'source': SOURCE,
               'updatedAt': datetime.now(timezone.utc).isoformat(),
               'status': 'active' if storms else 'no-active-system',
