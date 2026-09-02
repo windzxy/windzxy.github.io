@@ -9,6 +9,7 @@ on:
       - 'Html_tools/typhoon-radar-v4-1.js'
       - 'Html_tools/typhoon-atmosphere-v5-1.js'
       - 'Html_tools/typhoon-weather-layers-v5-5.js'
+      - 'Html_tools/typhoon-layers-toolbar-v1.js'
       - '.github/workflows/inject-webdesk-typhoon.yml'
   workflow_dispatch:
 
@@ -34,12 +35,14 @@ jobs:
           radar = '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260901-typhoon-radar-v4.1"></script>'
           atmosphere = '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.1-restored"></script>'
           weather = '<script src="Html_tools/typhoon-weather-layers-v5-5.js?v=20260902-typhoon-weather-v5.5-restored"></script>'
+          toolbar = '<script src="Html_tools/typhoon-layers-toolbar-v1.js?v=20260902-typhoon-layers-toolbar-v1"></script>'
           patterns = [
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-window-p0-fix\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-radar-v4-1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-atmosphere-v5-1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-weather-layers-v5-5\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-layers-toolbar-v1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-v5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-v5-2\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-layout-v5-3\.js\?v=[^"]+"></script>',
@@ -53,13 +56,13 @@ jobs:
           anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           if anchor not in s2:
               raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
-          stack='\n'.join([widget,window_fix,radar,atmosphere,weather])
+          stack='\n'.join([widget,window_fix,radar,atmosphere,weather,toolbar])
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired unified typhoon runtime plus radar, satellite and weather layers')
+              print('wired unified typhoon runtime plus visible weather-layer toolbar')
           else:
-              print('typhoon weather-layer stack already wired')
+              print('typhoon weather-layer toolbar stack already wired')
           PY
       - name: Verify typhoon stack order
         run: |
@@ -71,7 +74,8 @@ jobs:
             'Html_tools/typhoon-window-p0-fix.js',
             'Html_tools/typhoon-radar-v4-1.js',
             'Html_tools/typhoon-atmosphere-v5-1.js',
-            'Html_tools/typhoon-weather-layers-v5-5.js'
+            'Html_tools/typhoon-weather-layers-v5-5.js',
+            'Html_tools/typhoon-layers-toolbar-v1.js'
           ]
           pos=[]
           for f in files:
@@ -91,7 +95,7 @@ jobs:
           ]:
               if removed in s:
                   raise SystemExit(f'legacy typhoon patch still loaded: {removed}')
-          print('unified typhoon stack with weather layers verified')
+          print('unified typhoon stack with visible weather-layer toolbar verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -102,5 +106,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Restore WebDesk typhoon weather layers'
+          git commit -m 'Expose WebDesk typhoon weather toolbar'
           git push
