@@ -1,0 +1,54 @@
+name: Inject WebDesk JSON Shortcuts
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'Html_tools/basic-tools-json-shortcuts-v1.js'
+      - '.github/workflows/inject-webdesk-json-shortcuts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Inject JSON shortcuts helper
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'\n?<script src="Html_tools/basic-tools-json-shortcuts-v1\.js\?v=[^"]+"></script>','',s)
+          tag='<script src="Html_tools/basic-tools-json-shortcuts-v1.js?v=20260902-json-shortcuts-v1"></script>'
+          if '</body>' not in s:
+              raise SystemExit('body end not found')
+          s=s.replace('</body>',tag+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Verify helper
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          f='Html_tools/basic-tools-json-shortcuts-v1.js'
+          if s.count(f)!=1: raise SystemExit(f'expected one {f}, got {s.count(f)}')
+          PY
+      - name: Commit injected helper
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'JSON shortcuts already injected.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Inject WebDesk JSON shortcuts helper'
+          git push
