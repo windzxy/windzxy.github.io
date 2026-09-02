@@ -1,0 +1,20 @@
+(()=>{'use strict';
+const VER='20260902-typhoon-openfreemap-v6';
+if(window.__windzxyTyphoonOpenFreeMap===VER)return;
+window.__windzxyTyphoonOpenFreeMap=VER;
+const STYLE='https://tiles.openfreemap.org/styles/dark';
+const GL_JS='https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js';
+const GL_CSS='https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css';
+const BRIDGE_JS='https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js';
+const ATTR='OpenFreeMap © OpenMapTiles Data from OpenStreetMap';
+let depsPromise=null;
+function ensureCss(){if(document.querySelector('link[data-tp-maplibre-css]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href=GL_CSS;l.dataset.tpMaplibreCss='1';document.head.appendChild(l)}
+function loadScript(src,id,test){if(test())return Promise.resolve();const old=document.querySelector(`script[data-tp-dep="${id}"]`);if(old)return new Promise((resolve,reject)=>{if(test())return resolve();old.addEventListener('load',()=>test()?resolve():reject(new Error(id+' unavailable')),{once:true});old.addEventListener('error',reject,{once:true})});return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.async=true;s.dataset.tpDep=id;s.onload=()=>test()?resolve():reject(new Error(id+' unavailable'));s.onerror=reject;document.head.appendChild(s)})}
+function deps(){if(depsPromise)return depsPromise;ensureCss();depsPromise=loadScript(GL_JS,'maplibre',()=>!!window.maplibregl).then(()=>loadScript(BRIDGE_JS,'maplibre-leaflet',()=>!!window.L?.maplibreGL));return depsPromise}
+function fallback(root){const map=root.__tpMap;if(!map||!window.L)return;try{const old=root.__tpBase?.map;const osm=window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'});root.__tpBase=root.__tpBase||{};root.__tpBase.map=osm;if(root.__tpBaseName==='map'){if(old&&map.hasLayer(old))map.removeLayer(old);osm.addTo(map)}root.dataset.ofmBase='fallback';root.dataset.ofmProvider='OpenStreetMap fallback'}catch(_){root.dataset.ofmBase='error'}}
+async function apply(root){if(!root||!document.body.contains(root))return;root.dataset.zeDarkBase='1';root.dataset.zeKeylessBase='1';if(root.dataset.ofmBase==='ready'||root.dataset.ofmLoading==='1')return;if(!root.__tpMap||!window.L)return;root.dataset.ofmLoading='1';try{await deps();if(!document.body.contains(root)||!root.__tpMap)return;const map=root.__tpMap,old=root.__tpBase?.map;const layer=window.L.maplibreGL({style:STYLE,interactive:false});root.__tpBase=root.__tpBase||{};root.__tpBase.map=layer;root.__tpOpenFreeMap=layer;if(root.__tpBaseName==='map'){if(old&&map.hasLayer(old))map.removeLayer(old);layer.addTo(map)}try{if(!root.dataset.ofmAttr){map.attributionControl?.addAttribution(ATTR);root.dataset.ofmAttr='1'}}catch(_){}root.dataset.ofmBase='ready';root.dataset.ofmProvider='OpenFreeMap + MapLibre';window.WebDeskTyphoonBasemap={version:'v6',provider:'OpenFreeMap',renderer:'MapLibre GL via Leaflet bridge',style:STYLE,apiKey:false}}catch(e){console.warn('[typhoon] OpenFreeMap/MapLibre unavailable, using OSM fallback',e);fallback(root)}finally{root.dataset.ofmLoading='0'}}
+function mount(root){if(!root||!document.body.contains(root))return;root.dataset.zeDarkBase='1';root.dataset.zeKeylessBase='1';if(root.__tpMap){apply(root);return}let n=0;const wait=()=>{if(!document.body.contains(root))return;root.dataset.zeDarkBase='1';root.dataset.zeKeylessBase='1';if(root.__tpMap){apply(root);return}if(n++<150)setTimeout(wait,80)};wait()}
+function scan(scope=document){scope.querySelectorAll?.('[data-typhoon-root]').forEach(mount)}
+function boot(){scan();const host=document.getElementById('windowLayer')||document.body;new MutationObserver(ms=>{for(const m of ms){const owner=m.target?.closest?.('[data-typhoon-root]');if(owner)mount(owner);for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches?.('[data-typhoon-root]'))mount(n);scan(n)}}}).observe(host,{childList:true,subtree:true});setInterval(()=>scan(),1600)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
