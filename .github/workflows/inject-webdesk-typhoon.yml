@@ -36,7 +36,7 @@ jobs:
           radar = '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>'
           atmosphere = '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>'
           weather = '<script src="Html_tools/typhoon-native-weather-v2.js?v=20260902-typhoon-weather-v4-consolidated"></script>'
-          openfreemap = '<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6"></script>'
+          openfreemap = '<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.1-overlayfix"></script>'
           shell = '<script src="Html_tools/typhoon-product-shell-v5.js?v=20260902-typhoon-product-shell-v5"></script>'
           patterns = [
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
@@ -67,9 +67,9 @@ jobs:
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired typhoon runtime with OpenFreeMap + MapLibre basemap')
+              print('wired typhoon runtime with OpenFreeMap v6.1 overlay/performance fix')
           else:
-              print('OpenFreeMap typhoon runtime already wired')
+              print('OpenFreeMap v6.1 typhoon runtime already wired')
           PY
       - name: Verify consolidated typhoon stack
         run: |
@@ -95,8 +95,8 @@ jobs:
               raise SystemExit('typhoon stack load order invalid')
           if 'typhoon-weather-v4-consolidated' not in s:
               raise SystemExit('consolidated weather cache token missing')
-          if 'typhoon-openfreemap-v6' not in s:
-              raise SystemExit('OpenFreeMap MapLibre basemap runtime missing')
+          if 'typhoon-openfreemap-v6.1-overlayfix' not in s:
+              raise SystemExit('OpenFreeMap v6.1 cache token missing')
           if 'typhoon-product-shell-v5' not in s:
               raise SystemExit('Zoom Earth product shell missing')
           legacy=[
@@ -114,7 +114,7 @@ jobs:
           for f in legacy:
               if f in s:
                   raise SystemExit(f'legacy typhoon runtime still loaded: {f}')
-          print('OpenFreeMap + MapLibre typhoon stack verified')
+          print('OpenFreeMap v6.1 overlay/performance stack verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -125,5 +125,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Deploy OpenFreeMap MapLibre WebDesk typhoon basemap'
+          git commit -m 'Deploy OpenFreeMap v6.1 typhoon overlay fix'
           git push
