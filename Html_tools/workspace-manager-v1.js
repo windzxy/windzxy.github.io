@@ -1,10 +1,11 @@
 (function(){
   'use strict';
-  const VER='20260901-workspace-manager-v1-rename-delete';
+  const VER='20260902-workspace-manager-v1.1-clean-geometry';
   if(window.__windzxyWorkspaceManagerV1===VER)return;
   window.__windzxyWorkspaceManagerV1=VER;
 
   const ACTIVE_KEY='windzxy-active-workspace';
+  const GEO_KEY='windzxy-web-desktop-card-geometry-v4';
 
   function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function list(){try{return Array.isArray(workspaces)?workspaces:[];}catch(e){return [];}}
@@ -12,6 +13,28 @@
   function paint(){try{if(typeof renderAll==='function')renderAll();else if(typeof renderWorkspaces==='function')renderWorkspaces();}catch(e){}}
   function setActive(id){
     try{activeId=id;localStorage.setItem(ACTIVE_KEY,id);}catch(e){localStorage.setItem(ACTIVE_KEY,id);}
+  }
+  function cleanGeometryForWorkspace(ws){
+    try{
+      const ids=new Set((Array.isArray(ws?.cards)?ws.cards:[]).map(card=>String(card?.id||'')).filter(Boolean));
+      if(!ids.size)return 0;
+      const raw=localStorage.getItem(GEO_KEY);
+      if(!raw)return 0;
+      const geo=JSON.parse(raw);
+      if(!geo||typeof geo!=='object'||Array.isArray(geo))return 0;
+      let removed=0;
+      Object.keys(geo).forEach(key=>{
+        for(const id of ids){
+          if(key.includes('::id::'+id)){
+            delete geo[key];
+            removed++;
+            break;
+          }
+        }
+      });
+      if(removed)localStorage.setItem(GEO_KEY,JSON.stringify(geo));
+      return removed;
+    }catch(e){return 0;}
   }
 
   function ensureStyle(){
@@ -77,6 +100,7 @@
     if(rows.length<=1){alert('至少需要保留一個工作區。');return;}
     const count=Array.isArray(ws.cards)?ws.cards.length:0;
     if(!confirm(`刪除「${ws.name||'工作區'}」？${count?`\n其中 ${count} 張卡片也會一起刪除。`:''}`))return;
+    cleanGeometryForWorkspace(ws);
     const idx=rows.findIndex(x=>String(x.id)===String(id));
     rows.splice(idx,1);
     if(String(typeof activeId!=='undefined'?activeId:'')===String(id)){
@@ -94,5 +118,5 @@
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',patch,{once:true});else patch();
-  window.WebDeskWorkspaceManager={version:VER,render:enhancedRenderWorkspaces,rename:beginRename,remove:removeWorkspace};
+  window.WebDeskWorkspaceManager={version:VER,render:enhancedRenderWorkspaces,rename:beginRename,remove:removeWorkspace,cleanGeometry:cleanGeometryForWorkspace};
 })();
