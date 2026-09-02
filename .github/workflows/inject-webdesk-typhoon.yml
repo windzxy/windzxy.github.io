@@ -9,6 +9,7 @@ on:
       - 'Html_tools/typhoon-radar-v4-1.js'
       - 'Html_tools/typhoon-atmosphere-v5-1.js'
       - 'Html_tools/typhoon-native-weather-v2.js'
+      - 'Html_tools/typhoon-product-shell-v5.js'
       - '.github/workflows/inject-webdesk-typhoon.yml'
   workflow_dispatch:
 
@@ -34,6 +35,7 @@ jobs:
           radar = '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>'
           atmosphere = '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>'
           weather = '<script src="Html_tools/typhoon-native-weather-v2.js?v=20260902-typhoon-weather-v4-consolidated"></script>'
+          shell = '<script src="Html_tools/typhoon-product-shell-v5.js?v=20260902-typhoon-product-shell-v5"></script>'
           patterns = [
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-window-p0-fix\.js\?v=[^"]+"></script>',
@@ -42,6 +44,7 @@ jobs:
             r'\n?<script src="Html_tools/typhoon-weather-layers-v5-5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-layers-toolbar-v1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-native-weather-v2\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-product-shell-v5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-zoomearth-sync-v4\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-v5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-v5-2\.js\?v=[^"]+"></script>',
@@ -56,11 +59,11 @@ jobs:
           anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           if anchor not in s2:
               raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
-          stack='\n'.join([widget,window_fix,radar,atmosphere,weather])
+          stack='\n'.join([widget,window_fix,radar,atmosphere,weather,shell])
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired consolidated typhoon runtime')
+              print('wired consolidated typhoon runtime with Zoom Earth product shell')
           else:
               print('consolidated typhoon runtime already wired')
           PY
@@ -74,7 +77,8 @@ jobs:
             'Html_tools/typhoon-window-p0-fix.js',
             'Html_tools/typhoon-radar-v4-1.js',
             'Html_tools/typhoon-atmosphere-v5-1.js',
-            'Html_tools/typhoon-native-weather-v2.js'
+            'Html_tools/typhoon-native-weather-v2.js',
+            'Html_tools/typhoon-product-shell-v5.js'
           ]
           pos=[]
           for f in files:
@@ -86,6 +90,8 @@ jobs:
               raise SystemExit('typhoon stack load order invalid')
           if 'typhoon-weather-v4-consolidated' not in s:
               raise SystemExit('consolidated weather cache token missing')
+          if 'typhoon-product-shell-v5' not in s:
+              raise SystemExit('Zoom Earth product shell missing')
           legacy=[
             'Html_tools/typhoon-weather-layers-v5-5.js',
             'Html_tools/typhoon-layers-toolbar-v1.js',
@@ -100,7 +106,7 @@ jobs:
           for f in legacy:
               if f in s:
                   raise SystemExit(f'legacy typhoon runtime still loaded: {f}')
-          print('consolidated typhoon stack verified')
+          print('consolidated typhoon stack with Zoom Earth product shell verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -111,5 +117,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Consolidate WebDesk typhoon runtime'
+          git commit -m 'Deploy Zoom Earth style WebDesk typhoon shell'
           git push
