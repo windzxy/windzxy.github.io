@@ -30,7 +30,7 @@ jobs:
           s=p.read_text(encoding='utf-8')
           s=re.sub(r'Html_tools/workspace-preload-cleaner\.js\?v=[^\"]+', 'Html_tools/workspace-preload-cleaner.js?v=20260901-workspace-preload-cleaner6-preserve-deletions', s)
           s=re.sub(r'Html_tools/workspace-core-guard\.js\?v=[^\"]+', 'Html_tools/workspace-core-guard.js?v=20260901-workspace-core-guard4-preserve-deleted-workspaces', s)
-          manager='<script src="Html_tools/workspace-manager-v1.js?v=20260902-workspace-manager-v1.1-clean-geometry"></script>'
+          manager='<script src="Html_tools/workspace-manager-v1.js?v=20260902-workspace-manager-v1.2-clean-card-geometry"></script>'
           s=re.sub(r'\n?<script src="Html_tools/workspace-manager-v1\.js\?v=[^\"]+"></script>', '', s)
           anchor_re=r'(<script src="Html_tools/workspace-core-guard\.js\?v=[^\"]+"></script>)'
           m=re.search(anchor_re,s)
@@ -48,5 +48,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Wire WebDesk workspace manager v1.1'
+          git commit -m 'Wire WebDesk workspace manager v1.2'
           git push origin master
