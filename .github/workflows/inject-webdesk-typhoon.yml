@@ -33,7 +33,7 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
           widget='<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-p0-unified-runtime"></script>'
-          window_fix='<script src="Html_tools/typhoon-window-p0-fix.js?v=20260902-typhoon-window-p0-fix2"></script>'
+          window_fix='<script src="Html_tools/typhoon-window-p0-fix.js?v=20260902-typhoon-window-p0-fix3-no-rerender"></script>'
           radar='<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>'
           atmosphere='<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>'
           openfreemap='<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>'
@@ -76,9 +76,9 @@ jobs:
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired consolidated typhoon weather v11 + self-healing UI recovery')
+              print('wired consolidated typhoon weather v11 + non-rerendering window bridge')
           else:
-              print('v11 + recovery already wired')
+              print('v11 + non-rerendering bridge already wired')
           PY
       - name: Verify consolidated typhoon stack
         run: |
@@ -101,6 +101,7 @@ jobs:
               if c!=1: raise SystemExit(f'{f}: expected once, got {c}')
               pos.append(s.index(f))
           if pos!=sorted(pos): raise SystemExit('load order invalid')
+          if 'typhoon-window-p0-fix3-no-rerender' not in s: raise SystemExit('p0 no-rerender cache token missing')
           if 'typhoon-weather-v11-consolidated' not in s: raise SystemExit('v11 cache token missing')
           if 'typhoon-weather-ui-recovery-v11.1' not in s: raise SystemExit('v11 recovery cache token missing')
           unwanted=[
@@ -108,7 +109,7 @@ jobs:
           ]
           for f in unwanted:
               if f in s: raise SystemExit('legacy runtime still loaded: '+f)
-          print('consolidated v11 stack + recovery verified')
+          print('consolidated v11 stack + no-rerender bridge verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -119,5 +120,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Deploy self-healing typhoon weather controls'
+          git commit -m 'Deploy non-rerendering typhoon window bridge'
           git push
