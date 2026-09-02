@@ -37,7 +37,7 @@ jobs:
           atmosphere = '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.1-restored"></script>'
           weather = '<script src="Html_tools/typhoon-weather-layers-v5-5.js?v=20260902-typhoon-weather-v5.5-restored"></script>'
           toolbar = '<script src="Html_tools/typhoon-layers-toolbar-v1.js?v=20260902-typhoon-layers-toolbar-v1"></script>'
-          native = '<script src="Html_tools/typhoon-native-weather-v2.js?v=20260902-typhoon-native-weather-v2"></script>'
+          native = '<script src="Html_tools/typhoon-native-weather-v2.js?v=20260902-typhoon-native-weather-v2.1-persistent"></script>'
           patterns = [
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-window-p0-fix\.js\?v=[^"]+"></script>',
@@ -63,9 +63,9 @@ jobs:
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired unified typhoon runtime plus native visible weather layers')
+              print('wired unified typhoon runtime plus persistent native visible weather layers')
           else:
-              print('native typhoon weather-layer stack already wired')
+              print('persistent native typhoon weather-layer stack already wired')
           PY
       - name: Verify typhoon stack order
         run: |
@@ -89,7 +89,9 @@ jobs:
               pos.append(s.index(f))
           if pos != sorted(pos):
               raise SystemExit('typhoon stack load order invalid')
-          print('unified typhoon stack with native weather layers verified')
+          if 'typhoon-native-weather-v2.1-persistent' not in s:
+              raise SystemExit('persistent native weather cache token missing')
+          print('unified typhoon stack with persistent native weather layers verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -100,5 +102,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Expose native WebDesk typhoon weather layers'
+          git commit -m 'Refresh persistent WebDesk typhoon weather runtime'
           git push
