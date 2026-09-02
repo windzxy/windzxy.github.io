@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - 'maydayland/production-polish-v124.js'
+      - 'maydayland/tour-map-product-v1.js'
       - '.github/workflows/inject-maydayland-production-polish-v124.yml'
   workflow_dispatch:
 
@@ -25,12 +26,14 @@ jobs:
           import re
           p=Path('maydayland/index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="./production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2" defer></script>'
+          polish='<script src="./production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2" defer></script>'
+          map_product='<script src="./tour-map-product-v1.js?v=20260902-tour-map-product-v1" defer></script>'
           s2=re.sub(r'\n?\s*<script src="\./production-polish-v124\.js\?v=[^"]+" defer></script>','',s)
+          s2=re.sub(r'\n?\s*<script src="\./tour-map-product-v1\.js\?v=[^"]+" defer></script>','',s2)
           anchor='<script src="./app-v119.js?v=20260901-repaired-v119.2" defer></script>'
           if anchor not in s2:
               raise SystemExit('repaired v119 anchor missing; refusing unsafe rewrite')
-          s2=s2.replace(anchor,anchor+'\n  '+tag,1)
+          s2=s2.replace(anchor,anchor+'\n  '+polish+'\n  '+map_product,1)
 
           # Keep the static source-of-truth aligned with the production runtime.
           s2=re.sub(r'data-maydayland-release="[^"]+"','data-maydayland-release="v124.2"',s2,count=1)
@@ -53,7 +56,7 @@ jobs:
 
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired production polish v124.2 and normalized source metadata/assets/fallback copy')
+              print('wired production polish v124.2 + tour map product v1 and normalized source metadata/assets/fallback copy')
           else:
               print('already wired and normalized')
           PY
@@ -65,7 +68,8 @@ jobs:
           assert 'maydayland-static-fallback' in s
           assert 'app-v119.js?v=20260901-repaired-v119.2' in s
           assert 'production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2' in s
-          assert s.index('app-v119.js?v=20260901-repaired-v119.2') < s.index('production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2')
+          assert 'tour-map-product-v1.js?v=20260902-tour-map-product-v1' in s
+          assert s.index('app-v119.js?v=20260901-repaired-v119.2') < s.index('production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2') < s.index('tour-map-product-v1.js?v=20260902-tour-map-product-v1')
           assert 'data-maydayland-release="v124.2"' in s
           assert "version:'v124.2',release:'production-polish-stable-core'" in s
           assert '<title>Maydayland · Tour Music Time Archive v124.2</title>' in s
@@ -76,7 +80,7 @@ jobs:
           assert 'SAFE SHELL · 正在載入互動版' not in s
           assert 'MAYDAYLAND · RESILIENT FIRST SCREEN' not in s
           assert 'BASE AUDIT · repaired v119 未啟動' not in s
-          print('stable shell + runtime + polish order + source metadata/assets/customer fallback verified')
+          print('stable shell + runtime + polish + tour-map product order verified')
           PY
       - name: Commit entry update
         run: |
@@ -87,5 +91,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/index.html
-          git commit -m 'Productize Maydayland static fallback copy'
+          git commit -m 'Wire Maydayland tour map product layer'
           git push
