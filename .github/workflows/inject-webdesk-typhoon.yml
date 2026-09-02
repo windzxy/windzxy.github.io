@@ -11,6 +11,7 @@ on:
       - 'Html_tools/typhoon-openfreemap-v6.js'
       - 'Html_tools/typhoon-product-shell-v6.js'
       - 'Html_tools/typhoon-weather-runtime-v11.js'
+      - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
       - '.github/workflows/inject-webdesk-typhoon.yml'
   workflow_dispatch:
 
@@ -38,6 +39,7 @@ jobs:
           openfreemap='<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>'
           shell='<script src="Html_tools/typhoon-product-shell-v6.js?v=20260902-typhoon-product-shell-v6-keyless"></script>'
           weather='<script src="Html_tools/typhoon-weather-runtime-v11.js?v=20260902-typhoon-weather-v11-consolidated"></script>'
+          recovery='<script src="Html_tools/typhoon-weather-ui-recovery-v11-1.js?v=20260902-typhoon-weather-ui-recovery-v11.1"></script>'
           patterns=[
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-window-p0-fix\.js\?v=[^"]+"></script>',
@@ -48,6 +50,7 @@ jobs:
             r'\n?<script src="Html_tools/typhoon-weather-runtime-v7\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-weather-runtime-v10\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-weather-runtime-v11\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-weather-ui-recovery-v11-1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-native-weather-v2\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-openfreemap-v6\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-shell-v5\.js\?v=[^"]+"></script>',
@@ -69,13 +72,13 @@ jobs:
           anchor='<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           if anchor not in s2:
               raise SystemExit('fx widget anchor not found')
-          stack='\n'.join([widget,window_fix,radar,atmosphere,openfreemap,shell,weather])
+          stack='\n'.join([widget,window_fix,radar,atmosphere,openfreemap,shell,weather,recovery])
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired consolidated typhoon weather v11')
+              print('wired consolidated typhoon weather v11 + self-healing UI recovery')
           else:
-              print('v11 already wired')
+              print('v11 + recovery already wired')
           PY
       - name: Verify consolidated typhoon stack
         run: |
@@ -89,7 +92,8 @@ jobs:
             'Html_tools/typhoon-atmosphere-v5-1.js',
             'Html_tools/typhoon-openfreemap-v6.js',
             'Html_tools/typhoon-product-shell-v6.js',
-            'Html_tools/typhoon-weather-runtime-v11.js'
+            'Html_tools/typhoon-weather-runtime-v11.js',
+            'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
           ]
           pos=[]
           for f in wanted:
@@ -98,12 +102,13 @@ jobs:
               pos.append(s.index(f))
           if pos!=sorted(pos): raise SystemExit('load order invalid')
           if 'typhoon-weather-v11-consolidated' not in s: raise SystemExit('v11 cache token missing')
+          if 'typhoon-weather-ui-recovery-v11.1' not in s: raise SystemExit('v11 recovery cache token missing')
           unwanted=[
             'Html_tools/typhoon-runtime-repair-v8.js','Html_tools/typhoon-weather-hotfix-v7.js','Html_tools/typhoon-native-weather-v2.js','Html_tools/typhoon-weather-runtime-v10.js','Html_tools/typhoon-product-shell-v5.js','Html_tools/typhoon-keyless-basemap-v5-1.js','Html_tools/typhoon-weather-layers-v5-5.js','Html_tools/typhoon-layers-toolbar-v1.js','Html_tools/typhoon-zoomearth-sync-v4.js','Html_tools/typhoon-product-v5.js','Html_tools/typhoon-product-v5-2.js','Html_tools/typhoon-layout-v5-3.js','Html_tools/typhoon-polish-v5-4.js','Html_tools/typhoon-weather-layers-v5-6-fix.js','Html_tools/typhoon-weather-smooth-v5-7.js'
           ]
           for f in unwanted:
               if f in s: raise SystemExit('legacy runtime still loaded: '+f)
-          print('consolidated v11 stack verified')
+          print('consolidated v11 stack + recovery verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -114,5 +119,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Deploy consolidated typhoon weather v11'
+          git commit -m 'Deploy self-healing typhoon weather controls'
           git push
