@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VER = '20260903-table-delimiter-fix-v1.3-detect-suggestion';
+  const VER = '20260903-table-delimiter-fix-v1.4-paste-autodetect';
   const STORAGE_KEY = 'windzxy-webdesk-table-delimiter-v1';
   if (window.__windzxyTableDelimiterFix === VER) return;
   window.__windzxyTableDelimiterFix = VER;
@@ -117,6 +117,21 @@
     refresh();
   }
 
+  function bindPasteAutodetect(select, input) {
+    if (!input || input.dataset.delimiterPasteAutodetect === VER) return;
+    input.dataset.delimiterPasteAutodetect = VER;
+    input.addEventListener('paste', () => {
+      const wasEmpty = !input.value.trim();
+      if (!wasEmpty) return;
+      setTimeout(() => {
+        const detected = detectDelimiter(input.value);
+        if (!detected || detected === select.value) return;
+        select.value = detected;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      }, 0);
+    });
+  }
+
   function enhance(root) {
     const select = root?.matches?.('#tableDelim') ? root : root?.querySelector?.('#tableDelim');
     if (!select || select.dataset.delimiterFix === VER) return;
@@ -130,7 +145,9 @@
     bindPersistence(select);
     loadSavedDelimiter(select);
     const app = select.closest('.table-app') || document;
-    ensureSuggestion(select, app.querySelector?.('#appTableInput'));
+    const input = app.querySelector?.('#appTableInput');
+    ensureSuggestion(select, input);
+    bindPasteAutodetect(select, input);
   }
 
   function scan(root = document) {
