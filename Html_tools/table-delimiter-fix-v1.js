@@ -1,8 +1,16 @@
 (() => {
   'use strict';
-  const VER = '20260903-table-delimiter-fix-v1';
+  const VER = '20260903-table-delimiter-fix-v1.1';
   if (window.__windzxyTableDelimiterFix === VER) return;
   window.__windzxyTableDelimiterFix = VER;
+
+  function ensureOption(select, value, label) {
+    if ([...select.options].some(option => option.value === value)) return;
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = label;
+    select.appendChild(option);
+  }
 
   function enhance(root) {
     const select = root?.matches?.('#tableDelim') ? root : root?.querySelector?.('#tableDelim');
@@ -12,12 +20,8 @@
     const tsv = [...select.options].find(option => option.textContent.trim().toUpperCase() === 'TSV');
     if (tsv) tsv.value = '\t';
 
-    if (![...select.options].some(option => option.value === ';')) {
-      const option = document.createElement('option');
-      option.value = ';';
-      option.textContent = 'Semicolon (;)';
-      select.appendChild(option);
-    }
+    ensureOption(select, ';', 'Semicolon (;)');
+    ensureOption(select, '|', 'Pipe (|)');
   }
 
   function scan(root = document) {
