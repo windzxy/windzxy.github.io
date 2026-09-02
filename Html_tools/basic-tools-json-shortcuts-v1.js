@@ -1,16 +1,76 @@
 (() => {
   'use strict';
-  if (window.__basicToolsJsonShortcutsV1) return;
-  window.__basicToolsJsonShortcutsV1 = 1;
+  const VER = '20260902-json-shortcuts-v1.1-copy';
+  if (window.__basicToolsJsonShortcutsV1 === VER) return;
+  window.__basicToolsJsonShortcutsV1 = VER;
+
+  function copyText(text) {
+    if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+    return new Promise((resolve, reject) => {
+      try {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+        document.body.appendChild(area);
+        area.select();
+        const ok = document.execCommand('copy');
+        area.remove();
+        ok ? resolve() : reject(new Error('copy failed'));
+      } catch (error) { reject(error); }
+    });
+  }
+
+  function ensureStyle() {
+    if (document.getElementById('jsonShortcutsV11Style')) return;
+    const style = document.createElement('style');
+    style.id = 'jsonShortcutsV11Style';
+    style.textContent = '.json-app .json-shortcut-copy{margin-left:auto;padding:4px 9px;border:1px solid rgba(127,127,127,.22);border-radius:9px;background:rgba(127,127,127,.08);color:inherit;font:inherit;font-weight:650;cursor:pointer}.json-app .json-shortcut-copy:disabled{opacity:.38;cursor:not-allowed}.json-app .json-shortcut-copy:not(:disabled):hover{background:rgba(127,127,127,.14)}';
+    document.head.appendChild(style);
+  }
 
   function enhance(root) {
-    if (!root?.matches?.('.json-app') || root.dataset.jsonShortcutsV1) return;
+    if (!root?.matches?.('.json-app') || root.dataset.jsonShortcutsV1 === VER) return;
     const input = root.querySelector('#jsonInput');
     if (!input) return;
-    root.dataset.jsonShortcutsV1 = '1';
+    root.dataset.jsonShortcutsV1 = VER;
+    ensureStyle();
+
+    let copyButton = null;
+    const validJson = () => {
+      if (!input.value.trim()) return false;
+      try { JSON.parse(input.value); return true; } catch (_) { return false; }
+    };
+
+    const ensureCopyButton = () => {
+      const status = root.querySelector('.basic-tool-status');
+      if (!status) return null;
+      copyButton = status.querySelector('.json-shortcut-copy');
+      if (!copyButton) {
+        copyButton = document.createElement('button');
+        copyButton.type = 'button';
+        copyButton.className = 'json-shortcut-copy';
+        copyButton.textContent = '複製 JSON';
+        copyButton.setAttribute('aria-label', '複製目前 JSON');
+        copyButton.addEventListener('click', async () => {
+          if (!validJson()) return;
+          try {
+            await copyText(input.value);
+            copyButton.textContent = '已複製 ✓';
+            setTimeout(() => { if (copyButton?.isConnected) copyButton.textContent = '複製 JSON'; }, 1200);
+          } catch (_) {
+            copyButton.textContent = '複製失敗';
+            setTimeout(() => { if (copyButton?.isConnected) copyButton.textContent = '複製 JSON'; }, 1200);
+          }
+        });
+        status.appendChild(copyButton);
+      }
+      copyButton.disabled = !validJson();
+      return status;
+    };
 
     const updateHint = () => {
-      const status = root.querySelector('.basic-tool-status');
+      const status = ensureCopyButton();
       if (!status || !status.children[1] || !input.value.trim()) return;
       const hint = 'Ctrl/⌘ + Enter 格式化 · Shift + Ctrl/⌘ + Enter 壓縮';
       const current = status.children[1].textContent || '';
@@ -33,6 +93,7 @@
 
     input.addEventListener('input', () => setTimeout(updateHint, 0));
     setTimeout(updateHint, 0);
+    setTimeout(updateHint, 120);
   }
 
   function scan(root = document) {
