@@ -8,6 +8,7 @@ on:
       - 'Html_tools/typhoon-window-p0-fix.js'
       - 'Html_tools/typhoon-radar-v4-1.js'
       - 'Html_tools/typhoon-atmosphere-v5-1.js'
+      - 'Html_tools/typhoon-runtime-repair-v8.js'
       - 'Html_tools/typhoon-native-weather-v2.js'
       - 'Html_tools/typhoon-product-shell-v5.js'
       - 'Html_tools/typhoon-openfreemap-v6.js'
@@ -35,7 +36,8 @@ jobs:
           window_fix = '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260902-typhoon-window-p0-fix2"></script>'
           radar = '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>'
           atmosphere = '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>'
-          weather = '<script src="Html_tools/typhoon-native-weather-v2.js?v=20260902-typhoon-weather-v4.1-fluid"></script>'
+          repair = '<script src="Html_tools/typhoon-runtime-repair-v8.js?v=20260902-typhoon-runtime-repair-v8"></script>'
+          weather = '<script src="Html_tools/typhoon-native-weather-v2.js?v=20260902-typhoon-weather-v4.2-repaired"></script>'
           openfreemap = '<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>'
           shell = '<script src="Html_tools/typhoon-product-shell-v5.js?v=20260902-typhoon-product-shell-v5"></script>'
           patterns = [
@@ -43,6 +45,9 @@ jobs:
             r'\n?<script src="Html_tools/typhoon-window-p0-fix\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-radar-v4-1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-atmosphere-v5-1\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-runtime-repair-v8\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-weather-hotfix-v7\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-weather-runtime-v7\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-weather-layers-v5-5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-layers-toolbar-v1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-native-weather-v2\.js\?v=[^"]+"></script>',
@@ -63,13 +68,13 @@ jobs:
           anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           if anchor not in s2:
               raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
-          stack='\n'.join([widget,window_fix,radar,atmosphere,weather,openfreemap,shell])
+          stack='\n'.join([widget,window_fix,radar,atmosphere,repair,weather,openfreemap,shell])
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired typhoon runtime with fluid full-viewport weather layers')
+              print('wired repaired typhoon runtime')
           else:
-              print('fluid typhoon weather runtime already wired')
+              print('repaired typhoon runtime already wired')
           PY
       - name: Verify consolidated typhoon stack
         run: |
@@ -81,6 +86,7 @@ jobs:
             'Html_tools/typhoon-window-p0-fix.js',
             'Html_tools/typhoon-radar-v4-1.js',
             'Html_tools/typhoon-atmosphere-v5-1.js',
+            'Html_tools/typhoon-runtime-repair-v8.js',
             'Html_tools/typhoon-native-weather-v2.js',
             'Html_tools/typhoon-openfreemap-v6.js',
             'Html_tools/typhoon-product-shell-v5.js'
@@ -93,28 +99,17 @@ jobs:
               pos.append(s.index(f))
           if pos != sorted(pos):
               raise SystemExit('typhoon stack load order invalid')
-          if 'typhoon-weather-v4.1-fluid' not in s:
-              raise SystemExit('fluid weather cache token missing')
+          if 'typhoon-runtime-repair-v8' not in s:
+              raise SystemExit('runtime repair missing')
+          if 'typhoon-weather-v4.2-repaired' not in s:
+              raise SystemExit('repaired weather cache token missing')
           if 'typhoon-openfreemap-v6.3-antiflicker' not in s:
-              raise SystemExit('OpenFreeMap v6.3 cache token missing')
-          if 'typhoon-product-shell-v5' not in s:
-              raise SystemExit('Zoom Earth product shell missing')
-          legacy=[
-            'Html_tools/typhoon-keyless-basemap-v5-1.js',
-            'Html_tools/typhoon-weather-layers-v5-5.js',
-            'Html_tools/typhoon-layers-toolbar-v1.js',
-            'Html_tools/typhoon-zoomearth-sync-v4.js',
-            'Html_tools/typhoon-product-v5.js',
-            'Html_tools/typhoon-product-v5-2.js',
-            'Html_tools/typhoon-layout-v5-3.js',
-            'Html_tools/typhoon-polish-v5-4.js',
-            'Html_tools/typhoon-weather-layers-v5-6-fix.js',
-            'Html_tools/typhoon-weather-smooth-v5-7.js'
-          ]
-          for f in legacy:
+              raise SystemExit('OpenFreeMap cache token missing')
+          bad=['Html_tools/typhoon-weather-hotfix-v7.js','Html_tools/typhoon-weather-runtime-v7.js','Html_tools/typhoon-keyless-basemap-v5-1.js','Html_tools/typhoon-weather-layers-v5-5.js','Html_tools/typhoon-layers-toolbar-v1.js','Html_tools/typhoon-zoomearth-sync-v4.js','Html_tools/typhoon-product-v5.js','Html_tools/typhoon-product-v5-2.js','Html_tools/typhoon-layout-v5-3.js','Html_tools/typhoon-polish-v5-4.js','Html_tools/typhoon-weather-layers-v5-6-fix.js','Html_tools/typhoon-weather-smooth-v5-7.js']
+          for f in bad:
               if f in s:
-                  raise SystemExit(f'legacy typhoon runtime still loaded: {f}')
-          print('fluid full-viewport weather stack verified')
+                  raise SystemExit(f'unwanted typhoon runtime still loaded: {f}')
+          print('repaired typhoon stack verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -125,5 +120,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Deploy fluid full-viewport typhoon weather layers'
+          git commit -m 'Deploy repaired typhoon weather switching'
           git push
