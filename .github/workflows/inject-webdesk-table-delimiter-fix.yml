@@ -29,7 +29,7 @@ jobs:
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
           html = re.sub(r'<script\s+src="Html_tools/table-delimiter-fix-v1\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
-          tag = '<script src="Html_tools/table-delimiter-fix-v1.js?v=20260903-table-delimiter-fix-v1.1"></script>'
+          tag = '<script src="Html_tools/table-delimiter-fix-v1.js?v=20260903-table-delimiter-fix-v1.2"></script>'
           html = html.replace('</body>', tag + '\n</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
