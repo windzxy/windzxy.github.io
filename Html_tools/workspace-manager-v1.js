@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VER='20260902-workspace-manager-v1.1-clean-geometry';
+  const VER='20260902-workspace-manager-v1.2-clean-card-geometry';
   if(window.__windzxyWorkspaceManagerV1===VER)return;
   window.__windzxyWorkspaceManagerV1=VER;
 
@@ -14,9 +14,9 @@
   function setActive(id){
     try{activeId=id;localStorage.setItem(ACTIVE_KEY,id);}catch(e){localStorage.setItem(ACTIVE_KEY,id);}
   }
-  function cleanGeometryForWorkspace(ws){
+  function cleanGeometryForCards(cardIds){
     try{
-      const ids=new Set((Array.isArray(ws?.cards)?ws.cards:[]).map(card=>String(card?.id||'')).filter(Boolean));
+      const ids=new Set((Array.isArray(cardIds)?cardIds:[]).map(id=>String(id||'')).filter(Boolean));
       if(!ids.size)return 0;
       const raw=localStorage.getItem(GEO_KEY);
       if(!raw)return 0;
@@ -35,6 +35,9 @@
       if(removed)localStorage.setItem(GEO_KEY,JSON.stringify(geo));
       return removed;
     }catch(e){return 0;}
+  }
+  function cleanGeometryForWorkspace(ws){
+    return cleanGeometryForCards((Array.isArray(ws?.cards)?ws.cards:[]).map(card=>card?.id));
   }
 
   function ensureStyle(){
@@ -111,12 +114,29 @@
     paint();
   }
 
+  function patchCardRemoval(){
+    if(!window.__windzxyWorkspaceManagerCardRemovalPatched&&typeof removeCard==='function'){
+      window.__windzxyWorkspaceManagerCardRemovalPatched=1;
+      const coreRemove=removeCard;
+      removeCard=function(id){cleanGeometryForCards([id]);return coreRemove.apply(this,arguments);};
+    }
+    if(!window.__windzxyWorkspaceManagerResetPatched&&typeof resetLayout==='function'){
+      window.__windzxyWorkspaceManagerResetPatched=1;
+      const coreReset=resetLayout;
+      resetLayout=function(){
+        try{cleanGeometryForWorkspace(typeof activeWorkspace==='function'?activeWorkspace():null);}catch(e){}
+        return coreReset.apply(this,arguments);
+      };
+    }
+  }
+
   function patch(){
     ensureStyle();
     try{renderWorkspaces=enhancedRenderWorkspaces;}catch(e){}
+    patchCardRemoval();
     enhancedRenderWorkspaces();
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',patch,{once:true});else patch();
-  window.WebDeskWorkspaceManager={version:VER,render:enhancedRenderWorkspaces,rename:beginRename,remove:removeWorkspace,cleanGeometry:cleanGeometryForWorkspace};
+  window.WebDeskWorkspaceManager={version:VER,render:enhancedRenderWorkspaces,rename:beginRename,remove:removeWorkspace,cleanGeometry:cleanGeometryForWorkspace,cleanCardGeometry:cleanGeometryForCards};
 })();
