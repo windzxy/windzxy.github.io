@@ -20,6 +20,7 @@ function injectStyle(){
     .legend span[data-route-filter]{cursor:pointer;transition:opacity .18s ease,transform .18s ease,background .18s ease;outline:none}
     .legend span[data-route-filter]:hover,.legend span[data-route-filter]:focus-visible{transform:translateY(-1px)}
     .legend span[data-route-filter][aria-pressed="true"]{opacity:1!important;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+    @media(prefers-reduced-motion:reduce){.map-card .route,.legend span[data-route-filter]{transition:none!important}}
     @media(max-width:720px){.tour-route-status{position:sticky;top:0;z-index:2;backdrop-filter:blur(12px)}.tour-mobile-hint{display:block}.map-stage{min-height:360px;overflow:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin}.map-svg{min-width:620px;scroll-snap-align:start}}
   `;
   document.head.appendChild(style);
@@ -62,12 +63,32 @@ function connectMapNodes(){
   });
 }
 
+function wireTourKeyboard(){
+  const tours=$$('.tour[data-tour]');
+  tours.forEach((btn,index)=>{
+    if(btn.dataset.keyboardReady==='1')return;
+    btn.dataset.keyboardReady='1';
+    btn.addEventListener('keydown',e=>{
+      let next=-1;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown')next=(index+1)%tours.length;
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp')next=(index-1+tours.length)%tours.length;
+      else if(e.key==='Home')next=0;
+      else if(e.key==='End')next=tours.length-1;
+      if(next<0)return;
+      e.preventDefault();
+      tours[next]?.focus();
+      tours[next]?.click();
+    });
+  });
+}
+
 function wireLegend(){
   const buttons={};
   $$('.tour[data-tour]').forEach(btn=>{
     const b=$('b',btn);if(b)buttons[b.textContent.trim()]=btn.dataset.tour;
     btn.setAttribute('aria-pressed',btn.classList.contains('active')?'true':'false');
   });
+  wireTourKeyboard();
   $$('.map-card>.legend span,.map-card .legend span').forEach(span=>{
     const name=(span.textContent||'').trim(); const id=buttons[name]; if(!id) return;
     span.dataset.routeFilter=id; span.setAttribute('role','button'); span.setAttribute('tabindex','0'); span.setAttribute('aria-pressed','false');
@@ -91,7 +112,7 @@ function syncStatus(){
   const card=$('.map-card'); if(!card) return;
   let status=$('.tour-route-status',card);
   if(!status){
-    status=document.createElement('div');status.className='tour-route-status';const head=$('.map-head',card);if(head)head.insertAdjacentElement('afterend',status);else card.prepend(status);
+    status=document.createElement('div');status.className='tour-route-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');const head=$('.map-head',card);if(head)head.insertAdjacentElement('afterend',status);else card.prepend(status);
     const stage=$('.map-stage',card);if(stage&&!$('.tour-mobile-hint',card)){const hint=document.createElement('div');hint.className='tour-mobile-hint';hint.textContent='左右滑動瀏覽巡演地圖 · 點城市節點查看資料';stage.insertAdjacentElement('afterend',hint);}
   }
   const active=selectedTour(); if(!active) return;
@@ -113,7 +134,7 @@ function syncStatus(){
 function enhance(){
   if(!$('.map-card')||!$('.tour[data-tour]')) return false;
   injectStyle(); productizeCopy(); connectMapNodes(); wireLegend(); restoreTour(); syncStatus();
-  document.documentElement.dataset.maydaylandTourMap='product-v1.3';
+  document.documentElement.dataset.maydaylandTourMap='product-v1.4';
   return true;
 }
 
@@ -122,5 +143,6 @@ function boot(){
   let tries=0; const timer=setInterval(()=>{tries++;if(enhance()||tries>40)clearInterval(timer);},100);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&selectedTour()?.dataset.tour!=='all')$('.tour[data-tour="all"]')?.click();});
 document.addEventListener('click',e=>{const tour=e.target.closest?.('[data-tour]');if(tour)rememberTour(tour.dataset.tour||'all');if(e.target.closest?.('[data-tour],[data-city],[data-page]'))requestAnimationFrame(()=>{productizeCopy();syncStatus();});});
 })();
