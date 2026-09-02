@@ -98,12 +98,27 @@ function wireLegend(){
   });
 }
 
-function rememberTour(id){try{localStorage.setItem(TOUR_STORAGE,id||'all');}catch(e){}}
+function routeFromHash(){
+  const parts=(location.hash||'').replace(/^#/,'').split('/');
+  if(parts[0]!=='home'||!parts[1])return '';
+  try{return decodeURIComponent(parts[1]);}catch(e){return parts[1];}
+}
+function syncRouteHash(id){
+  if((location.hash||'#home').replace(/^#/,'').split('/')[0]!=='home')return;
+  const next=id&&id!=='all'?'#home/'+encodeURIComponent(id):'#home';
+  if(location.hash!==next)history.replaceState(null,'',next);
+}
+function rememberTour(id){
+  const value=id||'all';
+  try{localStorage.setItem(TOUR_STORAGE,value);}catch(e){}
+  syncRouteHash(value);
+}
 function restoreTour(){
   if(document.documentElement.dataset.maydaylandTourRestored==='1') return;
   document.documentElement.dataset.maydaylandTourRestored='1';
-  let id='all'; try{id=localStorage.getItem(TOUR_STORAGE)||'all';}catch(e){}
-  const btn=$('.tour[data-tour="'+CSS.escape(id)+'"]');
+  let id=routeFromHash();
+  if(!id){try{id=localStorage.getItem(TOUR_STORAGE)||'all';}catch(e){id='all';}}
+  const btn=$('.tour[data-tour="'+CSS.escape(id)+'"]')||$('.tour[data-tour="all"]');
   if(btn&&!btn.classList.contains('active')) requestAnimationFrame(()=>btn.click());
 }
 
@@ -121,7 +136,7 @@ function syncStatus(){
   if(id!=='all'){
     const route=$('.route[data-route="'+id+'"]'); const points=route?.getAttribute('points')?.trim(); if(points)cities=points.split(/\s+/).length;
   }
-  status.innerHTML='<div><strong>'+name+'</strong><small>'+(id==='all'?'顯示所有巡演分色路線':'聚焦 '+years+' · '+cities+' 個路線節點')+'</small></div>'+(id==='all'?'':'<button type="button" data-show-all-routes>顯示全部</button>');
+  status.innerHTML='<div><strong>'+name+'</strong><small>'+(id==='all'?'顯示所有巡演分色路線':'聚焦 '+years+' · '+cities+' 個路線節點 · 網址可直接分享此篩選')+'</small></div>'+(id==='all'?'':'<button type="button" data-show-all-routes>顯示全部</button>');
   const reset=$('[data-show-all-routes]',status); if(reset)reset.onclick=()=>$('.tour[data-tour="all"]')?.click();
   $$('.tour[data-tour]').forEach(btn=>btn.setAttribute('aria-pressed',(btn.dataset.tour||'all')===id?'true':'false'));
   $$('.legend [data-route-filter]').forEach(x=>{
@@ -134,7 +149,7 @@ function syncStatus(){
 function enhance(){
   if(!$('.map-card')||!$('.tour[data-tour]')) return false;
   injectStyle(); productizeCopy(); connectMapNodes(); wireLegend(); restoreTour(); syncStatus();
-  document.documentElement.dataset.maydaylandTourMap='product-v1.4';
+  document.documentElement.dataset.maydaylandTourMap='product-v1.5';
   return true;
 }
 
