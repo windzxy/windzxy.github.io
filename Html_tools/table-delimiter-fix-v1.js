@@ -1,6 +1,7 @@
 (() => {
   'use strict';
-  const VER = '20260903-table-delimiter-fix-v1.1';
+  const VER = '20260903-table-delimiter-fix-v1.2';
+  const STORAGE_KEY = 'windzxy-webdesk-table-delimiter-v1';
   if (window.__windzxyTableDelimiterFix === VER) return;
   window.__windzxyTableDelimiterFix = VER;
 
@@ -10,6 +11,24 @@
     option.value = value;
     option.textContent = label;
     select.appendChild(option);
+  }
+
+  function loadSavedDelimiter(select) {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved !== null && [...select.options].some(option => option.value === saved)) {
+        select.value = saved;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    } catch (_) {}
+  }
+
+  function bindPersistence(select) {
+    if (select.dataset.delimiterPersistence === VER) return;
+    select.dataset.delimiterPersistence = VER;
+    select.addEventListener('change', () => {
+      try { localStorage.setItem(STORAGE_KEY, select.value); } catch (_) {}
+    });
   }
 
   function enhance(root) {
@@ -22,6 +41,8 @@
 
     ensureOption(select, ';', 'Semicolon (;)');
     ensureOption(select, '|', 'Pipe (|)');
+    bindPersistence(select);
+    loadSavedDelimiter(select);
   }
 
   function scan(root = document) {
