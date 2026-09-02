@@ -2,6 +2,7 @@
 'use strict';
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const TOUR_STORAGE='maydayland-tour-filter-v1';
 
 function injectStyle(){
   if($('#maydayland-tour-map-product-v1-style')) return;
@@ -73,6 +74,15 @@ function wireLegend(){
   });
 }
 
+function rememberTour(id){try{localStorage.setItem(TOUR_STORAGE,id||'all');}catch(e){}}
+function restoreTour(){
+  if(document.documentElement.dataset.maydaylandTourRestored==='1') return;
+  document.documentElement.dataset.maydaylandTourRestored='1';
+  let id='all'; try{id=localStorage.getItem(TOUR_STORAGE)||'all';}catch(e){}
+  const btn=$('.tour[data-tour="'+CSS.escape(id)+'"]');
+  if(btn&&!btn.classList.contains('active')) requestAnimationFrame(()=>btn.click());
+}
+
 function selectedTour(){return $('.tour.active[data-tour]')||$('.tour[data-tour="all"]');}
 function syncStatus(){
   const card=$('.map-card'); if(!card) return;
@@ -98,8 +108,8 @@ function syncStatus(){
 
 function enhance(){
   if(!$('.map-card')||!$('.tour[data-tour]')) return false;
-  injectStyle(); productizeCopy(); connectMapNodes(); wireLegend(); syncStatus();
-  document.documentElement.dataset.maydaylandTourMap='product-v1.1';
+  injectStyle(); productizeCopy(); connectMapNodes(); wireLegend(); restoreTour(); syncStatus();
+  document.documentElement.dataset.maydaylandTourMap='product-v1.2';
   return true;
 }
 
@@ -108,5 +118,5 @@ function boot(){
   let tries=0; const timer=setInterval(()=>{tries++;if(enhance()||tries>40)clearInterval(timer);},100);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-document.addEventListener('click',e=>{if(e.target.closest?.('[data-tour],[data-city],[data-page]'))requestAnimationFrame(()=>{productizeCopy();syncStatus();});});
+document.addEventListener('click',e=>{const tour=e.target.closest?.('[data-tour]');if(tour)rememberTour(tour.dataset.tour||'all');if(e.target.closest?.('[data-tour],[data-city],[data-page]'))requestAnimationFrame(()=>{productizeCopy();syncStatus();});});
 })();
