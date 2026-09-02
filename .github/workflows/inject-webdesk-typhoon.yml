@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - 'Html_tools/typhoon-widget.js'
+      - 'Html_tools/typhoon-window-p0-fix.js'
       - 'Html_tools/typhoon-radar-v4-1.js'
       - '.github/workflows/inject-webdesk-typhoon.yml'
   workflow_dispatch:
@@ -27,9 +28,11 @@ jobs:
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
           widget = '<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-p0-unified-runtime"></script>'
+          window_fix = '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260902-typhoon-window-p0-fix1"></script>'
           radar = '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260901-typhoon-radar-v4.1"></script>'
           patterns = [
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-window-p0-fix\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-radar-v4-1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-v5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-atmosphere-v5-1\.js\?v=[^"]+"></script>',
@@ -46,12 +49,12 @@ jobs:
           anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           if anchor not in s2:
               raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
-          s2=s2.replace(anchor,anchor+'\n'+widget+'\n'+radar,1)
+          s2=s2.replace(anchor,anchor+'\n'+widget+'\n'+window_fix+'\n'+radar,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired unified typhoon runtime and radar add-on')
+              print('wired unified typhoon runtime, app-window bridge and radar add-on')
           else:
-              print('unified typhoon runtime already wired')
+              print('unified typhoon window stack already wired')
           PY
       - name: Verify typhoon stack order
         run: |
@@ -60,6 +63,7 @@ jobs:
           s=Path('index.html').read_text(encoding='utf-8')
           files=[
             'Html_tools/typhoon-widget.js',
+            'Html_tools/typhoon-window-p0-fix.js',
             'Html_tools/typhoon-radar-v4-1.js'
           ]
           pos=[]
@@ -82,7 +86,7 @@ jobs:
           ]:
               if removed in s:
                   raise SystemExit(f'legacy typhoon patch still loaded: {removed}')
-          print('unified typhoon runtime order verified')
+          print('unified typhoon app-window stack order verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -93,5 +97,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Use unified WebDesk typhoon runtime'
+          git commit -m 'Restore WebDesk typhoon app window runtime'
           git push
