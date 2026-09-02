@@ -113,6 +113,11 @@ function rememberTour(id){
   try{localStorage.setItem(TOUR_STORAGE,value);}catch(e){}
   syncRouteHash(value);
 }
+function applyRouteFromHash(){
+  const id=routeFromHash()||'all';
+  const btn=$('.tour[data-tour="'+CSS.escape(id)+'"]')||$('.tour[data-tour="all"]');
+  if(btn&&!btn.classList.contains('active'))requestAnimationFrame(()=>btn.click());
+}
 function restoreTour(){
   if(document.documentElement.dataset.maydaylandTourRestored==='1') return;
   document.documentElement.dataset.maydaylandTourRestored='1';
@@ -149,7 +154,7 @@ function syncStatus(){
 function enhance(){
   if(!$('.map-card')||!$('.tour[data-tour]')) return false;
   injectStyle(); productizeCopy(); connectMapNodes(); wireLegend(); restoreTour(); syncStatus();
-  document.documentElement.dataset.maydaylandTourMap='product-v1.5';
+  document.documentElement.dataset.maydaylandTourMap='product-v1.6';
   return true;
 }
 
@@ -160,4 +165,5 @@ function boot(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&selectedTour()?.dataset.tour!=='all')$('.tour[data-tour="all"]')?.click();});
 document.addEventListener('click',e=>{const tour=e.target.closest?.('[data-tour]');if(tour)rememberTour(tour.dataset.tour||'all');if(e.target.closest?.('[data-tour],[data-city],[data-page]'))requestAnimationFrame(()=>{productizeCopy();syncStatus();});});
+window.addEventListener('hashchange',()=>{if((location.hash||'').startsWith('#home'))applyRouteFromHash();});
 })();
