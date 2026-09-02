@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  if (window.__basicToolsUxV91) return;
-  window.__basicToolsUxV91 = 1;
+  if (window.__basicToolsUxV92) return;
+  window.__basicToolsUxV92 = 1;
 
   const q = (root, selector) => root.querySelector(selector);
   const bytes = value => {
@@ -39,15 +39,24 @@
   }
 
   function tableMeta(text) {
-    const lines = text.trim() ? text.trim().split(/\r?\n/) : [];
+    const lines = text.split(/\r?\n/).map(line => line.trimEnd()).filter(line => line.trim());
     if (!lines.length) return null;
-    let name = 'PLAIN';
-    let cols = 1;
-    for (const [candidate, separator] of [['TAB', '\t'], ['CSV', ','], ['PIPE', '|'], ['SEMICOLON', ';']]) {
-      const count = lines[0].split(separator).length;
-      if (count > cols) { name = candidate; cols = count; }
+    const sample = lines.slice(0, 8);
+    const candidates = [['TAB', '\t'], ['CSV', ','], ['PIPE', '|'], ['SEMICOLON', ';']];
+    let best = { name: 'PLAIN', separator: '', cols: 1, consistency: 0 };
+    for (const [name, separator] of candidates) {
+      const counts = sample.map(line => line.split(separator).length);
+      const frequency = new Map();
+      counts.forEach(count => frequency.set(count, (frequency.get(count) || 0) + 1));
+      const [modeCols, modeHits] = [...frequency.entries()].sort((a, b) => b[1] - a[1] || b[0] - a[0])[0];
+      const consistency = modeHits / sample.length;
+      if (modeCols > 1 && (consistency > best.consistency || (consistency === best.consistency && modeCols > best.cols))) {
+        best = { name, separator, cols: modeCols, consistency };
+      }
     }
-    return { rows: lines.length, cols, name };
+    const rowCounts = best.separator ? lines.map(line => line.split(best.separator).length) : lines.map(() => 1);
+    const uneven = rowCounts.filter(count => count !== best.cols).length;
+    return { rows: lines.length, cols: best.cols, name: best.name, uneven, consistency: best.consistency };
   }
 
   function jsonErrorLocation(text, error) {
@@ -101,8 +110,9 @@
     const s = makeStatus(input);
     const refresh = () => {
       const m = tableMeta(input.value);
+      s.classList.toggle('bad', !!m?.uneven);
       s.children[0].textContent = m ? `${m.rows} rows × ${m.cols} cols · ${m.name}` : '等待資料';
-      s.children[1].textContent = input.value.trim() ? `${human(bytes(input.value))} · Ctrl/⌘ + Enter 預覽` : 'Ctrl/⌘ + Enter 預覽';
+      s.children[1].textContent = input.value.trim() ? `${m?.uneven ? `${m.uneven} 行欄數不一致 · ` : ''}${human(bytes(input.value))} · Ctrl/⌘ + Enter 預覽` : 'Ctrl/⌘ + Enter 預覽';
     };
     input.addEventListener('input', refresh);
     input.addEventListener('keydown', event => {
