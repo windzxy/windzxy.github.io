@@ -8,11 +8,9 @@ on:
       - 'Html_tools/typhoon-window-p0-fix.js'
       - 'Html_tools/typhoon-radar-v4-1.js'
       - 'Html_tools/typhoon-atmosphere-v5-1.js'
-      - 'Html_tools/typhoon-runtime-repair-v8.js'
-      - 'Html_tools/typhoon-weather-hotfix-v7.js'
-      - 'Html_tools/typhoon-native-weather-v2.js'
       - 'Html_tools/typhoon-openfreemap-v6.js'
       - 'Html_tools/typhoon-product-shell-v6.js'
+      - 'Html_tools/typhoon-weather-runtime-v11.js'
       - '.github/workflows/inject-webdesk-typhoon.yml'
   workflow_dispatch:
 
@@ -26,23 +24,21 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Wire stable keyless typhoon stack into WebDesk entry
+      - name: Wire consolidated Zoom Earth style typhoon stack
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
-          widget = '<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-p0-unified-runtime"></script>'
-          window_fix = '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260902-typhoon-window-p0-fix2"></script>'
-          radar = '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>'
-          atmosphere = '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>'
-          repair = '<script src="Html_tools/typhoon-runtime-repair-v8.js?v=20260902-typhoon-runtime-repair-v8.1"></script>'
-          hotfix = '<script src="Html_tools/typhoon-weather-hotfix-v7.js?v=20260902-typhoon-weather-hotfix-v7-active"></script>'
-          weather = '<script src="Html_tools/typhoon-native-weather-v2.js?v=20260902-typhoon-weather-v4.2-fallback"></script>'
-          openfreemap = '<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>'
-          shell = '<script src="Html_tools/typhoon-product-shell-v6.js?v=20260902-typhoon-product-shell-v6-keyless"></script>'
-          patterns = [
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          widget='<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-p0-unified-runtime"></script>'
+          window_fix='<script src="Html_tools/typhoon-window-p0-fix.js?v=20260902-typhoon-window-p0-fix2"></script>'
+          radar='<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>'
+          atmosphere='<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>'
+          openfreemap='<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>'
+          shell='<script src="Html_tools/typhoon-product-shell-v6.js?v=20260902-typhoon-product-shell-v6-keyless"></script>'
+          weather='<script src="Html_tools/typhoon-weather-runtime-v11.js?v=20260902-typhoon-weather-v11-consolidated"></script>'
+          patterns=[
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-window-p0-fix\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-radar-v4-1\.js\?v=[^"]+"></script>',
@@ -50,13 +46,15 @@ jobs:
             r'\n?<script src="Html_tools/typhoon-runtime-repair-v8\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-weather-hotfix-v7\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-weather-runtime-v7\.js\?v=[^"]+"></script>',
-            r'\n?<script src="Html_tools/typhoon-weather-layers-v5-5\.js\?v=[^"]+"></script>',
-            r'\n?<script src="Html_tools/typhoon-layers-toolbar-v1\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-weather-runtime-v10\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-weather-runtime-v11\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-native-weather-v2\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-openfreemap-v6\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-shell-v5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-shell-v6\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-keyless-basemap-v5-1\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-weather-layers-v5-5\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-layers-toolbar-v1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-zoomearth-sync-v4\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-v5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-v5-2\.js\?v=[^"]+"></script>',
@@ -66,52 +64,46 @@ jobs:
             r'\n?<script src="Html_tools/typhoon-weather-smooth-v5-7\.js\?v=[^"]+"></script>'
           ]
           s2=s
-          for pattern in patterns:
-              s2=re.sub(pattern,'',s2)
-          anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
+          for pat in patterns:
+              s2=re.sub(pat,'',s2)
+          anchor='<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           if anchor not in s2:
-              raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
-          stack='\n'.join([widget,window_fix,radar,atmosphere,repair,hotfix,weather,openfreemap,shell])
+              raise SystemExit('fx widget anchor not found')
+          stack='\n'.join([widget,window_fix,radar,atmosphere,openfreemap,shell,weather])
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
-          if s2 != s:
-              p.write_text(s2, encoding='utf-8')
-              print('wired active weather hotfix + keyless shell v6')
+          if s2!=s:
+              p.write_text(s2,encoding='utf-8')
+              print('wired consolidated typhoon weather v11')
           else:
-              print('stable typhoon stack already wired')
+              print('v11 already wired')
           PY
-      - name: Verify stable keyless typhoon stack
+      - name: Verify consolidated typhoon stack
         run: |
           python - <<'PY'
           from pathlib import Path
           s=Path('index.html').read_text(encoding='utf-8')
-          files=[
+          wanted=[
             'Html_tools/typhoon-widget.js',
             'Html_tools/typhoon-window-p0-fix.js',
             'Html_tools/typhoon-radar-v4-1.js',
             'Html_tools/typhoon-atmosphere-v5-1.js',
-            'Html_tools/typhoon-runtime-repair-v8.js',
-            'Html_tools/typhoon-weather-hotfix-v7.js',
-            'Html_tools/typhoon-native-weather-v2.js',
             'Html_tools/typhoon-openfreemap-v6.js',
-            'Html_tools/typhoon-product-shell-v6.js'
+            'Html_tools/typhoon-product-shell-v6.js',
+            'Html_tools/typhoon-weather-runtime-v11.js'
           ]
           pos=[]
-          for f in files:
-              count=s.count(f)
-              if count != 1:
-                  raise SystemExit(f'{f}: expected exactly once, got {count}')
+          for f in wanted:
+              c=s.count(f)
+              if c!=1: raise SystemExit(f'{f}: expected once, got {c}')
               pos.append(s.index(f))
-          if pos != sorted(pos):
-              raise SystemExit('typhoon stack load order invalid')
-          required=['typhoon-runtime-repair-v8.1','typhoon-weather-hotfix-v7-active','typhoon-weather-v4.2-fallback','typhoon-openfreemap-v6.3-antiflicker','typhoon-product-shell-v6-keyless']
-          for token in required:
-              if token not in s:
-                  raise SystemExit('missing cache token: '+token)
-          bad=['Html_tools/typhoon-product-shell-v5.js','Html_tools/typhoon-weather-runtime-v7.js','Html_tools/typhoon-keyless-basemap-v5-1.js','Html_tools/typhoon-weather-layers-v5-5.js','Html_tools/typhoon-layers-toolbar-v1.js','Html_tools/typhoon-zoomearth-sync-v4.js','Html_tools/typhoon-product-v5.js','Html_tools/typhoon-product-v5-2.js','Html_tools/typhoon-layout-v5-3.js','Html_tools/typhoon-polish-v5-4.js','Html_tools/typhoon-weather-layers-v5-6-fix.js','Html_tools/typhoon-weather-smooth-v5-7.js']
-          for f in bad:
-              if f in s:
-                  raise SystemExit(f'unwanted typhoon runtime still loaded: {f}')
-          print('stable keyless typhoon stack verified')
+          if pos!=sorted(pos): raise SystemExit('load order invalid')
+          if 'typhoon-weather-v11-consolidated' not in s: raise SystemExit('v11 cache token missing')
+          unwanted=[
+            'Html_tools/typhoon-runtime-repair-v8.js','Html_tools/typhoon-weather-hotfix-v7.js','Html_tools/typhoon-native-weather-v2.js','Html_tools/typhoon-weather-runtime-v10.js','Html_tools/typhoon-product-shell-v5.js','Html_tools/typhoon-keyless-basemap-v5-1.js','Html_tools/typhoon-weather-layers-v5-5.js','Html_tools/typhoon-layers-toolbar-v1.js','Html_tools/typhoon-zoomearth-sync-v4.js','Html_tools/typhoon-product-v5.js','Html_tools/typhoon-product-v5-2.js','Html_tools/typhoon-layout-v5-3.js','Html_tools/typhoon-polish-v5-4.js','Html_tools/typhoon-weather-layers-v5-6-fix.js','Html_tools/typhoon-weather-smooth-v5-7.js'
+          ]
+          for f in unwanted:
+              if f in s: raise SystemExit('legacy runtime still loaded: '+f)
+          print('consolidated v11 stack verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -122,5 +114,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Activate stable typhoon weather controls'
+          git commit -m 'Deploy consolidated typhoon weather v11'
           git push
