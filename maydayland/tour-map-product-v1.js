@@ -14,9 +14,12 @@ function injectStyle(){
     .tour-route-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:11px 13px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.035)}
     .tour-route-status strong{display:block;font-size:13px}.tour-route-status small{display:block;margin-top:2px;color:#8fa4b8;font-size:11px}
     .tour-route-status button{border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:7px 10px;background:rgba(255,255,255,.05);color:inherit;font-size:11px;cursor:pointer}
+    .tour-mobile-hint{display:none;margin:8px 2px 0;color:#8fa4b8;font-size:11px;letter-spacing:.02em}
     .map-svg g[data-city]{cursor:pointer;outline:none}.map-svg g[data-city]:focus .city-node,.map-svg g[data-city]:hover .city-node{stroke:#fff;stroke-width:3;filter:drop-shadow(0 0 8px rgba(255,255,255,.7))}
-    .legend span[data-route-filter]{cursor:pointer;transition:opacity .18s ease,transform .18s ease}.legend span[data-route-filter]:hover{transform:translateY(-1px)}
-    @media(max-width:720px){.tour-route-status{position:sticky;top:0;z-index:2;backdrop-filter:blur(12px)}.map-stage{min-height:360px}.map-svg{min-width:620px}.map-stage{overflow:auto}}
+    .legend span[data-route-filter]{cursor:pointer;transition:opacity .18s ease,transform .18s ease,background .18s ease;outline:none}
+    .legend span[data-route-filter]:hover,.legend span[data-route-filter]:focus-visible{transform:translateY(-1px)}
+    .legend span[data-route-filter][aria-pressed="true"]{opacity:1!important;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+    @media(max-width:720px){.tour-route-status{position:sticky;top:0;z-index:2;backdrop-filter:blur(12px)}.tour-mobile-hint{display:block}.map-stage{min-height:360px;overflow:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin}.map-svg{min-width:620px;scroll-snap-align:start}}
   `;
   document.head.appendChild(style);
 }
@@ -63,7 +66,7 @@ function wireLegend(){
   $$('.tour[data-tour]').forEach(btn=>{const b=$('b',btn);if(b)buttons[b.textContent.trim()]=btn.dataset.tour;});
   $$('.map-card>.legend span,.map-card .legend span').forEach(span=>{
     const name=(span.textContent||'').trim(); const id=buttons[name]; if(!id) return;
-    span.dataset.routeFilter=id; span.setAttribute('role','button'); span.setAttribute('tabindex','0');
+    span.dataset.routeFilter=id; span.setAttribute('role','button'); span.setAttribute('tabindex','0'); span.setAttribute('aria-pressed','false');
     span.setAttribute('aria-label','只顯示 '+name+' 路線');
     const activate=()=>{const btn=$('.tour[data-tour="'+id+'"]');if(btn)btn.click();};
     span.addEventListener('click',activate); span.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate();}});
@@ -74,7 +77,10 @@ function selectedTour(){return $('.tour.active[data-tour]')||$('.tour[data-tour=
 function syncStatus(){
   const card=$('.map-card'); if(!card) return;
   let status=$('.tour-route-status',card);
-  if(!status){status=document.createElement('div');status.className='tour-route-status';const head=$('.map-head',card);if(head)head.insertAdjacentElement('afterend',status);else card.prepend(status);}
+  if(!status){
+    status=document.createElement('div');status.className='tour-route-status';const head=$('.map-head',card);if(head)head.insertAdjacentElement('afterend',status);else card.prepend(status);
+    const stage=$('.map-stage',card);if(stage&&!$('.tour-mobile-hint',card)){const hint=document.createElement('div');hint.className='tour-mobile-hint';hint.textContent='左右滑動瀏覽巡演地圖 · 點城市節點查看資料';stage.insertAdjacentElement('afterend',hint);}
+  }
   const active=selectedTour(); if(!active) return;
   const id=active.dataset.tour||'all'; const name=($('b',active)?.textContent||'全部巡演').trim(); const years=($('small',active)?.textContent||'').trim();
   let cities=$$('.city-btn[data-city]').length;
@@ -83,13 +89,17 @@ function syncStatus(){
   }
   status.innerHTML='<div><strong>'+name+'</strong><small>'+(id==='all'?'顯示所有巡演分色路線':'聚焦 '+years+' · '+cities+' 個路線節點')+'</small></div>'+(id==='all'?'':'<button type="button" data-show-all-routes>顯示全部</button>');
   const reset=$('[data-show-all-routes]',status); if(reset)reset.onclick=()=>$('.tour[data-tour="all"]')?.click();
-  $$('.legend [data-route-filter]').forEach(x=>x.style.opacity=(id==='all'||x.dataset.routeFilter===id)?'1':'.38');
+  $$('.legend [data-route-filter]').forEach(x=>{
+    const selected=id!=='all'&&x.dataset.routeFilter===id;
+    x.style.opacity=(id==='all'||selected)?'1':'.38';
+    x.setAttribute('aria-pressed',selected?'true':'false');
+  });
 }
 
 function enhance(){
   if(!$('.map-card')||!$('.tour[data-tour]')) return false;
   injectStyle(); productizeCopy(); connectMapNodes(); wireLegend(); syncStatus();
-  document.documentElement.dataset.maydaylandTourMap='product-v1';
+  document.documentElement.dataset.maydaylandTourMap='product-v1.1';
   return true;
 }
 
