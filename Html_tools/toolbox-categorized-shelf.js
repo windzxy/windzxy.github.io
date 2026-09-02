@@ -1,6 +1,11 @@
 (function(){
   'use strict';
-  const VER='20260828-toolbox-categorized-shelf1-search-groups';
+  const VER='20260902-toolbox-categorized-shelf2-legacy-guard';
+  if(window.WebDeskToolboxCategories&&window.WebDeskToolboxCategories.render){
+    window.__windzxyToolboxCategorizedShelf='disabled-by-toolbox-categories-v1';
+    window.windzxyToolboxCategorizedShelfVersion=VER;
+    return;
+  }
   if(window.__windzxyToolboxCategorizedShelf===VER)return;
   window.__windzxyToolboxCategorizedShelf=VER;
 
