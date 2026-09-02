@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260902-typhoon-window-p0-fix2';
+const VER='20260902-typhoon-window-p0-fix3-no-rerender';
 if(window.__windzxyTyphoonWindowP0===VER)return;
 window.__windzxyTyphoonWindowP0=VER;
 
@@ -21,36 +21,20 @@ function typhoonBody(){
 }
 
 function showDegraded(root){
-  if(!root||root.querySelector('.leaflet-container'))return;
+  if(!root||!document.body.contains(root)||root.querySelector('.leaflet-container'))return;
   const loading=root.querySelector('.tpv4-map-loading');
   if(!loading)return;
-  loading.innerHTML='<span>⚠️</span><b>颱風資料暫時無法載入</b><small style="display:block;margin-top:8px;opacity:.72">請稍後再試，或按下方重新載入。</small><button type="button" data-typhoon-retry style="margin-top:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.08);color:inherit;cursor:pointer">重新載入</button>';
-  const retry=loading.querySelector('[data-typhoon-retry]');
-  retry?.addEventListener('click',()=>{
-    loading.innerHTML='<span>🌀</span><b>正在重新載入颱風資料…</b>';
-    try{
-      if(typeof renderAll==='function')renderAll();
-      setTimeout(()=>showDegraded(root),12000);
-    }catch(error){
-      console.error('[typhoon-window] retry failed',error);
-      setTimeout(()=>showDegraded(root),0);
-    }
-  },{once:true});
+  loading.innerHTML='<span>⚠️</span><b>颱風資料暫時無法載入</b><small style="display:block;margin-top:8px;opacity:.72">請稍後再試。</small>';
 }
 
 function bindWindowRoot(win){
-  setTimeout(()=>{
-    const root=win?.querySelector?.('[data-typhoon-root]');
-    if(!root)return;
-    try{
-      /* The unified runtime wraps renderAll() and runs bindAll afterwards. */
-      if(typeof renderAll==='function')renderAll();
-    }catch(error){
-      console.error('[typhoon-window] runtime bind failed',error);
-    }
-    /* Never leave the user with an endless blank/loading window. */
-    setTimeout(()=>showDegraded(root),12000);
-  },0);
+  const root=win?.querySelector?.('[data-typhoon-root]');
+  if(!root)return;
+  win.dataset.tpP0Fixed='1';
+  root.dataset.tpP0Stable='1';
+  /* Critical: never call renderAll() here. It replaces the window DOM and
+     destroys weather controls/timeline that were mounted moments earlier. */
+  setTimeout(()=>showDegraded(root),12000);
 }
 
 function install(){
@@ -71,11 +55,11 @@ function install(){
     const oldBindApp=bindApp;
     bindApp=function(win,appId){
       const out=oldBindApp.apply(this,arguments);
-      if(appId==='typhoon')bindWindowRoot(win);
+      if(appId==='typhoon')requestAnimationFrame(()=>bindWindowRoot(win));
       return out;
     };
   }
-  window.WebDeskTyphoonWindowBridge={version:VER,appWindow:true,degradedRecovery:true};
+  window.WebDeskTyphoonWindowBridge={version:VER,appWindow:true,degradedRecovery:true,globalRerender:false};
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
