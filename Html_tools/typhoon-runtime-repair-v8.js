@@ -1,0 +1,12 @@
+(()=>{'use strict';
+const VER='20260902-typhoon-runtime-repair-v8';
+if(window.__windzxyTyphoonRuntimeRepair===VER)return;
+window.__windzxyTyphoonRuntimeRepair=VER;
+const realFetch=window.fetch.bind(window);
+function chunkedOpenMeteo(input,init){try{const raw=typeof input==='string'?input:input?.url||'';if(!raw.startsWith('https://api.open-meteo.com/v1/forecast'))return realFetch(input,init);const u=new URL(raw),la=(u.searchParams.get('latitude')||'').split(',').filter(Boolean),lo=(u.searchParams.get('longitude')||'').split(',').filter(Boolean);if(la.length<=40||la.length!==lo.length)return realFetch(input,init);const jobs=[];for(let i=0;i<la.length;i+=40){const v=new URL(u.toString());v.searchParams.set('latitude',la.slice(i,i+40).join(','));v.searchParams.set('longitude',lo.slice(i,i+40).join(','));jobs.push(realFetch(v.toString(),init).then(async r=>{if(!r.ok)throw new Error('Open-Meteo '+r.status);const j=await r.json();return Array.isArray(j)?j:[j]}))}return Promise.all(jobs).then(parts=>new Response(JSON.stringify(parts.flat()),{status:200,headers:{'Content-Type':'application/json'}}))}catch(_){return realFetch(input,init)}}
+window.fetch=chunkedOpenMeteo;
+function protect(root){if(!root)return;root.dataset.zeDarkBase='1';let s=root.querySelector('[data-tp-runtime-bridge]');if(!s){s=document.createElement('div');s.dataset.tpRuntimeBridge='1';s.hidden=true;root.appendChild(s)}if(!root.querySelector('[data-tpv41-radar]')){const b=document.createElement('button');b.type='button';b.dataset.tpv41Radar='1';s.appendChild(b)}if(!root.querySelector('[data-tpv51-cloud]')){const b=document.createElement('button');b.type='button';b.dataset.tpv51Cloud='1';s.appendChild(b)}}
+function scan(scope=document){scope.querySelectorAll?.('[data-typhoon-root]').forEach(protect)}
+function boot(){scan();const host=document.getElementById('windowLayer')||document.body;new MutationObserver(ms=>{for(const m of ms){const owner=m.target?.closest?.('[data-typhoon-root]');if(owner)protect(owner);for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches?.('[data-typhoon-root]'))protect(n);scan(n)}}}).observe(host,{childList:true,subtree:true});setInterval(()=>scan(),1000);window.WebDeskTyphoonRuntimeRepair={version:'v8',splitOpenMeteo:true,maxLocationsPerRequest:40,bridgeControls:true,preemptLegacyDarkBase:true}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
