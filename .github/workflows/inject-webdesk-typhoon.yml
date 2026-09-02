@@ -10,7 +10,7 @@ on:
       - 'Html_tools/typhoon-atmosphere-v5-1.js'
       - 'Html_tools/typhoon-native-weather-v2.js'
       - 'Html_tools/typhoon-product-shell-v5.js'
-      - 'Html_tools/typhoon-keyless-basemap-v5-1.js'
+      - 'Html_tools/typhoon-openfreemap-v6.js'
       - '.github/workflows/inject-webdesk-typhoon.yml'
   workflow_dispatch:
 
@@ -36,8 +36,8 @@ jobs:
           radar = '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>'
           atmosphere = '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>'
           weather = '<script src="Html_tools/typhoon-native-weather-v2.js?v=20260902-typhoon-weather-v4-consolidated"></script>'
+          openfreemap = '<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6"></script>'
           shell = '<script src="Html_tools/typhoon-product-shell-v5.js?v=20260902-typhoon-product-shell-v5"></script>'
-          keyless = '<script src="Html_tools/typhoon-keyless-basemap-v5-1.js?v=20260902-typhoon-keyless-basemap-v5.1"></script>'
           patterns = [
             r'\n?<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-window-p0-fix\.js\?v=[^"]+"></script>',
@@ -46,6 +46,7 @@ jobs:
             r'\n?<script src="Html_tools/typhoon-weather-layers-v5-5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-layers-toolbar-v1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-native-weather-v2\.js\?v=[^"]+"></script>',
+            r'\n?<script src="Html_tools/typhoon-openfreemap-v6\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-product-shell-v5\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-keyless-basemap-v5-1\.js\?v=[^"]+"></script>',
             r'\n?<script src="Html_tools/typhoon-zoomearth-sync-v4\.js\?v=[^"]+"></script>',
@@ -62,13 +63,13 @@ jobs:
           anchor = '<script src="Html_tools/fx-widget.js?v=20260819-fx-widget6-custom-dropdown"></script>'
           if anchor not in s2:
               raise SystemExit('fx widget anchor not found; refusing unsafe rewrite')
-          stack='\n'.join([widget,window_fix,radar,atmosphere,weather,shell,keyless])
+          stack='\n'.join([widget,window_fix,radar,atmosphere,weather,openfreemap,shell])
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2 != s:
               p.write_text(s2, encoding='utf-8')
-              print('wired consolidated typhoon runtime with keyless basemap')
+              print('wired typhoon runtime with OpenFreeMap + MapLibre basemap')
           else:
-              print('keyless typhoon runtime already wired')
+              print('OpenFreeMap typhoon runtime already wired')
           PY
       - name: Verify consolidated typhoon stack
         run: |
@@ -81,8 +82,8 @@ jobs:
             'Html_tools/typhoon-radar-v4-1.js',
             'Html_tools/typhoon-atmosphere-v5-1.js',
             'Html_tools/typhoon-native-weather-v2.js',
-            'Html_tools/typhoon-product-shell-v5.js',
-            'Html_tools/typhoon-keyless-basemap-v5-1.js'
+            'Html_tools/typhoon-openfreemap-v6.js',
+            'Html_tools/typhoon-product-shell-v5.js'
           ]
           pos=[]
           for f in files:
@@ -94,11 +95,12 @@ jobs:
               raise SystemExit('typhoon stack load order invalid')
           if 'typhoon-weather-v4-consolidated' not in s:
               raise SystemExit('consolidated weather cache token missing')
+          if 'typhoon-openfreemap-v6' not in s:
+              raise SystemExit('OpenFreeMap MapLibre basemap runtime missing')
           if 'typhoon-product-shell-v5' not in s:
               raise SystemExit('Zoom Earth product shell missing')
-          if 'typhoon-keyless-basemap-v5.1' not in s:
-              raise SystemExit('keyless basemap runtime missing')
           legacy=[
+            'Html_tools/typhoon-keyless-basemap-v5-1.js',
             'Html_tools/typhoon-weather-layers-v5-5.js',
             'Html_tools/typhoon-layers-toolbar-v1.js',
             'Html_tools/typhoon-zoomearth-sync-v4.js',
@@ -112,7 +114,7 @@ jobs:
           for f in legacy:
               if f in s:
                   raise SystemExit(f'legacy typhoon runtime still loaded: {f}')
-          print('consolidated typhoon stack with keyless basemap verified')
+          print('OpenFreeMap + MapLibre typhoon stack verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -123,5 +125,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Deploy keyless WebDesk typhoon basemap'
+          git commit -m 'Deploy OpenFreeMap MapLibre WebDesk typhoon basemap'
           git push
