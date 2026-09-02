@@ -64,7 +64,10 @@ function connectMapNodes(){
 
 function wireLegend(){
   const buttons={};
-  $$('.tour[data-tour]').forEach(btn=>{const b=$('b',btn);if(b)buttons[b.textContent.trim()]=btn.dataset.tour;});
+  $$('.tour[data-tour]').forEach(btn=>{
+    const b=$('b',btn);if(b)buttons[b.textContent.trim()]=btn.dataset.tour;
+    btn.setAttribute('aria-pressed',btn.classList.contains('active')?'true':'false');
+  });
   $$('.map-card>.legend span,.map-card .legend span').forEach(span=>{
     const name=(span.textContent||'').trim(); const id=buttons[name]; if(!id) return;
     span.dataset.routeFilter=id; span.setAttribute('role','button'); span.setAttribute('tabindex','0'); span.setAttribute('aria-pressed','false');
@@ -99,6 +102,7 @@ function syncStatus(){
   }
   status.innerHTML='<div><strong>'+name+'</strong><small>'+(id==='all'?'顯示所有巡演分色路線':'聚焦 '+years+' · '+cities+' 個路線節點')+'</small></div>'+(id==='all'?'':'<button type="button" data-show-all-routes>顯示全部</button>');
   const reset=$('[data-show-all-routes]',status); if(reset)reset.onclick=()=>$('.tour[data-tour="all"]')?.click();
+  $$('.tour[data-tour]').forEach(btn=>btn.setAttribute('aria-pressed',(btn.dataset.tour||'all')===id?'true':'false'));
   $$('.legend [data-route-filter]').forEach(x=>{
     const selected=id!=='all'&&x.dataset.routeFilter===id;
     x.style.opacity=(id==='all'||selected)?'1':'.38';
@@ -109,7 +113,7 @@ function syncStatus(){
 function enhance(){
   if(!$('.map-card')||!$('.tour[data-tour]')) return false;
   injectStyle(); productizeCopy(); connectMapNodes(); wireLegend(); restoreTour(); syncStatus();
-  document.documentElement.dataset.maydaylandTourMap='product-v1.2';
+  document.documentElement.dataset.maydaylandTourMap='product-v1.3';
   return true;
 }
 
