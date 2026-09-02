@@ -1,7 +1,8 @@
 (() => {
   'use strict';
-  if (window.__basicToolsUxV92) return;
-  window.__basicToolsUxV92 = 1;
+  if (window.__basicToolsUxV93) return;
+  window.__basicToolsUxV93 = 1;
+  window.windzxyBasicToolsUxVersion = '9.3';
 
   const q = (root, selector) => root.querySelector(selector);
   const bytes = value => {
@@ -38,6 +39,33 @@
     };
   }
 
+  function splitRowColumns(line, separator) {
+    if (!separator) return [line];
+    const cells = [];
+    let cell = '';
+    let quoted = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (quoted && line[i + 1] === '"') {
+          cell += '"';
+          i++;
+        } else {
+          quoted = !quoted;
+        }
+        continue;
+      }
+      if (ch === separator && !quoted) {
+        cells.push(cell);
+        cell = '';
+      } else {
+        cell += ch;
+      }
+    }
+    cells.push(cell);
+    return cells;
+  }
+
   function tableMeta(text) {
     const lines = text.split(/\r?\n/).map(line => line.trimEnd()).filter(line => line.trim());
     if (!lines.length) return null;
@@ -45,7 +73,7 @@
     const candidates = [['TAB', '\t'], ['CSV', ','], ['PIPE', '|'], ['SEMICOLON', ';']];
     let best = { name: 'PLAIN', separator: '', cols: 1, consistency: 0 };
     for (const [name, separator] of candidates) {
-      const counts = sample.map(line => line.split(separator).length);
+      const counts = sample.map(line => splitRowColumns(line, separator).length);
       const frequency = new Map();
       counts.forEach(count => frequency.set(count, (frequency.get(count) || 0) + 1));
       const [modeCols, modeHits] = [...frequency.entries()].sort((a, b) => b[1] - a[1] || b[0] - a[0])[0];
@@ -54,7 +82,7 @@
         best = { name, separator, cols: modeCols, consistency };
       }
     }
-    const rowCounts = best.separator ? lines.map(line => line.split(best.separator).length) : lines.map(() => 1);
+    const rowCounts = best.separator ? lines.map(line => splitRowColumns(line, best.separator).length) : lines.map(() => 1);
     const uneven = rowCounts.filter(count => count !== best.cols).length;
     return { rows: lines.length, cols: best.cols, name: best.name, uneven, consistency: best.consistency };
   }
