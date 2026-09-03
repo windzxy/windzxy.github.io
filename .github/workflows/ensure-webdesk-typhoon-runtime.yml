@@ -13,6 +13,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: webdesk-index-writers
+  cancel-in-progress: false
+
 jobs:
   ensure:
     runs-on: ubuntu-latest
