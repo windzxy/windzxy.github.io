@@ -83,6 +83,7 @@ jobs:
             '<script src="Html_tools/theme-contrast-fix.js?v=20260819-theme-contrast2-calendar-density"></script>',
             '<script src="Html_tools/finance-i18n-fix.js?v=20260819-finance-i18n4-remove-today-row"></script>',
             '<script src="Html_tools/metals-calendar-restore-guard.js?v=20260828-metals-calendar-restore-guard1"></script>',
+            '<script src="Html_tools/typhoon-widget.js?v=20260903-typhoon-p0-runtime-persist"></script>',
           ]
 
           path = Path('index.html')
@@ -142,6 +143,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk basic tools export helper"
+          git commit -m "Inject WebDesk lean helpers"
           git pull --rebase origin master
           git push
