@@ -8,7 +8,7 @@
       "id": "2634",
       "name": "SAUDEL",
       "sourceUrl": "https://www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2634.xml",
-      "bulletinTime": "2026-09-03T22:00:42+08:00",
+      "bulletinTime": "2026-09-04T00:35:42+08:00",
       "points": [
         {
           "lat": 18.9,
@@ -220,34 +220,11 @@
         },
         {
           "lat": 24.4,
-          "lon": 115.4,
-          "time": "2026-09-03T14:00:00+00:00",
-          "wind": "45km/h",
-          "intensity": "Tropical Depression",
-          "kind": "analysis"
-        },
-        {
-          "lat": 24.36,
-          "lon": 115.3,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.3,
-          "lon": 115.15,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.24,
-          "lon": 115.0,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.2,
-          "lon": 114.9,
-          "time": "2026-09-03T18:00:00+00:00",
+          "lon": 115.2,
+          "time": "2026-09-03T16:00:00+00:00",
           "wind": "40km/h",
           "intensity": "Low Pressure Area",
-          "kind": "forecast"
+          "kind": "analysis"
         }
       ]
     },
@@ -965,6 +942,6 @@
   ],
   "errors": [],
   "ok": true,
-  "sourceUpdatedAt": "2026-09-03T22:00:45+08:00",
-  "updatedAt": "2026-09-03T14:23:46.717349+00:00"
+  "sourceUpdatedAt": "2026-09-04T00:35:42+08:00",
+  "updatedAt": "2026-09-03T17:59:12.889712+00:00"
 }
