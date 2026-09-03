@@ -13,6 +13,7 @@ on:
       - 'Html_tools/calendar-widget-v11.js'
       - 'Html_tools/calendar-day-detail-card.js'
       - 'Html_tools/calendar-holiday-authority-v1.js'
+      - 'Html_tools/calendar-holiday-dot-sync-v1.js'
       - 'Html_tools/image-studio-v4.js'
       - 'Html_tools/image-studio-v5-crop-overlay.js'
       - 'Html_tools/image-studio-v2.js'
@@ -62,7 +63,8 @@ jobs:
             '<script src="Html_tools/toolbox-categorized-shelf.js?v=20260828-toolbox-categorized-shelf1-search-groups"></script>',
             '<script src="Html_tools/calendar-widget-v11.js?v=20260828-calendar-widget-v11-readable-compact"></script>',
             '<script src="Html_tools/calendar-day-detail-card.js?v=20260828-calendar-day-detail-card1-lunar-holiday-solar"></script>',
-            '<script src="Html_tools/calendar-holiday-authority-v1.js?v=20260903-calendar-holiday-authority-v1"></script>',
+            '<script src="Html_tools/calendar-holiday-authority-v1.js?v=20260903-calendar-holiday-authority-v2-region-groups"></script>',
+            '<script src="Html_tools/calendar-holiday-dot-sync-v1.js?v=20260903-calendar-holiday-dot-sync-v1"></script>',
             '<script src="Html_tools/image-studio-v4.js?v=20260828-image-studio-v4-safe-crop-output"></script>',
             '<script src="Html_tools/image-studio-v5-crop-overlay.js?v=20260901-image-studio-v5.1-efficient-observer"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
@@ -106,7 +108,7 @@ jobs:
 
           script_names = [
             'workspace-preload-cleaner','market-color-fix','workspace-default-cleaner','workspace-core-guard','toolbox-categorized-shelf',
-            'calendar-widget-v11','calendar-day-detail-card','calendar-holiday-authority-v1','image-studio-v5-crop-overlay','image-studio-v4','image-studio-v2',
+            'calendar-widget-v11','calendar-day-detail-card','calendar-holiday-authority-v1','calendar-holiday-dot-sync-v1','image-studio-v5-crop-overlay','image-studio-v4','image-studio-v2',
             'layout-persist-fix','calendar-widget-v10','metals-calendar-restore-guard','calendar-widget-v9','calendar-widget-v8','calendar-widget-v7','calendar-widget-v6','calendar-widget-v5','calendar-widget-v4','calendar-widget-v3',
             'calendar-v3-lite-polish','calendar-v3-lunar-label-fix','calendar-v3-day-picker-fix','calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix',
             'first-run-empty-desktop','background-fit-fix','icon-edge-fix','card-gap-fix','card-fold-fix','metals-widget','fx-widget','typhoon-widget',
@@ -128,11 +130,11 @@ jobs:
       - name: Commit lean script tags
         run: |
           if git diff --quiet -- index.html; then
-            echo "index.html already has authoritative calendar holidays."
+            echo "index.html already has calendar holiday marker color sync."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject authoritative calendar holiday layer"
+          git commit -m "Inject calendar holiday marker color sync"
           git push
