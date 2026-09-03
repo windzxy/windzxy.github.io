@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260902-typhoon-window-p0-fix3-no-rerender';
+const VER='20260903-typhoon-window-p0-fix4-stable-root';
 if(window.__windzxyTyphoonWindowP0===VER)return;
 window.__windzxyTyphoonWindowP0=VER;
 
@@ -27,11 +27,27 @@ function showDegraded(root){
   loading.innerHTML='<span>⚠️</span><b>颱風資料暫時無法載入</b><small style="display:block;margin-top:8px;opacity:.72">請稍後再試。</small>';
 }
 
+function protectRoot(win,root){
+  const body=win?.querySelector?.('.desktop-window-body');
+  if(!body||body.__tpStableRootObserver)return;
+  body.__tpStableRootObserver=new MutationObserver(()=>{
+    if(!document.body.contains(win))return;
+    if(root.parentNode===body)return;
+    /* A later addon must never replace the already-mounted typhoon root.
+       Re-attach the exact same node so Leaflet state, controls and listeners survive. */
+    body.replaceChildren(root);
+    root.dataset.tpP0Stable='1';
+  });
+  body.__tpStableRootObserver.observe(body,{childList:true});
+}
+
 function bindWindowRoot(win){
   const root=win?.querySelector?.('[data-typhoon-root]');
   if(!root)return;
   win.dataset.tpP0Fixed='1';
   root.dataset.tpP0Stable='1';
+  root.dataset.tpOwner='window-bridge-v4';
+  protectRoot(win,root);
   /* Critical: never call renderAll() here. It replaces the window DOM and
      destroys weather controls/timeline that were mounted moments earlier. */
   setTimeout(()=>showDegraded(root),12000);
@@ -59,7 +75,7 @@ function install(){
       return out;
     };
   }
-  window.WebDeskTyphoonWindowBridge={version:VER,appWindow:true,degradedRecovery:true,globalRerender:false};
+  window.WebDeskTyphoonWindowBridge={version:VER,appWindow:true,degradedRecovery:true,globalRerender:false,stableRoot:true};
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
