@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260904-basic-tools-export-v1.3-quote-aware-delimiter';
+const VER='20260904-basic-tools-export-v1.4-literal-quotes';
 if(window.__webdeskBasicToolsExport===VER)return;
 window.__webdeskBasicToolsExport=VER;
 
@@ -20,7 +20,9 @@ function parseDelimited(raw,separator){
     const ch=raw[i];
     if(ch==='"'){
       if(quoted&&raw[i+1]==='"'){cell+='"';i++;continue}
-      quoted=!quoted;continue;
+      if(quoted){quoted=false;continue}
+      if(cell===''){quoted=true;continue}
+      cell+=ch;continue;
     }
     if(!quoted&&ch===separator){row.push(cell);cell='';continue}
     if(!quoted&&(ch==='\n'||ch==='\r')){
@@ -34,15 +36,18 @@ function parseDelimited(raw,separator){
 }
 function rowsToCsv(raw,separator){return parseDelimited(raw,separator).map(r=>r.map(csvCell).join(',')).join('\r\n')}
 function detectDelimiter(raw){
-  const counts={'\t':0,'|':0};let quoted=false;
+  const counts={'\t':0,'|':0};let quoted=false,cellStart=true;
   const limit=Math.min(raw.length,8192);
   for(let i=0;i<limit;i++){
     const ch=raw[i];
     if(ch==='"'){
       if(quoted&&raw[i+1]==='"'){i++;continue}
-      quoted=!quoted;continue;
+      if(quoted){quoted=false;continue}
+      if(cellStart){quoted=true;continue}
     }
-    if(!quoted&&(ch==='\t'||ch==='|'))counts[ch]++;
+    if(!quoted&&(ch==='\t'||ch==='|')){counts[ch]++;cellStart=true;continue}
+    if(!quoted&&(ch==='\n'||ch==='\r')){cellStart=true;continue}
+    cellStart=false;
   }
   return counts['\t']||counts['|']?(counts['\t']>=counts['|']?'\t':'|'):null;
 }
