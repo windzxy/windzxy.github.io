@@ -47,6 +47,75 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Apply official 2026 calendar holidays
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          official = '''const HOLIDAYS={
+    '2026-01-01':{name:'內地元旦假期 · 香港一月一日',short:'元旦',type:'holiday'},
+    '2026-01-02':{name:'內地元旦假期',short:'元旦',type:'holiday'},
+    '2026-01-03':{name:'內地元旦假期',short:'元旦',type:'holiday'},
+    '2026-01-04':{name:'內地元旦調休補班',short:'元旦補班',type:'work'},
+    '2026-02-14':{name:'內地春節調休補班',short:'春節補班',type:'work'},
+    '2026-02-15':{name:'內地春節假期',short:'春節',type:'holiday'},
+    '2026-02-16':{name:'內地春節假期',short:'春節',type:'holiday'},
+    '2026-02-17':{name:'內地春節假期 · 香港農曆年初一',short:'春節',type:'holiday'},
+    '2026-02-18':{name:'內地春節假期 · 香港農曆年初二',short:'春節',type:'holiday'},
+    '2026-02-19':{name:'內地春節假期 · 香港農曆年初三',short:'春節',type:'holiday'},
+    '2026-02-20':{name:'內地春節假期',short:'春節',type:'holiday'},
+    '2026-02-21':{name:'內地春節假期',short:'春節',type:'holiday'},
+    '2026-02-22':{name:'內地春節假期',short:'春節',type:'holiday'},
+    '2026-02-23':{name:'內地春節假期',short:'春節',type:'holiday'},
+    '2026-02-28':{name:'內地春節調休補班',short:'春節補班',type:'work'},
+    '2026-04-03':{name:'香港耶穌受難節',short:'港·受難節',type:'holiday'},
+    '2026-04-04':{name:'內地清明假期 · 香港耶穌受難節翌日',short:'清明/港',type:'holiday'},
+    '2026-04-05':{name:'內地清明假期',short:'清明',type:'holiday'},
+    '2026-04-06':{name:'內地清明假期 · 香港清明節翌日',short:'清明/港',type:'holiday'},
+    '2026-04-07':{name:'香港復活節星期一翌日',short:'港·復活節',type:'holiday'},
+    '2026-05-01':{name:'內地勞動節假期 · 香港勞動節',short:'勞動節',type:'holiday'},
+    '2026-05-02':{name:'內地勞動節假期',short:'勞動節',type:'holiday'},
+    '2026-05-03':{name:'內地勞動節假期',short:'勞動節',type:'holiday'},
+    '2026-05-04':{name:'內地勞動節假期',short:'勞動節',type:'holiday'},
+    '2026-05-05':{name:'內地勞動節假期',short:'勞動節',type:'holiday'},
+    '2026-05-09':{name:'內地勞動節調休補班',short:'勞動節補班',type:'work'},
+    '2026-05-25':{name:'香港佛誕翌日',short:'港·佛誕',type:'holiday'},
+    '2026-06-19':{name:'內地端午假期 · 香港端午節',short:'端午',type:'holiday'},
+    '2026-06-20':{name:'內地端午假期',short:'端午',type:'holiday'},
+    '2026-06-21':{name:'內地端午假期',short:'端午',type:'holiday'},
+    '2026-07-01':{name:'香港特別行政區成立紀念日',short:'香港七一',type:'holiday'},
+    '2026-09-20':{name:'內地國慶調休補班',short:'國慶補班',type:'work'},
+    '2026-09-25':{name:'內地中秋節假期',short:'中秋',type:'holiday'},
+    '2026-09-26':{name:'內地中秋節假期 · 香港中秋節翌日',short:'中秋/港',type:'holiday'},
+    '2026-09-27':{name:'內地中秋節假期',short:'中秋',type:'holiday'},
+    '2026-10-01':{name:'內地國慶假期 · 香港國慶日',short:'國慶/港',type:'holiday'},
+    '2026-10-02':{name:'內地國慶假期',short:'國慶',type:'holiday'},
+    '2026-10-03':{name:'內地國慶假期',short:'國慶',type:'holiday'},
+    '2026-10-04':{name:'內地國慶假期',short:'國慶',type:'holiday'},
+    '2026-10-05':{name:'內地國慶假期',short:'國慶',type:'holiday'},
+    '2026-10-06':{name:'內地國慶假期',short:'國慶',type:'holiday'},
+    '2026-10-07':{name:'內地國慶假期',short:'國慶',type:'holiday'},
+    '2026-10-10':{name:'內地國慶調休補班',short:'國慶補班',type:'work'},
+    '2026-10-19':{name:'香港重陽節翌日',short:'港·重陽',type:'holiday'},
+    '2026-12-25':{name:'香港聖誕節',short:'聖誕',type:'holiday'},
+    '2026-12-26':{name:'香港聖誕節後第一個周日',short:'聖誕',type:'holiday'}
+  };'''
+
+          for fn in ['Html_tools/calendar-widget-v11.js','Html_tools/calendar-day-detail-card.js']:
+            p=Path(fn)
+            s=p.read_text(encoding='utf-8')
+            s2,n=re.subn(r"const HOLIDAYS=\{.*?\n  \};", official, s, count=1, flags=re.S)
+            if n!=1:
+              raise SystemExit(f'{fn}: HOLIDAYS block not found')
+            if fn.endswith('calendar-widget-v11.js'):
+              s2=s2.replace("const VER='20260828-calendar-widget-v11-readable-compact';", "const VER='20260903-calendar-widget-v11.1-official-holidays';")
+              s2=s2.replace("last&&last.short===it.short&&last.type===it.type&&day===last.end+1", "last&&last.short===it.short&&last.name===it.name&&last.type===it.type&&day===last.end+1")
+            else:
+              s2=s2.replace("const VER='20260828-calendar-day-detail-card1-lunar-holiday-solar';", "const VER='20260903-calendar-day-detail-card1.1-official-holidays';")
+            p.write_text(s2,encoding='utf-8')
+          PY
+
       - name: Inject lean WebDesk scripts
         run: |
           python - <<'PY'
@@ -59,8 +128,8 @@ jobs:
             '<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260901-workspace-core-guard4-preserve-deleted-workspaces"></script>',
             '<script src="Html_tools/toolbox-categorized-shelf.js?v=20260828-toolbox-categorized-shelf1-search-groups"></script>',
-            '<script src="Html_tools/calendar-widget-v11.js?v=20260828-calendar-widget-v11-readable-compact"></script>',
-            '<script src="Html_tools/calendar-day-detail-card.js?v=20260828-calendar-day-detail-card1-lunar-holiday-solar"></script>',
+            '<script src="Html_tools/calendar-widget-v11.js?v=20260903-calendar-widget-v11.1-official-holidays"></script>',
+            '<script src="Html_tools/calendar-day-detail-card.js?v=20260903-calendar-day-detail-card1.1-official-holidays"></script>',
             '<script src="Html_tools/image-studio-v4.js?v=20260828-image-studio-v4-safe-crop-output"></script>',
             '<script src="Html_tools/image-studio-v5-crop-overlay.js?v=20260901-image-studio-v5.1-efficient-observer"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
@@ -123,14 +192,14 @@ jobs:
           path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit lean script tags
+      - name: Commit lean script tags and calendar data
         run: |
-          if git diff --quiet -- index.html; then
-            echo "index.html already has categorized toolbox shelf."
+          if git diff --quiet -- index.html Html_tools/calendar-widget-v11.js Html_tools/calendar-day-detail-card.js; then
+            echo "WebDesk calendar and lean scripts already current."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "Inject categorized toolbox shelf"
+          git add index.html Html_tools/calendar-widget-v11.js Html_tools/calendar-day-detail-card.js
+          git commit -m "Fix official 2026 CN and HK calendar holidays"
           git push
