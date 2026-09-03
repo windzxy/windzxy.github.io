@@ -41,6 +41,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: webdesk-index-writers
+  cancel-in-progress: false
+
 jobs:
   inject:
     runs-on: ubuntu-latest
