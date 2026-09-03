@@ -1,0 +1,59 @@
+name: Inject WebDesk Typhoon Track Integrity
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/typhoon-track-integrity-v1.js'
+      - '.github/workflows/inject-webdesk-typhoon-track-integrity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Wire typhoon track integrity guard before widget runtime
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          tag='<script src="Html_tools/typhoon-track-integrity-v1.js?v=20260903-typhoon-track-integrity-v1"></script>'
+          s=re.sub(r'\n?<script src="Html_tools/typhoon-track-integrity-v1\.js\?v=[^"]+"></script>','',s)
+          marker=re.search(r'<script src="Html_tools/typhoon-widget\.js\?v=[^"]+"></script>',s)
+          if not marker:
+              raise SystemExit('typhoon widget marker not found')
+          s=s[:marker.start()]+tag+'\n'+s[marker.start():]
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Verify guard order
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          guard='Html_tools/typhoon-track-integrity-v1.js?v=20260903-typhoon-track-integrity-v1'
+          widget='Html_tools/typhoon-widget.js'
+          if s.count('Html_tools/typhoon-track-integrity-v1.js')!=1: raise SystemExit('integrity guard count invalid')
+          if guard not in s: raise SystemExit('integrity guard cache token missing')
+          if s.index(guard)>s.index(widget): raise SystemExit('integrity guard must load before typhoon widget')
+          print('typhoon track integrity guard verified')
+          PY
+      - name: Commit injected entry update
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'No index change required'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Deploy typhoon track integrity guard'
+          git pull --rebase origin master
+          git push
