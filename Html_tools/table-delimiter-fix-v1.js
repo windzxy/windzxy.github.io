@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VER = '20260903-table-delimiter-fix-v1.4-paste-autodetect';
+  const VER = '20260903-table-delimiter-fix-v1.5-file-drop';
   const STORAGE_KEY = 'windzxy-webdesk-table-delimiter-v1';
   if (window.__windzxyTableDelimiterFix === VER) return;
   window.__windzxyTableDelimiterFix = VER;
@@ -83,6 +83,14 @@
     });
   }
 
+  function applyDetectedDelimiter(select, input) {
+    const detected = detectDelimiter(input?.value || '');
+    if (!detected || detected === select.value) return detected;
+    select.value = detected;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    return detected;
+  }
+
   function ensureSuggestion(select, input) {
     const host = select.parentElement || select;
     let button = host.querySelector?.('.table-delimiter-suggestion');
@@ -123,12 +131,44 @@
     input.addEventListener('paste', () => {
       const wasEmpty = !input.value.trim();
       if (!wasEmpty) return;
-      setTimeout(() => {
-        const detected = detectDelimiter(input.value);
-        if (!detected || detected === select.value) return;
-        select.value = detected;
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-      }, 0);
+      setTimeout(() => applyDetectedDelimiter(select, input), 0);
+    });
+  }
+
+  function bindFileDrop(select, input) {
+    if (!input || input.dataset.delimiterFileDrop === VER) return;
+    input.dataset.delimiterFileDrop = VER;
+    const supported = /\.(csv|tsv|txt)$/i;
+    const setActive = active => {
+      input.style.outline = active ? '2px dashed rgba(89,184,255,.72)' : '';
+      input.style.outlineOffset = active ? '3px' : '';
+    };
+    input.addEventListener('dragover', event => {
+      const file = event.dataTransfer?.files?.[0];
+      if (!file || !supported.test(file.name)) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
+      setActive(true);
+    });
+    input.addEventListener('dragleave', () => setActive(false));
+    input.addEventListener('drop', event => {
+      setActive(false);
+      const file = event.dataTransfer?.files?.[0];
+      if (!file || !supported.test(file.name)) return;
+      event.preventDefault();
+      if (file.size > 2 * 1024 * 1024) {
+        input.setCustomValidity('檔案過大，請使用 2 MB 以下的 CSV、TSV 或 TXT。');
+        input.reportValidity();
+        setTimeout(() => input.setCustomValidity(''), 1800);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        input.value = String(reader.result || '');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        applyDetectedDelimiter(select, input);
+      };
+      reader.readAsText(file);
     });
   }
 
@@ -148,6 +188,7 @@
     const input = app.querySelector?.('#appTableInput');
     ensureSuggestion(select, input);
     bindPasteAutodetect(select, input);
+    bindFileDrop(select, input);
   }
 
   function scan(root = document) {
