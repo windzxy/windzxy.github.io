@@ -66,7 +66,7 @@ jobs:
             '<script src="Html_tools/calendar-day-detail-card.js?v=20260828-calendar-day-detail-card1-lunar-holiday-solar"></script>',
             '<script src="Html_tools/calendar-holiday-authority-v1.js?v=20260903-calendar-holiday-authority-v2-region-groups"></script>',
             '<script src="Html_tools/calendar-holiday-dot-sync-v1.js?v=20260903-calendar-holiday-dot-sync-v1"></script>',
-            '<script src="Html_tools/basic-tools-export-v1.js?v=20260903-basic-tools-export-v1"></script>',
+            '<script src="Html_tools/basic-tools-export-v1.js?v=20260903-basic-tools-export-v1.1-auto-delimiter"></script>',
             '<script src="Html_tools/image-studio-v4.js?v=20260828-image-studio-v4-safe-crop-output"></script>',
             '<script src="Html_tools/image-studio-v5-crop-overlay.js?v=20260901-image-studio-v5.1-efficient-observer"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
