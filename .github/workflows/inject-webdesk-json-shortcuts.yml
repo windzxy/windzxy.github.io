@@ -27,7 +27,7 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
           s=re.sub(r'\n?<script src="Html_tools/basic-tools-json-shortcuts-v1\.js\?v=[^"]+"></script>','',s)
-          tag='<script src="Html_tools/basic-tools-json-shortcuts-v1.js?v=20260903-json-shortcuts-v1.2-error-location"></script>'
+          tag='<script src="Html_tools/basic-tools-json-shortcuts-v1.js?v=20260903-json-shortcuts-v1.3-error-jump"></script>'
           if '</body>' not in s:
               raise SystemExit('body end not found')
           s=s.replace('</body>',tag+'\n</body>',1)
@@ -40,7 +40,7 @@ jobs:
           s=Path('index.html').read_text(encoding='utf-8')
           f='Html_tools/basic-tools-json-shortcuts-v1.js'
           if s.count(f)!=1: raise SystemExit(f'expected one {f}, got {s.count(f)}')
-          if '20260903-json-shortcuts-v1.2-error-location' not in s: raise SystemExit('JSON shortcuts cache token missing')
+          if '20260903-json-shortcuts-v1.3-error-jump' not in s: raise SystemExit('JSON shortcuts cache token missing')
           PY
       - name: Commit injected helper
         run: |
@@ -51,5 +51,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Inject WebDesk JSON error location helper'
+          git commit -m 'Inject WebDesk JSON error jump helper'
           git push
