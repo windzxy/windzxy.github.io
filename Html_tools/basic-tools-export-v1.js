@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260903-basic-tools-export-v1.1-auto-delimiter';
+const VER='20260903-basic-tools-export-v1.2-quoted-fields';
 if(window.__webdeskBasicToolsExport===VER)return;
 window.__webdeskBasicToolsExport=VER;
 
@@ -14,7 +14,25 @@ function stamp(){return new Date().toISOString().slice(0,19).replace(/[:T]/g,'-'
 function button(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.basicExport='1';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();handler()});return b}
 function textValue(root){const out=root.querySelector('#textOut')?.value||'';return out.trim()?out:(root.querySelector('#appText')?.value||'')}
 function csvCell(v){v=String(v??'');return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
-function rowsToCsv(raw,separator){return raw.split(/\r?\n/).map(r=>r.split(separator).map(csvCell).join(',')).join('\r\n')}
+function parseDelimited(raw,separator){
+  const rows=[];let row=[],cell='',quoted=false;
+  for(let i=0;i<raw.length;i++){
+    const ch=raw[i];
+    if(ch==='"'){
+      if(quoted&&raw[i+1]==='"'){cell+='"';i++;continue}
+      quoted=!quoted;continue;
+    }
+    if(!quoted&&ch===separator){row.push(cell);cell='';continue}
+    if(!quoted&&(ch==='\n'||ch==='\r')){
+      if(ch==='\r'&&raw[i+1]==='\n')i++;
+      row.push(cell);rows.push(row);row=[];cell='';continue;
+    }
+    cell+=ch;
+  }
+  if(cell!==''||row.length||raw.length){row.push(cell);rows.push(row)}
+  return rows;
+}
+function rowsToCsv(raw,separator){return parseDelimited(raw,separator).map(r=>r.map(csvCell).join(',')).join('\r\n')}
 function detectDelimiter(raw){
   const sample=(raw.split(/\r?\n/).find(Boolean)||'');
   const candidates=[['\t',(sample.match(/\t/g)||[]).length],['|',(sample.match(/\|/g)||[]).length]];
