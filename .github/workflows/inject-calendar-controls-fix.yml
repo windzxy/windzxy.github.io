@@ -1,0 +1,48 @@
+name: Inject Calendar Controls Fix
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/calendar-controls-fix-v1.js'
+      - 'Html_tools/calendar-holiday-dot-sync-v1.js'
+      - '.github/workflows/inject-calendar-controls-fix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Inject latest calendar UI helpers
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          html=p.read_text(encoding='utf-8')
+          for name in ['calendar-controls-fix-v1','calendar-holiday-dot-sync-v1']:
+              html=re.sub(rf'<script\s+src="Html_tools/{name}\.js\?v=[^"]+"\s*>\s*</script>\s*','',html)
+          tags='\n'.join([
+            '<script src="Html_tools/calendar-holiday-dot-sync-v1.js?v=20260903-calendar-holiday-dot-sync-v2"></script>',
+            '<script src="Html_tools/calendar-controls-fix-v1.js?v=20260903-calendar-controls-fix-v1"></script>'
+          ])
+          html=html.replace('</body>',tags+'\n</body>',1)
+          p.write_text(html,encoding='utf-8')
+          PY
+      - name: Commit injected calendar fixes
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'Calendar fixes already injected.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Inject calendar dropdown and marker fixes'
+          git push
