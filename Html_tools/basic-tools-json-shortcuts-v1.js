@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VER = '20260902-json-shortcuts-v1.1-copy';
+  const VER = '20260903-json-shortcuts-v1.2-error-location';
   if (window.__basicToolsJsonShortcutsV1 === VER) return;
   window.__basicToolsJsonShortcutsV1 = VER;
 
@@ -22,10 +22,10 @@
   }
 
   function ensureStyle() {
-    if (document.getElementById('jsonShortcutsV11Style')) return;
+    if (document.getElementById('jsonShortcutsV12Style')) return;
     const style = document.createElement('style');
-    style.id = 'jsonShortcutsV11Style';
-    style.textContent = '.json-app .json-shortcut-copy{margin-left:auto;padding:4px 9px;border:1px solid rgba(127,127,127,.22);border-radius:9px;background:rgba(127,127,127,.08);color:inherit;font:inherit;font-weight:650;cursor:pointer}.json-app .json-shortcut-copy:disabled{opacity:.38;cursor:not-allowed}.json-app .json-shortcut-copy:not(:disabled):hover{background:rgba(127,127,127,.14)}';
+    style.id = 'jsonShortcutsV12Style';
+    style.textContent = '.json-app .json-shortcut-copy{margin-left:auto;padding:4px 9px;border:1px solid rgba(127,127,127,.22);border-radius:9px;background:rgba(127,127,127,.08);color:inherit;font:inherit;font-weight:650;cursor:pointer}.json-app .json-shortcut-copy:disabled{opacity:.38;cursor:not-allowed}.json-app .json-shortcut-copy:not(:disabled):hover{background:rgba(127,127,127,.14)}.json-app .json-error-location{display:none;margin-left:6px;padding:4px 8px;border-radius:8px;background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.2);color:#ef6b6b;font:inherit;font-size:.88em;font-weight:650;white-space:nowrap}.json-app .json-error-location.show{display:inline-flex}';
     document.head.appendChild(style);
   }
 
@@ -37,12 +37,28 @@
     ensureStyle();
 
     let copyButton = null;
-    const validJson = () => {
-      if (!input.value.trim()) return false;
-      try { JSON.parse(input.value); return true; } catch (_) { return false; }
+    let errorLocation = null;
+    const parseState = () => {
+      const raw = input.value;
+      if (!raw.trim()) return { valid: false, empty: true, error: null };
+      try { JSON.parse(raw); return { valid: true, empty: false, error: null }; }
+      catch (error) { return { valid: false, empty: false, error }; }
     };
 
-    const ensureCopyButton = () => {
+    function locateError(error) {
+      if (!error) return '';
+      const msg = String(error.message || error);
+      const match = msg.match(/position\s+(\d+)/i) || msg.match(/at\s+position\s+(\d+)/i);
+      if (!match) return 'JSON 格式錯誤';
+      const pos = Math.max(0, Math.min(input.value.length, Number(match[1]) || 0));
+      const before = input.value.slice(0, pos);
+      const line = before.split('\n').length;
+      const lastBreak = before.lastIndexOf('\n');
+      const col = pos - lastBreak;
+      return `錯誤：第 ${line} 行，第 ${col} 字元`;
+    }
+
+    const ensureControls = () => {
       const status = root.querySelector('.basic-tool-status');
       if (!status) return null;
       copyButton = status.querySelector('.json-shortcut-copy');
@@ -53,7 +69,7 @@
         copyButton.textContent = '複製 JSON';
         copyButton.setAttribute('aria-label', '複製目前 JSON');
         copyButton.addEventListener('click', async () => {
-          if (!validJson()) return;
+          if (!parseState().valid) return;
           try {
             await copyText(input.value);
             copyButton.textContent = '已複製 ✓';
@@ -65,12 +81,23 @@
         });
         status.appendChild(copyButton);
       }
-      copyButton.disabled = !validJson();
+      errorLocation = status.querySelector('.json-error-location');
+      if (!errorLocation) {
+        errorLocation = document.createElement('span');
+        errorLocation.className = 'json-error-location';
+        errorLocation.setAttribute('role', 'status');
+        status.appendChild(errorLocation);
+      }
+      const state = parseState();
+      copyButton.disabled = !state.valid;
+      const message = !state.empty && !state.valid ? locateError(state.error) : '';
+      errorLocation.textContent = message;
+      errorLocation.classList.toggle('show', !!message);
       return status;
     };
 
     const updateHint = () => {
-      const status = ensureCopyButton();
+      const status = ensureControls();
       if (!status || !status.children[1] || !input.value.trim()) return;
       const hint = 'Ctrl/⌘ + Enter 格式化 · Shift + Ctrl/⌘ + Enter 壓縮';
       const current = status.children[1].textContent || '';
