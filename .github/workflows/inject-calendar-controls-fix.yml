@@ -30,7 +30,7 @@ jobs:
               html=re.sub(rf'<script\s+src="Html_tools/{name}\.js\?v=[^"]+"\s*>\s*</script>\s*','',html)
           tags='\n'.join([
             '<script src="Html_tools/calendar-holiday-dot-sync-v1.js?v=20260903-calendar-holiday-dot-sync-v2"></script>',
-            '<script src="Html_tools/calendar-controls-fix-v1.js?v=20260903-calendar-controls-fix-v1"></script>'
+            '<script src="Html_tools/calendar-controls-fix-v1.js?v=20260903-calendar-controls-fix-v2-mouse-release"></script>'
           ])
           html=html.replace('</body>',tags+'\n</body>',1)
           p.write_text(html,encoding='utf-8')
@@ -44,5 +44,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Inject calendar dropdown and marker fixes'
+          git commit -m 'Inject calendar dropdown mouse-release fix'
           git push
