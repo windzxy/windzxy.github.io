@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260904-card-refresh-v1';
+const VER='20260904-card-refresh-v1.1';
 if(window.__webdeskCardRefresh===VER)return;
 window.__webdeskCardRefresh=VER;
 
@@ -10,19 +10,30 @@ function label(){
   if(/^zh-CN/i.test(lang)||/Hans/i.test(lang))return '刷新卡片';
   return '刷新卡片';
 }
+function syncLabel(btn){
+  if(!btn)return;
+  const text=label();
+  btn.title=text;
+  btn.setAttribute('aria-label',text);
+}
 function enhance(card){
-  if(!card||card.dataset.cardRefreshReady===VER)return;
+  if(!card)return;
   const bar=card.querySelector('.card-bar');
   const remove=bar?.querySelector('.card-remove');
   if(!bar||!remove)return;
+  let btn=bar.querySelector('.card-refresh');
+  if(btn){
+    card.dataset.cardRefreshReady=VER;
+    syncLabel(btn);
+    return;
+  }
   card.dataset.cardRefreshReady=VER;
-  const btn=document.createElement('button');
+  btn=document.createElement('button');
   btn.type='button';
   btn.className='card-refresh';
   btn.dataset.cardRefresh='1';
   btn.textContent='↻';
-  btn.title=label();
-  btn.setAttribute('aria-label',label());
+  syncLabel(btn);
   btn.addEventListener('pointerdown',e=>e.stopPropagation());
   btn.addEventListener('mousedown',e=>e.stopPropagation());
   btn.addEventListener('click',e=>{
