@@ -1,0 +1,49 @@
+name: Inject WebDesk Text Import
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/text-file-import-v1.js'
+      - '.github/workflows/inject-webdesk-text-import.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: webdesk-index-writers
+  cancel-in-progress: false
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Inject Text import helper
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+          html = re.sub(r'<script\s+src="Html_tools/text-file-import-v1\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
+          tag = '<script src="Html_tools/text-file-import-v1.js?v=20260905-text-file-import-v1"></script>'
+          html = html.replace('</body>', tag + '\n</body>', 1)
+          path.write_text(html, encoding='utf-8')
+          PY
+      - name: Commit Text import helper tag
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "index.html already has current Text import helper."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Inject WebDesk Text import helper"
+          git pull --rebase origin master
+          git push
