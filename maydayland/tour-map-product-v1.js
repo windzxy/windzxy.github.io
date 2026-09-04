@@ -59,7 +59,11 @@ function connectMapNodes(){
     if(!id||!group) return;
     group.dataset.city=id; group.setAttribute('role','button'); group.setAttribute('tabindex','0');
     group.setAttribute('aria-label','查看 '+label.textContent.trim()+' 城市資料');
-    group.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const btn=$('.city-btn[data-city="'+id+'"]');if(btn)btn.click();}});
+    if(group.dataset.cityNodeReady==='1')return;
+    group.dataset.cityNodeReady='1';
+    const activate=()=>{const btn=$('.city-btn[data-city="'+CSS.escape(id)+'"]');if(btn)btn.click();};
+    group.addEventListener('click',activate);
+    group.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate();}});
   });
 }
 
@@ -154,7 +158,7 @@ function syncStatus(){
 function enhance(){
   if(!$('.map-card')||!$('.tour[data-tour]')) return false;
   injectStyle(); productizeCopy(); connectMapNodes(); wireLegend(); restoreTour(); syncStatus();
-  document.documentElement.dataset.maydaylandTourMap='product-v1.6';
+  document.documentElement.dataset.maydaylandTourMap='product-v1.7';
   return true;
 }
 
