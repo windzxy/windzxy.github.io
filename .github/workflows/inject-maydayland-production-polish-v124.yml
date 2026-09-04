@@ -27,25 +27,15 @@ jobs:
           p=Path('maydayland/index.html')
           s=p.read_text(encoding='utf-8')
           polish='<script src="./production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2" defer></script>'
-          map_product='<script src="./tour-map-product-v1.js?v=20260903-tour-map-product-v1.6" defer></script>'
+          map_product='<script src="./tour-map-product-v1.js?v=20260905-tour-map-product-v1.7" defer></script>'
           s2=re.sub(r'\n?\s*<script src="\./production-polish-v124\.js\?v=[^"]+" defer></script>','',s)
           s2=re.sub(r'\n?\s*<script src="\./tour-map-product-v1\.js\?v=[^"]+" defer></script>','',s2)
           anchor='<script src="./app-v119.js?v=20260901-repaired-v119.2" defer></script>'
           if anchor not in s2:
               raise SystemExit('repaired v119 anchor missing; refusing unsafe rewrite')
-          s2=s2.replace(anchor,anchor+'\n  '+polish+'\n  '+map_product,1)
+          s2=s2.replace(anchor,anchor+'\n'+polish+'\n'+map_product,1)
 
-          # Keep the static source-of-truth aligned with the production runtime.
-          s2=re.sub(r'data-maydayland-release="[^"]+"','data-maydayland-release="v124.2"',s2,count=1)
-          s2=re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="Maydayland v124.2：巡演地圖、城市專題、專輯室、歌曲宇宙、書籍出版與歷程檔案。">',s2,count=1)
-          s2=re.sub(r'<title>[^<]*</title>','<title>Maydayland · Tour Music Time Archive v124.2</title>',s2,count=1)
-          s2=s2.replace("version:'v123-audit',release:'runtime-audit-base-shell'","version:'v124.2',release:'production-polish-stable-core'")
-
-          # Keep release-specific static assets on the same cache generation.
-          s2=re.sub(r'(mayday-logo\.svg\?v=)[^"\']+',r'\g<1>124.2.0',s2)
-          s2=re.sub(r'(app-v118\.css\?v=)[^"\']+',r'\g<1>124.2.0',s2)
-
-          # Productize the no-JS / slow-network first screen too, not only the JS polish layer.
+          # Productize legacy no-JS / slow-network copy only when those legacy strings still exist.
           s2=s2.replace('SAFE SHELL · 正在載入互動版','正在載入互動體驗')
           s2=s2.replace('MAYDAYLAND · RESILIENT FIRST SCREEN','MAYDAYLAND · TOUR & MUSIC ARCHIVE')
           s2=s2.replace('巡演地圖、城市專題、唱片室、歌曲宇宙、出版與歷程檔案。即使互動腳本暫時失敗，首頁也不再黑屏。','巡演地圖、城市專題、唱片室、歌曲宇宙、出版與歷程檔案。即使網絡暫時不穩定，主要內容仍可繼續瀏覽。')
@@ -54,9 +44,10 @@ jobs:
           s2=s2.replace("paint('互動層 Promise 錯誤',String(e.reason||'unknown').slice(0,90))","paint('互動內容暫時不可用','基本內容仍可瀏覽')")
           s2=s2.replace("paint('BASE AUDIT · repaired v119 未啟動','已隔離 v120/v123/mobile')","paint('互動內容載入中','基本內容已可瀏覽')")
 
+          # Do not rewrite release/version metadata here. index.html is the release source-of-truth.
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired production polish v124.2 + tour map product v1.6 and normalized source metadata/assets/fallback copy')
+              print('wired production polish + tour map product v1.7 without downgrading release metadata')
           else:
               print('already wired and normalized')
           PY
@@ -64,23 +55,25 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
           s=Path('maydayland/index.html').read_text(encoding='utf-8')
+          app='app-v119.js?v=20260901-repaired-v119.2'
+          polish='production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2'
+          tour='tour-map-product-v1.js?v=20260905-tour-map-product-v1.7'
           assert 'maydayland-static-fallback' in s
-          assert 'app-v119.js?v=20260901-repaired-v119.2' in s
-          assert 'production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2' in s
-          assert 'tour-map-product-v1.js?v=20260903-tour-map-product-v1.6' in s
-          assert s.index('app-v119.js?v=20260901-repaired-v119.2') < s.index('production-polish-v124.js?v=20260901-maydayland-production-polish-v124.2') < s.index('tour-map-product-v1.js?v=20260903-tour-map-product-v1.6')
-          assert 'data-maydayland-release="v124.2"' in s
-          assert "version:'v124.2',release:'production-polish-stable-core'" in s
-          assert '<title>Maydayland · Tour Music Time Archive v124.2</title>' in s
-          assert 'mayday-logo.svg?v=124.2.0' in s
-          assert 'app-v118.css?v=124.2.0' in s
+          assert app in s and polish in s and tour in s
+          assert s.index(app) < s.index(polish) < s.index(tour)
+          release=re.search(r'data-maydayland-release="([^"]+)"',s)
+          build=re.search(r"version:'([^']+)'",s)
+          title=re.search(r'<title>Maydayland · Tour Music Time Archive ([^<]+)</title>',s)
+          assert release and build and title
+          assert release.group(1)==build.group(1)==title.group(1)
           assert '正在載入互動體驗' in s
           assert 'MAYDAYLAND · TOUR & MUSIC ARCHIVE' in s
           assert 'SAFE SHELL · 正在載入互動版' not in s
           assert 'MAYDAYLAND · RESILIENT FIRST SCREEN' not in s
           assert 'BASE AUDIT · repaired v119 未啟動' not in s
-          print('stable shell + runtime + polish + tour-map product order verified')
+          print('stable shell + runtime + polish + tour-map product order verified for '+release.group(1))
           PY
       - name: Commit entry update
         run: |
