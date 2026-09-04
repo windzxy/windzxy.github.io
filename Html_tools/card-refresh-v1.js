@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260904-card-refresh-v1.1';
+const VER='20260904-card-refresh-v1.2';
 if(window.__webdeskCardRefresh===VER)return;
 window.__webdeskCardRefresh=VER;
 
@@ -15,6 +15,17 @@ function syncLabel(btn){
   const text=label();
   btn.title=text;
   btn.setAttribute('aria-label',text);
+}
+function cardKey(card){
+  return card?.dataset?.cardId||card?.dataset?.id||card?.getAttribute?.('data-card-id')||card?.id||'';
+}
+function restoreFocus(key){
+  requestAnimationFrame(()=>{
+    run();
+    const cards=[...document.querySelectorAll('.desktop-card')];
+    const target=(key&&cards.find(card=>cardKey(card)===key))||cards.find(card=>card.querySelector('.card-refresh'));
+    target?.querySelector('.card-refresh')?.focus({preventScroll:true});
+  });
 }
 function enhance(card){
   if(!card)return;
@@ -38,8 +49,10 @@ function enhance(card){
   btn.addEventListener('mousedown',e=>e.stopPropagation());
   btn.addEventListener('click',e=>{
     e.preventDefault();e.stopPropagation();
+    const key=cardKey(card);
     if(typeof window.renderAll==='function')window.renderAll();
     else if(typeof window.renderDesktop==='function')window.renderDesktop();
+    restoreFocus(key);
   });
   bar.insertBefore(btn,remove);
 }
