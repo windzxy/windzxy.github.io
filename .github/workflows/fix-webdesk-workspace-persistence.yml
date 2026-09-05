@@ -42,6 +42,11 @@ jobs:
                   raise SystemExit('calendar app anchor not found')
               s=s.replace(anchor,anchor+schedule,1)
 
+          # Keep the browser cache key aligned with the deployed cleaner revision.
+          # This avoids serving an older workspace-cleaner script after a fix lands.
+          s=s.replace('workspace-preload-cleaner.js?v=20260901-workspace-preload-cleaner5-storage-only',
+                      'workspace-preload-cleaner.js?v=20260906-workspace-preload-cleaner7-stable-recovered-ids')
+
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit persistence fix
@@ -53,5 +58,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Fix WebDesk card persistence across refresh'
+          git commit -m 'Sync WebDesk workspace cleaner cache key to v7'
           git push origin master
