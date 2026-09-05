@@ -1,0 +1,59 @@
+{
+  "schema": "maydayland-tour-stops-v1",
+  "tour_id": "t5525",
+  "tour_name": "5525 回到那一天 25週年巡迴演唱會",
+  "updated_at": "2026-09-05T09:00:00+08:00",
+  "verification_policy": "Only include facts explicitly supported by B'in Music official news pages. Unknown fields stay null instead of being inferred.",
+  "stops": [
+    {
+      "city": "北京",
+      "venue": "國家體育場（鳥巢）",
+      "start_date": "2024-05-18",
+      "end_date": "2024-06-01",
+      "shows": 10,
+      "note": "官方列出 5/18、5/19、5/21、5/22、5/24、5/25、5/26、5/30、5/31、6/1 共十場。",
+      "source": "https://bin-music.com/news/1850"
+    },
+    {
+      "city": "成都",
+      "venue": "成都東安湖體育公園主體育場",
+      "start_date": "2024-09-27",
+      "end_date": null,
+      "shows": 4,
+      "note": "官方報導確認 9/27 起在成都舉辦四夜演出。",
+      "source": "https://bin-music.com/news/1942"
+    },
+    {
+      "city": "上海",
+      "venue": "上海體育場",
+      "start_date": null,
+      "end_date": "2024-11-24",
+      "shows": 11,
+      "note": "官方 11/25 報導確認 11/24 完成上海・絢爛天幕版十一場。",
+      "source": "https://bin-music.com/news/1987"
+    },
+    {
+      "city": "桃園",
+      "venue": "樂天桃園棒球場",
+      "start_date": "2024-12-28",
+      "end_date": "2025-01-05",
+      "shows": 6,
+      "dates": ["2024-12-28", "2024-12-29", "2024-12-31", "2025-01-01", "2025-01-04", "2025-01-05"],
+      "note": "5525 新年特別版六晚。",
+      "source": "https://bin-music.com/news/1960"
+    },
+    {
+      "city": "杭州",
+      "venue": "杭州奧體中心體育場（大蓮花）",
+      "start_date": null,
+      "end_date": "2025-05-28",
+      "shows": 5,
+      "note": "官方報導確認首次於杭州奧體中心體育場開唱並完成五場紀錄。",
+      "source": "https://bin-music.com/news/2145"
+    }
+  ],
+  "route_context": {
+    "official_2024_sequence": ["台中", "高雄", "香港", "北京", "深圳", "太原", "武漢", "成都", "上海"],
+    "source": "https://bin-music.com/news/1960"
+  }
+}
