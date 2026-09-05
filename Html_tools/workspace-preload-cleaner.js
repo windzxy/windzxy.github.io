@@ -1,9 +1,10 @@
 (function(){
-  if(window.__windzxyWorkspacePreloadCleanerLoadedV6)return;
+  if(window.__windzxyWorkspacePreloadCleanerLoadedV7)return;
+  window.__windzxyWorkspacePreloadCleanerLoadedV7=1;
   window.__windzxyWorkspacePreloadCleanerLoadedV6=1;
   window.__windzxyWorkspacePreloadCleanerLoaded=1;
 
-  const VER='20260901-workspace-preload-cleaner6-preserve-deletions';
+  const VER='20260906-workspace-preload-cleaner7-stable-recovered-card-ids';
   const STORE='windzxy-web-desktop-workspaces';
   const LEGACY=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
   const GEO='windzxy-web-desktop-card-geometry-v4';
@@ -33,16 +34,21 @@
     if(ws&&/^(daily|office|imageDesk|data)$/i.test(String(ws.id||''))&&id.startsWith(ws.id+'-')&&!id.startsWith('card-')&&!id.startsWith('custom-'))return true;
     return false;
   }
-  function normalizeCard(card,i){
+  function normalizeCard(card,i,wsId){
     const next=Object.assign({},card);
-    next.id=next.id||('card-'+Date.now()+'-'+i);
     next.appId=next.appId||next.toolId||'note';
+    if(!next.id){
+      const safeWs=String(wsId||'workspace').replace(/[^a-z0-9_-]+/gi,'-');
+      const safeApp=String(next.appId||'note').replace(/[^a-z0-9_-]+/gi,'-');
+      next.id='custom-recovered-'+safeWs+'-'+safeApp+'-'+i;
+      next.userCreated=true;
+    }
     return next;
   }
   function ensureWorkspaces(list){
     const source=Array.isArray(list)&&list.length?list:clone(EMPTY_DEFAULTS);
     return source.filter(Boolean).map(ws=>{
-      const cards=(Array.isArray(ws.cards)?ws.cards:[]).map(normalizeCard);
+      const cards=(Array.isArray(ws.cards)?ws.cards:[]).map((card,i)=>normalizeCard(card,i,ws&&ws.id));
       const kept=cards.filter(card=>!isLegacyAutoCard(card,ws));
       return Object.assign({},ws,{cards:kept});
     });
