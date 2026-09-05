@@ -2,9 +2,28 @@
   "schema": "maydayland-tour-stops-v1",
   "tour_id": "t5525",
   "tour_name": "5525 回到那一天 25週年巡迴演唱會",
-  "updated_at": "2026-09-05T09:00:00+08:00",
+  "updated_at": "2026-09-05T13:00:00+08:00",
   "verification_policy": "Only include facts explicitly supported by B'in Music official news pages. Unknown fields stay null instead of being inferred.",
   "stops": [
+    {
+      "city": "台中",
+      "venue": "臺中洲際棒球場",
+      "start_date": "2023-12-31",
+      "end_date": "2024-01-07",
+      "shows": 6,
+      "dates": ["2023-12-31", "2024-01-01", "2024-01-02", "2024-01-05", "2024-01-06", "2024-01-07"],
+      "note": "5525 巡演起點；官方公告六場跨年演出，共 15 萬人。",
+      "source": "https://bin-music.com/news/1740"
+    },
+    {
+      "city": "高雄",
+      "venue": "高雄世運主場館",
+      "start_date": null,
+      "end_date": "2024-03-31",
+      "shows": 5,
+      "note": "官方報導確認 5525 高雄無限放大版於高雄世運主場館一連五場。",
+      "source": "https://bin-music.com/news/1820"
+    },
     {
       "city": "北京",
       "venue": "國家體育場（鳥巢）",
