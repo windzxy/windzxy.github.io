@@ -55,6 +55,19 @@ function focusStop(city){
   target.scrollIntoView({behavior:'smooth',block:'nearest'});
   setTimeout(function(){target.classList.remove('is-target');},2200);
 }
+function findCoreCityButton(city){
+  var buttons=document.querySelectorAll('#page-home .city-btn[data-city]');
+  for(var i=0;i<buttons.length;i++){
+    var label=(buttons[i].textContent||'').trim();
+    if(label===city||label.indexOf(city)>=0)return buttons[i];
+  }
+  return null;
+}
+function selectVerifiedCity(city){
+  var core=findCoreCityButton(city);
+  if(core&&!core.classList.contains('active'))core.click();
+  focusStop(city);
+}
 function mountPanel(data){
   if(document.getElementById(ROOT_ID))return true;
   var target=document.querySelector('#page-home .city-panel');
@@ -70,9 +83,10 @@ function mountMapNodes(data){
   var layer=document.createElement('div');layer.id=NODE_LAYER_ID;layer.className='verified-map-node-layer';layer.setAttribute('aria-label','5525 官方驗證城市節點');
   (data.stops||[]).forEach(function(stop){
     var p=CITY_COORDS[stop.city];if(!p)return;
+    var core=findCoreCityButton(stop.city);
     var btn=document.createElement('button');btn.type='button';btn.className='verified-map-node';btn.style.left=p.x+'%';btn.style.top=p.y+'%';btn.textContent=stop.city;btn.setAttribute('aria-label','查看 '+stop.city+' 5525 官方驗證場次');
-    btn.setAttribute('data-existing',document.querySelector('.city-btn[data-city]')&&Array.prototype.some.call(document.querySelectorAll('.city-btn[data-city]'),function(el){return el.textContent.trim()===stop.city;})?'true':'false');
-    btn.addEventListener('click',function(){focusStop(stop.city);});
+    btn.setAttribute('data-existing',core?'true':'false');
+    btn.addEventListener('click',function(){selectVerifiedCity(stop.city);});
     layer.appendChild(btn);
   });
   stage.appendChild(layer);
