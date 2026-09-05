@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - '.github/workflows/fix-webdesk-workspace-persistence.yml'
+      - 'Html_tools/workspace-preload-cleaner.js'
   workflow_dispatch:
 
 permissions:
@@ -44,8 +45,12 @@ jobs:
 
           # Keep the browser cache key aligned with the deployed cleaner revision.
           # This avoids serving an older workspace-cleaner script after a fix lands.
-          s=s.replace('workspace-preload-cleaner.js?v=20260901-workspace-preload-cleaner5-storage-only',
-                      'workspace-preload-cleaner.js?v=20260906-workspace-preload-cleaner7-stable-recovered-ids')
+          current='workspace-preload-cleaner.js?v=20260906-workspace-preload-cleaner8-unique-card-ids'
+          for previous in (
+              'workspace-preload-cleaner.js?v=20260906-workspace-preload-cleaner7-stable-recovered-ids',
+              'workspace-preload-cleaner.js?v=20260901-workspace-preload-cleaner5-storage-only',
+          ):
+              s=s.replace(previous,current)
 
           p.write_text(s,encoding='utf-8')
           PY
@@ -58,5 +63,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Sync WebDesk workspace cleaner cache key to v7'
+          git commit -m 'Sync WebDesk workspace cleaner cache key to v8'
           git push origin master
