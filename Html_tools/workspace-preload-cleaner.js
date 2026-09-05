@@ -1,10 +1,11 @@
 (function(){
-  if(window.__windzxyWorkspacePreloadCleanerLoadedV7)return;
+  if(window.__windzxyWorkspacePreloadCleanerLoadedV8)return;
+  window.__windzxyWorkspacePreloadCleanerLoadedV8=1;
   window.__windzxyWorkspacePreloadCleanerLoadedV7=1;
   window.__windzxyWorkspacePreloadCleanerLoadedV6=1;
   window.__windzxyWorkspacePreloadCleanerLoaded=1;
 
-  const VER='20260906-workspace-preload-cleaner7-stable-recovered-card-ids';
+  const VER='20260906-workspace-preload-cleaner8-unique-card-ids';
   const STORE='windzxy-web-desktop-workspaces';
   const LEGACY=['windzxy-desktop-workspaces','windzxy-dashboard-workspaces'];
   const GEO='windzxy-web-desktop-card-geometry-v4';
@@ -22,6 +23,7 @@
   function clone(v){try{return JSON.parse(JSON.stringify(v));}catch(e){return v;}}
   function safeParse(text){try{const v=JSON.parse(text||'null');return Array.isArray(v)?v:null;}catch(e){return null;}}
   function idOf(card){return String(card?.id||'');}
+  function safePart(value,fallback){return String(value||fallback||'item').replace(/[^a-z0-9_-]+/gi,'-');}
   function isManual(card){return !!card&&(card.source==='manual'||card.manual===true||card.userCreated===true||idOf(card).startsWith('custom-'));}
   function isLegacyAutoCard(card,ws){
     if(!card)return false;
@@ -38,19 +40,41 @@
     const next=Object.assign({},card);
     next.appId=next.appId||next.toolId||'note';
     if(!next.id){
-      const safeWs=String(wsId||'workspace').replace(/[^a-z0-9_-]+/gi,'-');
-      const safeApp=String(next.appId||'note').replace(/[^a-z0-9_-]+/gi,'-');
+      const safeWs=safePart(wsId,'workspace');
+      const safeApp=safePart(next.appId,'note');
       next.id='custom-recovered-'+safeWs+'-'+safeApp+'-'+i;
       next.userCreated=true;
     }
     return next;
+  }
+  function ensureUniqueCardIds(cards,wsId){
+    const seen=new Set();
+    return cards.map((card,i)=>{
+      const current=idOf(card);
+      if(current&&!seen.has(current)){
+        seen.add(current);
+        return card;
+      }
+      const next=Object.assign({},card);
+      const safeWs=safePart(wsId,'workspace');
+      const safeApp=safePart(next.appId||next.toolId,'note');
+      const base='custom-recovered-'+safeWs+'-'+safeApp+'-'+i;
+      let candidate=base;
+      let n=2;
+      while(seen.has(candidate))candidate=base+'-dup'+n++;
+      next.id=candidate;
+      next.userCreated=true;
+      seen.add(candidate);
+      return next;
+    });
   }
   function ensureWorkspaces(list){
     const source=Array.isArray(list)&&list.length?list:clone(EMPTY_DEFAULTS);
     return source.filter(Boolean).map(ws=>{
       const cards=(Array.isArray(ws.cards)?ws.cards:[]).map((card,i)=>normalizeCard(card,i,ws&&ws.id));
       const kept=cards.filter(card=>!isLegacyAutoCard(card,ws));
-      return Object.assign({},ws,{cards:kept});
+      const unique=ensureUniqueCardIds(kept,ws&&ws.id);
+      return Object.assign({},ws,{cards:unique});
     });
   }
   function cleanText(text){
