@@ -9,7 +9,9 @@ var CITY_COORDS={
   '成都':{x:48,y:42},
   '上海':{x:74,y:28},
   '桃園':{x:75,y:45},
-  '杭州':{x:70,y:31}
+  '杭州':{x:70,y:31},
+  '台中':{x:80,y:78},
+  '高雄':{x:79,y:86}
 };
 function slugCity(name){return String(name||'').replace(/\s+/g,'-').replace(/[^\w\u3400-\u9fff-]/g,'').toLowerCase();}
 function addStyle(){
