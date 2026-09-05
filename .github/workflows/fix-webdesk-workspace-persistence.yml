@@ -23,6 +23,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
@@ -34,8 +35,6 @@ jobs:
           elif 'filter(card=>!card.custom&&allowedApps.has' in s:
               raise SystemExit('workspace normalization changed unexpectedly; refusing unsafe patch')
 
-          # Register the current class-schedule card in the core catalog too, so it
-          # has metadata immediately during workspace restoration.
           schedule='  {id:"class-schedule",kind:"widget",title:"課程表",desc:"今天優先的週課程表，快速查看當前與下一節。",icon:"課",tone:"t-schedule"},\n'
           if 'id:"class-schedule"' not in s:
               anchor='  {id:"calendar",kind:"widget",title:"萬年曆",desc:"農曆、公曆、節假日、調休、年份跳轉與日期定位。",icon:"📅",tone:"t-calendar"},\n'
@@ -43,14 +42,14 @@ jobs:
                   raise SystemExit('calendar app anchor not found')
               s=s.replace(anchor,anchor+schedule,1)
 
-          # Keep the browser cache key aligned with the deployed cleaner revision.
-          # This avoids serving an older workspace-cleaner script after a fix lands.
+          # Always align any previously injected cache key with the deployed cleaner.
+          # Multiple injector workflows may carry stale keys, so match the whole
+          # query string rather than enumerating known historical versions.
           current='workspace-preload-cleaner.js?v=20260906-workspace-preload-cleaner8-unique-card-ids'
-          for previous in (
-              'workspace-preload-cleaner.js?v=20260906-workspace-preload-cleaner7-stable-recovered-ids',
-              'workspace-preload-cleaner.js?v=20260901-workspace-preload-cleaner5-storage-only',
-          ):
-              s=s.replace(previous,current)
+          pattern=r'workspace-preload-cleaner\.js\?v=[^"\s<]+'
+          s,count=re.subn(pattern,current,s)
+          if count != 1:
+              raise SystemExit(f'expected exactly one workspace cleaner script, found {count}')
 
           p.write_text(s,encoding='utf-8')
           PY
