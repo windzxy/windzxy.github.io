@@ -2,7 +2,7 @@
   if(window.__windzxyWorkspaceDefaultCleanerLoaded)return;
   window.__windzxyWorkspaceDefaultCleanerLoaded=1;
 
-  const VER='20260828-workspace-default-cleaner1-source-empty';
+  const VER='20260906-workspace-default-cleaner2-close-startup-drawer';
   const STORE='windzxy-web-desktop-workspaces';
   const INIT='windzxy-webdesk-core-initialized-v3';
   const DEFAULT_IDS=new Set(['daily','office','imageDesk','data']);
@@ -12,6 +12,13 @@
   function clone(v){try{return JSON.parse(JSON.stringify(v));}catch(e){return v;}}
   function read(){try{const v=JSON.parse(localStorage.getItem(STORE)||'null');return Array.isArray(v)?v:null;}catch(e){return null;}}
   function write(list){try{localStorage.setItem(STORE,JSON.stringify(list));localStorage.setItem(INIT,'1');}catch(e){}}
+  function closeStartupDrawer(){
+    try{
+      const drawer=document.getElementById('desktopDrawer');
+      if(drawer)drawer.classList.remove('is-open');
+      document.querySelectorAll('[data-dock].is-active').forEach(btn=>btn.classList.remove('is-active'));
+    }catch(e){}
+  }
   function isSeedCard(card,ws){
     if(!card)return false;
     const id=String(card.id||'');
@@ -117,11 +124,13 @@
     }catch(e){console.warn('workspace default cleaner patch failed',e);}
   }
   function boot(){
+    closeStartupDrawer();
     patch();
     cleanRuntime('boot');
     [80,250,600,1200,2500].forEach(ms=>setTimeout(()=>{patch();cleanRuntime(String(ms));},ms));
     window.addEventListener('storage',e=>{if(e.key===STORE)setTimeout(()=>cleanRuntime('storage'),30);});
     window.addEventListener('pagehide',()=>cleanRuntime('pagehide'),{capture:true});
+    window.addEventListener('pageshow',closeStartupDrawer,{capture:true});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
   window.windzxyWorkspaceDefaultCleanerVersion=VER;
