@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260906-card-refresh-v1.3';
+const VER='20260906-card-refresh-v1.4';
 if(window.__webdeskCardRefresh===VER)return;
 window.__webdeskCardRefresh=VER;
 
@@ -64,6 +64,12 @@ function refreshCard(card){
   else if(typeof window.renderDesktop==='function')window.renderDesktop();
   return false;
 }
+function setBusy(btn,busy){
+  if(!btn)return;
+  btn.disabled=!!busy;
+  btn.setAttribute('aria-busy',busy?'true':'false');
+  btn.classList.toggle('is-refreshing',!!busy);
+}
 function enhance(card){
   if(!card)return;
   const bar=card.querySelector('.card-bar');
@@ -86,9 +92,19 @@ function enhance(card){
   btn.addEventListener('mousedown',e=>e.stopPropagation());
   btn.addEventListener('click',e=>{
     e.preventDefault();e.stopPropagation();
+    if(btn.disabled)return;
     const key=cardKey(card);
-    refreshCard(card);
-    restoreFocus(key);
+    setBusy(btn,true);
+    try{refreshCard(card);}finally{
+      window.setTimeout(()=>{
+        const cards=[...document.querySelectorAll('.desktop-card')];
+        const target=(key&&cards.find(item=>cardKey(item)===key))||card;
+        const current=target?.querySelector('.card-refresh');
+        setBusy(current,false);
+        syncLabel(current);
+        restoreFocus(key);
+      },700);
+    }
   });
   bar.insertBefore(btn,remove);
 }
