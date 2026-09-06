@@ -1,12 +1,18 @@
 {
-  "schema": "maydayland-tour-stops-v1",
+  "schema": "maydayland-tour-stops-v1.1",
   "tour_id": "t5525",
   "tour_name": "5525 回到那一天 25週年巡迴演唱會",
-  "updated_at": "2026-09-05T13:00:00+08:00",
+  "updated_at": "2026-09-06T11:01:00+08:00",
   "verification_policy": "Only include facts explicitly supported by B'in Music official news pages. Unknown fields stay null instead of being inferred.",
+  "core_model_bridge": {
+    "field": "core_city_id",
+    "purpose": "Allow the stable Maydayland route model to consume verified 5525 stops without DOM text matching.",
+    "unmapped_policy": "Keep core_city_id null until the stable core defines that city."
+  },
   "stops": [
     {
       "city": "台中",
+      "core_city_id": "taichung",
       "venue": "臺中洲際棒球場",
       "start_date": "2023-12-31",
       "end_date": "2024-01-07",
@@ -17,6 +23,7 @@
     },
     {
       "city": "高雄",
+      "core_city_id": "kaohsiung",
       "venue": "高雄世運主場館",
       "start_date": null,
       "end_date": "2024-03-31",
@@ -26,6 +33,7 @@
     },
     {
       "city": "北京",
+      "core_city_id": "beijing",
       "venue": "國家體育場（鳥巢）",
       "start_date": "2024-05-18",
       "end_date": "2024-06-01",
@@ -35,6 +43,7 @@
     },
     {
       "city": "成都",
+      "core_city_id": null,
       "venue": "成都東安湖體育公園主體育場",
       "start_date": "2024-09-27",
       "end_date": null,
@@ -44,6 +53,7 @@
     },
     {
       "city": "上海",
+      "core_city_id": "shanghai",
       "venue": "上海體育場",
       "start_date": null,
       "end_date": "2024-11-24",
@@ -53,6 +63,7 @@
     },
     {
       "city": "桃園",
+      "core_city_id": null,
       "venue": "樂天桃園棒球場",
       "start_date": "2024-12-28",
       "end_date": "2025-01-05",
@@ -63,6 +74,7 @@
     },
     {
       "city": "杭州",
+      "core_city_id": null,
       "venue": "杭州奧體中心體育場（大蓮花）",
       "start_date": null,
       "end_date": "2025-05-28",
@@ -73,6 +85,7 @@
   ],
   "route_context": {
     "official_2024_sequence": ["台中", "高雄", "香港", "北京", "深圳", "太原", "武漢", "成都", "上海"],
+    "core_2024_sequence": ["taichung", "kaohsiung", "hongkong", "beijing", "shenzhen", null, null, null, "shanghai"],
     "source": "https://bin-music.com/news/1960"
   }
 }
