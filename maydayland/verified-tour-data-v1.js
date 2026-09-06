@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-var DATA_URL='./data/5525-verified-stops.json?v=20260905-verified-stops-v1';
+var DATA_URL='./data/5525-verified-stops.json?v=20260906-verified-stops-v1.1';
 var STYLE_ID='maydayland-verified-tour-data-style-v1';
 var ROOT_ID='verified5525Panel';
 var NODE_LAYER_ID='verified5525MapNodes';
@@ -41,9 +41,9 @@ function build(data){
   }
   var list=document.createElement('div');list.className='verified-stop-list';
   stops.forEach(function(stop){
-    var item=document.createElement('article');item.className='verified-stop';item.id='verified-stop-'+slugCity(stop.city);item.setAttribute('data-verified-city',stop.city||'');item.setAttribute('role','button');item.setAttribute('tabindex','0');item.setAttribute('aria-label','定位 '+(stop.city||'此城市')+' 5525 官方驗證場次');
-    item.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('a'))return;selectVerifiedCity(stop.city);});
-    item.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();selectVerifiedCity(stop.city);}});
+    var item=document.createElement('article');item.className='verified-stop';item.id='verified-stop-'+slugCity(stop.city);item.setAttribute('data-verified-city',stop.city||'');if(stop.core_city_id)item.setAttribute('data-core-city-id',stop.core_city_id);item.setAttribute('role','button');item.setAttribute('tabindex','0');item.setAttribute('aria-label','定位 '+(stop.city||'此城市')+' 5525 官方驗證場次');
+    item.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('a'))return;selectVerifiedCity(stop);});
+    item.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();selectVerifiedCity(stop);}});
     var name=document.createElement('b');name.textContent=(stop.city||'未命名城市')+(stop.shows?' · '+stop.shows+' 場':'');item.appendChild(name);
     var venue=document.createElement('small');venue.textContent=stop.venue||'場館資料待補';item.appendChild(venue);
     var dates=document.createElement('small');dates.textContent=dateText(stop);item.appendChild(dates);
@@ -62,7 +62,14 @@ function focusStop(city){
   target.scrollIntoView({behavior:'smooth',block:'nearest'});
   setTimeout(function(){target.classList.remove('is-target');},2200);
 }
-function findCoreCityButton(city){
+function findCoreCityButton(stop){
+  var city=stop&&stop.city||'';
+  var coreCityId=stop&&stop.core_city_id||'';
+  if(coreCityId){
+    var safe=(window.CSS&&CSS.escape)?CSS.escape(coreCityId):coreCityId.replace(/[^a-zA-Z0-9_-]/g,'');
+    var byId=document.querySelector('#page-home .city-btn[data-city="'+safe+'"]');
+    if(byId)return byId;
+  }
   var buttons=document.querySelectorAll('#page-home .city-btn[data-city]');
   for(var i=0;i<buttons.length;i++){
     var label=(buttons[i].textContent||'').trim();
@@ -70,10 +77,10 @@ function findCoreCityButton(city){
   }
   return null;
 }
-function selectVerifiedCity(city){
-  var core=findCoreCityButton(city);
+function selectVerifiedCity(stop){
+  var core=findCoreCityButton(stop);
   if(core&&!core.classList.contains('active'))core.click();
-  focusStop(city);
+  focusStop(stop&&stop.city||'');
 }
 function mountPanel(data){
   if(document.getElementById(ROOT_ID))return true;
@@ -90,10 +97,10 @@ function mountMapNodes(data){
   var layer=document.createElement('div');layer.id=NODE_LAYER_ID;layer.className='verified-map-node-layer';layer.setAttribute('aria-label','5525 官方驗證城市節點');
   (data.stops||[]).forEach(function(stop){
     var p=CITY_COORDS[stop.city];if(!p)return;
-    var core=findCoreCityButton(stop.city);
-    var btn=document.createElement('button');btn.type='button';btn.className='verified-map-node';btn.style.left=p.x+'%';btn.style.top=p.y+'%';btn.textContent=stop.city;btn.setAttribute('aria-label','查看 '+stop.city+' 5525 官方驗證場次');
+    var core=findCoreCityButton(stop);
+    var btn=document.createElement('button');btn.type='button';btn.className='verified-map-node';btn.style.left=p.x+'%';btn.style.top=p.y+'%';btn.textContent=stop.city;btn.setAttribute('aria-label','查看 '+stop.city+' 5525 官方驗證場次');if(stop.core_city_id)btn.setAttribute('data-core-city-id',stop.core_city_id);
     btn.setAttribute('data-existing',core?'true':'false');
-    btn.addEventListener('click',function(){selectVerifiedCity(stop.city);});
+    btn.addEventListener('click',function(){selectVerifiedCity(stop);});
     layer.appendChild(btn);
   });
   stage.appendChild(layer);
