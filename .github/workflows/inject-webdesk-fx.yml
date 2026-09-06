@@ -61,7 +61,7 @@ jobs:
           from pathlib import Path
           import re
 
-          preload_tag = '<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner4-save-manual-cards"></script>'
+          preload_tag = '<script src="Html_tools/workspace-preload-cleaner.js?v=20260906-workspace-preload-cleaner8-unique-card-ids"></script>'
           tags = [
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
             '<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>',
@@ -74,7 +74,7 @@ jobs:
             '<script src="Html_tools/basic-tools-export-v1.js?v=20260904-basic-tools-export-v1.5-table-parser"></script>',
             '<script src="Html_tools/image-studio-v4.js?v=20260828-image-studio-v4-safe-crop-output"></script>',
             '<script src="Html_tools/image-studio-v5-crop-overlay.js?v=20260901-image-studio-v5.1-efficient-observer"></script>',
-            '<script src="Html_tools/card-refresh-v1.js?v=20260904-card-refresh-v1.2-focus-restore"></script>',
+            '<script src="Html_tools/card-refresh-v1.js?v=20260906-card-refresh-v1.3-widget-data-refresh"></script>',
             '<script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>',
             '<script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>',
             '<script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>',
