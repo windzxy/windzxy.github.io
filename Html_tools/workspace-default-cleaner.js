@@ -2,7 +2,7 @@
   if(window.__windzxyWorkspaceDefaultCleanerLoaded)return;
   window.__windzxyWorkspaceDefaultCleanerLoaded=1;
 
-  const VER='20260906-workspace-default-cleaner2-close-startup-drawer';
+  const VER='20260907-workspace-default-cleaner3-sync-close-startup-drawer';
   const STORE='windzxy-web-desktop-workspaces';
   const INIT='windzxy-webdesk-core-initialized-v3';
   const DEFAULT_IDS=new Set(['daily','office','imageDesk','data']);
@@ -132,6 +132,7 @@
     window.addEventListener('pagehide',()=>cleanRuntime('pagehide'),{capture:true});
     window.addEventListener('pageshow',closeStartupDrawer,{capture:true});
   }
+  closeStartupDrawer();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
   window.windzxyWorkspaceDefaultCleanerVersion=VER;
 })();
