@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260904-card-refresh-v1.2';
+const VER='20260906-card-refresh-v1.3';
 if(window.__webdeskCardRefresh===VER)return;
 window.__webdeskCardRefresh=VER;
 
@@ -27,6 +27,43 @@ function restoreFocus(key){
     target?.querySelector('.card-refresh')?.focus({preventScroll:true});
   });
 }
+function findWidgetRefresh(card){
+  if(!card)return null;
+  const selectors=[
+    '[data-action="refresh"]',
+    '[data-refresh]:not(.card-refresh)',
+    '.refresh-btn',
+    '.btn-refresh',
+    '.widget-refresh',
+    'button[aria-label*="刷新"]',
+    'button[title*="刷新"]',
+    'button[aria-label*="refresh" i]',
+    'button[title*="refresh" i]'
+  ];
+  for(const selector of selectors){
+    const el=[...card.querySelectorAll(selector)].find(node=>
+      !node.closest('.card-bar')&&
+      !node.classList.contains('card-refresh')&&
+      !node.disabled&&
+      node.getAttribute('aria-disabled')!=='true'
+    );
+    if(el)return el;
+  }
+  return null;
+}
+function refreshCard(card){
+  const nativeRefresh=findWidgetRefresh(card);
+  if(nativeRefresh){
+    nativeRefresh.click();
+    return true;
+  }
+  const refreshEvent=new CustomEvent('webdesk:card-refresh',{bubbles:true,cancelable:true,detail:{cardId:cardKey(card)}});
+  const handled=!card.dispatchEvent(refreshEvent);
+  if(handled)return true;
+  if(typeof window.renderAll==='function')window.renderAll();
+  else if(typeof window.renderDesktop==='function')window.renderDesktop();
+  return false;
+}
 function enhance(card){
   if(!card)return;
   const bar=card.querySelector('.card-bar');
@@ -50,8 +87,7 @@ function enhance(card){
   btn.addEventListener('click',e=>{
     e.preventDefault();e.stopPropagation();
     const key=cardKey(card);
-    if(typeof window.renderAll==='function')window.renderAll();
-    else if(typeof window.renderDesktop==='function')window.renderDesktop();
+    refreshCard(card);
     restoreFocus(key);
   });
   bar.insertBefore(btn,remove);
