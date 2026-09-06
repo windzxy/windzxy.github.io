@@ -88,7 +88,7 @@
 <script>
 (function(){const root=document.documentElement;const btn=document.querySelector(".theme-toggle");const saved=localStorage.getItem("windzxy-theme");function paint(){if(!btn)return;btn.textContent="";btn.dataset.theme=root.dataset.theme==="dark"?"dark":"light";}if(saved)root.dataset.theme=saved;paint();btn?.addEventListener("click",()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("windzxy-theme",next);paint();});})();
 </script>
-<script src="Html_tools/workspace-preload-cleaner.js?v=20260828-workspace-preload-cleaner4-save-manual-cards"></script>
+<script src="Html_tools/workspace-preload-cleaner.js?v=20260906-workspace-preload-cleaner8-unique-card-ids"></script>
 <script>
 const apps=[
   {id:"image",kind:"tool",title:"圖片處理",desc:"尺寸、裁切、去背景/底色、調色修復、輸出、OCR。",icon:"◎",tone:"t-image"},
@@ -1426,7 +1426,7 @@ try{renderAll();openDrawer("tools");loadBackgrounds()}catch(error){console.error
 <script src="Html_tools/basic-tools-export-v1.js?v=20260904-basic-tools-export-v1.5-table-parser"></script>
 <script src="Html_tools/image-studio-v4.js?v=20260828-image-studio-v4-safe-crop-output"></script>
 <script src="Html_tools/image-studio-v5-crop-overlay.js?v=20260901-image-studio-v5.1-efficient-observer"></script>
-<script src="Html_tools/card-refresh-v1.js?v=20260904-card-refresh-v1.2-focus-restore"></script>
+<script src="Html_tools/card-refresh-v1.js?v=20260906-card-refresh-v1.3-widget-data-refresh"></script>
 <script src="Html_tools/first-run-empty-desktop.js?v=20260819-first-run-empty4-bg-once"></script>
 <script src="Html_tools/background-fit-fix.js?v=20260820-bg-fit4-single-cover-no-tile"></script>
 <script src="Html_tools/icon-edge-fix.js?v=20260819-icon-edge4-left-center-right"></script>
