@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VER='20260908-workspace-storage-recovery-v1';
+  const VER='20260908-workspace-storage-recovery-v1.1-feedback';
   if(window.__windzxyWorkspaceStorageRecovery===VER)return;
   window.__windzxyWorkspaceStorageRecovery=VER;
 
@@ -21,23 +21,27 @@
 
   function recoverWorkspaces(){
     let raw='';
-    try{raw=localStorage.getItem(STORE_KEY)||'';}catch(e){return {recovered:false,ids:[]};}
-    if(!raw)return {recovered:false,ids:[]};
+    try{raw=localStorage.getItem(STORE_KEY)||'';}catch(e){return {recovered:false,ids:[],activeAdjusted:false};}
+    if(!raw)return {recovered:false,ids:[],activeAdjusted:false};
     try{
       const rows=JSON.parse(raw);
       if(!Array.isArray(rows))throw new Error('workspace-store-not-array');
       const ids=rows.map(row=>row&&row.id!=null?String(row.id):'').filter(Boolean);
+      let activeAdjusted=false;
       if(ids.length){
         try{
           const active=localStorage.getItem(ACTIVE_KEY)||'';
-          if(active&&!ids.includes(active))localStorage.setItem(ACTIVE_KEY,ids[0]);
+          if(active&&!ids.includes(active)){
+            localStorage.setItem(ACTIVE_KEY,ids[0]);
+            activeAdjusted=true;
+          }
         }catch(e){}
       }
-      return {recovered:false,ids:ids};
+      return {recovered:false,ids:ids,activeAdjusted:activeAdjusted};
     }catch(err){
       backup(STORE_KEY,raw,err&&err.message);
       try{localStorage.removeItem(STORE_KEY);localStorage.removeItem(ACTIVE_KEY);}catch(e){}
-      return {recovered:true,ids:[]};
+      return {recovered:true,ids:[],activeAdjusted:false};
     }
   }
 
@@ -56,12 +60,34 @@
     }
   }
 
+  function announce(result){
+    if(!result.workspaceRecovered&&!result.geometryRecovered&&!result.activeWorkspaceAdjusted)return;
+    function show(){
+      const hint=document.getElementById('workspaceHint');
+      const lang=(document.documentElement.lang||'').toLowerCase();
+      const text=lang.indexOf('en')===0
+        ? 'Workspace data was repaired safely; damaged data was backed up when available.'
+        : '已安全修復工作區資料；如有損壞資料，已先建立復原備份。';
+      if(hint){
+        hint.setAttribute('role','status');
+        hint.setAttribute('aria-live','polite');
+        hint.textContent=text;
+      }
+      try{window.dispatchEvent(new CustomEvent('webdesk:workspace-storage-recovered',{detail:result}));}catch(e){}
+    }
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',show,{once:true});
+    else show();
+  }
+
   const workspaceResult=recoverWorkspaces();
   const geometryRecovered=recoverGeometry();
-  window.WebDeskWorkspaceStorageRecovery={
+  const result={
     version:VER,
     workspaceRecovered:workspaceResult.recovered,
     geometryRecovered:geometryRecovered,
+    activeWorkspaceAdjusted:workspaceResult.activeAdjusted,
     backupSuffix:BACKUP_SUFFIX
   };
+  window.WebDeskWorkspaceStorageRecovery=result;
+  announce(result);
 })();
