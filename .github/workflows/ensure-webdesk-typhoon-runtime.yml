@@ -6,6 +6,7 @@ on:
     paths:
       - 'index.html'
       - 'Html_tools/typhoon-widget.js'
+      - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
       - '.github/workflows/inject-webdesk-fx.yml'
       - '.github/workflows/ensure-webdesk-typhoon-runtime.yml'
   workflow_dispatch:
@@ -24,29 +25,60 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Ensure typhoon runtime is loaded
+      - name: Ensure typhoon runtime and weather recovery are loaded
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
+
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          # Keep exactly one typhoon runtime tag. The lean injector previously removed it,
-          # leaving the app metadata visible but no body/runtime, which made the card flash then vanish.
-          s=re.sub(r'\s*<script\s+src="Html_tools/typhoon-widget\.js\?v=[^"]+"\s*>\s*</script>\s*','\n',s)
-          tag='<script src="Html_tools/typhoon-widget.js?v=20260903-typhoon-p0-runtime-persist"></script>'
-          s=s.replace('</body>',tag+'\n</body>',1)
+
+          # Canonical WebDesk typhoon runtime order. The widget must be available before
+          # the window bridge and weather modules bind, otherwise the layer controls can
+          # disappear after the window is rebuilt.
+          tags=[
+            '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
+            '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260903-typhoon-window-p0-fix5-restore-weather"></script>',
+            '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>',
+            '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>',
+            '<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>',
+            '<script src="Html_tools/typhoon-product-shell-v6.js?v=20260902-typhoon-product-shell-v6-keyless"></script>',
+            '<script src="Html_tools/typhoon-weather-runtime-v11.js?v=20260902-typhoon-weather-v11-consolidated"></script>',
+            '<script src="Html_tools/typhoon-weather-ui-recovery-v11-1.js?v=20260907-typhoon-weather-ui-recovery-v11.3-self-heal"></script>',
+          ]
+          typhoon_files=[
+            'typhoon-widget.js',
+            'typhoon-window-p0-fix.js',
+            'typhoon-radar-v4-1.js',
+            'typhoon-atmosphere-v5-1.js',
+            'typhoon-openfreemap-v6.js',
+            'typhoon-product-shell-v6.js',
+            'typhoon-weather-runtime-v11.js',
+            'typhoon-weather-ui-recovery-v11-1.js',
+          ]
+          for name in typhoon_files:
+            s=re.sub(r'\s*<script\s+src="Html_tools/'+re.escape(name)+r'\?v=[^"]+"\s*>\s*</script>\s*','\n',s)
+
+          block='\n'.join(tags)+'\n'
+          marker='<script src="Html_tools/theme-contrast-fix.js'
+          pos=s.find(marker)
+          if pos!=-1:
+            s=s[:pos]+block+s[pos:]
+          else:
+            s=s.replace('</body>',block+'</body>',1)
+
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit runtime tag
         run: |
           if git diff --quiet -- index.html; then
-            echo 'Typhoon runtime already present.'
+            echo 'Typhoon runtime and weather recovery already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Keep WebDesk typhoon runtime loaded'
+          git commit -m 'Keep WebDesk typhoon weather controls loaded'
           git pull --rebase origin master
           git push
