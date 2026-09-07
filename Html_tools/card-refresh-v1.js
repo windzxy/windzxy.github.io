@@ -1,14 +1,23 @@
 (function(){
 'use strict';
-const VER='20260906-card-refresh-v1.4';
+const VER='20260907-card-refresh-v1.5-feedback';
 if(window.__webdeskCardRefresh===VER)return;
 window.__webdeskCardRefresh=VER;
 
+function lang(){
+  return document.querySelector('.lang-select')?.value||localStorage.getItem('windzxy-lang')||document.documentElement.lang||'zh-HK';
+}
 function label(){
-  const lang=document.querySelector('.lang-select')?.value||localStorage.getItem('windzxy-lang')||document.documentElement.lang||'zh-HK';
-  if(/^en/i.test(lang))return 'Refresh card';
-  if(/^zh-CN/i.test(lang)||/Hans/i.test(lang))return '刷新卡片';
+  const value=lang();
+  if(/^en/i.test(value))return 'Refresh card';
+  if(/^zh-CN/i.test(value)||/Hans/i.test(value))return '刷新卡片';
   return '刷新卡片';
+}
+function doneLabel(){
+  const value=lang();
+  if(/^en/i.test(value))return 'Card refreshed';
+  if(/^zh-CN/i.test(value)||/Hans/i.test(value))return '卡片已刷新';
+  return '卡片已刷新';
 }
 function syncLabel(btn){
   if(!btn)return;
@@ -18,6 +27,29 @@ function syncLabel(btn){
 }
 function cardKey(card){
   return card?.dataset?.cardId||card?.dataset?.id||card?.getAttribute?.('data-card-id')||card?.id||'';
+}
+function announce(card,text){
+  if(!card||!text)return;
+  let live=card.querySelector('.card-refresh-status');
+  if(!live){
+    live=document.createElement('span');
+    live.className='card-refresh-status';
+    live.setAttribute('role','status');
+    live.setAttribute('aria-live','polite');
+    live.setAttribute('aria-atomic','true');
+    live.style.position='absolute';
+    live.style.width='1px';
+    live.style.height='1px';
+    live.style.padding='0';
+    live.style.margin='-1px';
+    live.style.overflow='hidden';
+    live.style.clip='rect(0,0,0,0)';
+    live.style.whiteSpace='nowrap';
+    live.style.border='0';
+    card.appendChild(live);
+  }
+  live.textContent='';
+  requestAnimationFrame(()=>{live.textContent=text;});
 }
 function restoreFocus(key){
   requestAnimationFrame(()=>{
@@ -102,6 +134,7 @@ function enhance(card){
         const current=target?.querySelector('.card-refresh');
         setBusy(current,false);
         syncLabel(current);
+        announce(target,doneLabel());
         restoreFocus(key);
       },700);
     }
