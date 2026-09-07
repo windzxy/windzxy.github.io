@@ -1,0 +1,57 @@
+name: Inject WebDesk Workspace Recovery
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'Html_tools/workspace-storage-recovery-v1.js'
+      - '.github/workflows/inject-webdesk-workspace-recovery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: webdesk-index-writers
+  cancel-in-progress: false
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Inject workspace recovery before WebDesk core
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+          tag = '<script src="Html_tools/workspace-storage-recovery-v1.js?v=20260908-workspace-storage-recovery-v1"></script>'
+          html = re.sub(r'<script\s+src="Html_tools/workspace-storage-recovery-v1\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
+          marker = '<script>\nconst apps=['
+          if marker in html:
+              html = html.replace(marker, tag + '\n' + marker, 1)
+          else:
+              html = html.replace('</head>', tag + '\n</head>', 1)
+          path.write_text(html, encoding='utf-8')
+          PY
+
+      - name: Commit recovery loader
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "index.html already has current workspace recovery loader."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Load WebDesk workspace storage recovery"
+          git pull --rebase origin master
+          git push
