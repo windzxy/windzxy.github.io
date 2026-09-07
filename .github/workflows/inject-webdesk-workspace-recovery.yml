@@ -33,7 +33,7 @@ jobs:
 
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
-          tag = '<script src="Html_tools/workspace-storage-recovery-v1.js?v=20260908-workspace-storage-recovery-v1"></script>'
+          tag = '<script src="Html_tools/workspace-storage-recovery-v1.js?v=20260908-workspace-storage-recovery-v1.1-feedback"></script>'
           html = re.sub(r'<script\s+src="Html_tools/workspace-storage-recovery-v1\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
           marker = '<script>\nconst apps=['
           if marker in html:
