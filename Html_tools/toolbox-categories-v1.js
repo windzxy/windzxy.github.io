@@ -16,7 +16,10 @@
       .toolbox-category-head strong{font-size:12px;letter-spacing:.04em;opacity:.72}
       .toolbox-category-head small{font-size:11px;opacity:.46}
       .toolbox-category-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-      .toolbox-category-list .dock-tool{min-width:0}
+      .toolbox-category-list .dock-tool{min-width:0;align-items:flex-start}
+      .toolbox-category-list .dock-tool .toolbox-copy{display:grid;gap:2px;min-width:0;text-align:left}
+      .toolbox-category-list .dock-tool .toolbox-copy>span{font-weight:700;line-height:1.2}
+      .toolbox-category-list .dock-tool .toolbox-copy>small{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:10px;line-height:1.35;opacity:.58}
       .toolbox-search-summary{display:flex;justify-content:space-between;gap:10px;margin:0 0 10px;padding:0 3px;font-size:11px;opacity:.55}
       .toolbox-search-summary kbd{font:inherit;padding:1px 6px;border:1px solid rgba(127,127,127,.24);border-radius:6px;opacity:.8}
       .toolbox-empty{padding:18px 12px;border:1px dashed rgba(127,127,127,.25);border-radius:14px;text-align:center;font-size:12px;opacity:.62}
@@ -26,7 +29,7 @@
   }
 
   function buttonHtml(t){
-    return '<button class="dock-tool '+escapeHtml(t.tone||'')+'" type="button" data-id="'+escapeHtml(t.id)+'" aria-label="'+escapeHtml(tr(t.title))+'"><span class="app-icon">'+escapeHtml(t.icon||'')+'</span><span>'+labelHtml(t.title)+'</span><small aria-hidden="true">＋</small></button>';
+    return '<button class="dock-tool '+escapeHtml(t.tone||'')+'" type="button" data-id="'+escapeHtml(t.id)+'" aria-label="'+escapeHtml(tr(t.title))+'"><span class="app-icon">'+escapeHtml(t.icon||'')+'</span><span class="toolbox-copy"><span>'+labelHtml(t.title)+'</span><small>'+escapeHtml(tr(t.desc||''))+'</small></span><small aria-hidden="true">＋</small></button>';
   }
 
   function categorySearchText(app){
@@ -82,5 +85,5 @@
     });
   }
   groupedRenderShelf();
-  window.WebDeskToolboxCategories={version:'v5',groups:groups.map(g=>g.id),render:groupedRenderShelf,shortcuts:{focusSearch:'/',clearSearch:'Escape'},categorySearch:true,classSchedule:true};
+  window.WebDeskToolboxCategories={version:'v6',groups:groups.map(g=>g.id),render:groupedRenderShelf,shortcuts:{focusSearch:'/',clearSearch:'Escape'},categorySearch:true,classSchedule:true,descriptions:true};
 })();
