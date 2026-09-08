@@ -31,7 +31,7 @@ jobs:
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
           html = re.sub(r'<script\s+src="Html_tools/text-file-import-v1\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
-          tag = '<script src="Html_tools/text-file-import-v1.js?v=20260905-text-file-import-v1"></script>'
+          tag = '<script src="Html_tools/text-file-import-v1.js?v=20260909-text-file-import-v1.1-import-undo"></script>'
           html = html.replace('</body>', tag + '\n</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
@@ -44,6 +44,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk Text import helper"
+          git commit -m "Inject WebDesk Text import undo helper"
           git pull --rebase origin master
           git push
