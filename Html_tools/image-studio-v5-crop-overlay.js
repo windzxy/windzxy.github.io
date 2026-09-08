@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VER='20260901-image-studio-v5.1-crop-overlay-efficient-observer';
+  const VER='20260909-image-studio-v5.2-keyboard-crop';
   if(window.__windzxyImageStudioV5CropOverlay===VER)return;
   window.__windzxyImageStudioV5CropOverlay=VER;
 
@@ -55,6 +55,9 @@
     if(!box){
       box=document.createElement('div');
       box.className='is5-crop-box';
+      box.tabIndex=0;
+      box.setAttribute('role','group');
+      box.setAttribute('aria-label','裁切範圍。方向鍵移動 1 像素，Shift 加方向鍵移動 10 像素。');
       box.innerHTML='<i data-h="nw"></i><i data-h="n"></i><i data-h="ne"></i><i data-h="e"></i><i data-h="se"></i><i data-h="s"></i><i data-h="sw"></i><i data-h="w"></i><b></b><em></em>';
       info.canvas.appendChild(box);
     }
@@ -125,12 +128,25 @@
     window.addEventListener('pointerup',end,{once:true,capture:true});
   }
 
+  function moveWithKeyboard(e){
+    const box=e.target.closest?.('.is5-crop-box');
+    if(!box||e.target!==box)return;
+    const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
+    if(!delta)return;
+    const root=rootOf(box);const info=imageInfo(root);if(!root||!info||!isCrop(root))return;
+    e.preventDefault();e.stopPropagation();
+    const step=e.shiftKey?10:1;
+    const c=readCrop(root,info);
+    c.x+=delta[0]*step;c.y+=delta[1]*step;
+    writeCrop(root,c,true);
+  }
+
   function style(){
     if(document.getElementById('windzxyImageStudioV5CropStyle'))return;
     const s=document.createElement('style');
     s.id='windzxyImageStudioV5CropStyle';
     s.textContent=`
-.is4-canvas{position:relative}.is5-crop-box{position:absolute;z-index:8;border:2px solid rgba(255,189,98,.98);border-radius:10px;background:rgba(255,189,98,.055);box-shadow:0 0 0 9999px rgba(0,0,0,.48),0 12px 30px rgba(0,0,0,.28);cursor:move;touch-action:none}.is5-crop-box:before,.is5-crop-box:after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(90deg,transparent 33.333%,rgba(255,255,255,.42) 33.333%,rgba(255,255,255,.42) 34%,transparent 34%,transparent 66.666%,rgba(255,255,255,.42) 66.666%,rgba(255,255,255,.42) 67.333%,transparent 67.333%),linear-gradient(0deg,transparent 33.333%,rgba(255,255,255,.42) 33.333%,rgba(255,255,255,.42) 34%,transparent 34%,transparent 66.666%,rgba(255,255,255,.42) 66.666%,rgba(255,255,255,.42) 67.333%,transparent 67.333%)}.is5-crop-box.dragging{border-color:#fff2bd;background:rgba(255,218,123,.10)}.is5-crop-box i{position:absolute;width:15px;height:15px;border-radius:50%;background:#fff2bd;border:2px solid #2a1705;box-shadow:0 3px 10px rgba(0,0,0,.35);z-index:2}.is5-crop-box i[data-h="nw"]{left:-8px;top:-8px;cursor:nwse-resize}.is5-crop-box i[data-h="n"]{left:50%;top:-8px;transform:translateX(-50%);cursor:ns-resize}.is5-crop-box i[data-h="ne"]{right:-8px;top:-8px;cursor:nesw-resize}.is5-crop-box i[data-h="e"]{right:-8px;top:50%;transform:translateY(-50%);cursor:ew-resize}.is5-crop-box i[data-h="se"]{right:-8px;bottom:-8px;cursor:nwse-resize}.is5-crop-box i[data-h="s"]{left:50%;bottom:-8px;transform:translateX(-50%);cursor:ns-resize}.is5-crop-box i[data-h="sw"]{left:-8px;bottom:-8px;cursor:nesw-resize}.is5-crop-box i[data-h="w"]{left:-8px;top:50%;transform:translateY(-50%);cursor:ew-resize}.is5-crop-box b{position:absolute;inset:0;pointer-events:none;border-radius:8px;outline:1px solid rgba(0,0,0,.38)}.is5-crop-box em{position:absolute;left:8px;bottom:8px;z-index:3;padding:4px 7px;border-radius:999px;background:rgba(0,0,0,.58);color:#fff;font-style:normal;font-size:11px;font-weight:850;backdrop-filter:blur(8px)}
+.is4-canvas{position:relative}.is5-crop-box{position:absolute;z-index:8;border:2px solid rgba(255,189,98,.98);border-radius:10px;background:rgba(255,189,98,.055);box-shadow:0 0 0 9999px rgba(0,0,0,.48),0 12px 30px rgba(0,0,0,.28);cursor:move;touch-action:none;outline:none}.is5-crop-box:focus-visible{outline:3px solid rgba(255,255,255,.95);outline-offset:3px}.is5-crop-box:before,.is5-crop-box:after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(90deg,transparent 33.333%,rgba(255,255,255,.42) 33.333%,rgba(255,255,255,.42) 34%,transparent 34%,transparent 66.666%,rgba(255,255,255,.42) 66.666%,rgba(255,255,255,.42) 67.333%,transparent 67.333%),linear-gradient(0deg,transparent 33.333%,rgba(255,255,255,.42) 33.333%,rgba(255,255,255,.42) 34%,transparent 34%,transparent 66.666%,rgba(255,255,255,.42) 66.666%,rgba(255,255,255,.42) 67.333%,transparent 67.333%)}.is5-crop-box.dragging{border-color:#fff2bd;background:rgba(255,218,123,.10)}.is5-crop-box i{position:absolute;width:15px;height:15px;border-radius:50%;background:#fff2bd;border:2px solid #2a1705;box-shadow:0 3px 10px rgba(0,0,0,.35);z-index:2}.is5-crop-box i[data-h="nw"]{left:-8px;top:-8px;cursor:nwse-resize}.is5-crop-box i[data-h="n"]{left:50%;top:-8px;transform:translateX(-50%);cursor:ns-resize}.is5-crop-box i[data-h="ne"]{right:-8px;top:-8px;cursor:nesw-resize}.is5-crop-box i[data-h="e"]{right:-8px;top:50%;transform:translateY(-50%);cursor:ew-resize}.is5-crop-box i[data-h="se"]{right:-8px;bottom:-8px;cursor:nwse-resize}.is5-crop-box i[data-h="s"]{left:50%;bottom:-8px;transform:translateX(-50%);cursor:ns-resize}.is5-crop-box i[data-h="sw"]{left:-8px;bottom:-8px;cursor:nesw-resize}.is5-crop-box i[data-h="w"]{left:-8px;top:50%;transform:translateY(-50%);cursor:ew-resize}.is5-crop-box b{position:absolute;inset:0;pointer-events:none;border-radius:8px;outline:1px solid rgba(0,0,0,.38)}.is5-crop-box em{position:absolute;left:8px;bottom:8px;z-index:3;padding:4px 7px;border-radius:999px;background:rgba(0,0,0,.58);color:#fff;font-style:normal;font-size:11px;font-weight:850;backdrop-filter:blur(8px)}
     `;
     document.head.appendChild(s);
   }
@@ -138,6 +154,7 @@
     style();
     schedule();
     document.addEventListener('pointerdown',startDrag,true);
+    document.addEventListener('keydown',moveWithKeyboard,true);
     document.addEventListener('click',()=>setTimeout(schedule,40),true);
     document.addEventListener('input',e=>{if(e.target.closest('[data-is4-root]'))schedule();},true);
     document.addEventListener('load',e=>{if(e.target?.matches?.('[data-is4-root] img,[data-is4-original] img'))schedule();},true);
