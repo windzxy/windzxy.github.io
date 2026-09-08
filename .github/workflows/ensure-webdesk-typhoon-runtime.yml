@@ -6,6 +6,7 @@ on:
     paths:
       - 'index.html'
       - 'Html_tools/typhoon-widget.js'
+      - 'Html_tools/typhoon-window-p0-fix.js'
       - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
       - 'Html_tools/typhoon-weather-p0-remount.js'
       - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
@@ -36,13 +37,13 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Canonical WebDesk typhoon runtime order. P0 remount v8 owns one visible
-          # controller and hard-hides all legacy radar/satellite/layer UI. The v3
-          # interaction layer bypasses native click bridges, uses latest provider data,
-          # refreshes active layers, and adds viewport city-temperature labels.
+          # Canonical WebDesk typhoon runtime order. The window bridge repairs
+          # Leaflet viewport sizing after desktop-window resize/restore. P0 remount
+          # owns one visible controller; the interaction layer supplies live layers
+          # and viewport city-temperature labels.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
-            '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260903-typhoon-window-p0-fix5-restore-weather"></script>',
+            '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix6-resize-repair"></script>',
             '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>',
             '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>',
             '<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>',
