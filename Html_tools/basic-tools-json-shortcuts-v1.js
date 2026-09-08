@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VER = '20260903-json-shortcuts-v1.3-error-jump';
+  const VER = '20260908-json-shortcuts-v1.4-live-stats';
   if (window.__basicToolsJsonShortcutsV1 === VER) return;
   window.__basicToolsJsonShortcutsV1 = VER;
 
@@ -22,10 +22,10 @@
   }
 
   function ensureStyle() {
-    if (document.getElementById('jsonShortcutsV13Style')) return;
+    if (document.getElementById('jsonShortcutsV14Style')) return;
     const style = document.createElement('style');
-    style.id = 'jsonShortcutsV13Style';
-    style.textContent = '.json-app .json-shortcut-copy{margin-left:auto;padding:4px 9px;border:1px solid rgba(127,127,127,.22);border-radius:9px;background:rgba(127,127,127,.08);color:inherit;font:inherit;font-weight:650;cursor:pointer}.json-app .json-shortcut-copy:disabled{opacity:.38;cursor:not-allowed}.json-app .json-shortcut-copy:not(:disabled):hover{background:rgba(127,127,127,.14)}.json-app .json-error-location{display:none;margin-left:6px;padding:4px 8px;border-radius:8px;background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.2);color:#ef6b6b;font:inherit;font-size:.88em;font-weight:650;white-space:nowrap}.json-app .json-error-location.show{display:inline-flex}.json-app .json-error-location[data-pos]{cursor:pointer}.json-app .json-error-location[data-pos]:hover{background:rgba(239,68,68,.15)}.json-app .json-error-location[data-pos]:focus-visible{outline:2px solid currentColor;outline-offset:2px}';
+    style.id = 'jsonShortcutsV14Style';
+    style.textContent = '.json-app .json-shortcut-copy{margin-left:auto;padding:4px 9px;border:1px solid rgba(127,127,127,.22);border-radius:9px;background:rgba(127,127,127,.08);color:inherit;font:inherit;font-weight:650;cursor:pointer}.json-app .json-shortcut-copy:disabled{opacity:.38;cursor:not-allowed}.json-app .json-shortcut-copy:not(:disabled):hover{background:rgba(127,127,127,.14)}.json-app .json-error-location{display:none;margin-left:6px;padding:4px 8px;border-radius:8px;background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.2);color:#ef6b6b;font:inherit;font-size:.88em;font-weight:650;white-space:nowrap}.json-app .json-error-location.show{display:inline-flex}.json-app .json-error-location[data-pos]{cursor:pointer}.json-app .json-error-location[data-pos]:hover{background:rgba(239,68,68,.15)}.json-app .json-error-location[data-pos]:focus-visible{outline:2px solid currentColor;outline-offset:2px}.json-app .json-live-stats{display:inline-flex;align-items:center;gap:5px;margin-left:6px;padding:4px 8px;border-radius:8px;background:rgba(127,127,127,.07);color:inherit;font:inherit;font-size:.86em;white-space:nowrap;opacity:.78}.json-app .json-live-stats[data-valid="true"]{opacity:.9}.json-app .json-live-stats[data-empty="true"]{opacity:.5}';
     document.head.appendChild(style);
   }
 
@@ -38,6 +38,7 @@
 
     let copyButton = null;
     let errorLocation = null;
+    let liveStats = null;
     const parseState = () => {
       const raw = input.value;
       if (!raw.trim()) return { valid: false, empty: true, error: null };
@@ -83,6 +84,18 @@
       input.scrollTop = Math.max(0, (line - 3) * lineHeight);
     }
 
+    function updateLiveStats(state) {
+      if (!liveStats) return;
+      const raw = input.value;
+      const lines = raw ? raw.split('\n').length : 0;
+      const chars = raw.length;
+      const validity = state.empty ? '空白' : (state.valid ? '有效 JSON' : '格式有誤');
+      liveStats.textContent = `${lines} 行 · ${chars.toLocaleString()} 字元 · ${validity}`;
+      liveStats.dataset.valid = String(!!state.valid);
+      liveStats.dataset.empty = String(!!state.empty);
+      liveStats.setAttribute('aria-label', `JSON 統計：${lines} 行，${chars} 字元，${validity}`);
+    }
+
     const ensureControls = () => {
       const status = root.querySelector('.basic-tool-status');
       if (!status) return null;
@@ -119,6 +132,14 @@
         });
         status.appendChild(errorLocation);
       }
+      liveStats = status.querySelector('.json-live-stats');
+      if (!liveStats) {
+        liveStats = document.createElement('span');
+        liveStats.className = 'json-live-stats';
+        liveStats.setAttribute('role', 'status');
+        liveStats.setAttribute('aria-live', 'polite');
+        status.appendChild(liveStats);
+      }
       const state = parseState();
       copyButton.disabled = !state.valid;
       const location = !state.empty && !state.valid ? locateError(state.error) : { message: '', pos: null };
@@ -135,6 +156,7 @@
         errorLocation.setAttribute('role', 'status');
         errorLocation.removeAttribute('aria-label');
       }
+      updateLiveStats(state);
       return status;
     };
 
