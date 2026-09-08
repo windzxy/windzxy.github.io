@@ -1,0 +1,16 @@
+(()=>{'use strict';
+const VER='20260908-typhoon-layer-interaction-fix-v1';
+if(window.__windzxyTyphoonLayerInteractionFix===VER)return;
+window.__windzxyTyphoonLayerInteractionFix=VER;
+const NAMES={radar:'雷達',cloud:'衛星',precip:'降水',wind:'風',gust:'陣風',temp:'溫度',humidity:'濕度',pressure:'氣壓'};
+const FORECAST=new Set(['precip','wind','gust','temp','humidity','pressure']);
+function rootFor(btn){const r=btn.getBoundingClientRect();let best=null,dist=Infinity;document.querySelectorAll('[data-typhoon-root]').forEach(root=>{const q=root.getBoundingClientRect(),d=Math.abs(q.left-r.left)+Math.abs(q.top-r.top);if(d<dist){dist=d;best=root}});return best}
+function statusBox(btn){let box=btn.closest('.tp-weather-p0-global');if(!box)return null;let s=box.querySelector('[data-layer-fix-status]');if(!s){s=document.createElement('div');s.dataset.layerFixStatus='1';s.setAttribute('role','status');s.setAttribute('aria-live','polite');s.style.cssText='grid-column:1/-1;min-height:24px;padding:4px;color:#bae6fd;font:700 9px/1.35 system-ui';box.appendChild(s)}return s}
+function say(btn,msg,kind='info'){const s=statusBox(btn);if(!s)return;s.textContent=msg;s.style.color=kind==='ok'?'#86efac':kind==='fail'?'#fda4af':'#bae6fd'}
+function active(btn){const box=btn.closest('.tp-weather-p0-global');box?.querySelectorAll('[data-p0-mode]').forEach(b=>{const on=b===btn;b.setAttribute('aria-pressed',on?'true':'false');b.style.background=on?'rgba(56,189,248,.28)':'rgba(255,255,255,.08)';b.style.borderColor=on?'rgba(125,211,252,.72)':'rgba(255,255,255,.12)'})}
+function reload(root,done){const now=Date.now();try{root.dataset.v11Bound='0';window.__windzxyTyphoonWeatherRuntimeV11='';const s=document.createElement('script');s.src='Html_tools/typhoon-weather-runtime-v11.js?v=20260908-layer-click-fix-'+now;s.async=true;s.onload=()=>setTimeout(done,350);s.onerror=()=>done(new Error('runtime load failed'));document.head.appendChild(s)}catch(err){done(err)}}
+function watch(root,btn,mode){if(!FORECAST.has(mode)){say(btn,NAMES[mode]+' 已切換','ok');return}const started=Date.now();const poll=()=>{if(root.__v11Mode!==mode)return;if(root.__v11Overlay){say(btn,NAMES[mode]+' 已顯示','ok');return}if(Date.now()-started>6500){say(btn,'載入較慢，仍在處理…');return}setTimeout(poll,180)};poll()}
+function invoke(root,btn,mode,repaired){const real=root?.querySelector?.('.tp-weather-v11 [data-v11-mode="'+mode+'"]');if(real){try{real.click()}catch(_){}}setTimeout(()=>{if(root?.__v11Mode===mode){watch(root,btn,mode);return}if(!repaired){say(btn,'圖層未回應，正在修復…');reload(root,err=>{if(err){say(btn,'圖層載入失敗，請重試','fail');return}invoke(root,btn,mode,true)});return}say(btn,'圖層未回應，請再試一次','fail')},140)}
+document.addEventListener('click',e=>{const btn=e.target?.closest?.('.tp-weather-p0-global [data-p0-mode]');if(!btn)return;e.preventDefault();e.stopImmediatePropagation();const mode=btn.dataset.p0Mode,root=rootFor(btn);active(btn);say(btn,'正在載入 '+(NAMES[mode]||mode)+'…');if(!root){say(btn,'找不到颱風地圖，請重開窗口','fail');return}invoke(root,btn,mode,false)},true);
+window.WebDeskTyphoonLayerInteractionFix={version:'v1',clickRecovery:true,visibleFeedback:true};
+})();
