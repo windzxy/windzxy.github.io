@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260908-typhoon-window-p0-fix6-resize-repair';
+const VER='20260908-typhoon-window-p0-fix7-tile-viewport-repair';
 if(window.__windzxyTyphoonWindowP0===VER)return;
 window.__windzxyTyphoonWindowP0=VER;
 
@@ -27,33 +27,71 @@ function showDegraded(root){
   loading.innerHTML='<span>⚠️</span><b>颱風資料暫時無法載入</b><small style="display:block;margin-top:8px;opacity:.72">請稍後再試。</small>';
 }
 
-function repairMapSize(root){
+function redrawLeafletLayers(map){
+  if(!map||typeof map.eachLayer!=='function')return;
+  try{
+    map.eachLayer(function(layer){
+      if(layer&&typeof layer.redraw==='function'){
+        try{layer.redraw();}catch(_){ }
+      }
+    });
+  }catch(_){ }
+}
+
+function repairMapViewport(root,reason){
   if(!root||!root.isConnected)return;
   const map=root.__tpMap;
   if(!map||typeof map.invalidateSize!=='function')return;
-  try{map.invalidateSize({pan:false,animate:false});}catch(_){try{map.invalidateSize(false)}catch(__){}}
+  const container=typeof map.getContainer==='function'?map.getContainer():root.querySelector('.leaflet-container');
+  if(container){
+    const rect=container.getBoundingClientRect();
+    if(rect.width<16||rect.height<16)return;
+  }
+  try{map.invalidateSize({pan:false,animate:false});}catch(_){try{map.invalidateSize(false);}catch(__){}}
+  redrawLeafletLayers(map);
+  try{if(typeof map.fire==='function')map.fire('moveend',{hardRefresh:true,reason:reason||'repair'});}catch(_){ }
+  requestAnimationFrame(function(){
+    if(!root.isConnected)return;
+    try{map.invalidateSize({pan:false,animate:false});}catch(_){ }
+    redrawLeafletLayers(map);
+  });
 }
 
 function installResizeRepair(win,root){
-  if(!win||!root||win.__tpResizeRepair)return;
-  win.__tpResizeRepair=1;
+  if(!win||!root||win.__tpResizeRepairVersion===VER)return;
+  win.__tpResizeRepairVersion=VER;
   let raf=0;
-  const repair=()=>{
+  let lastW=0,lastH=0;
+  const repair=(reason)=>{
     cancelAnimationFrame(raf);
-    raf=requestAnimationFrame(()=>repairMapSize(root));
+    raf=requestAnimationFrame(()=>repairMapViewport(root,reason));
   };
+  const observeTarget=(target,observer)=>{if(target&&target.nodeType===1)observer.observe(target);};
   if(typeof ResizeObserver==='function'){
-    const observer=new ResizeObserver(()=>{
+    if(win.__tpResizeObserver)try{win.__tpResizeObserver.disconnect();}catch(_){ }
+    const observer=new ResizeObserver((entries)=>{
       if(!win.isConnected){observer.disconnect();return;}
-      repair();
+      let changed=false;
+      entries.forEach(entry=>{
+        const box=entry.contentRect;
+        if(Math.abs(box.width-lastW)>1||Math.abs(box.height-lastH)>1){lastW=box.width;lastH=box.height;changed=true;}
+      });
+      if(changed)repair('resize-observer');
     });
-    observer.observe(win);
-    const body=win.querySelector('.desktop-window-body');
-    if(body)observer.observe(body);
+    observeTarget(win,observer);
+    observeTarget(win.querySelector('.desktop-window-body'),observer);
+    observeTarget(root.querySelector('.tpv4-map'),observer);
+    observeTarget(root.querySelector('.leaflet-container'),observer);
     win.__tpResizeObserver=observer;
   }
-  [0,80,220,520,1200].forEach(ms=>setTimeout(repair,ms));
-  win.addEventListener('transitionend',repair);
+  const map=root.__tpMap;
+  if(map&&typeof map.on==='function'&&!map.__tpViewportRepairBound){
+    map.__tpViewportRepairBound=true;
+    map.on('zoomend moveend layeradd baselayerchange overlayadd overlayremove',function(){repair('map-event');});
+  }
+  [0,60,160,360,800,1600].forEach(ms=>setTimeout(()=>repair('startup-'+ms),ms));
+  win.addEventListener('transitionend',()=>repair('transitionend'));
+  window.addEventListener('resize',()=>repair('window-resize'),{passive:true});
 }
 
 function bindWindowRoot(win){
@@ -61,10 +99,7 @@ function bindWindowRoot(win){
   if(!root)return;
   win.dataset.tpP0Fixed='1';
   root.dataset.tpP0Stable='1';
-  root.dataset.tpOwner='window-bridge-v6';
-  /* Keep the mounted root stable: weather/radar controls attach listeners to it.
-     Resize repair only asks Leaflet to recalculate its viewport; it never replaces
-     the root or resets the current map bounds. */
+  root.dataset.tpOwner='window-bridge-v7';
   installResizeRepair(win,root);
   setTimeout(()=>showDegraded(root),12000);
 }
@@ -91,7 +126,7 @@ function install(){
       return out;
     };
   }
-  window.WebDeskTyphoonWindowBridge={version:VER,appWindow:true,degradedRecovery:true,globalRerender:false,stableRoot:true,weatherControlsPreserved:true,mapResizeRepair:true};
+  window.WebDeskTyphoonWindowBridge={version:VER,appWindow:true,degradedRecovery:true,globalRerender:false,stableRoot:true,weatherControlsPreserved:true,mapResizeRepair:true,tileViewportRepair:true,layerRedraw:true};
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
