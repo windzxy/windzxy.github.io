@@ -38,12 +38,12 @@ jobs:
           s=p.read_text(encoding='utf-8')
 
           # Canonical WebDesk typhoon runtime order. The window bridge repairs
-          # Leaflet viewport sizing after desktop-window resize/restore. P0 remount
-          # owns one visible controller; the interaction layer supplies live layers
-          # and viewport city-temperature labels.
+          # Leaflet viewport sizing and redraws tile/raster layers after desktop-
+          # window resize, pan, zoom and layer switches. P0 remount owns one visible
+          # controller; the interaction layer supplies live layers and city labels.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
-            '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix6-resize-repair"></script>',
+            '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
             '<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>',
             '<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>',
             '<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>',
