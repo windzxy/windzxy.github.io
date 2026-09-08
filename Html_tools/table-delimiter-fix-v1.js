@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VER = '20260903-table-delimiter-fix-v1.5-file-drop';
+  const VER = '20260908-table-delimiter-fix-v1.6-live-stats';
   const STORAGE_KEY = 'windzxy-webdesk-table-delimiter-v1';
   if (window.__windzxyTableDelimiterFix === VER) return;
   window.__windzxyTableDelimiterFix = VER;
@@ -125,6 +125,42 @@
     refresh();
   }
 
+  function ensureLiveStats(select, input) {
+    if (!input) return;
+    const app = select.closest('.table-app') || input.parentElement || document.body;
+    let stats = app.querySelector?.('.table-live-stats');
+    if (!stats) {
+      stats = document.createElement('div');
+      stats.className = 'table-live-stats';
+      stats.setAttribute('role', 'status');
+      stats.setAttribute('aria-live', 'polite');
+      stats.style.cssText = 'margin-top:7px;font-size:11px;line-height:1.45;opacity:.72;font-variant-numeric:tabular-nums';
+      input.insertAdjacentElement('afterend', stats);
+    }
+    const refresh = () => {
+      const raw = String(input.value || '');
+      const rows = raw.split(/\r?\n/).filter(line => line.trim().length > 0);
+      if (!rows.length) {
+        stats.textContent = '0 行 · 0 欄 · 空白資料';
+        return;
+      }
+      const separator = select.value || detectDelimiter(raw);
+      const counts = separator ? rows.map(line => splitRowColumns(line, separator).length) : rows.map(() => 1);
+      const maxCols = Math.max(...counts);
+      const minCols = Math.min(...counts);
+      const shape = minCols === maxCols ? `${maxCols} 欄` : `${minCols}–${maxCols} 欄`;
+      const detected = detectDelimiter(raw);
+      const delimiterText = detected ? labelFor(detected) : '未偵測分隔符';
+      stats.textContent = `${rows.length} 行 · ${shape} · ${delimiterText}`;
+    };
+    if (stats.dataset.bound !== VER) {
+      stats.dataset.bound = VER;
+      input.addEventListener('input', refresh);
+      select.addEventListener('change', refresh);
+    }
+    refresh();
+  }
+
   function bindPasteAutodetect(select, input) {
     if (!input || input.dataset.delimiterPasteAutodetect === VER) return;
     input.dataset.delimiterPasteAutodetect = VER;
@@ -187,6 +223,7 @@
     const app = select.closest('.table-app') || document;
     const input = app.querySelector?.('#appTableInput');
     ensureSuggestion(select, input);
+    ensureLiveStats(select, input);
     bindPasteAutodetect(select, input);
     bindFileDrop(select, input);
   }
