@@ -33,7 +33,7 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
           widget='<script src="Html_tools/typhoon-widget.js?v=20260901-typhoon-p0-unified-runtime"></script>'
-          window_fix='<script src="Html_tools/typhoon-window-p0-fix.js?v=20260903-typhoon-window-p0-fix5-restore-weather"></script>'
+          window_fix='<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>'
           radar='<script src="Html_tools/typhoon-radar-v4-1.js?v=20260902-typhoon-radar-v4.2-sync"></script>'
           atmosphere='<script src="Html_tools/typhoon-atmosphere-v5-1.js?v=20260902-typhoon-atmosphere-v5.2-sync"></script>'
           openfreemap='<script src="Html_tools/typhoon-openfreemap-v6.js?v=20260902-typhoon-openfreemap-v6.3-antiflicker"></script>'
@@ -76,9 +76,9 @@ jobs:
           s2=s2.replace(anchor,anchor+'\n'+stack,1)
           if s2!=s:
               p.write_text(s2,encoding='utf-8')
-              print('wired consolidated typhoon weather v11 + weather-control restore bridge')
+              print('wired consolidated typhoon weather v11 + tile viewport repair bridge')
           else:
-              print('weather-control restore bridge already wired')
+              print('tile viewport repair bridge already wired')
           PY
       - name: Verify consolidated typhoon stack
         run: |
@@ -101,10 +101,10 @@ jobs:
               if c!=1: raise SystemExit(f'{f}: expected once, got {c}')
               pos.append(s.index(f))
           if pos!=sorted(pos): raise SystemExit('load order invalid')
-          if 'typhoon-window-p0-fix5-restore-weather' not in s: raise SystemExit('weather-control restore cache token missing')
+          if 'typhoon-window-p0-fix7-tile-viewport-repair' not in s: raise SystemExit('tile viewport repair cache token missing')
           if 'typhoon-weather-v11-consolidated' not in s: raise SystemExit('v11 cache token missing')
           if 'typhoon-weather-ui-recovery-v11.2-passive' not in s: raise SystemExit('v11.2 passive recovery cache token missing')
-          print('consolidated v11 stack + weather-control restore bridge verified')
+          print('consolidated v11 stack + tile viewport repair bridge verified')
           PY
       - name: Commit injected entry update
         run: |
@@ -115,5 +115,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Restore typhoon weather controls in window bridge'
+          git commit -m 'Keep WebDesk tile viewport repair loaded'
           git push
