@@ -29,7 +29,7 @@ jobs:
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
           html = re.sub(r'<script\s+src="Html_tools/table-delimiter-fix-v1\.js\?v=[^"]+"\s*>\s*</script>\s*', '', html)
-          tag = '<script src="Html_tools/table-delimiter-fix-v1.js?v=20260903-table-delimiter-fix-v1.5-file-drop"></script>'
+          tag = '<script src="Html_tools/table-delimiter-fix-v1.js?v=20260908-table-delimiter-fix-v1.6-live-stats"></script>'
           html = html.replace('</body>', tag + '\n</body>', 1)
           path.write_text(html, encoding='utf-8')
           PY
@@ -37,11 +37,11 @@ jobs:
       - name: Commit injected helper
         run: |
           if git diff --quiet -- index.html; then
-            echo "Table delimiter helper already injected."
+            echo "Table live stats helper already injected."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Inject WebDesk Table delimiter fix"
+          git commit -m "Inject WebDesk Table live stats helper"
           git push
