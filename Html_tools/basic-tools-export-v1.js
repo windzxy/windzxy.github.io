@@ -1,9 +1,24 @@
 (function(){
 'use strict';
-const VER='20260904-basic-tools-export-v1.5-table-parser';
+const VER='20260910-basic-tools-export-v1.6-i18n-downloads';
 if(window.__webdeskBasicToolsExport===VER)return;
 window.__webdeskBasicToolsExport=VER;
 
+const EXPORT_LABELS={
+  text:{'zh-CN':'下载 TXT','zh-HK':'下載 TXT',en:'Download TXT'},
+  table:{'zh-CN':'下载 CSV','zh-HK':'下載 CSV',en:'Download CSV'},
+  json:{'zh-CN':'下载 JSON','zh-HK':'下載 JSON',en:'Download JSON'}
+};
+function currentLang(){
+  const selected=document.querySelector('.lang-select')?.value;
+  if(selected==='zh-CN'||selected==='zh-HK'||selected==='en')return selected;
+  const html=(document.documentElement.lang||'').toLowerCase();
+  if(html.startsWith('en'))return 'en';
+  if(html.includes('hans')||html==='zh-cn')return 'zh-CN';
+  return 'zh-HK';
+}
+function exportLabel(kind){return EXPORT_LABELS[kind]?.[currentLang()]||EXPORT_LABELS[kind]?.['zh-HK']||''}
+function syncExportLabels(){document.querySelectorAll('[data-basic-export-kind]').forEach(b=>{b.textContent=exportLabel(b.dataset.basicExportKind)})}
 function download(name,text,type){
   const blob=new Blob([text],{type:type||'text/plain;charset=utf-8'});
   const url=URL.createObjectURL(blob);
@@ -11,7 +26,7 @@ function download(name,text,type){
   setTimeout(()=>URL.revokeObjectURL(url),500);
 }
 function stamp(){return new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}
-function button(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.basicExport='1';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();handler()});return b}
+function button(kind,handler){const b=document.createElement('button');b.type='button';b.textContent=exportLabel(kind);b.dataset.basicExport='1';b.dataset.basicExportKind=kind;b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();handler()});return b}
 function textValue(root){const out=root.querySelector('#textOut')?.value||'';return out.trim()?out:(root.querySelector('#appText')?.value||'')}
 function csvCell(v){v=String(v??'');return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
 function parseDelimited(raw,separator){
@@ -89,7 +104,7 @@ function jsonValue(root){
     return null;
   }
 }
-function enhanceText(root){if(root.dataset.exportReady)return;root.dataset.exportReady=VER;const actions=root.querySelector('.text-actions');if(!actions)return;const run=()=>download('webdesk-text-'+stamp()+'.txt',textValue(root));actions.appendChild(button('下載 TXT',run));bindSave(root,run)}
+function enhanceText(root){if(root.dataset.exportReady===VER)return;root.dataset.exportReady=VER;const actions=root.querySelector('.text-actions');if(!actions)return;const run=()=>download('webdesk-text-'+stamp()+'.txt',textValue(root));if(!actions.querySelector('[data-basic-export-kind="text"]'))actions.appendChild(button('text',run));bindSave(root,run)}
 function enhanceTable(root){
   if(root.dataset.exportReady===VER)return;
   root.dataset.exportReady=VER;
@@ -102,13 +117,14 @@ function enhanceTable(root){
   if(tsv)tsv.onclick=()=>{if(out)out.innerHTML='<pre>'+escapeHtml(tableJoin(root,'\t'))+'</pre>'};
   if(search)search.oninput=()=>renderParsedTable(root);
   const run=()=>download('webdesk-table-'+stamp()+'.csv','\ufeff'+tableCsv(root),'text/csv;charset=utf-8');
-  if(!actions.querySelector('[data-basic-export="1"]'))actions.appendChild(button('下載 CSV',run));
+  if(!actions.querySelector('[data-basic-export-kind="table"]'))actions.appendChild(button('table',run));
   bindSave(root,run);
 }
-function enhanceJson(root){if(root.dataset.exportReady)return;root.dataset.exportReady=VER;const actions=root.querySelector('.app-actions');if(!actions)return;const run=()=>{const value=jsonValue(root);if(value!==null)download('webdesk-data-'+stamp()+'.json',value,'application/json;charset=utf-8')};actions.appendChild(button('下載 JSON',run));bindSave(root,run)}
+function enhanceJson(root){if(root.dataset.exportReady===VER)return;root.dataset.exportReady=VER;const actions=root.querySelector('.app-actions');if(!actions)return;const run=()=>{const value=jsonValue(root);if(value!==null)download('webdesk-data-'+stamp()+'.json',value,'application/json;charset=utf-8')};if(!actions.querySelector('[data-basic-export-kind="json"]'))actions.appendChild(button('json',run));bindSave(root,run)}
 function bindSave(root,run){if(root.dataset.exportSaveBound===VER)return;root.dataset.exportSaveBound=VER;root.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();run()}})}
-function run(){document.querySelectorAll('.text-app').forEach(enhanceText);document.querySelectorAll('.table-app').forEach(enhanceTable);document.querySelectorAll('.json-app').forEach(enhanceJson)}
+function run(){document.querySelectorAll('.text-app').forEach(enhanceText);document.querySelectorAll('.table-app').forEach(enhanceTable);document.querySelectorAll('.json-app').forEach(enhanceJson);syncExportLabels()}
 let queued=false;function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;run()})}
 new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});
+document.addEventListener('change',e=>{if(e.target?.matches?.('.lang-select'))syncExportLabels()});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
