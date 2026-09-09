@@ -28,6 +28,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: master
       - name: Ensure typhoon runtime and weather recovery are loaded
         run: |
           python - <<'PY'
@@ -50,7 +51,7 @@ jobs:
             '<script src="Html_tools/typhoon-product-shell-v6.js?v=20260902-typhoon-product-shell-v6-keyless"></script>',
             '<script src="Html_tools/typhoon-weather-runtime-v11.js?v=20260902-typhoon-weather-v11-consolidated"></script>',
             '<script src="Html_tools/typhoon-weather-ui-recovery-v11-1.js?v=20260907-typhoon-weather-ui-recovery-v11.3-self-heal"></script>',
-            '<script src="Html_tools/typhoon-weather-p0-remount.js?v=20260908-typhoon-weather-p0-remount-v8-stable-controller"></script>',
+            '<script src="Html_tools/typhoon-weather-p0-remount.js?v=20260909-typhoon-weather-p0-remount-v9-grouped-controller"></script>',
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260908-typhoon-layer-interaction-fix-v3-live-now-citytemps"></script>',
           ]
           typhoon_files=[
