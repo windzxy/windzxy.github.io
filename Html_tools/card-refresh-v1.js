@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260909-card-controls-close-only-v1';
+const VER='20260910-card-controls-close-only-v2-accessible-remove';
 if(window.__webdeskCardRefresh===VER)return;
 window.__webdeskCardRefresh=VER;
 
@@ -10,6 +10,13 @@ window.__webdeskCardRefresh=VER;
  * it must never be injected beside or in place of the standard close control.
  * This compatibility shim also removes refresh controls left by older builds.
  */
+function removeLabel(){
+  const v=document.querySelector('.lang-select')?.value||localStorage.getItem('windzxy-lang')||document.documentElement.lang||'zh-HK';
+  if(/^en/i.test(v))return 'Close card';
+  if(/^zh-CN/i.test(v))return '关闭卡片';
+  return '關閉卡片';
+}
+
 function restoreCardControls(root){
   const scope=root&&root.querySelectorAll?root:document;
   scope.querySelectorAll('.desktop-card .card-bar .card-refresh').forEach(btn=>btn.remove());
@@ -20,6 +27,11 @@ function restoreCardControls(root){
       remove.hidden=false;
       remove.removeAttribute('aria-hidden');
       remove.removeAttribute('disabled');
+      if(remove.tagName==='BUTTON')remove.type='button';
+      remove.tabIndex=0;
+      const label=removeLabel();
+      if(!remove.getAttribute('aria-label'))remove.setAttribute('aria-label',label);
+      if(!remove.getAttribute('title'))remove.setAttribute('title',label);
     }
   });
 }
@@ -32,6 +44,7 @@ function schedule(){
 }
 
 new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});
+document.addEventListener('change',e=>{if(e.target?.matches?.('.lang-select'))restoreCardControls(document);});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>restoreCardControls(document),{once:true});
 else restoreCardControls(document);
 })();
