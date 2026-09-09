@@ -1,7 +1,7 @@
 (()=>{
   'use strict';
   const APP_ID='spend-wheel';
-  const VERSION='20260909-decision-wheel-v1.0';
+  const VERSION='20260909-decision-wheel-v1.1';
   const DEFAULT_VALUES=[5,10,20,30,50,80,100];
 
   function safeNumber(value,fallback){
@@ -68,7 +68,7 @@
     const style=document.createElement('style');
     style.id='spend-wheel-v1-style';
     style.textContent=`
-      .t-spend-wheel{--wheel-accent:#9bd05f;min-width:320px;min-height:400px}
+      .desktop-card.t-spend-wheel{--wheel-accent:#9bd05f;min-width:320px;min-height:400px}
       .spend-wheel-widget{height:100%;display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px 12px;box-sizing:border-box;overflow:auto}
       .spend-wheel-question{font-size:18px;font-weight:800;letter-spacing:.02em;text-align:center}
       .spend-wheel-stage{position:relative;width:min(280px,78vw);aspect-ratio:1;display:grid;place-items:center;flex:0 0 auto}
@@ -82,7 +82,7 @@
       .spend-wheel-spin{width:min(280px,100%);min-height:42px;border:0;border-radius:13px;font-weight:800;font-size:15px;background:linear-gradient(135deg,#b9e781,#86c84c);color:#18300d;box-shadow:0 8px 18px rgba(95,150,45,.2);cursor:pointer}
       .spend-wheel-spin:disabled{opacity:.6;cursor:wait}.spend-wheel-spin:active{transform:translateY(1px)}
       .spend-wheel-settings{width:min(320px,100%);font-size:12px}.spend-wheel-settings summary{cursor:pointer;text-align:center;opacity:.72;padding:4px}.spend-wheel-settings label{display:grid;grid-template-columns:1fr;gap:4px;margin:7px 0}.spend-wheel-settings input{width:100%;box-sizing:border-box;border-radius:9px;border:1px solid rgba(127,127,127,.25);padding:8px 10px;background:rgba(255,255,255,.12);color:inherit}.spend-wheel-budget{text-align:center;opacity:.74;padding:4px}
-      @media(max-width:520px){.spend-wheel-stage{width:min(250px,76vw)}.spend-wheel-label{font-size:10px}.t-spend-wheel{min-width:290px}}
+      @media(max-width:520px){.spend-wheel-stage{width:min(250px,76vw)}.spend-wheel-label{font-size:10px}.desktop-card.t-spend-wheel{min-width:290px}}
       @media(prefers-reduced-motion:reduce){.spend-wheel-disk{transition-duration:.01ms}}
     `;
     document.head.appendChild(style);
