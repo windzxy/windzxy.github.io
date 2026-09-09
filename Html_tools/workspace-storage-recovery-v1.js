@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VER='20260908-workspace-storage-recovery-v1.1-feedback';
+  const VER='20260909-workspace-storage-recovery-v1.2-empty-active';
   if(window.__windzxyWorkspaceStorageRecovery===VER)return;
   window.__windzxyWorkspaceStorageRecovery=VER;
 
@@ -28,15 +28,14 @@
       if(!Array.isArray(rows))throw new Error('workspace-store-not-array');
       const ids=rows.map(row=>row&&row.id!=null?String(row.id):'').filter(Boolean);
       let activeAdjusted=false;
-      if(ids.length){
-        try{
-          const active=localStorage.getItem(ACTIVE_KEY)||'';
-          if(active&&!ids.includes(active)){
-            localStorage.setItem(ACTIVE_KEY,ids[0]);
-            activeAdjusted=true;
-          }
-        }catch(e){}
-      }
+      try{
+        const active=localStorage.getItem(ACTIVE_KEY)||'';
+        if(active&&!ids.includes(active)){
+          if(ids[0])localStorage.setItem(ACTIVE_KEY,ids[0]);
+          else localStorage.removeItem(ACTIVE_KEY);
+          activeAdjusted=true;
+        }
+      }catch(e){}
       return {recovered:false,ids:ids,activeAdjusted:activeAdjusted};
     }catch(err){
       backup(STORE_KEY,raw,err&&err.message);
