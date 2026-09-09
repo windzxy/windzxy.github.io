@@ -1,12 +1,14 @@
 (function(){
 'use strict';
-const VER='20260910-basic-tools-export-v1.6-i18n-downloads';
+const VER='20260910-basic-tools-export-v1.7-table-multiformat-downloads';
 if(window.__webdeskBasicToolsExport===VER)return;
 window.__webdeskBasicToolsExport=VER;
 
 const EXPORT_LABELS={
   text:{'zh-CN':'下载 TXT','zh-HK':'下載 TXT',en:'Download TXT'},
   table:{'zh-CN':'下载 CSV','zh-HK':'下載 CSV',en:'Download CSV'},
+  tableTsv:{'zh-CN':'下载 TSV','zh-HK':'下載 TSV',en:'Download TSV'},
+  tableMd:{'zh-CN':'下载 Markdown','zh-HK':'下載 Markdown',en:'Download Markdown'},
   json:{'zh-CN':'下载 JSON','zh-HK':'下載 JSON',en:'Download JSON'}
 };
 function currentLang(){
@@ -116,9 +118,13 @@ function enhanceTable(root){
   if(csv)csv.onclick=()=>{if(out)out.innerHTML='<pre>'+escapeHtml(tableJoin(root,','))+'</pre>'};
   if(tsv)tsv.onclick=()=>{if(out)out.innerHTML='<pre>'+escapeHtml(tableJoin(root,'\t'))+'</pre>'};
   if(search)search.oninput=()=>renderParsedTable(root);
-  const run=()=>download('webdesk-table-'+stamp()+'.csv','\ufeff'+tableCsv(root),'text/csv;charset=utf-8');
-  if(!actions.querySelector('[data-basic-export-kind="table"]'))actions.appendChild(button('table',run));
-  bindSave(root,run);
+  const runCsv=()=>download('webdesk-table-'+stamp()+'.csv','\ufeff'+tableCsv(root),'text/csv;charset=utf-8');
+  const runTsv=()=>download('webdesk-table-'+stamp()+'.tsv','\ufeff'+tableJoin(root,'\t'),'text/tab-separated-values;charset=utf-8');
+  const runMd=()=>download('webdesk-table-'+stamp()+'.md',tableMarkdown(root),'text/markdown;charset=utf-8');
+  if(!actions.querySelector('[data-basic-export-kind="table"]'))actions.appendChild(button('table',runCsv));
+  if(!actions.querySelector('[data-basic-export-kind="tableTsv"]'))actions.appendChild(button('tableTsv',runTsv));
+  if(!actions.querySelector('[data-basic-export-kind="tableMd"]'))actions.appendChild(button('tableMd',runMd));
+  bindSave(root,runCsv);
 }
 function enhanceJson(root){if(root.dataset.exportReady===VER)return;root.dataset.exportReady=VER;const actions=root.querySelector('.app-actions');if(!actions)return;const run=()=>{const value=jsonValue(root);if(value!==null)download('webdesk-data-'+stamp()+'.json',value,'application/json;charset=utf-8')};if(!actions.querySelector('[data-basic-export-kind="json"]'))actions.appendChild(button('json',run));bindSave(root,run)}
 function bindSave(root,run){if(root.dataset.exportSaveBound===VER)return;root.dataset.exportSaveBound=VER;root.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();run()}})}
