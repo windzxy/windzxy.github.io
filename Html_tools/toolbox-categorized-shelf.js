@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VER='20260902-toolbox-categorized-shelf2-legacy-guard';
+  const VER='20260909-toolbox-categorized-shelf2.1-lifestyle-wheel';
   if(window.WebDeskToolboxCategories&&window.WebDeskToolboxCategories.render){
     window.__windzxyToolboxCategorizedShelf='disabled-by-toolbox-categories-v1';
     window.windzxyToolboxCategorizedShelfVersion=VER;
@@ -12,6 +12,7 @@
   const CATS=[
     ['all','全部','All'],
     ['daily','日常','Daily'],
+    ['lifestyle','生活','Lifestyle'],
     ['image','圖片','Image'],
     ['data','數據','Data'],
     ['finance','金融','Finance'],
@@ -19,11 +20,12 @@
   ];
   const APP_CAT={
     weather:'daily',calendar:'daily',note:'daily',todo:'daily',clock:'daily',link:'daily',memo:'daily',typhoon:'daily',
+    'spend-wheel':'lifestyle',
     image:'image',color:'image',
     text:'data',table:'data',json:'data',date:'data',calc:'data',
     metals:'finance','fx-rates':'finance'
   };
-  const CAT_ORDER={daily:['weather','calendar','note','todo','clock','link','memo','typhoon'],image:['image','color'],data:['text','table','json','date','calc'],finance:['metals','fx-rates'],widgets:['weather','calendar','note','todo','clock','color','link','memo','metals','fx-rates','typhoon']};
+  const CAT_ORDER={daily:['weather','calendar','note','todo','clock','link','memo','typhoon'],lifestyle:['spend-wheel'],image:['image','color'],data:['text','table','json','date','calc'],finance:['metals','fx-rates'],widgets:['spend-wheel','weather','calendar','note','todo','clock','color','link','memo','metals','fx-rates','typhoon']};
   const KEY='windzxy-toolbox-category';
 
   function tr(v){try{return window.t?window.t(v):v;}catch(e){return v;}}
@@ -76,7 +78,7 @@
     const all=(window.apps||apps).filter(Boolean);
     const q=(document.getElementById('deskSearch')?.value||'').trim().toLowerCase();
     const cat=currentCat();
-    const groups=cat==='all'?['daily','image','data','finance']:cat==='widgets'?['widgets']:[cat];
+    const groups=cat==='all'?['daily','lifestyle','image','data','finance']:cat==='widgets'?['widgets']:[cat];
     const sections=[];
     groups.forEach(g=>{
       let list=all.filter(a=>(g==='widgets'?a.kind==='widget':appCategory(a)===g)).filter(a=>appMatches(a,q));
