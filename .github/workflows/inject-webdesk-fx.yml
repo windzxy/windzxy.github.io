@@ -69,7 +69,7 @@ jobs:
             '<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260901-workspace-core-guard4-preserve-deleted-workspaces"></script>',
             '<script src="Html_tools/decision-wheel-card-v1.js?v=20260909-decision-wheel-v1.0"></script>',
-            '<script src="Html_tools/toolbox-categorized-shelf.js?v=20260828-toolbox-categorized-shelf1-search-groups"></script>',
+            '<script src="Html_tools/toolbox-categorized-shelf.js?v=20260909-toolbox-categorized-shelf2.1-lifestyle-wheel"></script>',
             '<script src="Html_tools/calendar-widget-v11.js?v=20260828-calendar-widget-v11-readable-compact"></script>',
             '<script src="Html_tools/calendar-day-detail-card.js?v=20260828-calendar-day-detail-card1-lunar-holiday-solar"></script>',
             '<script src="Html_tools/calendar-holiday-authority-v1.js?v=20260903-calendar-holiday-authority-v2-region-groups"></script>',
