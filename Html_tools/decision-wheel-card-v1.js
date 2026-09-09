@@ -1,7 +1,7 @@
 (()=>{
   'use strict';
   const APP_ID='spend-wheel';
-  const VERSION='20260909-decision-wheel-v1.1';
+  const VERSION='20260909-decision-wheel-v1.2';
   const DEFAULT_VALUES=[5,10,20,30,50,80,100];
 
   function safeNumber(value,fallback){
@@ -68,7 +68,7 @@
     const style=document.createElement('style');
     style.id='spend-wheel-v1-style';
     style.textContent=`
-      .desktop-card.t-spend-wheel{--wheel-accent:#9bd05f;min-width:320px;min-height:400px}
+      .desktop-card.t-spend-wheel{--wheel-accent:#9bd05f;min-width:320px;min-height:400px;max-width:calc(100vw - 24px);max-height:calc(100vh - 96px);box-sizing:border-box}
       .spend-wheel-widget{height:100%;display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 10px 12px;box-sizing:border-box;overflow:auto}
       .spend-wheel-question{font-size:18px;font-weight:800;letter-spacing:.02em;text-align:center}
       .spend-wheel-stage{position:relative;width:min(280px,78vw);aspect-ratio:1;display:grid;place-items:center;flex:0 0 auto}
@@ -115,7 +115,7 @@
       if(appId!==APP_ID)return previous(appId);
       const ws=activeWorkspace();
       const i=ws.cards.length;
-      ws.cards.push({id:'card-'+Date.now()+'-'+Math.random().toString(16).slice(2),appId:APP_ID,x:72+(i%5)*38,y:78+(i%7)*32,w:380,h:470,collapsed:false,data:{wheelValues:DEFAULT_VALUES.slice(),wheelBudget:100,wheelRotation:0}});
+      ws.cards.push({id:'card-'+Date.now()+'-'+Math.random().toString(16).slice(2),appId:APP_ID,x:72+(i%5)*38,y:78+(i%7)*32,w:600,h:800,collapsed:false,data:{wheelValues:DEFAULT_VALUES.slice(),wheelBudget:100,wheelRotation:0}});
       save();
       renderAll();
     };
