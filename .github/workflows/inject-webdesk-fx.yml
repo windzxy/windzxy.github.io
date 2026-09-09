@@ -10,6 +10,7 @@ on:
       - 'Html_tools/workspace-default-cleaner.js'
       - 'Html_tools/workspace-core-guard.js'
       - 'Html_tools/decision-wheel-card-v1.js'
+      - 'Html_tools/toolbox-categories-v1.js'
       - 'Html_tools/toolbox-categorized-shelf.js'
       - 'Html_tools/calendar-widget-v11.js'
       - 'Html_tools/calendar-day-detail-card.js'
@@ -68,6 +69,7 @@ jobs:
             '<script src="Html_tools/market-color-fix.js?v=20260827-market-color14-emergency-slim-loader"></script>',
             '<script src="Html_tools/workspace-default-cleaner.js?v=20260828-workspace-default-cleaner1-source-empty"></script>',
             '<script src="Html_tools/workspace-core-guard.js?v=20260901-workspace-core-guard4-preserve-deleted-workspaces"></script>',
+            '<script src="Html_tools/toolbox-categories-v1.js?v=20260909-toolbox-categories-v7-lifestyle"></script>',
             '<script src="Html_tools/decision-wheel-card-v1.js?v=20260909-decision-wheel-v1.0"></script>',
             '<script src="Html_tools/toolbox-categorized-shelf.js?v=20260909-toolbox-categorized-shelf2.1-lifestyle-wheel"></script>',
             '<script src="Html_tools/calendar-widget-v11.js?v=20260828-calendar-widget-v11-readable-compact"></script>',
@@ -119,7 +121,7 @@ jobs:
           )
 
           script_names = [
-            'workspace-preload-cleaner','market-color-fix','workspace-default-cleaner','workspace-core-guard','decision-wheel-card-v1','toolbox-categorized-shelf',
+            'workspace-preload-cleaner','market-color-fix','workspace-default-cleaner','workspace-core-guard','toolbox-categories-v1','decision-wheel-card-v1','toolbox-categorized-shelf',
             'calendar-widget-v11','calendar-day-detail-card','calendar-holiday-authority-v1','calendar-holiday-dot-sync-v1','basic-tools-export-v1','image-studio-v5-crop-overlay','image-studio-v4','card-refresh-v1','image-studio-v2',
             'layout-persist-fix','calendar-widget-v10','metals-calendar-restore-guard','calendar-widget-v9','calendar-widget-v8','calendar-widget-v7','calendar-widget-v6','calendar-widget-v5','calendar-widget-v4','calendar-widget-v3',
             'calendar-v3-lite-polish','calendar-v3-lunar-label-fix','calendar-v3-day-picker-fix','calendar-v3-responsive-fix','calendar-v3-product-polish','calendar-v3-select-year-fix',
