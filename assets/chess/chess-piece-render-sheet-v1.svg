@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000" flood-opacity=".42"/></filter>
+  </defs>
+  <symbol id="wR" viewBox="80 180 150 305"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="wN" viewBox="210 165 190 320"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="wB" viewBox="365 115 175 370"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="wK" viewBox="505 50 220 435"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="wQ" viewBox="680 90 225 395"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="wP" viewBox="895 170 185 315"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="bR" viewBox="75 620 160 310"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="bN" viewBox="205 580 195 350"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="bB" viewBox="370 545 175 385"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="bK" viewBox="505 525 230 405"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="bQ" viewBox="690 555 230 375"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+  <symbol id="bP" viewBox="905 615 185 315"><g filter="url(#shadow)"><image href="chess-academy-hero.jpg" x="0" y="0" width="1600" height="1067"/></g></symbol>
+</svg>
