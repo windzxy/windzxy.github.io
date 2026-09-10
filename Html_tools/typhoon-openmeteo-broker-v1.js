@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260910-typhoon-openmeteo-broker-v2.0-shared-viewport';
+const VER='20260910-typhoon-openmeteo-broker-v2.1-stable-shared-viewport';
 if(window.__windzxyTyphoonOpenMeteoBroker===VER)return;
 window.__windzxyTyphoonOpenMeteoBroker=VER;
 
@@ -8,8 +8,8 @@ const nativeFetch=window.fetch.bind(window);
 const HOST='api.open-meteo.com';
 const ALL_FIELDS=['temperature_2m','relative_humidity_2m','wind_speed_10m','wind_direction_10m','wind_gusts_10m','precipitation','pressure_msl','weather_code'];
 const FIELD_UNITS={temperature_2m:'°C',relative_humidity_2m:'%',wind_speed_10m:'km/h',wind_direction_10m:'°',wind_gusts_10m:'km/h',precipitation:'mm',pressure_msl:'hPa',weather_code:'wmo code'};
-const GENERIC_FRESH_MS=75000;
-const SHARED_FRESH_MS=60000;
+const GENERIC_FRESH_MS=90000;
+const SHARED_FRESH_MS=75000;
 const STALE_MS=10*60*1000;
 const MAX_ACTIVE=2;
 const genericCache=new Map();
@@ -35,14 +35,16 @@ function visibleRoot(){
   return best;
 }
 function parsePoints(url){
-  const u=new URL(url),la=(u.searchParams.get('latitude')||'').split(',').map(Number),lo=(u.searchParams.get('longitude')||'').split(',').map(Number);
+  const u=new URL(url),latRaw=u.searchParams.get('latitude'),lonRaw=u.searchParams.get('longitude');
+  if(!latRaw||!lonRaw)return null;
+  const la=latRaw.split(',').map(Number),lo=lonRaw.split(',').map(Number);
   if(!la.length||la.length!==lo.length||la.some(v=>!Number.isFinite(v))||lo.some(v=>!Number.isFinite(v)))return null;
   return la.map((lat,i)=>({lat:Math.max(-89.4,Math.min(89.4,lat)),lon:normLon(lo[i])}));
 }
 function currentFields(url){return (new URL(url).searchParams.get('current')||'').split(',').map(s=>s.trim()).filter(Boolean)}
 function isSharedCandidate(url){
   const pts=parsePoints(url),fields=currentFields(url);
-  return !!(pts&&pts.length>=2&&pts.length<=120&&fields.length&&fields.every(f=>ALL_FIELDS.includes(f)));
+  return !!(pts&&pts.length>=2&&pts.length<=80&&fields.length&&fields.every(f=>ALL_FIELDS.includes(f)));
 }
 function responseFrom(entry){return new Response(entry.body,{status:entry.status,statusText:entry.statusText,headers:entry.headers})}
 function retryable(status){return status===408||status===425||status===429||status===500||status===502||status===503||status===504}
@@ -52,8 +54,6 @@ async function nativeWithTimeout(url,init,ms){
   try{return await nativeFetch(url,{...clean,cache:'no-store',signal:ctl.signal})}finally{clearTimeout(t)}
 }
 
-/* Generic fallback lane: single-point weather requests and anything that is not
-   a typhoon viewport request still get dedupe, retry and stale cache protection. */
 function rememberGeneric(key,res,body){
   const headers={};try{res.headers.forEach((v,k)=>headers[k]=v)}catch(_){}
   const entry={body,status:res.status,statusText:res.statusText,headers,at:Date.now()};
@@ -61,14 +61,14 @@ function rememberGeneric(key,res,body){
 }
 async function executeGeneric(task){
   const {url,key,init}=task;let lastErr=null;
-  for(let attempt=0;attempt<3;attempt++){
+  for(let attempt=0;attempt<2;attempt++){
     try{
-      const res=await nativeWithTimeout(url,init,attempt?10000:8000);
+      const res=await nativeWithTimeout(url,init,attempt?9000:7000);
       if(res.ok){const body=await res.text();return responseFrom(rememberGeneric(key,res,body))}
       if(!retryable(res.status))return res;
       lastErr=new Error('Open-Meteo '+res.status);
     }catch(err){lastErr=err}
-    if(attempt<2)await sleep(attempt?700:260);
+    if(attempt===0)await sleep(320);
   }
   const stale=genericCache.get(key);
   if(stale&&Date.now()-stale.at<STALE_MS)return responseFrom(stale);
@@ -93,9 +93,9 @@ function gridSpec(root){
   const map=root.__tpMap,size=map.getSize(),c=map.getCenter(),b=map.getBounds();
   let west=unwrapLon(b.getWest(),c.lng),east=unwrapLon(b.getEast(),c.lng);while(east<=west)east+=360;
   const lonSpan=Math.max(.1,east-west),south=Math.max(-84.8,b.getSouth()),north=Math.min(84.8,b.getNorth()),latSpan=Math.max(.1,north-south);
-  west-=lonSpan*.08;east+=lonSpan*.08;
-  const s=Math.max(-84.8,south-latSpan*.08),n=Math.min(84.8,north+latSpan*.08);
-  const nx=size.x>1150?8:7,ny=size.y>760?6:5,pts=[];
+  west-=lonSpan*.10;east+=lonSpan*.10;
+  const s=Math.max(-84.8,south-latSpan*.10),n=Math.min(84.8,north+latSpan*.10);
+  const nx=size.x>1200?6:5,ny=4,pts=[];
   const yN=mercY(n),yS=mercY(s);
   for(let y=0;y<ny;y++){
     const fy=y/(ny-1),my=yN+(yS-yN)*fy,lat=180/Math.PI*(2*Math.atan(Math.exp(my))-Math.PI/2);
@@ -104,31 +104,42 @@ function gridSpec(root){
       pts.push({lat,lon:normLon(lon)})
     }
   }
-  const key=[Math.round(map.getZoom()*2)/2,Math.round(c.lat*4)/4,Math.round(normLon(c.lng)*4)/4,nx,ny].join('|');
+  const key=[Math.round(map.getZoom()*2)/2,Math.round(c.lat*2)/2,Math.round(normLon(c.lng)*2)/2,nx,ny].join('|');
   return{key,nx,ny,pts,west,east,south:s,north:n,centerLon:c.lng,size:{x:size.x,y:size.y}};
 }
 function hubUrl(spec){return 'https://api.open-meteo.com/v1/forecast?latitude='+spec.pts.map(p=>p.lat.toFixed(3)).join(',')+'&longitude='+spec.pts.map(p=>p.lon.toFixed(3)).join(',')+'&current='+ALL_FIELDS.join(',')+'&timezone=GMT&wind_speed_unit=kmh&precipitation_unit=mm'}
+function gridCovers(grid,pts){
+  if(!grid||!pts?.length)return false;
+  const padLat=Math.max(.5,(grid.north-grid.south)*.06),padLon=Math.max(.5,(grid.east-grid.west)*.06);
+  return pts.every(p=>{
+    const lon=unwrapLon(p.lon,grid.centerLon);
+    return p.lat>=grid.south-padLat&&p.lat<=grid.north+padLat&&lon>=grid.west-padLon&&lon<=grid.east+padLon;
+  });
+}
 async function fetchHubGrid(root,force=false){
   const st=hubState(root),spec=gridSpec(root),now=Date.now();
   if(!force&&st.grid&&st.key===spec.key&&now-st.lastSuccess<SHARED_FRESH_MS)return st.grid;
   if(st.inflight&&st.inflight.key===spec.key)return st.inflight.promise;
   const p=(async()=>{
     let lastErr=null;
-    for(let attempt=0;attempt<3;attempt++){
+    for(let attempt=0;attempt<2;attempt++){
       try{
-        const res=await nativeWithTimeout(hubUrl(spec),{},attempt?11000:9000);
-        if(!res.ok){if(!retryable(res.status))throw new Error('Open-Meteo '+res.status);throw new Error('Open-Meteo '+res.status)}
+        const res=await nativeWithTimeout(hubUrl(spec),{},attempt?7800:5600);
+        if(!res.ok)throw new Error('Open-Meteo '+res.status);
         const j=await res.json(),data=Array.isArray(j)?j:[j];
         if(data.length!==spec.pts.length)throw new Error('shared viewport grid incomplete');
         const grid={...spec,data,at:Date.now(),sourceTime:data.find(d=>d?.current?.time)?.current?.time||null};
         st.previous=st.grid;st.grid=grid;st.key=spec.key;st.lastSuccess=Date.now();st.failures=0;
         root.__tpSharedWeatherGrid=grid;
-        try{root.dispatchEvent(new CustomEvent('typhoon-shared-weather-update',{detail:{grid,version:'v2.0'}}))}catch(_){}
+        try{root.dispatchEvent(new CustomEvent('typhoon-shared-weather-update',{detail:{grid,version:'v2.1'}}))}catch(_){}
         return grid;
-      }catch(err){lastErr=err;if(attempt<2)await sleep(attempt?750:280)}
+      }catch(err){
+        lastErr=err;
+        st.failures++;
+        if(st.grid&&Date.now()-st.grid.at<STALE_MS)return st.grid;
+        if(attempt===0)await sleep(260);
+      }
     }
-    st.failures++;
-    if(st.grid&&Date.now()-st.grid.at<STALE_MS)return st.grid;
     throw lastErr||new Error('shared viewport weather unavailable');
   })();
   st.inflight={key:spec.key,promise:p};
@@ -154,19 +165,33 @@ function interpolate(grid,lat,lon,field){
   if(![a,b,c,d].every(Number.isFinite)){for(const v of [a,b,c,d])if(Number.isFinite(v))return v;return NaN}
   return(a*(1-w.tx)+b*w.tx)*(1-w.ty)+(c*(1-w.tx)+d*w.tx)*w.ty;
 }
-function syntheticResponse(url,grid){
-  const u=new URL(url),pts=parsePoints(url),fields=currentFields(url),time=grid.sourceTime||new Date().toISOString().slice(0,16),items=pts.map(p=>{
-    const current={time,interval:900},units={time:'iso8601',interval:'seconds'};
-    for(const f of fields){const v=interpolate(grid,p.lat,p.lon,f);current[f]=Number.isFinite(v)?(f==='weather_code'?Math.round(v):v):null;units[f]=FIELD_UNITS[f]||''}
-    return{latitude:p.lat,longitude:p.lon,generationtime_ms:0,utc_offset_seconds:0,timezone:'GMT',timezone_abbreviation:'GMT',elevation:0,current_units:units,current};
+function sampleItems(grid,pts,fields){
+  const time=grid.sourceTime||new Date().toISOString().slice(0,16);
+  return pts.map(p=>{
+    const current={time,interval:900};
+    for(const f of fields){const v=interpolate(grid,p.lat,p.lon,f);current[f]=Number.isFinite(v)?(f==='weather_code'?Math.round(v):v):null}
+    return{latitude:p.lat,longitude:p.lon,current};
   });
-  return new Response(JSON.stringify(items),{status:200,headers:{'content-type':'application/json','x-webdesk-weather-source':'shared-viewport','x-webdesk-weather-grid':grid.nx+'x'+grid.ny}});
+}
+function syntheticResponse(url,grid){
+  const pts=parsePoints(url),fields=currentFields(url),items=sampleItems(grid,pts,fields);
+  return new Response(JSON.stringify(items.map(item=>{
+    const units={time:'iso8601',interval:'seconds'};for(const f of fields)units[f]=FIELD_UNITS[f]||'';
+    return{...item,generationtime_ms:0,utc_offset_seconds:0,timezone:'GMT',timezone_abbreviation:'GMT',elevation:0,current_units:units};
+  })),{status:200,headers:{'content-type':'application/json','x-webdesk-weather-source':'shared-viewport','x-webdesk-weather-grid':grid.nx+'x'+grid.ny}});
 }
 async function sharedFetch(url,init={}){
-  const root=visibleRoot();
-  if(!root)return genericFetch(url,init);
-  try{return syntheticResponse(url,await fetchHubGrid(root,false))}
-  catch(_){return genericFetch(url,init)}
+  const root=visibleRoot(),pts=parsePoints(url);
+  if(!root||!pts)return genericFetch(url,init);
+  const st=hubState(root),now=Date.now();
+  if(st.grid&&gridCovers(st.grid,pts)){
+    if(now-st.grid.at>SHARED_FRESH_MS&&!st.inflight)fetchHubGrid(root,false).catch(()=>{});
+    return syntheticResponse(url,st.grid);
+  }
+  try{
+    const grid=await fetchHubGrid(root,false);
+    return gridCovers(grid,pts)?syntheticResponse(url,grid):genericFetch(url,init);
+  }catch(_){return genericFetch(url,init)}
 }
 function brokerFetch(input,init={}){
   if(!isOpenMeteo(input))return nativeFetch(input,init);
@@ -191,9 +216,10 @@ function boot(){document.querySelectorAll('[data-layer-fix-status]').forEach(sof
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 
 window.WebDeskTyphoonWeatherHub={
-  version:'v2.0',source:'shared-viewport-grid',fields:ALL_FIELDS.slice(),freshMs:SHARED_FRESH_MS,staleMs:STALE_MS,
+  version:'v2.1',source:'shared-viewport-grid',fields:ALL_FIELDS.slice(),freshMs:SHARED_FRESH_MS,staleMs:STALE_MS,
   get(root,force=false){return root?.__tpMap?fetchHubGrid(root,force):Promise.reject(new Error('typhoon map unavailable'))},
+  async sample(root,pts,fields=ALL_FIELDS){const grid=await fetchHubGrid(root,false);return sampleItems(grid,pts,fields)},
   state(root){return root?hubState(root):null}
 };
-window.WebDeskTyphoonOpenMeteoBroker={version:'v2.0',maxConcurrent:MAX_ACTIVE,freshMs:GENERIC_FRESH_MS,sharedFreshMs:SHARED_FRESH_MS,staleMs:STALE_MS,genericCache,genericQueue,genericInflight,HUBS};
+window.WebDeskTyphoonOpenMeteoBroker={version:'v2.1',maxConcurrent:MAX_ACTIVE,freshMs:GENERIC_FRESH_MS,sharedFreshMs:SHARED_FRESH_MS,staleMs:STALE_MS,genericCache,genericQueue,genericInflight,HUBS};
 })();
