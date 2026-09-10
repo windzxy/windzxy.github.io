@@ -1,0 +1,40 @@
+name: Ensure Typhoon Weather Health
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/typhoon-weather-health-v1.js'
+      - '.github/workflows/ensure-typhoon-weather-health.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Keep weather health runtime loaded
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'\n?<script src="Html_tools/typhoon-weather-health-v1\.js\?v=[^"]+"></script>','',s)
+          anchor='<script src="Html_tools/typhoon-openmeteo-broker-v1.js?v=20260910-typhoon-weather-hub-v2.5-triple-provider"></script>'
+          tag='<script src="Html_tools/typhoon-weather-health-v1.js?v=20260911-typhoon-weather-health-v1.0"></script>'
+          if anchor not in s:
+              raise SystemExit('weather broker anchor missing')
+          s=s.replace(anchor,anchor+'\n'+tag)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit formal entry update
+        run: |
+          if git diff --quiet -- index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Load typhoon weather health recovery'
+          git push
