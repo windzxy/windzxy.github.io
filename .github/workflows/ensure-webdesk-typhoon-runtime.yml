@@ -9,6 +9,7 @@ on:
       - 'Html_tools/typhoon-window-p0-fix.js'
       - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
       - 'Html_tools/typhoon-weather-p0-remount.js'
+      - 'Html_tools/typhoon-openmeteo-broker-v1.js'
       - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
       - 'Html_tools/typhoon-wind-city-weather-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
@@ -41,11 +42,10 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Canonical WebDesk typhoon runtime order. The window bridge repairs
-          # Leaflet viewport sizing and redraws tile/raster layers after desktop-
-          # window resize, pan, zoom and layer switches. P0 remount owns one visible
-          # controller; the final enhancers add animated wind, multilingual viewport-
-          # aware city weather labels and live, stale-while-revalidate weather motion.
+          # Canonical WebDesk typhoon runtime order. The request broker is loaded
+          # before all Open-Meteo consumers to deduplicate, retry and cache viewport
+          # weather requests. The remaining enhancers add live layers, animated wind,
+          # multilingual viewport-aware city labels and distinct weather motion.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -56,6 +56,7 @@ jobs:
             '<script src="Html_tools/typhoon-weather-runtime-v11.js?v=20260902-typhoon-weather-v11-consolidated"></script>',
             '<script src="Html_tools/typhoon-weather-ui-recovery-v11-1.js?v=20260907-typhoon-weather-ui-recovery-v11.3-self-heal"></script>',
             '<script src="Html_tools/typhoon-weather-p0-remount.js?v=20260909-typhoon-weather-p0-remount-v9-grouped-controller"></script>',
+            '<script src="Html_tools/typhoon-openmeteo-broker-v1.js?v=20260910-typhoon-openmeteo-broker-v1.0"></script>',
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260910-typhoon-layer-interaction-v4-live-pan-swr"></script>',
             '<script src="Html_tools/typhoon-wind-city-weather-v1.js?v=20260910-typhoon-wind-city-weather-v1.0"></script>',
             '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.4-live-viewport"></script>',
@@ -71,6 +72,7 @@ jobs:
             'typhoon-weather-runtime-v11',
             'typhoon-weather-ui-recovery-v11-1',
             'typhoon-weather-p0-remount',
+            'typhoon-openmeteo-broker-v1',
             'typhoon-weather-layer-interaction-fix-v1',
             'typhoon-wind-city-weather-v1',
             'typhoon-dynamic-city-labels-v1',
