@@ -57,7 +57,7 @@ jobs:
             '<script src="Html_tools/typhoon-weather-p0-remount.js?v=20260909-typhoon-weather-p0-remount-v9-grouped-controller"></script>',
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260908-typhoon-layer-interaction-fix-v3-live-now-citytemps"></script>',
             '<script src="Html_tools/typhoon-wind-city-weather-v1.js?v=20260910-typhoon-wind-city-weather-v1.0"></script>',
-            '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.0"></script>',
+            '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.1-bilingual"></script>',
           ]
           # Keep base names here because the matcher appends the .js suffix.
           typhoon_files=[
