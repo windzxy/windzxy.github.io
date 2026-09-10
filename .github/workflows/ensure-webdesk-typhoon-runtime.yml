@@ -14,6 +14,7 @@ on:
       - 'Html_tools/typhoon-wind-city-weather-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
       - 'Html_tools/typhoon-weather-motion-v1.js'
+      - 'Html_tools/typhoon-zoom-motion-v2.js'
       - 'Html_tools/mobile-desktop-ux-v1.js'
       - '.github/workflows/inject-webdesk-fx.yml'
       - '.github/workflows/ensure-webdesk-typhoon-runtime.yml'
@@ -43,9 +44,9 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Triple-provider weather recovery plus mobile UX recovery. On phones
-          # the function center starts closed and opens as a compact bottom sheet;
-          # typhoon weather controls remain visible without covering most of map.
+          # Triple-provider weather recovery plus mobile UX. The v2 motion layer
+          # adds true radar/satellite temporal frames with preloading/crossfade and
+          # richer shared-field motion for wind, gust, rain, humidity, temp/pressure.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -60,6 +61,7 @@ jobs:
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260910-typhoon-layer-interaction-v6-hub-recovery"></script>',
             '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.6-shared-hub"></script>',
             '<script src="Html_tools/typhoon-weather-motion-v1.js?v=20260910-typhoon-weather-motion-v1.4-pan-pause"></script>',
+            '<script src="Html_tools/typhoon-zoom-motion-v2.js?v=20260910-typhoon-zoom-motion-v2.0"></script>',
             '<script src="Html_tools/mobile-desktop-ux-v1.js?v=20260910-mobile-desktop-ux-v1.0"></script>',
           ]
           runtime_files=[
@@ -77,6 +79,7 @@ jobs:
             'typhoon-wind-city-weather-v1',
             'typhoon-dynamic-city-labels-v1',
             'typhoon-weather-motion-v1',
+            'typhoon-zoom-motion-v2',
             'mobile-desktop-ux-v1',
           ]
           for name in runtime_files:
