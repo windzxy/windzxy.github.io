@@ -6,6 +6,7 @@ on:
     paths:
       - 'index.html'
       - 'Html_tools/typhoon-widget.js'
+      - 'Html_tools/global-weather-brand-v1.js'
       - 'Html_tools/typhoon-window-p0-fix.js'
       - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
       - 'Html_tools/typhoon-weather-p0-remount.js'
@@ -38,7 +39,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: master
-      - name: Ensure typhoon runtime and weather recovery are loaded
+      - name: Ensure global weather runtime and recovery are loaded
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -47,13 +48,9 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Stability-first real-data stack:
-          # - radar/satellite keep independent real temporal frames
-          # - wind/gust keep real geographic vectors
-          # - precipitation/temperature/humidity/pressure use the proven v5.1
-          #   independent hourly requests. One failed mode cannot break the others.
-          # - do not load the v5.2 continuous interpolator until it is validated
-          #   without reducing live weather-data availability.
+          # Stability-first real-data stack. The legacy app id remains "typhoon"
+          # so existing saved cards keep working, while the product name shown to
+          # users is now Global Weather / 全球氣象.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -72,9 +69,11 @@ jobs:
             '<script src="Html_tools/typhoon-real-weather-v5-1.js?v=20260910-typhoon-real-weather-v5.1-independent-scalars"></script>',
             '<script src="Html_tools/mobile-desktop-ux-v1.js?v=20260910-mobile-desktop-ux-v1.0"></script>',
             '<script src="Html_tools/typhoon-control-layout-v11.js?v=20260910-typhoon-control-layout-v11.0-bottom-dock"></script>',
+            '<script src="Html_tools/global-weather-brand-v1.js?v=20260910-global-weather-brand-v1.0"></script>',
           ]
           runtime_files=[
             'typhoon-widget',
+            'global-weather-brand-v1',
             'typhoon-window-p0-fix',
             'typhoon-radar-v4-1',
             'typhoon-atmosphere-v5-1',
@@ -115,12 +114,12 @@ jobs:
       - name: Commit runtime tag
         run: |
           if git diff --quiet -- index.html; then
-            echo 'WebDesk runtime already canonical.'
+            echo 'WebDesk Global Weather runtime already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Restore WebDesk stable real weather playback'
+          git commit -m 'Keep WebDesk Global Weather branding loaded'
           git pull --rebase origin master
           git push
