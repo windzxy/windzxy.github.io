@@ -1,0 +1,40 @@
+name: Ensure Chess Academy Runtime
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/chess-academy-v1.js'
+      - '.github/workflows/ensure-chess-academy-runtime.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Keep canonical chess academy loader
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'\n?<script src="Html_tools/chess-academy-v1\.js\?v=[^"]+"></script>','',s)
+          anchor='<script src="Html_tools/boardgame-polish-v2.js?v=20260910-boardgame-polish-v2.0"></script>'
+          tag='<script src="Html_tools/chess-academy-v1.js?v=20260910-chess-academy-v1.0-zero-to-competition"></script>'
+          if anchor not in s:
+              raise SystemExit('boardgame anchor missing')
+          s=s.replace(anchor,anchor+'\n'+tag)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit formal entry update
+        run: |
+          if git diff --quiet -- index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Keep Chess Academy runtime loaded'
+          git push
