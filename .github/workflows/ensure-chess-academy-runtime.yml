@@ -5,6 +5,7 @@ on:
     paths:
       - 'Html_tools/chess-academy-v1.js'
       - 'Html_tools/xiangqi-card-v1.js'
+      - 'Html_tools/chess-fun-learning-v1.js'
       - '.github/workflows/ensure-chess-academy-runtime.yml'
   workflow_dispatch:
 permissions:
@@ -23,12 +24,13 @@ jobs:
           import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          for name in ('chess-academy-v1','xiangqi-card-v1'):
+          for name in ('chess-academy-v1','xiangqi-card-v1','chess-fun-learning-v1'):
               s=re.sub(r'\n?<script src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"></script>','',s)
           anchor='<script src="Html_tools/boardgame-polish-v2.js?v=20260910-boardgame-polish-v2.0"></script>'
           tags=[
               '<script src="Html_tools/chess-academy-v1.js?v=20260910-chess-academy-v1.0-zero-to-competition"></script>',
-              '<script src="Html_tools/xiangqi-card-v1.js?v=20260910-xiangqi-v1.0-learn-play"></script>'
+              '<script src="Html_tools/xiangqi-card-v1.js?v=20260910-xiangqi-v1.0-learn-play"></script>',
+              '<script src="Html_tools/chess-fun-learning-v1.js?v=20260910-chess-fun-learning-v1.0-missions-stars-hints"></script>'
           ]
           if anchor not in s:
               raise SystemExit('boardgame anchor missing')
@@ -41,5 +43,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Keep Chess Academy and Xiangqi runtimes loaded'
+          git commit -m 'Keep Chess Academy fun learning runtimes loaded'
           git push
