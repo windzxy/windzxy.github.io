@@ -1,0 +1,43 @@
+name: Ensure Maydayland Map Interaction Guard
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'maydayland/tour-map-interaction-guard-v1.js'
+      - 'maydayland/tour-map-stability-v1.js'
+      - '.github/workflows/ensure-mayday-map-interaction-guard.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Keep Maydayland map interaction guard loaded
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('maydayland/index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'\n?<script src="\./tour-map-interaction-guard-v1\.js\?v=[^"]+" defer></script>','',s)
+          s=re.sub(r'<script src="\./tour-map-stability-v1\.js\?v=[^"]+" defer></script>', '<script src="./tour-map-interaction-guard-v1.js?v=20260911-tour-map-interaction-guard-v1.0" defer></script>\n<script src="./tour-map-stability-v1.js?v=20260911-tour-map-stability-v1.1-interaction-aware" defer></script>', s)
+          s=s.replace('data-maydayland-release="v124.26"','data-maydayland-release="v124.27"')
+          s=s.replace('Maydayland v124.26：','Maydayland v124.27：')
+          s=s.replace('巡演地圖 · v124.26','巡演地圖 · v124.27')
+          s=s.replace("version:'v124.26'","version:'v124.27'")
+          s=s.replace("'mobile-blank-recovery'","'interaction-aware-recovery','mobile-blank-recovery'",1)
+          s=s.replace("document.title='Maydayland · '+labels[page]+' · v124.26'","document.title='Maydayland · '+labels[page]+' · v124.27'")
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit formal entry update
+        run: |
+          if git diff --quiet -- maydayland/index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add maydayland/index.html
+          git commit -m 'Load Maydayland interaction-aware map recovery'
+          git push
