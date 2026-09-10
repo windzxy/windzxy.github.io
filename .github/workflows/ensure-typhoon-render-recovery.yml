@@ -24,7 +24,7 @@ jobs:
           s=p.read_text(encoding='utf-8')
           s=re.sub(r'\n?<script src="Html_tools/typhoon-render-recovery-v1\.js\?v=[^"]+"></script>','',s)
           anchor_pat=r'(<script src="Html_tools/typhoon-weather-ui-recovery-v11-1\.js\?v=[^"]+"></script>)'
-          tag='<script src="Html_tools/typhoon-render-recovery-v1.js?v=20260911-typhoon-render-recovery-v1.0"></script>'
+          tag='<script src="Html_tools/typhoon-render-recovery-v1.js?v=20260911-typhoon-render-recovery-v1.1-leaflet"></script>'
           if re.search(anchor_pat,s):
               s=re.sub(anchor_pat,r'\1\n'+tag,s,count=1)
           else:
