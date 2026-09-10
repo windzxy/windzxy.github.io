@@ -14,6 +14,7 @@ on:
       - 'Html_tools/typhoon-wind-city-weather-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
       - 'Html_tools/typhoon-weather-motion-v1.js'
+      - 'Html_tools/mobile-desktop-ux-v1.js'
       - '.github/workflows/inject-webdesk-fx.yml'
       - '.github/workflows/ensure-webdesk-typhoon-runtime.yml'
   workflow_dispatch:
@@ -42,9 +43,9 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Triple-provider recovery: scalar layers, animation and city weather
-          # share one viewport hub. Open-Meteo is primary, GraySky is the browser-
-          # safe fallback, and MET Norway is tertiary. Native fetch is untouched.
+          # Triple-provider weather recovery plus mobile UX recovery. On phones
+          # the function center starts closed and opens as a compact bottom sheet;
+          # typhoon weather controls remain visible without covering most of map.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -59,8 +60,9 @@ jobs:
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260910-typhoon-layer-interaction-v6-hub-recovery"></script>',
             '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.6-shared-hub"></script>',
             '<script src="Html_tools/typhoon-weather-motion-v1.js?v=20260910-typhoon-weather-motion-v1.4-pan-pause"></script>',
+            '<script src="Html_tools/mobile-desktop-ux-v1.js?v=20260910-mobile-desktop-ux-v1.0"></script>',
           ]
-          typhoon_files=[
+          runtime_files=[
             'typhoon-widget',
             'typhoon-window-p0-fix',
             'typhoon-radar-v4-1',
@@ -75,8 +77,9 @@ jobs:
             'typhoon-wind-city-weather-v1',
             'typhoon-dynamic-city-labels-v1',
             'typhoon-weather-motion-v1',
+            'mobile-desktop-ux-v1',
           ]
-          for name in typhoon_files:
+          for name in runtime_files:
             s=re.sub(r'\s*<script\s+src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"\s*>\s*</script>\s*','\n',s)
 
           block='\n'.join(tags)+'\n'
@@ -92,12 +95,12 @@ jobs:
       - name: Commit runtime tag
         run: |
           if git diff --quiet -- index.html; then
-            echo 'Typhoon runtime and weather recovery already canonical.'
+            echo 'WebDesk runtime already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Keep WebDesk typhoon weather controls loaded'
+          git commit -m 'Keep WebDesk typhoon and mobile UX loaded'
           git pull --rebase origin master
           git push
