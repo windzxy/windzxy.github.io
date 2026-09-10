@@ -17,7 +17,9 @@ on:
       - 'Html_tools/typhoon-zoom-motion-v2.js'
       - 'Html_tools/typhoon-zoom-motion-v2-1.js'
       - 'Html_tools/typhoon-wind-model-v3.js'
+      - 'Html_tools/typhoon-real-forecast-v4.js'
       - 'Html_tools/mobile-desktop-ux-v1.js'
+      - 'Html_tools/typhoon-control-layout-v10.js'
       - '.github/workflows/inject-webdesk-fx.yml'
       - '.github/workflows/ensure-webdesk-typhoon-runtime.yml'
   workflow_dispatch:
@@ -46,9 +48,9 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Zoom-Earth-style source policy: real radar/satellite frames plus real
-          # forecast-model wind vectors. DWD ICON is primary and NOAA GFS is the
-          # wind-field fallback; scalar layers never invent directional motion.
+          # Zoom-Earth-style source policy: true radar/satellite frames, real
+          # ICON/GFS wind vectors, and real hourly scalar forecast frames.
+          # Layout v10 keeps weather controls compact so the map remains primary.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -65,7 +67,9 @@ jobs:
             '<script src="Html_tools/typhoon-weather-motion-v1.js?v=20260910-typhoon-weather-motion-v1.4-pan-pause"></script>',
             '<script src="Html_tools/typhoon-zoom-motion-v2-1.js?v=20260910-typhoon-zoom-motion-v2.1-real-vectors"></script>',
             '<script src="Html_tools/typhoon-wind-model-v3.js?v=20260910-typhoon-wind-model-v3.0-icon-gfs"></script>',
+            '<script src="Html_tools/typhoon-real-forecast-v4.js?v=20260910-typhoon-real-forecast-v4.0-icon-gfs-hourly"></script>',
             '<script src="Html_tools/mobile-desktop-ux-v1.js?v=20260910-mobile-desktop-ux-v1.0"></script>',
+            '<script src="Html_tools/typhoon-control-layout-v10.js?v=20260910-typhoon-control-layout-v10.0-compact-responsive"></script>',
           ]
           runtime_files=[
             'typhoon-widget',
@@ -85,7 +89,9 @@ jobs:
             'typhoon-zoom-motion-v2',
             'typhoon-zoom-motion-v2-1',
             'typhoon-wind-model-v3',
+            'typhoon-real-forecast-v4',
             'mobile-desktop-ux-v1',
+            'typhoon-control-layout-v10',
           ]
           for name in runtime_files:
             s=re.sub(r'\s*<script\s+src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"\s*>\s*</script>\s*','\n',s)
@@ -109,6 +115,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Keep WebDesk ICON GFS wind field loaded'
+          git commit -m 'Keep WebDesk real forecast and compact weather controls loaded'
           git pull --rebase origin master
           git push
