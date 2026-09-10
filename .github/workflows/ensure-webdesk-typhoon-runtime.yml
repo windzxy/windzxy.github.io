@@ -42,9 +42,9 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Multi-provider recovery: scalar layers, animation and city weather
-          # share one viewport hub. Open-Meteo is primary; MET Norway is the
-          # fallback. Native fetch is never monkey-patched.
+          # Triple-provider recovery: scalar layers, animation and city weather
+          # share one viewport hub. Open-Meteo is primary, GraySky is the browser-
+          # safe fallback, and MET Norway is tertiary. Native fetch is untouched.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -55,7 +55,7 @@ jobs:
             '<script src="Html_tools/typhoon-weather-runtime-v11.js?v=20260902-typhoon-weather-v11-consolidated"></script>',
             '<script src="Html_tools/typhoon-weather-ui-recovery-v11-1.js?v=20260907-typhoon-weather-ui-recovery-v11.3-self-heal"></script>',
             '<script src="Html_tools/typhoon-weather-p0-remount.js?v=20260909-typhoon-weather-p0-remount-v9-grouped-controller"></script>',
-            '<script src="Html_tools/typhoon-openmeteo-broker-v1.js?v=20260910-typhoon-weather-hub-v2.4-multiprovider"></script>',
+            '<script src="Html_tools/typhoon-openmeteo-broker-v1.js?v=20260910-typhoon-weather-hub-v2.5-triple-provider"></script>',
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260910-typhoon-layer-interaction-v6-hub-recovery"></script>',
             '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.6-shared-hub"></script>',
             '<script src="Html_tools/typhoon-weather-motion-v1.js?v=20260910-typhoon-weather-motion-v1.3-shared-hub"></script>',
