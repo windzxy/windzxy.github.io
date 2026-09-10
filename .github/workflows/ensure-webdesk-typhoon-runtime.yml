@@ -12,6 +12,7 @@ on:
       - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
       - 'Html_tools/typhoon-wind-city-weather-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
+      - 'Html_tools/typhoon-weather-motion-v1.js'
       - '.github/workflows/inject-webdesk-fx.yml'
       - '.github/workflows/ensure-webdesk-typhoon-runtime.yml'
   workflow_dispatch:
@@ -43,8 +44,8 @@ jobs:
           # Canonical WebDesk typhoon runtime order. The window bridge repairs
           # Leaflet viewport sizing and redraws tile/raster layers after desktop-
           # window resize, pan, zoom and layer switches. P0 remount owns one visible
-          # controller; the interaction layer supplies live layers. The final
-          # enhancers add animated wind flow and viewport-aware global city weather.
+          # controller; the final enhancers add animated wind, multilingual viewport-
+          # aware city weather labels and lightweight motion for scalar weather layers.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -57,7 +58,8 @@ jobs:
             '<script src="Html_tools/typhoon-weather-p0-remount.js?v=20260909-typhoon-weather-p0-remount-v9-grouped-controller"></script>',
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260908-typhoon-layer-interaction-fix-v3-live-now-citytemps"></script>',
             '<script src="Html_tools/typhoon-wind-city-weather-v1.js?v=20260910-typhoon-wind-city-weather-v1.0"></script>',
-            '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.2-layer-aware-initial"></script>',
+            '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.3-multilingual-10m"></script>',
+            '<script src="Html_tools/typhoon-weather-motion-v1.js?v=20260910-typhoon-weather-motion-v1.0"></script>',
           ]
           # Keep base names here because the matcher appends the .js suffix.
           typhoon_files=[
@@ -73,6 +75,7 @@ jobs:
             'typhoon-weather-layer-interaction-fix-v1',
             'typhoon-wind-city-weather-v1',
             'typhoon-dynamic-city-labels-v1',
+            'typhoon-weather-motion-v1',
           ]
           for name in typhoon_files:
             s=re.sub(r'\s*<script\s+src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"\s*>\s*</script>\s*','\n',s)
