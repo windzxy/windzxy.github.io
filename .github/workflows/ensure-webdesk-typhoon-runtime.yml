@@ -16,6 +16,7 @@ on:
       - 'Html_tools/typhoon-weather-motion-v1.js'
       - 'Html_tools/typhoon-zoom-motion-v2.js'
       - 'Html_tools/typhoon-zoom-motion-v2-1.js'
+      - 'Html_tools/typhoon-wind-model-v3.js'
       - 'Html_tools/mobile-desktop-ux-v1.js'
       - '.github/workflows/inject-webdesk-fx.yml'
       - '.github/workflows/ensure-webdesk-typhoon-runtime.yml'
@@ -45,10 +46,9 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Triple-provider weather recovery plus real geographic animation.
-          # Wind/gust direction comes from the actual viewport weather grid;
-          # scalar fields never invent a directional flow. Mobile starts with
-          # the function center closed and uses the compact bottom sheet.
+          # Zoom-Earth-style source policy: real radar/satellite frames plus real
+          # forecast-model wind vectors. DWD ICON is primary and NOAA GFS is the
+          # wind-field fallback; scalar layers never invent directional motion.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -64,6 +64,7 @@ jobs:
             '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.6-shared-hub"></script>',
             '<script src="Html_tools/typhoon-weather-motion-v1.js?v=20260910-typhoon-weather-motion-v1.4-pan-pause"></script>',
             '<script src="Html_tools/typhoon-zoom-motion-v2-1.js?v=20260910-typhoon-zoom-motion-v2.1-real-vectors"></script>',
+            '<script src="Html_tools/typhoon-wind-model-v3.js?v=20260910-typhoon-wind-model-v3.0-icon-gfs"></script>',
             '<script src="Html_tools/mobile-desktop-ux-v1.js?v=20260910-mobile-desktop-ux-v1.0"></script>',
           ]
           runtime_files=[
@@ -83,6 +84,7 @@ jobs:
             'typhoon-weather-motion-v1',
             'typhoon-zoom-motion-v2',
             'typhoon-zoom-motion-v2-1',
+            'typhoon-wind-model-v3',
             'mobile-desktop-ux-v1',
           ]
           for name in runtime_files:
@@ -107,6 +109,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Keep WebDesk typhoon real-vector motion loaded'
+          git commit -m 'Keep WebDesk ICON GFS wind field loaded'
           git pull --rebase origin master
           git push
