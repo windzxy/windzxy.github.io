@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20260910-card-controls-close-only-v2-accessible-remove';
+const VER='20260910-card-controls-close-only-v2.1-live-i18n-labels';
 if(window.__webdeskCardRefresh===VER)return;
 window.__webdeskCardRefresh=VER;
 
@@ -30,8 +30,8 @@ function restoreCardControls(root){
       if(remove.tagName==='BUTTON')remove.type='button';
       remove.tabIndex=0;
       const label=removeLabel();
-      if(!remove.getAttribute('aria-label'))remove.setAttribute('aria-label',label);
-      if(!remove.getAttribute('title'))remove.setAttribute('title',label);
+      remove.setAttribute('aria-label',label);
+      remove.setAttribute('title',label);
     }
   });
 }
