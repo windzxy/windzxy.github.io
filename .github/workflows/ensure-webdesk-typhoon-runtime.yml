@@ -45,7 +45,8 @@ jobs:
           # Canonical WebDesk typhoon runtime order. The shared viewport weather
           # source is loaded before all Open-Meteo consumers so scalar layers,
           # city labels and motion reuse one sampled field instead of making three
-          # independent request streams.
+          # independent request streams. v2.1 keeps the shared grid deliberately
+          # small and falls back quickly so a slow provider cannot block the UI.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/typhoon-window-p0-fix.js?v=20260908-typhoon-window-p0-fix7-tile-viewport-repair"></script>',
@@ -56,7 +57,7 @@ jobs:
             '<script src="Html_tools/typhoon-weather-runtime-v11.js?v=20260902-typhoon-weather-v11-consolidated"></script>',
             '<script src="Html_tools/typhoon-weather-ui-recovery-v11-1.js?v=20260907-typhoon-weather-ui-recovery-v11.3-self-heal"></script>',
             '<script src="Html_tools/typhoon-weather-p0-remount.js?v=20260909-typhoon-weather-p0-remount-v9-grouped-controller"></script>',
-            '<script src="Html_tools/typhoon-openmeteo-broker-v1.js?v=20260910-typhoon-openmeteo-broker-v2.0-shared-viewport"></script>',
+            '<script src="Html_tools/typhoon-openmeteo-broker-v1.js?v=20260910-typhoon-openmeteo-broker-v2.1-stable-shared-viewport"></script>',
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260910-typhoon-layer-interaction-v4-live-pan-swr"></script>',
             '<script src="Html_tools/typhoon-wind-city-weather-v1.js?v=20260910-typhoon-wind-city-weather-v1.0"></script>',
             '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.4-live-viewport"></script>',
