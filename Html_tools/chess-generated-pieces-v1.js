@@ -1,0 +1,17 @@
+(()=>{
+'use strict';
+const VERSION='20260910-chess-generated-pieces-v1.0-image25-renders';
+if(window.__windzxyGeneratedChessPieces===VERSION)return;
+window.__windzxyGeneratedChessPieces=VERSION;
+const MAP={K:'wK',Q:'wQ',R:'wR',B:'wB',N:'wN',P:'wP',k:'bK',q:'bQ',r:'bR',b:'bB',n:'bN',p:'bP'};
+const UNI={'♔':'K','♕':'Q','♖':'R','♗':'B','♘':'N','♙':'P','♚':'k','♛':'q','♜':'r','♝':'b','♞':'n','♟':'p'};
+function css(){if(document.getElementById('chess-generated-pieces-v1-style'))return;const s=document.createElement('style');s.id='chess-generated-pieces-v1-style';s.textContent=`
+.chess-piece[data-piece]{font-size:0!important;overflow:visible!important;background:none!important;border:0!important;display:flex!important;align-items:flex-end!important;justify-content:center!important;filter:none!important;position:relative!important;z-index:2}.chess-piece[data-piece]>.generated-piece-art{width:112%;height:132%;display:block;overflow:visible;pointer-events:none;filter:drop-shadow(0 7px 6px rgba(0,0,0,.42));transform-origin:50% 92%;transition:transform .16s ease,filter .16s ease}.chess-piece[data-piece]:hover>.generated-piece-art{transform:translateY(-5px) scale(1.07);filter:drop-shadow(0 10px 9px rgba(0,0,0,.48))}.chess-piece[data-piece="P"]>.generated-piece-art,.chess-piece[data-piece="p"]>.generated-piece-art{width:95%;height:112%}.chess-piece[data-piece="R"]>.generated-piece-art,.chess-piece[data-piece="r"]>.generated-piece-art{width:96%;height:118%}.chess-piece[data-piece] .piece-figure{display:none!important}.chess-piece[data-piece]::before,.chess-piece[data-piece]::after{content:none!important}.chess-square.sel .generated-piece-art,.chess-square.selected .generated-piece-art{filter:drop-shadow(0 0 9px rgba(67,145,255,.95)) drop-shadow(0 8px 6px rgba(0,0,0,.45))}.chess-board{background:linear-gradient(135deg,#8b673d,#d7b684)!important;box-shadow:inset 0 0 0 8px rgba(61,40,22,.65),0 16px 34px rgba(0,0,0,.24)!important}.chess-app .boardgame-side{background:linear-gradient(180deg,rgba(16,24,39,.96),rgba(9,15,26,.96))!important}.chess-app .boardgame-side h2,.chess-app .boardgame-side h3{letter-spacing:.01em}
+@media(max-width:720px){.chess-piece[data-piece]>.generated-piece-art{width:108%;height:124%}}
+`;document.head.appendChild(s)}
+function codeFor(p){let c=p.dataset.piece;if(c&&MAP[c])return c;const txt=(p.textContent||'').trim();if(UNI[txt]){c=UNI[txt];p.dataset.piece=c;return c}const aria=p.closest('.chess-square')?.getAttribute('aria-label')||'';const m=aria.match(/([KQRBNPkqrbnp])\s*$/);if(m){p.dataset.piece=m[1];return m[1]}return null}
+function render(root=document){root.querySelectorAll?.('.chess-piece').forEach(p=>{const c=codeFor(p);if(!c||!MAP[c])return;const id=MAP[c];const current=p.querySelector('.generated-piece-art use')?.getAttribute('href');const href='assets/chess/chess-piece-render-sheet-v1.svg#'+id;if(current===href)return;p.innerHTML='<svg class="generated-piece-art" role="img" aria-hidden="true"><use href="'+href+'"></use></svg>';p.dataset.generatedArt='1'})}
+function boot(){css();render();new MutationObserver(()=>render()).observe(document.body,{childList:true,subtree:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+window.WebDeskGeneratedChessPieces={version:VERSION,source:'generated-hero-art',emoji:false,pieces:12};
+})();
