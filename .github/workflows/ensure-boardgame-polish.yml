@@ -1,0 +1,54 @@
+name: Ensure WebDesk Board Game Polish
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/boardgame-polish-v2.js'
+      - '.github/workflows/ensure-boardgame-polish.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: webdesk-index-writers
+  cancel-in-progress: false
+
+jobs:
+  ensure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: master
+      - name: Ensure board game polish runtime is loaded
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          tag='<script src="Html_tools/boardgame-polish-v2.js?v=20260910-boardgame-polish-v2.0"></script>'
+          s=re.sub(r'\s*<script\s+src="Html_tools/boardgame-polish-v2\.js\?v=[^"]+"\s*>\s*</script>\s*','\n',s)
+          anchor=re.search(r'<script\s+src="Html_tools/chess-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
+          if anchor:
+              pos=anchor.end()
+              s=s[:pos]+'\n'+tag+s[pos:]
+          else:
+              s=s.replace('</body>',tag+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit board game runtime tag
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'Board game polish runtime already loaded.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Keep WebDesk board game polish loaded'
+          git pull --rebase origin master
+          git push
