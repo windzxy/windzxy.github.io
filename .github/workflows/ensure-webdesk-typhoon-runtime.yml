@@ -12,6 +12,7 @@ on:
       - 'Html_tools/typhoon-weather-p0-remount.js'
       - 'Html_tools/typhoon-openmeteo-broker-v1.js'
       - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
+      - 'Html_tools/typhoon-wind-city-weather-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
       - 'Html_tools/typhoon-weather-motion-v1.js'
       - 'Html_tools/typhoon-zoom-motion-v2-1.js'
@@ -63,6 +64,7 @@ jobs:
             '<script src="Html_tools/typhoon-weather-p0-remount.js?v=20260909-typhoon-weather-p0-remount-v9-grouped-controller"></script>',
             '<script src="Html_tools/typhoon-openmeteo-broker-v1.js?v=20260910-typhoon-weather-hub-v2.5-triple-provider"></script>',
             '<script src="Html_tools/typhoon-weather-layer-interaction-fix-v1.js?v=20260910-typhoon-layer-interaction-v6-hub-recovery"></script>',
+            '<script src="Html_tools/typhoon-wind-city-weather-v1.js?v=20260910-typhoon-wind-city-weather-v1.0"></script>',
             '<script src="Html_tools/typhoon-dynamic-city-labels-v1.js?v=20260910-typhoon-dynamic-city-labels-v1.6-shared-hub"></script>',
             '<script src="Html_tools/typhoon-weather-motion-v1.js?v=20260910-typhoon-weather-motion-v1.5-pan-swr"></script>',
             '<script src="Html_tools/typhoon-zoom-motion-v2-1.js?v=20260910-typhoon-zoom-motion-v2.1-real-vectors"></script>',
