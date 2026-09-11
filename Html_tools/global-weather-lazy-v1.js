@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260911-global-weather-lazy-v1.1-performance';
+const VERSION='20260911-global-weather-lazy-v1.2-viewport-cache';
 if(window.__windzxyGlobalWeatherLazy===VERSION)return;
 window.__windzxyGlobalWeatherLazy=VERSION;
 let loading=false,loaded=false,observer=null;
@@ -13,7 +13,7 @@ const SCRIPTS=[
  ['Html_tools/typhoon-weather-runtime-v11.js','20260902-typhoon-weather-v11-consolidated'],
  ['Html_tools/typhoon-weather-ui-recovery-v11-1.js','20260907-typhoon-weather-ui-recovery-v11.3-self-heal'],
  ['Html_tools/typhoon-weather-p0-remount.js','20260909-typhoon-weather-p0-remount-v9-grouped-controller'],
- ['Html_tools/typhoon-openmeteo-broker-v1.js','20260910-typhoon-weather-hub-v2.5-triple-provider'],
+ ['Html_tools/typhoon-openmeteo-broker-v1.js','20260911-typhoon-weather-hub-v2.6-viewport-cache'],
  ['Html_tools/typhoon-weather-layer-interaction-fix-v1.js','20260910-typhoon-layer-interaction-v6-hub-recovery'],
  ['Html_tools/typhoon-dynamic-city-labels-v1.js','20260910-typhoon-dynamic-city-labels-v1.6-shared-hub'],
  ['Html_tools/typhoon-zoom-motion-v2-1.js','20260910-typhoon-zoom-motion-v2.1-real-vectors'],
