@@ -9,20 +9,18 @@ on:
       - 'Html_tools/global-weather-brand-v1.js'
       - 'Html_tools/global-weather-lazy-v1.js'
       - 'Html_tools/typhoon-window-p0-fix.js'
-      - 'Html_tools/typhoon-atmosphere-v5-1.js'
-      - 'Html_tools/typhoon-satellite-pan-v1.js'
       - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
       - 'Html_tools/typhoon-weather-p0-remount.js'
       - 'Html_tools/typhoon-openmeteo-broker-v1.js'
       - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
       - 'Html_tools/typhoon-provider-failover-v1.js'
+      - 'Html_tools/typhoon-satellite-pan-v1.js'
       - 'Html_tools/typhoon-weather-motion-v1.js'
       - 'Html_tools/typhoon-zoom-motion-v2-1.js'
       - 'Html_tools/typhoon-real-weather-v5-1.js'
       - 'Html_tools/mobile-desktop-ux-v1.js'
-      - 'Html_tools/typhoon-control-layout-v11.js'
-      - 'Html_tools/typhoon-control-layout-v12.js'
+      - 'Html_tools/typhoon-control-layout-v13.js'
       - '.github/workflows/inject-webdesk-fx.yml'
       - '.github/workflows/ensure-webdesk-typhoon-runtime.yml'
   workflow_dispatch:
@@ -51,8 +49,6 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Keep the legacy app id for workspace compatibility, but make the
-          # visible product name canonical at first paint.
           s=re.sub(
             r'\{id:"typhoon",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-typhoon"\}',
             '{id:"typhoon",kind:"widget",title:"全球氣象",desc:"實時雷達、衛星、降水、真實風場、溫濕度、氣壓與熱帶氣旋路徑。",icon:"🌦️",tone:"t-typhoon"}',
@@ -60,11 +56,10 @@ jobs:
             count=1
           )
 
-          # Startup stays light: card registration + branding + one lazy loader.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/global-weather-brand-v1.js?v=20260910-global-weather-brand-v1.0"></script>',
-            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.5-satellite-pan-controls"></script>',
+            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.6-no-flicker-top-left"></script>',
           ]
           runtime_files=[
             'typhoon-widget','global-weather-brand-v1','global-weather-lazy-v1','typhoon-window-p0-fix',
@@ -75,7 +70,7 @@ jobs:
             'typhoon-zoom-motion-v2','typhoon-zoom-motion-v2-1','typhoon-wind-model-v3',
             'typhoon-real-forecast-v4','typhoon-real-weather-v5','typhoon-real-weather-v5-1','typhoon-real-weather-v5-2',
             'typhoon-render-recovery-v1','typhoon-weather-health-v1','typhoon-overlay-health-v1','typhoon-provider-failover-v1',
-            'mobile-desktop-ux-v1','typhoon-control-layout-v10','typhoon-control-layout-v11','typhoon-control-layout-v12',
+            'mobile-desktop-ux-v1','typhoon-control-layout-v10','typhoon-control-layout-v11','typhoon-control-layout-v12','typhoon-control-layout-v13',
           ]
           for name in runtime_files:
             s=re.sub(r'\s*<script\s+src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"\s*>\s*</script>\s*','\n',s)
@@ -99,6 +94,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Deploy Global Weather satellite pan and control layout'
+          git commit -m 'Use no-flicker Global Weather top-left layout'
           git pull --rebase origin master
           git push
