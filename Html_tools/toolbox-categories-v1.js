@@ -4,7 +4,7 @@
     {id:'data',title:'文字與資料',items:['text','table','date','json']},
     {id:'utility',title:'實用工具',items:['class-schedule','note','todo','clock','calc','color','link','memo']},
     {id:'lifestyle',title:'生活',items:['spend-wheel']},
-    {id:'games',title:'棋類遊戲',items:['gomoku','chess']},
+    {id:'games',title:'棋類遊戲',items:['gomoku','chess','xiangqi']},
     {id:'live',title:'即時資訊',items:['metals','fx-rates','calendar','typhoon','weather']}
   ];
 
@@ -87,5 +87,5 @@
     });
   }
   groupedRenderShelf();
-  window.WebDeskToolboxCategories={version:'v8-games',groups:groups.map(g=>g.id),render:groupedRenderShelf,shortcuts:{focusSearch:'/',clearSearch:'Escape'},categorySearch:true,classSchedule:true,descriptions:true,lifestyle:true,games:true};
+  window.WebDeskToolboxCategories={version:'v9-games-xiangqi',groups:groups.map(g=>g.id),render:groupedRenderShelf,shortcuts:{focusSearch:'/',clearSearch:'Escape'},categorySearch:true,classSchedule:true,descriptions:true,lifestyle:true,games:true,xiangqi:true};
 })();
