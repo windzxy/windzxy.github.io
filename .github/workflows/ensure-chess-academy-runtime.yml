@@ -5,6 +5,7 @@ on:
     paths:
       - 'Html_tools/chess-card-v1.js'
       - 'Html_tools/xiangqi-card-v1.js'
+      - 'Html_tools/xiangqi-interaction-fix-v1.js'
       - 'Html_tools/chess-enhancement-lazy-v1.js'
       - 'Html_tools/chess-academy-v1.js'
       - 'Html_tools/chess-fun-learning-v1.js'
@@ -36,7 +37,6 @@ jobs:
               s=re.sub(r'\n?<script src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"></script>','',s)
 
           xiangqi='<script src="Html_tools/xiangqi-card-v1.js?v=20260910-xiangqi-v1.0-learn-play"></script>'
-          # Remove stale/duplicate Xiangqi tags, then place exactly once beside the chess card.
           s=re.sub(r'\n?<script src="Html_tools/xiangqi-card-v1\.js\?v=[^"]+"></script>','',s)
           chess=re.search(r'<script\s+src="Html_tools/chess-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
           if chess:
@@ -44,10 +44,19 @@ jobs:
           else:
               s=s.replace('</body>',xiangqi+'\n</body>',1)
 
+          # Interaction patch is kept adjacent to the Xiangqi runtime so mode switching remains reliable.
+          fix='<script src="Html_tools/xiangqi-interaction-fix-v1.js?v=20260911-xiangqi-interaction-fix-v1.0"></script>'
+          s=re.sub(r'\n?<script src="Html_tools/xiangqi-interaction-fix-v1\.js\?v=[^"]+"></script>','',s)
+          xq=re.search(r'<script\s+src="Html_tools/xiangqi-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
+          if xq:
+              pos=xq.end(); s=s[:pos]+'\n'+fix+s[pos:]
+          else:
+              s=s.replace('</body>',fix+'\n</body>',1)
+
           lazy='<script src="Html_tools/chess-enhancement-lazy-v1.js?v=20260911-chess-enhancement-lazy-v1.1-explicit-tutorial"></script>'
-          chess_or_xq=re.search(r'<script\s+src="Html_tools/xiangqi-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
-          if chess_or_xq:
-              pos=chess_or_xq.end(); s=s[:pos]+'\n'+lazy+s[pos:]
+          anchor=re.search(r'<script\s+src="Html_tools/xiangqi-interaction-fix-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
+          if anchor:
+              pos=anchor.end(); s=s[:pos]+'\n'+lazy+s[pos:]
           else:
               s=s.replace('</body>',lazy+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
@@ -58,6 +67,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Expose Chinese Xiangqi card in WebDesk'
+          git commit -m 'Load Xiangqi interaction fix in WebDesk'
           git pull --rebase origin master
           git push
