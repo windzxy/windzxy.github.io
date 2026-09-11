@@ -29,5 +29,5 @@ async function activate(){if(loading||loaded||!hasWeather())return;loading=true;
 function schedule(){if(loading||loaded)return;if('requestIdleCallback'in window)requestIdleCallback(()=>activate(),{timeout:250});else setTimeout(activate,30)}
 function boot(){if(hasWeather())schedule();else{const root=document.getElementById('desktopCanvas')||document.body;observer=new MutationObserver(()=>{if(hasWeather())schedule()});observer.observe(root,{childList:true,subtree:true})}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskGlobalWeatherLazy={version:VERSION,get loaded(){return loaded},activate,scripts:SCRIPTS.map(x=>x[0]),performanceProfile:'zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover'};
+window.WebDeskGlobalWeatherLazy={version:VERSION,get loaded(){return loaded},activate,scripts:SCRIPTS.map(x=>x[0]),performanceProfile:'zoom-tiered-city-labels+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover'};
 })();
