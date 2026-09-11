@@ -3,14 +3,12 @@ on:
   push:
     branches: [master]
     paths:
+      - 'Html_tools/chess-enhancement-lazy-v1.js'
       - 'Html_tools/chess-academy-v1.js'
-      - 'Html_tools/xiangqi-card-v1.js'
       - 'Html_tools/chess-fun-learning-v1.js'
       - 'Html_tools/chess-piece-visuals-v1.js'
       - 'Html_tools/chess-academy-hero-v1.js'
       - 'Html_tools/chess-generated-pieces-v1.js'
-      - 'assets/chess/chess-academy-hero.jpg'
-      - 'assets/chess/chess-piece-render-sheet-v1.svg'
       - '.github/workflows/ensure-chess-academy-runtime.yml'
   workflow_dispatch:
 permissions:
@@ -22,34 +20,30 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Keep canonical chess academy loaders
+      - name: Keep only lightweight chess enhancement loader on startup
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          for name in ('chess-academy-v1','xiangqi-card-v1','chess-fun-learning-v1','chess-piece-visuals-v1','chess-academy-hero-v1','chess-generated-pieces-v1'):
+          heavy=('chess-academy-v1','xiangqi-card-v1','chess-fun-learning-v1','chess-piece-visuals-v1','chess-academy-hero-v1','chess-generated-pieces-v1','chess-enhancement-lazy-v1')
+          for name in heavy:
               s=re.sub(r'\n?<script src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"></script>','',s)
-          anchor='<script src="Html_tools/boardgame-polish-v2.js?v=20260910-boardgame-polish-v2.0"></script>'
-          tags=[
-              '<script src="Html_tools/chess-academy-v1.js?v=20260910-chess-academy-v1.0-zero-to-competition"></script>',
-              '<script src="Html_tools/xiangqi-card-v1.js?v=20260910-xiangqi-v1.0-learn-play"></script>',
-              '<script src="Html_tools/chess-fun-learning-v1.js?v=20260910-chess-fun-learning-v1.0-missions-stars-hints"></script>',
-              '<script src="Html_tools/chess-piece-visuals-v1.js?v=20260910-chess-piece-visuals-v1.2-figurative-dual"></script>',
-              '<script src="Html_tools/chess-academy-hero-v1.js?v=20260910-chess-academy-hero-v1.0-generated-art"></script>',
-              '<script src="Html_tools/chess-generated-pieces-v1.js?v=20260910-chess-generated-pieces-v1.0-image25-renders"></script>'
-          ]
-          if anchor not in s:
-              raise SystemExit('boardgame anchor missing')
-          s=s.replace(anchor,anchor+'\n'+'\n'.join(tags))
+          tag='<script src="Html_tools/chess-enhancement-lazy-v1.js?v=20260911-chess-enhancement-lazy-v1.0"></script>'
+          anchor=re.search(r'<script\s+src="Html_tools/chess-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
+          if anchor:
+              pos=anchor.end(); s=s[:pos]+'\n'+tag+s[pos:]
+          else:
+              s=s.replace('</body>',tag+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
           PY
-      - name: Commit formal entry update
+      - name: Commit startup performance update
         run: |
           if git diff --quiet -- index.html; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Keep Chess Academy generated piece runtime loaded'
+          git commit -m 'Lazy-load Chess Academy enhancements'
+          git pull --rebase origin master
           git push
