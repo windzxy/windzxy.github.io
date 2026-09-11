@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260911-xiangqi-interaction-fix-v1.2-segmented-difficulty';
+const VERSION='20260911-xiangqi-interaction-fix-v1.1-fixed-90-cell-board';
 const START=['r','n','b','a','k','a','b','n','r',null,null,null,null,null,null,null,null,null,null,'c',null,null,null,null,null,'c',null,'p',null,'p',null,'p',null,'p',null,'p',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'P',null,'P',null,'P',null,'P',null,'P',null,'C',null,null,null,null,null,'C',null,null,null,null,null,null,null,null,null,'R','N','B','A','K','A','B','N','R'];
 let lastPointerAt=0;
 function currentCard(target){
