@@ -14,6 +14,7 @@ on:
       - 'Html_tools/typhoon-openmeteo-broker-v1.js'
       - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
+      - 'Html_tools/typhoon-provider-failover-v1.js'
       - 'Html_tools/typhoon-weather-motion-v1.js'
       - 'Html_tools/typhoon-zoom-motion-v2-1.js'
       - 'Html_tools/typhoon-real-weather-v5-1.js'
@@ -49,12 +50,12 @@ jobs:
 
           # WebDesk startup must stay light. Only the core card registration,
           # branding and one tiny lazy loader are parsed at boot. Radar, maps,
-          # forecast models, particles and city overlays load only after a
-          # Global Weather card actually exists on the desktop.
+          # forecast models, particles, city overlays and provider recovery
+          # load only after a Global Weather card actually exists.
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/global-weather-brand-v1.js?v=20260910-global-weather-brand-v1.0"></script>',
-            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.2-viewport-cache"></script>',
+            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.3-provider-failover"></script>',
           ]
           runtime_files=[
             'typhoon-widget','global-weather-brand-v1','global-weather-lazy-v1','typhoon-window-p0-fix',
