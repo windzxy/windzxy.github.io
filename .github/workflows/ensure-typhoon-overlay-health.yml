@@ -4,6 +4,7 @@ on:
     branches: [master]
     paths:
       - 'Html_tools/typhoon-overlay-health-v1.js'
+      - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
       - '.github/workflows/ensure-typhoon-overlay-health.yml'
   workflow_dispatch:
 permissions:
@@ -39,11 +40,34 @@ jobs:
               s=s.replace(marker,tag+'\n'+marker,1)
           p.write_text(s,encoding='utf-8')
           PY
+      - name: Reduce mobile forecast rasterization and defer viewport refresh
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('Html_tools/typhoon-weather-layer-interaction-fix-v1.js')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r"const VER='[^']+';", "const VER='20260912-typhoon-layer-interaction-v8-mobile-idle-forecast';", s, count=1)
+          s=s.replace("s={grid:null,at:0,bound:false,timer:0,seq:0,lastView:'',lastRenderAt:0}", "s={grid:null,at:0,bound:false,timer:0,idle:0,seq:0,refreshSeq:0,lastView:'',lastRenderAt:0}")
+          s=s.replace("mobile=size.x<620,w=mobile?190:230,h=Math.max(mobile?105:120,Math.min(mobile?145:170,Math.round(w*size.y/Math.max(1,size.x))))", "mobile=size.x<620,w=mobile?160:230,h=Math.max(mobile?90:120,Math.min(mobile?125:170,Math.round(w*size.y/Math.max(1,size.x))))")
+          s=s.replace("sx.filter='blur(2px) saturate(1.08)'", "sx.filter=mobile?'blur(1.4px) saturate(1.05)':'blur(2px) saturate(1.08)'")
+          old="function bindMapRefresh(root){const s=state(root);if(s.bound||!root.__tpMap)return;s.bound=true;const refresh=()=>{clearTimeout(s.timer);s.timer=setTimeout(()=>{const m=root.__v11Mode,b=root.__activeWeatherBtn,map=root.__tpMap;if(!b||!FORECAST.has(m)||!document.body.contains(b)||!map)return;const key=viewKey(map);if(key===s.lastView&&Date.now()-s.lastRenderAt<1500)return;showForecast(root,b,m,false,true)},340)};root.__tpMap.on('moveend',refresh);root.__tpMap.on('zoomend',refresh)}"
+          new="function bindMapRefresh(root){const s=state(root),map=root.__tpMap;if(s.bound||!map)return;s.bound=true;const cancel=()=>{clearTimeout(s.timer);s.timer=0;++s.refreshSeq;if(s.idle){if('cancelIdleCallback'in window)cancelIdleCallback(s.idle);else clearTimeout(s.idle);s.idle=0}};const refresh=()=>{cancel();const seq=++s.refreshSeq,mobile=map.getSize().x<620;s.timer=setTimeout(()=>{const run=()=>{s.idle=0;if(seq!==s.refreshSeq)return;const m=root.__v11Mode,b=root.__activeWeatherBtn;if(!b||!FORECAST.has(m)||!document.body.contains(b))return;const key=viewKey(map);if(key===s.lastView&&Date.now()-s.lastRenderAt<1500)return;showForecast(root,b,m,false,true)};s.idle='requestIdleCallback'in window?requestIdleCallback(run,{timeout:520}):setTimeout(run,36)},mobile?460:380)};map.on('movestart',cancel);map.on('zoomstart',cancel);map.on('moveend',refresh);map.on('zoomend',refresh)}"
+          if old in s:
+              s=s.replace(old,new,1)
+          elif 'mobile-idle-forecast' not in s or "map.on('movestart',cancel)" not in s:
+              raise SystemExit('forecast refresh signature changed; refusing unsafe patch')
+          s=s.replace("version:'v7'", "version:'v8'")
+          s=s.replace("refresh:'debounced-cached-moveend'", "refresh:'motion-cancelled-idle-last-viewport'")
+          s=s.replace("renderWidth:{mobile:190,desktop:230}", "renderWidth:{mobile:160,desktop:230}")
+          p.write_text(s,encoding='utf-8')
+          PY
       - name: Commit formal entry update
         run: |
-          if git diff --quiet -- index.html; then exit 0; fi
+          if git diff --quiet -- index.html Html_tools/typhoon-weather-layer-interaction-fix-v1.js; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Load typhoon overlay data time coherence guard'
+          git add index.html Html_tools/typhoon-weather-layer-interaction-fix-v1.js
+          git commit -m 'Defer mobile Global Weather forecast rendering until idle'
+          git pull --rebase origin master
           git push
