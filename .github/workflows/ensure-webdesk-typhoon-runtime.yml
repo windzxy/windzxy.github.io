@@ -40,7 +40,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: master
-      - name: Reduce Global Weather city density at low zoom
+      - name: Keep Global Weather city labels zoom-tiered and motion-debounced
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -48,7 +48,8 @@ jobs:
 
           p=Path('Html_tools/typhoon-dynamic-city-labels-v1.js')
           s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VER='[^']+';", "const VER='20260911-typhoon-dynamic-city-labels-v1.7-zoom-tiered';", s, count=1)
+          s=re.sub(r"const VER='[^']+';", "const VER='20260911-typhoon-dynamic-city-labels-v1.8-motion-debounced';", s, count=1)
+          s=s.replace("'\"':'&quot'", "'\"':'&quot;'")
           s=re.sub(
             r"function capFor\(map\)\{.*?\}\nfunction pickPlaces",
             "function capFor(map){const z=map.getZoom(),s=map.getSize(),area=Math.max(1,s.x*s.y),base=z<=2.8?8:z<=3.6?12:z<=4.4?18:z<=5.2?28:z<=6.2?42:z<=7.2?58:78;return Math.max(6,Math.min(88,Math.round(base*Math.min(1.18,Math.max(.72,area/760000)))))}\nfunction pickPlaces",
@@ -62,9 +63,9 @@ jobs:
 
           p=Path('Html_tools/global-weather-lazy-v1.js')
           s=p.read_text(encoding='utf-8')
-          s=s.replace('20260911-global-weather-lazy-v1.7-single-layout-owner','20260911-global-weather-lazy-v1.8-zoom-tiered-cities')
-          s=s.replace("20260910-typhoon-dynamic-city-labels-v1.6-shared-hub","20260911-typhoon-dynamic-city-labels-v1.7-zoom-tiered")
-          s=s.replace('single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover','zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover')
+          s=re.sub(r"const VERSION='[^']+';", "const VERSION='20260911-global-weather-lazy-v1.9-motion-debounced-cities';", s, count=1)
+          s=re.sub(r"\['Html_tools/typhoon-dynamic-city-labels-v1\.js','[^']+'\]", "['Html_tools/typhoon-dynamic-city-labels-v1.js','20260911-typhoon-dynamic-city-labels-v1.8-motion-debounced']", s, count=1)
+          s=re.sub(r"performanceProfile:'[^']+'", "performanceProfile:'motion-debounced-city-labels+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover'", s, count=1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Keep Global Weather branded and off the startup critical path
@@ -86,7 +87,7 @@ jobs:
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/global-weather-brand-v1.js?v=20260910-global-weather-brand-v1.0"></script>',
-            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.8-zoom-tiered-cities"></script>',
+            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.9-motion-debounced-cities"></script>',
           ]
           runtime_files=[
             'typhoon-widget','global-weather-brand-v1','global-weather-lazy-v1','typhoon-window-p0-fix',
@@ -121,6 +122,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/global-weather-lazy-v1.js
-          git commit -m 'Tier Global Weather city labels by zoom'
+          git commit -m 'Debounce Global Weather city refresh after map motion'
           git pull --rebase origin master
           git push
