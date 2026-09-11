@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260911-global-weather-lazy-v1.9-motion-debounced-cities';
+const VERSION='20260911-global-weather-lazy-v2.0-staggered-viewport';
 if(window.__windzxyGlobalWeatherLazy===VERSION)return;
 window.__windzxyGlobalWeatherLazy=VERSION;
 let loading=false,loaded=false,observer=null;
@@ -18,7 +18,7 @@ const SCRIPTS=[
  ['Html_tools/typhoon-openmeteo-broker-v1.js','20260911-typhoon-weather-hub-v2.6-viewport-cache'],
  ['Html_tools/typhoon-weather-layer-interaction-fix-v1.js','20260911-typhoon-layer-interaction-v7-smooth-forecast-panzoom'],
  ['Html_tools/typhoon-dynamic-city-labels-v1.js','20260911-typhoon-dynamic-city-labels-v1.8-motion-debounced'],
- ['Html_tools/typhoon-zoom-motion-v2-1.js','20260910-typhoon-zoom-motion-v2.1-real-vectors'],
+ ['Html_tools/typhoon-zoom-motion-v2-1.js','20260911-typhoon-zoom-motion-v2.2-idle-staggered'],
  ['Html_tools/mobile-desktop-ux-v1.js','20260910-mobile-desktop-ux-v1.0'],
  ['Html_tools/typhoon-control-layout-v13.js','20260911-typhoon-control-layout-v13.1-single-owner']
 ];
@@ -29,5 +29,5 @@ async function activate(){if(loading||loaded||!hasWeather())return;loading=true;
 function schedule(){if(loading||loaded)return;if('requestIdleCallback'in window)requestIdleCallback(()=>activate(),{timeout:250});else setTimeout(activate,30)}
 function boot(){if(hasWeather())schedule();else{const root=document.getElementById('desktopCanvas')||document.body;observer=new MutationObserver(()=>{if(hasWeather())schedule()});observer.observe(root,{childList:true,subtree:true})}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskGlobalWeatherLazy={version:VERSION,get loaded(){return loaded},activate,scripts:SCRIPTS.map(x=>x[0]),performanceProfile:'motion-debounced-city-labels+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover'};
+window.WebDeskGlobalWeatherLazy={version:VERSION,get loaded(){return loaded},activate,scripts:SCRIPTS.map(x=>x[0]),performanceProfile:'idle-staggered-vector-refresh+motion-debounced-city-labels+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover'};
 })();
