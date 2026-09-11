@@ -32,7 +32,7 @@ jobs:
           start="['r','n','b','a','k','a','b','n','r',null,null,null,null,null,null,null,null,null,null,'c',null,null,null,null,null,'c',null,'p',null,'p',null,'p',null,'p',null,'p',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'P',null,'P',null,'P',null,'P',null,'P',null,'C',null,null,null,null,null,'C',null,null,null,null,null,null,null,null,null,'R','N','B','A','K','A','B','N','R']"
           targets=[
             ('Html_tools/xiangqi-card-v1.js','20260911-xiangqi-v1.1-fixed-90-cell-board'),
-            ('Html_tools/xiangqi-interaction-fix-v1.js','20260911-xiangqi-interaction-fix-v1.2-segmented-difficulty')
+            ('Html_tools/xiangqi-interaction-fix-v1.js','20260911-xiangqi-interaction-fix-v1.3-playable-endgames')
           ]
           for name,version in targets:
               p=Path(name)
@@ -62,7 +62,7 @@ jobs:
           else:
               s=s.replace('</body>',xiangqi+'\n</body>',1)
 
-          fix='<script src="Html_tools/xiangqi-interaction-fix-v1.js?v=20260911-xiangqi-interaction-fix-v1.2-segmented-difficulty"></script>'
+          fix='<script src="Html_tools/xiangqi-interaction-fix-v1.js?v=20260911-xiangqi-interaction-fix-v1.3-playable-endgames"></script>'
           s=re.sub(r'\n?<script src="Html_tools/xiangqi-interaction-fix-v1\.js\?v=[^"]+"></script>','',s)
           xq=re.search(r'<script\s+src="Html_tools/xiangqi-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
           if xq:
@@ -92,6 +92,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html Html_tools/xiangqi-card-v1.js Html_tools/xiangqi-interaction-fix-v1.js
-          git commit -m 'Polish Xiangqi difficulty controls'
+          git commit -m 'Enable playable Xiangqi endgame challenges'
           git pull --rebase origin master
           git push
