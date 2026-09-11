@@ -4,36 +4,27 @@ on:
     branches: [master]
     paths:
       - 'Html_tools/typhoon-provider-failover-v1.js'
+      - 'Html_tools/global-weather-lazy-v1.js'
       - '.github/workflows/ensure-typhoon-provider-failover.yml'
   workflow_dispatch:
-permissions:
-  contents: write
 jobs:
-  inject:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Keep provider failover runtime loaded
+      - name: Verify provider failover stays in lazy Global Weather runtime
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
-          p=Path('index.html')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r'\n?<script src="Html_tools/typhoon-provider-failover-v1\.js\?v=[^"]+"></script>','',s)
-          tag='<script src="Html_tools/typhoon-provider-failover-v1.js?v=20260911-typhoon-provider-failover-v1.1-recover-primary"></script>'
-          if '</body>' not in s:
-              raise SystemExit('body close missing')
-          s=s.replace('</body>',tag+'\n</body>')
-          p.write_text(s,encoding='utf-8')
+          lazy=Path('Html_tools/global-weather-lazy-v1.js').read_text(encoding='utf-8')
+          needle="['Html_tools/typhoon-provider-failover-v1.js'"
+          if needle not in lazy:
+              raise SystemExit('typhoon provider failover is missing from lazy Global Weather runtime')
+          index=Path('index.html').read_text(encoding='utf-8')
+          direct='<script src="Html_tools/typhoon-provider-failover-v1.js?'
+          if direct in index:
+              raise SystemExit('provider failover must remain lazy-loaded, not startup-loaded')
+          print('Provider failover is present in lazy runtime and absent from startup path.')
           PY
-      - name: Commit formal entry update
-        run: |
-          if git diff --quiet -- index.html; then exit 0; fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Load typhoon provider recovery guard'
-          git push
