@@ -40,6 +40,33 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: master
+      - name: Reduce Global Weather city density at low zoom
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('Html_tools/typhoon-dynamic-city-labels-v1.js')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r"const VER='[^']+';", "const VER='20260911-typhoon-dynamic-city-labels-v1.7-zoom-tiered';", s, count=1)
+          s=re.sub(
+            r"function capFor\(map\)\{.*?\}\nfunction pickPlaces",
+            "function capFor(map){const z=map.getZoom(),s=map.getSize(),area=Math.max(1,s.x*s.y),base=z<=2.8?8:z<=3.6?12:z<=4.4?18:z<=5.2?28:z<=6.2?42:z<=7.2?58:78;return Math.max(6,Math.min(88,Math.round(base*Math.min(1.18,Math.max(.72,area/760000)))))}\nfunction pickPlaces",
+            s,
+            count=1,
+            flags=re.S
+          )
+          s=s.replace("minPx=z<=4?68:z<=6?56:z<=8?48:42", "minPx=z<=3?104:z<=4?86:z<=5?70:z<=6?58:z<=8?48:42")
+          s=s.replace("if(p.minZoom>z+2.2&&imp<4e8)continue", "if(z<3.2&&!(p.capital||p.world||p.mega||p.pop>3500000))continue;if(z<4.2&&imp<9e8)continue;if(p.minZoom>z+1.6&&imp<5e8)continue")
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('Html_tools/global-weather-lazy-v1.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('20260911-global-weather-lazy-v1.7-single-layout-owner','20260911-global-weather-lazy-v1.8-zoom-tiered-cities')
+          s=s.replace("20260910-typhoon-dynamic-city-labels-v1.6-shared-hub","20260911-typhoon-dynamic-city-labels-v1.7-zoom-tiered")
+          s=s.replace('single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover','zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover')
+          p.write_text(s,encoding='utf-8')
+          PY
       - name: Keep Global Weather branded and off the startup critical path
         run: |
           python - <<'PY'
@@ -59,7 +86,7 @@ jobs:
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/global-weather-brand-v1.js?v=20260910-global-weather-brand-v1.0"></script>',
-            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.7-single-layout-owner"></script>',
+            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.8-zoom-tiered-cities"></script>',
           ]
           runtime_files=[
             'typhoon-widget','global-weather-brand-v1','global-weather-lazy-v1','typhoon-window-p0-fix',
@@ -87,13 +114,13 @@ jobs:
           PY
       - name: Commit runtime tag
         run: |
-          if git diff --quiet -- index.html; then
+          if git diff --quiet -- index.html Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/global-weather-lazy-v1.js; then
             echo 'WebDesk lazy Global Weather runtime already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Use one canonical Global Weather control layout'
+          git add index.html Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/global-weather-lazy-v1.js
+          git commit -m 'Tier Global Weather city labels by zoom'
           git pull --rebase origin master
           git push
