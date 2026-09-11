@@ -23,7 +23,7 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
           s=re.sub(r'\n?<script src="Html_tools/typhoon-overlay-health-v1\.js\?v=[^"]+"></script>','',s)
-          tag='<script src="Html_tools/typhoon-overlay-health-v1.js?v=20260911-typhoon-overlay-health-v1.1-overlay-time-source-sync"></script>'
+          tag='<script src="Html_tools/typhoon-overlay-health-v1.js?v=20260911-typhoon-overlay-health-v1.2-data-time-coherence"></script>'
           anchors=[
             r'(<script src="Html_tools/typhoon-weather-health-v1\.js\?v=[^"]+"></script>)',
             r'(<script src="Html_tools/typhoon-openmeteo-broker-v1\.js\?v=[^"]+"></script>)'
@@ -45,5 +45,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Load typhoon overlay time source sync guard'
+          git commit -m 'Load typhoon overlay data time coherence guard'
           git push
