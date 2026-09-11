@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Stabilize raster rendering and keep canonical entry
+      - name: Stage vector providers and keep canonical entry
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -35,23 +35,32 @@ jobs:
           r = runtime.read_text(encoding='utf-8')
 
           r = r.replace(
-              "const VER='20260911-mayday-openfreemap-v3.0-raster-motion-stable';",
               "const VER='20260911-mayday-openfreemap-v3.1-raster-seamless-handoff';",
+              "const VER='20260911-mayday-openfreemap-v3.2-vector-seamless-handoff';",
               1,
           )
-          old_try = "async function tryRaster(spec,which,seq,withSatLabels=false){const probe=makeTile(spec);const extras=[];if(withSatLabels)extras.push(makeTile({url:'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',maxNativeZoom:20,attribution:'© CARTO'},{opacity:.82}));const group=L.layerGroup([probe,...extras]).addTo(map);try{await waitTiles(probe);if(seq!==switchSeq){removeLayer(group);return false}const oldBase=base,oldRaster=raster;base=null;raster=group;removeLayer(oldBase);if(oldRaster!==group)removeLayer(oldRaster);rasterBadSamples=0;ensureRasterWatch();return true}catch(err){removeLayer(group);throw err}}"
-          new_try = "async function tryRaster(spec,which,seq,withSatLabels=false){const hasOld=!!(base||raster);const probe=makeTile(spec,{opacity:hasOld?0:1});const extras=[];if(withSatLabels)extras.push(makeTile({url:'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',maxNativeZoom:20,attribution:'© CARTO'},{opacity:hasOld?0:.82}));const group=L.layerGroup([probe,...extras]).addTo(map);try{await waitTiles(probe);if(seq!==switchSeq){removeLayer(group);return false}const oldBase=base,oldRaster=raster;if(hasOld){for(const layer of [probe,...extras]){try{const c=layer.getContainer?.();if(c)c.style.transition='opacity .18s ease-out'}catch(_){}}probe.setOpacity?.(1);extras.forEach(l=>l.setOpacity?.(.82));await new Promise(res=>setTimeout(res,190));if(seq!==switchSeq){removeLayer(group);return false}}base=null;raster=group;removeLayer(oldBase);if(oldRaster!==group)removeLayer(oldRaster);rasterBadSamples=0;ensureRasterWatch();return true}catch(err){removeLayer(group);throw err}}"
-          if old_try in r:
-              r = r.replace(old_try, new_try, 1)
-          elif 'v3.1-raster-seamless-handoff' not in r:
-              raise SystemExit('tryRaster canonical block not found; refusing unsafe rewrite')
+
+          old_helper = "function removeLayer(layer){if(layer&&map)try{map.removeLayer(layer)}catch(_){} }"
+          new_helper = "function removeLayer(layer){if(layer&&map)try{map.removeLayer(layer)}catch(_){} }\nfunction reducedMotion(){try{return !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches}catch(_){return false}}\nfunction setVectorOpacity(layer,value,transition=false){try{const gl=layer?._glMap||layer?._maplibreGL;const c=layer?.getContainer?.()||layer?._container||gl?.getContainer?.()?.closest?.('.leaflet-maplibre-gl')||gl?.getCanvasContainer?.()?.parentElement;if(!c)return false;c.style.pointerEvents='none';c.style.transition=transition&&!reducedMotion()?'opacity .18s ease-out':'none';c.style.opacity=String(value);return true}catch(_){return false}}"
+          if 'function setVectorOpacity(' not in r:
+              if old_helper not in r:
+                  raise SystemExit('removeLayer anchor not found; refusing unsafe helper injection')
+              r = r.replace(old_helper, new_helper, 1)
+
+          old_vector = "async function addVector(style,which,seq){if(!map||!window.L?.maplibreGL)throw new Error('vector unavailable');if(Date.now()<vectorBackoffUntil){status('OpenFreeMap 暫時不可用，直接使用「'+MODES[which].label+'」備援底圖…',false);return fallbackRaster(which,seq)}const next=window.L.maplibreGL({style:OFM+style,pane:'tilePane',interactive:false,attributionControl:false,renderWorldCopies:true,fadeDuration:0,padding:.08});next.addTo(map);try{await waitVector(next);if(seq!==switchSeq){removeLayer(next);return false}vectorBackoffUntil=0;const oldBase=base,oldRaster=raster;base=next;raster=null;rasterBadSamples=0;removeLayer(oldBase);removeLayer(oldRaster);try{map.attributionControl.addAttribution('OpenFreeMap © OpenMapTiles · OpenStreetMap')}catch(_){}return true}catch(err){removeLayer(next);vectorBackoffUntil=Date.now()+120000;status('OpenFreeMap '+MODES[which].label+' 暫時不可用，正在切換備援…',false);return fallbackRaster(which,seq)}}"
+          new_vector = "async function addVector(style,which,seq){if(!map||!window.L?.maplibreGL)throw new Error('vector unavailable');if(Date.now()<vectorBackoffUntil){status('OpenFreeMap 暫時不可用，直接使用「'+MODES[which].label+'」備援底圖…',false);return fallbackRaster(which,seq)}const hasOld=!!(base||raster);const next=window.L.maplibreGL({style:OFM+style,pane:'tilePane',interactive:false,attributionControl:false,renderWorldCopies:true,fadeDuration:0,padding:.08});next.addTo(map);if(hasOld){setVectorOpacity(next,0,false);requestAnimationFrame(()=>setVectorOpacity(next,0,false))}try{await waitVector(next);if(seq!==switchSeq){removeLayer(next);return false}vectorBackoffUntil=0;const oldBase=base,oldRaster=raster;if(hasOld){setVectorOpacity(next,1,true);if(!reducedMotion())await new Promise(res=>setTimeout(res,190));if(seq!==switchSeq){removeLayer(next);return false}}base=next;raster=null;rasterBadSamples=0;removeLayer(oldBase);removeLayer(oldRaster);try{map.attributionControl.addAttribution('OpenFreeMap © OpenMapTiles · OpenStreetMap')}catch(_){}return true}catch(err){removeLayer(next);vectorBackoffUntil=Date.now()+120000;status('OpenFreeMap '+MODES[which].label+' 暫時不可用，正在切換備援…',false);return fallbackRaster(which,seq)}}"
+          if old_vector in r:
+              r = r.replace(old_vector, new_vector, 1)
+          elif 'v3.2-vector-seamless-handoff' not in r or 'setVectorOpacity(next,0,false)' not in r:
+              raise SystemExit('addVector canonical block not found; refusing unsafe rewrite')
+
           runtime.write_text(r, encoding='utf-8')
 
           p = Path('maydayland/index.html')
           s = p.read_text(encoding='utf-8')
           s = re.sub(
               r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v3.1-raster-seamless-handoff" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v3.2-vector-seamless-handoff" defer></script>',
               s,
               count=1,
           )
@@ -61,17 +70,19 @@ jobs:
               s = s.replace("'raster-pan-watchdog',", "'raster-pan-watchdog','raster-motion-stable',", 1)
           if "'raster-seamless-handoff'" not in s:
               s = s.replace("'raster-motion-stable',", "'raster-motion-stable','raster-seamless-handoff',", 1)
+          if "'vector-seamless-handoff'" not in s:
+              s = s.replace("'raster-seamless-handoff',", "'raster-seamless-handoff','vector-seamless-handoff',", 1)
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit runtime stabilization if needed
+      - name: Commit vector handoff if needed
         run: |
           if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
-            echo 'Maydayland raster handoff runtime already canonical.'
+            echo 'Maydayland vector handoff runtime already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Stage Mayday raster layers before seamless reveal'
+          git commit -m 'Stage Mayday vector layers before seamless reveal'
           git pull --rebase origin master
           git push
