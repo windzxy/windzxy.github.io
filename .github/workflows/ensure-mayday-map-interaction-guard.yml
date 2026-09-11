@@ -1,93 +1,57 @@
 name: Ensure Maydayland Map Interaction Guard
+
 on:
   push:
     branches: [master]
     paths:
+      - 'maydayland/index.html'
       - 'maydayland/tour-map-interaction-guard-v1.js'
       - 'maydayland/tour-map-stability-v1.js'
       - 'maydayland/tour-map-openfreemap-v2.js'
       - '.github/workflows/ensure-mayday-map-interaction-guard.yml'
   workflow_dispatch:
+
 permissions:
   contents: write
+
+concurrency:
+  group: maydayland-map-runtime
+  cancel-in-progress: false
+
 jobs:
-  inject:
+  ensure:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Harden vector readiness and raster viewport coverage
+      - name: Keep canonical Maydayland map runtime entry
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          p=Path('maydayland/tour-map-openfreemap-v2.js')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VER='[^']+';","const VER='20260911-mayday-openfreemap-v2.9-raster-pan-watchdog';",s,count=1)
-          vector=r'''function waitVector(layer,timeout=5200){return new Promise((resolve,reject)=>{const start=Date.now();let done=false,bound=null,errors=0,readyEvents=0;const cleanup=()=>{if(bound?.off)for(const [ev,fn] of [['error',onError],['load',onReady],['idle',onReady],['render',onRender]])try{bound.off(ev,fn)}catch(_){}};const finish=(ok,err)=>{if(done)return;done=true;cleanup();ok?resolve():reject(err||new Error('vector load failed'))};const onError=e=>{errors++;const msg=String(e?.error?.message||e?.message||e?.error||'');if(errors>=2||/(style|source|sprite|glyph|404|403|failed to fetch|network|load failed)/i.test(msg))finish(false,new Error(msg||'vector provider error'))};const providerReady=gl=>{try{if(gl?.loaded?.())return true;const styleReady=gl?.isStyleLoaded?.();const tilesReady=gl?.areTilesLoaded?.();return styleReady===true&&tilesReady===true}catch(_){return false}};const onReady=()=>{readyEvents++;if(bound&&providerReady(bound))finish(true)};const onRender=()=>{if(bound&&providerReady(bound))finish(true)};const bind=gl=>{if(!gl||gl===bound)return;if(bound)cleanup();bound=gl;try{bound.on?.('error',onError);bound.on?.('load',onReady);bound.on?.('idle',onReady);bound.on?.('render',onRender)}catch(_){}};const tick=()=>{if(done)return;const gl=layer?._glMap||layer?._maplibreGL;bind(gl);if(gl&&providerReady(gl))return finish(true);if(Date.now()-start>timeout)return finish(false,new Error('vector provider readiness timeout'+(readyEvents?' after '+readyEvents+' render events':'')));setTimeout(tick,100)};tick()})}'''
-          s,n=re.subn(r'function waitVector\(layer,timeout=\d+\)\{.*?\}\nfunction waitTiles',vector+'\nfunction waitTiles',s,count=1,flags=re.S)
-          if n!=1:
-              raise SystemExit('Could not normalize waitVector readiness guard')
-          raster=r'''function waitTiles(layer,timeout=4600){return new Promise((resolve,reject)=>{const start=Date.now();let done=false,loads=0,errors=0,checkTimer=0;const coverage=()=>{try{const tiles=Object.values(layer?._tiles||{}).filter(t=>t&&t.el&&t.current!==false);const total=tiles.length;const loaded=tiles.filter(t=>t.loaded||(t.el.complete&&t.el.naturalWidth>0)).length;return {total,loaded,ratio:total?loaded/total:0}}catch(_){return {total:0,loaded:loads,ratio:loads?1:0}}};const healthy=()=>{const c=coverage();if(c.total<=2)return c.loaded>=1;return c.loaded>=2&&c.ratio>=.45};const cleanup=()=>{clearTimeout(checkTimer);layer.off('tileload',onLoad);layer.off('tileerror',onError)};const finish=(pass)=>{if(done)return;done=true;cleanup();pass?resolve():reject(new Error('tile viewport coverage failed'))};const verify=()=>{if(done)return;if(healthy())return finish(true);if(Date.now()-start>=timeout)return finish(false);checkTimer=setTimeout(verify,180)};const onLoad=()=>{loads++;clearTimeout(checkTimer);checkTimer=setTimeout(verify,220)};const onError=()=>{errors++;if(errors>=4&&!loads&&!coverage().loaded)return finish(false);clearTimeout(checkTimer);checkTimer=setTimeout(verify,180)};layer.on('tileload',onLoad);layer.on('tileerror',onError);verify()})}'''
-          s,n=re.subn(r'function waitTiles\(layer,timeout=\d+\)\{.*?\}\nfunction makeTile',raster+'\nfunction makeTile',s,count=1,flags=re.S)
-          if n!=1:
-              raise SystemExit('Could not replace raster viewport health guard')
-          old_decl="let depsPromise=null,map=null,base=null,raster=null,routeLayer=null,markerLayer=null,mode='street',mountedStage=null,switchSeq=0,resizeObserver=null,vectorBackoffUntil=0;"
-          new_decl="let depsPromise=null,map=null,base=null,raster=null,routeLayer=null,markerLayer=null,mode='street',mountedStage=null,switchSeq=0,resizeObserver=null,vectorBackoffUntil=0,rasterWatchTimer=null,rasterRepairBackoffUntil=0,rasterBadSamples=0;"
-          if old_decl in s:
-              s=s.replace(old_decl,new_decl,1)
-          elif 'rasterWatchTimer=null' not in s:
-              raise SystemExit('Could not add raster watchdog state')
-          watchdog=r'''function rasterProbe(){if(!raster)return null;if(raster._tiles)return raster;let probe=null;try{raster.eachLayer?.(l=>{if(!probe&&l?._tiles)probe=l})}catch(_){}return probe}
-function rasterCoverage(layer){try{const tiles=Object.values(layer?._tiles||{}).filter(t=>t&&t.el&&t.current!==false);const total=tiles.length;const loaded=tiles.filter(t=>t.loaded||(t.el.complete&&t.el.naturalWidth>0)).length;return {total,loaded,ratio:total?loaded/total:0}}catch(_){return {total:0,loaded:0,ratio:0}}}
-function ensureRasterWatch(){if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster||Date.now()<rasterRepairBackoffUntil)return;try{if(map._animatingZoom||map.dragging?._draggable?._moving)return}catch(_){}const probe=rasterProbe();if(!probe)return;const c=rasterCoverage(probe);const bad=c.total>=3&&(c.loaded<2||c.ratio<.34);if(!bad){rasterBadSamples=0;return}rasterBadSamples++;if(rasterBadSamples<2)return;rasterBadSamples=0;rasterRepairBackoffUntil=Date.now()+30000;status(MODES[mode].label+'底圖局部載入不足，正在重新建立可見區域…',false,2600);switchMode(mode,true).catch(()=>{})},2200)}'''
-          if 'function rasterProbe()' not in s:
-              s,n=re.subn(r'\nasync function tryRaster\(', '\n'+watchdog+'\nasync function tryRaster(', s, count=1)
-              if n!=1:
-                  raise SystemExit('Could not insert raster watchdog')
-          s=s.replace("if(oldRaster!==group)removeLayer(oldRaster);return true","if(oldRaster!==group)removeLayer(oldRaster);rasterBadSamples=0;ensureRasterWatch();return true",1)
-          s=s.replace("base=next;raster=null;removeLayer(oldBase);removeLayer(oldRaster);","base=next;raster=null;rasterBadSamples=0;removeLayer(oldBase);removeLayer(oldRaster);",1)
-          s=s.replace("document.documentElement.dataset.maydaylandMap='openfreemap-v2.8'","document.documentElement.dataset.maydaylandMap='openfreemap-v2.9'")
-          s=s.replace("document.documentElement.dataset.maydaylandMap='osm-fallback-v2.8'","document.documentElement.dataset.maydaylandMap='osm-fallback-v2.9'")
-          p.write_text(s,encoding='utf-8')
-          PY
-      - name: Keep Maydayland map interaction guard loaded
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-          p=Path('maydayland/index.html')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r'\n?<script src="\./tour-map-interaction-guard-v1\.js\?v=[^"]+" defer></script>','',s)
-          replacement=(
-            '<script src="./tour-map-interaction-guard-v1.js?v=20260911-tour-map-interaction-guard-v1.0" defer></script>\n'
-            '<script src="./tour-map-stability-v1.js?v=20260911-tour-map-stability-v1.3-fast-recovery" defer></script>'
+
+          p = Path('maydayland/index.html')
+          s = p.read_text(encoding='utf-8')
+          s = re.sub(
+              r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v2.9-raster-pan-watchdog" defer></script>',
+              s,
+              count=1,
           )
-          s=re.sub(r'<script src="\./tour-map-stability-v1\.js\?v=[^"]+" defer></script>', replacement, s)
-          if replacement not in s:
-            anchor='<script src="./tour-map-fallback-status-v1.js?v=20260910-mayday-tour-map-fallback-status-v1.0" defer></script>'
-            s=s.replace(anchor, anchor+'\n'+replacement)
-          s=re.sub(r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>','<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v2.9-raster-pan-watchdog" defer></script>',s)
-          s=s.replace("'interaction-aware-recovery','interaction-aware-recovery',", "'interaction-aware-recovery',")
-          if "'painted-fallback-recovery'" not in s:
-            s=s.replace("'interaction-aware-recovery',", "'interaction-aware-recovery','painted-fallback-recovery',", 1)
-          if "'fast-blank-recovery'" not in s:
-            s=s.replace("'painted-fallback-recovery',", "'painted-fallback-recovery','fast-blank-recovery',", 1)
-          if "'vector-provider-ready-check'" not in s:
-            s=s.replace("'fast-provider-failover',", "'fast-provider-failover','vector-provider-ready-check',", 1)
-          if "'raster-viewport-health'" not in s:
-            s=s.replace("'vector-provider-ready-check',", "'vector-provider-ready-check','raster-viewport-health',", 1)
           if "'raster-pan-watchdog'" not in s:
-            s=s.replace("'raster-viewport-health',", "'raster-viewport-health','raster-pan-watchdog',", 1)
-          p.write_text(s,encoding='utf-8')
+              s = s.replace("'raster-viewport-health',", "'raster-viewport-health','raster-pan-watchdog',", 1)
+          p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit formal entry update
+      - name: Commit canonical entry if needed
         run: |
-          if git diff --quiet -- maydayland/index.html maydayland/tour-map-openfreemap-v2.js; then exit 0; fi
+          if git diff --quiet -- maydayland/index.html; then
+            echo 'Maydayland map runtime entry already canonical.'
+            exit 0
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add maydayland/index.html maydayland/tour-map-openfreemap-v2.js
-          git commit -m 'Watch raster viewport health after pan and zoom'
+          git add maydayland/index.html
+          git commit -m 'Keep Mayday raster pan watchdog loaded'
           git pull --rebase origin master
           git push
