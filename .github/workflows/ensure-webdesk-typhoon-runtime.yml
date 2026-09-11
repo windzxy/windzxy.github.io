@@ -39,7 +39,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: master
-      - name: Keep Global Weather off the startup critical path
+      - name: Keep Global Weather branded and off the startup critical path
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -48,6 +48,15 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
+          # The legacy app id remains "typhoon" for saved workspace compatibility,
+          # but the visible product name is now Global Weather at first paint.
+          s=re.sub(
+            r'\{id:"typhoon",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-typhoon"\}',
+            '{id:"typhoon",kind:"widget",title:"全球氣象",desc:"實時雷達、衛星、降水、真實風場、溫濕度、氣壓與熱帶氣旋路徑。",icon:"🌦️",tone:"t-typhoon"}',
+            s,
+            count=1
+          )
+
           # WebDesk startup must stay light. Only the core card registration,
           # branding and one tiny lazy loader are parsed at boot. Radar, maps,
           # forecast models, particles, city overlays and provider recovery
@@ -55,7 +64,7 @@ jobs:
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/global-weather-brand-v1.js?v=20260910-global-weather-brand-v1.0"></script>',
-            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.3-provider-failover"></script>',
+            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260911-global-weather-lazy-v1.4-smooth-forecast-panzoom"></script>',
           ]
           runtime_files=[
             'typhoon-widget','global-weather-brand-v1','global-weather-lazy-v1','typhoon-window-p0-fix',
@@ -90,6 +99,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Lazy-load Global Weather runtime after card open'
+          git commit -m 'Rename Typhoon to Global Weather and smooth forecast map'
           git pull --rebase origin master
           git push
