@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Coalesce rapid map-mode clicks and keep canonical entry
+      - name: Cancel stale map-mode work during click coalescing
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -34,33 +34,19 @@ jobs:
           runtime = Path('maydayland/tour-map-openfreemap-v2.js')
           r = runtime.read_text(encoding='utf-8')
 
-          old_ver = "const VER='20260911-mayday-openfreemap-v3.3-vector-supersede-cancel';"
-          new_ver = "const VER='20260912-mayday-openfreemap-v3.4-mode-switch-coalesce';"
+          old_ver = "const VER='20260912-mayday-openfreemap-v3.4-mode-switch-coalesce';"
+          new_ver = "const VER='20260912-mayday-openfreemap-v3.5-immediate-supersede';"
           if old_ver in r:
               r = r.replace(old_ver, new_ver, 1)
           elif new_ver not in r:
               raise SystemExit('unexpected Mayday map runtime version; refusing unsafe rewrite')
 
-          old_globals = "let depsPromise=null,map=null,base=null,raster=null,routeLayer=null,markerLayer=null,mode='street',mountedStage=null,switchSeq=0,resizeObserver=null,vectorBackoffUntil=0,rasterWatchTimer=null,rasterRepairBackoffUntil=0,rasterBadSamples=0;"
-          new_globals = "let depsPromise=null,map=null,base=null,raster=null,routeLayer=null,markerLayer=null,mode='street',mountedStage=null,switchSeq=0,resizeObserver=null,vectorBackoffUntil=0,rasterWatchTimer=null,rasterRepairBackoffUntil=0,rasterBadSamples=0,modeSwitchTimer=0,pendingMode=null;"
-          if old_globals in r:
-              r = r.replace(old_globals, new_globals, 1)
-          elif new_globals not in r:
-              raise SystemExit('mode switch state anchor not found')
-
-          switch_anchor = "async function switchMode(next,force=false){if(!MODES[next]||(!force&&next===mode))return;const seq=++switchSeq,spec=MODES[next];busy(true);status('正在載入「'+spec.label+'」底圖…');try{const ok=spec.kind==='vector'?await addVector(spec.style,next,seq):await addRaster(next,seq);if(!ok||seq!==switchSeq)return;mode=next;document.querySelectorAll('.mayday-map-modes button').forEach(b=>b.classList.toggle('on',b.dataset.mode===mode));status(spec.label+'底圖已載入',false,1100);requestAnimationFrame(()=>{try{map.invalidateSize(false);base?._glMap?.resize?.()}catch(_){}})}catch(err){if(seq===switchSeq)status(spec.label+'底圖載入失敗，已保留上一個可用底圖',true,3200)}finally{if(seq===switchSeq)busy(false)}}"
-          queued = switch_anchor + "\nfunction requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode)return;switchMode(target).catch(()=>{})},90)}"
-          if "function requestModeSwitch(next){" not in r:
-              if switch_anchor not in r:
-                  raise SystemExit('switchMode anchor not found')
-              r = r.replace(switch_anchor, queued, 1)
-
-          old_click = "box.addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(b)switchMode(b.dataset.mode)});"
-          new_click = "box.addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(b)requestModeSwitch(b.dataset.mode)});"
-          if old_click in r:
-              r = r.replace(old_click, new_click, 1)
-          elif new_click not in r:
-              raise SystemExit('mode button click anchor not found')
+          old_request = "function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode)return;switchMode(target).catch(()=>{})},90)}"
+          new_request = "function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;++switchSeq;busy(true);status('準備切換至「'+MODES[next].label+'」底圖…');clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode){busy(false);status('',false);return}switchMode(target).catch(()=>{})},90)}"
+          if old_request in r:
+              r = r.replace(old_request, new_request, 1)
+          elif new_request not in r:
+              raise SystemExit('mode switch coalescing anchor not found')
 
           runtime.write_text(r, encoding='utf-8')
 
@@ -68,25 +54,25 @@ jobs:
           s = p.read_text(encoding='utf-8')
           s = re.sub(
               r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v3.4-mode-switch-coalesce" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v3.5-immediate-supersede" defer></script>',
               s,
               count=1,
           )
-          if "'mode-switch-coalesce'" not in s:
-              if "'vector-supersede-cancel'" not in s:
-                  raise SystemExit('vector supersede preserve marker anchor not found')
-              s = s.replace("'vector-supersede-cancel',", "'vector-supersede-cancel','mode-switch-coalesce',", 1)
+          if "'immediate-mode-supersede'" not in s:
+              if "'mode-switch-coalesce'" not in s:
+                  raise SystemExit('mode switch preserve marker anchor not found')
+              s = s.replace("'mode-switch-coalesce',", "'mode-switch-coalesce','immediate-mode-supersede',", 1)
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit map-mode coalescing if needed
+      - name: Commit immediate mode supersede if needed
         run: |
           if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
-            echo 'Maydayland map-mode coalescing already canonical.'
+            echo 'Maydayland immediate mode supersede already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Coalesce rapid Mayday map mode switches'
+          git commit -m 'Cancel stale Mayday map switch before debounce settles'
           git pull --rebase origin master
           git push
