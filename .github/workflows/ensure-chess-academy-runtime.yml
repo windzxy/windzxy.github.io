@@ -51,7 +51,7 @@ jobs:
           else:
               s=s.replace('</body>',fix+'\n</body>',1)
 
-          render_fix='<script src="Html_tools/chess-render-stability-v1.js?v=20260911-chess-render-stability-v1.0"></script>'
+          render_fix='<script src="Html_tools/chess-render-stability-v1.js?v=20260911-chess-render-stability-v1.1-no-flicker"></script>'
           s=re.sub(r'\n?<script src="Html_tools/chess-render-stability-v1\.js\?v=[^"]+"></script>','',s)
           polish=re.search(r'<script\s+src="Html_tools/boardgame-polish-v3-lite\.js\?v=[^"]+"\s*>\s*</script>',s)
           if polish:
@@ -73,6 +73,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Load chess rendering stability patch'
+          git commit -m 'Load no-flicker chess render patch'
           git pull --rebase origin master
           git push
