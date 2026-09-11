@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260911-global-weather-lazy-v1.6-no-flicker-top-left';
+const VERSION='20260911-global-weather-lazy-v1.7-single-layout-owner';
 if(window.__windzxyGlobalWeatherLazy===VERSION)return;
 window.__windzxyGlobalWeatherLazy=VERSION;
 let loading=false,loaded=false,observer=null;
@@ -20,7 +20,7 @@ const SCRIPTS=[
  ['Html_tools/typhoon-dynamic-city-labels-v1.js','20260910-typhoon-dynamic-city-labels-v1.6-shared-hub'],
  ['Html_tools/typhoon-zoom-motion-v2-1.js','20260910-typhoon-zoom-motion-v2.1-real-vectors'],
  ['Html_tools/mobile-desktop-ux-v1.js','20260910-mobile-desktop-ux-v1.0'],
- ['Html_tools/typhoon-control-layout-v13.js','20260911-typhoon-control-layout-v13.0-top-left-refined']
+ ['Html_tools/typhoon-control-layout-v13.js','20260911-typhoon-control-layout-v13.1-single-owner']
 ];
 function hasWeather(){return !!document.querySelector('[data-typhoon-root],.typhoon-widget,.desktop-card.t-typhoon')}
 function load(src,v){return new Promise(resolve=>{if(document.querySelector('script[data-weather-lazy="'+src+'"]')||document.querySelector('script[src^="'+src+'?"]'))return resolve();const s=document.createElement('script');s.src=src+'?v='+v;s.async=false;s.dataset.weatherLazy=src;s.onload=resolve;s.onerror=resolve;document.body.appendChild(s)})}
@@ -29,5 +29,5 @@ async function activate(){if(loading||loaded||!hasWeather())return;loading=true;
 function schedule(){if(loading||loaded)return;if('requestIdleCallback'in window)requestIdleCallback(()=>activate(),{timeout:250});else setTimeout(activate,30)}
 function boot(){if(hasWeather())schedule();else{const root=document.getElementById('desktopCanvas')||document.body;observer=new MutationObserver(()=>{if(hasWeather())schedule()});observer.observe(root,{childList:true,subtree:true})}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskGlobalWeatherLazy={version:VERSION,get loaded(){return loaded},activate,scripts:SCRIPTS.map(x=>x[0]),performanceProfile:'no-tile-fade+buffered-satellite-pan+top-left-refined-controls+cached-debounced-forecast-panzoom+provider-failover'};
+window.WebDeskGlobalWeatherLazy={version:VERSION,get loaded(){return loaded},activate,scripts:SCRIPTS.map(x=>x[0]),performanceProfile:'single-layout-owner+no-tile-fade+buffered-satellite-pan+cached-debounced-forecast-panzoom+provider-failover'};
 })();
