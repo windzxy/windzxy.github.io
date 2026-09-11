@@ -1,13 +1,21 @@
 (()=>{
 'use strict';
-const VER='20260911-typhoon-control-layout-v13.0-top-left-refined';
+const VER='20260911-typhoon-control-layout-v13.1-single-owner';
 if(window.__windzxyTyphoonControlLayoutV13===VER)return;
 window.__windzxyTyphoonControlLayoutV13=VER;
+window.__windzxyTyphoonLayoutOwner=VER;
+
+const LEGACY_STYLE_IDS=['tpControlLayoutV10Css','tpControlLayoutV11Css','tpControlLayoutV12Css'];
+function cleanupLegacyLayouts(){
+  LEGACY_STYLE_IDS.forEach(id=>document.getElementById(id)?.remove());
+  document.querySelectorAll('script[src*="typhoon-control-layout-v10.js"],script[src*="typhoon-control-layout-v11.js"],script[src*="typhoon-control-layout-v12.js"]').forEach(el=>el.remove());
+}
 function style(){
+ cleanupLegacyLayouts();
  let s=document.getElementById('tpControlLayoutV13Css');
  if(!s){s=document.createElement('style');s.id='tpControlLayoutV13Css';document.head.appendChild(s)}
  s.textContent=`
-/* Refined return to the compact top-left layout the user preferred. */
+/* Canonical Global Weather layout. v10-v12 styles are removed before this sheet is applied. */
 [data-typhoon-root]>.tp-weather-p0-global{
  left:12px!important;right:auto!important;top:52px!important;bottom:auto!important;transform:none!important;
  width:min(336px,calc(100% - 24px))!important;max-width:none!important;max-height:calc(100% - 76px)!important;
@@ -36,12 +44,9 @@ function style(){
 [data-typhoon-root]>.tp-weather-p0-global .tp-wind-v3-bar,
 [data-typhoon-root]>.tp-weather-p0-global .tp-real-v4-bar,
 [data-typhoon-root]>.tp-weather-p0-global .tp-vector-truth{display:none!important}
-/* Satellite timeline sits under the compact top-left weather card. */
 [data-typhoon-root] .tpv51-satbar{left:12px!important;right:auto!important;top:264px!important;bottom:auto!important;transform:none!important;width:min(336px,calc(100% - 24px))!important;box-sizing:border-box!important}
-/* Cyclone intelligence stays compact at top-right. */
 [data-typhoon-root] .tpv4-panel{right:12px!important;top:48px!important;width:218px!important;max-height:210px!important;padding:9px!important;border-radius:12px!important;overflow:auto!important}
 [data-typhoon-root] .tpv4-storms{right:12px!important;top:266px!important;width:218px!important;max-height:120px!important;overflow:auto!important}
-/* Basemap and zoom remain a single predictable bottom-right cluster. */
 [data-typhoon-root] .tpv4-maptools{right:12px!important;bottom:14px!important;top:auto!important;left:auto!important;display:flex!important;flex-direction:column!important;align-items:flex-end!important;gap:6px!important}
 [data-typhoon-root] .tpv4-basemap{max-width:310px!important;overflow-x:auto!important;white-space:nowrap!important;scrollbar-width:none!important}
 [data-typhoon-root] .tpv4-basemap::-webkit-scrollbar{display:none!important}
@@ -70,9 +75,18 @@ function style(){
 }
 `;
 }
-function annotate(root){const box=root.querySelector(':scope > .tp-weather-p0-global');if(box)box.dataset.layout='top-left-refined-v13'}
+function annotate(root){
+ cleanupLegacyLayouts();
+ const box=root.querySelector(':scope > .tp-weather-p0-global');
+ if(box){box.dataset.layout='top-left-refined-v13.1';box.dataset.layoutOwner='v13.1'}
+}
 function scan(){document.querySelectorAll('[data-typhoon-root]').forEach(annotate)}
-function boot(){style();scan();const host=document.getElementById('windowLayer')||document.body;new MutationObserver(()=>scan()).observe(host,{childList:true,subtree:true});setInterval(scan,1800)}
+function boot(){
+ style();scan();
+ const host=document.getElementById('windowLayer')||document.body;
+ new MutationObserver(()=>{cleanupLegacyLayouts();scan()}).observe(host,{childList:true,subtree:true});
+ setInterval(()=>{cleanupLegacyLayouts();scan()},1800);
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskTyphoonControlLayout={version:'v13.0',desktop:'compact-top-left-refined',mobile:'compact-top',cyclonePanel:'compact-top-right',mapTools:'bottom-right',satelliteTimeline:'under-weather-card',mapFirst:true};
+window.WebDeskTyphoonControlLayout={version:'v13.1',desktop:'compact-top-left-refined',mobile:'compact-top',cyclonePanel:'compact-top-right',mapTools:'bottom-right',satelliteTimeline:'under-weather-card',mapFirst:true,singleOwner:true};
 })();
