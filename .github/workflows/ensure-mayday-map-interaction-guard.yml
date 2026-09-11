@@ -17,20 +17,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Harden OpenFreeMap provider readiness detection
+      - name: Harden vector readiness and raster viewport coverage
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
           p=Path('maydayland/tour-map-openfreemap-v2.js')
           s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VER='[^']+';","const VER='20260911-mayday-openfreemap-v2.7-provider-ready-check';",s,count=1)
-          replacement=r'''function waitVector(layer,timeout=5200){return new Promise((resolve,reject)=>{const start=Date.now();let done=false,bound=null,errors=0,readyEvents=0;const cleanup=()=>{if(bound?.off)for(const [ev,fn] of [['error',onError],['load',onReady],['idle',onReady],['render',onRender]])try{bound.off(ev,fn)}catch(_){}};const finish=(ok,err)=>{if(done)return;done=true;cleanup();ok?resolve():reject(err||new Error('vector load failed'))};const onError=e=>{errors++;const msg=String(e?.error?.message||e?.message||e?.error||'');if(errors>=2||/(style|source|sprite|glyph|404|403|failed to fetch|network|load failed)/i.test(msg))finish(false,new Error(msg||'vector provider error'))};const providerReady=gl=>{try{if(gl?.loaded?.())return true;const styleReady=gl?.isStyleLoaded?.();const tilesReady=gl?.areTilesLoaded?.();return styleReady===true&&tilesReady===true}catch(_){return false}};const onReady=()=>{readyEvents++;if(bound&&providerReady(bound))finish(true)};const onRender=()=>{if(bound&&providerReady(bound))finish(true)};const bind=gl=>{if(!gl||gl===bound)return;if(bound)cleanup();bound=gl;try{bound.on?.('error',onError);bound.on?.('load',onReady);bound.on?.('idle',onReady);bound.on?.('render',onRender)}catch(_){}};const tick=()=>{if(done)return;const gl=layer?._glMap||layer?._maplibreGL;bind(gl);if(gl&&providerReady(gl))return finish(true);if(Date.now()-start>timeout)return finish(false,new Error('vector provider readiness timeout'+(readyEvents?' after '+readyEvents+' render events':'')));setTimeout(tick,100)};tick()})}'''
-          s,n=re.subn(r'function waitVector\(layer,timeout=4300\)\{.*?\}\nfunction waitTiles',replacement+'\nfunction waitTiles',s,count=1,flags=re.S)
+          s=re.sub(r"const VER='[^']+';","const VER='20260911-mayday-openfreemap-v2.8-raster-viewport-health';",s,count=1)
+          vector=r'''function waitVector(layer,timeout=5200){return new Promise((resolve,reject)=>{const start=Date.now();let done=false,bound=null,errors=0,readyEvents=0;const cleanup=()=>{if(bound?.off)for(const [ev,fn] of [['error',onError],['load',onReady],['idle',onReady],['render',onRender]])try{bound.off(ev,fn)}catch(_){}};const finish=(ok,err)=>{if(done)return;done=true;cleanup();ok?resolve():reject(err||new Error('vector load failed'))};const onError=e=>{errors++;const msg=String(e?.error?.message||e?.message||e?.error||'');if(errors>=2||/(style|source|sprite|glyph|404|403|failed to fetch|network|load failed)/i.test(msg))finish(false,new Error(msg||'vector provider error'))};const providerReady=gl=>{try{if(gl?.loaded?.())return true;const styleReady=gl?.isStyleLoaded?.();const tilesReady=gl?.areTilesLoaded?.();return styleReady===true&&tilesReady===true}catch(_){return false}};const onReady=()=>{readyEvents++;if(bound&&providerReady(bound))finish(true)};const onRender=()=>{if(bound&&providerReady(bound))finish(true)};const bind=gl=>{if(!gl||gl===bound)return;if(bound)cleanup();bound=gl;try{bound.on?.('error',onError);bound.on?.('load',onReady);bound.on?.('idle',onReady);bound.on?.('render',onRender)}catch(_){}};const tick=()=>{if(done)return;const gl=layer?._glMap||layer?._maplibreGL;bind(gl);if(gl&&providerReady(gl))return finish(true);if(Date.now()-start>timeout)return finish(false,new Error('vector provider readiness timeout'+(readyEvents?' after '+readyEvents+' render events':'')));setTimeout(tick,100)};tick()})}'''
+          s,n=re.subn(r'function waitVector\(layer,timeout=\d+\)\{.*?\}\nfunction waitTiles',vector+'\nfunction waitTiles',s,count=1,flags=re.S)
           if n!=1:
-              raise SystemExit('Could not replace waitVector readiness guard')
-          s=s.replace("document.documentElement.dataset.maydaylandMap='openfreemap-v2.6'","document.documentElement.dataset.maydaylandMap='openfreemap-v2.7'")
-          s=s.replace("document.documentElement.dataset.maydaylandMap='osm-fallback-v2.6'","document.documentElement.dataset.maydaylandMap='osm-fallback-v2.7'")
+              raise SystemExit('Could not normalize waitVector readiness guard')
+          raster=r'''function waitTiles(layer,timeout=4600){return new Promise((resolve,reject)=>{const start=Date.now();let done=false,loads=0,errors=0,checkTimer=0;const coverage=()=>{try{const tiles=Object.values(layer?._tiles||{}).filter(t=>t&&t.el&&t.current!==false);const total=tiles.length;const loaded=tiles.filter(t=>t.loaded||(t.el.complete&&t.el.naturalWidth>0)).length;return {total,loaded,ratio:total?loaded/total:0}}catch(_){return {total:0,loaded:loads,ratio:loads?1:0}}};const healthy=()=>{const c=coverage();if(c.total<=2)return c.loaded>=1;return c.loaded>=2&&c.ratio>=.45};const cleanup=()=>{clearTimeout(checkTimer);layer.off('tileload',onLoad);layer.off('tileerror',onError)};const finish=(pass)=>{if(done)return;done=true;cleanup();pass?resolve():reject(new Error('tile viewport coverage failed'))};const verify=()=>{if(done)return;if(healthy())return finish(true);if(Date.now()-start>=timeout)return finish(false);checkTimer=setTimeout(verify,180)};const onLoad=()=>{loads++;clearTimeout(checkTimer);checkTimer=setTimeout(verify,220)};const onError=()=>{errors++;if(errors>=4&&!loads&&!coverage().loaded)return finish(false);clearTimeout(checkTimer);checkTimer=setTimeout(verify,180)};layer.on('tileload',onLoad);layer.on('tileerror',onError);verify()})}'''
+          s,n=re.subn(r'function waitTiles\(layer,timeout=\d+\)\{.*?\}\nfunction makeTile',raster+'\nfunction makeTile',s,count=1,flags=re.S)
+          if n!=1:
+              raise SystemExit('Could not replace raster viewport health guard')
+          s=s.replace("document.documentElement.dataset.maydaylandMap='openfreemap-v2.7'","document.documentElement.dataset.maydaylandMap='openfreemap-v2.8'")
+          s=s.replace("document.documentElement.dataset.maydaylandMap='osm-fallback-v2.7'","document.documentElement.dataset.maydaylandMap='osm-fallback-v2.8'")
           p.write_text(s,encoding='utf-8')
           PY
       - name: Keep Maydayland map interaction guard loaded
@@ -49,7 +53,7 @@ jobs:
           if replacement not in s:
             anchor='<script src="./tour-map-fallback-status-v1.js?v=20260910-mayday-tour-map-fallback-status-v1.0" defer></script>'
             s=s.replace(anchor, anchor+'\n'+replacement)
-          s=re.sub(r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>','<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v2.7-provider-ready-check" defer></script>',s)
+          s=re.sub(r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>','<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v2.8-raster-viewport-health" defer></script>',s)
           s=s.replace("'interaction-aware-recovery','interaction-aware-recovery',", "'interaction-aware-recovery',")
           if "'painted-fallback-recovery'" not in s:
             s=s.replace("'interaction-aware-recovery',", "'interaction-aware-recovery','painted-fallback-recovery',", 1)
@@ -57,6 +61,8 @@ jobs:
             s=s.replace("'painted-fallback-recovery',", "'painted-fallback-recovery','fast-blank-recovery',", 1)
           if "'vector-provider-ready-check'" not in s:
             s=s.replace("'fast-provider-failover',", "'fast-provider-failover','vector-provider-ready-check',", 1)
+          if "'raster-viewport-health'" not in s:
+            s=s.replace("'vector-provider-ready-check',", "'vector-provider-ready-check','raster-viewport-health',", 1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit formal entry update
@@ -65,6 +71,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/index.html maydayland/tour-map-openfreemap-v2.js
-          git commit -m 'Require real vector provider readiness before map reveal'
+          git commit -m 'Require healthy raster viewport coverage before map reveal'
           git pull --rebase origin master
           git push
