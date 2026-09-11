@@ -26,16 +26,17 @@ jobs:
           s=re.sub(r'\n?<script src="\./tour-map-interaction-guard-v1\.js\?v=[^"]+" defer></script>','',s)
           replacement=(
             '<script src="./tour-map-interaction-guard-v1.js?v=20260911-tour-map-interaction-guard-v1.0" defer></script>\n'
-            '<script src="./tour-map-stability-v1.js?v=20260911-tour-map-stability-v1.2-painted-fallback" defer></script>'
+            '<script src="./tour-map-stability-v1.js?v=20260911-tour-map-stability-v1.3-fast-recovery" defer></script>'
           )
           s=re.sub(r'<script src="\./tour-map-stability-v1\.js\?v=[^"]+" defer></script>', replacement, s)
           if replacement not in s:
             anchor='<script src="./tour-map-fallback-status-v1.js?v=20260910-mayday-tour-map-fallback-status-v1.0" defer></script>'
             s=s.replace(anchor, anchor+'\n'+replacement)
-          # Keep the release metadata stable while making the effective runtime unambiguous.
           s=s.replace("'interaction-aware-recovery','interaction-aware-recovery',", "'interaction-aware-recovery',")
           if "'painted-fallback-recovery'" not in s:
             s=s.replace("'interaction-aware-recovery',", "'interaction-aware-recovery','painted-fallback-recovery',", 1)
+          if "'fast-blank-recovery'" not in s:
+            s=s.replace("'painted-fallback-recovery',", "'painted-fallback-recovery','fast-blank-recovery',", 1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit formal entry update
@@ -44,5 +45,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/index.html
-          git commit -m 'Load painted-fallback Maydayland map recovery'
+          git commit -m 'Load fast Maydayland map recovery'
+          git pull --rebase origin master
           git push
