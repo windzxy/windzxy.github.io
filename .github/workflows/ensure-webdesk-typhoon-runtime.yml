@@ -13,6 +13,7 @@ on:
       - 'Html_tools/typhoon-weather-p0-remount.js'
       - 'Html_tools/typhoon-openmeteo-broker-v1.js'
       - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
+      - 'Html_tools/typhoon-overlay-health-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
       - 'Html_tools/typhoon-provider-failover-v1.js'
       - 'Html_tools/typhoon-satellite-pan-v1.js'
@@ -57,7 +58,7 @@ jobs:
           s=s.replace("version:'v2.1'", "version:'v2.2'")
           p.write_text(s,encoding='utf-8')
           PY
-      - name: Keep Global Weather city labels zoom-tiered and motion-debounced
+      - name: Keep Global Weather runtime canonical
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -74,11 +75,16 @@ jobs:
 
           p=Path('Html_tools/global-weather-lazy-v1.js')
           s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VERSION='[^']+';", "const VERSION='20260912-global-weather-lazy-v2.1-mobile-idle-forecast';", s, count=1)
+          s=re.sub(r"const VERSION='[^']+';", "const VERSION='20260912-global-weather-lazy-v2.2-overlay-health';", s, count=1)
           s=re.sub(r"\['Html_tools/typhoon-weather-layer-interaction-fix-v1\.js','[^']+'\]", "['Html_tools/typhoon-weather-layer-interaction-fix-v1.js','20260912-typhoon-layer-interaction-v8-mobile-idle-forecast']", s, count=1)
+          health=" ['Html_tools/typhoon-overlay-health-v1.js','20260911-typhoon-overlay-health-v1.2-data-time-coherence'],\n"
+          if 'typhoon-overlay-health-v1.js' not in s:
+            s=re.sub(r"( \['Html_tools/typhoon-weather-layer-interaction-fix-v1\.js','[^']+'\],\n)", r"\1"+health, s, count=1)
+          else:
+            s=re.sub(r"\['Html_tools/typhoon-overlay-health-v1\.js','[^']+'\]", "['Html_tools/typhoon-overlay-health-v1.js','20260911-typhoon-overlay-health-v1.2-data-time-coherence']", s, count=1)
           s=re.sub(r"\['Html_tools/typhoon-dynamic-city-labels-v1\.js','[^']+'\]", "['Html_tools/typhoon-dynamic-city-labels-v1.js','20260911-typhoon-dynamic-city-labels-v1.8-motion-debounced']", s, count=1)
           s=re.sub(r"\['Html_tools/typhoon-zoom-motion-v2-1\.js','[^']+'\]", "['Html_tools/typhoon-zoom-motion-v2-1.js','20260911-typhoon-zoom-motion-v2.2-idle-staggered']", s, count=1)
-          s=re.sub(r"performanceProfile:'[^']+'", "performanceProfile:'mobile-idle-forecast+idle-staggered-vector-refresh+motion-debounced-city-labels+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'", s, count=1)
+          s=re.sub(r"performanceProfile:'[^']+'", "performanceProfile:'mobile-idle-forecast+overlay-health+idle-staggered-vector-refresh+motion-debounced-city-labels+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'", s, count=1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Keep Global Weather branded and off the startup critical path
@@ -93,7 +99,7 @@ jobs:
           tags=[
             '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
             '<script src="Html_tools/global-weather-brand-v1.js?v=20260910-global-weather-brand-v1.0"></script>',
-            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v2.1-mobile-idle-forecast"></script>',
+            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v2.2-overlay-health"></script>',
           ]
           runtime_files=[
             'typhoon-widget','global-weather-brand-v1','global-weather-lazy-v1','typhoon-window-p0-fix','typhoon-radar-v4-1','typhoon-atmosphere-v5-1','typhoon-satellite-pan-v1','typhoon-openfreemap-v6','typhoon-product-shell-v6','typhoon-weather-runtime-v11','typhoon-weather-ui-recovery-v11-1','typhoon-weather-p0-remount','typhoon-openmeteo-broker-v1','typhoon-weather-layer-interaction-fix-v1','typhoon-wind-city-weather-v1','typhoon-dynamic-city-labels-v1','typhoon-weather-motion-v1','typhoon-zoom-motion-v2','typhoon-zoom-motion-v2-1','typhoon-wind-model-v3','typhoon-real-forecast-v4','typhoon-real-weather-v5','typhoon-real-weather-v5-1','typhoon-real-weather-v5-2','typhoon-render-recovery-v1','typhoon-weather-health-v1','typhoon-overlay-health-v1','typhoon-provider-failover-v1','mobile-desktop-ux-v1','typhoon-control-layout-v10','typhoon-control-layout-v11','typhoon-control-layout-v12','typhoon-control-layout-v13',
@@ -116,6 +122,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js
-          git commit -m 'Expose mobile-idle Global Weather forecast runtime'
+          git commit -m 'Preserve Global Weather overlay health in lazy runtime'
           git pull --rebase origin master
           git push
