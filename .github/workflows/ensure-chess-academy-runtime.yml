@@ -4,6 +4,7 @@ on:
     branches: [master]
     paths:
       - 'Html_tools/chess-card-v1.js'
+      - 'Html_tools/chess-render-stability-v1.js'
       - 'Html_tools/xiangqi-card-v1.js'
       - 'Html_tools/xiangqi-interaction-fix-v1.js'
       - 'Html_tools/chess-enhancement-lazy-v1.js'
@@ -30,8 +31,6 @@ jobs:
           import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          # Core game cards must stay on the startup path so they are visible in Function Center.
-          # Only optional teaching/visual enhancement modules remain lazy.
           optional=('chess-academy-v1','chess-fun-learning-v1','chess-piece-visuals-v1','chess-academy-hero-v1','chess-generated-pieces-v1','chess-enhancement-lazy-v1')
           for name in optional:
               s=re.sub(r'\n?<script src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"></script>','',s)
@@ -44,7 +43,6 @@ jobs:
           else:
               s=s.replace('</body>',xiangqi+'\n</body>',1)
 
-          # Interaction patch is kept adjacent to the Xiangqi runtime so mode switching remains reliable.
           fix='<script src="Html_tools/xiangqi-interaction-fix-v1.js?v=20260911-xiangqi-interaction-fix-v1.0"></script>'
           s=re.sub(r'\n?<script src="Html_tools/xiangqi-interaction-fix-v1\.js\?v=[^"]+"></script>','',s)
           xq=re.search(r'<script\s+src="Html_tools/xiangqi-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
@@ -52,6 +50,14 @@ jobs:
               pos=xq.end(); s=s[:pos]+'\n'+fix+s[pos:]
           else:
               s=s.replace('</body>',fix+'\n</body>',1)
+
+          render_fix='<script src="Html_tools/chess-render-stability-v1.js?v=20260911-chess-render-stability-v1.0"></script>'
+          s=re.sub(r'\n?<script src="Html_tools/chess-render-stability-v1\.js\?v=[^"]+"></script>','',s)
+          polish=re.search(r'<script\s+src="Html_tools/boardgame-polish-v3-lite\.js\?v=[^"]+"\s*>\s*</script>',s)
+          if polish:
+              pos=polish.end(); s=s[:pos]+'\n'+render_fix+s[pos:]
+          else:
+              s=s.replace('</body>',render_fix+'\n</body>',1)
 
           lazy='<script src="Html_tools/chess-enhancement-lazy-v1.js?v=20260911-chess-enhancement-lazy-v1.1-explicit-tutorial"></script>'
           anchor=re.search(r'<script\s+src="Html_tools/xiangqi-interaction-fix-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
@@ -67,6 +73,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Load Xiangqi interaction fix in WebDesk'
+          git commit -m 'Load chess rendering stability patch'
           git pull --rebase origin master
           git push
