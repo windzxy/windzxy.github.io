@@ -24,6 +24,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
+      - name: Repair Xiangqi 9x10 startup position
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          start="['r','n','b','a','k','a','b','n','r',null,null,null,null,null,null,null,null,null,null,'c',null,null,null,null,null,'c',null,'p',null,'p',null,'p',null,'p',null,'p',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'P',null,'P',null,'P',null,'P',null,'P',null,'C',null,null,null,null,null,'C',null,null,null,null,null,null,null,null,null,'R','N','B','A','K','A','B','N','R']"
+          targets=[
+            ('Html_tools/xiangqi-card-v1.js','20260911-xiangqi-v1.1-fixed-90-cell-board'),
+            ('Html_tools/xiangqi-interaction-fix-v1.js','20260911-xiangqi-interaction-fix-v1.1-fixed-90-cell-board')
+          ]
+          for name,version in targets:
+              p=Path(name)
+              s=p.read_text(encoding='utf-8')
+              s,n=re.subn(r"const START=\[[^;]*\];","const START="+start+";",s,count=1)
+              if n!=1:
+                  raise SystemExit(f'Could not replace START in {name}')
+              s=re.sub(r"const VERSION='[^']+';",f"const VERSION='{version}';",s,count=1)
+              p.write_text(s,encoding='utf-8')
+          PY
       - name: Keep chess cards visible and optional enhancements lazy
         run: |
           python - <<'PY'
@@ -35,7 +54,7 @@ jobs:
           for name in optional:
               s=re.sub(r'\n?<script src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"></script>','',s)
 
-          xiangqi='<script src="Html_tools/xiangqi-card-v1.js?v=20260910-xiangqi-v1.0-learn-play"></script>'
+          xiangqi='<script src="Html_tools/xiangqi-card-v1.js?v=20260911-xiangqi-v1.1-fixed-90-cell-board"></script>'
           s=re.sub(r'\n?<script src="Html_tools/xiangqi-card-v1\.js\?v=[^"]+"></script>','',s)
           chess=re.search(r'<script\s+src="Html_tools/chess-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
           if chess:
@@ -43,7 +62,7 @@ jobs:
           else:
               s=s.replace('</body>',xiangqi+'\n</body>',1)
 
-          fix='<script src="Html_tools/xiangqi-interaction-fix-v1.js?v=20260911-xiangqi-interaction-fix-v1.0"></script>'
+          fix='<script src="Html_tools/xiangqi-interaction-fix-v1.js?v=20260911-xiangqi-interaction-fix-v1.1-fixed-90-cell-board"></script>'
           s=re.sub(r'\n?<script src="Html_tools/xiangqi-interaction-fix-v1\.js\?v=[^"]+"></script>','',s)
           xq=re.search(r'<script\s+src="Html_tools/xiangqi-card-v1\.js\?v=[^"]+"\s*>\s*</script>',s)
           if xq:
@@ -67,12 +86,12 @@ jobs:
               s=s.replace('</body>',lazy+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
           PY
-      - name: Commit chess card startup update
+      - name: Commit chess runtime corrections
         run: |
-          if git diff --quiet -- index.html; then exit 0; fi
+          if git diff --quiet -- index.html Html_tools/xiangqi-card-v1.js Html_tools/xiangqi-interaction-fix-v1.js; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Load no-flicker chess render patch'
+          git add index.html Html_tools/xiangqi-card-v1.js Html_tools/xiangqi-interaction-fix-v1.js
+          git commit -m 'Repair Xiangqi board indexing and mode switching'
           git pull --rebase origin master
           git push
