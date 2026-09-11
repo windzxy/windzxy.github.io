@@ -1,8 +1,8 @@
 (()=>{
 'use strict';
 const APP_ID='xiangqi';
-const VERSION='20260910-xiangqi-v1.0-learn-play';
-const START=['r','n','b','a','k','a','b','n','r',null,null,null,null,null,null,null,null,'c',null,null,null,null,null,'c',null,'p',null,'p',null,'p',null,'p',null,'p',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'P',null,'P',null,'P',null,'P',null,'P',null,'C',null,null,null,null,null,'C',null,null,null,null,null,null,null,null,'R','N','B','A','K','A','B','N','R'];
+const VERSION='20260911-xiangqi-v1.1-fixed-90-cell-board';
+const START=['r','n','b','a','k','a','b','n','r',null,null,null,null,null,null,null,null,null,null,'c',null,null,null,null,null,'c',null,'p',null,'p',null,'p',null,'p',null,'p',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'P',null,'P',null,'P',null,'P',null,'P',null,'C',null,null,null,null,null,'C',null,null,null,null,null,null,null,null,null,'R','N','B','A','K','A','B','N','R'];
 const LABEL={K:'帥',A:'仕',B:'相',N:'馬',R:'車',C:'炮',P:'兵',k:'將',a:'士',b:'象',n:'馬',r:'車',c:'炮',p:'卒'};
 const VALUE={k:10000,r:900,c:450,n:400,b:200,a:200,p:100};
 const LESSONS=[
