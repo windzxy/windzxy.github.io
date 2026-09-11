@@ -5,6 +5,7 @@ on:
     paths:
       - 'maydayland/tour-map-interaction-guard-v1.js'
       - 'maydayland/tour-map-stability-v1.js'
+      - 'maydayland/tour-map-openfreemap-v2.js'
       - '.github/workflows/ensure-mayday-map-interaction-guard.yml'
   workflow_dispatch:
 permissions:
@@ -16,6 +17,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
+      - name: Harden OpenFreeMap provider readiness detection
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('maydayland/tour-map-openfreemap-v2.js')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r"const VER='[^']+';","const VER='20260911-mayday-openfreemap-v2.7-provider-ready-check';",s,count=1)
+          replacement=r'''function waitVector(layer,timeout=5200){return new Promise((resolve,reject)=>{const start=Date.now();let done=false,bound=null,errors=0,readyEvents=0;const cleanup=()=>{if(bound?.off)for(const [ev,fn] of [['error',onError],['load',onReady],['idle',onReady],['render',onRender]])try{bound.off(ev,fn)}catch(_){}};const finish=(ok,err)=>{if(done)return;done=true;cleanup();ok?resolve():reject(err||new Error('vector load failed'))};const onError=e=>{errors++;const msg=String(e?.error?.message||e?.message||e?.error||'');if(errors>=2||/(style|source|sprite|glyph|404|403|failed to fetch|network|load failed)/i.test(msg))finish(false,new Error(msg||'vector provider error'))};const providerReady=gl=>{try{if(gl?.loaded?.())return true;const styleReady=gl?.isStyleLoaded?.();const tilesReady=gl?.areTilesLoaded?.();return styleReady===true&&tilesReady===true}catch(_){return false}};const onReady=()=>{readyEvents++;if(bound&&providerReady(bound))finish(true)};const onRender=()=>{if(bound&&providerReady(bound))finish(true)};const bind=gl=>{if(!gl||gl===bound)return;if(bound)cleanup();bound=gl;try{bound.on?.('error',onError);bound.on?.('load',onReady);bound.on?.('idle',onReady);bound.on?.('render',onRender)}catch(_){}};const tick=()=>{if(done)return;const gl=layer?._glMap||layer?._maplibreGL;bind(gl);if(gl&&providerReady(gl))return finish(true);if(Date.now()-start>timeout)return finish(false,new Error('vector provider readiness timeout'+(readyEvents?' after '+readyEvents+' render events':'')));setTimeout(tick,100)};tick()})}'''
+          s,n=re.subn(r'function waitVector\(layer,timeout=4300\)\{.*?\}\nfunction waitTiles',replacement+'\nfunction waitTiles',s,count=1,flags=re.S)
+          if n!=1:
+              raise SystemExit('Could not replace waitVector readiness guard')
+          s=s.replace("document.documentElement.dataset.maydaylandMap='openfreemap-v2.6'","document.documentElement.dataset.maydaylandMap='openfreemap-v2.7'")
+          s=s.replace("document.documentElement.dataset.maydaylandMap='osm-fallback-v2.6'","document.documentElement.dataset.maydaylandMap='osm-fallback-v2.7'")
+          p.write_text(s,encoding='utf-8')
+          PY
       - name: Keep Maydayland map interaction guard loaded
         run: |
           python - <<'PY'
@@ -32,19 +49,22 @@ jobs:
           if replacement not in s:
             anchor='<script src="./tour-map-fallback-status-v1.js?v=20260910-mayday-tour-map-fallback-status-v1.0" defer></script>'
             s=s.replace(anchor, anchor+'\n'+replacement)
+          s=re.sub(r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>','<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v2.7-provider-ready-check" defer></script>',s)
           s=s.replace("'interaction-aware-recovery','interaction-aware-recovery',", "'interaction-aware-recovery',")
           if "'painted-fallback-recovery'" not in s:
             s=s.replace("'interaction-aware-recovery',", "'interaction-aware-recovery','painted-fallback-recovery',", 1)
           if "'fast-blank-recovery'" not in s:
             s=s.replace("'painted-fallback-recovery',", "'painted-fallback-recovery','fast-blank-recovery',", 1)
+          if "'vector-provider-ready-check'" not in s:
+            s=s.replace("'fast-provider-failover',", "'fast-provider-failover','vector-provider-ready-check',", 1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit formal entry update
         run: |
-          if git diff --quiet -- maydayland/index.html; then exit 0; fi
+          if git diff --quiet -- maydayland/index.html maydayland/tour-map-openfreemap-v2.js; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add maydayland/index.html
-          git commit -m 'Load fast Maydayland map recovery'
+          git add maydayland/index.html maydayland/tour-map-openfreemap-v2.js
+          git commit -m 'Require real vector provider readiness before map reveal'
           git pull --rebase origin master
           git push
