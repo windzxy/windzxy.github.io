@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260911-typhoon-satellite-pan-v1.1-no-flicker';
+const VER='20260912-typhoon-satellite-pan-v1.2-generation-guard-cleanup';
 if(window.__windzxyTyphoonSatellitePan===VER)return;
 window.__windzxyTyphoonSatellitePan=VER;
 
@@ -39,24 +39,45 @@ function tuneLayer(layer){
   layer.options.noWrap=false;
   layer.options.crossOrigin=true;
 }
+function unbind(root){
+  const s=root?.__tpSatellitePanV1;
+  if(!s)return;
+  if(s.timer){clearTimeout(s.timer);s.timer=0}
+  try{
+    s.map?.off('movestart zoomstart',s.onStart);
+    s.map?.off('moveend zoomend',s.onEnd);
+  }catch(_){}
+  root.__tpSatellitePanV1=null;
+  root?.classList?.remove('tp-satellite-map-moving');
+}
 function bind(root){
-  if(root.dataset.tpSatellitePanBound)return;
   const map=root.__tpMap;if(!map)return;
-  root.dataset.tpSatellitePanBound='1';
-  let timer=0;
-  const settle=()=>{
-    clearTimeout(timer);
-    timer=setTimeout(()=>{
-      tuneLayer(currentLayer(root));
-      root.classList.remove('tp-satellite-map-moving');
-    },180);
-  };
-  map.on('movestart zoomstart',()=>{
+  const old=root.__tpSatellitePanV1;
+  if(old?.map===map)return;
+  if(old)unbind(root);
+  const s={map,timer:0,generation:0,moving:false,onStart:null,onEnd:null};
+  s.onStart=()=>{
+    s.moving=true;
+    ++s.generation;
+    if(s.timer){clearTimeout(s.timer);s.timer=0}
     root.classList.add('tp-satellite-map-moving');
     tuneLayer(currentLayer(root));
-  });
-  map.on('moveend zoomend',settle);
-  settle();
+  };
+  s.onEnd=()=>{
+    s.moving=false;
+    const gen=++s.generation;
+    if(s.timer)clearTimeout(s.timer);
+    s.timer=setTimeout(()=>{
+      s.timer=0;
+      if(root.__tpSatellitePanV1!==s||root.__tpMap!==map||s.moving||gen!==s.generation)return;
+      tuneLayer(currentLayer(root));
+      root.classList.remove('tp-satellite-map-moving');
+    },260);
+  };
+  root.__tpSatellitePanV1=s;
+  map.on('movestart zoomstart',s.onStart);
+  map.on('moveend zoomend',s.onEnd);
+  s.onEnd();
 }
 function style(){
   let s=document.getElementById('tpSatellitePanV1Css');
@@ -78,6 +99,7 @@ function scan(){
   installLeafletGuard();
   document.querySelectorAll('[data-typhoon-root]').forEach(root=>{
     if(root.__tpMap)bind(root);
+    else if(root.__tpSatellitePanV1)unbind(root);
     tuneLayer(currentLayer(root));
   });
 }
@@ -88,5 +110,5 @@ function boot(){
   setInterval(scan,1400);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskTyphoonSatellitePan={version:'v1.1',keepBuffer:10,updateWhenIdle:true,updateWhenZooming:false,noTileFade:true,noBringToFront:true};
+window.WebDeskTyphoonSatellitePan={version:'v1.2',keepBuffer:10,updateWhenIdle:true,updateWhenZooming:false,noTileFade:true,noBringToFront:true,generationGuard:true,listenerCleanup:true,settleDelay:260};
 })();
