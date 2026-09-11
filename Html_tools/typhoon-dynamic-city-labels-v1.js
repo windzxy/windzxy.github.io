@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260911-typhoon-dynamic-city-labels-v1.7-zoom-tiered';
+const VER='20260911-typhoon-dynamic-city-labels-v1.8-motion-debounced';
 if(window.__windzxyTyphoonDynamicCityLabels===VER)return;
 window.__windzxyTyphoonDynamicCityLabels=VER;
 const FAST_URL='https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_populated_places.geojson';
@@ -8,7 +8,7 @@ const DENSE_URL='https://raw.githubusercontent.com/nvkelso/natural-earth-vector/
 const VALID=new Set(['overview','radar','cloud','precip','wind','gust','temp','humidity','pressure']);
 const ROOTS=new WeakMap();let fastPromise=null,densePromise=null,densePlaces=null;
 const ZH_FALLBACK={Beijing:'北京',Tianjin:'天津',Shanghai:'上海',Nanjing:'南京',Hangzhou:'杭州',Ningbo:'寧波',Wuhan:'武漢',Changsha:'長沙',Nanchang:'南昌',Hefei:'合肥',Suzhou:'蘇州',Wuxi:'無錫',Fuzhou:'福州',Xiamen:'廈門',Quanzhou:'泉州',Shantou:'汕頭',Guangzhou:'廣州',Shenzhen:'深圳','Hong Kong':'香港',HongKong:'香港',Macau:'澳門',Nanning:'南寧',Guilin:'桂林',Haikou:'海口',Sanya:'三亞',Taipei:'台北',Kaohsiung:'高雄',Taichung:'台中',Tokyo:'東京',Osaka:'大阪',Nagoya:'名古屋',Sapporo:'札幌',Seoul:'首爾',Busan:'釜山',Singapore:'新加坡',Bangkok:'曼谷',Hanoi:'河內','Ho Chi Minh City':'胡志明市',Manila:'馬尼拉',Jakarta:'雅加達','Kuala Lumpur':'吉隆坡',London:'倫敦',Paris:'巴黎',Berlin:'柏林',Rome:'羅馬',Madrid:'馬德里',Lisbon:'里斯本',Moscow:'莫斯科',Kyiv:'基輔',Istanbul:'伊斯坦堡',Cairo:'開羅',Nairobi:'內羅畢',Johannesburg:'約翰尼斯堡',Sydney:'悉尼',Melbourne:'墨爾本',Auckland:'奧克蘭','New York':'紐約',Washington:'華盛頓',Chicago:'芝加哥','Los Angeles':'洛杉磯','San Francisco':'舊金山',Toronto:'多倫多',Vancouver:'溫哥華','Mexico City':'墨西哥城','São Paulo':'聖保羅','Rio de Janeiro':'里約熱內盧','Buenos Aires':'布宜諾斯艾利斯'};
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]))}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function lang(){const v=document.querySelector('.lang-select')?.value||localStorage.getItem('windzxy-lang')||document.documentElement.lang||'zh-HK';return /^en/i.test(v)?'en':/^zh-CN/i.test(v)?'zh-CN':'zh-HK'}
 function cardinal(d){if(!Number.isFinite(+d))return'--';const zh=['北','東北','東','東南','南','西南','西','西北'],en=['N','NE','E','SE','S','SW','W','NW'];return(lang()==='en'?en:zh)[Math.round((((+d)%360)+360)%360/45)%8]}
 function weatherIcon(code){code=+code;if(code===0)return'☀️';if(code<=2)return'🌤️';if(code===3)return'☁️';if(code===45||code===48)return'🌫️';if([51,53,55,56,57].includes(code))return'🌦️';if([61,63,65,66,67,80,81,82].includes(code))return'🌧️';if([71,73,75,77,85,86].includes(code))return'🌨️';if([95,96,99].includes(code))return'⛈️';return'🌡️'}
