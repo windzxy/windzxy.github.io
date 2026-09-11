@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Cancel stale map-mode work during click coalescing
+      - name: Cancel superseded raster tile waits immediately
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -34,19 +34,33 @@ jobs:
           runtime = Path('maydayland/tour-map-openfreemap-v2.js')
           r = runtime.read_text(encoding='utf-8')
 
-          old_ver = "const VER='20260912-mayday-openfreemap-v3.4-mode-switch-coalesce';"
-          new_ver = "const VER='20260912-mayday-openfreemap-v3.5-immediate-supersede';"
+          old_ver = "const VER='20260912-mayday-openfreemap-v3.5-immediate-supersede';"
+          new_ver = "const VER='20260912-mayday-openfreemap-v3.6-raster-supersede-cancel';"
           if old_ver in r:
               r = r.replace(old_ver, new_ver, 1)
           elif new_ver not in r:
               raise SystemExit('unexpected Mayday map runtime version; refusing unsafe rewrite')
 
-          old_request = "function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode)return;switchMode(target).catch(()=>{})},90)}"
-          new_request = "function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;++switchSeq;busy(true);status('準備切換至「'+MODES[next].label+'」底圖…');clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode){busy(false);status('',false);return}switchMode(target).catch(()=>{})},90)}"
-          if old_request in r:
-              r = r.replace(old_request, new_request, 1)
-          elif new_request not in r:
-              raise SystemExit('mode switch coalescing anchor not found')
+          old_wait = "function waitTiles(layer,timeout=4600){return new Promise((resolve,reject)=>{const start=Date.now();let done=false,loads=0,errors=0,checkTimer=0;const coverage=()=>{try{const tiles=Object.values(layer?._tiles||{}).filter(t=>t&&t.el&&t.current!==false);const total=tiles.length;const loaded=tiles.filter(t=>t.loaded||(t.el.complete&&t.el.naturalWidth>0)).length;return {total,loaded,ratio:total?loaded/total:0}}catch(_){return {total:0,loaded:loads,ratio:loads?1:0}}};const healthy=()=>{const c=coverage();if(c.total<=2)return c.loaded>=1;return c.loaded>=2&&c.ratio>=.45};const cleanup=()=>{clearTimeout(checkTimer);layer.off('tileload',onLoad);layer.off('tileerror',onError)};const finish=(pass)=>{if(done)return;done=true;cleanup();pass?resolve():reject(new Error('tile viewport coverage failed'))};const verify=()=>{if(done)return;if(healthy())return finish(true);if(Date.now()-start>=timeout)return finish(false);checkTimer=setTimeout(verify,180)};const onLoad=()=>{loads++;clearTimeout(checkTimer);checkTimer=setTimeout(verify,220)};const onError=()=>{errors++;if(errors>=4&&!loads&&!coverage().loaded)return finish(false);clearTimeout(checkTimer);checkTimer=setTimeout(verify,180)};layer.on('tileload',onLoad);layer.on('tileerror',onError);verify()})}"
+          new_wait = "function waitTiles(layer,timeout=4600,stillCurrent=null){return new Promise((resolve,reject)=>{const start=Date.now();let done=false,loads=0,errors=0,checkTimer=0;const coverage=()=>{try{const tiles=Object.values(layer?._tiles||{}).filter(t=>t&&t.el&&t.current!==false);const total=tiles.length;const loaded=tiles.filter(t=>t.loaded||(t.el.complete&&t.el.naturalWidth>0)).length;return {total,loaded,ratio:total?loaded/total:0}}catch(_){return {total:0,loaded:loads,ratio:loads?1:0}}};const healthy=()=>{const c=coverage();if(c.total<=2)return c.loaded>=1;return c.loaded>=2&&c.ratio>=.45};const cleanup=()=>{clearTimeout(checkTimer);layer.off('tileload',onLoad);layer.off('tileerror',onError)};const finish=(pass,err)=>{if(done)return;done=true;cleanup();pass?resolve():reject(err||new Error('tile viewport coverage failed'))};const verify=()=>{if(done)return;if(stillCurrent&&!stillCurrent())return finish(false,new Error('raster switch superseded'));if(healthy())return finish(true);if(Date.now()-start>=timeout)return finish(false);checkTimer=setTimeout(verify,180)};const onLoad=()=>{loads++;clearTimeout(checkTimer);checkTimer=setTimeout(verify,120)};const onError=()=>{errors++;if(stillCurrent&&!stillCurrent())return finish(false,new Error('raster switch superseded'));if(errors>=4&&!loads&&!coverage().loaded)return finish(false);clearTimeout(checkTimer);checkTimer=setTimeout(verify,140)};layer.on('tileload',onLoad);layer.on('tileerror',onError);verify()})}"
+          if old_wait in r:
+              r = r.replace(old_wait, new_wait, 1)
+          elif new_wait not in r:
+              raise SystemExit('waitTiles anchor not found')
+
+          old_try = "try{await waitTiles(probe);if(seq!==switchSeq){removeLayer(group);return false}"
+          new_try = "try{await waitTiles(probe,4600,()=>seq===switchSeq);if(seq!==switchSeq){removeLayer(group);return false}"
+          if old_try in r:
+              r = r.replace(old_try, new_try, 1)
+          elif new_try not in r:
+              raise SystemExit('tryRaster waitTiles anchor not found')
+
+          old_catch = "}catch(err){removeLayer(group);throw err}}\nasync function fallbackRaster"
+          new_catch = "}catch(err){removeLayer(group);if(seq!==switchSeq)return false;throw err}}\nasync function fallbackRaster"
+          if old_catch in r:
+              r = r.replace(old_catch, new_catch, 1)
+          elif new_catch not in r:
+              raise SystemExit('tryRaster cancellation anchor not found')
 
           runtime.write_text(r, encoding='utf-8')
 
@@ -54,25 +68,25 @@ jobs:
           s = p.read_text(encoding='utf-8')
           s = re.sub(
               r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v3.5-immediate-supersede" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v3.6-raster-supersede-cancel" defer></script>',
               s,
               count=1,
           )
-          if "'immediate-mode-supersede'" not in s:
-              if "'mode-switch-coalesce'" not in s:
-                  raise SystemExit('mode switch preserve marker anchor not found')
-              s = s.replace("'mode-switch-coalesce',", "'mode-switch-coalesce','immediate-mode-supersede',", 1)
+          if "'raster-supersede-cancel'" not in s:
+              if "'immediate-mode-supersede'" not in s:
+                  raise SystemExit('immediate supersede preserve marker anchor not found')
+              s = s.replace("'immediate-mode-supersede',", "'immediate-mode-supersede','raster-supersede-cancel',", 1)
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit immediate mode supersede if needed
+      - name: Commit raster supersede cancellation if needed
         run: |
           if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
-            echo 'Maydayland immediate mode supersede already canonical.'
+            echo 'Maydayland raster supersede cancellation already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Cancel stale Mayday map switch before debounce settles'
+          git commit -m 'Cancel superseded Mayday raster tile waits early'
           git pull --rebase origin master
           git push
