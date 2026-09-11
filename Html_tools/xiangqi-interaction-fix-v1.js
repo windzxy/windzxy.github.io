@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260911-xiangqi-interaction-fix-v1.2-segmented-difficulty';
+const VERSION='20260911-xiangqi-interaction-fix-v1.3-playable-endgames';
 const START=['r','n','b','a','k','a','b','n','r',null,null,null,null,null,null,null,null,null,null,'c',null,null,null,null,null,'c',null,'p',null,'p',null,'p',null,'p',null,'p',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'P',null,'P',null,'P',null,'P',null,'P',null,'C',null,null,null,null,null,'C',null,null,null,null,null,null,null,null,null,'R','N','B','A','K','A','B','N','R'];
 const ENDGAMES=[
   {title:'單車擒將',hint:'用車控制橫線，配合帥逐步縮小黑將活動空間。',pieces:[[0,4,'k'],[2,3,'a'],[2,5,'a'],[6,4,'R'],[9,4,'K']]},
