@@ -25,33 +25,57 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Keep canonical Maydayland map runtime entry
+      - name: Stabilize raster rendering and keep canonical entry
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
+          runtime = Path('maydayland/tour-map-openfreemap-v2.js')
+          r = runtime.read_text(encoding='utf-8')
+
+          # Avoid promoting every raster tile into a permanent compositor layer.
+          # This reduces Chromium tile flashing and GPU churn during pan/zoom.
+          r = r.replace(
+              "const VER='20260911-mayday-openfreemap-v2.9-raster-pan-watchdog';",
+              "const VER='20260911-mayday-openfreemap-v3.0-raster-motion-stable';",
+              1,
+          )
+          r = r.replace(
+              '.mayday-leaflet-map .leaflet-tile{will-change:transform}',
+              '.mayday-leaflet-map .leaflet-tile{will-change:auto;image-rendering:auto}',
+              1,
+          )
+          r = r.replace(
+              'keepBuffer:4,updateWhenIdle:false,updateWhenZooming:true,crossOrigin:true',
+              'keepBuffer:4,updateWhenIdle:true,updateWhenZooming:false,crossOrigin:true',
+              1,
+          )
+          runtime.write_text(r, encoding='utf-8')
+
           p = Path('maydayland/index.html')
           s = p.read_text(encoding='utf-8')
           s = re.sub(
               r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v2.9-raster-pan-watchdog" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260911-mayday-openfreemap-v3.0-raster-motion-stable" defer></script>',
               s,
               count=1,
           )
           if "'raster-pan-watchdog'" not in s:
               s = s.replace("'raster-viewport-health',", "'raster-viewport-health','raster-pan-watchdog',", 1)
+          if "'raster-motion-stable'" not in s:
+              s = s.replace("'raster-pan-watchdog',", "'raster-pan-watchdog','raster-motion-stable',", 1)
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit canonical entry if needed
+      - name: Commit runtime stabilization if needed
         run: |
-          if git diff --quiet -- maydayland/index.html; then
-            echo 'Maydayland map runtime entry already canonical.'
+          if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
+            echo 'Maydayland raster motion runtime already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add maydayland/index.html
-          git commit -m 'Keep Mayday raster pan watchdog loaded'
+          git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
+          git commit -m 'Stabilize Mayday raster tiles during map motion'
           git pull --rebase origin master
           git push
