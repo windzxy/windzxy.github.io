@@ -1,23 +1,14 @@
 name: Ensure Maydayland Map Interaction Guard
-
 on:
   push:
     branches: [master]
-    paths:
-      - 'maydayland/index.html'
-      - 'maydayland/tour-map-interaction-guard-v1.js'
-      - 'maydayland/tour-map-stability-v1.js'
-      - 'maydayland/tour-map-openfreemap-v2.js'
-      - '.github/workflows/ensure-mayday-map-interaction-guard.yml'
+    paths: ['maydayland/index.html','maydayland/tour-map-openfreemap-v2.js','.github/workflows/ensure-mayday-map-interaction-guard.yml']
   workflow_dispatch:
-
 permissions:
   contents: write
-
 concurrency:
   group: maydayland-map-runtime
   cancel-in-progress: false
-
 jobs:
   ensure:
     runs-on: ubuntu-latest
@@ -25,82 +16,32 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Give raster tiles a post-motion load grace
+      - name: Make raster watchdog stall aware
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-
-          runtime = Path('maydayland/tour-map-openfreemap-v2.js')
-          r = runtime.read_text(encoding='utf-8')
-
-          old_ver = "const VER='20260912-mayday-openfreemap-v4.1-motion-aware-watchdog';"
-          new_ver = "const VER='20260912-mayday-openfreemap-v4.2-tile-progress-grace';"
-          if old_ver in r:
-              r = r.replace(old_ver, new_ver, 1)
-          elif new_ver not in r:
-              raise SystemExit('unexpected Mayday map runtime version; refusing unsafe rewrite')
-
-          old_state = "rasterMotionActive=false,rasterMotionSettleUntil=0,rasterWatchMap=null,modeSwitchTimer=0,pendingMode=null;"
-          new_state = "rasterMotionActive=false,rasterMotionSettleUntil=0,rasterLastTileProgressAt=0,rasterWatchProbe=null,rasterTileProgressHandler=null,rasterWatchMap=null,modeSwitchTimer=0,pendingMode=null;"
-          if old_state in r:
-              r = r.replace(old_state, new_state, 1)
-          elif "rasterLastTileProgressAt=0" not in r:
-              raise SystemExit('raster progress state anchor not found')
-
-          old_motion = "function rasterMotionEnd(){rasterMotionActive=false;rasterMotionSettleUntil=Date.now()+420;rasterBadSamples=0}"
-          new_motion = "function rasterMotionEnd(){rasterMotionActive=false;rasterMotionSettleUntil=Date.now()+520;rasterBadSamples=0}"
-          if old_motion in r:
-              r = r.replace(old_motion, new_motion, 1)
-          elif new_motion not in r:
-              raise SystemExit('raster motion end anchor not found')
-
-          old_bind = "function bindRasterWatchMotion(){if(!map||rasterWatchMap===map)return;unbindRasterWatchMotion();rasterWatchMap=map;try{map.on('movestart',rasterMotionStart);map.on('zoomstart',rasterMotionStart);map.on('moveend',rasterMotionEnd);map.on('zoomend',rasterMotionEnd)}catch(_){rasterWatchMap=null}}\nfunction stopRasterWatch(){if(rasterWatchTimer){clearInterval(rasterWatchTimer);rasterWatchTimer=null}unbindRasterWatchMotion();resetRasterWatchSamples()}"
-          new_bind = "function bindRasterWatchMotion(){if(!map||rasterWatchMap===map)return;unbindRasterWatchMotion();rasterWatchMap=map;try{map.on('movestart',rasterMotionStart);map.on('zoomstart',rasterMotionStart);map.on('moveend',rasterMotionEnd);map.on('zoomend',rasterMotionEnd)}catch(_){rasterWatchMap=null}}\nfunction unbindRasterTileProgress(){if(rasterWatchProbe&&rasterTileProgressHandler)try{rasterWatchProbe.off('tileload',rasterTileProgressHandler)}catch(_){}rasterWatchProbe=null;rasterTileProgressHandler=null;rasterLastTileProgressAt=0}\nfunction bindRasterTileProgress(){const probe=rasterProbe();if(!probe||probe===rasterWatchProbe)return;if(rasterWatchProbe&&rasterTileProgressHandler)try{rasterWatchProbe.off('tileload',rasterTileProgressHandler)}catch(_){}rasterWatchProbe=probe;rasterTileProgressHandler=()=>{rasterLastTileProgressAt=Date.now();rasterBadSamples=0};try{probe.on('tileload',rasterTileProgressHandler)}catch(_){rasterWatchProbe=null;rasterTileProgressHandler=null}}\nfunction stopRasterWatch(){if(rasterWatchTimer){clearInterval(rasterWatchTimer);rasterWatchTimer=null}unbindRasterTileProgress();unbindRasterWatchMotion();resetRasterWatchSamples()}"
-          if old_bind in r:
-              r = r.replace(old_bind, new_bind, 1)
-          elif "function bindRasterTileProgress()" not in r:
-              raise SystemExit('raster tile progress binding anchor not found')
-
-          old_ensure = "function ensureRasterWatch(){if(!raster){stopRasterWatch();return}bindRasterWatchMotion();if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}if(rasterMotionActive||map._animatingZoom||map.dragging?._draggable?._moving||Date.now()<rasterMotionSettleUntil)return;if(rasterRepairInFlight)return;"
-          new_ensure = "function ensureRasterWatch(){if(!raster){stopRasterWatch();return}bindRasterWatchMotion();bindRasterTileProgress();if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}bindRasterTileProgress();const now=Date.now();if(rasterMotionActive||map._animatingZoom||map.dragging?._draggable?._moving||now<rasterMotionSettleUntil||now-rasterLastTileProgressAt<900)return;if(rasterRepairInFlight)return;"
-          if old_ensure in r:
-              r = r.replace(old_ensure, new_ensure, 1)
-          elif "now-rasterLastTileProgressAt<900" not in r:
-              raise SystemExit('raster watchdog ensure anchor not found')
-
-          old_now = "const key=rasterViewportKey(),now=Date.now();"
-          new_now = "const key=rasterViewportKey();"
-          if old_now in r:
-              r = r.replace(old_now, new_now, 1)
-          elif new_now not in r:
-              raise SystemExit('raster watchdog now anchor not found')
-
-          runtime.write_text(r, encoding='utf-8')
-
-          p = Path('maydayland/index.html')
-          s = p.read_text(encoding='utf-8')
-          s = re.sub(
-              r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v4.2-tile-progress-grace" defer></script>',
-              s,
-              count=1,
-          )
-          if "'tile-progress-grace'" not in s:
-              if "'motion-aware-watchdog'" not in s:
-                  raise SystemExit('motion-aware watchdog preserve marker anchor not found')
-              s = s.replace("'motion-aware-watchdog',", "'motion-aware-watchdog','tile-progress-grace',", 1)
-          p.write_text(s, encoding='utf-8')
+          p=Path('maydayland/tour-map-openfreemap-v2.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("20260912-mayday-openfreemap-v4.2-tile-progress-grace","20260912-mayday-openfreemap-v4.3-stall-aware-watchdog",1)
+          s=s.replace("rasterLastTileProgressAt=0,rasterWatchProbe=null,rasterTileProgressHandler=null", "rasterLastTileProgressAt=0,rasterLastTileErrorAt=0,rasterTileErrorCount=0,rasterWatchProbe=null,rasterTileProgressHandler=null,rasterTileErrorHandler=null",1)
+          s=s.replace("function unbindRasterTileProgress(){if(rasterWatchProbe&&rasterTileProgressHandler)try{rasterWatchProbe.off('tileload',rasterTileProgressHandler)}catch(_){}rasterWatchProbe=null;rasterTileProgressHandler=null;rasterLastTileProgressAt=0}", "function unbindRasterTileProgress(){if(rasterWatchProbe){if(rasterTileProgressHandler)try{rasterWatchProbe.off('tileload',rasterTileProgressHandler)}catch(_){}if(rasterTileErrorHandler)try{rasterWatchProbe.off('tileerror',rasterTileErrorHandler)}catch(_){}}rasterWatchProbe=null;rasterTileProgressHandler=null;rasterTileErrorHandler=null;rasterLastTileProgressAt=0;rasterLastTileErrorAt=0;rasterTileErrorCount=0}",1)
+          s=s.replace("rasterTileProgressHandler=()=>{rasterLastTileProgressAt=Date.now();rasterBadSamples=0};try{probe.on('tileload',rasterTileProgressHandler)}", "rasterTileProgressHandler=()=>{rasterLastTileProgressAt=Date.now();rasterTileErrorCount=Math.max(0,rasterTileErrorCount-1);rasterBadSamples=0};rasterTileErrorHandler=()=>{rasterLastTileErrorAt=Date.now();rasterTileErrorCount=Math.min(12,rasterTileErrorCount+1)};try{probe.on('tileload',rasterTileProgressHandler);probe.on('tileerror',rasterTileErrorHandler)}",1)
+          s=s.replace("const c=rasterCoverage(probe);const bad=c.total>=3&&(c.loaded<2||c.ratio<.34);if(!bad){rasterBadSamples=0;return}rasterBadSamples++;if(rasterBadSamples<2)return;", "const c=rasterCoverage(probe);const stalledFor=rasterLastTileProgressAt?now-rasterLastTileProgressAt:Infinity;const recentError=rasterLastTileErrorAt&&now-rasterLastTileErrorAt<5000;const errorStall=rasterTileErrorCount>=2&&recentError&&stalledFor>=1800;const bad=c.total>=3&&(c.loaded<2||c.ratio<.34);if(!bad&&!errorStall){rasterBadSamples=0;return}rasterBadSamples++;if(!errorStall&&rasterBadSamples<3)return;if(errorStall&&rasterBadSamples<2)return;",1)
+          if "stall-aware-watchdog" not in s or "rasterTileErrorHandler" not in s or "const errorStall=" not in s: raise SystemExit('stall-aware patch failed')
+          p.write_text(s,encoding='utf-8')
+          p=Path('maydayland/index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'tour-map-openfreemap-v2\.js\?v=[^\" ]+', 'tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v4.3-stall-aware-watchdog', s, count=1)
+          if "'stall-aware-watchdog'" not in s: s=s.replace("'tile-progress-grace',", "'tile-progress-grace','stall-aware-watchdog',",1)
+          p.write_text(s,encoding='utf-8')
           PY
-      - name: Commit tile-progress raster watchdog if needed
+      - name: Commit runtime
         run: |
-          if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
-            echo 'Maydayland tile-progress raster watchdog already canonical.'
-            exit 0
-          fi
+          if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Wait for Mayday raster tile progress before repair'
+          git commit -m 'Make Mayday raster watchdog stall aware'
           git pull --rebase origin master
           git push
