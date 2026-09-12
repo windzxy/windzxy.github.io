@@ -1,0 +1,89 @@
+name: Upgrade board games side choice and mobile dock
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/chess-card-v1.js'
+      - 'Html_tools/xiangqi-card-v1.js'
+      - 'Html_tools/gomoku-card-v1.js'
+      - 'Html_tools/boardgame-side-choice-v1.js'
+      - 'Html_tools/webdesk-mobile-dock-v1.js'
+      - '.github/workflows/upgrade-boardgame-side-and-mobile.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Patch board game side logic and mobile loader
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def patch_chess():
+              p=Path('Html_tools/chess-card-v1.js'); s=p.read_text(encoding='utf-8')
+              s=re.sub(r"const VERSION='[^']+';","const VERSION='20260912-chess-v1.1-side-choice';",s,count=1)
+              s=s.replace("s={...parseFen(START),mode:'ai',difficulty:'normal',lesson:0}","s={...parseFen(START),mode:'ai',difficulty:'normal',lesson:0,playerSide:'w',aiSide:'b'}")
+              s=s.replace("const s={...parseFen(START),mode:'ai',difficulty:'normal',lesson:0};","const s={...parseFen(START),mode:'ai',difficulty:'normal',lesson:0,playerSide:'w',aiSide:'b'};")
+              s=re.sub(r"(function init\(card\)\{.*?)(return s\})",r"\1s.playerSide=s.playerSide==='b'?'b':'w';s.aiSide=s.playerSide==='w'?'b':'w';\2",s,count=1,flags=re.S)
+              new_ai="""function aiPick(s){const side=s.aiSide||'b';let moves=legal(s,side);if(!moves.length)return null;if(s.difficulty==='easy')return moves[Math.floor(Math.random()*moves.length)];const depth=s.difficulty==='hard'?(moves.length<13?3:2):2;let best=-Infinity,pool=[];const q0={...s,turn:side};moves=orderedMoves(q0);for(const m of moves){const q=clone(q0);rawMove(q,m);const v=minimax(q,depth-1,-Infinity,Infinity,side)+(Math.random()-.5)*(s.difficulty==='normal'?14:2);if(v>best+1){best=v;pool=[m]}else if(Math.abs(v-best)<2)pool.push(m)}return pool[Math.floor(Math.random()*pool.length)]||moves[0]}"""
+              s=re.sub(r"function aiPick\(s\)\{.*?\}\nfunction status",new_ai+"\nfunction status",s,count=1,flags=re.S)
+              s=re.sub(r"function resetMode\(card,mode\)\{.*?\}\nfunction scheduleAI", "function resetMode(card,mode){const s=init(card),diff=s.difficulty,lesson=s.lesson,playerSide=s.playerSide||'w';makeFromFen(s,mode==='tutorial'?LESSONS[lesson].fen:START);s.mode=mode;s.difficulty=diff;s.lesson=lesson;s.playerSide=playerSide;s.aiSide=playerSide==='w'?'b':'w';persist();redraw();if(mode==='ai'&&s.turn===s.aiSide)setTimeout(()=>scheduleAI(card),40)}\nfunction scheduleAI", s,count=1,flags=re.S)
+              s=re.sub(r"function scheduleAI\(card\)\{.*?\}\nfunction chooseSquare", "function scheduleAI(card){const s=init(card);if(s.mode!=='ai'||s.turn!==s.aiSide||s.result)return;s.thinking=true;persist();redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);if(q.mode!=='ai'||q.turn!==q.aiSide||q.result)return;const m=aiPick(q);q.thinking=false;if(m)apply(q,m,true);persist();redraw()},120)}\nfunction chooseSquare", s,count=1,flags=re.S)
+              s=re.sub(r"function chooseSquare\(card,sq\)\{.*?\}\nfunction bind", "function chooseSquare(card,sq){const s=init(card);if(s.result||s.thinking||s.pendingPromotion)return;if(s.mode==='ai'&&s.turn!==s.playerSide)return;const p=s.board[sq];if(s.selected<0){if(p&&color(p)===s.turn){s.selected=sq;persist();redraw()}return}if(p&&color(p)===s.turn){s.selected=sq;persist();redraw();return}const options=legal(s,s.turn).filter(m=>m.from===s.selected&&m.to===sq);if(!options.length){s.selected=-1;persist();redraw();return}if(options.length>1&&options.some(m=>m.promo)){s.pendingPromotion={from:s.selected,to:sq,choices:options};persist();redraw();return}apply(s,options[0],true);persist();redraw();if(s.mode==='ai'&&!s.result&&s.turn===s.aiSide)scheduleAI(card)}\nfunction bind", s,count=1,flags=re.S)
+              s=s.replace("if(s.mode==='ai'&&!s.result&&s.turn==='b')scheduleAI(card)","if(s.mode==='ai'&&!s.result&&s.turn===s.aiSide)scheduleAI(card)")
+              s=s.replace("if(s.mode==='ai'&&s.turn==='w'&&s.history.length>=2)","if(s.mode==='ai'&&s.turn===s.playerSide&&s.history.length>=2)")
+              p.write_text(s,encoding='utf-8')
+
+          def patch_xiangqi():
+              p=Path('Html_tools/xiangqi-card-v1.js'); s=p.read_text(encoding='utf-8')
+              s=re.sub(r"const VERSION='[^']+';","const VERSION='20260912-xiangqi-v1.2-side-choice';",s,count=1)
+              s=s.replace("difficulty:'entry',lesson:0,thinking:false,winner:'',section:'learn'","difficulty:'entry',lesson:0,thinking:false,winner:'',section:'learn',playerSide:'r',aiSide:'b'")
+              s=re.sub(r"(function init\(card\)\{.*?)(return s\})",r"\1s.playerSide=s.playerSide==='b'?'b':'r';s.aiSide=s.playerSide==='r'?'b':'r';\2",s,count=1,flags=re.S)
+              new_ai="""function aiPick(s){const side=s.aiSide||'b',enemy=side==='r'?'b':'r';let ms=allMoves(s,side);if(!ms.length)return null;if(s.difficulty==='entry')return ms[Math.floor(Math.random()*ms.length)];let best=-1e9,pool=[];for(const m of ms){const q={...s,board:cloneBoard(s.board),history:[],turn:side,winner:''};const cap=q.board[m.to];q.board[m.to]=q.board[m.from];q.board[m.from]=null;q.turn=enemy;let score=(cap?VALUE[cap.toLowerCase()]||0:0)*4+evalBoard(q,side);if(s.difficulty==='competition'){const replies=allMoves(q,enemy).slice(0,28);let worst=1e9;for(const r of replies){const z={...q,board:cloneBoard(q.board),turn:enemy};const c=z.board[r.to];z.board[r.to]=z.board[r.from];z.board[r.from]=null;worst=Math.min(worst,evalBoard(z,side)-(c?VALUE[c.toLowerCase()]||0:0)*3)}score=worst}score+=Math.random()*4;if(score>best+1){best=score;pool=[m]}else if(Math.abs(score-best)<2)pool.push(m)}return pool[Math.floor(Math.random()*pool.length)]||ms[0]}"""
+              s=re.sub(r"function aiPick\(s\)\{.*?\}\nfunction esc",new_ai+"\nfunction esc",s,count=1,flags=re.S)
+              helper="""function scheduleAI(card){const s=init(card);if(s.mode!=='ai'||s.winner||s.turn!==s.aiSide)return;s.thinking=true;redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);q.thinking=false;if(q.mode!=='ai'||q.winner||q.turn!==q.aiSide)return;const m=aiPick(q);if(m)applyMove(q,m);redraw()},240)}\n"""
+              s=s.replace("function speak(s){",helper+"function speak(s){",1)
+              s=re.sub(r"function play\(card,i\)\{.*?\}\nfunction install", "function play(card,i){const s=init(card);if(s.winner||s.thinking)return;if(s.mode==='ai'&&s.turn!==s.playerSide)return;const p=s.board[i];if(s.selected<0){if(p&&color(p)===s.turn){s.selected=i;redraw()}return}if(p&&color(p)===s.turn){s.selected=i;redraw();return}if(!legalMovesFrom(s,s.selected).includes(i)){s.selected=-1;redraw();return}applyMove(s,{from:s.selected,to:i});redraw();if(s.mode==='ai'&&!s.winner&&s.turn===s.aiSide)scheduleAI(card)}\nfunction install", s,count=1,flags=re.S)
+              s=s.replace("if(m==='ai'||m==='pvp'){s.mode=m;s.section='play';reset(s)}else", "if(m==='ai'||m==='pvp'){s.mode=m;s.section='play';reset(s);if(m==='ai'&&s.turn===s.aiSide)setTimeout(()=>scheduleAI(c),40)}else")
+              s=s.replace("if(n){const c=getCard(n);if(c){reset(init(c));redraw()}return}","if(n){const c=getCard(n);if(c){const s=init(c);reset(s);redraw();if(s.mode==='ai'&&s.turn===s.aiSide)setTimeout(()=>scheduleAI(c),40)}return}")
+              s=s.replace("if(s.mode==='ai'&&s.turn==='b'&&s.history.length)","if(s.mode==='ai'&&s.turn===s.playerSide&&s.history.length)")
+              p.write_text(s,encoding='utf-8')
+
+          def patch_gomoku():
+              p=Path('Html_tools/gomoku-card-v1.js'); s=p.read_text(encoding='utf-8')
+              s=re.sub(r"const VERSION='[^']+';","const VERSION='20260912-gomoku-v1.1-side-choice';",s,count=1)
+              s=s.replace("lesson:0,thinking:false}","lesson:0,thinking:false,playerStone:1,aiStone:2}")
+              s=re.sub(r"(function init\(card\)\{.*?)(return s\})",r"\1s.playerStone=s.playerStone===2?2:1;s.aiStone=s.playerStone===1?2:1;\2",s,count=1,flags=re.S)
+              new_ai="""function aiMove(s){const ai=s.aiStone||2,human=ai===1?2:1,cand=candidates(s.board);const ranked=cand.map(i=>({i,atk:lineScore(s.board,i,ai),def:lineScore(s.board,i,human)})).map(x=>({...x,score:x.atk+1.08*x.def})).sort((a,b)=>b.score-a.score);const win=ranked.find(x=>x.atk>=10000000);if(win)return win.i;const block=ranked.find(x=>x.def>=10000000);if(block)return block.i;if(s.difficulty==='easy'){const top=ranked.slice(0,Math.min(6,ranked.length));return top[Math.floor(Math.random()*top.length)]?.i??cand[0]}if(s.difficulty==='normal'){const top=ranked.slice(0,Math.min(2,ranked.length));return(Math.random()<.78?top[0]:top[1]||top[0])?.i??cand[0]}let best=ranked[0],bestV=-Infinity;for(const x of ranked.slice(0,Math.min(10,ranked.length))){s.board[x.i]=ai;if(isWin(s.board,x.i,ai)){s.board[x.i]=0;return x.i}let danger=0,reply=0;for(const j of candidates(s.board)){danger=Math.max(danger,lineScore(s.board,j,human));reply=Math.max(reply,lineScore(s.board,j,ai))}s.board[x.i]=0;const v=x.score-danger*.82+reply*.13;if(v>bestV){bestV=v;best=x}}return best?.i??cand[0]}"""
+              s=re.sub(r"function aiMove\(s\)\{.*?\}\nfunction persist",new_ai+"\nfunction persist",s,count=1,flags=re.S)
+              helper="""function scheduleAI(card){const s=init(card);if(s.mode!=='ai'||s.winner||s.turn!==s.aiStone)return;s.thinking=true;persist();redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);if(q.mode!=='ai'||q.winner||q.turn!==q.aiStone)return;q.thinking=false;const m=aiMove(q);q.history.push(snapshot(q));q.board[m]=q.aiStone;q.last=m;if(isWin(q.board,m,q.aiStone))q.winner=q.aiStone;else if(boardFull(q.board))q.winner=3;else q.turn=q.aiStone===1?2:1;persist();redraw()},220)}\n"""
+              s=s.replace("function play(card,i){",helper+"function play(card,i){",1)
+              s=re.sub(r"function play\(card,i\)\{.*?\}\nfunction resetMode", "function play(card,i){const s=init(card);if(s.winner||s.thinking||s.board[i])return;if(s.mode==='ai'&&s.turn!==s.playerStone)return;s.history.push(snapshot(s));s.board[i]=s.turn;s.last=i;if(isWin(s.board,i,s.turn))s.winner=s.turn;else if(boardFull(s.board))s.winner=3;else s.turn=s.turn===1?2:1;persist();redraw();if(s.mode==='ai'&&!s.winner&&s.turn===s.aiStone)scheduleAI(card)}\nfunction resetMode", s,count=1,flags=re.S)
+              s=re.sub(r"function resetMode\(card,mode\)\{.*?\}\nfunction bind", "function resetMode(card,mode){const s=init(card),playerStone=s.playerStone||1;s.mode=mode;s.history=[];s.winner=0;s.turn=1;s.last=-1;s.thinking=false;s.playerStone=playerStone;s.aiStone=playerStone===1?2:1;s.board=mode==='tutorial'?lessonBoard(s.lesson):emptyBoard();persist();redraw();if(mode==='ai'&&s.turn===s.aiStone)setTimeout(()=>scheduleAI(card),40)}\nfunction bind", s,count=1,flags=re.S)
+              s=s.replace("if(s.mode==='ai'&&s.turn===1&&s.history.length>=2)","if(s.mode==='ai'&&s.turn===s.playerStone&&s.history.length>=2)")
+              p.write_text(s,encoding='utf-8')
+
+          patch_chess(); patch_xiangqi(); patch_gomoku()
+
+          p=Path('index.html'); s=p.read_text(encoding='utf-8')
+          for name in ('boardgame-side-choice-v1','webdesk-mobile-dock-v1'):
+              s=re.sub(r'\n?<script src="Html_tools/'+name+r'\.js\?v=[^"]+"></script>','',s)
+          tags='\n<script src="Html_tools/boardgame-side-choice-v1.js?v=20260912-boardgame-side-choice-v1.0"></script>\n<script src="Html_tools/webdesk-mobile-dock-v1.js?v=20260912-webdesk-mobile-dock-v1.0"></script>'
+          s=s.replace('</body>',tags+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit upgrades
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Html_tools/chess-card-v1.js Html_tools/xiangqi-card-v1.js Html_tools/gomoku-card-v1.js index.html
+          git commit -m 'Add first second move choice and mobile WebDesk dock'
+          git pull --rebase origin master
+          git push
