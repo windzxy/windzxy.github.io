@@ -1,0 +1,100 @@
+name: Ensure Typhoon Radar Visibility Idle
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/ensure-typhoon-radar-visibility-idle.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: webdesk-index-writers
+  cancel-in-progress: false
+
+jobs:
+  radar-visibility-idle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: master
+      - name: Patch Radar playback visibility lifecycle
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          radar=Path('Html_tools/typhoon-radar-v4-1.js')
+          s=radar.read_text(encoding='utf-8')
+          s=s.replace("const VER='20260912-typhoon-radar-v4.5-shared-motion-coordinator';","const VER='20260913-typhoon-radar-v4.6-visibility-idle';",1)
+          s=s.replace("const API='https://api.rainviewer.com/public/weather-maps.json';\nlet metaPromise=null,metaAt=0;","const API='https://api.rainviewer.com/public/weather-maps.json';\nlet metaPromise=null,metaAt=0,visibilityObserver=null;",1)
+
+          old="function stop(root){const c=root.__tpRadar41;if(!c)return;if(c.timer){clearInterval(c.timer);c.timer=null}if(c.settleTimer){clearTimeout(c.settleTimer);c.settleTimer=null}const play=root.querySelector('[data-tpv41-play]');if(play)play.textContent=t('play')}"
+          new="function stopTimer(root){const c=root.__tpRadar41;if(!c)return;if(c.timer){clearInterval(c.timer);c.timer=null}}\nfunction stop(root){const c=root.__tpRadar41;if(!c)return;c.wantsPlay=false;stopTimer(root);if(c.settleTimer){clearTimeout(c.settleTimer);c.settleTimer=null}const play=root.querySelector('[data-tpv41-play]');if(play)play.textContent=t('play')}\nfunction canAnimate(root,c){return !!(c&&root.__tpRadar41===c&&!document.hidden&&c.visible!==false&&document.body.contains(root))}\nfunction startPlayback(root){const c=root.__tpRadar41;if(!c||!c.wantsPlay||c.timer||!canAnimate(root,c))return;const play=root.querySelector('[data-tpv41-play]');if(play)play.textContent=t('pause');c.timer=setInterval(()=>{if(!root.__tpRadar41||root.__tpRadar41!==c){stopTimer(root);return}if(!canAnimate(root,c)){stopTimer(root);return}let n=(c.index+1)%c.frames.length;if(c.moving)c.pendingIndex=n;else showFrame(root,n)},720)}\nfunction syncPlaybackVisibility(root){const c=root.__tpRadar41;if(!c)return;if(canAnimate(root,c)){if(c.wantsPlay)startPlayback(root)}else stopTimer(root)}"
+          if old not in s: raise SystemExit('Radar stop block changed; refusing unsafe patch')
+          s=s.replace(old,new,1)
+
+          old="const settle=()=>{c.pendingLayers.delete(next);if(!root.__tpRadar41||root.__tpRadar41!==c||gen!==c.swapGen){safeRemove(map,next);return}if(old&&old!==next)safeRemove(map,old);for(const layer of Array.from(c.pendingLayers)){if(layer!==next){c.pendingLayers.delete(layer);safeRemove(map,layer)}}};"
+          new="const settle=()=>{c.pendingLayers.delete(next);if(!root.__tpRadar41||root.__tpRadar41!==c||gen!==c.swapGen||document.hidden||c.visible===false){safeRemove(map,next);if(c.layer===next)c.layer=old||null;return}if(old&&old!==next)safeRemove(map,old);for(const layer of Array.from(c.pendingLayers)){if(layer!==next){c.pendingLayers.delete(layer);safeRemove(map,layer)}}};"
+          if old not in s: raise SystemExit('Radar settle block changed; refusing unsafe patch')
+          s=s.replace(old,new,1)
+
+          old="root.__tpRadar41={host:m.host,frames:m.frames,index:m.frames.length-1,layer:null,timer:null,moving:false,pendingIndex:null,settleTimer:null,motionBound:false,motionStart:null,motionEnd:null,swapGen:0,pendingLayers:new Set()};"
+          new="root.__tpRadar41={host:m.host,frames:m.frames,index:m.frames.length-1,layer:null,timer:null,wantsPlay:false,visible:root.__tpRadarVisible!==false,moving:false,pendingIndex:null,settleTimer:null,motionBound:false,motionStart:null,motionEnd:null,swapGen:0,pendingLayers:new Set()};"
+          if old not in s: raise SystemExit('Radar state block changed; refusing unsafe patch')
+          s=s.replace(old,new,1)
+
+          old="function togglePlay(root){const c=root.__tpRadar41;if(!c)return;if(c.timer){stop(root);return}const play=root.querySelector('[data-tpv41-play]');if(play)play.textContent=t('pause');c.timer=setInterval(()=>{if(!root.__tpRadar41||root.__tpRadar41!==c){stop(root);return}let n=(c.index+1)%c.frames.length;if(c.moving)c.pendingIndex=n;else showFrame(root,n)},720)}"
+          new="function togglePlay(root){const c=root.__tpRadar41;if(!c)return;if(c.wantsPlay){stop(root);return}c.wantsPlay=true;const play=root.querySelector('[data-tpv41-play]');if(play)play.textContent=t('pause');startPlayback(root)}"
+          if old not in s: raise SystemExit('Radar playback block changed; refusing unsafe patch')
+          s=s.replace(old,new,1)
+
+          old="function bind(root){if(root.dataset.tpv41Bound)return;ensureUi(root);root.dataset.tpv41Bound='1';"
+          new="function watchVisibility(root){if(root.dataset.tpv41Visibility==='1')return;root.dataset.tpv41Visibility='1';if(!visibilityObserver&&'IntersectionObserver'in window)visibilityObserver=new IntersectionObserver(entries=>{for(const entry of entries){const r=entry.target;r.__tpRadarVisible=entry.isIntersecting&&entry.intersectionRatio>0;const c=r.__tpRadar41;if(c){c.visible=r.__tpRadarVisible;syncPlaybackVisibility(r)}}},{root:null,rootMargin:'80px',threshold:0});visibilityObserver?.observe(root);if(!visibilityObserver)root.__tpRadarVisible=true}\nfunction bind(root){if(root.dataset.tpv41Bound)return;ensureUi(root);watchVisibility(root);root.dataset.tpv41Bound='1';"
+          if old not in s: raise SystemExit('Radar bind block changed; refusing unsafe patch')
+          s=s.replace(old,new,1)
+
+          old="function boot(){style();scan();observe(document.getElementById('desktopCanvas'));observe(document.getElementById('windowLayer'));observe(document.body);document.addEventListener('change',e=>{"
+          new="function boot(){style();scan();observe(document.getElementById('desktopCanvas'));observe(document.getElementById('windowLayer'));observe(document.body);document.addEventListener('visibilitychange',()=>{document.querySelectorAll('[data-typhoon-root]').forEach(root=>{const c=root.__tpRadar41;if(!c)return;if(document.hidden){++c.swapGen;stopTimer(root)}else syncPlaybackVisibility(root)})});document.addEventListener('change',e=>{"
+          if old not in s: raise SystemExit('Radar boot block changed; refusing unsafe patch')
+          s=s.replace(old,new,1)
+          s=s.replace("window.WebDeskTyphoonRadar={version:'v4.5',provider:'RainViewer',pastRadar:true,animated:true,motionSuspended:true,bufferedSwap:true,generationGuard:true,listenerCleanup:true,sharedMotionCoordinator:true}","window.WebDeskTyphoonRadar={version:'v4.6',provider:'RainViewer',pastRadar:true,animated:true,motionSuspended:true,bufferedSwap:true,generationGuard:true,listenerCleanup:true,sharedMotionCoordinator:true,visibilityIdle:true,offscreenPlaybackPause:true}",1)
+          radar.write_text(s,encoding='utf-8')
+
+          loader=Path('Html_tools/global-weather-lazy-v1.js')
+          s=loader.read_text(encoding='utf-8')
+          s=s.replace("const VERSION='20260912-global-weather-lazy-v3.2-raster-visibility-idle';","const VERSION='20260913-global-weather-lazy-v3.3-radar-visibility-idle';",1)
+          s=re.sub(r"\['Html_tools/typhoon-radar-v4-1\.js','[^']+'\]","['Html_tools/typhoon-radar-v4-1.js','20260913-typhoon-radar-v4.6-visibility-idle']",s,count=1)
+          s=s.replace("performanceProfile:'shared-overlay-motion+post-settle-staggered-forecast-city-vector+visibility-idle+satellite-visibility-idle+overlay-health+radar-generation-guard+satellite-generation-guard+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'","performanceProfile:'shared-overlay-motion+post-settle-staggered-forecast-city-vector+visibility-idle+satellite-visibility-idle+radar-visibility-idle+overlay-health+radar-generation-guard+satellite-generation-guard+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'",1)
+          loader.write_text(s,encoding='utf-8')
+
+          index=Path('index.html')
+          s=index.read_text(encoding='utf-8')
+          s=re.sub(r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+','Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle',s,count=1)
+          index.write_text(s,encoding='utf-8')
+
+          # Fail closed if any expected marker is absent.
+          rs=radar.read_text(encoding='utf-8'); ls=loader.read_text(encoding='utf-8')
+          required=[
+            ('radar v4.6',"20260913-typhoon-radar-v4.6-visibility-idle" in rs),
+            ('radar visibility marker','visibilityIdle:true' in rs),
+            ('radar offscreen marker','offscreenPlaybackPause:true' in rs),
+            ('loader v3.3',"20260913-global-weather-lazy-v3.3-radar-visibility-idle" in ls),
+            ('loader radar v4.6',"20260913-typhoon-radar-v4.6-visibility-idle" in ls),
+          ]
+          missing=[name for name,ok in required if not ok]
+          if missing: raise SystemExit('Missing expected markers: '+', '.join(missing))
+          PY
+      - name: Commit Radar visibility idle runtime
+        run: |
+          if git diff --quiet -- Html_tools/typhoon-radar-v4-1.js Html_tools/global-weather-lazy-v1.js index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Html_tools/typhoon-radar-v4-1.js Html_tools/global-weather-lazy-v1.js index.html
+          git commit -m 'Pause Radar playback while hidden or offscreen'
+          git pull --rebase origin master
+          git push
