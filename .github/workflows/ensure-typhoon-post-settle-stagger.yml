@@ -5,86 +5,88 @@ on:
     branches: [master]
     paths:
       - '.github/workflows/ensure-typhoon-post-settle-stagger.yml'
+      - 'Html_tools/global-weather-lazy-v1.js'
+      - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
+      - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
+      - 'Html_tools/typhoon-zoom-motion-v2-1.js'
+      - 'Html_tools/typhoon-satellite-pan-v1.js'
+      - 'index.html'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: webdesk-index-writers
-  cancel-in-progress: false
+  group: webdesk-weather-runtime-verify
+  cancel-in-progress: true
 
 jobs:
-  stagger:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           ref: master
-      - name: Stagger forecast city and vector work after settle
+      - name: Verify post-settle and visibility-idle runtime stack
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
 
-          forecast_version='20260912-typhoon-layer-interaction-v10-post-settle-stagger'
-          city_version='20260912-typhoon-dynamic-city-labels-v2.0-post-settle-stagger'
-          vector_version='20260912-typhoon-zoom-motion-v2.4-post-settle-stagger'
-          loader_version='20260912-global-weather-lazy-v3.0-post-settle-stagger'
+          expected = {
+              'Html_tools/global-weather-lazy-v1.js': [
+                  '20260912-global-weather-lazy-v3.2-raster-visibility-idle',
+                  '20260912-typhoon-layer-interaction-v10-post-settle-stagger',
+                  '20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle',
+                  '20260912-typhoon-zoom-motion-v2.5-visibility-idle',
+                  '20260912-typhoon-satellite-pan-v1.4-visibility-idle',
+                  'post-settle-staggered-forecast-city-vector',
+                  'visibility-idle',
+                  'satellite-visibility-idle',
+              ],
+              'Html_tools/typhoon-weather-layer-interaction-fix-v1.js': [
+                  '20260912-typhoon-layer-interaction-v10-post-settle-stagger',
+              ],
+              'Html_tools/typhoon-dynamic-city-labels-v1.js': [
+                  '20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle',
+                  'visibilityIdle',
+                  'postSettleStagger',
+              ],
+              'Html_tools/typhoon-zoom-motion-v2-1.js': [
+                  '20260912-typhoon-zoom-motion-v2.5-visibility-idle',
+                  'visibilityIdle',
+                  'postSettleStagger',
+              ],
+              'Html_tools/typhoon-satellite-pan-v1.js': [
+                  '20260912-typhoon-satellite-pan-v1.4-visibility-idle',
+                  'visibilityIdle',
+              ],
+              'index.html': [
+                  'Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v3.2-raster-visibility-idle',
+              ],
+          }
 
-          p=Path('Html_tools/typhoon-weather-layer-interaction-fix-v1.js')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VER='[^']+';",f"const VER='{forecast_version}';",s,count=1)
-          new="function bindMapRefresh(root){const s=state(root),map=root.__tpMap;if(s.bound||!map)return;s.bound=true;const cancel=()=>{clearTimeout(s.timer);s.timer=0;++s.refreshSeq;if(s.idle){if('cancelIdleCallback'in window)cancelIdleCallback(s.idle);else clearTimeout(s.idle);s.idle=0}};const refresh=()=>{cancel();const seq=++s.refreshSeq;const run=()=>{s.idle=0;if(seq!==s.refreshSeq)return;const m=root.__v11Mode,b=root.__activeWeatherBtn;if(!b||!FORECAST.has(m)||!document.body.contains(b))return;const key=viewKey(map);if(key===s.lastView&&Date.now()-s.lastRenderAt<1500)return;showForecast(root,b,m,false,true)};const queueIdle=()=>{s.timer=0;if(seq!==s.refreshSeq)return;s.idle='requestIdleCallback'in window?requestIdleCallback(run,{timeout:460}):setTimeout(run,24)};const mobile=map.getSize().x<620;s.timer=setTimeout(queueIdle,mobile?145:95)};if(window.WebDeskTyphoonOverlayMotion){root.addEventListener('typhoon-overlay-motion-start',cancel);root.addEventListener('typhoon-overlay-motion-settled',refresh);if(root.__tpOverlayMotion?.moving)cancel()}else{map.on('movestart',cancel);map.on('zoomstart',cancel);map.on('moveend',refresh);map.on('zoomend',refresh)}}\nfunction handle"
-          s,n=re.subn(r"function bindMapRefresh\(root\)\{.*?\}\nfunction handle",new,s,count=1,flags=re.S)
-          if n!=1: raise SystemExit('forecast patch not applied')
-          s=re.sub(r"version:'v\d+(?:\.\d+)?'","version:'v10'",s,count=1)
-          s=re.sub(r"refresh:'[^']+'","refresh:'shared-motion-settled-staggered-idle-last-viewport'",s,count=1)
-          p.write_text(s,encoding='utf-8')
+          failures = []
+          for path, markers in expected.items():
+              text = Path(path).read_text(encoding='utf-8')
+              missing = [marker for marker in markers if marker not in text]
+              if missing:
+                  failures.append(f"{path}: missing {', '.join(missing)}")
 
-          p=Path('Html_tools/typhoon-dynamic-city-labels-v1.js')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VER='[^']+';",f"const VER='{city_version}';",s,count=1)
-          new="function bind(root){const s=state(root),map=root.__tpMap;if(!map)return;if(s.bound&&s.map===map)return;if(s.bound&&s.map&&s.onResize)try{s.map.off('resize',s.onResize)}catch(_){}s.map=map;s.onResize=()=>{if(!s.moving){schedule(root,80);scheduleHub(root,280)}};map.on('resize',s.onResize);if(!s.bound){s.bound=true;s.onMotionStart=e=>{s.moving=true;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;clearTimeout(s.timer);clearTimeout(s.hubTimer);s.req++};s.onMotionEnd=e=>{s.moving=false;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;const mobile=map.getSize().x<620;schedule(root,mobile?28:18);scheduleHub(root,mobile?210:170)};root.addEventListener('typhoon-overlay-motion-start',s.onMotionStart);root.addEventListener('typhoon-overlay-motion-settled',s.onMotionEnd);root.addEventListener('typhoon-shared-weather-update',()=>{if(!s.moving)schedule(root,70)});if(!window.WebDeskTyphoonOverlayMotion){map.on('movestart zoomstart',s.onMotionStart);map.on('moveend zoomend',s.onMotionEnd)}}if(root.__tpOverlayMotion?.moving)s.moving=true}\nfunction sync"
-          s,n=re.subn(r"function bind\(root\)\{.*?\}\nfunction sync",new,s,count=1,flags=re.S)
-          if n!=1: raise SystemExit('city patch not applied')
-          s=re.sub(r"version:'v\d+(?:\.\d+)?'","version:'v2.0'",s,count=1)
-          if 'postSettleStagger:true' not in s:s=s.replace('sharedMotionCoordinator:true','sharedMotionCoordinator:true,postSettleStagger:true',1)
-          p.write_text(s,encoding='utf-8')
+          forbidden = {
+              'Html_tools/global-weather-lazy-v1.js': [
+                  '20260912-global-weather-lazy-v3.0-post-settle-stagger',
+                  '20260912-typhoon-dynamic-city-labels-v2.0-post-settle-stagger',
+                  '20260912-typhoon-zoom-motion-v2.4-post-settle-stagger',
+                  '20260912-typhoon-satellite-pan-v1.3',
+              ],
+          }
+          for path, markers in forbidden.items():
+              text = Path(path).read_text(encoding='utf-8')
+              present = [marker for marker in markers if marker in text]
+              if present:
+                  failures.append(f"{path}: stale runtime refs present: {', '.join(present)}")
 
-          p=Path('Html_tools/typhoon-zoom-motion-v2-1.js')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VER='[^']+';",f"const VER='{vector_version}';",s,count=1)
-          new="function bind(root){const s=state(root),map=root.__tpMap;if(!map)return;if(s.bound&&s.map===map)return;if(s.bound&&s.map&&s.onResize)try{s.map.off('resize',s.onResize)}catch(_){}s.map=map;const refreshField=()=>{const seq=++s.viewportSeq;clearTimeout(s.viewportTimer);const run=()=>{if(seq!==s.viewportSeq||s.moving||!FIELD_MODES.has(s.mode))return;const latest=root.__tpSharedWeatherGrid||root.__tpLastGoodWeatherGrid||s.grid;if(latest){s.grid=latest;s.screenField=buildScreenField(root,latest);s.particles=[];if(latest.degraded&&VECTOR_MODES.has(s.mode)){clearCanvas(root);root.dataset.zoomMotionV21='1';setTruth(root,text('degraded'),true)}else if(!s.raf)s.raf=requestAnimationFrame(t=>drawField(root,t));return}getGrid(root,false).then(g=>{if(seq!==s.viewportSeq||s.moving||!g)return;s.screenField=buildScreenField(root,g);s.particles=[];if(g.degraded&&VECTOR_MODES.has(s.mode)){clearCanvas(root);root.dataset.zoomMotionV21='1';setTruth(root,text('degraded'),true)}else if(!s.raf)s.raf=requestAnimationFrame(t=>drawField(root,t))})};const queueIdle=()=>{s.viewportTimer=0;if(seq!==s.viewportSeq||s.moving)return;if('requestIdleCallback'in window)requestIdleCallback(run,{timeout:520});else setTimeout(run,40)};const mobile=map.getSize().x<620;s.viewportTimer=setTimeout(queueIdle,mobile?235:155)};if(!s.bound){s.bound=true;s.onMotionStart=()=>{s.moving=true;++s.viewportSeq;clearTimeout(s.viewportTimer);s.viewportTimer=0;if(FRAME_MODES.has(s.mode)){clearTimeout(s.timer);s.timer=0}else if(s.canvas)s.canvas.classList.add('is-moving')};s.onMotionEnd=()=>{s.moving=false;if(FRAME_MODES.has(s.mode)&&s.playing)s.timer=setTimeout(()=>promote(root),0);else if(FIELD_MODES.has(s.mode)){if(s.canvas)s.canvas.classList.remove('is-moving');refreshField()}};root.addEventListener('typhoon-overlay-motion-start',s.onMotionStart);root.addEventListener('typhoon-overlay-motion-settled',s.onMotionEnd);root.addEventListener('typhoon-shared-weather-update',e=>{if(!FIELD_MODES.has(s.mode))return;const g=e.detail?.grid||root.__tpSharedWeatherGrid;if(!g)return;s.grid=g;if(s.moving)return;refreshField()});if(!window.WebDeskTyphoonOverlayMotion){map.on('movestart zoomstart',s.onMotionStart);map.on('moveend zoomend',s.onMotionEnd)}}s.onResize=()=>{resize(root);if(s.grid)s.screenField=buildScreenField(root,s.grid)};map.on('resize',s.onResize);if(root.__tpOverlayMotion?.moving)s.moving=true}\nfunction scan"
-          s,n=re.subn(r"function bind\(root\)\{.*?\}\nfunction scan",new,s,count=1,flags=re.S)
-          if n!=1: raise SystemExit('vector patch not applied')
-          s=re.sub(r"version:'v\d+(?:\.\d+)?'","version:'v2.4'",s,count=1)
-          if 'postSettleStagger:true' not in s:s=s.replace('sharedMotionCoordinator:true','sharedMotionCoordinator:true,postSettleStagger:true',1)
-          p.write_text(s,encoding='utf-8')
-
-          p=Path('Html_tools/global-weather-lazy-v1.js')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VERSION='[^']+';",f"const VERSION='{loader_version}';",s,count=1)
-          refs={'typhoon-weather-layer-interaction-fix-v1.js':forecast_version,'typhoon-dynamic-city-labels-v1.js':city_version,'typhoon-zoom-motion-v2-1.js':vector_version}
-          for name,ver in refs.items():s=re.sub(r"\['Html_tools/"+re.escape(name)+r"','[^']+'\]","['Html_tools/"+name+"','"+ver+"']",s,count=1)
-          s=re.sub(r"performanceProfile:'[^']+'","performanceProfile:'shared-overlay-motion+post-settle-staggered-forecast-city-vector+overlay-health+radar-generation-guard+satellite-generation-guard+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'",s,count=1)
-          p.write_text(s,encoding='utf-8')
-
-          p=Path('index.html')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+',f'Html_tools/global-weather-lazy-v1.js?v={loader_version}',s,count=1)
-          p.write_text(s,encoding='utf-8')
+          if failures:
+              raise SystemExit('\n'.join(failures))
+          print('Post-settle + visibility-idle runtime stack verified; no legacy rewrite performed.')
           PY
-      - name: Commit staggered runtime
-        run: |
-          if git diff --quiet -- Html_tools/typhoon-weather-layer-interaction-fix-v1.js Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js index.html; then
-            echo 'Post-settle stagger already applied.'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Html_tools/typhoon-weather-layer-interaction-fix-v1.js Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js index.html
-          git commit -m 'Stagger WebDesk weather work after map settle'
-          git pull --rebase origin master
-          git push
