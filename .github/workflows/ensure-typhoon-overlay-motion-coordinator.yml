@@ -40,7 +40,10 @@ jobs:
           s=s.replace("const VER='20260912-typhoon-radar-v4.4-generation-guard-cleanup';","const VER='20260912-typhoon-radar-v4.5-shared-motion-coordinator';")
           s=re.sub(r"function unbindMotion\(root\)\{.*?\}\nfunction bindMotion\(root\)\{.*?\}\nasync function turnOn", """function unbindMotion(root){const c=root.__tpRadar41;if(!c||!c.motionBound)return;try{root.removeEventListener('typhoon-overlay-motion-start',c.motionStart);root.removeEventListener('typhoon-overlay-motion-settled',c.motionEnd)}catch(e){}c.motionBound=false;c.motionStart=null;c.motionEnd=null}\nfunction bindMotion(root){const c=root.__tpRadar41;if(!c||c.motionBound)return;c.motionBound=true;c.motionStart=()=>{c.moving=true;if(c.settleTimer){clearTimeout(c.settleTimer);c.settleTimer=null}};c.motionEnd=()=>{c.moving=false;if(c.settleTimer)clearTimeout(c.settleTimer);c.settleTimer=setTimeout(()=>{c.settleTimer=null;if(!root.__tpRadar41||root.__tpRadar41!==c||c.moving)return;const idx=c.pendingIndex==null?c.index:c.pendingIndex;c.pendingIndex=null;showFrame(root,idx)},0)};root.addEventListener('typhoon-overlay-motion-start',c.motionStart);root.addEventListener('typhoon-overlay-motion-settled',c.motionEnd)}\nasync function turnOn""", s, count=1, flags=re.S)
           s=s.replace("version:'v4.4'","version:'v4.5'")
-          s=s.replace("listenerCleanup:true}","listenerCleanup:true,sharedMotionCoordinator:true}")
+          if 'sharedMotionCoordinator:true' not in s:
+            s=s.replace("listenerCleanup:true}","listenerCleanup:true,sharedMotionCoordinator:true}")
+          while 'sharedMotionCoordinator:true,sharedMotionCoordinator:true' in s:
+            s=s.replace('sharedMotionCoordinator:true,sharedMotionCoordinator:true','sharedMotionCoordinator:true')
           p.write_text(s,encoding='utf-8')
 
           p=Path('Html_tools/typhoon-satellite-pan-v1.js')
@@ -48,7 +51,10 @@ jobs:
           s=s.replace("const VER='20260912-typhoon-satellite-pan-v1.2-generation-guard-cleanup';","const VER='20260912-typhoon-satellite-pan-v1.3-shared-motion-coordinator';")
           s=re.sub(r"function unbind\(root\)\{.*?\}\nfunction bind\(root\)\{.*?\}\nfunction style", """function unbind(root){const s=root?.__tpSatellitePanV1;if(!s)return;try{root.removeEventListener('typhoon-overlay-motion-start',s.onStart);root.removeEventListener('typhoon-overlay-motion-settled',s.onEnd)}catch(_){}root.__tpSatellitePanV1=null;root?.classList?.remove('tp-satellite-map-moving')}\nfunction bind(root){const map=root.__tpMap;if(!map)return;const old=root.__tpSatellitePanV1;if(old?.map===map)return;if(old)unbind(root);const s={map,generation:0,moving:false,onStart:null,onEnd:null};s.onStart=e=>{s.moving=true;s.generation=e.detail?.generation||s.generation+1;root.classList.add('tp-satellite-map-moving');tuneLayer(currentLayer(root))};s.onEnd=e=>{s.moving=false;s.generation=e.detail?.generation||s.generation+1;if(root.__tpSatellitePanV1!==s||root.__tpMap!==map)return;tuneLayer(currentLayer(root));root.classList.remove('tp-satellite-map-moving')};root.__tpSatellitePanV1=s;root.addEventListener('typhoon-overlay-motion-start',s.onStart);root.addEventListener('typhoon-overlay-motion-settled',s.onEnd);if(root.__tpOverlayMotion?.moving)s.onStart({detail:root.__tpOverlayMotion});else s.onEnd({detail:root.__tpOverlayMotion||{generation:0}})}\nfunction style""", s, count=1, flags=re.S)
           s=s.replace("version:'v1.2'","version:'v1.3'")
-          s=s.replace("settleDelay:260}","settleDelay:260,sharedMotionCoordinator:true}")
+          if 'sharedMotionCoordinator:true' not in s:
+            s=s.replace("settleDelay:260}","settleDelay:260,sharedMotionCoordinator:true}")
+          while 'sharedMotionCoordinator:true,sharedMotionCoordinator:true' in s:
+            s=s.replace('sharedMotionCoordinator:true,sharedMotionCoordinator:true','sharedMotionCoordinator:true')
           p.write_text(s,encoding='utf-8')
 
           p=Path('Html_tools/typhoon-weather-layer-interaction-fix-v1.js')
@@ -68,7 +74,10 @@ jobs:
           new="function bind(root){const s=state(root),map=root.__tpMap;if(!map)return;if(s.bound&&s.map===map)return;if(s.bound&&s.map&&s.onResize)try{s.map.off('resize',s.onResize)}catch(_){}s.map=map;s.onResize=()=>{if(!s.moving){schedule(root,80);scheduleHub(root,260)}};map.on('resize',s.onResize);if(!s.bound){s.bound=true;s.onMotionStart=e=>{s.moving=true;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;clearTimeout(s.timer);clearTimeout(s.hubTimer);s.req++};s.onMotionEnd=e=>{s.moving=false;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;schedule(root,0);scheduleHub(root,140)};root.addEventListener('typhoon-overlay-motion-start',s.onMotionStart);root.addEventListener('typhoon-overlay-motion-settled',s.onMotionEnd);root.addEventListener('typhoon-shared-weather-update',()=>{if(!s.moving)schedule(root,55)});if(!window.WebDeskTyphoonOverlayMotion){map.on('movestart zoomstart',s.onMotionStart);map.on('moveend zoomend',s.onMotionEnd)}}if(root.__tpOverlayMotion?.moving)s.moving=true}"
           s=s.replace(old,new,1)
           s=s.replace("version:'v1.8'","version:'v1.9'")
-          s=s.replace("motionDebounced:true","motionDebounced:true,sharedMotionCoordinator:true")
+          if 'sharedMotionCoordinator:true' not in s:
+            s=s.replace("motionDebounced:true","motionDebounced:true,sharedMotionCoordinator:true")
+          while 'sharedMotionCoordinator:true,sharedMotionCoordinator:true' in s:
+            s=s.replace('sharedMotionCoordinator:true,sharedMotionCoordinator:true','sharedMotionCoordinator:true')
           p.write_text(s,encoding='utf-8')
 
           p=Path('Html_tools/global-weather-lazy-v1.js')
