@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Suspend raster watchdog when raster is inactive
+      - name: Make raster watchdog sampling motion aware
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -34,26 +34,33 @@ jobs:
           runtime = Path('maydayland/tour-map-openfreemap-v2.js')
           r = runtime.read_text(encoding='utf-8')
 
-          old_ver = "const VER='20260912-mayday-openfreemap-v3.9-mode-switch-repair-reset';"
-          new_ver = "const VER='20260912-mayday-openfreemap-v4.0-raster-watchdog-suspend';"
+          old_ver = "const VER='20260912-mayday-openfreemap-v4.0-raster-watchdog-suspend';"
+          new_ver = "const VER='20260912-mayday-openfreemap-v4.1-motion-aware-watchdog';"
           if old_ver in r:
               r = r.replace(old_ver, new_ver, 1)
           elif new_ver not in r:
               raise SystemExit('unexpected Mayday map runtime version; refusing unsafe rewrite')
 
-          old_watch = "function ensureRasterWatch(){if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster||rasterRepairInFlight)return;"
-          new_watch = "function stopRasterWatch(){if(!rasterWatchTimer)return;clearInterval(rasterWatchTimer);rasterWatchTimer=null;rasterBadSamples=0;rasterRepairKey='';rasterRepairBackoffUntil=0}\nfunction ensureRasterWatch(){if(!raster){stopRasterWatch();return}if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}if(rasterRepairInFlight)return;"
-          if old_watch in r:
-              r = r.replace(old_watch, new_watch, 1)
-          elif "function stopRasterWatch()" not in r:
-              raise SystemExit('raster watchdog anchor not found')
+          old_state = "rasterProviderHealthy=Object.create(null),modeSwitchTimer=0,pendingMode=null;"
+          new_state = "rasterProviderHealthy=Object.create(null),rasterMotionActive=false,rasterMotionSettleUntil=0,rasterWatchMap=null,modeSwitchTimer=0,pendingMode=null;"
+          if old_state in r:
+              r = r.replace(old_state, new_state, 1)
+          elif "rasterMotionSettleUntil=0" not in r:
+              raise SystemExit('raster watchdog state anchor not found')
 
-          old_vector = "base=next;raster=null;rasterBadSamples=0;removeLayer(oldBase);removeLayer(oldRaster);"
-          new_vector = "base=next;raster=null;rasterBadSamples=0;stopRasterWatch();removeLayer(oldBase);removeLayer(oldRaster);"
-          if old_vector in r:
-              r = r.replace(old_vector, new_vector, 1)
-          elif new_vector not in r:
-              raise SystemExit('vector activation anchor not found')
+          old_stop = "function stopRasterWatch(){if(!rasterWatchTimer)return;clearInterval(rasterWatchTimer);rasterWatchTimer=null;rasterBadSamples=0;rasterRepairKey='';rasterRepairBackoffUntil=0}"
+          new_stop = "function resetRasterWatchSamples(){rasterBadSamples=0;rasterRepairKey='';rasterRepairBackoffUntil=0}\nfunction rasterMotionStart(){if(!rasterMotionActive)++rasterRepairGeneration;rasterMotionActive=true;rasterMotionSettleUntil=0;resetRasterWatchSamples()}\nfunction rasterMotionEnd(){rasterMotionActive=false;rasterMotionSettleUntil=Date.now()+420;rasterBadSamples=0}\nfunction unbindRasterWatchMotion(){if(rasterWatchMap)try{rasterWatchMap.off('movestart',rasterMotionStart);rasterWatchMap.off('zoomstart',rasterMotionStart);rasterWatchMap.off('moveend',rasterMotionEnd);rasterWatchMap.off('zoomend',rasterMotionEnd)}catch(_){}rasterWatchMap=null;rasterMotionActive=false;rasterMotionSettleUntil=0}\nfunction bindRasterWatchMotion(){if(!map||rasterWatchMap===map)return;unbindRasterWatchMotion();rasterWatchMap=map;try{map.on('movestart',rasterMotionStart);map.on('zoomstart',rasterMotionStart);map.on('moveend',rasterMotionEnd);map.on('zoomend',rasterMotionEnd)}catch(_){rasterWatchMap=null}}\nfunction stopRasterWatch(){if(rasterWatchTimer){clearInterval(rasterWatchTimer);rasterWatchTimer=null}unbindRasterWatchMotion();resetRasterWatchSamples()}"
+          if old_stop in r:
+              r = r.replace(old_stop, new_stop, 1)
+          elif "function rasterMotionStart()" not in r:
+              raise SystemExit('raster watchdog stop anchor not found')
+
+          old_ensure = "function ensureRasterWatch(){if(!raster){stopRasterWatch();return}if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}if(rasterRepairInFlight)return;"
+          new_ensure = "function ensureRasterWatch(){if(!raster){stopRasterWatch();return}bindRasterWatchMotion();if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}if(rasterMotionActive||map._animatingZoom||map.dragging?._draggable?._moving||Date.now()<rasterMotionSettleUntil)return;if(rasterRepairInFlight)return;"
+          if old_ensure in r:
+              r = r.replace(old_ensure, new_ensure, 1)
+          elif "Date.now()<rasterMotionSettleUntil" not in r:
+              raise SystemExit('raster watchdog ensure anchor not found')
 
           runtime.write_text(r, encoding='utf-8')
 
@@ -61,25 +68,25 @@ jobs:
           s = p.read_text(encoding='utf-8')
           s = re.sub(
               r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v4.0-raster-watchdog-suspend" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v4.1-motion-aware-watchdog" defer></script>',
               s,
               count=1,
           )
-          if "'raster-watchdog-suspend'" not in s:
-              if "'mode-switch-repair-reset'" not in s:
-                  raise SystemExit('mode-switch repair preserve marker anchor not found')
-              s = s.replace("'mode-switch-repair-reset',", "'mode-switch-repair-reset','raster-watchdog-suspend',", 1)
+          if "'motion-aware-watchdog'" not in s:
+              if "'raster-watchdog-suspend'" not in s:
+                  raise SystemExit('watchdog suspension preserve marker anchor not found')
+              s = s.replace("'raster-watchdog-suspend',", "'raster-watchdog-suspend','motion-aware-watchdog',", 1)
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit raster watchdog suspension if needed
+      - name: Commit motion-aware raster watchdog if needed
         run: |
           if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
-            echo 'Maydayland raster watchdog suspension already canonical.'
+            echo 'Maydayland motion-aware raster watchdog already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Suspend Mayday raster watchdog outside raster modes'
+          git commit -m 'Pause Mayday raster watchdog sampling during map motion'
           git pull --rebase origin master
           git push
