@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260912-global-weather-lazy-v2.8-shared-city-motion';
+const VERSION='20260912-global-weather-lazy-v2.9-shared-vector-motion';
 if(window.__windzxyGlobalWeatherLazy===VERSION)return;
 window.__windzxyGlobalWeatherLazy=VERSION;
 let loading=false,loaded=false,observer=null;
@@ -20,7 +20,7 @@ const SCRIPTS=[
  ['Html_tools/typhoon-weather-layer-interaction-fix-v1.js','20260912-typhoon-layer-interaction-v9-shared-motion-forecast'],
  ['Html_tools/typhoon-overlay-health-v1.js','20260911-typhoon-overlay-health-v1.2-data-time-coherence'],
  ['Html_tools/typhoon-dynamic-city-labels-v1.js','20260912-typhoon-dynamic-city-labels-v1.9-shared-motion'],
- ['Html_tools/typhoon-zoom-motion-v2-1.js','20260911-typhoon-zoom-motion-v2.2-idle-staggered'],
+ ['Html_tools/typhoon-zoom-motion-v2-1.js','20260912-typhoon-zoom-motion-v2.3-shared-motion-field'],
  ['Html_tools/mobile-desktop-ux-v1.js','20260910-mobile-desktop-ux-v1.0'],
  ['Html_tools/typhoon-control-layout-v13.js','20260911-typhoon-control-layout-v13.1-single-owner']
 ];
@@ -31,5 +31,5 @@ async function activate(){if(loading||loaded||!hasWeather())return;loading=true;
 function schedule(){if(loading||loaded)return;if('requestIdleCallback'in window)requestIdleCallback(()=>activate(),{timeout:250});else setTimeout(activate,30)}
 function boot(){if(hasWeather())schedule();else{const root=document.getElementById('desktopCanvas')||document.body;observer=new MutationObserver(()=>{if(hasWeather())schedule()});observer.observe(root,{childList:true,subtree:true})}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskGlobalWeatherLazy={version:VERSION,get loaded(){return loaded},activate,scripts:SCRIPTS.map(x=>x[0]),performanceProfile:'shared-overlay-motion+shared-forecast-motion+shared-city-motion+overlay-health+radar-generation-guard+satellite-generation-guard+idle-staggered-vector-refresh+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'};
+window.WebDeskGlobalWeatherLazy={version:VERSION,get loaded(){return loaded},activate,scripts:SCRIPTS.map(x=>x[0]),performanceProfile:'shared-overlay-motion+shared-forecast-motion+shared-city-motion+shared-vector-motion+overlay-health+radar-generation-guard+satellite-generation-guard+idle-staggered-vector-refresh+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'};
 })();
