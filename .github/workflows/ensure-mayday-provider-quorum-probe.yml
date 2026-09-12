@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Bind recovery probes to switch and viewport generation
+      - name: Cancel stale recovery requests and enforce probe budget
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -24,44 +24,51 @@ jobs:
 
           p=Path('maydayland/tour-map-openfreemap-v2.js')
           s=p.read_text(encoding='utf-8')
-          old_ver='20260913-mayday-openfreemap-v4.6-viewport-quorum-probe'
-          new_ver='20260913-mayday-openfreemap-v4.7-probe-generation-cancel'
+          old_ver='20260913-mayday-openfreemap-v4.7-probe-generation-cancel'
+          new_ver='20260913-mayday-openfreemap-v4.8-probe-request-budget'
           if old_ver in s:
               s=s.replace(old_ver,new_ver,1)
           elif new_ver not in s:
               raise SystemExit('Unexpected Mayday map version; refusing unsafe patch')
 
-          old_state='rasterProviderProbe=Object.create(null),rasterMotionActive=false'
-          new_state='rasterProviderProbe=Object.create(null),rasterProviderProbeGeneration=Object.create(null),rasterMotionActive=false'
+          old_state='rasterProviderProbe=Object.create(null),rasterProviderProbeGeneration=Object.create(null),rasterMotionActive=false'
+          new_state='rasterProviderProbe=Object.create(null),rasterProviderProbeGeneration=Object.create(null),rasterProviderProbeAbort=Object.create(null),rasterMotionActive=false'
           if old_state in s:
               s=s.replace(old_state,new_state,1)
-          elif 'rasterProviderProbeGeneration=Object.create(null)' not in s:
-              raise SystemExit('Provider probe state anchor missing; refusing unsafe patch')
+          elif 'rasterProviderProbeAbort=Object.create(null)' not in s:
+              raise SystemExit('Provider probe abort state anchor missing; refusing unsafe patch')
 
-          old_probe="""function probeRasterProvider(which,spec,timeout=1900){if(rasterProviderProbe[which])return rasterProviderProbe[which];const tiles=rasterProbeCoords().slice(0,3);rasterProviderProbe[which]=Promise.all(tiles.map(tile=>probeRasterImage(spec,tile,timeout))).then(results=>results.filter(Boolean).length>=2).catch(()=>false).finally(()=>{rasterProviderProbe[which]=null});return rasterProviderProbe[which]}"""
-          new_probe="""function rasterProbeSignature(tiles){return tiles.map(t=>t.z+':'+t.x+':'+t.y).join('|')}function probeRasterProvider(which,spec,seq,timeout=1900){const active=rasterProviderProbe[which];if(active&&active.seq===seq)return active.promise;const generation=(rasterProviderProbeGeneration[which]||0)+1;rasterProviderProbeGeneration[which]=generation;const tiles=rasterProbeCoords().slice(0,3),signature=rasterProbeSignature(tiles);const stillValid=()=>seq===switchSeq&&generation===rasterProviderProbeGeneration[which]&&signature===rasterProbeSignature(rasterProbeCoords().slice(0,3));const promise=Promise.all(tiles.map(tile=>probeRasterImage(spec,tile,timeout))).then(results=>({ok:results.filter(Boolean).length>=2,valid:stillValid()})).catch(()=>({ok:false,valid:stillValid()})).finally(()=>{if(rasterProviderProbe[which]?.generation===generation)rasterProviderProbe[which]=null});rasterProviderProbe[which]={seq,generation,promise};return promise}"""
+          old_image="""function probeRasterImage(spec,tile,timeout){return new Promise(resolve=>{const img=new Image();let done=false,timer=0;const finish=ok=>{if(done)return;done=true;clearTimeout(timer);img.onload=img.onerror=null;resolve(ok)};img.onload=()=>finish(true);img.onerror=()=>finish(false);timer=setTimeout(()=>finish(false),timeout);try{img.referrerPolicy='no-referrer';img.src=rasterProbeUrl(spec,tile)}catch(_){finish(false)}})}"""
+          new_image="""function probeRasterImage(spec,tile,timeout,aborters){return new Promise(resolve=>{const img=new Image();let done=false,timer=0;const finish=ok=>{if(done)return;done=true;clearTimeout(timer);img.onload=img.onerror=null;resolve(ok)};const abort=()=>{if(done)return;try{img.onload=img.onerror=null;img.src=''}catch(_){}finish(false)};aborters?.push(abort);img.onload=()=>finish(true);img.onerror=()=>finish(false);timer=setTimeout(()=>finish(false),timeout);try{img.referrerPolicy='no-referrer';img.decoding='async';img.src=rasterProbeUrl(spec,tile)}catch(_){finish(false)}})}"""
+          if old_image in s:
+              s=s.replace(old_image,new_image,1)
+          elif 'function probeRasterImage(spec,tile,timeout,aborters)' not in s:
+              raise SystemExit('Expected cancellable image probe anchor missing; refusing unsafe patch')
+
+          old_probe="""function probeRasterProvider(which,spec,seq,timeout=1900){const active=rasterProviderProbe[which];if(active&&active.seq===seq)return active.promise;const generation=(rasterProviderProbeGeneration[which]||0)+1;rasterProviderProbeGeneration[which]=generation;const tiles=rasterProbeCoords().slice(0,3),signature=rasterProbeSignature(tiles);const stillValid=()=>seq===switchSeq&&generation===rasterProviderProbeGeneration[which]&&signature===rasterProbeSignature(rasterProbeCoords().slice(0,3));const promise=Promise.all(tiles.map(tile=>probeRasterImage(spec,tile,timeout))).then(results=>({ok:results.filter(Boolean).length>=2,valid:stillValid()})).catch(()=>({ok:false,valid:stillValid()})).finally(()=>{if(rasterProviderProbe[which]?.generation===generation)rasterProviderProbe[which]=null});rasterProviderProbe[which]={seq,generation,promise};return promise}"""
+          new_probe="""function cancelRasterProviderProbe(which){const list=rasterProviderProbeAbort[which];if(Array.isArray(list))for(const abort of list.splice(0))try{abort()}catch(_){}rasterProviderProbeAbort[which]=null}function probeRasterProvider(which,spec,seq,timeout=1900){const tiles=rasterProbeCoords().slice(0,3),signature=rasterProbeSignature(tiles),active=rasterProviderProbe[which];if(active&&active.seq===seq&&active.signature===signature)return active.promise;if(active)cancelRasterProviderProbe(which);const generation=(rasterProviderProbeGeneration[which]||0)+1;rasterProviderProbeGeneration[which]=generation;const aborters=[];rasterProviderProbeAbort[which]=aborters;const stillValid=()=>seq===switchSeq&&generation===rasterProviderProbeGeneration[which]&&signature===rasterProbeSignature(rasterProbeCoords().slice(0,3));const promise=Promise.all(tiles.map(tile=>probeRasterImage(spec,tile,timeout,aborters))).then(results=>({ok:results.filter(Boolean).length>=2,valid:stillValid()})).catch(()=>({ok:false,valid:stillValid()})).finally(()=>{if(rasterProviderProbe[which]?.generation===generation){rasterProviderProbe[which]=null;rasterProviderProbeAbort[which]=null}});rasterProviderProbe[which]={seq,generation,signature,promise};return promise}"""
           if old_probe in s:
               s=s.replace(old_probe,new_probe,1)
-          elif 'function rasterProbeSignature(tiles)' not in s:
-              raise SystemExit('Expected v4.6 quorum probe not found; refusing unsafe patch')
+          elif 'function cancelRasterProviderProbe(which)' not in s:
+              raise SystemExit('Expected v4.7 probe function not found; refusing unsafe patch')
 
-          old_recovery="""const recovered=await probeRasterProvider(which,primary);if(seq!==switchSeq)return false;if(!recovered){"""
-          new_recovery="""const recovery=await probeRasterProvider(which,primary,seq);if(seq!==switchSeq||!recovery?.valid)return false;if(!recovery.ok){"""
-          if old_recovery in s:
-              s=s.replace(old_recovery,new_recovery,1)
-          elif new_recovery not in s:
-              raise SystemExit('Provider recovery call anchor missing; refusing unsafe patch')
+          old_request="""function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;++switchSeq;++rasterRepairGeneration;rasterRepairInFlight=false;rasterRepairKey='';rasterRepairBackoffUntil=0;rasterBadSamples=0;busy(true);"""
+          new_request="""function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;++switchSeq;++rasterRepairGeneration;for(const which of Object.keys(rasterProviderProbe))cancelRasterProviderProbe(which);rasterRepairInFlight=false;rasterRepairKey='';rasterRepairBackoffUntil=0;rasterBadSamples=0;busy(true);"""
+          if old_request in s:
+              s=s.replace(old_request,new_request,1)
+          elif 'for(const which of Object.keys(rasterProviderProbe))cancelRasterProviderProbe(which)' not in s:
+              raise SystemExit('Mode switch cancellation anchor missing; refusing unsafe patch')
 
-          required=['probe-generation-cancel','rasterProviderProbeGeneration=Object.create(null)','function rasterProbeSignature(tiles)','active&&active.seq===seq','generation===rasterProviderProbeGeneration[which]','signature===rasterProbeSignature(rasterProbeCoords().slice(0,3))','probeRasterProvider(which,primary,seq)','!recovery?.valid','!recovery.ok']
+          required=['probe-request-budget','rasterProviderProbeAbort=Object.create(null)','function cancelRasterProviderProbe(which)','active.signature===signature','if(active)cancelRasterProviderProbe(which)','img.src=\'\'','img.decoding=\'async\'','probeRasterImage(spec,tile,timeout,aborters)','for(const which of Object.keys(rasterProviderProbe))cancelRasterProviderProbe(which)']
           if not all(x in s for x in required):
-              raise SystemExit('Probe generation cancellation verification failed')
+              raise SystemExit('Probe request budget verification failed')
           p.write_text(s,encoding='utf-8')
 
           p=Path('maydayland/index.html')
           s=p.read_text(encoding='utf-8')
           s=re.sub(r'tour-map-openfreemap-v2\.js\?v=[^\" ]+', 'tour-map-openfreemap-v2.js?v='+new_ver, s, count=1)
-          if "'probe-generation-cancel'" not in s:
-              s=s.replace("'viewport-quorum-probe',", "'viewport-quorum-probe','probe-generation-cancel',",1)
+          if "'probe-request-budget'" not in s:
+              s=s.replace("'probe-generation-cancel',", "'probe-generation-cancel','probe-request-budget',",1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Verify map baselines
@@ -70,8 +77,8 @@ jobs:
           from pathlib import Path
           js=Path('maydayland/tour-map-openfreemap-v2.js').read_text(encoding='utf-8')
           html=Path('maydayland/index.html').read_text(encoding='utf-8')
-          js_required=["street:{kind:'vector'","bright:{kind:'vector'","terrain:{kind:'raster'","dark:{kind:'vector'","sat:{kind:'sat'",'SECONDARY_FALLBACKS','rasterProviderBackoff','rasterProviderFailures','rasterProviderProbe','rasterProviderProbeGeneration','function probeRasterProvider','function rasterProbeCoords()','function rasterProbeSignature(tiles)','@media(max-width:720px)']
-          html_required=['stall-aware-watchdog','adaptive-provider-backoff','provider-recovery-probe','viewport-quorum-probe','probe-generation-cancel']
+          js_required=["street:{kind:'vector'","bright:{kind:'vector'","terrain:{kind:'raster'","dark:{kind:'vector'","sat:{kind:'sat'",'SECONDARY_FALLBACKS','rasterProviderBackoff','rasterProviderFailures','rasterProviderProbe','rasterProviderProbeGeneration','rasterProviderProbeAbort','function probeRasterProvider','function rasterProbeCoords()','function rasterProbeSignature(tiles)','function cancelRasterProviderProbe(which)','@media(max-width:720px)']
+          html_required=['stall-aware-watchdog','adaptive-provider-backoff','provider-recovery-probe','viewport-quorum-probe','probe-generation-cancel','probe-request-budget']
           missing=[x for x in js_required if x not in js]+[x for x in html_required if x not in html]
           if missing: raise SystemExit('Baseline regression: '+', '.join(missing))
           PY
@@ -81,6 +88,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Cancel stale Mayday provider recovery probes'
+          git commit -m 'Cancel stale Mayday probe network requests'
           git pull --rebase origin master
           git push
