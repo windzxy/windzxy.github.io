@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260911-tour-map-stability-v1.3-fast-recovery';
+const VER='20260913-tour-map-stability-v1.4-shared-resize-coordinator';
 if(window.__maydayTourMapStability===VER)return;
 window.__maydayTourMapStability=VER;
 const KEY='maydayland-tour-map-mode-v1';
@@ -9,7 +9,7 @@ function stage(){return document.querySelector('.map-stage.mayday-real-map')||do
 function activeMode(){return document.querySelector('.mayday-map-modes button.on')?.dataset.mode||'street'}
 function buttons(){return [...document.querySelectorAll('.mayday-map-modes button[data-mode]')]}
 function interactionBusy(){try{return !!window.MAYDAYLAND_MAP_INTERACTION?.isBusy?.()}catch(_){return false}}
-function emitResize(delay=0){clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(interactionBusy())return emitResize(180);window.dispatchEvent(new Event('resize'));requestAnimationFrame(()=>window.dispatchEvent(new Event('resize')))},delay)}
+function emitResize(delay=0){const shared=window.MAYDAYLAND_MAP_INTERACTION?.requestResize;if(typeof shared==='function'){shared(delay);return}clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(interactionBusy())return emitResize(180);window.dispatchEvent(new Event('resize'))},delay)}
 function visibleMap(){const s=stage();if(!s)return false;const r=s.getBoundingClientRect();return r.width>120&&r.height>180&&r.bottom>0&&r.top<innerHeight}
 function hasPaint(){const s=stage();if(!s)return true;const tiles=[...s.querySelectorAll('.leaflet-tile')].some(t=>t.complete&&t.naturalWidth>0&&getComputedStyle(t).opacity!=='0');const canvas=[...s.querySelectorAll('canvas')].some(c=>c.width>32&&c.height>32&&getComputedStyle(c).visibility!=='hidden'&&getComputedStyle(c).opacity!=='0');return tiles||canvas}
 function status(msg,hold=1800){const el=stage()?.querySelector('.mayday-map-status');if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(el.__stabilityTimer);el.__stabilityTimer=setTimeout(()=>el.classList.remove('show'),hold)}
