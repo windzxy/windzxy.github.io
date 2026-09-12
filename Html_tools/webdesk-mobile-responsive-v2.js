@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260912-webdesk-mobile-responsive-v2.2-swipe-cards';
+const VERSION='20260912-webdesk-mobile-responsive-v2.3-targeted-card-observer';
 if(window.__webdeskMobileResponsive===VERSION)return;
 window.__webdeskMobileResponsive=VERSION;
 let activeIndex=0,lastIds=[],touch=null,indicator=null;
@@ -93,11 +93,24 @@ function installFab(){
   window.addEventListener('keydown',e=>{if(e.key==='Escape')closeDock()});
 }
 function leaveMobile(){document.querySelectorAll('.desktop-card.mobile-active-card').forEach(x=>x.classList.remove('mobile-active-card'));document.body.classList.remove('webdesk-dock-open')}
+let syncFrame=0,resizeTimer=0;
+function scheduleSync(){
+  if(syncFrame)return;
+  syncFrame=requestAnimationFrame(()=>{syncFrame=0;bindSwipe();syncCards()});
+}
 function boot(){
   installStyle();installFab();bindSwipe();syncCards();
-  new MutationObserver(()=>{bindSwipe();syncCards()}).observe(document.body,{childList:true,subtree:true});
-  window.addEventListener('resize',()=>{if(innerWidth<=820)syncCards();else leaveMobile()});
-  window.addEventListener('orientationchange',()=>setTimeout(syncCards,100));
+  const canvas=document.getElementById('desktopCanvas');
+  if(canvas){
+    new MutationObserver(records=>{
+      if(records.some(r=>r.type==='childList'&&(r.addedNodes.length||r.removedNodes.length)))scheduleSync();
+    }).observe(canvas,{childList:true,subtree:false});
+  }
+  window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{if(innerWidth<=820)scheduleSync();else leaveMobile()},120);
+  },{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(scheduleSync,140),{passive:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 window.WebDeskMobileResponsive={version:VERSION,features:['safe-floating-dock','single-card-mobile-view','swipe-card-switching','natural-card-height','vertical-page-scroll','card-position-indicator']};
