@@ -1,0 +1,38 @@
+name: Ensure WebDesk Mobile Responsive V2
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/webdesk-mobile-responsive-v2.js'
+      - '.github/workflows/ensure-webdesk-mobile-responsive-v2.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Keep mobile responsive runtime loaded
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'\n?<script src="Html_tools/webdesk-mobile-responsive-v2\.js\?v=[^"]+"></script>','',s)
+          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260912-webdesk-mobile-responsive-v2.0-safe-dock-fluid-games"></script>'
+          s=s.replace('</body>',tag+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit loader
+        run: |
+          if git diff --quiet -- index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Load safe mobile dock and fluid game cards'
+          git pull --rebase origin master
+          git push
