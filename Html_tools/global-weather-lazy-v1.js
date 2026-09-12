@@ -17,10 +17,10 @@ const SCRIPTS=[
  ['Html_tools/typhoon-weather-ui-recovery-v11-1.js','20260907-typhoon-weather-ui-recovery-v11.3-self-heal'],
  ['Html_tools/typhoon-weather-p0-remount.js','20260909-typhoon-weather-p0-remount-v9-grouped-controller'],
  ['Html_tools/typhoon-openmeteo-broker-v1.js','20260911-typhoon-weather-hub-v2.6-viewport-cache'],
- ['Html_tools/typhoon-weather-layer-interaction-fix-v1.js','20260912-typhoon-layer-interaction-v9-shared-motion-forecast'],
+ ['Html_tools/typhoon-weather-layer-interaction-fix-v1.js','20260912-typhoon-layer-interaction-v10-post-settle-stagger'],
  ['Html_tools/typhoon-overlay-health-v1.js','20260911-typhoon-overlay-health-v1.2-data-time-coherence'],
- ['Html_tools/typhoon-dynamic-city-labels-v1.js','20260912-typhoon-dynamic-city-labels-v1.9-shared-motion'],
- ['Html_tools/typhoon-zoom-motion-v2-1.js','20260912-typhoon-zoom-motion-v2.3-shared-motion-field'],
+ ['Html_tools/typhoon-dynamic-city-labels-v1.js','20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle'],
+ ['Html_tools/typhoon-zoom-motion-v2-1.js','20260912-typhoon-zoom-motion-v2.5-visibility-idle'],
  ['Html_tools/mobile-desktop-ux-v1.js','20260910-mobile-desktop-ux-v1.0'],
  ['Html_tools/typhoon-control-layout-v13.js','20260911-typhoon-control-layout-v13.1-single-owner']
 ];

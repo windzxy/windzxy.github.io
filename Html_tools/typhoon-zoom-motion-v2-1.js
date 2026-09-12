@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260912-typhoon-zoom-motion-v2.3-shared-motion-field';
+const VER='20260912-typhoon-zoom-motion-v2.5-visibility-idle';
 if(window.__windzxyTyphoonZoomMotion21===VER)return;
 window.__windzxyTyphoonZoomMotion21=VER;
 
