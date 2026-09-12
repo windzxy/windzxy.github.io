@@ -20,46 +20,25 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
-
           runtime=Path('Html_tools/webdesk-mobile-responsive-v2.js')
           s=runtime.read_text(encoding='utf-8')
-          s=s.replace("const VERSION='20260912-webdesk-mobile-responsive-v2.2-swipe-cards';","const VERSION='20260912-webdesk-mobile-responsive-v2.3-targeted-card-observer';")
-          old="""function boot(){
-  installStyle();installFab();bindSwipe();syncCards();
-  new MutationObserver(()=>{bindSwipe();syncCards()}).observe(document.body,{childList:true,subtree:true});
-  window.addEventListener('resize',()=>{if(innerWidth<=820)syncCards();else leaveMobile()});
-  window.addEventListener('orientationchange',()=>setTimeout(syncCards,100));
-}"""
-          new="""let syncFrame=0,resizeTimer=0;
-function scheduleSync(){
-  if(syncFrame)return;
-  syncFrame=requestAnimationFrame(()=>{syncFrame=0;bindSwipe();syncCards()});
-}
-function boot(){
-  installStyle();installFab();bindSwipe();syncCards();
-  const canvas=document.getElementById('desktopCanvas');
-  if(canvas){
-    new MutationObserver(records=>{
-      if(records.some(r=>r.type==='childList'&&(r.addedNodes.length||r.removedNodes.length)))scheduleSync();
-    }).observe(canvas,{childList:true,subtree:false});
-  }
-  window.addEventListener('resize',()=>{
-    clearTimeout(resizeTimer);
-    resizeTimer=setTimeout(()=>{if(innerWidth<=820)scheduleSync();else leaveMobile()},120);
-  },{passive:true});
-  window.addEventListener('orientationchange',()=>setTimeout(scheduleSync,140),{passive:true});
-}"""
-          if old not in s:
-              raise SystemExit('Expected v2.2 boot block not found; refusing unsafe patch')
-          s=s.replace(old,new,1)
+          old_version="const VERSION='20260912-webdesk-mobile-responsive-v2.2-swipe-cards';"
+          new_version="const VERSION='20260912-webdesk-mobile-responsive-v2.3-targeted-card-observer';"
+          if old_version in s:
+              s=s.replace(old_version,new_version,1)
+          old="function boot(){\n  installStyle();installFab();bindSwipe();syncCards();\n  new MutationObserver(()=>{bindSwipe();syncCards()}).observe(document.body,{childList:true,subtree:true});\n  window.addEventListener('resize',()=>{if(innerWidth<=820)syncCards();else leaveMobile()});\n  window.addEventListener('orientationchange',()=>setTimeout(syncCards,100));\n}"
+          new="let syncFrame=0,resizeTimer=0;\nfunction scheduleSync(){\n  if(syncFrame)return;\n  syncFrame=requestAnimationFrame(()=>{syncFrame=0;bindSwipe();syncCards()});\n}\nfunction boot(){\n  installStyle();installFab();bindSwipe();syncCards();\n  const canvas=document.getElementById('desktopCanvas');\n  if(canvas){\n    new MutationObserver(records=>{\n      if(records.some(r=>r.type==='childList'&&(r.addedNodes.length||r.removedNodes.length)))scheduleSync();\n    }).observe(canvas,{childList:true,subtree:false});\n  }\n  window.addEventListener('resize',()=>{\n    clearTimeout(resizeTimer);\n    resizeTimer=setTimeout(()=>{if(innerWidth<=820)scheduleSync();else leaveMobile()},120);\n  },{passive:true});\n  window.addEventListener('orientationchange',()=>setTimeout(scheduleSync,140),{passive:true});\n}"
+          if old in s:
+              s=s.replace(old,new,1)
+          elif 'targeted-card-observer' not in s or 'subtree:false' not in s:
+              raise SystemExit('Unexpected mobile runtime; refusing unsafe patch')
           runtime.write_text(s,encoding='utf-8')
-
           p=Path('index.html')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r'\n?<script src="Html_tools/webdesk-mobile-responsive-v2\.js\?v=[^"]+"></script>','',s)
+          page=p.read_text(encoding='utf-8')
+          page=re.sub(r'\n?<script src="Html_tools/webdesk-mobile-responsive-v2\.js\?v=[^"]+"></script>','',page)
           tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260912-webdesk-mobile-responsive-v2.3-targeted-card-observer"></script>'
-          s=s.replace('</body>',tag+'\n</body>',1)
-          p.write_text(s,encoding='utf-8')
+          page=page.replace('</body>',tag+'\n</body>',1)
+          p.write_text(page,encoding='utf-8')
           PY
       - name: Commit runtime and loader
         run: |
