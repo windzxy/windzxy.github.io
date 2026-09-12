@@ -15,24 +15,58 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Keep mobile responsive runtime loaded
+      - name: Keep mobile responsive runtime efficient and loaded
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
+
+          runtime=Path('Html_tools/webdesk-mobile-responsive-v2.js')
+          s=runtime.read_text(encoding='utf-8')
+          s=s.replace("const VERSION='20260912-webdesk-mobile-responsive-v2.2-swipe-cards';","const VERSION='20260912-webdesk-mobile-responsive-v2.3-targeted-card-observer';")
+          old="""function boot(){
+  installStyle();installFab();bindSwipe();syncCards();
+  new MutationObserver(()=>{bindSwipe();syncCards()}).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('resize',()=>{if(innerWidth<=820)syncCards();else leaveMobile()});
+  window.addEventListener('orientationchange',()=>setTimeout(syncCards,100));
+}"""
+          new="""let syncFrame=0,resizeTimer=0;
+function scheduleSync(){
+  if(syncFrame)return;
+  syncFrame=requestAnimationFrame(()=>{syncFrame=0;bindSwipe();syncCards()});
+}
+function boot(){
+  installStyle();installFab();bindSwipe();syncCards();
+  const canvas=document.getElementById('desktopCanvas');
+  if(canvas){
+    new MutationObserver(records=>{
+      if(records.some(r=>r.type==='childList'&&(r.addedNodes.length||r.removedNodes.length)))scheduleSync();
+    }).observe(canvas,{childList:true,subtree:false});
+  }
+  window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{if(innerWidth<=820)scheduleSync();else leaveMobile()},120);
+  },{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(scheduleSync,140),{passive:true});
+}"""
+          if old not in s:
+              raise SystemExit('Expected v2.2 boot block not found; refusing unsafe patch')
+          s=s.replace(old,new,1)
+          runtime.write_text(s,encoding='utf-8')
+
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
           s=re.sub(r'\n?<script src="Html_tools/webdesk-mobile-responsive-v2\.js\?v=[^"]+"></script>','',s)
-          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260912-webdesk-mobile-responsive-v2.2-swipe-cards"></script>'
+          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260912-webdesk-mobile-responsive-v2.3-targeted-card-observer"></script>'
           s=s.replace('</body>',tag+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
           PY
-      - name: Commit loader
+      - name: Commit runtime and loader
         run: |
-          if git diff --quiet -- index.html; then exit 0; fi
+          if git diff --quiet -- Html_tools/webdesk-mobile-responsive-v2.js index.html; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Load swipe card mobile runtime'
+          git add Html_tools/webdesk-mobile-responsive-v2.js index.html
+          git commit -m 'Reduce WebDesk mobile card observer overhead'
           git pull --rebase origin master
           git push
