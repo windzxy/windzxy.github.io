@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Make raster watchdog sampling motion aware
+      - name: Give raster tiles a post-motion load grace
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -34,33 +34,47 @@ jobs:
           runtime = Path('maydayland/tour-map-openfreemap-v2.js')
           r = runtime.read_text(encoding='utf-8')
 
-          old_ver = "const VER='20260912-mayday-openfreemap-v4.0-raster-watchdog-suspend';"
-          new_ver = "const VER='20260912-mayday-openfreemap-v4.1-motion-aware-watchdog';"
+          old_ver = "const VER='20260912-mayday-openfreemap-v4.1-motion-aware-watchdog';"
+          new_ver = "const VER='20260912-mayday-openfreemap-v4.2-tile-progress-grace';"
           if old_ver in r:
               r = r.replace(old_ver, new_ver, 1)
           elif new_ver not in r:
               raise SystemExit('unexpected Mayday map runtime version; refusing unsafe rewrite')
 
-          old_state = "rasterProviderHealthy=Object.create(null),modeSwitchTimer=0,pendingMode=null;"
-          new_state = "rasterProviderHealthy=Object.create(null),rasterMotionActive=false,rasterMotionSettleUntil=0,rasterWatchMap=null,modeSwitchTimer=0,pendingMode=null;"
+          old_state = "rasterMotionActive=false,rasterMotionSettleUntil=0,rasterWatchMap=null,modeSwitchTimer=0,pendingMode=null;"
+          new_state = "rasterMotionActive=false,rasterMotionSettleUntil=0,rasterLastTileProgressAt=0,rasterWatchProbe=null,rasterTileProgressHandler=null,rasterWatchMap=null,modeSwitchTimer=0,pendingMode=null;"
           if old_state in r:
               r = r.replace(old_state, new_state, 1)
-          elif "rasterMotionSettleUntil=0" not in r:
-              raise SystemExit('raster watchdog state anchor not found')
+          elif "rasterLastTileProgressAt=0" not in r:
+              raise SystemExit('raster progress state anchor not found')
 
-          old_stop = "function stopRasterWatch(){if(!rasterWatchTimer)return;clearInterval(rasterWatchTimer);rasterWatchTimer=null;rasterBadSamples=0;rasterRepairKey='';rasterRepairBackoffUntil=0}"
-          new_stop = "function resetRasterWatchSamples(){rasterBadSamples=0;rasterRepairKey='';rasterRepairBackoffUntil=0}\nfunction rasterMotionStart(){if(!rasterMotionActive)++rasterRepairGeneration;rasterMotionActive=true;rasterMotionSettleUntil=0;resetRasterWatchSamples()}\nfunction rasterMotionEnd(){rasterMotionActive=false;rasterMotionSettleUntil=Date.now()+420;rasterBadSamples=0}\nfunction unbindRasterWatchMotion(){if(rasterWatchMap)try{rasterWatchMap.off('movestart',rasterMotionStart);rasterWatchMap.off('zoomstart',rasterMotionStart);rasterWatchMap.off('moveend',rasterMotionEnd);rasterWatchMap.off('zoomend',rasterMotionEnd)}catch(_){}rasterWatchMap=null;rasterMotionActive=false;rasterMotionSettleUntil=0}\nfunction bindRasterWatchMotion(){if(!map||rasterWatchMap===map)return;unbindRasterWatchMotion();rasterWatchMap=map;try{map.on('movestart',rasterMotionStart);map.on('zoomstart',rasterMotionStart);map.on('moveend',rasterMotionEnd);map.on('zoomend',rasterMotionEnd)}catch(_){rasterWatchMap=null}}\nfunction stopRasterWatch(){if(rasterWatchTimer){clearInterval(rasterWatchTimer);rasterWatchTimer=null}unbindRasterWatchMotion();resetRasterWatchSamples()}"
-          if old_stop in r:
-              r = r.replace(old_stop, new_stop, 1)
-          elif "function rasterMotionStart()" not in r:
-              raise SystemExit('raster watchdog stop anchor not found')
+          old_motion = "function rasterMotionEnd(){rasterMotionActive=false;rasterMotionSettleUntil=Date.now()+420;rasterBadSamples=0}"
+          new_motion = "function rasterMotionEnd(){rasterMotionActive=false;rasterMotionSettleUntil=Date.now()+520;rasterBadSamples=0}"
+          if old_motion in r:
+              r = r.replace(old_motion, new_motion, 1)
+          elif new_motion not in r:
+              raise SystemExit('raster motion end anchor not found')
 
-          old_ensure = "function ensureRasterWatch(){if(!raster){stopRasterWatch();return}if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}if(rasterRepairInFlight)return;"
-          new_ensure = "function ensureRasterWatch(){if(!raster){stopRasterWatch();return}bindRasterWatchMotion();if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}if(rasterMotionActive||map._animatingZoom||map.dragging?._draggable?._moving||Date.now()<rasterMotionSettleUntil)return;if(rasterRepairInFlight)return;"
+          old_bind = "function bindRasterWatchMotion(){if(!map||rasterWatchMap===map)return;unbindRasterWatchMotion();rasterWatchMap=map;try{map.on('movestart',rasterMotionStart);map.on('zoomstart',rasterMotionStart);map.on('moveend',rasterMotionEnd);map.on('zoomend',rasterMotionEnd)}catch(_){rasterWatchMap=null}}\nfunction stopRasterWatch(){if(rasterWatchTimer){clearInterval(rasterWatchTimer);rasterWatchTimer=null}unbindRasterWatchMotion();resetRasterWatchSamples()}"
+          new_bind = "function bindRasterWatchMotion(){if(!map||rasterWatchMap===map)return;unbindRasterWatchMotion();rasterWatchMap=map;try{map.on('movestart',rasterMotionStart);map.on('zoomstart',rasterMotionStart);map.on('moveend',rasterMotionEnd);map.on('zoomend',rasterMotionEnd)}catch(_){rasterWatchMap=null}}\nfunction unbindRasterTileProgress(){if(rasterWatchProbe&&rasterTileProgressHandler)try{rasterWatchProbe.off('tileload',rasterTileProgressHandler)}catch(_){}rasterWatchProbe=null;rasterTileProgressHandler=null;rasterLastTileProgressAt=0}\nfunction bindRasterTileProgress(){const probe=rasterProbe();if(!probe||probe===rasterWatchProbe)return;if(rasterWatchProbe&&rasterTileProgressHandler)try{rasterWatchProbe.off('tileload',rasterTileProgressHandler)}catch(_){}rasterWatchProbe=probe;rasterTileProgressHandler=()=>{rasterLastTileProgressAt=Date.now();rasterBadSamples=0};try{probe.on('tileload',rasterTileProgressHandler)}catch(_){rasterWatchProbe=null;rasterTileProgressHandler=null}}\nfunction stopRasterWatch(){if(rasterWatchTimer){clearInterval(rasterWatchTimer);rasterWatchTimer=null}unbindRasterTileProgress();unbindRasterWatchMotion();resetRasterWatchSamples()}"
+          if old_bind in r:
+              r = r.replace(old_bind, new_bind, 1)
+          elif "function bindRasterTileProgress()" not in r:
+              raise SystemExit('raster tile progress binding anchor not found')
+
+          old_ensure = "function ensureRasterWatch(){if(!raster){stopRasterWatch();return}bindRasterWatchMotion();if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}if(rasterMotionActive||map._animatingZoom||map.dragging?._draggable?._moving||Date.now()<rasterMotionSettleUntil)return;if(rasterRepairInFlight)return;"
+          new_ensure = "function ensureRasterWatch(){if(!raster){stopRasterWatch();return}bindRasterWatchMotion();bindRasterTileProgress();if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}bindRasterTileProgress();const now=Date.now();if(rasterMotionActive||map._animatingZoom||map.dragging?._draggable?._moving||now<rasterMotionSettleUntil||now-rasterLastTileProgressAt<900)return;if(rasterRepairInFlight)return;"
           if old_ensure in r:
               r = r.replace(old_ensure, new_ensure, 1)
-          elif "Date.now()<rasterMotionSettleUntil" not in r:
+          elif "now-rasterLastTileProgressAt<900" not in r:
               raise SystemExit('raster watchdog ensure anchor not found')
+
+          old_now = "const key=rasterViewportKey(),now=Date.now();"
+          new_now = "const key=rasterViewportKey();"
+          if old_now in r:
+              r = r.replace(old_now, new_now, 1)
+          elif new_now not in r:
+              raise SystemExit('raster watchdog now anchor not found')
 
           runtime.write_text(r, encoding='utf-8')
 
@@ -68,25 +82,25 @@ jobs:
           s = p.read_text(encoding='utf-8')
           s = re.sub(
               r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v4.1-motion-aware-watchdog" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v4.2-tile-progress-grace" defer></script>',
               s,
               count=1,
           )
-          if "'motion-aware-watchdog'" not in s:
-              if "'raster-watchdog-suspend'" not in s:
-                  raise SystemExit('watchdog suspension preserve marker anchor not found')
-              s = s.replace("'raster-watchdog-suspend',", "'raster-watchdog-suspend','motion-aware-watchdog',", 1)
+          if "'tile-progress-grace'" not in s:
+              if "'motion-aware-watchdog'" not in s:
+                  raise SystemExit('motion-aware watchdog preserve marker anchor not found')
+              s = s.replace("'motion-aware-watchdog',", "'motion-aware-watchdog','tile-progress-grace',", 1)
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit motion-aware raster watchdog if needed
+      - name: Commit tile-progress raster watchdog if needed
         run: |
           if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
-            echo 'Maydayland motion-aware raster watchdog already canonical.'
+            echo 'Maydayland tile-progress raster watchdog already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Pause Mayday raster watchdog sampling during map motion'
+          git commit -m 'Wait for Mayday raster tile progress before repair'
           git pull --rebase origin master
           git push
