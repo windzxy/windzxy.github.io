@@ -1,0 +1,88 @@
+name: Ensure Typhoon Visibility Idle
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/ensure-typhoon-visibility-idle.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: webdesk-index-writers
+  cancel-in-progress: false
+
+jobs:
+  visibility-idle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: master
+      - name: Suspend weather work while hidden or offscreen
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          city_version='20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle'
+          vector_version='20260912-typhoon-zoom-motion-v2.5-visibility-idle'
+          loader_version='20260912-global-weather-lazy-v3.1-visibility-idle'
+
+          p=Path('Html_tools/typhoon-dynamic-city-labels-v1.js')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r"const VER='[^']+';",f"const VER='{city_version}';",s,count=1)
+          replacement="""function scan(){if(document.hidden)return;document.querySelectorAll('[data-typhoon-root]').forEach(sync)}
+function sleep(){document.querySelectorAll('[data-typhoon-root]').forEach(root=>{const s=state(root);clearTimeout(s.timer);clearTimeout(s.hubTimer);s.timer=s.hubTimer=0;s.req++})}
+function boot(){ensureStyle();scan();setInterval(()=>{if(!document.hidden)scan()},1800);document.addEventListener('visibilitychange',()=>{if(document.hidden)sleep();else{scan();document.querySelectorAll('[data-typhoon-root]').forEach(r=>{if(visible(r)){schedule(r,45);scheduleHub(r,190)}})}});document.addEventListener('typhoon-dense-city-index-ready',()=>{if(!document.hidden)document.querySelectorAll('[data-typhoon-root]').forEach(r=>schedule(r,45))});document.addEventListener('typhoon-weather-controller-mode',e=>{if(document.hidden)return;const r=e.target?.closest?.('[data-typhoon-root]')||e.detail?.button?.closest?.('[data-typhoon-root]');if(r&&visible(r))schedule(r,35)},true);document.addEventListener('change',e=>{if(document.hidden)return;if(e.target?.matches?.('.lang-select'))document.querySelectorAll('[data-typhoon-root]').forEach(r=>{if(visible(r))schedule(r,35)})},true)}
+if(document.readyState"""
+          s,n=re.subn(r"function scan\(\)\{.*?\}\nfunction boot\(\)\{.*?\}\nif\(document\.readyState",replacement,s,count=1,flags=re.S)
+          if n!=1: raise SystemExit('city visibility patch not applied')
+          s=re.sub(r"version:'v\d+(?:\.\d+)?'","version:'v2.1'",s,count=1)
+          if 'visibilityIdle:true' not in s:s=s.replace('postSettleStagger:true','postSettleStagger:true,visibilityIdle:true',1)
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('Html_tools/typhoon-zoom-motion-v2-1.js')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r"const VER='[^']+';",f"const VER='{vector_version}';",s,count=1)
+          replacement="""function scan(){document.querySelectorAll('[data-typhoon-root]').forEach(root=>{if(document.hidden||!visible(root)){deactivate(root);return}if(root.__tpMap){bind(root);ensureTimeline(root);ensureTruth(root);activate(root,false)}})}
+function boot(){ensureStyle();scan();setInterval(()=>{if(!document.hidden)scan()},1600);document.addEventListener('visibilitychange',()=>{if(document.hidden)document.querySelectorAll('[data-typhoon-root]').forEach(deactivate);else scan()});document.addEventListener('typhoon-weather-controller-mode',e=>{if(document.hidden)return;const root=e.target?.closest?.('[data-typhoon-root]')||e.detail?.button?.closest?.('[data-typhoon-root]');if(!root||!visible(root))return;setTimeout(()=>{state(root).mode='';activate(root,true)},90)},true);document.addEventListener('click',e=>{const play=e.target.closest?.('[data-zoom21-play]');if(play){const root=play.closest('[data-typhoon-root]'),s=state(root);s.playing=!s.playing;updateTimeline(root,s.mode==='radar'?'RainViewer · real radar frames':'JMA Himawari · real satellite frames',null);clearTimeout(s.timer);if(s.playing&&!document.hidden&&visible(root))s.timer=setTimeout(()=>promote(root),120);return}const b=e.target.closest?.('.tp-weather-p0-global [data-p0-mode]');if(b){const root=b.closest('[data-typhoon-root]');if(document.hidden||!visible(root))return;setTimeout(()=>{state(root).mode='';activate(root,true)},120)}},true);document.addEventListener('input',e=>{const range=e.target.closest?.('[data-zoom21-range]');if(!range)return;const root=range.closest('[data-typhoon-root]'),s=state(root);if(!FRAME_MODES.has(s.mode))return;s.playing=false;clearTimeout(s.timer);promote(root,+range.value)},true)}
+if(document.readyState"""
+          s,n=re.subn(r"function scan\(\)\{.*?\}\nfunction boot\(\)\{.*?\}\nif\(document\.readyState",replacement,s,count=1,flags=re.S)
+          if n!=1: raise SystemExit('vector visibility patch not applied')
+          s=re.sub(r"version:'v\d+(?:\.\d+)?'","version:'v2.5'",s,count=1)
+          if 'visibilityIdle:true' not in s:s=s.replace('postSettleStagger:true','postSettleStagger:true,visibilityIdle:true',1)
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('Html_tools/global-weather-lazy-v1.js')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r"const VERSION='[^']+';",f"const VERSION='{loader_version}';",s,count=1)
+          refs={'typhoon-dynamic-city-labels-v1.js':city_version,'typhoon-zoom-motion-v2-1.js':vector_version}
+          for name,ver in refs.items():
+              s=re.sub(r"\['Html_tools/"+re.escape(name)+r"','[^']+'\]","['Html_tools/"+name+"','"+ver+"']",s,count=1)
+          s=s.replace("async function activate(){if(loading||loaded||!hasWeather())return;","async function activate(){if(document.hidden||loading||loaded||!hasWeather())return;",1)
+          s=s.replace("function schedule(){if(loading||loaded)return;","function schedule(){if(document.hidden||loading||loaded)return;",1)
+          s=s.replace("function boot(){if(hasWeather())schedule();else{const root=document.getElementById('desktopCanvas')||document.body;observer=new MutationObserver(()=>{if(hasWeather())schedule()});observer.observe(root,{childList:true,subtree:true})}}","function boot(){if(hasWeather())schedule();else{const root=document.getElementById('desktopCanvas')||document.body;observer=new MutationObserver(()=>{if(!document.hidden&&hasWeather())schedule()});observer.observe(root,{childList:true,subtree:true})}document.addEventListener('visibilitychange',()=>{if(!document.hidden&&hasWeather())schedule()})}",1)
+          s=re.sub(r"performanceProfile:'[^']+'","performanceProfile:'visibility-idle+shared-overlay-motion+post-settle-staggered-forecast-city-vector+overlay-health+radar-generation-guard+satellite-generation-guard+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'",s,count=1)
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+',f'Html_tools/global-weather-lazy-v1.js?v={loader_version}',s,count=1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit visibility idle runtime
+        run: |
+          if git diff --quiet -- Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js index.html; then
+            echo 'Visibility idle guard already applied.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js index.html
+          git commit -m 'Suspend WebDesk weather work when hidden or offscreen'
+          git pull --rebase origin master
+          git push
