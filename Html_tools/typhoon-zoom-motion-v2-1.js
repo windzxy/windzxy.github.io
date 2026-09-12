@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260912-typhoon-zoom-motion-v2.5-visibility-idle';
+const VER='20260912-typhoon-zoom-motion-v2.4-post-settle-stagger';
 if(window.__windzxyTyphoonZoomMotion21===VER)return;
 window.__windzxyTyphoonZoomMotion21=VER;
 

@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260912-typhoon-satellite-pan-v1.4-visibility-idle';
+const VER='20260912-typhoon-satellite-pan-v1.3-shared-motion-coordinator';
 if(window.__windzxyTyphoonSatellitePan===VER)return;
 window.__windzxyTyphoonSatellitePan=VER;
 let io=null,scanFrame=0,leafletRetry=0;

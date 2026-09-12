@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle';
+const VER='20260912-typhoon-dynamic-city-labels-v2.0-post-settle-stagger';
 if(window.__windzxyTyphoonDynamicCityLabels===VER)return;
 window.__windzxyTyphoonDynamicCityLabels=VER;
 const FAST_URL='https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_populated_places.geojson';
