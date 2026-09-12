@@ -38,10 +38,10 @@ jobs:
 
           versions={
             'Html_tools/typhoon-radar-v4-1.js':'20260912-typhoon-radar-v4.5-shared-motion-coordinator',
-            'Html_tools/typhoon-satellite-pan-v1.js':'20260912-typhoon-satellite-pan-v1.3-shared-motion-coordinator',
+            'Html_tools/typhoon-satellite-pan-v1.js':'20260912-typhoon-satellite-pan-v1.4-visibility-idle',
             'Html_tools/typhoon-weather-layer-interaction-fix-v1.js':'20260912-typhoon-layer-interaction-v10-post-settle-stagger',
-            'Html_tools/typhoon-dynamic-city-labels-v1.js':'20260912-typhoon-dynamic-city-labels-v2.0-post-settle-stagger',
-            'Html_tools/typhoon-zoom-motion-v2-1.js':'20260912-typhoon-zoom-motion-v2.4-post-settle-stagger',
+            'Html_tools/typhoon-dynamic-city-labels-v1.js':'20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle',
+            'Html_tools/typhoon-zoom-motion-v2-1.js':'20260912-typhoon-zoom-motion-v2.5-visibility-idle',
           }
           for path,ver in versions.items():
             p=Path(path)
@@ -52,8 +52,9 @@ jobs:
 
           required={
             'Html_tools/typhoon-weather-layer-interaction-fix-v1.js':['shared-motion-settled-staggered-idle-last-viewport'],
-            'Html_tools/typhoon-dynamic-city-labels-v1.js':['sharedMotionCoordinator:true','postSettleStagger:true'],
-            'Html_tools/typhoon-zoom-motion-v2-1.js':['sharedMotionCoordinator:true','postSettleStagger:true'],
+            'Html_tools/typhoon-dynamic-city-labels-v1.js':['sharedMotionCoordinator:true','postSettleStagger:true','visibilityIdle:true'],
+            'Html_tools/typhoon-zoom-motion-v2-1.js':['sharedMotionCoordinator:true','postSettleStagger:true','visibilityIdle:true'],
+            'Html_tools/typhoon-satellite-pan-v1.js':['visibilityIdle:true'],
           }
           for path,markers in required.items():
             s=Path(path).read_text(encoding='utf-8')
@@ -63,20 +64,21 @@ jobs:
 
           loader=Path('Html_tools/global-weather-lazy-v1.js')
           s=loader.read_text(encoding='utf-8')
-          s=re.sub(r"const VERSION='[^']+';","const VERSION='20260912-global-weather-lazy-v3.0-post-settle-stagger';",s,count=1)
+          s=re.sub(r"const VERSION='[^']+';","const VERSION='20260912-global-weather-lazy-v3.2-raster-visibility-idle';",s,count=1)
           refs={
+            'typhoon-satellite-pan-v1.js':'20260912-typhoon-satellite-pan-v1.4-visibility-idle',
             'typhoon-weather-layer-interaction-fix-v1.js':'20260912-typhoon-layer-interaction-v10-post-settle-stagger',
-            'typhoon-dynamic-city-labels-v1.js':'20260912-typhoon-dynamic-city-labels-v2.0-post-settle-stagger',
-            'typhoon-zoom-motion-v2-1.js':'20260912-typhoon-zoom-motion-v2.4-post-settle-stagger',
+            'typhoon-dynamic-city-labels-v1.js':'20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle',
+            'typhoon-zoom-motion-v2-1.js':'20260912-typhoon-zoom-motion-v2.5-visibility-idle',
           }
           for name,ver in refs.items():
             s=re.sub(r"\['Html_tools/"+re.escape(name)+r"','[^']+'\]","['Html_tools/"+name+"','"+ver+"']",s,count=1)
-          s=re.sub(r"performanceProfile:'[^']+'","performanceProfile:'shared-overlay-motion+post-settle-staggered-forecast-city-vector+overlay-health+radar-generation-guard+satellite-generation-guard+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'",s,count=1)
+          s=re.sub(r"performanceProfile:'[^']+'","performanceProfile:'shared-overlay-motion+post-settle-staggered-forecast-city-vector+visibility-idle+satellite-visibility-idle+overlay-health+radar-generation-guard+satellite-generation-guard+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'",s,count=1)
           loader.write_text(s,encoding='utf-8')
 
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          s=re.sub(r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+','Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v3.0-post-settle-stagger',s,count=1)
+          s=re.sub(r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+','Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v3.2-raster-visibility-idle',s,count=1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit canonical cache busters
@@ -88,6 +90,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add Html_tools/typhoon-radar-v4-1.js Html_tools/typhoon-satellite-pan-v1.js Html_tools/typhoon-weather-layer-interaction-fix-v1.js Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js index.html
-          git commit -m 'Keep staggered typhoon runtime canonical'
+          git commit -m 'Keep visibility-idle typhoon runtime canonical'
           git pull --rebase origin master
           git push
