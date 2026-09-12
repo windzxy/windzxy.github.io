@@ -1,0 +1,51 @@
+name: Ensure Typhoon Raster Visibility Lifecycle
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/ensure-typhoon-raster-visibility-v1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: webdesk-index-writers
+  cancel-in-progress: false
+
+jobs:
+  raster-visibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: master
+      - name: Keep visibility-aware satellite runtime loaded
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          satellite_version='20260912-typhoon-satellite-pan-v1.4-visibility-idle'
+          loader_version='20260912-global-weather-lazy-v3.2-raster-visibility-idle'
+          p=Path('Html_tools/global-weather-lazy-v1.js')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r"const VERSION='[^']+';",f"const VERSION='{loader_version}';",s,count=1)
+          s=re.sub(r"\['Html_tools/typhoon-satellite-pan-v1\.js','[^']+'\]",f"['Html_tools/typhoon-satellite-pan-v1.js','{satellite_version}']",s,count=1)
+          s=re.sub(r"performanceProfile:'[^']+'","performanceProfile:'visibility-idle+raster-visibility-idle+shared-overlay-motion+post-settle-staggered-forecast-city-vector+overlay-health+radar-generation-guard+satellite-generation-guard+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'",s,count=1)
+          p.write_text(s,encoding='utf-8')
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+',f'Html_tools/global-weather-lazy-v1.js?v={loader_version}',s,count=1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit raster visibility runtime loader
+        run: |
+          if git diff --quiet -- Html_tools/global-weather-lazy-v1.js index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Html_tools/global-weather-lazy-v1.js index.html
+          git commit -m 'Load visibility-aware satellite lifecycle'
+          git pull --rebase origin master
+          git push
