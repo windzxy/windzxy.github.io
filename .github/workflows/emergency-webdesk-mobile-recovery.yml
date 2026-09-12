@@ -1,0 +1,39 @@
+name: Emergency WebDesk mobile recovery
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/emergency-webdesk-mobile-recovery.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Restore stable board-game cores and remove risky mobile loaders
+        run: |
+          set -e
+          git checkout e3f5d3b877970b5231f2a1b29bc1f35f480e3d7a -- Html_tools/chess-card-v1.js Html_tools/xiangqi-card-v1.js Html_tools/gomoku-card-v1.js
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          for name in ('boardgame-side-choice-v1','webdesk-mobile-dock-v1'):
+              s=re.sub(r'\n?<script src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"></script>','',s)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit emergency recovery
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Html_tools/chess-card-v1.js Html_tools/xiangqi-card-v1.js Html_tools/gomoku-card-v1.js index.html
+          git commit -m 'Emergency restore WebDesk mobile loading and dock interaction'
+          git pull --rebase origin master
+          git push
