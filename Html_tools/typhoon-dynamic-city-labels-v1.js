@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260911-typhoon-dynamic-city-labels-v1.8-motion-debounced';
+const VER='20260912-typhoon-dynamic-city-labels-v1.9-shared-motion';
 if(window.__windzxyTyphoonDynamicCityLabels===VER)return;
 window.__windzxyTyphoonDynamicCityLabels=VER;
 const FAST_URL='https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_populated_places.geojson';
@@ -13,7 +13,7 @@ function lang(){const v=document.querySelector('.lang-select')?.value||localStor
 function cardinal(d){if(!Number.isFinite(+d))return'--';const zh=['北','東北','東','東南','南','西南','西','西北'],en=['N','NE','E','SE','S','SW','W','NW'];return(lang()==='en'?en:zh)[Math.round((((+d)%360)+360)%360/45)%8]}
 function weatherIcon(code){code=+code;if(code===0)return'☀️';if(code<=2)return'🌤️';if(code===3)return'☁️';if(code===45||code===48)return'🌫️';if([51,53,55,56,57].includes(code))return'🌦️';if([61,63,65,66,67,80,81,82].includes(code))return'🌧️';if([71,73,75,77,85,86].includes(code))return'🌨️';if([95,96,99].includes(code))return'⛈️';return'🌡️'}
 function visible(root){const r=root.getBoundingClientRect();return r.width>120&&r.height>120&&r.bottom>0&&r.right>0&&r.top<innerHeight&&r.left<innerWidth}
-function state(root){let s=ROOTS.get(root);if(!s){s={timer:0,hubTimer:0,req:0,bound:false,layer:null,lastMode:'',moving:false};ROOTS.set(root,s)}return s}
+function state(root){let s=ROOTS.get(root);if(!s){s={timer:0,hubTimer:0,req:0,bound:false,layer:null,lastMode:'',moving:false,motionGeneration:0,onMotionStart:null,onMotionEnd:null,map:null,onResize:null};ROOTS.set(root,s)}return s}
 function modeFor(root){const raw=String(root.__v11Mode||'');if(VALID.has(raw))return raw;const b=root.querySelector?.('.tp-weather-p0-global [data-p0-mode][aria-pressed="true"],.tp-weather-p0-global [data-p0-mode][data-active="1"]');return VALID.has(b?.dataset?.p0Mode)?b.dataset.p0Mode:'overview'}
 function timeoutFetch(url,ms=10000){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,{cache:'force-cache',signal:c.signal}).finally(()=>clearTimeout(t))}
 function prop(p,...keys){for(const k of keys){const v=p?.[k];if(v!==undefined&&v!==null&&v!=='')return v}return null}
@@ -34,10 +34,10 @@ function draw(root,ps,mode,req){if(req!==state(root).req||!root.__tpMap||!window
 async function render(root){const map=root.__tpMap,s=state(root);if(!map||!window.L||!visible(root)||s.moving)return;const req=++s.req,mode=modeFor(root);try{const all=await placesNow();if(req!==s.req||state(root).moving)return;draw(root,pickPlaces(map,all),mode,req)}catch(err){console.warn('[WebDesk Typhoon] city labels',err)}}
 function schedule(root,delay=90){const s=state(root);clearTimeout(s.timer);s.timer=setTimeout(()=>{s.timer=0;render(root)},delay)}
 function scheduleHub(root,delay=240){const s=state(root);clearTimeout(s.hubTimer);s.hubTimer=setTimeout(()=>{s.hubTimer=0;if(!s.moving)window.WebDeskTyphoonWeatherHub?.get?.(root,true).catch(()=>{})},delay)}
-function bind(root){const s=state(root),map=root.__tpMap;if(!map||s.bound)return;s.bound=true;map.on('movestart zoomstart',()=>{s.moving=true;clearTimeout(s.timer);clearTimeout(s.hubTimer);s.req++});map.on('moveend zoomend resize',()=>{s.moving=false;schedule(root,80);scheduleHub(root,260)});root.addEventListener('typhoon-shared-weather-update',()=>schedule(root,55))}
+function bind(root){const s=state(root),map=root.__tpMap;if(!map)return;if(s.bound&&s.map===map)return;if(s.bound&&s.map&&s.onResize)try{s.map.off('resize',s.onResize)}catch(_){}s.map=map;s.onResize=()=>{if(!s.moving){schedule(root,80);scheduleHub(root,260)}};map.on('resize',s.onResize);if(!s.bound){s.bound=true;s.onMotionStart=e=>{s.moving=true;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;clearTimeout(s.timer);clearTimeout(s.hubTimer);s.req++};s.onMotionEnd=e=>{s.moving=false;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;schedule(root,0);scheduleHub(root,140)};root.addEventListener('typhoon-overlay-motion-start',s.onMotionStart);root.addEventListener('typhoon-overlay-motion-settled',s.onMotionEnd);root.addEventListener('typhoon-shared-weather-update',()=>{if(!s.moving)schedule(root,55)});if(!window.WebDeskTyphoonOverlayMotion){map.on('movestart zoomstart',s.onMotionStart);map.on('moveend zoomend',s.onMotionEnd)}}if(root.__tpOverlayMotion?.moving)s.moving=true}
 function sync(root){if(!root.__tpMap||!visible(root))return;bind(root);if(!state(root).layer||state(root).lastMode!==modeFor(root))schedule(root,35)}
 function scan(){document.querySelectorAll('[data-typhoon-root]').forEach(sync)}
 function boot(){ensureStyle();scan();setInterval(scan,900);document.addEventListener('typhoon-dense-city-index-ready',()=>document.querySelectorAll('[data-typhoon-root]').forEach(r=>schedule(r,45)));document.addEventListener('typhoon-weather-controller-mode',e=>{const r=e.target?.closest?.('[data-typhoon-root]')||e.detail?.button?.closest?.('[data-typhoon-root]');if(r)schedule(r,35)},true);document.addEventListener('change',e=>{if(e.target?.matches?.('.lang-select'))document.querySelectorAll('[data-typhoon-root]').forEach(r=>schedule(r,35))},true)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskTyphoonDynamicCityLabels={version:'v1.8',viewportAware:true,bilingualCityNames:true,sharedWeatherHub:true,noDirectWeatherFetch:true,zoomTiered:true,motionDebounced:true,fastIndex:'Natural Earth 50m',denseIndex:'Natural Earth 10m'};
+window.WebDeskTyphoonDynamicCityLabels={version:'v1.9',viewportAware:true,bilingualCityNames:true,sharedWeatherHub:true,noDirectWeatherFetch:true,zoomTiered:true,motionDebounced:true,sharedMotionCoordinator:true,fastIndex:'Natural Earth 50m',denseIndex:'Natural Earth 10m'};
 })();
