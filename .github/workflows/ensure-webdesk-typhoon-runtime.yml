@@ -47,7 +47,10 @@ jobs:
           new="function bind(root){const s=state(root),map=root.__tpMap;if(!map)return;if(s.bound&&s.map===map)return;if(s.bound&&s.map&&s.onResize)try{s.map.off('resize',s.onResize)}catch(_){}s.map=map;s.onResize=()=>{if(!s.moving){schedule(root,80);scheduleHub(root,260)}};map.on('resize',s.onResize);if(!s.bound){s.bound=true;s.onMotionStart=e=>{s.moving=true;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;clearTimeout(s.timer);clearTimeout(s.hubTimer);s.req++};s.onMotionEnd=e=>{s.moving=false;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;schedule(root,0);scheduleHub(root,140)};root.addEventListener('typhoon-overlay-motion-start',s.onMotionStart);root.addEventListener('typhoon-overlay-motion-settled',s.onMotionEnd);root.addEventListener('typhoon-shared-weather-update',()=>{if(!s.moving)schedule(root,55)});if(!window.WebDeskTyphoonOverlayMotion){map.on('movestart zoomstart',s.onMotionStart);map.on('moveend zoomend',s.onMotionEnd)}}if(root.__tpOverlayMotion?.moving)s.moving=true}"
           s=s.replace(old,new,1)
           s=s.replace("version:'v1.8'","version:'v1.9'")
-          s=s.replace("motionDebounced:true","motionDebounced:true,sharedMotionCoordinator:true")
+          if 'sharedMotionCoordinator:true' not in s:
+            s=s.replace("motionDebounced:true","motionDebounced:true,sharedMotionCoordinator:true")
+          while 'sharedMotionCoordinator:true,sharedMotionCoordinator:true' in s:
+            s=s.replace('sharedMotionCoordinator:true,sharedMotionCoordinator:true','sharedMotionCoordinator:true')
           p.write_text(s,encoding='utf-8')
 
           p=Path('Html_tools/global-weather-lazy-v1.js')
