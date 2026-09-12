@@ -1,0 +1,23 @@
+(()=>{
+'use strict';
+const VERSION='20260912-webdesk-mobile-dock-v1.0';
+if(window.__webdeskMobileDock===VERSION)return;window.__webdeskMobileDock=VERSION;
+function style(){if(document.getElementById('webdesk-mobile-dock-v1-style'))return;const s=document.createElement('style');s.id='webdesk-mobile-dock-v1-style';s.textContent=`
+.webdesk-mobile-dock-fab,.webdesk-mobile-dock-mask{display:none}
+@media(max-width:820px){
+  .desktop-dock{position:fixed!important;right:max(12px,env(safe-area-inset-right))!important;bottom:max(84px,calc(env(safe-area-inset-bottom) + 76px))!important;z-index:12020!important;display:flex!important;flex-direction:column!important;gap:8px!important;padding:10px!important;border-radius:20px!important;background:rgba(16,24,40,.92)!important;box-shadow:0 18px 45px rgba(0,0,0,.38)!important;backdrop-filter:blur(18px) saturate(1.2)!important;-webkit-backdrop-filter:blur(18px) saturate(1.2)!important;transform:translateX(calc(100% + 30px)) scale(.96)!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;transition:.22s ease!important}
+  body.webdesk-mobile-dock-open .desktop-dock{transform:translateX(0) scale(1)!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+  .desktop-dock button{width:46px!important;height:46px!important;min-width:46px!important;border-radius:14px!important}
+  .webdesk-mobile-dock-fab{display:flex!important;position:fixed!important;right:max(14px,env(safe-area-inset-right))!important;bottom:max(18px,calc(env(safe-area-inset-bottom) + 12px))!important;width:56px!important;height:56px!important;border:1px solid rgba(255,255,255,.22)!important;border-radius:19px!important;z-index:12022!important;align-items:center!important;justify-content:center!important;background:linear-gradient(145deg,rgba(35,57,96,.98),rgba(13,22,38,.98))!important;color:#fff!important;font:700 24px/1 system-ui!important;box-shadow:0 12px 32px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.14)!important;touch-action:manipulation!important}
+  .webdesk-mobile-dock-mask{position:fixed!important;inset:0!important;z-index:12018!important;border:0!important;background:rgba(3,8,15,.34)!important;backdrop-filter:blur(1.5px)!important;-webkit-backdrop-filter:blur(1.5px)!important}
+  body.webdesk-mobile-dock-open .webdesk-mobile-dock-mask{display:block!important}
+  .desktop-drawer{position:fixed!important;top:max(10px,env(safe-area-inset-top))!important;right:max(10px,env(safe-area-inset-right))!important;bottom:max(10px,env(safe-area-inset-bottom))!important;left:auto!important;width:min(90vw,390px)!important;max-width:390px!important;height:auto!important;max-height:calc(100dvh - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;z-index:12030!important;border-radius:22px!important;overflow:auto!important;overscroll-behavior:contain!important;box-shadow:0 22px 60px rgba(0,0,0,.46)!important}
+  .desktop-surface,.window-layer{padding-right:0!important;margin-right:0!important;width:100%!important;max-width:100%!important}
+}
+`;document.head.appendChild(s)}
+function close(){document.body.classList.remove('webdesk-mobile-dock-open');const b=document.querySelector('.webdesk-mobile-dock-fab');if(b){b.textContent='☰';b.setAttribute('aria-expanded','false')}}
+function toggle(){const open=!document.body.classList.contains('webdesk-mobile-dock-open');document.body.classList.toggle('webdesk-mobile-dock-open',open);const b=document.querySelector('.webdesk-mobile-dock-fab');if(b){b.textContent=open?'×':'☰';b.setAttribute('aria-expanded',String(open))}}
+function boot(){style();if(document.querySelector('.webdesk-mobile-dock-fab'))return;const fab=document.createElement('button');fab.type='button';fab.className='webdesk-mobile-dock-fab';fab.textContent='☰';fab.setAttribute('aria-label','開啟 WebDesk 功能選單');fab.setAttribute('aria-expanded','false');const mask=document.createElement('button');mask.type='button';mask.className='webdesk-mobile-dock-mask';mask.setAttribute('aria-label','關閉 WebDesk 功能選單');document.body.append(mask,fab);fab.addEventListener('click',e=>{e.stopPropagation();toggle()});mask.addEventListener('click',close);document.addEventListener('click',e=>{if(innerWidth<=820&&e.target.closest('.desktop-dock [data-dock],#closeDrawer'))setTimeout(close,80)},true);window.addEventListener('keydown',e=>{if(e.key==='Escape')close()});window.addEventListener('resize',()=>{if(innerWidth>820)close()})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+window.WebDeskMobileDock={version:VERSION};
+})();
