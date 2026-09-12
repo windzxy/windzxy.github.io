@@ -1,0 +1,70 @@
+name: Ensure Maydayland Provider Quorum Probe
+on:
+  push:
+    branches: [master]
+    paths: ['maydayland/index.html','maydayland/tour-map-openfreemap-v2.js','.github/workflows/ensure-mayday-provider-quorum-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: maydayland-map-runtime
+  cancel-in-progress: false
+jobs:
+  ensure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Upgrade recovery probe to viewport quorum
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('maydayland/tour-map-openfreemap-v2.js')
+          s=p.read_text(encoding='utf-8')
+          old_ver='20260913-mayday-openfreemap-v4.5-provider-recovery-probe'
+          new_ver='20260913-mayday-openfreemap-v4.6-viewport-quorum-probe'
+          if old_ver in s:
+              s=s.replace(old_ver,new_ver,1)
+          elif new_ver not in s:
+              raise SystemExit('Unexpected Mayday map version; refusing unsafe patch')
+
+          old="""function rasterProbeUrl(spec){let url=String(spec?.url||'').replace('{z}','1').replace('{x}','1').replace('{y}','0').replace('{r}','');url=url.replace('{s}','a');return url}function probeRasterProvider(which,spec,timeout=2200){if(rasterProviderProbe[which])return rasterProviderProbe[which];rasterProviderProbe[which]=new Promise(resolve=>{const img=new Image();let done=false,timer=0;const finish=ok=>{if(done)return;done=true;clearTimeout(timer);img.onload=img.onerror=null;rasterProviderProbe[which]=null;resolve(ok)};img.onload=()=>finish(true);img.onerror=()=>finish(false);timer=setTimeout(()=>finish(false),timeout);try{img.referrerPolicy='no-referrer';img.src=rasterProbeUrl(spec)}catch(_){finish(false)}});return rasterProviderProbe[which]}"""
+          new="""function rasterProbeCoords(){try{const c=map?.getCenter?.();const z=Math.max(2,Math.min(6,Math.round(map?.getZoom?.()||4)));if(!c)return [{z:2,x:2,y:1},{z:2,x:2,y:2},{z:2,x:1,y:1}];const n=Math.pow(2,z),x=Math.floor((c.lng+180)/360*n),lat=Math.max(-85.0511,Math.min(85.0511,c.lat)),rad=lat*Math.PI/180,y=Math.floor((1-Math.log(Math.tan(rad)+1/Math.cos(rad))/Math.PI)/2*n);return [{z,x:Math.max(0,Math.min(n-1,x)),y:Math.max(0,Math.min(n-1,y))},{z,x:Math.max(0,Math.min(n-1,x+1)),y:Math.max(0,Math.min(n-1,y))},{z,x:Math.max(0,Math.min(n-1,x)),y:Math.max(0,Math.min(n-1,y+1))}]}catch(_){return [{z:2,x:2,y:1},{z:2,x:2,y:2},{z:2,x:1,y:1}]}}function rasterProbeUrl(spec,tile){let url=String(spec?.url||'').replace('{z}',String(tile.z)).replace('{x}',String(tile.x)).replace('{y}',String(tile.y)).replace('{r}','');url=url.replace('{s}','a');return url}function probeRasterImage(spec,tile,timeout){return new Promise(resolve=>{const img=new Image();let done=false,timer=0;const finish=ok=>{if(done)return;done=true;clearTimeout(timer);img.onload=img.onerror=null;resolve(ok)};img.onload=()=>finish(true);img.onerror=()=>finish(false);timer=setTimeout(()=>finish(false),timeout);try{img.referrerPolicy='no-referrer';img.src=rasterProbeUrl(spec,tile)}catch(_){finish(false)}})}function probeRasterProvider(which,spec,timeout=1900){if(rasterProviderProbe[which])return rasterProviderProbe[which];const tiles=rasterProbeCoords().slice(0,3);rasterProviderProbe[which]=Promise.all(tiles.map(tile=>probeRasterImage(spec,tile,timeout))).then(results=>results.filter(Boolean).length>=2).catch(()=>false).finally(()=>{rasterProviderProbe[which]=null});return rasterProviderProbe[which]}"""
+          if old in s:
+              s=s.replace(old,new,1)
+          elif 'function rasterProbeCoords()' not in s:
+              raise SystemExit('Expected v4.5 recovery probe not found; refusing unsafe patch')
+
+          required=['viewport-quorum-probe','function rasterProbeCoords()','function probeRasterImage','results.filter(Boolean).length>=2','slice(0,3)']
+          if not all(x in s for x in required):
+              raise SystemExit('Viewport quorum probe verification failed')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('maydayland/index.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'tour-map-openfreemap-v2\\.js\\?v=[^\\" ]+', 'tour-map-openfreemap-v2.js?v='+new_ver, s, count=1)
+          if "'viewport-quorum-probe'" not in s:
+              s=s.replace("'provider-recovery-probe',", "'provider-recovery-probe','viewport-quorum-probe',",1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Verify map baselines
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('maydayland/tour-map-openfreemap-v2.js').read_text(encoding='utf-8')
+          required=["street:{kind:'vector'","bright:{kind:'vector'","terrain:{kind:'raster'","dark:{kind:'vector'","sat:{kind:'sat'",'SECONDARY_FALLBACKS','stall-aware-watchdog','adaptive-provider-backoff','provider-recovery-probe','viewport-quorum-probe','@media(max-width:720px)']
+          missing=[x for x in required if x not in s]
+          if missing: raise SystemExit('Baseline regression: '+', '.join(missing))
+          PY
+      - name: Commit runtime
+        run: |
+          if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
+          git commit -m 'Use viewport quorum for Mayday provider recovery'
+          git pull --rebase origin master
+          git push
