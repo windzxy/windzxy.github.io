@@ -23,7 +23,7 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
           s=re.sub(r'\n?<script src="Html_tools/webdesk-mobile-responsive-v2\.js\?v=[^"]+"></script>','',s)
-          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260912-webdesk-mobile-responsive-v2.0-safe-dock-fluid-games"></script>'
+          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260912-webdesk-mobile-responsive-v2.1-flow-layout"></script>'
           s=s.replace('</body>',tag+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
           PY
@@ -33,6 +33,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Load safe mobile dock and fluid game cards'
+          git commit -m 'Load mobile flow layout and fluid cards'
           git pull --rebase origin master
           git push
