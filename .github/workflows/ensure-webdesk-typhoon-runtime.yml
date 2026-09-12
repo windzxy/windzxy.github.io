@@ -5,25 +5,16 @@ on:
     branches: [master]
     paths:
       - 'index.html'
-      - 'Html_tools/typhoon-widget.js'
-      - 'Html_tools/global-weather-brand-v1.js'
       - 'Html_tools/global-weather-lazy-v1.js'
-      - 'Html_tools/typhoon-window-p0-fix.js'
+      - 'Html_tools/typhoon-overlay-motion-coordinator-v1.js'
       - 'Html_tools/typhoon-radar-v4-1.js'
-      - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
-      - 'Html_tools/typhoon-weather-p0-remount.js'
-      - 'Html_tools/typhoon-openmeteo-broker-v1.js'
-      - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
-      - 'Html_tools/typhoon-overlay-health-v1.js'
-      - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
-      - 'Html_tools/typhoon-provider-failover-v1.js'
       - 'Html_tools/typhoon-satellite-pan-v1.js'
-      - 'Html_tools/typhoon-weather-motion-v1.js'
+      - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
+      - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
+      - 'Html_tools/typhoon-overlay-health-v1.js'
+      - 'Html_tools/typhoon-provider-failover-v1.js'
       - 'Html_tools/typhoon-zoom-motion-v2-1.js'
-      - 'Html_tools/typhoon-real-weather-v5-1.js'
-      - 'Html_tools/mobile-desktop-ux-v1.js'
       - 'Html_tools/typhoon-control-layout-v13.js'
-      - '.github/workflows/inject-webdesk-fx.yml'
       - '.github/workflows/ensure-webdesk-typhoon-runtime.yml'
   workflow_dispatch:
 
@@ -42,24 +33,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: master
-      - name: Stagger vector refresh after viewport motion
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-
-          p=Path('Html_tools/typhoon-zoom-motion-v2-1.js')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VER='[^']+';", "const VER='20260911-typhoon-zoom-motion-v2.2-idle-staggered';", s, count=1)
-          s=s.replace("resizeObserver:null};ROOTS.set(root,s)", "resizeObserver:null,viewportTimer:0,viewportSeq:0};ROOTS.set(root,s)")
-          old="""function bind(root){const s=state(root),map=root.__tpMap;if(!map||s.bound)return;s.bound=true;map.on('movestart zoomstart',()=>{s.moving=true;if(FRAME_MODES.has(s.mode)){clearTimeout(s.timer);s.timer=0}else if(s.canvas){s.canvas.classList.add('is-moving')}});map.on('moveend zoomend',()=>{s.moving=false;if(FRAME_MODES.has(s.mode)&&s.playing)s.timer=setTimeout(()=>promote(root),220);else if(FIELD_MODES.has(s.mode)){if(s.canvas)s.canvas.classList.remove('is-moving');getGrid(root,true).then(g=>{if(!g)return;s.screenField=buildScreenField(root,g);s.particles=[];if(g.degraded&&VECTOR_MODES.has(s.mode)){clearCanvas(root);root.dataset.zoomMotionV21='1';setTruth(root,text('degraded'),true)}else if(!s.raf)s.raf=requestAnimationFrame(t=>drawField(root,t))})}});map.on('resize',()=>{resize(root);if(s.grid)s.screenField=buildScreenField(root,s.grid)});root.addEventListener('typhoon-shared-weather-update',e=>{if(!FIELD_MODES.has(s.mode))return;const g=e.detail?.grid||root.__tpSharedWeatherGrid;if(!g)return;s.grid=g;s.screenField=buildScreenField(root,g);s.particles=[]})}"""
-          new="""function bind(root){const s=state(root),map=root.__tpMap;if(!map||s.bound)return;s.bound=true;const refreshField=()=>{const seq=++s.viewportSeq;clearTimeout(s.viewportTimer);s.viewportTimer=setTimeout(()=>{const run=()=>{if(seq!==s.viewportSeq||s.moving||!FIELD_MODES.has(s.mode))return;const latest=root.__tpSharedWeatherGrid||root.__tpLastGoodWeatherGrid||s.grid;if(latest){s.grid=latest;s.screenField=buildScreenField(root,latest);s.particles=[];if(latest.degraded&&VECTOR_MODES.has(s.mode)){clearCanvas(root);root.dataset.zoomMotionV21='1';setTruth(root,text('degraded'),true)}else if(!s.raf)s.raf=requestAnimationFrame(t=>drawField(root,t));return}getGrid(root,false).then(g=>{if(seq!==s.viewportSeq||s.moving||!g)return;s.screenField=buildScreenField(root,g);s.particles=[];if(g.degraded&&VECTOR_MODES.has(s.mode)){clearCanvas(root);root.dataset.zoomMotionV21='1';setTruth(root,text('degraded'),true)}else if(!s.raf)s.raf=requestAnimationFrame(t=>drawField(root,t))})};if('requestIdleCallback'in window)requestIdleCallback(run,{timeout:450});else setTimeout(run,40)},620)};map.on('movestart zoomstart',()=>{s.moving=true;++s.viewportSeq;clearTimeout(s.viewportTimer);if(FRAME_MODES.has(s.mode)){clearTimeout(s.timer);s.timer=0}else if(s.canvas){s.canvas.classList.add('is-moving')}});map.on('moveend zoomend',()=>{s.moving=false;if(FRAME_MODES.has(s.mode)&&s.playing)s.timer=setTimeout(()=>promote(root),220);else if(FIELD_MODES.has(s.mode)){if(s.canvas)s.canvas.classList.remove('is-moving');refreshField()}});map.on('resize',()=>{resize(root);if(s.grid)s.screenField=buildScreenField(root,s.grid)});root.addEventListener('typhoon-shared-weather-update',e=>{if(!FIELD_MODES.has(s.mode))return;const g=e.detail?.grid||root.__tpSharedWeatherGrid;if(!g)return;s.grid=g;if(s.moving)return;s.screenField=buildScreenField(root,g);s.particles=[]})}"""
-          if old in s:
-            s=s.replace(old,new,1)
-          s=s.replace("version:'v2.1'", "version:'v2.2'")
-          p.write_text(s,encoding='utf-8')
-          PY
-      - name: Keep Global Weather runtime canonical
+      - name: Keep Global Weather shared-motion runtime canonical
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -67,64 +41,50 @@ jobs:
 
           p=Path('Html_tools/typhoon-dynamic-city-labels-v1.js')
           s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VER='[^']+';", "const VER='20260911-typhoon-dynamic-city-labels-v1.8-motion-debounced';", s, count=1)
-          s=s.replace("'\"':'&quot'", "'\"':'&quot;'")
-          s=re.sub(r"function capFor\(map\)\{.*?\}\nfunction pickPlaces", "function capFor(map){const z=map.getZoom(),s=map.getSize(),area=Math.max(1,s.x*s.y),base=z<=2.8?8:z<=3.6?12:z<=4.4?18:z<=5.2?28:z<=6.2?42:z<=7.2?58:78;return Math.max(6,Math.min(88,Math.round(base*Math.min(1.18,Math.max(.72,area/760000)))))}\nfunction pickPlaces", s, count=1, flags=re.S)
-          s=s.replace("minPx=z<=4?68:z<=6?56:z<=8?48:42", "minPx=z<=3?104:z<=4?86:z<=5?70:z<=6?58:z<=8?48:42")
-          s=s.replace("if(p.minZoom>z+2.2&&imp<4e8)continue", "if(z<3.2&&!(p.capital||p.world||p.mega||p.pop>3500000))continue;if(z<4.2&&imp<9e8)continue;if(p.minZoom>z+1.6&&imp<5e8)continue")
+          s=re.sub(r"const VER='[^']+';","const VER='20260912-typhoon-dynamic-city-labels-v1.9-shared-motion';",s,count=1)
+          s=s.replace("s={timer:0,hubTimer:0,req:0,bound:false,layer:null,lastMode:'',moving:false}","s={timer:0,hubTimer:0,req:0,bound:false,layer:null,lastMode:'',moving:false,motionGeneration:0,onMotionStart:null,onMotionEnd:null,map:null,onResize:null}")
+          old="function bind(root){const s=state(root),map=root.__tpMap;if(!map||s.bound)return;s.bound=true;map.on('movestart zoomstart',()=>{s.moving=true;clearTimeout(s.timer);clearTimeout(s.hubTimer);s.req++});map.on('moveend zoomend resize',()=>{s.moving=false;schedule(root,80);scheduleHub(root,260)});root.addEventListener('typhoon-shared-weather-update',()=>schedule(root,55))}"
+          new="function bind(root){const s=state(root),map=root.__tpMap;if(!map)return;if(s.bound&&s.map===map)return;if(s.bound&&s.map&&s.onResize)try{s.map.off('resize',s.onResize)}catch(_){}s.map=map;s.onResize=()=>{if(!s.moving){schedule(root,80);scheduleHub(root,260)}};map.on('resize',s.onResize);if(!s.bound){s.bound=true;s.onMotionStart=e=>{s.moving=true;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;clearTimeout(s.timer);clearTimeout(s.hubTimer);s.req++};s.onMotionEnd=e=>{s.moving=false;s.motionGeneration=e.detail?.generation||s.motionGeneration+1;schedule(root,0);scheduleHub(root,140)};root.addEventListener('typhoon-overlay-motion-start',s.onMotionStart);root.addEventListener('typhoon-overlay-motion-settled',s.onMotionEnd);root.addEventListener('typhoon-shared-weather-update',()=>{if(!s.moving)schedule(root,55)});if(!window.WebDeskTyphoonOverlayMotion){map.on('movestart zoomstart',s.onMotionStart);map.on('moveend zoomend',s.onMotionEnd)}}if(root.__tpOverlayMotion?.moving)s.moving=true}"
+          s=s.replace(old,new,1)
+          s=s.replace("version:'v1.8'","version:'v1.9'")
+          s=s.replace("motionDebounced:true","motionDebounced:true,sharedMotionCoordinator:true")
           p.write_text(s,encoding='utf-8')
 
           p=Path('Html_tools/global-weather-lazy-v1.js')
           s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VERSION='[^']+';", "const VERSION='20260912-global-weather-lazy-v2.5-satellite-generation-guard';", s, count=1)
-          s=re.sub(r"\['Html_tools/typhoon-radar-v4-1\.js','[^']+'\]", "['Html_tools/typhoon-radar-v4-1.js','20260912-typhoon-radar-v4.4-generation-guard-cleanup']", s, count=1)
-          s=re.sub(r"\['Html_tools/typhoon-satellite-pan-v1\.js','[^']+'\]", "['Html_tools/typhoon-satellite-pan-v1.js','20260912-typhoon-satellite-pan-v1.2-generation-guard-cleanup']", s, count=1)
-          s=re.sub(r"\['Html_tools/typhoon-weather-layer-interaction-fix-v1\.js','[^']+'\]", "['Html_tools/typhoon-weather-layer-interaction-fix-v1.js','20260912-typhoon-layer-interaction-v8-mobile-idle-forecast']", s, count=1)
-          health=" ['Html_tools/typhoon-overlay-health-v1.js','20260911-typhoon-overlay-health-v1.2-data-time-coherence'],\n"
-          if 'typhoon-overlay-health-v1.js' not in s:
-            s=re.sub(r"( \['Html_tools/typhoon-weather-layer-interaction-fix-v1\.js','[^']+'\],\n)", r"\1"+health, s, count=1)
-          else:
-            s=re.sub(r"\['Html_tools/typhoon-overlay-health-v1\.js','[^']+'\]", "['Html_tools/typhoon-overlay-health-v1.js','20260911-typhoon-overlay-health-v1.2-data-time-coherence']", s, count=1)
-          s=re.sub(r"\['Html_tools/typhoon-dynamic-city-labels-v1\.js','[^']+'\]", "['Html_tools/typhoon-dynamic-city-labels-v1.js','20260911-typhoon-dynamic-city-labels-v1.8-motion-debounced']", s, count=1)
-          s=re.sub(r"\['Html_tools/typhoon-zoom-motion-v2-1\.js','[^']+'\]", "['Html_tools/typhoon-zoom-motion-v2-1.js','20260911-typhoon-zoom-motion-v2.2-idle-staggered']", s, count=1)
-          s=re.sub(r"performanceProfile:'[^']+'", "performanceProfile:'mobile-idle-forecast+overlay-health+radar-generation-guard+satellite-generation-guard+idle-staggered-vector-refresh+motion-debounced-city-labels+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'", s, count=1)
+          s=re.sub(r"const VERSION='[^']+';","const VERSION='20260912-global-weather-lazy-v2.8-shared-city-motion';",s,count=1)
+          coord=" ['Html_tools/typhoon-overlay-motion-coordinator-v1.js','20260912-typhoon-overlay-motion-coordinator-v1.0'],\n"
+          if 'typhoon-overlay-motion-coordinator-v1.js' not in s:
+            s=s.replace(" ['Html_tools/typhoon-window-p0-fix.js'",coord+" ['Html_tools/typhoon-window-p0-fix.js'",1)
+          replacements={
+            'typhoon-radar-v4-1.js':'20260912-typhoon-radar-v4.5-shared-motion-coordinator',
+            'typhoon-satellite-pan-v1.js':'20260912-typhoon-satellite-pan-v1.3-shared-motion-coordinator',
+            'typhoon-weather-layer-interaction-fix-v1.js':'20260912-typhoon-layer-interaction-v9-shared-motion-forecast',
+            'typhoon-dynamic-city-labels-v1.js':'20260912-typhoon-dynamic-city-labels-v1.9-shared-motion',
+            'typhoon-overlay-health-v1.js':'20260911-typhoon-overlay-health-v1.2-data-time-coherence',
+            'typhoon-provider-failover-v1.js':'20260911-typhoon-provider-failover-v1.1-recover-primary',
+            'typhoon-zoom-motion-v2-1.js':'20260911-typhoon-zoom-motion-v2.2-idle-staggered',
+            'typhoon-control-layout-v13.js':'20260911-typhoon-control-layout-v13.1-single-owner'
+          }
+          for name,version in replacements.items():
+            s=re.sub(r"\['Html_tools/"+re.escape(name)+r"','[^']+'\]","['Html_tools/"+name+"','"+version+"']",s,count=1)
+          s=re.sub(r"performanceProfile:'[^']+'","performanceProfile:'shared-overlay-motion+shared-forecast-motion+shared-city-motion+overlay-health+radar-generation-guard+satellite-generation-guard+idle-staggered-vector-refresh+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'",s,count=1)
           p.write_text(s,encoding='utf-8')
-          PY
-      - name: Keep Global Weather branded and off the startup critical path
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
 
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          s=re.sub(r'\{id:"typhoon",kind:"widget",title:"[^"]+",desc:"[^"]+",icon:"[^"]+",tone:"t-typhoon"\}', '{id:"typhoon",kind:"widget",title:"全球氣象",desc:"實時雷達、衛星、降水、真實風場、溫濕度、氣壓與熱帶氣旋路徑。",icon:"🌦️",tone:"t-typhoon"}', s, count=1)
-          tags=[
-            '<script src="Html_tools/typhoon-widget.js?v=20260907-typhoon-p0-runtime-order"></script>',
-            '<script src="Html_tools/global-weather-brand-v1.js?v=20260910-global-weather-brand-v1.0"></script>',
-            '<script src="Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v2.5-satellite-generation-guard"></script>',
-          ]
-          runtime_files=[
-            'typhoon-widget','global-weather-brand-v1','global-weather-lazy-v1','typhoon-window-p0-fix','typhoon-radar-v4-1','typhoon-atmosphere-v5-1','typhoon-satellite-pan-v1','typhoon-openfreemap-v6','typhoon-product-shell-v6','typhoon-weather-runtime-v11','typhoon-weather-ui-recovery-v11-1','typhoon-weather-p0-remount','typhoon-openmeteo-broker-v1','typhoon-weather-layer-interaction-fix-v1','typhoon-wind-city-weather-v1','typhoon-dynamic-city-labels-v1','typhoon-weather-motion-v1','typhoon-zoom-motion-v2','typhoon-zoom-motion-v2-1','typhoon-wind-model-v3','typhoon-real-forecast-v4','typhoon-real-weather-v5','typhoon-real-weather-v5-1','typhoon-real-weather-v5-2','typhoon-render-recovery-v1','typhoon-weather-health-v1','typhoon-overlay-health-v1','typhoon-provider-failover-v1','mobile-desktop-ux-v1','typhoon-control-layout-v10','typhoon-control-layout-v11','typhoon-control-layout-v12','typhoon-control-layout-v13',
-          ]
-          for name in runtime_files:
-            s=re.sub(r'\s*<script\s+src="Html_tools/'+re.escape(name)+r'\.js\?v=[^"]+"\s*>\s*</script>\s*','\n',s)
-          block='\n'.join(tags)+'\n'
-          marker='<script src="Html_tools/theme-contrast-fix.js'
-          pos=s.find(marker)
-          if pos!=-1:s=s[:pos]+block+s[pos:]
-          else:s=s.replace('</body>',block+'</body>',1)
+          s=re.sub(r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+','Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v2.8-shared-city-motion',s,count=1)
           p.write_text(s,encoding='utf-8')
           PY
-      - name: Commit runtime tag
+      - name: Commit canonical runtime
         run: |
-          if git diff --quiet -- index.html Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js; then
-            echo 'WebDesk lazy Global Weather runtime already canonical.'
+          if git diff --quiet -- index.html Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/global-weather-lazy-v1.js; then
+            echo 'WebDesk Global Weather runtime already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js
-          git commit -m 'Expose satellite generation-guard runtime'
+          git add index.html Html_tools/typhoon-dynamic-city-labels-v1.js Html_tools/global-weather-lazy-v1.js
+          git commit -m 'Expose shared-motion city labels runtime'
           git pull --rebase origin master
           git push
