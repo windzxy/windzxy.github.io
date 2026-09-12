@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Reset stale raster repair ownership on manual mode switch
+      - name: Suspend raster watchdog when raster is inactive
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -34,19 +34,26 @@ jobs:
           runtime = Path('maydayland/tour-map-openfreemap-v2.js')
           r = runtime.read_text(encoding='utf-8')
 
-          old_ver = "const VER='20260912-mayday-openfreemap-v3.8-raster-provider-cooldown';"
-          new_ver = "const VER='20260912-mayday-openfreemap-v3.9-mode-switch-repair-reset';"
+          old_ver = "const VER='20260912-mayday-openfreemap-v3.9-mode-switch-repair-reset';"
+          new_ver = "const VER='20260912-mayday-openfreemap-v4.0-raster-watchdog-suspend';"
           if old_ver in r:
               r = r.replace(old_ver, new_ver, 1)
           elif new_ver not in r:
               raise SystemExit('unexpected Mayday map runtime version; refusing unsafe rewrite')
 
-          old_switch = "function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;++switchSeq;busy(true);status('準備切換至「'+MODES[next].label+'」底圖…');clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode){busy(false);status('',false);return}switchMode(target).catch(()=>{})},90)}"
-          new_switch = "function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;++switchSeq;++rasterRepairGeneration;rasterRepairInFlight=false;rasterRepairKey='';rasterRepairBackoffUntil=0;rasterBadSamples=0;busy(true);status('準備切換至「'+MODES[next].label+'」底圖…');clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode){busy(false);status('',false);return}switchMode(target).catch(()=>{})},90)}"
-          if old_switch in r:
-              r = r.replace(old_switch, new_switch, 1)
-          elif new_switch not in r:
-              raise SystemExit('requestModeSwitch anchor not found')
+          old_watch = "function ensureRasterWatch(){if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster||rasterRepairInFlight)return;"
+          new_watch = "function stopRasterWatch(){if(!rasterWatchTimer)return;clearInterval(rasterWatchTimer);rasterWatchTimer=null;rasterBadSamples=0;rasterRepairKey='';rasterRepairBackoffUntil=0}\nfunction ensureRasterWatch(){if(!raster){stopRasterWatch();return}if(rasterWatchTimer)return;rasterWatchTimer=setInterval(()=>{if(!map||!raster){stopRasterWatch();return}if(rasterRepairInFlight)return;"
+          if old_watch in r:
+              r = r.replace(old_watch, new_watch, 1)
+          elif "function stopRasterWatch()" not in r:
+              raise SystemExit('raster watchdog anchor not found')
+
+          old_vector = "base=next;raster=null;rasterBadSamples=0;removeLayer(oldBase);removeLayer(oldRaster);"
+          new_vector = "base=next;raster=null;rasterBadSamples=0;stopRasterWatch();removeLayer(oldBase);removeLayer(oldRaster);"
+          if old_vector in r:
+              r = r.replace(old_vector, new_vector, 1)
+          elif new_vector not in r:
+              raise SystemExit('vector activation anchor not found')
 
           runtime.write_text(r, encoding='utf-8')
 
@@ -54,25 +61,25 @@ jobs:
           s = p.read_text(encoding='utf-8')
           s = re.sub(
               r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v3.9-mode-switch-repair-reset" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v4.0-raster-watchdog-suspend" defer></script>',
               s,
               count=1,
           )
-          if "'mode-switch-repair-reset'" not in s:
-              if "'raster-provider-cooldown'" not in s:
-                  raise SystemExit('raster provider cooldown preserve marker anchor not found')
-              s = s.replace("'raster-provider-cooldown',", "'raster-provider-cooldown','mode-switch-repair-reset',", 1)
+          if "'raster-watchdog-suspend'" not in s:
+              if "'mode-switch-repair-reset'" not in s:
+                  raise SystemExit('mode-switch repair preserve marker anchor not found')
+              s = s.replace("'mode-switch-repair-reset',", "'mode-switch-repair-reset','raster-watchdog-suspend',", 1)
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit mode-switch repair reset if needed
+      - name: Commit raster watchdog suspension if needed
         run: |
           if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
-            echo 'Maydayland mode-switch repair reset already canonical.'
+            echo 'Maydayland raster watchdog suspension already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Reset Mayday raster repair state on manual mode switch'
+          git commit -m 'Suspend Mayday raster watchdog outside raster modes'
           git pull --rebase origin master
           git push
