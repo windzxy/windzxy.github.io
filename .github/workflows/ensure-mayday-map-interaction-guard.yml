@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Cooldown failed raster providers and prefer healthy fallback
+      - name: Reset stale raster repair ownership on manual mode switch
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -34,26 +34,19 @@ jobs:
           runtime = Path('maydayland/tour-map-openfreemap-v2.js')
           r = runtime.read_text(encoding='utf-8')
 
-          old_ver = "const VER='20260912-mayday-openfreemap-v3.7-raster-watchdog-dedupe';"
-          new_ver = "const VER='20260912-mayday-openfreemap-v3.8-raster-provider-cooldown';"
+          old_ver = "const VER='20260912-mayday-openfreemap-v3.8-raster-provider-cooldown';"
+          new_ver = "const VER='20260912-mayday-openfreemap-v3.9-mode-switch-repair-reset';"
           if old_ver in r:
               r = r.replace(old_ver, new_ver, 1)
           elif new_ver not in r:
               raise SystemExit('unexpected Mayday map runtime version; refusing unsafe rewrite')
 
-          old_state = "let depsPromise=null,map=null,base=null,raster=null,routeLayer=null,markerLayer=null,mode='street',mountedStage=null,switchSeq=0,resizeObserver=null,vectorBackoffUntil=0,rasterWatchTimer=null,rasterRepairBackoffUntil=0,rasterRepairKey='',rasterRepairInFlight=false,rasterRepairGeneration=0,rasterBadSamples=0,modeSwitchTimer=0,pendingMode=null;"
-          new_state = "let depsPromise=null,map=null,base=null,raster=null,routeLayer=null,markerLayer=null,mode='street',mountedStage=null,switchSeq=0,resizeObserver=null,vectorBackoffUntil=0,rasterWatchTimer=null,rasterRepairBackoffUntil=0,rasterRepairKey='',rasterRepairInFlight=false,rasterRepairGeneration=0,rasterBadSamples=0,rasterProviderBackoff=Object.create(null),rasterProviderHealthy=Object.create(null),modeSwitchTimer=0,pendingMode=null;"
-          if old_state in r:
-              r = r.replace(old_state, new_state, 1)
-          elif new_state not in r:
-              raise SystemExit('raster provider health state anchor not found')
-
-          old_fallback = "async function fallbackRaster(which,seq){const spec=FALLBACKS[which]||FALLBACKS.street;try{return await tryRaster(spec,which,seq,which==='sat')}catch(err){const secondary=SECONDARY_FALLBACKS[which];if(!secondary)throw err;if(seq!==switchSeq)return false;status(MODES[which].label+'主底圖暫時不可用，正在切換第二備援…',false);return tryRaster(secondary,which,seq,false)}}"
-          new_fallback = "async function fallbackRaster(which,seq){const primary=FALLBACKS[which]||FALLBACKS.street,secondary=SECONDARY_FALLBACKS[which],now=Date.now(),primaryCooling=!!secondary&&now<(rasterProviderBackoff[which]||0);if(primaryCooling){status(MODES[which].label+'主底圖仍在冷卻，直接使用已驗證備援…',false);try{const ok=await tryRaster(secondary,which,seq,false);if(ok&&seq===switchSeq)rasterProviderHealthy[which]='secondary';return ok}catch(err){if(seq!==switchSeq)return false;rasterProviderBackoff[which]=0;throw err}}try{const ok=await tryRaster(primary,which,seq,which==='sat');if(ok&&seq===switchSeq){rasterProviderBackoff[which]=0;rasterProviderHealthy[which]='primary'}return ok}catch(err){if(!secondary)throw err;if(seq!==switchSeq)return false;rasterProviderBackoff[which]=Date.now()+90000;rasterProviderHealthy[which]='secondary';status(MODES[which].label+'主底圖暫時不可用，90 秒內優先使用第二備援…',false);try{return await tryRaster(secondary,which,seq,false)}catch(secondaryErr){if(seq===switchSeq)rasterProviderHealthy[which]='';throw secondaryErr}}}"
-          if old_fallback in r:
-              r = r.replace(old_fallback, new_fallback, 1)
-          elif new_fallback not in r:
-              raise SystemExit('fallbackRaster anchor not found')
+          old_switch = "function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;++switchSeq;busy(true);status('準備切換至「'+MODES[next].label+'」底圖…');clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode){busy(false);status('',false);return}switchMode(target).catch(()=>{})},90)}"
+          new_switch = "function requestModeSwitch(next){if(!MODES[next])return;pendingMode=next;++switchSeq;++rasterRepairGeneration;rasterRepairInFlight=false;rasterRepairKey='';rasterRepairBackoffUntil=0;rasterBadSamples=0;busy(true);status('準備切換至「'+MODES[next].label+'」底圖…');clearTimeout(modeSwitchTimer);modeSwitchTimer=setTimeout(()=>{const target=pendingMode;pendingMode=null;modeSwitchTimer=0;if(!target||target===mode){busy(false);status('',false);return}switchMode(target).catch(()=>{})},90)}"
+          if old_switch in r:
+              r = r.replace(old_switch, new_switch, 1)
+          elif new_switch not in r:
+              raise SystemExit('requestModeSwitch anchor not found')
 
           runtime.write_text(r, encoding='utf-8')
 
@@ -61,25 +54,25 @@ jobs:
           s = p.read_text(encoding='utf-8')
           s = re.sub(
               r'<script src="\./tour-map-openfreemap-v2\.js\?v=[^"]+" defer></script>',
-              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v3.8-raster-provider-cooldown" defer></script>',
+              '<script src="./tour-map-openfreemap-v2.js?v=20260912-mayday-openfreemap-v3.9-mode-switch-repair-reset" defer></script>',
               s,
               count=1,
           )
-          if "'raster-provider-cooldown'" not in s:
-              if "'raster-watchdog-dedupe'" not in s:
-                  raise SystemExit('raster watchdog preserve marker anchor not found')
-              s = s.replace("'raster-watchdog-dedupe',", "'raster-watchdog-dedupe','raster-provider-cooldown',", 1)
+          if "'mode-switch-repair-reset'" not in s:
+              if "'raster-provider-cooldown'" not in s:
+                  raise SystemExit('raster provider cooldown preserve marker anchor not found')
+              s = s.replace("'raster-provider-cooldown',", "'raster-provider-cooldown','mode-switch-repair-reset',", 1)
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit raster provider cooldown if needed
+      - name: Commit mode-switch repair reset if needed
         run: |
           if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then
-            echo 'Maydayland raster provider cooldown already canonical.'
+            echo 'Maydayland mode-switch repair reset already canonical.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
-          git commit -m 'Cooldown failed Mayday raster providers before retry'
+          git commit -m 'Reset Mayday raster repair state on manual mode switch'
           git pull --rebase origin master
           git push
