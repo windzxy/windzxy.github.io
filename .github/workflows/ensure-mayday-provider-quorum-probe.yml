@@ -45,7 +45,7 @@ jobs:
 
           p=Path('maydayland/index.html')
           s=p.read_text(encoding='utf-8')
-          s=re.sub(r'tour-map-openfreemap-v2\\.js\\?v=[^\\" ]+', 'tour-map-openfreemap-v2.js?v='+new_ver, s, count=1)
+          s=re.sub(r'tour-map-openfreemap-v2\.js\?v=[^\" ]+', 'tour-map-openfreemap-v2.js?v='+new_ver, s, count=1)
           if "'viewport-quorum-probe'" not in s:
               s=s.replace("'provider-recovery-probe',", "'provider-recovery-probe','viewport-quorum-probe',",1)
           p.write_text(s,encoding='utf-8')
@@ -54,9 +54,11 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          s=Path('maydayland/tour-map-openfreemap-v2.js').read_text(encoding='utf-8')
-          required=["street:{kind:'vector'","bright:{kind:'vector'","terrain:{kind:'raster'","dark:{kind:'vector'","sat:{kind:'sat'",'SECONDARY_FALLBACKS','stall-aware-watchdog','adaptive-provider-backoff','provider-recovery-probe','viewport-quorum-probe','@media(max-width:720px)']
-          missing=[x for x in required if x not in s]
+          js=Path('maydayland/tour-map-openfreemap-v2.js').read_text(encoding='utf-8')
+          html=Path('maydayland/index.html').read_text(encoding='utf-8')
+          js_required=["street:{kind:'vector'","bright:{kind:'vector'","terrain:{kind:'raster'","dark:{kind:'vector'","sat:{kind:'sat'",'SECONDARY_FALLBACKS','rasterProviderBackoff','rasterProviderFailures','rasterProviderProbe','function probeRasterProvider','function rasterProbeCoords()','@media(max-width:720px)']
+          html_required=['stall-aware-watchdog','adaptive-provider-backoff','provider-recovery-probe','viewport-quorum-probe']
+          missing=[x for x in js_required if x not in js]+[x for x in html_required if x not in html]
           if missing: raise SystemExit('Baseline regression: '+', '.join(missing))
           PY
       - name: Commit runtime
