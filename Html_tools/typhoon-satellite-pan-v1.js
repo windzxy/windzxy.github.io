@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VER='20260912-typhoon-satellite-pan-v1.2-generation-guard-cleanup';
+const VER='20260912-typhoon-satellite-pan-v1.3-shared-motion-coordinator';
 if(window.__windzxyTyphoonSatellitePan===VER)return;
 window.__windzxyTyphoonSatellitePan=VER;
 
@@ -39,46 +39,8 @@ function tuneLayer(layer){
   layer.options.noWrap=false;
   layer.options.crossOrigin=true;
 }
-function unbind(root){
-  const s=root?.__tpSatellitePanV1;
-  if(!s)return;
-  if(s.timer){clearTimeout(s.timer);s.timer=0}
-  try{
-    s.map?.off('movestart zoomstart',s.onStart);
-    s.map?.off('moveend zoomend',s.onEnd);
-  }catch(_){}
-  root.__tpSatellitePanV1=null;
-  root?.classList?.remove('tp-satellite-map-moving');
-}
-function bind(root){
-  const map=root.__tpMap;if(!map)return;
-  const old=root.__tpSatellitePanV1;
-  if(old?.map===map)return;
-  if(old)unbind(root);
-  const s={map,timer:0,generation:0,moving:false,onStart:null,onEnd:null};
-  s.onStart=()=>{
-    s.moving=true;
-    ++s.generation;
-    if(s.timer){clearTimeout(s.timer);s.timer=0}
-    root.classList.add('tp-satellite-map-moving');
-    tuneLayer(currentLayer(root));
-  };
-  s.onEnd=()=>{
-    s.moving=false;
-    const gen=++s.generation;
-    if(s.timer)clearTimeout(s.timer);
-    s.timer=setTimeout(()=>{
-      s.timer=0;
-      if(root.__tpSatellitePanV1!==s||root.__tpMap!==map||s.moving||gen!==s.generation)return;
-      tuneLayer(currentLayer(root));
-      root.classList.remove('tp-satellite-map-moving');
-    },260);
-  };
-  root.__tpSatellitePanV1=s;
-  map.on('movestart zoomstart',s.onStart);
-  map.on('moveend zoomend',s.onEnd);
-  s.onEnd();
-}
+function unbind(root){const s=root?.__tpSatellitePanV1;if(!s)return;try{root.removeEventListener('typhoon-overlay-motion-start',s.onStart);root.removeEventListener('typhoon-overlay-motion-settled',s.onEnd)}catch(_){}root.__tpSatellitePanV1=null;root?.classList?.remove('tp-satellite-map-moving')}
+function bind(root){const map=root.__tpMap;if(!map)return;const old=root.__tpSatellitePanV1;if(old?.map===map)return;if(old)unbind(root);const s={map,generation:0,moving:false,onStart:null,onEnd:null};s.onStart=e=>{s.moving=true;s.generation=e.detail?.generation||s.generation+1;root.classList.add('tp-satellite-map-moving');tuneLayer(currentLayer(root))};s.onEnd=e=>{s.moving=false;s.generation=e.detail?.generation||s.generation+1;if(root.__tpSatellitePanV1!==s||root.__tpMap!==map)return;tuneLayer(currentLayer(root));root.classList.remove('tp-satellite-map-moving')};root.__tpSatellitePanV1=s;root.addEventListener('typhoon-overlay-motion-start',s.onStart);root.addEventListener('typhoon-overlay-motion-settled',s.onEnd);if(root.__tpOverlayMotion?.moving)s.onStart({detail:root.__tpOverlayMotion});else s.onEnd({detail:root.__tpOverlayMotion||{generation:0}})}
 function style(){
   let s=document.getElementById('tpSatellitePanV1Css');
   if(!s){s=document.createElement('style');s.id='tpSatellitePanV1Css';document.head.appendChild(s)}
@@ -110,5 +72,5 @@ function boot(){
   setInterval(scan,1400);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskTyphoonSatellitePan={version:'v1.2',keepBuffer:10,updateWhenIdle:true,updateWhenZooming:false,noTileFade:true,noBringToFront:true,generationGuard:true,listenerCleanup:true,settleDelay:260};
+window.WebDeskTyphoonSatellitePan={version:'v1.3',keepBuffer:10,updateWhenIdle:true,updateWhenZooming:false,noTileFade:true,noBringToFront:true,generationGuard:true,listenerCleanup:true,settleDelay:260,sharedMotionCoordinator:true};
 })();
