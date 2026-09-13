@@ -17,6 +17,7 @@ function validateLocalized(value,label,id){
   assert(value&&typeof value==='object',`${id}: ${label} must be an object`);
   for(const locale of ['zh-CN','zh-HK'])assert(typeof value[locale]==='string'&&value[locale].trim(),`${id}: ${label}.${locale} is required`);
 }
+function validSize(size){return size&&Number.isInteger(size.w)&&size.w>0&&Number.isInteger(size.h)&&size.h>0}
 
 async function validateManifest(manifest,folder){
   const id=manifest?.id||folder;
@@ -50,7 +51,14 @@ async function validateManifest(manifest,folder){
       }
     }
     const size=manifest.defaultSize[platform];
-    assert(size&&Number.isInteger(size.w)&&size.w>0&&Number.isInteger(size.h)&&size.h>0,`${id}: invalid defaultSize.${platform}`);
+    assert(validSize(size),`${id}: invalid defaultSize.${platform}`);
+    const min=manifest.minSize?.[platform];
+    const max=manifest.maxSize?.[platform];
+    if(manifest.minSize)assert(validSize(min),`${id}: invalid minSize.${platform}`);
+    if(manifest.maxSize)assert(validSize(max),`${id}: invalid maxSize.${platform}`);
+    if(min)assert(min.w<=size.w&&min.h<=size.h,`${id}: minSize.${platform} must not exceed defaultSize`);
+    if(max)assert(max.w>=size.w&&max.h>=size.h,`${id}: maxSize.${platform} must not be smaller than defaultSize`);
+    if(min&&max)assert(min.w<=max.w&&min.h<=max.h,`${id}: minSize.${platform} must not exceed maxSize`);
   }
 
   if(manifest.entry.shared!=null){
