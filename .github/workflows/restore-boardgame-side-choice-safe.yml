@@ -1,0 +1,104 @@
+name: Restore Boardgame Side Choice Safely
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/restore-boardgame-side-choice-safe.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Apply exact side-choice patches
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_exact(path, old, new, count=1):
+              p=Path(path)
+              s=p.read_text(encoding='utf-8')
+              n=s.count(old)
+              if n != count:
+                  raise SystemExit(f'{path}: expected {count} exact matches, found {n}')
+              s=s.replace(old,new,count)
+              p.write_text(s,encoding='utf-8')
+
+          # ---------- Gomoku ----------
+          gp='Html_tools/gomoku-card-v1.js'
+          replace_exact(gp,
+          "function init(card){card.data=card.data||{};let s=card.data.gomoku;if(!s||!Array.isArray(s.board)||s.board.length!==N){s=card.data.gomoku={mode:'ai',difficulty:'normal',board:emptyBoard(),turn:1,winner:0,history:[],last:-1,lesson:0,thinking:false}}s.mode=['tutorial','ai','pvp'].includes(s.mode)?s.mode:'ai';s.difficulty=['easy','normal','hard'].includes(s.difficulty)?s.difficulty:'normal';s.lesson=Math.max(0,Math.min(LESSONS.length-1,+s.lesson||0));s.history=Array.isArray(s.history)?s.history:[];return s}",
+          "function init(card){card.data=card.data||{};let s=card.data.gomoku;if(!s||!Array.isArray(s.board)||s.board.length!==N){s=card.data.gomoku={mode:'ai',difficulty:'normal',board:emptyBoard(),turn:1,winner:0,history:[],last:-1,lesson:0,thinking:false,playerStone:1,aiStone:2}}s.mode=['tutorial','ai','pvp'].includes(s.mode)?s.mode:'ai';s.difficulty=['easy','normal','hard'].includes(s.difficulty)?s.difficulty:'normal';s.lesson=Math.max(0,Math.min(LESSONS.length-1,+s.lesson||0));s.history=Array.isArray(s.history)?s.history:[];s.playerStone=s.playerStone===2?2:1;s.aiStone=s.playerStone===1?2:1;return s}")
+
+          replace_exact(gp,
+          "function aiMove(s){const cand=candidates(s.board);const ranked=cand.map(i=>({i,atk:lineScore(s.board,i,2),def:lineScore(s.board,i,1)})).map(x=>({...x,score:x.atk+1.08*x.def})).sort((a,b)=>b.score-a.score);const win=ranked.find(x=>x.atk>=10000000);if(win)return win.i;const block=ranked.find(x=>x.def>=10000000);if(block)return block.i;if(s.difficulty==='easy'){const top=ranked.slice(0,Math.min(6,ranked.length));return top[Math.floor(Math.random()*top.length)]?.i??cand[0]}if(s.difficulty==='normal'){const top=ranked.slice(0,Math.min(2,ranked.length));return(Math.random()<.78?top[0]:top[1]||top[0])?.i??cand[0]}let best=ranked[0],bestV=-Infinity;for(const x of ranked.slice(0,Math.min(10,ranked.length))){s.board[x.i]=2;if(isWin(s.board,x.i,2)){s.board[x.i]=0;return x.i}let danger=0,reply=0;for(const j of candidates(s.board)){danger=Math.max(danger,lineScore(s.board,j,1));reply=Math.max(reply,lineScore(s.board,j,2))}s.board[x.i]=0;const v=x.score-danger*.82+reply*.13;if(v>bestV){bestV=v;best=x}}return best?.i??cand[0]}",
+          "function aiMove(s){const ai=s.aiStone===1?1:2,human=ai===1?2:1,cand=candidates(s.board);const ranked=cand.map(i=>({i,atk:lineScore(s.board,i,ai),def:lineScore(s.board,i,human)})).map(x=>({...x,score:x.atk+1.08*x.def})).sort((a,b)=>b.score-a.score);const win=ranked.find(x=>x.atk>=10000000);if(win)return win.i;const block=ranked.find(x=>x.def>=10000000);if(block)return block.i;if(s.difficulty==='easy'){const top=ranked.slice(0,Math.min(6,ranked.length));return top[Math.floor(Math.random()*top.length)]?.i??cand[0]}if(s.difficulty==='normal'){const top=ranked.slice(0,Math.min(2,ranked.length));return(Math.random()<.78?top[0]:top[1]||top[0])?.i??cand[0]}let best=ranked[0],bestV=-Infinity;for(const x of ranked.slice(0,Math.min(10,ranked.length))){s.board[x.i]=ai;if(isWin(s.board,x.i,ai)){s.board[x.i]=0;return x.i}let danger=0,reply=0;for(const j of candidates(s.board)){danger=Math.max(danger,lineScore(s.board,j,human));reply=Math.max(reply,lineScore(s.board,j,ai))}s.board[x.i]=0;const v=x.score-danger*.82+reply*.13;if(v>bestV){bestV=v;best=x}}return best?.i??cand[0]}")
+
+          replace_exact(gp,
+          "data:{gomoku:{mode:'ai',difficulty:'normal',board:emptyBoard(),turn:1,winner:0,history:[],last:-1,lesson:0,thinking:false}}",
+          "data:{gomoku:{mode:'ai',difficulty:'normal',board:emptyBoard(),turn:1,winner:0,history:[],last:-1,lesson:0,thinking:false,playerStone:1,aiStone:2}}")
+
+          replace_exact(gp,
+          "function play(card,i){const s=init(card);if(s.winner||s.thinking||s.board[i])return;if(s.mode==='ai'&&s.turn!==1)return;s.history.push(snapshot(s));s.board[i]=s.turn;s.last=i;if(isWin(s.board,i,s.turn))s.winner=s.turn;else if(boardFull(s.board))s.winner=3;else s.turn=s.turn===1?2:1;persist();redraw();if(s.mode==='ai'&&!s.winner&&s.turn===2){s.thinking=true;persist();redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);if(q.mode!=='ai'||q.winner||q.turn!==2)return;q.thinking=false;const m=aiMove(q);q.history.push(snapshot(q));q.board[m]=2;q.last=m;if(isWin(q.board,m,2))q.winner=2;else if(boardFull(q.board))q.winner=3;else q.turn=1;persist();redraw()},220)}}\nfunction resetMode(card,mode){const s=init(card);s.mode=mode;s.history=[];s.winner=0;s.turn=1;s.last=-1;s.thinking=false;s.board=mode==='tutorial'?lessonBoard(s.lesson):emptyBoard();persist();redraw()}",
+          "function scheduleAI(card){const s=init(card);if(s.mode!=='ai'||s.winner||s.thinking||s.turn!==s.aiStone)return;s.thinking=true;persist();redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);if(q.mode!=='ai'||q.winner||q.turn!==q.aiStone)return;q.thinking=false;const m=aiMove(q);if(m===undefined||m===null){persist();redraw();return}q.history.push(snapshot(q));const ai=q.aiStone;q.board[m]=ai;q.last=m;if(isWin(q.board,m,ai))q.winner=ai;else if(boardFull(q.board))q.winner=3;else q.turn=ai===1?2:1;persist();redraw()},220)}\nfunction play(card,i){const s=init(card);if(s.winner||s.thinking||s.board[i])return;if(s.mode==='ai'&&s.turn!==s.playerStone)return;s.history.push(snapshot(s));s.board[i]=s.turn;s.last=i;if(isWin(s.board,i,s.turn))s.winner=s.turn;else if(boardFull(s.board))s.winner=3;else s.turn=s.turn===1?2:1;persist();redraw();if(s.mode==='ai'&&!s.winner&&s.turn===s.aiStone)scheduleAI(card)}\nfunction resetMode(card,mode){const s=init(card);s.mode=mode;s.history=[];s.winner=0;s.turn=1;s.last=-1;s.thinking=false;s.board=mode==='tutorial'?lessonBoard(s.lesson):emptyBoard();persist();redraw();if(mode==='ai'&&s.turn===s.aiStone)scheduleAI(card)}")
+          replace_exact(gp,"if(s.mode==='ai'&&s.turn===1&&s.history.length>=2)","if(s.mode==='ai'&&s.turn===s.playerStone&&s.history.length>=2)")
+
+          # ---------- International chess ----------
+          cp='Html_tools/chess-card-v1.js'
+          replace_exact(cp,
+          "function init(card){card.data=card.data||{};let s=card.data.chess;if(!s||!Array.isArray(s.board)||s.board.length!==64){s={...parseFen(START),mode:'ai',difficulty:'normal',lesson:0};card.data.chess=s}s.mode=['tutorial','ai','pvp'].includes(s.mode)?s.mode:'ai';s.difficulty=['easy','normal','hard'].includes(s.difficulty)?s.difficulty:'normal';s.lesson=Math.max(0,Math.min(LESSONS.length-1,+s.lesson||0));s.history=Array.isArray(s.history)?s.history:[];s.selected=Number.isInteger(s.selected)?s.selected:-1;return s}",
+          "function init(card){card.data=card.data||{};let s=card.data.chess;if(!s||!Array.isArray(s.board)||s.board.length!==64){s={...parseFen(START),mode:'ai',difficulty:'normal',lesson:0,playerSide:'w',aiSide:'b'};card.data.chess=s}s.mode=['tutorial','ai','pvp'].includes(s.mode)?s.mode:'ai';s.difficulty=['easy','normal','hard'].includes(s.difficulty)?s.difficulty:'normal';s.lesson=Math.max(0,Math.min(LESSONS.length-1,+s.lesson||0));s.history=Array.isArray(s.history)?s.history:[];s.selected=Number.isInteger(s.selected)?s.selected:-1;s.playerSide=s.playerSide==='b'?'b':'w';s.aiSide=opp(s.playerSide);return s}")
+          replace_exact(cp,
+          "function aiPick(s){let moves=legal(s,'b');if(!moves.length)return null;if(s.difficulty==='easy')return moves[Math.floor(Math.random()*moves.length)];const depth=s.difficulty==='hard'?(moves.length<13?3:2):2;let best=-Infinity,pool=[];moves=orderedMoves(s);for(const m of moves){const q=clone(s);rawMove(q,m);const v=minimax(q,depth-1,-Infinity,Infinity,'b')+(Math.random()-.5)*(s.difficulty==='normal'?14:2);if(v>best+1){best=v;pool=[m]}else if(Math.abs(v-best)<2)pool.push(m)}return pool[Math.floor(Math.random()*pool.length)]||moves[0]}",
+          "function aiPick(s){const ai=s.aiSide||'b';let moves=legal(s,ai);if(!moves.length)return null;if(s.difficulty==='easy')return moves[Math.floor(Math.random()*moves.length)];const depth=s.difficulty==='hard'?(moves.length<13?3:2):2;let best=-Infinity,pool=[];moves=orderedMoves(s);for(const m of moves){const q=clone(s);rawMove(q,m);const v=minimax(q,depth-1,-Infinity,Infinity,ai)+(Math.random()-.5)*(s.difficulty==='normal'?14:2);if(v>best+1){best=v;pool=[m]}else if(Math.abs(v-best)<2)pool.push(m)}return pool[Math.floor(Math.random()*pool.length)]||moves[0]}")
+          replace_exact(cp,"const s={...parseFen(START),mode:'ai',difficulty:'normal',lesson:0};","const s={...parseFen(START),mode:'ai',difficulty:'normal',lesson:0,playerSide:'w',aiSide:'b'};")
+          replace_exact(cp,
+          "function resetMode(card,mode){const s=init(card),diff=s.difficulty,lesson=s.lesson;makeFromFen(s,mode==='tutorial'?LESSONS[lesson].fen:START);s.mode=mode;s.difficulty=diff;s.lesson=lesson;persist();redraw()}\nfunction scheduleAI(card){const s=init(card);if(s.mode!=='ai'||s.turn!=='b'||s.result)return;s.thinking=true;persist();redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);if(q.mode!=='ai'||q.turn!=='b'||q.result)return;const m=aiPick(q);q.thinking=false;if(m)apply(q,m,true);persist();redraw()},120)}\nfunction chooseSquare(card,sq){const s=init(card);if(s.result||s.thinking||s.pendingPromotion)return;if(s.mode==='ai'&&s.turn==='b')return;const p=s.board[sq];if(s.selected<0){if(p&&color(p)===s.turn){s.selected=sq;persist();redraw()}return}if(p&&color(p)===s.turn){s.selected=sq;persist();redraw();return}const options=legal(s,s.turn).filter(m=>m.from===s.selected&&m.to===sq);if(!options.length){s.selected=-1;persist();redraw();return}if(options.length>1&&options.some(m=>m.promo)){s.pendingPromotion={from:s.selected,to:sq,choices:options};persist();redraw();return}apply(s,options[0],true);persist();redraw();if(s.mode==='ai'&&!s.result&&s.turn==='b')scheduleAI(card)}",
+          "function resetMode(card,mode){const s=init(card),diff=s.difficulty,lesson=s.lesson,playerSide=s.playerSide,aiSide=s.aiSide;makeFromFen(s,mode==='tutorial'?LESSONS[lesson].fen:START);s.mode=mode;s.difficulty=diff;s.lesson=lesson;s.playerSide=playerSide;s.aiSide=aiSide;persist();redraw();if(mode==='ai'&&s.turn===s.aiSide)scheduleAI(card)}\nfunction scheduleAI(card){const s=init(card);if(s.mode!=='ai'||s.turn!==s.aiSide||s.result)return;s.thinking=true;persist();redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);if(q.mode!=='ai'||q.turn!==q.aiSide||q.result)return;const m=aiPick(q);q.thinking=false;if(m)apply(q,m,true);persist();redraw()},120)}\nfunction chooseSquare(card,sq){const s=init(card);if(s.result||s.thinking||s.pendingPromotion)return;if(s.mode==='ai'&&s.turn===s.aiSide)return;const p=s.board[sq];if(s.selected<0){if(p&&color(p)===s.turn){s.selected=sq;persist();redraw()}return}if(p&&color(p)===s.turn){s.selected=sq;persist();redraw();return}const options=legal(s,s.turn).filter(m=>m.from===s.selected&&m.to===sq);if(!options.length){s.selected=-1;persist();redraw();return}if(options.length>1&&options.some(m=>m.promo)){s.pendingPromotion={from:s.selected,to:sq,choices:options};persist();redraw();return}apply(s,options[0],true);persist();redraw();if(s.mode==='ai'&&!s.result&&s.turn===s.aiSide)scheduleAI(card)}")
+          replace_exact(cp,"if(s.mode==='ai'&&!s.result&&s.turn==='b')scheduleAI(card)","if(s.mode==='ai'&&!s.result&&s.turn===s.aiSide)scheduleAI(card)")
+          replace_exact(cp,"if(s.mode==='ai'&&s.turn==='w'&&s.history.length>=2)","if(s.mode==='ai'&&s.turn===s.playerSide&&s.history.length>=2)")
+
+          # ---------- Xiangqi ----------
+          xp='Html_tools/xiangqi-card-v1.js'
+          replace_exact(xp,
+          "function init(card){card.data=card.data||{};let s=card.data.xiangqi;if(!s||!Array.isArray(s.board)||s.board.length!==90)s=card.data.xiangqi={board:cloneBoard(START),turn:'r',selected:-1,history:[],mode:'ai',difficulty:'entry',lesson:0,thinking:false,winner:'',section:'learn'};s.history=Array.isArray(s.history)?s.history:[];return s}",
+          "function init(card){card.data=card.data||{};let s=card.data.xiangqi;if(!s||!Array.isArray(s.board)||s.board.length!==90)s=card.data.xiangqi={board:cloneBoard(START),turn:'r',selected:-1,history:[],mode:'ai',difficulty:'entry',lesson:0,thinking:false,winner:'',section:'learn',playerSide:'r',aiSide:'b'};s.history=Array.isArray(s.history)?s.history:[];s.playerSide=s.playerSide==='b'?'b':'r';s.aiSide=s.playerSide==='r'?'b':'r';return s}")
+          replace_exact(xp,
+          "function aiPick(s){let ms=allMoves(s,'b');if(!ms.length)return null;if(s.difficulty==='entry')return ms[Math.floor(Math.random()*ms.length)];let best=-1e9,pool=[];for(const m of ms){const q={...s,board:cloneBoard(s.board),history:[],turn:'b',winner:''};const cap=q.board[m.to];q.board[m.to]=q.board[m.from];q.board[m.from]=null;q.turn='r';let score=(cap?VALUE[cap.toLowerCase()]||0:0)*4+evalBoard(q,'b');if(s.difficulty==='competition'){const replies=allMoves(q,'r').slice(0,28);let worst=1e9;for(const r of replies){const z={...q,board:cloneBoard(q.board),turn:'r'};const c=z.board[r.to];z.board[r.to]=z.board[r.from];z.board[r.from]=null;worst=Math.min(worst,evalBoard(z,'b')-(c?VALUE[c.toLowerCase()]||0:0)*3)}score=worst}score+=Math.random()*4;if(score>best+1){best=score;pool=[m]}else if(Math.abs(score-best)<2)pool.push(m)}return pool[Math.floor(Math.random()*pool.length)]||ms[0]}",
+          "function aiPick(s){const ai=s.aiSide||'b',human=ai==='r'?'b':'r';let ms=allMoves(s,ai);if(!ms.length)return null;if(s.difficulty==='entry')return ms[Math.floor(Math.random()*ms.length)];let best=-1e9,pool=[];for(const m of ms){const q={...s,board:cloneBoard(s.board),history:[],turn:ai,winner:''};const cap=q.board[m.to];q.board[m.to]=q.board[m.from];q.board[m.from]=null;q.turn=human;let score=(cap?VALUE[cap.toLowerCase()]||0:0)*4+evalBoard(q,ai);if(s.difficulty==='competition'){const replies=allMoves(q,human).slice(0,28);let worst=1e9;for(const r of replies){const z={...q,board:cloneBoard(q.board),turn:human};const c=z.board[r.to];z.board[r.to]=z.board[r.from];z.board[r.from]=null;worst=Math.min(worst,evalBoard(z,ai)-(c?VALUE[c.toLowerCase()]||0:0)*3)}score=worst}score+=Math.random()*4;if(score>best+1){best=score;pool=[m]}else if(Math.abs(score-best)<2)pool.push(m)}return pool[Math.floor(Math.random()*pool.length)]||ms[0]}")
+          replace_exact(xp,
+          "function play(card,i){const s=init(card);if(s.winner||s.thinking)return;const p=s.board[i];if(s.selected<0){if(p&&color(p)===s.turn&&(s.mode!=='ai'||s.turn==='r')){s.selected=i;redraw()}return}if(p&&color(p)===s.turn){s.selected=i;redraw();return}if(!legalMovesFrom(s,s.selected).includes(i)){s.selected=-1;redraw();return}applyMove(s,{from:s.selected,to:i});redraw();if(s.mode==='ai'&&!s.winner&&s.turn==='b'){s.thinking=true;redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);q.thinking=false;if(q.mode!=='ai'||q.turn!=='b'||q.winner)return;const m=aiPick(q);if(m)applyMove(q,m);redraw()},240)}}",
+          "function scheduleAI(card){const s=init(card);if(s.mode!=='ai'||s.winner||s.thinking||s.turn!==s.aiSide)return;s.thinking=true;redraw();setTimeout(()=>{const c=typeof activeWorkspace==='function'?activeWorkspace().cards.find(x=>x.id===card.id):null;if(!c)return;const q=init(c);q.thinking=false;if(q.mode!=='ai'||q.turn!==q.aiSide||q.winner)return;const m=aiPick(q);if(m)applyMove(q,m);redraw()},240)}\nfunction play(card,i){const s=init(card);if(s.winner||s.thinking)return;const p=s.board[i];if(s.selected<0){if(p&&color(p)===s.turn&&(s.mode!=='ai'||s.turn===s.playerSide)){s.selected=i;redraw()}return}if(p&&color(p)===s.turn){if(s.mode==='ai'&&s.turn!==s.playerSide)return;s.selected=i;redraw();return}if(!legalMovesFrom(s,s.selected).includes(i)){s.selected=-1;redraw();return}applyMove(s,{from:s.selected,to:i});redraw();if(s.mode==='ai'&&!s.winner&&s.turn===s.aiSide)scheduleAI(card)}")
+          replace_exact(xp,"if(m==='ai'||m==='pvp'){s.mode=m;s.section='play';reset(s)}else s.section=m;redraw();return","if(m==='ai'||m==='pvp'){s.mode=m;s.section='play';reset(s);redraw();if(m==='ai'&&s.turn===s.aiSide)scheduleAI(c)}else{s.section=m;redraw()}return")
+          replace_exact(xp,"if(c){reset(init(c));redraw()}return","if(c){const s=init(c);reset(s);redraw();if(s.mode==='ai'&&s.turn===s.aiSide)scheduleAI(c)}return")
+          replace_exact(xp,"if(s.history.length){restore(s,s.history.pop());if(s.mode==='ai'&&s.turn==='b'&&s.history.length)restore(s,s.history.pop());redraw()}","if(s.history.length){restore(s,s.history.pop());if(s.mode==='ai'&&s.turn===s.playerSide&&s.history.length)restore(s,s.history.pop());redraw()}")
+
+          # Re-enable the existing UI runtime only after all three cores support true side switching.
+          ip=Path('index.html')
+          page=ip.read_text(encoding='utf-8')
+          page=re.sub(r'\n?<script src="Html_tools/boardgame-side-choice-v1\.js\?v=[^"]+"></script>','',page)
+          tag='<script src="Html_tools/boardgame-side-choice-v1.js?v=20260913-boardgame-side-choice-v1.1-safe-core"></script>'
+          if '</body>' not in page: raise SystemExit('index.html missing </body>')
+          page=page.replace('</body>',tag+'\n</body>',1)
+          ip.write_text(page,encoding='utf-8')
+          PY
+      - name: Syntax-check patched runtimes
+        run: |
+          node --check Html_tools/gomoku-card-v1.js
+          node --check Html_tools/chess-card-v1.js
+          node --check Html_tools/xiangqi-card-v1.js
+          node --check Html_tools/boardgame-side-choice-v1.js
+      - name: Commit safe side-choice core
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Html_tools/gomoku-card-v1.js Html_tools/chess-card-v1.js Html_tools/xiangqi-card-v1.js index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Restore real first and second move choice safely'
+          git pull --rebase origin master
+          git push
