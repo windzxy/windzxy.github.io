@@ -1,6 +1,6 @@
 {
   "id":"global-weather",
-  "version":"0.2.7",
+  "version":"0.2.8",
   "schemaVersion":1,
   "name":{"zh-CN":"全球天气","zh-HK":"全球天氣"},
   "description":{"zh-CN":"全球天气地图与图层","zh-HK":"全球天氣地圖與圖層"},
