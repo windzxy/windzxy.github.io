@@ -5,8 +5,11 @@ on:
     paths:
       - 'Html_tools/typhoon-provider-failover-v1.js'
       - 'Html_tools/global-weather-lazy-v1.js'
+      - 'index.html'
       - '.github/workflows/ensure-typhoon-provider-failover.yml'
   workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -14,17 +17,52 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Verify provider failover stays in lazy Global Weather runtime
+      - name: Verify current provider failover and lazy weather baseline
         run: |
           python - <<'PY'
           from pathlib import Path
-          lazy=Path('Html_tools/global-weather-lazy-v1.js').read_text(encoding='utf-8')
-          needle="['Html_tools/typhoon-provider-failover-v1.js'"
-          if needle not in lazy:
-              raise SystemExit('typhoon provider failover is missing from lazy Global Weather runtime')
-          index=Path('index.html').read_text(encoding='utf-8')
-          direct='<script src="Html_tools/typhoon-provider-failover-v1.js?'
+
+          lazy = Path('Html_tools/global-weather-lazy-v1.js').read_text(encoding='utf-8')
+          failover = Path('Html_tools/typhoon-provider-failover-v1.js').read_text(encoding='utf-8')
+          index = Path('index.html').read_text(encoding='utf-8')
+
+          required_lazy = [
+              "const VERSION='20260913-global-weather-lazy-v3.3-radar-visibility-idle'",
+              "['Html_tools/typhoon-provider-failover-v1.js','20260911-typhoon-provider-failover-v1.1-recover-primary']",
+              "provider-failover",
+          ]
+          for marker in required_lazy:
+              if marker not in lazy:
+                  raise SystemExit(f'missing current lazy weather marker: {marker}')
+
+          required_failover = [
+              "const VER='20260911-typhoon-provider-failover-v1.1-recover-primary'",
+              "recoverySuccess",
+              "beginRecovery",
+              "primary-restored:",
+              "recoveryProbe:true",
+              "retryMs:[45000,180000]",
+          ]
+          for marker in required_failover:
+              if marker not in failover:
+                  raise SystemExit(f'missing provider failover recovery marker: {marker}')
+
+          forbidden = [
+              '20260911-typhoon-provider-failover-v1.0',
+              'global-weather-lazy-v3.2',
+          ]
+          joined = lazy + '\n' + failover
+          for marker in forbidden:
+              if marker in joined:
+                  raise SystemExit(f'legacy weather/provider baseline reappeared: {marker}')
+
+          direct = '<script src="Html_tools/typhoon-provider-failover-v1.js?'
           if direct in index:
               raise SystemExit('provider failover must remain lazy-loaded, not startup-loaded')
-          print('Provider failover is present in lazy runtime and absent from startup path.')
+
+          lazy_entry = '<script src="Html_tools/global-weather-lazy-v1.js?'
+          if lazy_entry not in index:
+              raise SystemExit('Global Weather lazy loader missing from WebDesk entry point')
+
+          print('Provider failover v1.1 recovery and Global Weather v3.3 lazy baseline verified.')
           PY
