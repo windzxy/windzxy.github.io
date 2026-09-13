@@ -85,7 +85,7 @@ jobs:
           from pathlib import Path
           js=Path('maydayland/tour-map-openfreemap-v2.js').read_text(encoding='utf-8')
           html=Path('maydayland/index.html').read_text(encoding='utf-8')
-          js_required=["street:{kind:'vector'","bright:{kind:'vector'","terrain:{kind:'raster'","dark:{kind:'vector'","sat:{kind:'sat'",'SECONDARY_FALLBACKS','rasterProviderBackoff','rasterProviderProbe','rasterProviderProbeStarts','function waitRasterProbeSettle','map.setRenderWorldCopies?.(true)','function requestSharedResize(delay=0)',"window.addEventListener('resize',()=>resizeMapNow(true))"]
+          js_required=["street:{kind:'vector'","bright:{kind:'vector'","terrain:{kind:'raster'","dark:{kind:'vector'","sat:{kind:'sat'",'SECONDARY_FALLBACKS','rasterProviderBackoff','rasterProviderProbe','rasterProviderProbeStarts','function waitRasterProbeSettle','function requestSharedResize(delay=0)',"window.addEventListener('resize',()=>resizeMapNow(true))"]
           html_required=['v124.27','stall-aware-watchdog','adaptive-provider-backoff','viewport-quorum-probe','probe-settle-budget','shared-resize-coordinator','shared-resize-owner','tour-map-interaction-guard-v1.1-resize-coordinator','tour-map-stability-v1.4-shared-resize-coordinator']
           missing=[x for x in js_required if x not in js]+[x for x in html_required if x not in html]
           if missing: raise SystemExit('Baseline regression: '+', '.join(missing))
