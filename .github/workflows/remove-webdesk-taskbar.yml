@@ -1,0 +1,41 @@
+name: Remove WebDesk Taskbar
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remove-taskbar:
+    if: ${{ !contains(github.event.head_commit.message || '', '[skip-taskbar-cleanup]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Remove visible workspace info bar
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old='''  <footer class="desktop-taskbar">\n    <div>\n      <strong id="workspaceTitle" data-i18n="日常工作區">日常工作區</strong>\n      <span id="workspaceHint" data-i18n="拖拽卡片可任意擺放；點擊卡片打開工具。">拖拽卡片可任意擺放；點擊卡片打開工具。</span>\n    </div>\n    <time id="desktopClock"></time>\n  </footer>'''
+          new='''  <div hidden aria-hidden="true">\n    <strong id="workspaceTitle"></strong>\n    <span id="workspaceHint"></span>\n    <time id="desktopClock"></time>\n  </div>'''
+          if old in s:
+              s=s.replace(old,new,1)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit cleanup
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No visible taskbar remains"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Remove WebDesk workspace info bar [skip-taskbar-cleanup]"
+          git push
