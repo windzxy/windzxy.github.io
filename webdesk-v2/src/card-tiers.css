@@ -1,0 +1,15 @@
+/* WebDesk V2 shared card size tiers. Core assigns data-size-tier while resizing. */
+.wd-card[data-size-tier="mini"]{border-radius:18px}
+.wd-card[data-size-tier="mini"] .wd-card-head{position:absolute;inset:0 0 auto 0;height:100%;padding:0;border:0;background:transparent;z-index:5;pointer-events:none}
+.wd-card[data-size-tier="mini"] .wd-card-title{display:none}
+.wd-card[data-size-tier="mini"] .wd-card-head button{position:absolute;right:6px;top:50%;width:28px;height:28px;min-height:28px;transform:translateY(-50%);font-size:16px;opacity:0;pointer-events:auto;background:rgba(118,118,128,.12);backdrop-filter:blur(12px)}
+.wd-card[data-size-tier="mini"]:hover .wd-card-head button,.wd-card[data-size-tier="mini"]:focus-within .wd-card-head button{opacity:1}
+.wd-card[data-size-tier="mini"] .wd-card-mount,.wd-card[data-size-tier="mini"][data-user-sized="1"] .wd-card-mount{height:100%;overflow:hidden;padding-right:30px}
+.wd-card[data-size-tier="mini"] .wd-card-resize{right:4px;bottom:4px;width:16px;height:16px;background:transparent;box-shadow:none}
+.wd-card[data-size-tier="mini"] .wd-card-resize::after{right:2px;bottom:2px;width:7px;height:7px}
+.wd-card[data-size-tier="compact"] .wd-card-head{padding:9px 11px}
+.wd-card[data-size-tier="compact"] .wd-card-icon{width:30px;height:30px;border-radius:10px}
+.wd-card[data-size-tier="compact"] .wd-card-head button{width:32px;min-height:32px}
+.wd-card[data-size-tier="compact"][data-user-sized="1"] .wd-card-mount{height:calc(100% - 51px)}
+.wd-card[data-size-tier="large"]{border-radius:26px}
+@media(max-width:820px){.wd-card[data-size-tier] .wd-card-head{position:relative;height:auto;padding:12px 13px;border-bottom:1px solid var(--line);pointer-events:auto}.wd-card[data-size-tier] .wd-card-title{display:flex}.wd-card[data-size-tier] .wd-card-head button{position:static;width:36px;height:auto;min-height:42px;transform:none;opacity:1}.wd-card[data-size-tier] .wd-card-mount,.wd-card[data-size-tier][data-user-sized="1"] .wd-card-mount{height:auto;overflow:visible;padding-right:0}.wd-card[data-size-tier] .wd-card-resize{display:none}}
