@@ -1,41 +1,66 @@
-name: Ensure Typhoon Render Recovery
+name: Verify Typhoon Render Recovery Ownership
 on:
   push:
     branches: [master]
     paths:
-      - 'Html_tools/typhoon-render-recovery-v1.js'
+      - 'Html_tools/global-weather-lazy-v1.js'
+      - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
+      - 'Html_tools/typhoon-weather-p0-remount.js'
+      - 'Html_tools/typhoon-overlay-health-v1.js'
+      - 'index.html'
       - '.github/workflows/ensure-typhoon-render-recovery.yml'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  inject:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: master
-      - name: Keep typhoon render recovery loaded
+      - name: Verify current render recovery ownership
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
-          import re
-          p=Path('index.html')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r'\n?<script src="Html_tools/typhoon-render-recovery-v1\.js\?v=[^"]+"></script>','',s)
-          anchor_pat=r'(<script src="Html_tools/typhoon-weather-ui-recovery-v11-1\.js\?v=[^"]+"></script>)'
-          tag='<script src="Html_tools/typhoon-render-recovery-v1.js?v=20260911-typhoon-render-recovery-v1.1-leaflet"></script>'
-          if re.search(anchor_pat,s):
-              s=re.sub(anchor_pat,r'\1\n'+tag,s,count=1)
-          else:
-              s=s.replace('</body>',tag+'\n</body>')
-          p.write_text(s,encoding='utf-8')
+
+          loader = Path('Html_tools/global-weather-lazy-v1.js').read_text(encoding='utf-8')
+          index = Path('index.html').read_text(encoding='utf-8')
+          ui = Path('Html_tools/typhoon-weather-ui-recovery-v11-1.js').read_text(encoding='utf-8')
+          remount = Path('Html_tools/typhoon-weather-p0-remount.js').read_text(encoding='utf-8')
+          health = Path('Html_tools/typhoon-overlay-health-v1.js').read_text(encoding='utf-8')
+
+          required_loader = [
+              '20260913-global-weather-lazy-v3.3-radar-visibility-idle',
+              '20260907-typhoon-weather-ui-recovery-v11.3-self-heal',
+              '20260909-typhoon-weather-p0-remount-v9-grouped-controller',
+              '20260911-typhoon-overlay-health-v1.2-data-time-coherence',
+              '20260912-typhoon-overlay-motion-coordinator-v1.0',
+          ]
+          required_index = [
+              'Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle'
+          ]
+          required_runtime = [
+              (ui, 'selfHeal'),
+              (remount, 'grouped'),
+              (health, 'dataTimeCoherence'),
+          ]
+          forbidden_index = [
+              'Html_tools/typhoon-render-recovery-v1.js',
+              'Html_tools/typhoon-weather-ui-recovery-v11-1.js',
+              'Html_tools/typhoon-weather-p0-remount.js',
+              'Html_tools/typhoon-overlay-health-v1.js',
+          ]
+
+          missing = [x for x in required_loader if x not in loader]
+          missing += [x for x in required_index if x not in index]
+          missing += [marker for text, marker in required_runtime if marker not in text]
+          direct = [x for x in forbidden_index if x in index]
+          stale_loader = 'typhoon-render-recovery-v1.js' in loader
+
+          if missing:
+              raise SystemExit('Missing current render recovery ownership markers: ' + ', '.join(missing))
+          if direct:
+              raise SystemExit('Legacy/direct weather recovery scripts found in formal entry: ' + ', '.join(direct))
+          if stale_loader:
+              raise SystemExit('Legacy render recovery guard reintroduced into lazy loader')
+          print('Render recovery remains owned by the current lazy self-heal/remount/health stack.')
           PY
-      - name: Commit formal entry update
-        run: |
-          if git diff --quiet -- index.html; then exit 0; fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Load typhoon render recovery guard'
-          git push
