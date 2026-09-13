@@ -1,11 +1,69 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T14:00:33.231Z",
-  "cards": [],
-  "errors": [
+  "generatedAt": "2026-09-13T14:00:47.842Z",
+  "cards": [
     {
-      "folder": "weather",
-      "error": "weather: missing ./mobile/app.css"
+      "id": "weather",
+      "version": "0.2.0",
+      "schemaVersion": 1,
+      "name": {
+        "zh-CN": "天气",
+        "zh-HK": "天氣"
+      },
+      "description": {
+        "zh-CN": "三端独立设计的实时天气卡片与预报。",
+        "zh-HK": "三端獨立設計的即時天氣卡片與預報。"
+      },
+      "icon": "☁️",
+      "category": "live",
+      "kind": "live",
+      "order": 10,
+      "platforms": [
+        "desktop",
+        "tablet",
+        "mobile"
+      ],
+      "capabilities": [
+        "network",
+        "location-optional"
+      ],
+      "permissions": [],
+      "defaultSize": {
+        "desktop": {
+          "w": 430,
+          "h": 310
+        },
+        "tablet": {
+          "w": 520,
+          "h": 270
+        },
+        "mobile": {
+          "w": 360,
+          "h": 190
+        }
+      },
+      "entry": {
+        "shared": "./shared/weather-service.js",
+        "desktop": {
+          "card": "./desktop/card.js",
+          "cardStyle": "./desktop/card.css",
+          "app": "./desktop/app.js",
+          "appStyle": "./desktop/app.css"
+        },
+        "tablet": {
+          "card": "./tablet/card.js",
+          "cardStyle": "./tablet/card.css",
+          "app": "./tablet/app.js",
+          "appStyle": "./tablet/app.css"
+        },
+        "mobile": {
+          "card": "./mobile/card.js",
+          "cardStyle": "./mobile/card.css",
+          "app": "./mobile/app.js",
+          "appStyle": "./mobile/app.css"
+        }
+      }
     }
-  ]
+  ],
+  "errors": []
 }
