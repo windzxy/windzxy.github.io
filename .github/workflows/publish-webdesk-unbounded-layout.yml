@@ -24,7 +24,7 @@ jobs:
           import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="Html_tools/webdesk-unbounded-layout-v1.js?v=20260913-webdesk-unbounded-layout-v1.1"></script>'
+          tag='<script src="Html_tools/webdesk-unbounded-layout-v1.js?v=20260913-webdesk-unbounded-layout-v1.2-drag-grow"></script>'
           s=re.sub(r'\n?<script src="Html_tools/webdesk-unbounded-layout-v1\.js[^>]*></script>', '', s)
           if '</body>' not in s:
               raise SystemExit('index.html has no </body> marker')
@@ -36,8 +36,8 @@ jobs:
           from pathlib import Path
           s=Path('index.html').read_text(encoding='utf-8')
           js=Path('Html_tools/webdesk-unbounded-layout-v1.js').read_text(encoding='utf-8')
-          assert '20260913-webdesk-unbounded-layout-v1.1' in s
-          for marker in ['height:auto!important','overflow-y:auto!important','syncHeight','desktop-card','minHeight']:
+          assert '20260913-webdesk-unbounded-layout-v1.2-drag-grow' in s
+          for marker in ['height:auto!important','overflow-y:auto!important','syncHeight','desktop-card','minHeight','growAheadOfPointer','dragGrowUntil','touch-action:none']:
               assert marker in js
       - name: Commit published entry
         run: |
@@ -45,6 +45,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Publish WebDesk unbounded page layout [skip-webdesk-unbounded-publish]"
+          git commit -m "Publish WebDesk drag-grow unbounded layout [skip-webdesk-unbounded-publish]"
           git pull --rebase origin master
           git push origin master
