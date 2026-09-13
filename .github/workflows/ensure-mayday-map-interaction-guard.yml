@@ -10,7 +10,7 @@ on:
       - '.github/workflows/ensure-mayday-map-interaction-guard.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: maydayland-map-runtime
   cancel-in-progress: false
@@ -21,62 +21,51 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
+          fetch-depth: 0
+      - name: Publish current map recovery runtime
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('maydayland/index.html')
+          s=p.read_text(encoding='utf-8')
+          replacements={
+            r'tour-map-openfreemap-v2\.js\?v=[^"\']+':'tour-map-openfreemap-v2.js?v=20260913-mayday-openfreemap-v4.10-shared-resize-owner',
+            r'tour-map-interaction-guard-v1\.js\?v=[^"\']+':'tour-map-interaction-guard-v1.js?v=20260913-tour-map-interaction-guard-v1.2-visual-viewport-settle',
+            r'tour-map-stability-v1\.js\?v=[^"\']+':'tour-map-stability-v1.js?v=20260913-tour-map-stability-v1.5-raster-owner-aware',
+          }
+          for pattern,new in replacements.items():
+            if not re.search(pattern,s): raise SystemExit('Missing runtime entry: '+pattern)
+            s=re.sub(pattern,new,s,count=1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit formal entry if needed
+        run: |
+          if ! git diff --quiet -- maydayland/index.html; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add maydayland/index.html
+            git commit -m "Publish Maydayland mobile viewport recovery [skip-mayday-map-publish]"
+            git push
+          fi
       - name: Verify current Maydayland map recovery baseline
         run: |
           python - <<'PY'
           from pathlib import Path
-
-          runtime = Path('maydayland/tour-map-openfreemap-v2.js').read_text(encoding='utf-8')
-          interaction = Path('maydayland/tour-map-interaction-guard-v1.js').read_text(encoding='utf-8')
-          stability = Path('maydayland/tour-map-stability-v1.js').read_text(encoding='utf-8')
-          index = Path('maydayland/index.html').read_text(encoding='utf-8')
-
-          runtime_required = [
-              '20260913-mayday-openfreemap-v4.9-probe-settle-budget',
-              'function nextRasterProviderBackoff',
-              'function probeRasterProvider',
-              'function rasterProbeCoords',
-              'function cancelRasterProviderProbe',
-              'function rasterProbeStartDelay',
-              'function waitRasterProbeSettle',
-              'rasterProviderProbeGeneration=Object.create(null)',
-              'rasterProviderProbeAbort=Object.create(null)',
-              'rasterProviderProbeStarts=Object.create(null)',
+          runtime=Path('maydayland/tour-map-openfreemap-v2.js').read_text(encoding='utf-8')
+          interaction=Path('maydayland/tour-map-interaction-guard-v1.js').read_text(encoding='utf-8')
+          stability=Path('maydayland/tour-map-stability-v1.js').read_text(encoding='utf-8')
+          index=Path('maydayland/index.html').read_text(encoding='utf-8')
+          checks=[
+            ('map runtime',runtime,['20260913-mayday-openfreemap-v4.10-shared-resize-owner','function nextRasterProviderBackoff','function probeRasterProvider','rasterProviderProbeGeneration=Object.create(null)']),
+            ('interaction guard',interaction,['20260913-tour-map-interaction-guard-v1.2-visual-viewport-settle','requestResize:resizePulse','MIN_RESIZE_GAP=220','window.visualViewport']),
+            ('stability guard',stability,['20260913-tour-map-stability-v1.5-raster-owner-aware','MAYDAYLAND_MAP_INTERACTION?.requestResize']),
+            ('production entry',index,['20260913-mayday-openfreemap-v4.10-shared-resize-owner','20260913-tour-map-interaction-guard-v1.2-visual-viewport-settle','20260913-tour-map-stability-v1.5-raster-owner-aware',"'shared-resize-coordinator'","'adaptive-provider-backoff'","'viewport-quorum-probe'"])
           ]
-          interaction_required = [
-              '20260913-tour-map-interaction-guard-v1.1-resize-coordinator',
-              'requestResize:resizePulse',
-              'MIN_RESIZE_GAP=220',
-          ]
-          stability_required = [
-              '20260913-tour-map-stability-v1.4-shared-resize-coordinator',
-              'MAYDAYLAND_MAP_INTERACTION?.requestResize',
-          ]
-          index_required = [
-              '20260913-mayday-openfreemap-v4.9-probe-settle-budget',
-              '20260913-tour-map-interaction-guard-v1.1-resize-coordinator',
-              '20260913-tour-map-stability-v1.4-shared-resize-coordinator',
-              "'shared-resize-coordinator'",
-              "'adaptive-provider-backoff'",
-              "'provider-recovery-probe'",
-              "'viewport-quorum-probe'",
-              "'probe-generation-cancel'",
-              "'probe-request-budget'",
-              "'probe-settle-budget'",
-          ]
-
-          checks = [
-              ('map runtime', runtime, runtime_required),
-              ('interaction guard', interaction, interaction_required),
-              ('stability guard', stability, stability_required),
-              ('production entry', index, index_required),
-          ]
-          missing = []
-          for label, text, required in checks:
-              for marker in required:
-                  if marker not in text:
-                      missing.append(f'{label}: {marker}')
-          if missing:
-              raise SystemExit('Maydayland map baseline regression detected:\n- ' + '\n- '.join(missing))
-          print('Maydayland map v4.9 + shared resize coordinator baseline verified.')
+          missing=[]
+          for label,text,required in checks:
+            for marker in required:
+              if marker not in text: missing.append(f'{label}: {marker}')
+          if missing: raise SystemExit('Maydayland map baseline regression detected:\n- '+'\n- '.join(missing))
+          print('Maydayland v4.10 + visual viewport recovery baseline verified.')
           PY
