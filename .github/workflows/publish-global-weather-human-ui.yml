@@ -1,9 +1,11 @@
-name: Publish Global Weather Human UI
+name: Publish Global Weather Runtime
 
 on:
   push:
     branches: [master]
     paths:
+      - 'Html_tools/global-weather-lazy-v1.js'
+      - 'Html_tools/typhoon-weather-ui-recovery-v11-1.js'
       - '.github/workflows/publish-global-weather-human-ui.yml'
   workflow_dispatch:
 
@@ -12,6 +14,7 @@ permissions:
 
 jobs:
   publish:
+    if: ${{ !contains(github.event.head_commit.message || '', '[skip-global-weather-publish]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,27 +25,24 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          old=[
-            'Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v2.9-shared-vector-motion',
-            'Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle'
-          ]
-          new='Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.4-human-ui'
-          for marker in old:
-            s=s.replace(marker,new)
-          if new not in s:
-            raise SystemExit('Global Weather loader script tag not found')
+          new='Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.5-coalesced-ui-heal'
+          pattern=r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+'
+          if not re.search(pattern,s):
+              raise SystemExit('Global Weather loader script tag not found')
+          s=re.sub(pattern,new,s,count=1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit formal entry update
         run: |
           if git diff --quiet -- index.html; then
-            echo "Global Weather human UI loader already published"
+            echo "Global Weather runtime already current"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Publish redesigned Global Weather controls [skip-human-ui]"
+          git commit -m "Publish Global Weather coalesced recovery [skip-global-weather-publish]"
           git push
