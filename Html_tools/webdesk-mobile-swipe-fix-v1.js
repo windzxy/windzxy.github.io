@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260913-webdesk-mobile-swipe-fix-v1.1-board-safe';
+const VERSION='20260913-webdesk-mobile-swipe-fix-v1.2-flight-board-safe';
 if(window.__webdeskMobileSwipeFix===VERSION)return;
 window.__webdeskMobileSwipeFix=VERSION;
 let start=null,lastSwitch=0;
@@ -8,8 +8,8 @@ const isMobile=()=>innerWidth<=820;
 const cards=()=>[...document.querySelectorAll('#desktopCanvas .desktop-card')];
 function blocked(el){
   if(!el?.closest)return false;
-  /* Game boards are interaction zones, never card-swipe zones. */
-  if(el.closest('.gomoku-board,.chess-board,.xq-board,.gomoku-board-wrap,.chess-board-wrap,[data-gomoku-cell],[data-chess-square],[data-xq-cell],.gomoku-cell,.chess-square,.xq-cell'))return true;
+  /* All game boards are interaction zones, never card-swipe zones. */
+  if(el.closest('.gomoku-board,.chess-board,.xq-board,.flight-board,.flight-board-wrap,[data-flight-board],[data-flight-plane],.gomoku-board-wrap,.chess-board-wrap,[data-gomoku-cell],[data-chess-square],[data-xq-cell],.gomoku-cell,.chess-square,.xq-cell'))return true;
   if(el.closest('.table-output,.table-wrap,.table-scroll,.schedule-table-wrap,input,textarea,select,button,a,[contenteditable=true]'))return true;
   return false;
 }
@@ -47,12 +47,12 @@ function finish(x,y){
   switchTo(dx<0?1:-1);
 }
 function boot(){
-  const canvas=document.getElementById('desktopCanvas');if(!canvas||canvas.dataset.mobileSwipeFixV11==='1')return;canvas.dataset.mobileSwipeFixV11='1';
+  const canvas=document.getElementById('desktopCanvas');if(!canvas||canvas.dataset.mobileSwipeFixV12==='1')return;canvas.dataset.mobileSwipeFixV12='1';
   canvas.addEventListener('touchstart',e=>{const p=e.touches?.[0];if(p)begin(p.clientX,p.clientY,e.target)},{passive:true,capture:true});
   canvas.addEventListener('touchend',e=>{const p=e.changedTouches?.[0];if(p)finish(p.clientX,p.clientY)},{passive:true,capture:true});
   canvas.addEventListener('touchcancel',()=>{start=null},{passive:true,capture:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 new MutationObserver(()=>{if(isMobile())boot()}).observe(document.documentElement,{childList:true,subtree:true});
-window.WebDeskMobileSwipeFix={version:VERSION,boardSafe:true};
+window.WebDeskMobileSwipeFix={version:VERSION,boardSafe:true,flightBoardSafe:true};
 })();
