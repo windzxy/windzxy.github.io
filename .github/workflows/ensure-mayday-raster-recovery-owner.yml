@@ -1,0 +1,70 @@
+name: Ensure Maydayland Raster Recovery Owner
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'maydayland/tour-map-stability-v1.js'
+      - 'maydayland/tour-map-openfreemap-v2.js'
+      - 'maydayland/index.html'
+      - '.github/workflows/ensure-mayday-raster-recovery-owner.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: maydayland-raster-recovery-owner
+  cancel-in-progress: true
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Verify raster recovery ownership
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('maydayland/tour-map-stability-v1.js').read_text()
+          m=Path('maydayland/tour-map-openfreemap-v2.js').read_text()
+          assert 'v1.5-raster-owner-aware' in s
+          assert "current==='terrain'||current==='sat'" in s
+          assert 'blankFor<12000' in s
+          for marker in ['rasterRepairInFlight','rasterProviderBackoff','rasterProviderProbe','rasterWatchTimer']:
+              assert marker in m, marker
+          PY
+      - name: Publish current stability cache key
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('maydayland/index.html')
+          s=p.read_text()
+          old='tour-map-stability-v1.js?v=20260913-tour-map-stability-v1.4-shared-resize-coordinator'
+          new='tour-map-stability-v1.js?v=20260913-tour-map-stability-v1.5-raster-owner-aware'
+          if old in s:
+              s=s.replace(old,new)
+          elif new not in s:
+              raise SystemExit('unexpected stability cache key')
+          marker="'raster-owner-aware'"
+          if marker not in s:
+              anchor="'shared-resize-owner'"
+              if anchor not in s:
+                  raise SystemExit('preserve anchor missing')
+              s=s.replace(anchor,anchor+","+marker,1)
+          p.write_text(s)
+          PY
+      - name: Commit published entry point
+        run: |
+          if git diff --quiet -- maydayland/index.html; then
+            echo 'entry point already current'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add maydayland/index.html
+          git commit -m 'Publish Mayday raster recovery owner split'
+          git push origin HEAD:master
