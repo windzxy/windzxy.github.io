@@ -16,6 +16,13 @@
     "kind": {"enum":["live","tool","studio","utility","widget","game"]},
     "order": {"type":"integer","minimum":0},
     "platforms": {"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["desktop","tablet","mobile"]}},
+    "interaction": {
+      "type":"object","additionalProperties":false,"required":["mode"],
+      "properties": {
+        "mode":{"enum":["card-only","card-app","app-first"]},
+        "appLaunch":{"enum":["explicit","whole-card"]}
+      }
+    },
     "entry": {
       "type":"object","additionalProperties":false,"required":["desktop","tablet","mobile"],
       "properties": {
