@@ -1,0 +1,38 @@
+name: Load Flight Chess V3
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/flight-chess-card-v3.js'
+      - '.github/workflows/load-flight-chess-v3.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Inject v3 runtime
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          tag='<script src="Html_tools/flight-chess-card-v3.js?v=20260913-flight-chess-v3.0-product-grade"></script>'
+          import re
+          s=re.sub(r'\n?<script src="Html_tools/flight-chess-card-v3\.js\?v=[^"]+"></script>','',s)
+          s=s.replace('</body>',tag+'\n</body>')
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit loader
+        run: |
+          if git diff --quiet -- index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Load Flight Chess v3 product runtime'
+          git push origin master
