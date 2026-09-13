@@ -39,9 +39,10 @@ function fallbackMap(container,{center,onMove,onStatus,reason}={}){
   iframe.src=`https://www.openstreetmap.org/export/embed.html?bbox=${box}&layer=mapnik&marker=${lat}%2C${lon}`;
   iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#dbe7ef';
   const label=document.createElement('div');label.textContent='地圖備援模式';label.style.cssText='position:absolute;left:10px;bottom:10px;z-index:2;padding:5px 8px;border-radius:9px;background:rgba(0,0,0,.5);color:#fff;font:11px -apple-system,BlinkMacSystemFont,sans-serif;pointer-events:none';
-  wrap.append(iframe,label);container.appendChild(wrap);onMove?.({lat,lon,zoom:4});
+  const flow=document.createElement('div');flow.style.cssText='display:none;position:absolute;right:10px;top:10px;z-index:3;padding:6px 9px;border-radius:10px;background:rgba(18,24,35,.68);color:#fff;font:11px -apple-system,BlinkMacSystemFont,sans-serif;backdrop-filter:blur(8px);pointer-events:none';
+  wrap.append(iframe,label,flow);container.appendChild(wrap);onMove?.({lat,lon,zoom:4});
   onStatus?.({state:'fallback',source:'OpenStreetMap',reason:String(reason?.message||reason||'MapLibre unavailable')});
-  return{map:null,isFallback:true,source:'OpenStreetMap',setBasemap(){return'fallback'},setWeatherOverlay(){return false},clearWeatherOverlay(){},flyTo(){},resize(){},destroy(){wrap.remove()}};
+  return{map:null,isFallback:true,source:'OpenStreetMap',setBasemap(){return'fallback'},setWeatherOverlay(){return false},clearWeatherOverlay(){},setWindField(layer,geojson){const count=geojson?.features?.length||0;flow.textContent=count?`${layer==='gust'?'陣風':'風'}場 ${count} 點 · 靜態備援`:'風場不可用';flow.style.display='block';return count>0},clearWindField(){flow.style.display='none'},flyTo(){},resize(){},destroy(){wrap.remove()}};
 }
 
 export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,basemap='weather',onMove,onStatus}={}){
@@ -51,12 +52,14 @@ export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,bas
   let gl;try{gl=await load()}catch(e){console.warn('[Global Weather] MapLibre unavailable, using OSM fallback',e);return fallbackMap(container,{center,onMove,onStatus,reason:e})}
   if(!container||!document.body.contains(container))return null;
   try{
-    let activeSpec=specFor(basemap),activeOverlay=null;
+    let activeSpec=specFor(basemap),activeOverlay=null,windField=null;
     const map=new gl.Map({container,style:activeSpec.style(),center,zoom,minZoom:1.6,maxZoom:16,renderWorldCopies:true,attributionControl:true,fadeDuration:0});
     map.addControl(new gl.NavigationControl({showCompass:false}),'bottom-right');
-    let settled=false,failed=false,ro=null,watchdog=0,destroyed=false;
+    let settled=false,failed=false,ro=null,watchdog=0,destroyed=false,windCanvas=null,windCtx=null,windRaf=0,particles=[],windPaused=false;
+    const reduceMotion=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
     const notify=()=>{const c=map.getCenter();onMove?.({lat:c.lat,lon:c.lng,zoom:map.getZoom()})};
-    const resize=()=>{if(destroyed||!container.isConnected||container.clientWidth<1||container.clientHeight<1)return;try{map.resize()}catch{}};
+    const resizeWind=()=>{if(!windCanvas)return;const r=container.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);windCanvas.width=Math.max(1,Math.round(r.width*dpr));windCanvas.height=Math.max(1,Math.round(r.height*dpr));windCanvas.style.width=r.width+'px';windCanvas.style.height=r.height+'px';windCtx=windCanvas.getContext('2d');windCtx?.setTransform(dpr,0,0,dpr,0,0);particles=[]};
+    const resize=()=>{if(destroyed||!container.isConnected||container.clientWidth<1||container.clientHeight<1)return;try{map.resize()}catch{}resizeWind()};
     const clearOverlay=()=>{try{if(map.getLayer(OVERLAY_LABEL))map.removeLayer(OVERLAY_LABEL);if(map.getLayer(OVERLAY_FIELD))map.removeLayer(OVERLAY_FIELD);if(map.getSource(OVERLAY_SOURCE))map.removeSource(OVERLAY_SOURCE)}catch{}};
     const applyOverlay=()=>{
       if(destroyed||!activeOverlay||!map.isStyleLoaded())return false;
@@ -64,22 +67,29 @@ export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,bas
       try{
         const existing=map.getSource(OVERLAY_SOURCE);
         if(existing?.setData)existing.setData(geojson);else map.addSource(OVERLAY_SOURCE,{type:'geojson',data:geojson});
-        if(!map.getLayer(OVERLAY_FIELD))map.addLayer({id:OVERLAY_FIELD,type:'circle',source:OVERLAY_SOURCE,paint:{
-          'circle-radius':['interpolate',['linear'],['zoom'],2,34,5,54,8,82],
-          'circle-color':overlayColor(layer),'circle-opacity':layer==='rain'?0.48:0.52,'circle-blur':0.78
-        }});else{map.setPaintProperty(OVERLAY_FIELD,'circle-color',overlayColor(layer));map.setPaintProperty(OVERLAY_FIELD,'circle-opacity',layer==='rain'?0.48:0.52)}
+        if(!map.getLayer(OVERLAY_FIELD))map.addLayer({id:OVERLAY_FIELD,type:'circle',source:OVERLAY_SOURCE,paint:{'circle-radius':['interpolate',['linear'],['zoom'],2,34,5,54,8,82],'circle-color':overlayColor(layer),'circle-opacity':layer==='rain'?0.48:0.52,'circle-blur':0.78}});else{map.setPaintProperty(OVERLAY_FIELD,'circle-color',overlayColor(layer));map.setPaintProperty(OVERLAY_FIELD,'circle-opacity',layer==='rain'?0.48:0.52)}
         if(!map.getLayer(OVERLAY_LABEL))map.addLayer({id:OVERLAY_LABEL,type:'symbol',source:OVERLAY_SOURCE,minzoom:2.6,layout:{'text-field':['get','label'],'text-size':11,'text-allow-overlap':false},paint:{'text-color':'#fff','text-halo-color':'rgba(25,30,40,.75)','text-halo-width':1.4}});
         return true;
       }catch(e){console.warn('[Global Weather overlay]',e);return false}
     };
-    const markReady=()=>{if(destroyed)return;settled=true;failed=false;clearTimeout(watchdog);resize();applyOverlay();notify();onStatus?.({state:'ready',source:activeSpec.source,basemap:activeSpec.id})};
-    const failover=reason=>{if(destroyed||failed||settled||!container.isConnected)return;failed=true;clearTimeout(watchdog);console.warn('[Global Weather] map render failed, using OSM fallback',reason);try{ro?.disconnect?.();map.remove()}catch{}fallbackMap(container,{center,onMove,onStatus,reason})};
-    const onStyleLoad=()=>{resize();applyOverlay()};
-    map.on('moveend',notify);map.on('load',markReady);map.on('idle',markReady);map.on('style.load',onStyleLoad);
+    const ensureWindCanvas=()=>{if(windCanvas)return windCanvas;windCanvas=document.createElement('canvas');windCanvas.className='gw-wind-canvas';windCanvas.setAttribute('aria-hidden','true');windCanvas.style.cssText='position:absolute;inset:0;z-index:3;pointer-events:none';container.appendChild(windCanvas);resizeWind();return windCanvas};
+    const samples=()=>windField?.geojson?.features?.map(f=>({lon:Number(f.geometry?.coordinates?.[0]),lat:Number(f.geometry?.coordinates?.[1]),speed:Number(f.properties?.speed),direction:Number(f.properties?.direction)})).filter(s=>Number.isFinite(s.lon)&&Number.isFinite(s.lat)&&Number.isFinite(s.speed)&&Number.isFinite(s.direction))||[];
+    const nearest=(lng,lat,list)=>{let best=null,bd=Infinity,cos=Math.max(.15,Math.cos(lat*Math.PI/180));for(const s of list){let dx=Math.abs(s.lon-lng);dx=Math.min(dx,360-dx)*cos;const dy=s.lat-lat,d=dx*dx+dy*dy;if(d<bd){bd=d;best=s}}return best};
+    const resetParticle=(p,w,h)=>{p.x=Math.random()*w;p.y=Math.random()*h;p.age=Math.random()*80;p.max=70+Math.random()*100};
+    const drawStaticWind=()=>{const list=samples();if(!windCtx||!list.length)return;const r=container.getBoundingClientRect();windCtx.clearRect(0,0,r.width,r.height);windCtx.lineWidth=1.5;windCtx.strokeStyle='rgba(238,248,255,.78)';for(const s of list){const pt=map.project([s.lon,s.lat]);if(pt.x<0||pt.y<0||pt.x>r.width||pt.y>r.height)continue;const a=(s.direction+180)*Math.PI/180,len=Math.max(8,Math.min(24,8+s.speed*.22)),dx=Math.sin(a)*len,dy=-Math.cos(a)*len;windCtx.beginPath();windCtx.moveTo(pt.x-dx*.45,pt.y-dy*.45);windCtx.lineTo(pt.x+dx*.55,pt.y+dy*.55);windCtx.stroke();const ex=pt.x+dx*.55,ey=pt.y+dy*.55;windCtx.beginPath();windCtx.moveTo(ex,ey);windCtx.lineTo(ex-Math.sin(a-.55)*5,ey+Math.cos(a-.55)*5);windCtx.moveTo(ex,ey);windCtx.lineTo(ex-Math.sin(a+.55)*5,ey+Math.cos(a+.55)*5);windCtx.stroke()}};
+    const stopWindAnimation=()=>{if(windRaf)cancelAnimationFrame(windRaf);windRaf=0};
+    const animateWind=()=>{stopWindAnimation();ensureWindCanvas();const list=samples(),r=container.getBoundingClientRect();if(!windCtx||!list.length)return;if(reduceMotion()){drawStaticWind();return}const count=Math.max(38,Math.min(120,Math.round(r.width*r.height/6200)));if(particles.length!==count){particles=Array.from({length:count},()=>{const p={};resetParticle(p,r.width,r.height);return p})}windCtx.clearRect(0,0,r.width,r.height);const frame=()=>{if(destroyed||windPaused||!windField||reduceMotion())return;windCtx.fillStyle='rgba(11,18,28,.075)';windCtx.fillRect(0,0,r.width,r.height);windCtx.lineWidth=1.15;for(const p of particles){let ll;try{ll=map.unproject([p.x,p.y])}catch{resetParticle(p,r.width,r.height);continue}const s=nearest(ll.lng,ll.lat,list);if(!s){resetParticle(p,r.width,r.height);continue}const a=(s.direction+180)*Math.PI/180,v=Math.max(.35,Math.min(3.1,s.speed*.045)),nx=p.x+Math.sin(a)*v,ny=p.y-Math.cos(a)*v;windCtx.strokeStyle=`rgba(225,244,255,${Math.max(.28,Math.min(.78,.28+s.speed/100))})`;windCtx.beginPath();windCtx.moveTo(p.x,p.y);windCtx.lineTo(nx,ny);windCtx.stroke();p.x=nx;p.y=ny;p.age++;if(nx<-6||ny<-6||nx>r.width+6||ny>r.height+6||p.age>p.max)resetParticle(p,r.width,r.height)}windRaf=requestAnimationFrame(frame)};windRaf=requestAnimationFrame(frame)};
+    const applyWind=()=>{if(!windField?.geojson?.features?.length){stopWindAnimation();windCanvas?.remove();windCanvas=null;windCtx=null;return false}ensureWindCanvas();animateWind();return true};
+    const markReady=()=>{if(destroyed)return;settled=true;failed=false;clearTimeout(watchdog);resize();applyOverlay();applyWind();notify();onStatus?.({state:'ready',source:activeSpec.source,basemap:activeSpec.id})};
+    const failover=reason=>{if(destroyed||failed||settled||!container.isConnected)return;failed=true;clearTimeout(watchdog);console.warn('[Global Weather] map render failed, using OSM fallback',reason);stopWindAnimation();try{ro?.disconnect?.();map.remove()}catch{}fallbackMap(container,{center,onMove,onStatus,reason})};
+    const onStyleLoad=()=>{resize();applyOverlay();applyWind()};
+    const onMoveStart=()=>{windPaused=true;stopWindAnimation();if(windCtx&&windCanvas){const r=container.getBoundingClientRect();windCtx.clearRect(0,0,r.width,r.height)}};
+    const onMoveEnd=()=>{windPaused=false;notify();applyWind()};
+    map.on('moveend',onMoveEnd);map.on('movestart',onMoveStart);map.on('load',markReady);map.on('idle',markReady);map.on('style.load',onStyleLoad);
     map.on('error',e=>{console.warn('[Global Weather map]',e?.error||e);if(!settled)failover(e?.error||e)});
     watchdog=setTimeout(()=>failover(new Error('map first render timeout')),6500);
     try{ro=new ResizeObserver(()=>resize());ro.observe(container)}catch{}
     requestAnimationFrame(()=>{resize();requestAnimationFrame(resize)});
-    return{map,isFallback:false,get source(){return activeSpec.source},resize,setWeatherOverlay(layer,geojson){activeOverlay={layer,geojson};return applyOverlay()},clearWeatherOverlay(){activeOverlay=null;clearOverlay()},setBasemap(id){const spec=specFor(id);activeSpec=spec;settled=false;failed=false;clearTimeout(watchdog);onStatus?.({state:'loading',source:spec.source,basemap:spec.id});watchdog=setTimeout(()=>failover(new Error('basemap render timeout')),6500);try{map.setStyle(spec.style(),{diff:true})}catch{map.setStyle(spec.style())}setTimeout(resize,60);return spec.id},flyTo(lon,lat,z=Math.max(map.getZoom(),6)){map.flyTo({center:[lon,lat],zoom:z,essential:false,duration:550})},destroy(){destroyed=true;activeOverlay=null;clearTimeout(watchdog);ro?.disconnect?.();map.off('moveend',notify);map.off('load',markReady);map.off('idle',markReady);map.off('style.load',onStyleLoad);try{map.remove()}catch{}}};
+    return{map,isFallback:false,get source(){return activeSpec.source},resize,setWeatherOverlay(layer,geojson){activeOverlay={layer,geojson};return applyOverlay()},clearWeatherOverlay(){activeOverlay=null;clearOverlay()},setWindField(layer,geojson){windField={layer,geojson};return applyWind()},clearWindField(){windField=null;particles=[];stopWindAnimation();windCanvas?.remove();windCanvas=null;windCtx=null},setBasemap(id){const spec=specFor(id);activeSpec=spec;settled=false;failed=false;clearTimeout(watchdog);onStatus?.({state:'loading',source:spec.source,basemap:spec.id});watchdog=setTimeout(()=>failover(new Error('basemap render timeout')),6500);try{map.setStyle(spec.style(),{diff:true})}catch{map.setStyle(spec.style())}setTimeout(resize,60);return spec.id},flyTo(lon,lat,z=Math.max(map.getZoom(),6)){map.flyTo({center:[lon,lat],zoom:z,essential:false,duration:550})},destroy(){destroyed=true;activeOverlay=null;windField=null;stopWindAnimation();windCanvas?.remove();clearTimeout(watchdog);ro?.disconnect?.();map.off('moveend',onMoveEnd);map.off('movestart',onMoveStart);map.off('load',markReady);map.off('idle',markReady);map.off('style.load',onStyleLoad);try{map.remove()}catch{}}};
   }catch(e){console.warn('[Global Weather] map init failed, using OSM fallback',e);return fallbackMap(container,{center,onMove,onStatus,reason:e})}
 }
