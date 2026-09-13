@@ -1,6 +1,6 @@
 {
   "id": "weather",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "schemaVersion": 1,
   "name": {"zh-CN": "天气", "zh-HK": "天氣"},
   "description": {"zh-CN": "实时天气与预报", "zh-HK": "即時天氣與預報"},
@@ -20,12 +20,17 @@
   "minSize": {
     "desktop": {"w": 330, "h": 76},
     "tablet": {"w": 360, "h": 76},
-    "mobile": {"w": 320, "h": 150}
+    "mobile": {"w": 320, "h": 76}
   },
   "maxSize": {
     "desktop": {"w": 760, "h": 620},
     "tablet": {"w": 720, "h": 560},
     "mobile": {"w": 430, "h": 520}
+  },
+  "sizeTiers": {
+    "desktop": {"mini":{"w":330,"h":76},"compact":{"w":360,"h":170},"standard":{"w":430,"h":310},"large":{"w":700,"h":560}},
+    "tablet": {"mini":{"w":360,"h":76},"compact":{"w":420,"h":160},"standard":{"w":520,"h":270},"large":{"w":680,"h":520}},
+    "mobile": {"mini":{"w":320,"h":76},"compact":{"w":340,"h":128},"standard":{"w":360,"h":190},"large":{"w":420,"h":480}}
   },
   "entry": {
     "shared": "./shared/weather-service.js",
