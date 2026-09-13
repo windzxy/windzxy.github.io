@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T15:51:21.216Z",
+  "generatedAt": "2026-09-13T15:51:41.383Z",
   "cards": [
     {
       "id": "weather",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "天气",
@@ -45,15 +45,15 @@
       "minSize": {
         "desktop": {
           "w": 330,
-          "h": 230
+          "h": 76
         },
         "tablet": {
-          "w": 420,
-          "h": 230
+          "w": 360,
+          "h": 76
         },
         "mobile": {
           "w": 320,
-          "h": 170
+          "h": 150
         }
       },
       "maxSize": {
