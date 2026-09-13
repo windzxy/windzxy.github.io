@@ -5,7 +5,7 @@
   .wd-desktop{padding:10px 10px calc(70px + env(safe-area-inset-bottom));gap:10px;align-content:start}
   .wd-card{display:block!important;align-self:start!important;height:auto!important;min-height:0!important;max-height:none!important;border-radius:18px;box-shadow:0 10px 28px rgba(15,23,42,.12)}
   .wd-card-head{min-height:48px;padding:8px 10px}
-  .wd-card-title{gap:8px;font-size:16px}.wd-card-icon{width:30px;height:30px;border-radius:10px}
+  .wd-card-title{gap:8px;font-size:16px}.wd-card-icon{width:30px;height:30px;border-radius:10px;position:relative}
   .wd-card-head button{width:32px;min-height:32px;font-size:18px}
   .wd-card-mount,.wd-card[data-user-sized="1"] .wd-card-mount{display:block;height:auto!important;min-height:0!important;overflow:visible!important}
   .wd-dock{bottom:max(6px,env(safe-area-inset-bottom));gap:2px;padding:4px;border-radius:17px}
@@ -15,9 +15,14 @@
   .wd-drawer-head button{width:34px;min-height:34px}
   .wd-search{height:40px;margin-top:8px;border-radius:12px;padding:0 11px}
   .wd-library{gap:7px;margin-top:8px}
-  .wd-tool{grid-template-columns:34px minmax(0,1fr) 38px;gap:8px;padding:9px;border-radius:14px}
+  .wd-tool{grid-template-columns:34px minmax(0,1fr) 36px;gap:8px;padding:9px;border-radius:14px}
   .wd-tool .wd-card-icon{width:34px;height:34px}
-  .wd-tool strong{display:block;font-size:16px;line-height:1.2}.wd-tool small{display:block;margin-top:1px;font-size:12px;line-height:1.25;color:#6e6e73;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .wd-tool button{width:38px;min-height:34px!important;padding:0!important;border-radius:11px;font-size:18px}
+  .wd-tool strong{display:block;font-size:16px;line-height:1.2}
+  .wd-tool-add{appearance:none;width:34px!important;height:34px!important;min-height:34px!important;padding:0!important;border:0!important;border-radius:50%!important;background:rgba(10,132,255,.12)!important;box-shadow:none!important;position:relative}
+  .wd-tool-add span::before,.wd-tool-add span::after{content:"";position:absolute;left:50%;top:50%;width:13px;height:2px;border-radius:2px;background:#0a84ff;transform:translate(-50%,-50%)}
+  .wd-tool-add span::after{transform:translate(-50%,-50%) rotate(90deg)}
+  .wd-tool-add:active{transform:scale(.92)}
+  .wd-tool-spacer{width:34px;height:34px}
+  .wd-tool-present{position:absolute;right:-2px;bottom:-2px;width:8px;height:8px;border-radius:50%;background:#30d158;border:2px solid rgba(248,248,248,.98)}
   .wd-workspace-actions{margin:8px 0}.wd-workspace-actions button{min-height:40px}
 }
