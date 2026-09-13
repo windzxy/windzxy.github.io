@@ -33,6 +33,7 @@ jobs:
           if not re.search(pattern,s):
               raise SystemExit('Global Weather loader script tag not found')
           s=re.sub(pattern,new,s,count=1)
+          s=re.sub(r'\s*<script src="Html_tools/typhoon-weather-ui-recovery-v11-1\.js\?v=[^"]+"></script>\s*','\n',s,count=1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit formal entry update
