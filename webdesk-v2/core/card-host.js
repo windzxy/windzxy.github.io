@@ -12,7 +12,7 @@ async function ensureStyle(path){
 }
 
 function errorSurface(host,manifest,error){
-  host.innerHTML=`<div class="wd-card-error"><strong>${manifest?.name?.['zh-HK']||manifest?.id||'卡片'} 載入失敗</strong><small>${String(error?.message||error||'Unknown error')}</small><button type="button" data-card-retry>重試</button></div>`;
+  host.innerHTML=`<div class="wd-card-error"><strong>${manifest?.name?.['zh-HK']||manifest?.id||'卡片'} 載入失敗</strong><small>${String(error?.message||error||'Unknown error')}</small><button class="wd-ios-button wd-ios-button-tinted" type="button" data-card-retry>重試</button></div>`;
 }
 
 export async function mountCard(host,manifest,platform){
@@ -22,6 +22,7 @@ export async function mountCard(host,manifest,platform){
   const sdk=createCardSDK({manifest,platform,host});
   const abort=new AbortController();
   mounted.set(host,{sdk,abort,cleanup:null,manifest,platform});
+  host._manifest=manifest;
   host.dataset.cardId=manifest.id;host.dataset.platform=platform;host.setAttribute('aria-busy','true');
   try{
     if(entry.cardStyle)await ensureStyle(`./cards/${manifest.id}/${entry.cardStyle}`);
@@ -51,5 +52,5 @@ export async function unmountCard(host){
 export async function remountCard(host,manifest,platform){return mountCard(host,manifest,platform)}
 
 export function bindCardRecovery(root,resolvePlatform){
-  root.addEventListener('click',e=>{const button=e.target.closest('[data-card-retry]');if(!button)return;const host=button.closest('[data-card-host]');const manifest=host?._manifest;if(host&&manifest)mountCard(host,manifest,resolvePlatform())});
+  root.addEventListener('click',e=>{const button=e.target.closest('[data-card-retry]');if(!button)return;const host=button.closest('[data-card-mount]');const manifest=host?._manifest;if(host&&manifest)mountCard(host,manifest,resolvePlatform())});
 }
