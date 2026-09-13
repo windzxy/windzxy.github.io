@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T14:00:28.254Z",
+  "generatedAt": "2026-09-13T14:00:33.231Z",
   "cards": [],
   "errors": [
     {
       "folder": "weather",
-      "error": "weather: missing ./mobile/app.js"
+      "error": "weather: missing ./mobile/app.css"
     }
   ]
 }
