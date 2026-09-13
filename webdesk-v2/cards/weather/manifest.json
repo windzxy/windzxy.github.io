@@ -1,6 +1,6 @@
 {
   "id": "weather",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "schemaVersion": 1,
   "name": {"zh-CN": "天气", "zh-HK": "天氣"},
   "description": {"zh-CN": "三端独立设计的实时天气卡片与预报。", "zh-HK": "三端獨立設計的即時天氣卡片與預報。"},
