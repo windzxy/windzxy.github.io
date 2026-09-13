@@ -6,14 +6,15 @@
   <title>WebDesk V2</title>
   <meta name="description" content="WebDesk V2 clean architecture preview">
   <link rel="stylesheet" href="./src/styles.css">
+  <link rel="stylesheet" href="./src/ios-controls.css">
 </head>
 <body>
   <div id="app" class="wd-shell">
     <header class="wd-topbar">
       <div class="wd-brand">WebDesk <span>V2</span></div>
       <div class="wd-top-actions">
-        <button data-action="workspace">工作區</button>
-        <button data-action="library">功能中心</button>
+        <button class="wd-ios-button wd-ios-button-tinted" data-action="workspace">工作區</button>
+        <button class="wd-ios-button wd-ios-button-tinted" data-action="library">功能中心</button>
       </div>
     </header>
 
@@ -28,7 +29,7 @@
           <small>FUNCTION CENTER</small>
           <h2>功能中心</h2>
         </div>
-        <button data-action="close-drawer">×</button>
+        <button class="wd-ios-button wd-ios-button-icon wd-ios-button-secondary" data-action="close-drawer" aria-label="關閉功能中心">×</button>
       </div>
       <input id="toolSearch" class="wd-search" type="search" placeholder="搜尋工具">
       <div id="toolLibrary" class="wd-library"></div>
@@ -40,10 +41,10 @@
           <small>WORKSPACES</small>
           <h2>工作區</h2>
         </div>
-        <button data-action="close-workspace">×</button>
+        <button class="wd-ios-button wd-ios-button-icon wd-ios-button-secondary" data-action="close-workspace" aria-label="關閉工作區">×</button>
       </div>
       <div class="wd-workspace-actions">
-        <button data-workspace-action="create">＋ 新增工作區</button>
+        <button class="wd-ios-button wd-ios-button-tinted wd-ios-button-block" data-workspace-action="create">＋ 新增工作區</button>
       </div>
       <div id="workspaceList" class="wd-workspace-list"></div>
     </aside>
