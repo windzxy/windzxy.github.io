@@ -39,3 +39,5 @@ jobs:
           git add index.html
           git commit -m "Remove WebDesk workspace info bar [skip-taskbar-cleanup]"
           git push
+
+# Triggered intentionally to remove the legacy visible workspace information bar.
