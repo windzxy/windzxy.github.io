@@ -1,4 +1,4 @@
-name: Verify Typhoon Render Recovery Ownership
+name: Verify Typhoon Recovery Ownership
 on:
   push:
     branches: [master]
@@ -17,30 +17,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify current render recovery ownership
+      - name: Verify current recovery ownership
         run: |
           python3 - <<'PY'
           from pathlib import Path
-
           loader = Path('Html_tools/global-weather-lazy-v1.js').read_text(encoding='utf-8')
           index = Path('index.html').read_text(encoding='utf-8')
           ui = Path('Html_tools/typhoon-weather-ui-recovery-v11-1.js').read_text(encoding='utf-8')
           remount = Path('Html_tools/typhoon-weather-p0-remount.js').read_text(encoding='utf-8')
           health = Path('Html_tools/typhoon-overlay-health-v1.js').read_text(encoding='utf-8')
-
           required_loader = [
-              '20260913-global-weather-lazy-v3.3-radar-visibility-idle',
-              '20260907-typhoon-weather-ui-recovery-v11.3-self-heal',
-              '20260909-typhoon-weather-p0-remount-v9-grouped-controller',
+              '20260913-global-weather-lazy-v3.5-coalesced-ui-heal',
+              '20260913-typhoon-weather-ui-recovery-v11.4-coalesced-heal',
+              '20260913-typhoon-weather-p0-remount-v10-human-ui',
               '20260911-typhoon-overlay-health-v1.2-data-time-coherence',
               '20260912-typhoon-overlay-motion-coordinator-v1.0',
           ]
-          required_index = [
-              'Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle'
-          ]
+          required_index = ['Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.5-coalesced-ui-heal']
           required_runtime = [
               (ui, 'selfHealing:true'),
-              (remount, 'groupedLiveForecast:true'),
+              (ui, 'coalescedHeal:true'),
+              (ui, 'visibleOnly:true'),
+              (remount, 'humanUi:true'),
               (health, '1.2-data-time-coherence'),
           ]
           forbidden_index = [
@@ -49,18 +47,13 @@ jobs:
               'Html_tools/typhoon-weather-p0-remount.js',
               'Html_tools/typhoon-overlay-health-v1.js',
           ]
-
           missing = [x for x in required_loader if x not in loader]
           missing += [x for x in required_index if x not in index]
           missing += [marker for text, marker in required_runtime if marker not in text]
           direct = [x for x in forbidden_index if x in index]
           stale_loader = 'typhoon-render-recovery-v1.js' in loader
-
-          if missing:
-              raise SystemExit('Missing current render recovery ownership markers: ' + ', '.join(missing))
-          if direct:
-              raise SystemExit('Legacy/direct weather recovery scripts found in formal entry: ' + ', '.join(direct))
-          if stale_loader:
-              raise SystemExit('Legacy render recovery guard reintroduced into lazy loader')
-          print('Render recovery remains owned by the current lazy self-heal/remount/health stack.')
+          if missing: raise SystemExit('Missing current recovery markers: ' + ', '.join(missing))
+          if direct: raise SystemExit('Direct weather recovery scripts found in formal entry: ' + ', '.join(direct))
+          if stale_loader: raise SystemExit('Legacy render recovery guard reintroduced into lazy loader')
+          print('Recovery ownership verified: lazy loader + coalesced UI self-heal/remount/health stack.')
           PY
