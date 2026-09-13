@@ -10,6 +10,7 @@ function normalizeCard(item){
   if(!item||typeof item.id!=='string'||!item.id)return null;
   const n={id:item.id};
   for(const key of ['x','y','w','h'])if(Number.isFinite(item[key]))n[key]=Math.round(item[key]);
+  if(item.userSized===true)n.userSized=true;
   return n;
 }
 
