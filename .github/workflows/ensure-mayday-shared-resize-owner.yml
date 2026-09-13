@@ -62,7 +62,7 @@ jobs:
           elif switch_new not in s:
               raise SystemExit('Mode-local resize anchor missing')
 
-          required=[new_ver,'function resizeMapNow(redraw=false)','function requestSharedResize(delay=0)','owner.requestResize(delay)',"map.on('zoomend moveend',repair)",'ResizeObserver(()=>requestSharedResize(120))',"window.addEventListener('resize',()=>resizeMapNow(true))",'requestAnimationFrame(()=>resizeMapNow(false))','probe-settle-budget','windowMs=8000,maxStarts=3']
+          required=[new_ver,'function resizeMapNow(redraw=false)','function requestSharedResize(delay=0)','owner.requestResize(delay)',"map.on('zoomend moveend',repair)",'ResizeObserver(()=>requestSharedResize(120))',"window.addEventListener('resize',()=>resizeMapNow(true))",'requestAnimationFrame(()=>resizeMapNow(false))','function waitRasterProbeSettle','windowMs=8000,maxStarts=3']
           forbidden=["map.on('zoomend moveend resize',repair)","window.addEventListener('resize',()=>{try{map?.invalidateSize(false)"]
           missing=[x for x in required if x not in s]
           bad=[x for x in forbidden if x in s]
