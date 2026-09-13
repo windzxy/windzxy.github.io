@@ -1,6 +1,6 @@
 (()=>{
   "use strict";
-  const VERSION="20260913-card-product-system-v1.1-function-center";
+  const VERSION="20260913-card-product-system-v1.2-live-summary";
   const meta={
     typhoon:{tier:"P0",type:"live",group:"即時資訊",label:"Live",hint:"全球氣象 · 雷達 / 衛星 / 風場"},
     weather:{tier:"P0",type:"live",group:"即時資訊",label:"Live",hint:"即時天氣 · 預報"},
@@ -42,7 +42,10 @@
       .desktop-card[data-card-product-type]::before{content:attr(data-card-product-label);position:absolute;right:74px;top:13px;z-index:3;height:18px;line-height:18px;padding:0 7px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-size:9px;font-weight:800;pointer-events:none}
       .desktop-card[data-card-product-tier="P0"]{box-shadow:0 20px 50px rgba(16,18,23,.14),inset 0 0 0 1px color-mix(in srgb,var(--blue1) 12%,transparent)}
       .desktop-card[data-card-product-type="live"]::before{background:color-mix(in srgb,var(--blue1) 12%,var(--panel));color:color-mix(in srgb,var(--blue1) 70%,var(--ink))}
-      @media(max-width:700px){.desktop-card[data-card-product-type]::before{display:none}.product-group-title{position:sticky;top:0;z-index:2;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(16px)}}`;
+      .product-live-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:0 0 10px;padding:9px 11px;border:1px solid color-mix(in srgb,var(--blue1) 16%,var(--line));border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--blue1) 8%,var(--panel)),color-mix(in srgb,var(--panel2) 88%,transparent));font-size:11px;color:var(--muted)}
+      .product-live-summary strong{display:block;color:var(--ink);font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.product-live-summary span{white-space:nowrap}.product-live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--blue1);box-shadow:0 0 0 4px color-mix(in srgb,var(--blue1) 12%,transparent)}
+      @media(max-width:700px){.desktop-card[data-card-product-type]::before{display:none}.product-group-title{position:sticky;top:0;z-index:2;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(16px)}.product-live-summary{grid-template-columns:1fr}.product-live-summary span{white-space:normal}}
+    `;
     document.head.appendChild(s);
   }
   function ensureFilters(){
@@ -66,10 +69,34 @@
     buttons.forEach(btn=>(buckets.get(meta[btn.dataset.id]?.group||"實用工具")||buckets.get("實用工具")).push(btn));
     const frag=document.createDocumentFragment();order.forEach(group=>{const list=buckets.get(group);if(!list?.length)return;const head=document.createElement("div");head.className="product-group-title";head.innerHTML=`<span>${group}</span><small>${list.length}</small>`;frag.appendChild(head);list.sort((a,b)=>{const ta=meta[a.dataset.id]?.tier||"P9",tb=meta[b.dataset.id]?.tier||"P9";return ta.localeCompare(tb)});list.forEach(x=>frag.appendChild(x))});shelf.replaceChildren(frag);shelf.dataset.productSystem=q?"search":activeGroup==="全部"?"grouped":"filtered";
   }
-  function decorateCards(){document.querySelectorAll(".desktop-card[data-card-id]").forEach(el=>{const id=el.querySelector("[data-inline-app]")?.dataset.inlineApp||el.querySelector("[data-weather-refresh]")?"weather":null;let app=id;if(!app){const cardId=el.dataset.cardId;try{const all=JSON.parse(localStorage.getItem("windzxy-web-desktop-workspaces")||"[]");for(const ws of all){const c=(ws.cards||[]).find(x=>x.id===cardId);if(c){app=c.appId;break}}}catch(e){}}const m=meta[app];if(m){el.dataset.cardProductType=m.type;el.dataset.cardProductLabel=m.label;el.dataset.cardProductTier=m.tier}})}
+  function resolveApp(el){
+    const inline=el.querySelector("[data-inline-app]")?.dataset.inlineApp;if(inline)return inline;
+    if(el.querySelector("[data-weather-refresh]"))return "weather";
+    const cardId=el.dataset.cardId;try{const all=JSON.parse(localStorage.getItem("windzxy-web-desktop-workspaces")||"[]");for(const ws of all){const c=(ws.cards||[]).find(x=>x.id===cardId);if(c)return c.appId}}catch(e){}
+    return null;
+  }
+  function compactText(v,max=42){const s=String(v||"").replace(/\s+/g," ").trim();return s.length>max?s.slice(0,max-1)+"…":s}
+  function liveSummary(el,app){
+    if(app!=="weather"&&app!=="typhoon")return;
+    const body=el.querySelector(".card-body");if(!body)return;
+    let box=body.querySelector(":scope > .product-live-summary");if(!box){box=document.createElement("div");box.className="product-live-summary";body.prepend(box)}
+    const now=new Date();const stamp=now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+    if(app==="weather"){
+      const temp=compactText(el.querySelector(".weather-current strong,.weather-current [data-temp],.weather-current")?.textContent,24);
+      const place=compactText(el.querySelector(".weather-place,.weather-current h4,.weather-search input")?.textContent||el.querySelector(".weather-search input")?.value,22);
+      const state=compactText(el.querySelector(".weather-status,.weather-current span,.weather-current small")?.textContent,28);
+      const headline=[place,temp].filter(Boolean).join(" · ")||"即時天氣";
+      box.innerHTML=`<strong><i class="product-live-dot"></i>${headline}</strong><span>${state||"預報已連線"} · ${stamp}</span>`;
+    }else{
+      const source=el.querySelector("[data-typhoon-status],.typhoon-status,.typhoon-summary,.global-weather-summary,.typhoon-layer-status");
+      const txt=compactText(source?.textContent,52);
+      box.innerHTML=`<strong><i class="product-live-dot"></i>全球氣象即時圖層</strong><span>${txt||"風場 / 雷達 / 衛星"} · ${stamp}</span>`;
+    }
+  }
+  function decorateCards(){document.querySelectorAll(".desktop-card[data-card-id]").forEach(el=>{const app=resolveApp(el);const m=meta[app];if(m){el.dataset.cardProductType=m.type;el.dataset.cardProductLabel=m.label;el.dataset.cardProductTier=m.tier}liveSummary(el,app)})}
   function apply(){css();ensureFilters();decorateShelf();decorateCards();document.documentElement.dataset.cardProductSystem=VERSION}
   let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})};
   const obs=new MutationObserver(schedule);
-  function start(){apply();const shelf=document.getElementById("toolShelf"),desk=document.getElementById("desktopCanvas");if(shelf)obs.observe(shelf,{childList:true});if(desk)obs.observe(desk,{childList:true});document.getElementById("deskSearch")?.addEventListener("input",schedule)}
+  function start(){apply();const shelf=document.getElementById("toolShelf"),desk=document.getElementById("desktopCanvas");if(shelf)obs.observe(shelf,{childList:true});if(desk)obs.observe(desk,{childList:true,subtree:true});document.getElementById("deskSearch")?.addEventListener("input",schedule)}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
