@@ -1,0 +1,52 @@
+name: Publish WebDesk card product system
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/card-product-system-v1.js'
+      - '.github/workflows/publish-card-product-system.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    if: "!contains(github.event.head_commit.message, '[skip-card-product-publish]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Inject current card product runtime
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          tag='<script src="Html_tools/card-product-system-v1.js?v=20260913-card-product-system-v1.0"></script>'
+          s=re.sub(r'\n?<script src="Html_tools/card-product-system-v1\.js[^>]*></script>', '', s)
+          marker='</body>'
+          if marker not in s:
+              raise SystemExit('index.html has no </body> marker')
+          s=s.replace(marker,tag+'\n'+marker,1)
+          p.write_text(s,encoding='utf-8')
+      - name: Verify product card baseline
+        shell: python
+        run: |
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          js=Path('Html_tools/card-product-system-v1.js').read_text(encoding='utf-8')
+          assert '20260913-card-product-system-v1.0' in s
+          for key in ['typhoon','weather','image','text','table','json']:
+              assert key in js
+          assert 'product-group-title' in js
+      - name: Commit published entry
+        run: |
+          if git diff --quiet -- index.html; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Publish WebDesk product card hierarchy [skip-card-product-publish]"
+          git pull --rebase origin master
+          git push origin master
