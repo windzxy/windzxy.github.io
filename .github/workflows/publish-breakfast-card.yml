@@ -26,19 +26,13 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
-          p=Path('index.html')
-          s=p.read_text(encoding='utf-8')
-          tags=[
-            '<script src="Html_tools/breakfast-card-v1.js?v=20260913-breakfast-card-v2.2-checkin-score-illustrations"></script>',
-            '<script src="Html_tools/breakfast-no-svg-art-v1.js?v=20260913-breakfast-manga-raster-v1.2"></script>'
-          ]
+          p=Path('index.html'); s=p.read_text(encoding='utf-8')
+          tags=['<script src="Html_tools/breakfast-card-v1.js?v=20260913-breakfast-card-v2.2-checkin-score-illustrations"></script>','<script src="Html_tools/breakfast-no-svg-art-v1.js?v=20260913-breakfast-manga-raster-v1.3"></script>']
           for tag in tags:
-            name=tag.split('src="')[1].split('?')[0]
-            pattern=r'<script src="'+re.escape(name)+r'\?v=[^"]+"></script>'
+            name=tag.split('src="')[1].split('?')[0]; pattern=r'<script src="'+re.escape(name)+r'\?v=[^"]+"></script>'
             if re.search(pattern,s): s=re.sub(pattern,tag,s,count=1)
             elif tag not in s:
-              marker='<script src="Html_tools/theme-contrast-fix.js'
-              i=s.find(marker)
+              marker='<script src="Html_tools/theme-contrast-fix.js'; i=s.find(marker)
               if i<0: raise SystemExit('Theme runtime marker not found')
               s=s[:i]+tag+'\n'+s[i:]
           p.write_text(s,encoding='utf-8')
@@ -47,7 +41,7 @@ jobs:
         run: |
           if git diff --quiet -- index.html; then echo "Breakfast runtime already current"; exit 0; fi
           git config user.name "github-actions[bot]"
-          git config user.email "4189826+github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           git commit -m "Load Breakfast manga raster artwork [skip-breakfast-publish]"
           git push
