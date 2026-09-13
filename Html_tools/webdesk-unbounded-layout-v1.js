@@ -1,6 +1,6 @@
 (()=>{
   "use strict";
-  const VERSION="20260913-webdesk-unbounded-layout-v1.0";
+  const VERSION="20260913-webdesk-unbounded-layout-v1.1";
   const STYLE_ID="webdeskUnboundedLayoutStyle";
   let frame=0;
 
@@ -58,9 +58,10 @@
       const height=card.getBoundingClientRect().height||card.offsetHeight||0;
       bottom=Math.max(bottom,top+height+72);
     });
-    const min=Math.max(0,bottom);
-    surface.style.minHeight=min+"px";
-    root.style.minHeight=(min+46)+"px";
+    const surfaceHeight=Math.max(0,Math.ceil(bottom))+"px";
+    const rootHeight=Math.max(0,Math.ceil(bottom+46))+"px";
+    if(surface.style.minHeight!==surfaceHeight)surface.style.minHeight=surfaceHeight;
+    if(root.style.minHeight!==rootHeight)root.style.minHeight=rootHeight;
     document.documentElement.dataset.webdeskUnboundedLayout=VERSION;
   }
 
