@@ -27,7 +27,7 @@ jobs:
           from pathlib import Path
           import re
           p=Path('index.html'); s=p.read_text(encoding='utf-8')
-          tags=['<script src="Html_tools/breakfast-card-v1.js?v=20260913-breakfast-card-v2.2-checkin-score-illustrations"></script>','<script src="Html_tools/breakfast-no-svg-art-v1.js?v=20260913-breakfast-manga-raster-v1.5-responsive-crisp"></script>']
+          tags=['<script src="Html_tools/breakfast-card-v1.js?v=20260913-breakfast-card-v2.2-checkin-score-illustrations"></script>','<script src="Html_tools/breakfast-no-svg-art-v1.js?v=20260913-breakfast-manga-raster-v1.6-mobile-hotfix"></script>']
           for tag in tags:
             name=tag.split('src="')[1].split('?')[0]; pattern=r'<script src="'+re.escape(name)+r'\?v=[^"]+"></script>'
             if re.search(pattern,s): s=re.sub(pattern,tag,s,count=1)
@@ -43,5 +43,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Load Breakfast responsive raster redesign [skip-breakfast-publish]"
+          git commit -m "Load Breakfast mobile hotfix runtime [skip-breakfast-publish]"
           git push
