@@ -1,0 +1,101 @@
+name: Ensure Maydayland Shared Resize Owner
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'maydayland/index.html'
+      - 'maydayland/tour-map-openfreemap-v2.js'
+      - 'maydayland/tour-map-interaction-guard-v1.js'
+      - '.github/workflows/ensure-mayday-shared-resize-owner.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: maydayland-map-runtime
+  cancel-in-progress: false
+jobs:
+  ensure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Route external resize recovery through shared coordinator
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('maydayland/tour-map-openfreemap-v2.js')
+          s=p.read_text(encoding='utf-8')
+          old_ver='20260913-mayday-openfreemap-v4.9-probe-settle-budget'
+          new_ver='20260913-mayday-openfreemap-v4.10-shared-resize-owner'
+          if old_ver in s:
+              s=s.replace(old_ver,new_ver,1)
+          elif new_ver not in s:
+              raise SystemExit('Unexpected Mayday map version; refusing unsafe patch')
+
+          anchor="function bindMapStability(){if(!map||map.__maydayStabilityBound)return;map.__maydayStabilityBound=true;let t=0;const repair=()=>{clearTimeout(t);t=setTimeout(()=>{try{map.invalidateSize(false);base?._glMap?.resize?.();raster?.eachLayer?.(l=>l.redraw?.())}catch(_){}},80)};map.on('zoomend moveend resize',repair)}"
+          replacement="function resizeMapNow(redraw=false){try{map?.invalidateSize(false);base?._glMap?.resize?.();if(redraw)raster?.eachLayer?.(l=>l.redraw?.())}catch(_){}}function requestSharedResize(delay=0){const owner=window.MAYDAYLAND_MAP_INTERACTION;if(owner&&typeof owner.requestResize==='function'){owner.requestResize(delay);return}setTimeout(()=>resizeMapNow(true),delay)}function bindMapStability(){if(!map||map.__maydayStabilityBound)return;map.__maydayStabilityBound=true;let t=0;const repair=()=>{clearTimeout(t);t=setTimeout(()=>requestSharedResize(0),80)};map.on('zoomend moveend',repair)}"
+          if anchor in s:
+              s=s.replace(anchor,replacement,1)
+          elif 'function requestSharedResize(delay=0)' not in s:
+              raise SystemExit('Map stability anchor missing; refusing unsafe patch')
+
+          replacements={
+            "if(stage===mountedStage&&map){setTimeout(()=>{try{map.invalidateSize(false);base?._glMap?.resize?.()}catch(_){}},0);draw();return true}":"if(stage===mountedStage&&map){requestSharedResize(0);draw();return true}",
+            "resizeObserver=new ResizeObserver(()=>{try{map.invalidateSize(false);base?._glMap?.resize?.()}catch(_){}})":"resizeObserver=new ResizeObserver(()=>requestSharedResize(120))",
+            "mount().then(()=>{draw();try{map?.invalidateSize(false);base?._glMap?.resize?.()}catch(_){}})":"mount().then(()=>{draw();requestSharedResize(30)})",
+            "window.addEventListener('resize',()=>{try{map?.invalidateSize(false);base?._glMap?.resize?.()}catch(_){}})":"window.addEventListener('resize',()=>resizeMapNow(true))"
+          }
+          for old,new in replacements.items():
+              if old in s:
+                  s=s.replace(old,new,1)
+              elif new not in s:
+                  raise SystemExit('Expected resize owner anchor missing: '+old[:60])
+
+          # Mode switching still owns its immediate local resize; it must not wait for the external coordinator.
+          switch_old="requestAnimationFrame(()=>{try{map.invalidateSize(false);base?._glMap?.resize?.()}catch(_){}})"
+          switch_new="requestAnimationFrame(()=>resizeMapNow(false))"
+          if switch_old in s:
+              s=s.replace(switch_old,switch_new,1)
+          elif switch_new not in s:
+              raise SystemExit('Mode-local resize anchor missing')
+
+          required=[new_ver,'function resizeMapNow(redraw=false)','function requestSharedResize(delay=0)','owner.requestResize(delay)',"map.on('zoomend moveend',repair)",'ResizeObserver(()=>requestSharedResize(120))',"window.addEventListener('resize',()=>resizeMapNow(true))",'requestAnimationFrame(()=>resizeMapNow(false))','probe-settle-budget','windowMs=8000,maxStarts=3']
+          forbidden=["map.on('zoomend moveend resize',repair)","window.addEventListener('resize',()=>{try{map?.invalidateSize(false)"]
+          missing=[x for x in required if x not in s]
+          bad=[x for x in forbidden if x in s]
+          if missing or bad:
+              raise SystemExit('Shared resize verification failed. missing='+repr(missing)+' forbidden='+repr(bad))
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('maydayland/index.html')
+          h=p.read_text(encoding='utf-8')
+          h=re.sub(r'tour-map-openfreemap-v2\.js\?v=[^\" ]+', 'tour-map-openfreemap-v2.js?v='+new_ver, h, count=1)
+          if "'shared-resize-owner'" not in h:
+              h=h.replace("'shared-resize-coordinator'", "'shared-resize-coordinator','shared-resize-owner'",1)
+          if new_ver not in h or 'shared-resize-owner' not in h:
+              raise SystemExit('Formal entry cache key/preserve marker update failed')
+          p.write_text(h,encoding='utf-8')
+          PY
+      - name: Verify no baseline regression
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          js=Path('maydayland/tour-map-openfreemap-v2.js').read_text(encoding='utf-8')
+          html=Path('maydayland/index.html').read_text(encoding='utf-8')
+          js_required=["street:{kind:'vector'","bright:{kind:'vector'","terrain:{kind:'raster'","dark:{kind:'vector'","sat:{kind:'sat'",'SECONDARY_FALLBACKS','rasterProviderBackoff','rasterProviderProbe','rasterProviderProbeStarts','function waitRasterProbeSettle','map.setRenderWorldCopies?.(true)','function requestSharedResize(delay=0)',"window.addEventListener('resize',()=>resizeMapNow(true))"]
+          html_required=['v124.27','stall-aware-watchdog','adaptive-provider-backoff','viewport-quorum-probe','probe-settle-budget','shared-resize-coordinator','shared-resize-owner','tour-map-interaction-guard-v1.1-resize-coordinator','tour-map-stability-v1.4-shared-resize-coordinator']
+          missing=[x for x in js_required if x not in js]+[x for x in html_required if x not in html]
+          if missing: raise SystemExit('Baseline regression: '+', '.join(missing))
+          PY
+      - name: Commit runtime
+        run: |
+          if git diff --quiet -- maydayland/tour-map-openfreemap-v2.js maydayland/index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add maydayland/tour-map-openfreemap-v2.js maydayland/index.html
+          git commit -m 'Share Mayday OpenFreeMap resize recovery owner'
+          git pull --rebase origin master
+          git push
