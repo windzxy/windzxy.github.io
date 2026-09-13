@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T14:55:27.868Z",
+  "generatedAt": "2026-09-13T14:55:35.980Z",
   "cards": [
     {
       "id": "weather",
@@ -96,7 +96,7 @@
   "errors": [
     {
       "folder": "global-weather",
-      "error": "global-weather: missing ./mobile/app.js"
+      "error": "global-weather: missing ./mobile/app.css"
     }
   ]
 }
