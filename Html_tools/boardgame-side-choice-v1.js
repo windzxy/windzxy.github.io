@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260912-boardgame-side-choice-v1.0';
+const VERSION='20260913-boardgame-side-choice-v1.1-perf';
 if(window.__webdeskBoardgameSideChoice===VERSION)return;window.__webdeskBoardgameSideChoice=VERSION;
 function saveSafe(){try{if(typeof save==='function')save()}catch(_){}}
 function redraw(){try{if(typeof renderDesktop==='function')renderDesktop();else if(typeof renderAll==='function')renderAll()}catch(_){}}
@@ -14,8 +14,9 @@ function enhance(app,kind){if(!app)return;const card=cardFor(app),s=state(card,k
  if(kind==='xiangqi'&&s.mode==='ai'){const sp=app.querySelector('.xq-status span');if(sp&&!s.thinking)sp.textContent=first?'你執紅方 · AI 執黑方':'你執黑方 · AI 執紅方'}
  if(kind==='gomoku'&&s.mode==='ai'){const sp=app.querySelector('.gomoku-status span');if(sp)sp.textContent=first?'你執黑棋 · AI 執白棋':'你執白棋 · AI 執黑棋'}
 }
-function scan(){document.querySelectorAll('.chess-app').forEach(x=>enhance(x,'chess'));document.querySelectorAll('.xq-app').forEach(x=>enhance(x,'xiangqi'));document.querySelectorAll('.gomoku-app').forEach(x=>enhance(x,'gomoku'))}
-function setChoice(btn){const app=btn.closest('.chess-app,.xq-app,.gomoku-app'),card=cardFor(btn);if(!app||!card)return;const second=btn.dataset.sideChoice==='second';if(app.classList.contains('chess-app')){const s=card.data.chess||(card.data.chess={});s.playerSide=second?'b':'w';s.aiSide=second?'w':'b';app.querySelector('[data-chess-new]')?.click()}else if(app.classList.contains('xq-app')){const s=card.data.xiangqi||(card.data.xiangqi={});s.playerSide=second?'b':'r';s.aiSide=second?'r':'b';app.querySelector('[data-xq-new]')?.click()}else{const s=card.data.gomoku||(card.data.gomoku={});s.playerStone=second?2:1;s.aiStone=second?1:2;app.querySelector('[data-gomoku-new]')?.click()}saveSafe();setTimeout(()=>{redraw();scan()},20)}
-function boot(){style();scan();new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});document.addEventListener('click',e=>{const b=e.target.closest?.('[data-side-choice]');if(b){e.preventDefault();e.stopPropagation();setChoice(b)}},true)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();window.WebDeskBoardgameSideChoice={version:VERSION,games:['chess','xiangqi','gomoku']};
+function scan(root=document){root.querySelectorAll?.('.chess-app').forEach(x=>enhance(x,'chess'));root.querySelectorAll?.('.xq-app').forEach(x=>enhance(x,'xiangqi'));root.querySelectorAll?.('.gomoku-app').forEach(x=>enhance(x,'gomoku'));if(root.matches?.('.chess-app'))enhance(root,'chess');if(root.matches?.('.xq-app'))enhance(root,'xiangqi');if(root.matches?.('.gomoku-app'))enhance(root,'gomoku')}
+function setChoice(btn){const app=btn.closest('.chess-app,.xq-app,.gomoku-app'),card=cardFor(btn);if(!app||!card)return;const second=btn.dataset.sideChoice==='second';if(app.classList.contains('chess-app')){const s=card.data.chess||(card.data.chess={});s.playerSide=second?'b':'w';s.aiSide=second?'w':'b';app.querySelector('[data-chess-new]')?.click()}else if(app.classList.contains('xq-app')){const s=card.data.xiangqi||(card.data.xiangqi={});s.playerSide=second?'b':'r';s.aiSide=second?'r':'b';app.querySelector('[data-xq-new]')?.click()}else{const s=card.data.gomoku||(card.data.gomoku={});s.playerStone=second?2:1;s.aiStone=second?1:2;app.querySelector('[data-gomoku-new]')?.click()}saveSafe();setTimeout(()=>{redraw()},20)}
+let raf=0;function scheduleScan(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const canvas=document.getElementById('desktopCanvas');if(canvas)scan(canvas)})}
+function boot(){style();const canvas=document.getElementById('desktopCanvas');if(canvas){scan(canvas);new MutationObserver(records=>{if(records.some(r=>r.addedNodes.length||r.removedNodes.length))scheduleScan()}).observe(canvas,{childList:true,subtree:true})}document.addEventListener('click',e=>{const b=e.target.closest?.('[data-side-choice]');if(b){e.preventDefault();e.stopPropagation();setChoice(b)}},true)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();window.WebDeskBoardgameSideChoice={version:VERSION,games:['chess','xiangqi','gomoku'],scopedObserver:true};
 })();
