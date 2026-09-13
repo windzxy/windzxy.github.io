@@ -29,7 +29,11 @@ export async function openApp(target,manifest,platform,{inline=false,onClose=nul
   const shell=inline?target:document.createElement('section');
   if(!inline){shell.className=`wd-window wd-window-${platform}`;target.replaceChildren(shell)}
   else{shell.classList.add('wd-card-detail');shell.dataset.detailOpen='1'}
-  shell.innerHTML=`<header class="wd-window-head"><strong>${manifest.icon||'•'} ${manifest.name?.['zh-HK']||manifest.id}</strong><button type="button" data-close-window>關閉</button></header><div class="wd-window-body" data-app-mount aria-busy="true"></div>`;
+  const compactMobile=inline&&platform==='mobile';
+  shell.classList.toggle('wd-card-detail-mobile',compactMobile);
+  shell.innerHTML=compactMobile
+    ? `<button class="wd-detail-close" type="button" data-close-window aria-label="關閉詳細內容">×</button><div class="wd-window-body" data-app-mount aria-busy="true"></div>`
+    : `<header class="wd-window-head"><strong>${manifest.icon||'•'} ${manifest.name?.['zh-HK']||manifest.id}</strong><button type="button" data-close-window>關閉</button></header><div class="wd-window-body" data-app-mount aria-busy="true"></div>`;
   document.body.classList.add('wd-app-open');
   shell.querySelector('[data-close-window]').onclick=()=>closeApp(target);
   const mount=shell.querySelector('[data-app-mount]');
