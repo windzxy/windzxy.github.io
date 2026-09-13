@@ -1,6 +1,6 @@
 {
   "id": "weather",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "schemaVersion": 1,
   "name": {"zh-CN": "天气", "zh-HK": "天氣"},
   "description": {"zh-CN": "实时天气与预报", "zh-HK": "即時天氣與預報"},
@@ -17,9 +17,9 @@
     "mobile": {"w": 360, "h": 190}
   },
   "minSize": {
-    "desktop": {"w": 330, "h": 230},
-    "tablet": {"w": 420, "h": 230},
-    "mobile": {"w": 320, "h": 170}
+    "desktop": {"w": 330, "h": 76},
+    "tablet": {"w": 360, "h": 76},
+    "mobile": {"w": 320, "h": 150}
   },
   "maxSize": {
     "desktop": {"w": 760, "h": 620},
