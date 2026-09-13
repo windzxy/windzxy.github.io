@@ -7,6 +7,7 @@ const cardsDir=path.join(root,'cards');
 const outDir=path.join(root,'generated');
 const outFile=path.join(outDir,'cards.registry.json');
 const PLATFORMS=['desktop','tablet','mobile'];
+const SIZE_TIERS=['mini','compact','standard','large'];
 
 function fail(message){throw new Error(message)}
 function assert(condition,message){if(!condition)fail(message)}
@@ -18,6 +19,7 @@ function validateLocalized(value,label,id){
   for(const locale of ['zh-CN','zh-HK'])assert(typeof value[locale]==='string'&&value[locale].trim(),`${id}: ${label}.${locale} is required`);
 }
 function validSize(size){return size&&Number.isInteger(size.w)&&size.w>0&&Number.isInteger(size.h)&&size.h>0}
+function area(size){return size.w*size.h}
 
 async function validateManifest(manifest,folder){
   const id=manifest?.id||folder;
@@ -33,6 +35,10 @@ async function validateManifest(manifest,folder){
   assert(Number.isInteger(manifest.order)&&manifest.order>=0,`${id}: order must be >= 0`);
   assert(Array.isArray(manifest.platforms)&&manifest.platforms.length>0,`${id}: platforms required`);
   for(const platform of manifest.platforms)assert(PLATFORMS.includes(platform),`${id}: unsupported platform ${platform}`);
+  if(manifest.interaction){
+    assert(['card-only','card-app','app-first'].includes(manifest.interaction.mode),`${id}: invalid interaction.mode`);
+    if(manifest.interaction.appLaunch!=null)assert(['explicit','whole-card'].includes(manifest.interaction.appLaunch),`${id}: invalid interaction.appLaunch`);
+  }
 
   assert(manifest.entry&&typeof manifest.entry==='object',`${id}: entry required`);
   assert(manifest.defaultSize&&typeof manifest.defaultSize==='object',`${id}: defaultSize required`);
@@ -59,6 +65,19 @@ async function validateManifest(manifest,folder){
     if(min)assert(min.w<=size.w&&min.h<=size.h,`${id}: minSize.${platform} must not exceed defaultSize`);
     if(max)assert(max.w>=size.w&&max.h>=size.h,`${id}: maxSize.${platform} must not be smaller than defaultSize`);
     if(min&&max)assert(min.w<=max.w&&min.h<=max.h,`${id}: minSize.${platform} must not exceed maxSize`);
+
+    const tiers=manifest.sizeTiers?.[platform];
+    if(manifest.sizeTiers){
+      assert(tiers&&typeof tiers==='object',`${id}: sizeTiers.${platform} required`);
+      for(const tier of SIZE_TIERS)assert(validSize(tiers[tier]),`${id}: invalid sizeTiers.${platform}.${tier}`);
+      for(let i=1;i<SIZE_TIERS.length;i++){
+        const prev=tiers[SIZE_TIERS[i-1]],next=tiers[SIZE_TIERS[i]];
+        assert(next.w>=prev.w&&next.h>=prev.h&&area(next)>area(prev),`${id}: sizeTiers.${platform} must grow mini < compact < standard < large`);
+      }
+      if(min)assert(tiers.mini.w>=min.w&&tiers.mini.h>=min.h,`${id}: mini tier must respect minSize.${platform}`);
+      if(max)assert(tiers.large.w<=max.w&&tiers.large.h<=max.h,`${id}: large tier must respect maxSize.${platform}`);
+      assert(size.w>=tiers.mini.w&&size.h>=tiers.mini.h&&size.w<=tiers.large.w&&size.h<=tiers.large.h,`${id}: defaultSize.${platform} must fall inside size tiers`);
+    }
   }
 
   if(manifest.entry.shared!=null){
