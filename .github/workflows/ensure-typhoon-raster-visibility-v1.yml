@@ -1,51 +1,71 @@
-name: Ensure Typhoon Raster Visibility Lifecycle
+name: Verify Typhoon Raster Visibility Runtime
 
 on:
   push:
     branches: [master]
     paths:
       - '.github/workflows/ensure-typhoon-raster-visibility-v1.yml'
+      - 'Html_tools/global-weather-lazy-v1.js'
+      - 'Html_tools/typhoon-satellite-pan-v1.js'
+      - 'index.html'
   workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: webdesk-index-writers
-  cancel-in-progress: false
+  contents: read
 
 jobs:
   raster-visibility:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: master
-      - name: Keep visibility-aware satellite runtime loaded
+      - name: Verify current raster visibility baseline
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
-          import re
-          satellite_version='20260912-typhoon-satellite-pan-v1.4-visibility-idle'
-          loader_version='20260912-global-weather-lazy-v3.2-raster-visibility-idle'
-          p=Path('Html_tools/global-weather-lazy-v1.js')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r"const VERSION='[^']+';",f"const VERSION='{loader_version}';",s,count=1)
-          s=re.sub(r"\['Html_tools/typhoon-satellite-pan-v1\.js','[^']+'\]",f"['Html_tools/typhoon-satellite-pan-v1.js','{satellite_version}']",s,count=1)
-          s=re.sub(r"performanceProfile:'[^']+'","performanceProfile:'visibility-idle+raster-visibility-idle+shared-overlay-motion+post-settle-staggered-forecast-city-vector+overlay-health+radar-generation-guard+satellite-generation-guard+zoom-tiered-city-labels+single-layout-owner+no-tile-fade+buffered-satellite-pan+provider-failover'",s,count=1)
-          p.write_text(s,encoding='utf-8')
-          p=Path('index.html')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r'Html_tools/global-weather-lazy-v1\.js\?v=[^"\']+',f'Html_tools/global-weather-lazy-v1.js?v={loader_version}',s,count=1)
-          p.write_text(s,encoding='utf-8')
+
+          loader = Path('Html_tools/global-weather-lazy-v1.js').read_text(encoding='utf-8')
+          satellite = Path('Html_tools/typhoon-satellite-pan-v1.js').read_text(encoding='utf-8')
+          index = Path('index.html').read_text(encoding='utf-8')
+
+          required_loader = [
+              "20260913-global-weather-lazy-v3.3-radar-visibility-idle",
+              "20260912-typhoon-satellite-pan-v1.4-visibility-idle",
+              "20260913-typhoon-radar-v4.6-visibility-idle",
+              "20260912-typhoon-layer-interaction-v10-post-settle-stagger",
+              "20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle",
+              "20260912-typhoon-zoom-motion-v2.5-visibility-idle",
+              "20260908-typhoon-openfreemap-v6.4-world-wrap",
+              "20260911-typhoon-provider-failover-v1.1-recover-primary",
+              "satellite-visibility-idle",
+              "radar-visibility-idle",
+          ]
+          required_satellite = [
+              "20260912-typhoon-satellite-pan-v1.4-visibility-idle",
+              "keepBuffer:10",
+              "updateWhenIdle:true",
+              "updateWhenZooming:false",
+              "noWrap=false",
+              "IntersectionObserver",
+              "visibilityIdle:true",
+              "eventDrivenMaintenance:true",
+          ]
+          required_index = [
+              "Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle"
+          ]
+          forbidden = [
+              "20260912-global-weather-lazy-v3.2-raster-visibility-idle",
+              "global-weather-lazy-v3.2",
+              "typhoon-satellite-pan-v1.3",
+          ]
+
+          missing = [x for x in required_loader if x not in loader]
+          missing += [x for x in required_satellite if x not in satellite]
+          missing += [x for x in required_index if x not in index]
+          stale = [x for x in forbidden if x in loader or x in index]
+
+          if missing:
+              raise SystemExit('Missing current raster visibility markers: ' + ', '.join(missing))
+          if stale:
+              raise SystemExit('Stale raster visibility baseline detected: ' + ', '.join(stale))
+          print('Typhoon raster visibility runtime is on the current v3.3 / satellite v1.4 baseline.')
           PY
-      - name: Commit raster visibility runtime loader
-        run: |
-          if git diff --quiet -- Html_tools/global-weather-lazy-v1.js index.html; then exit 0; fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Html_tools/global-weather-lazy-v1.js index.html
-          git commit -m 'Load visibility-aware satellite lifecycle'
-          git pull --rebase origin master
-          git push
