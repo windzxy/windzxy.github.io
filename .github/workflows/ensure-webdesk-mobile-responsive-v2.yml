@@ -15,24 +15,51 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Keep mobile responsive runtime loaded
+      - name: Fix mobile swipe gesture and keep runtime loaded
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
+          runtime=Path('Html_tools/webdesk-mobile-responsive-v2.js')
+          s=runtime.read_text(encoding='utf-8')
+          s=s.replace("const VERSION='20260913-webdesk-mobile-responsive-v2.5-inner-width-containment';","const VERSION='20260913-webdesk-mobile-responsive-v2.6-reliable-swipe';",1)
+          pattern=r"function bindSwipe\(\)\{.*?\n\}\nfunction closeDock"
+          replacement=r'''function bindSwipe(){
+  const canvas=document.getElementById('desktopCanvas');if(!canvas||canvas.dataset.mobileSwipeBound==='2')return;canvas.dataset.mobileSwipeBound='2';
+  const blocked=el=>{
+    if(!el?.closest)return false;
+    if(el.closest('input,textarea,select,a,[contenteditable=true],.table-output,.table-wrap,.table-scroll,.schedule-table-wrap'))return true;
+    const btn=el.closest('button');
+    if(!btn)return false;
+    return !btn.matches('.gomoku-cell,.chess-square,.xq-cell,[data-gomoku-cell],[data-chess-square],[data-xq-cell]');
+  };
+  const start=(x,y,target)=>{if(innerWidth>820||blocked(target))return;touch={x,y,t:Date.now()}};
+  const end=(x,y)=>{if(!touch||innerWidth>820)return;const dx=x-touch.x,dy=y-touch.y,dt=Date.now()-touch.t;touch=null;if(dt>1000||Math.abs(dx)<42||Math.abs(dx)<Math.abs(dy)*1.08)return;if(dx<0)show(activeIndex+1);else show(activeIndex-1)};
+  canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;start(e.clientX,e.clientY,e.target)},{passive:true});
+  canvas.addEventListener('pointerup',e=>end(e.clientX,e.clientY),{passive:true});
+  canvas.addEventListener('pointercancel',()=>{touch=null},{passive:true});
+  canvas.addEventListener('touchstart',e=>{const p=e.touches&&e.touches[0];if(p)start(p.clientX,p.clientY,e.target)},{passive:true});
+  canvas.addEventListener('touchend',e=>{const p=e.changedTouches&&e.changedTouches[0];if(p)end(p.clientX,p.clientY)},{passive:true});
+  canvas.addEventListener('touchcancel',()=>{touch=null},{passive:true});
+}
+function closeDock'''
+          ns,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
+          if n!=1:
+              raise SystemExit('bindSwipe patch target not found; refusing unsafe change')
+          runtime.write_text(ns,encoding='utf-8')
           p=Path('index.html')
           page=p.read_text(encoding='utf-8')
           page=re.sub(r'\n?<script src="Html_tools/webdesk-mobile-responsive-v2\.js\?v=[^"]+"></script>','',page)
-          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260913-webdesk-mobile-responsive-v2.5-inner-width-containment"></script>'
+          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260913-webdesk-mobile-responsive-v2.6-reliable-swipe"></script>'
           page=page.replace('</body>',tag+'\n</body>',1)
           p.write_text(page,encoding='utf-8')
           PY
-      - name: Commit loader
+      - name: Commit runtime and loader
         run: |
-          if git diff --quiet -- index.html; then exit 0; fi
+          if git diff --quiet -- Html_tools/webdesk-mobile-responsive-v2.js index.html; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Load mobile width containment runtime'
+          git add Html_tools/webdesk-mobile-responsive-v2.js index.html
+          git commit -m 'Fix mobile card swipe on game boards'
           git pull --rebase origin master
           git push
