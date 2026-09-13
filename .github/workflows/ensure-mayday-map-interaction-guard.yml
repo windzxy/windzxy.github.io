@@ -33,12 +33,15 @@ jobs:
 
           runtime_required = [
               '20260913-mayday-openfreemap-v4.9-probe-settle-budget',
-              'adaptive-provider-backoff',
-              'provider-recovery-probe',
-              'viewport-quorum-probe',
-              'probe-generation-cancel',
-              'probe-request-budget',
-              'probe-settle-budget',
+              'function nextRasterProviderBackoff',
+              'function probeRasterProvider',
+              'function rasterProbeCoords',
+              'function cancelRasterProviderProbe',
+              'function rasterProbeStartDelay',
+              'function waitRasterProbeSettle',
+              'rasterProviderProbeGeneration=Object.create(null)',
+              'rasterProviderProbeAbort=Object.create(null)',
+              'rasterProviderProbeStarts=Object.create(null)',
           ]
           interaction_required = [
               '20260913-tour-map-interaction-guard-v1.1-resize-coordinator',
@@ -54,6 +57,12 @@ jobs:
               '20260913-tour-map-interaction-guard-v1.1-resize-coordinator',
               '20260913-tour-map-stability-v1.4-shared-resize-coordinator',
               "'shared-resize-coordinator'",
+              "'adaptive-provider-backoff'",
+              "'provider-recovery-probe'",
+              "'viewport-quorum-probe'",
+              "'probe-generation-cancel'",
+              "'probe-request-budget'",
+              "'probe-settle-budget'",
           ]
 
           checks = [
