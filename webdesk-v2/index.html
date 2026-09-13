@@ -33,6 +33,20 @@
       <input id="toolSearch" class="wd-search" type="search" placeholder="搜尋工具">
       <div id="toolLibrary" class="wd-library"></div>
     </aside>
+
+    <aside id="workspaceDrawer" class="wd-drawer wd-workspace-drawer" aria-hidden="true">
+      <div class="wd-drawer-head">
+        <div>
+          <small>WORKSPACES</small>
+          <h2>工作區</h2>
+        </div>
+        <button data-action="close-workspace">×</button>
+      </div>
+      <div class="wd-workspace-actions">
+        <button data-workspace-action="create">＋ 新增工作區</button>
+      </div>
+      <div id="workspaceList" class="wd-workspace-list"></div>
+    </aside>
   </div>
   <script type="module" src="./src/app.js"></script>
 </body>
