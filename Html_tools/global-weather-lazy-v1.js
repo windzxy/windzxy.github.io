@@ -25,7 +25,7 @@ const SCRIPTS=[
  ['Html_tools/typhoon-control-layout-v13.js','20260911-typhoon-control-layout-v13.1-single-owner']
 ];
 function hasWeather(){return !!document.querySelector('[data-typhoon-root],.typhoon-widget,.desktop-card.t-typhoon')}
-function load(src,v){return new Promise(resolve=>{if(document.querySelector('script[data-weather-lazy="'+src+'"]')||document.querySelector('script[src^="'+src+'?"]'))return resolve();const s=document.createElement('script');s.src=src+'?v='+v;s.async=false;s.dataset.weatherLazy=src;s.onload=resolve;s.onerror=resolve;document.body.appendChild(s)})}
+function load(src,v){return new Promise(resolve=>{if(document.querySelector('script[data-weather-lazy="'+src+'"]')||document.querySelector('script[src^="'+src+'?"]'))return resolve();const s=document.createElement('script');s.src=src+'?v='+v+((src.includes('typhoon-weather-p0-remount.js')||src.includes('typhoon-zoom-motion-v2-1.js'))?'&perf=20260913-mainthread1':'');s.async=false;s.dataset.weatherLazy=src;s.onload=resolve;s.onerror=resolve;document.body.appendChild(s)})}
 function idle(){return new Promise(resolve=>{'requestIdleCallback'in window?requestIdleCallback(()=>resolve(),{timeout:350}):setTimeout(resolve,24)})}
 async function activate(){if(document.hidden||loading||loaded||!hasWeather())return;loading=true;observer?.disconnect();observer=null;for(let i=0;i<SCRIPTS.length;i++){const [src,v]=SCRIPTS[i];await load(src,v);if(i===9||i===13)await idle()}loaded=true;loading=false;window.dispatchEvent(new CustomEvent('webdesk-global-weather-ready'))}
 function schedule(){if(document.hidden||loading||loaded)return;if('requestIdleCallback'in window)requestIdleCallback(()=>activate(),{timeout:250});else setTimeout(activate,30)}
