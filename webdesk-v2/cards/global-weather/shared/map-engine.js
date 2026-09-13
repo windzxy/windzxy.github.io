@@ -1,5 +1,9 @@
-const MAPLIBRE_JS='https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js';
-const MAPLIBRE_CSS='https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css';
+const MAPLIBRE_VERSION='5.10.0';
+const MAPLIBRE_SOURCES=[
+  `https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.js`,
+  `https://cdn.jsdelivr.net/npm/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.js`
+];
+const MAPLIBRE_CSS=`https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.css`;
 const OFM='https://tiles.openfreemap.org/styles/';
 let loader=null;
 
@@ -14,22 +18,32 @@ export const basemaps=[
 
 function rasterStyle(tile,attribution){return{version:8,sources:{base:{type:'raster',tiles:[tile],tileSize:256,attribution}},layers:[{id:'base',type:'raster',source:'base',minzoom:0,maxzoom:22}]}}
 function ensureCss(){if(document.querySelector('link[data-gw-maplibre]'))return;const link=document.createElement('link');link.rel='stylesheet';link.href=MAPLIBRE_CSS;link.dataset.gwMaplibre='1';document.head.appendChild(link)}
-function load(){if(window.maplibregl)return Promise.resolve(window.maplibregl);if(loader)return loader;ensureCss();loader=new Promise((resolve,reject)=>{const old=document.querySelector('script[data-gw-maplibre]');if(old){old.addEventListener('load',()=>window.maplibregl?resolve(window.maplibregl):reject(new Error('MapLibre unavailable')),{once:true});old.addEventListener('error',reject,{once:true});return}const s=document.createElement('script');s.src=MAPLIBRE_JS;s.async=true;s.dataset.gwMaplibre='1';s.onload=()=>window.maplibregl?resolve(window.maplibregl):reject(new Error('MapLibre unavailable'));s.onerror=()=>reject(new Error('MapLibre load failed'));document.head.appendChild(s)});return loader}
+function loadScript(src,index){return new Promise((resolve,reject)=>{const old=document.querySelector(`script[data-gw-maplibre="${index}"]`);if(old){if(window.maplibregl)return resolve(window.maplibregl);old.addEventListener('load',()=>window.maplibregl?resolve(window.maplibregl):reject(new Error('MapLibre unavailable')),{once:true});old.addEventListener('error',()=>reject(new Error('MapLibre CDN failed')),{once:true});return}const s=document.createElement('script');s.src=src;s.async=true;s.crossOrigin='anonymous';s.dataset.gwMaplibre=String(index);const t=setTimeout(()=>{s.remove();reject(new Error('MapLibre CDN timeout'))},9000);s.onload=()=>{clearTimeout(t);window.maplibregl?resolve(window.maplibregl):reject(new Error('MapLibre unavailable'))};s.onerror=()=>{clearTimeout(t);s.remove();reject(new Error('MapLibre CDN failed'))};document.head.appendChild(s)})}
+async function load(){if(window.maplibregl)return window.maplibregl;if(loader)return loader;ensureCss();loader=(async()=>{let last;for(let i=0;i<MAPLIBRE_SOURCES.length;i++){try{return await loadScript(MAPLIBRE_SOURCES[i],i)}catch(e){last=e}}throw last||new Error('MapLibre unavailable')})();try{return await loader}catch(e){loader=null;throw e}}
 function specFor(id){return basemaps.find(x=>x.id===id)||basemaps[0]}
+function fallbackMap(container,{center,onMove}={}){
+  const [lon,lat]=center||[114.0579,22.5431];
+  container.innerHTML='';
+  const iframe=document.createElement('iframe');
+  iframe.className='gw-map-fallback';iframe.title='全球天氣地圖';iframe.loading='eager';iframe.referrerPolicy='no-referrer';
+  const span=7,box=[lon-span,lat-span*.65,lon+span,lat+span*.65].join('%2C');
+  iframe.src=`https://www.openstreetmap.org/export/embed.html?bbox=${box}&layer=mapnik&marker=${lat}%2C${lon}`;
+  iframe.style.cssText='width:100%;height:100%;border:0;display:block;background:#dbe7ef';
+  container.appendChild(iframe);onMove?.({lat,lon,zoom:4});
+  return{map:null,isFallback:true,setBasemap(){return'fallback'},flyTo(){},destroy(){iframe.remove()}};
+}
 
 export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,basemap='weather',onMove}={}){
-  const gl=await load();
   if(!container||!document.body.contains(container))return null;
-  const map=new gl.Map({container,style:specFor(basemap).style(),center,zoom,minZoom:1.6,maxZoom:16,renderWorldCopies:true,attributionControl:true,fadeDuration:0});
-  map.addControl(new gl.NavigationControl({showCompass:false}),'bottom-right');
-  const notify=()=>{const c=map.getCenter();onMove?.({lat:c.lat,lon:c.lng,zoom:map.getZoom()})};
-  map.on('moveend',notify);
-  map.on('load',notify);
-  let ro=null;try{ro=new ResizeObserver(()=>map.resize());ro.observe(container)}catch{}
-  return{
-    map,
-    setBasemap(id){const spec=specFor(id);try{map.setStyle(spec.style(),{diff:true})}catch{map.setStyle(spec.style())}return spec.id},
-    flyTo(lon,lat,z=Math.max(map.getZoom(),6)){map.flyTo({center:[lon,lat],zoom:z,essential:false,duration:550})},
-    destroy(){ro?.disconnect?.();map.off('moveend',notify);try{map.remove()}catch{}}
-  };
+  let gl;try{gl=await load()}catch(e){console.warn('[Global Weather] MapLibre unavailable, using OSM fallback',e);return fallbackMap(container,{center,onMove})}
+  if(!container||!document.body.contains(container))return null;
+  try{
+    const map=new gl.Map({container,style:specFor(basemap).style(),center,zoom,minZoom:1.6,maxZoom:16,renderWorldCopies:true,attributionControl:true,fadeDuration:0});
+    map.addControl(new gl.NavigationControl({showCompass:false}),'bottom-right');
+    const notify=()=>{const c=map.getCenter();onMove?.({lat:c.lat,lon:c.lng,zoom:map.getZoom()})};
+    map.on('moveend',notify);map.on('load',notify);
+    map.on('error',e=>console.warn('[Global Weather map]',e?.error||e));
+    let ro=null;try{ro=new ResizeObserver(()=>map.resize());ro.observe(container)}catch{}
+    return{map,isFallback:false,setBasemap(id){const spec=specFor(id);try{map.setStyle(spec.style(),{diff:true})}catch{map.setStyle(spec.style())}return spec.id},flyTo(lon,lat,z=Math.max(map.getZoom(),6)){map.flyTo({center:[lon,lat],zoom:z,essential:false,duration:550})},destroy(){ro?.disconnect?.();map.off('moveend',notify);try{map.remove()}catch{}}};
+  }catch(e){console.warn('[Global Weather] map init failed, using OSM fallback',e);return fallbackMap(container,{center,onMove})}
 }
