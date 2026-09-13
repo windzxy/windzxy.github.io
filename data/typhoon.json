@@ -6,9 +6,9 @@
   "storms": [
     {
       "id": "2639",
-      "name": "Tropical Depression",
+      "name": "Low Pressure Area",
       "sourceUrl": "https://www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2639.xml",
-      "bulletinTime": "2026-09-13T21:30:43+08:00",
+      "bulletinTime": "2026-09-13T23:18:06+08:00",
       "points": [
         {
           "lat": 15.4,
@@ -104,76 +104,21 @@
           "time": "2026-09-13T12:00:00+00:00",
           "wind": "45km/h",
           "intensity": "Tropical Depression",
-          "kind": "analysis"
-        },
-        {
-          "lat": 17.43,
-          "lon": 106.56,
-          "kind": "forecast"
-        },
-        {
-          "lat": 17.47,
-          "lon": 106.5,
-          "kind": "forecast"
-        },
-        {
-          "lat": 17.52,
-          "lon": 106.42,
-          "kind": "forecast"
-        },
-        {
-          "lat": 17.57,
-          "lon": 106.35,
-          "kind": "forecast"
-        },
-        {
-          "lat": 17.63,
-          "lon": 106.27,
-          "kind": "forecast"
+          "kind": "past"
         },
         {
           "lat": 17.7,
           "lon": 106.2,
-          "kind": "forecast"
-        },
-        {
-          "lat": 17.78,
-          "lon": 106.13,
-          "kind": "forecast"
-        },
-        {
-          "lat": 17.87,
-          "lon": 106.05,
-          "kind": "forecast"
-        },
-        {
-          "lat": 17.97,
-          "lon": 105.98,
-          "kind": "forecast"
-        },
-        {
-          "lat": 18.06,
-          "lon": 105.9,
-          "kind": "forecast"
-        },
-        {
-          "lat": 18.14,
-          "lon": 105.84,
-          "kind": "forecast"
-        },
-        {
-          "lat": 18.2,
-          "lon": 105.8,
-          "time": "2026-09-14T00:00:00+00:00",
+          "time": "2026-09-13T15:00:00+00:00",
           "wind": "40km/h",
           "intensity": "Low Pressure Area",
-          "kind": "forecast"
+          "kind": "analysis"
         }
       ]
     }
   ],
   "errors": [],
   "ok": true,
-  "sourceUpdatedAt": "2026-09-13T21:30:43+08:00",
-  "updatedAt": "2026-09-13T14:39:50.417830+00:00"
+  "sourceUpdatedAt": "2026-09-13T23:18:06+08:00",
+  "updatedAt": "2026-09-13T17:38:26.250380+00:00"
 }
