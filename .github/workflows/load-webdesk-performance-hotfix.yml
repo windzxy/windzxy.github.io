@@ -1,0 +1,46 @@
+name: Load WebDesk Performance Hotfix
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Html_tools/flight-chess-polish-v1.js'
+      - 'Html_tools/boardgame-side-choice-v1.js'
+      - 'Html_tools/webdesk-mobile-swipe-fix-v1.js'
+      - '.github/workflows/load-webdesk-performance-hotfix.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Refresh optimized runtime cache keys
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          specs=[
+            ('Html_tools/flight-chess-polish-v1.js','20260913-flight-chess-polish-v1.1-perf'),
+            ('Html_tools/boardgame-side-choice-v1.js','20260913-boardgame-side-choice-v1.1-perf'),
+            ('Html_tools/webdesk-mobile-swipe-fix-v1.js','20260913-webdesk-mobile-swipe-fix-v1.3-no-global-observer'),
+          ]
+          for src,ver in specs:
+              pat=r'\n?<script src="'+re.escape(src)+r'\?v=[^"]+"></script>'
+              s=re.sub(pat,'',s)
+              s=s.replace('</body>',f'<script src="{src}?v={ver}"></script>\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit loader
+        run: |
+          if git diff --quiet -- index.html; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Load optimized WebDesk runtimes'
+          git pull --rebase origin master
+          git push
