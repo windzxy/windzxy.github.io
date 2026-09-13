@@ -1,7 +1,33 @@
 import {loadWeather,weatherIcon,weatherLabel,weatherInsight,searchCities,savedLocations,saveLocation} from '../shared/weather-service.js';
 export async function mount({host,signal}){
   let active=null;
-  async function render(location=null){active=location;host.innerHTML='<section class="weather-app weather-app-mobile" aria-busy="true"></section>';const d=await loadWeather({signal,location});if(signal.aborted)return;const insight=weatherInsight(d);host.innerHTML=`<section class="weather-app weather-app-mobile"><button class="wd-ios-button wd-ios-button-tinted weather-mobile-place" data-city>${d.place}</button><div class="weather-mobile-current"><h2>${weatherIcon(d.code)} ${d.temperature}°</h2><p>${weatherLabel(d.code)} · 體感 ${d.feelsLike}°</p><div><span>${d.high}° / ${d.low}°</span><span>雨 ${d.rain}%</span></div></div>${insight?`<div class="weather-mobile-insight"><p>${insight}</p></div>`:''}<div class="weather-mobile-hourly" aria-label="逐小時預報">${d.hourly.slice(0,6).map(x=>`<article><small>${x.time}</small><strong>${weatherIcon(x.code)}</strong><b>${x.temp}°</b><span>${x.rain}%</span></article>`).join('')}</div><div class="weather-mobile-list" aria-label="七日預報">${d.forecast.slice(0,7).map(x=>`<article><span>${x.label}</span><strong>${weatherIcon(x.code)}</strong><b>${x.high}°</b><small>${x.low}°</small></article>`).join('')}</div><div class="weather-mobile-details"><span>濕度 ${d.humidity}%</span><span>陣風 ${d.gust}</span><span>UV ${d.uv}</span></div>${d.source?`<small class="weather-source">${String(d.updatedAt||'').slice(-5)} · ${d.source}</small>`:''}<div class="weather-city-sheet" data-sheet hidden><div class="weather-city-search"><input class="wd-search" data-query type="search" placeholder="搜尋城市" autocomplete="off"><button class="wd-ios-button wd-ios-button-secondary" data-close>完成</button></div><div data-results></div></div></section>`;bind()}
-  function bind(){const sheet=host.querySelector('[data-sheet]'),results=host.querySelector('[data-results]'),input=host.querySelector('[data-query]');host.querySelector('[data-city]').onclick=()=>{sheet.hidden=false;paint(savedLocations())};host.querySelector('[data-close]').onclick=()=>sheet.hidden=true;let timer;input.oninput=()=>{clearTimeout(timer);timer=setTimeout(async()=>{try{paint(await searchCities(input.value,{signal}))}catch{}},220)};function paint(list){results.innerHTML=list.length?list.map(x=>`<button class="wd-ios-button wd-ios-button-row" data-id="${x.id}"><span>${x.name}</span><small>${x.region}</small></button>`).join(''):'<p class="weather-empty">沒有結果</p>';results.querySelectorAll('[data-id]').forEach((b,i)=>b.onclick=()=>{const loc=list[i];saveLocation(loc);render(loc)})}}
+  async function render(location=null){
+    active=location;
+    host.innerHTML='<section class="weather-app weather-app-mobile" aria-busy="true"></section>';
+    const d=await loadWeather({signal,location});if(signal.aborted)return;
+    const insight=weatherInsight(d);
+    host.innerHTML=`<section class="weather-app weather-app-mobile">
+      <button class="wd-ios-button wd-ios-button-tinted weather-mobile-place" data-city>${d.place}</button>
+      <section class="weather-mobile-current" aria-label="目前天氣">
+        <div class="weather-mobile-now"><h2>${weatherIcon(d.code)} ${d.temperature}°</h2><span>${weatherLabel(d.code)}</span></div>
+        <div class="weather-mobile-current-meta"><span>體感 ${d.feelsLike}°</span><span>${d.high}° / ${d.low}°</span><span>雨 ${d.rain}%</span></div>
+      </section>
+      ${insight?`<p class="weather-mobile-insight">${insight}</p>`:''}
+      <div class="weather-mobile-hourly" aria-label="逐小時預報">${d.hourly.slice(0,6).map(x=>`<article><small>${x.time}</small><strong>${weatherIcon(x.code)}</strong><b>${x.temp}°</b><span>${x.rain}%</span></article>`).join('')}</div>
+      <div class="weather-mobile-list" aria-label="七日預報">${d.forecast.slice(0,7).map(x=>`<article><span>${x.label}</span><strong>${weatherIcon(x.code)}</strong><b>${x.high}°</b><small>${x.low}°</small></article>`).join('')}</div>
+      <div class="weather-mobile-details"><span>濕度 ${d.humidity}%</span><span>陣風 ${d.gust}</span><span>UV ${d.uv}</span></div>
+      ${d.source?`<small class="weather-source">${String(d.updatedAt||'').slice(-5)} · ${d.source}</small>`:''}
+      <div class="weather-city-sheet" data-sheet hidden><div class="weather-city-search"><input class="wd-search" data-query type="search" placeholder="搜尋城市" autocomplete="off"><button class="wd-ios-button wd-ios-button-secondary" data-close>完成</button></div><div data-results></div></div>
+    </section>`;
+    bind();
+  }
+  function bind(){
+    const sheet=host.querySelector('[data-sheet]'),results=host.querySelector('[data-results]'),input=host.querySelector('[data-query]');
+    host.querySelector('[data-city]').onclick=()=>{sheet.hidden=false;paint(savedLocations())};
+    host.querySelector('[data-close]').onclick=()=>sheet.hidden=true;
+    let timer;
+    input.oninput=()=>{clearTimeout(timer);timer=setTimeout(async()=>{try{paint(await searchCities(input.value,{signal}))}catch{}},220)};
+    function paint(list){results.innerHTML=list.length?list.map(x=>`<button class="wd-ios-button wd-ios-button-row" data-id="${x.id}"><span>${x.name}</span><small>${x.region}</small></button>`).join(''):'<p class="weather-empty">沒有結果</p>';results.querySelectorAll('[data-id]').forEach((b,i)=>b.onclick=()=>{const loc=list[i];saveLocation(loc);render(loc)})}
+  }
   await render(active);
 }
