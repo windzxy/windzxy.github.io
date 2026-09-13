@@ -75,13 +75,11 @@
       <button id="openToolbox" class="drawer-button" type="button" data-dock="tools" data-i18n="打開完整工具箱">打開完整工具箱</button>
     </div>
   </aside>
-  <footer class="desktop-taskbar">
-    <div>
-      <strong id="workspaceTitle" data-i18n="日常工作區">日常工作區</strong>
-      <span id="workspaceHint" data-i18n="拖拽卡片可任意擺放；點擊卡片打開工具。">拖拽卡片可任意擺放；點擊卡片打開工具。</span>
-    </div>
+  <div hidden aria-hidden="true">
+    <strong id="workspaceTitle"></strong>
+    <span id="workspaceHint"></span>
     <time id="desktopClock"></time>
-  </footer>
+  </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.4.1/dist/umd/full.js?v=20260729-opencc1"></script>
 <script src="Html_tools/i18n.js?v=20260729-fast-opencc1"></script>
