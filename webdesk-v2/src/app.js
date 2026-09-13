@@ -2,6 +2,7 @@ import {loadRegistry,registryIndex} from '../core/registry.js';
 import {createPlatformResolver} from '../core/platform.js';
 import {mountCard,unmountCard,bindCardRecovery} from '../core/card-host.js';
 import {openApp as openHostedApp,closeApp as closeHostedApp} from '../core/app-host.js';
+import {loadShellState,saveShellState,pruneMissingCards} from '../core/storage.js';
 
 const $=s=>document.querySelector(s);
 const desktop=$('#desktop'),drawer=$('#drawer'),library=$('#toolLibrary'),dock=$('#quickDock'),windowLayer=$('#windowLayer');
@@ -13,6 +14,7 @@ function title(card){return card?.name?.['zh-HK']||card?.name?.['zh-CN']||card?.
 function description(card){return card?.description?.['zh-HK']||card?.description?.['zh-CN']||''}
 function sizeFor(card){return card?.defaultSize?.[state.platform.name]||{w:320,h:180}}
 function placed(id){return state.cards.some(x=>x.id===id)}
+function persist(){saveShellState({cards:state.cards})}
 
 function createHost(item,card){
   const host=document.createElement('article');
@@ -38,11 +40,18 @@ async function renderDesktop(){
   bindCards();
 }
 
+function addCard(card){
+  if(!card||placed(card.id))return;
+  const size=sizeFor(card);
+  state.cards.push({id:card.id,x:28+state.cards.length*26,y:34+state.cards.length*26,w:size.w});
+  persist();
+}
+
 function renderLibrary(q=''){
   const text=q.trim().toLowerCase();
   const cards=(state.registry?.cards||[]).filter(card=>!text||`${title(card)} ${description(card)} ${card.category}`.toLowerCase().includes(text));
   library.innerHTML=cards.length?cards.map(card=>`<div class="wd-tool"><span class="wd-card-icon">${card.icon||'•'}</span><div><strong>${title(card)}</strong><small>${card.category} · ${description(card)}</small></div><button data-add="${card.id}" ${placed(card.id)?'disabled':''}>${placed(card.id)?'已加入':'加入'}</button></div>`).join(''):'<p class="wd-empty">目前沒有可用卡片</p>';
-  library.querySelectorAll('[data-add]:not([disabled])').forEach(button=>button.onclick=()=>{const card=state.index.get(button.dataset.add);const size=sizeFor(card);state.cards.push({id:card.id,x:28+state.cards.length*26,y:34+state.cards.length*26,w:size.w});renderDesktop();renderLibrary($('#toolSearch').value);drawer.classList.remove('open')});
+  library.querySelectorAll('[data-add]:not([disabled])').forEach(button=>button.onclick=()=>{const card=state.index.get(button.dataset.add);addCard(card);renderDesktop();renderLibrary($('#toolSearch').value);drawer.classList.remove('open')});
 }
 
 function renderDock(){
@@ -51,15 +60,15 @@ function renderDock(){
 }
 
 function bindCards(){
-  desktop.querySelectorAll('[data-remove]').forEach(button=>button.onclick=()=>{state.cards=state.cards.filter(card=>card.id!==button.dataset.remove);renderDesktop();renderLibrary($('#toolSearch').value)});
+  desktop.querySelectorAll('[data-remove]').forEach(button=>button.onclick=()=>{state.cards=state.cards.filter(card=>card.id!==button.dataset.remove);persist();renderDesktop();renderLibrary($('#toolSearch').value)});
   if(state.platform.name!=='desktop')return;
-  desktop.querySelectorAll('.wd-card-head').forEach(head=>{head.onpointerdown=e=>{if(e.target.closest('button'))return;const shell=head.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id);const sx=e.clientX,sy=e.clientY,ox=item.x||0,oy=item.y||0;head.setPointerCapture(e.pointerId);const move=ev=>{item.x=Math.max(0,ox+ev.clientX-sx);item.y=Math.max(0,oy+ev.clientY-sy);shell.style.left=item.x+'px';shell.style.top=item.y+'px';desktop.style.minHeight=Math.max(innerHeight,item.y+shell.offsetHeight+160)+'px'};const up=()=>{head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up)};head.addEventListener('pointermove',move);head.addEventListener('pointerup',up,{once:true})}});
+  desktop.querySelectorAll('.wd-card-head').forEach(head=>{head.onpointerdown=e=>{if(e.target.closest('button'))return;const shell=head.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id);const sx=e.clientX,sy=e.clientY,ox=item.x||0,oy=item.y||0;head.setPointerCapture(e.pointerId);const move=ev=>{item.x=Math.max(0,ox+ev.clientX-sx);item.y=Math.max(0,oy+ev.clientY-sy);shell.style.left=item.x+'px';shell.style.top=item.y+'px';desktop.style.minHeight=Math.max(innerHeight,item.y+shell.offsetHeight+160)+'px'};const up=()=>{persist();head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up)};head.addEventListener('pointermove',move);head.addEventListener('pointerup',up,{once:true})}});
 }
 
 async function openApp(id){const card=state.index.get(id);if(!card)return;try{await openHostedApp(windowLayer,card,state.platform.name)}catch(error){console.error('[WebDesk V2 app]',error)}}
 
 document.addEventListener('webdesk:open-app',e=>openApp(e.detail?.id));
-document.addEventListener('click',e=>{const action=e.target.closest('[data-action]')?.dataset.action;if(action==='library')drawer.classList.add('open');if(action==='close-drawer')drawer.classList.remove('open');const quick=e.target.closest('[data-quick-add]')?.dataset.quickAdd;if(quick&&!placed(quick)){const card=state.index.get(quick),size=sizeFor(card);state.cards.push({id:quick,x:32,y:32,w:size.w});renderDesktop();renderLibrary($('#toolSearch').value)}});
+document.addEventListener('click',e=>{const action=e.target.closest('[data-action]')?.dataset.action;if(action==='library')drawer.classList.add('open');if(action==='close-drawer')drawer.classList.remove('open');const quick=e.target.closest('[data-quick-add]')?.dataset.quickAdd;if(quick&&!placed(quick)){const card=state.index.get(quick);addCard(card);renderDesktop();renderLibrary($('#toolSearch').value)}});
 $('#toolSearch').addEventListener('input',e=>renderLibrary(e.target.value));
 bindCardRecovery(document,()=>state.platform.name);
 platformResolver.subscribe(async next=>{state.platform=next;await closeHostedApp(windowLayer);renderDesktop();renderLibrary($('#toolSearch').value)});
@@ -67,8 +76,10 @@ platformResolver.subscribe(async next=>{state.platform=next;await closeHostedApp
 async function boot(){
   try{
     state.registry=await loadRegistry();state.index=registryIndex(state.registry);
-    const first=state.registry.cards[0];if(first)state.cards=[{id:first.id,x:32,y:32,w:sizeFor(first).w}];
-    renderDock();renderLibrary();await renderDesktop();
+    const restored=pruneMissingCards(loadShellState(),state.index);
+    state.cards=restored.cards;
+    if(!state.cards.length){const first=state.registry.cards[0];if(first)state.cards=[{id:first.id,x:32,y:32,w:sizeFor(first).w}]}
+    persist();renderDock();renderLibrary();await renderDesktop();
   }catch(error){console.error(error);library.innerHTML='<p class="wd-empty">Card Registry 載入失敗</p>';}
 }
 boot();
