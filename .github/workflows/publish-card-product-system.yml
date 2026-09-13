@@ -24,7 +24,7 @@ jobs:
           import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="Html_tools/card-product-system-v1.js?v=20260913-card-product-system-v1.1-function-center"></script>'
+          tag='<script src="Html_tools/card-product-system-v1.js?v=20260913-card-product-system-v1.2-live-summary"></script>'
           s=re.sub(r'\n?<script src="Html_tools/card-product-system-v1\.js[^>]*></script>', '', s)
           marker='</body>'
           if marker not in s:
@@ -37,10 +37,10 @@ jobs:
           from pathlib import Path
           s=Path('index.html').read_text(encoding='utf-8')
           js=Path('Html_tools/card-product-system-v1.js').read_text(encoding='utf-8')
-          assert '20260913-card-product-system-v1.1-function-center' in s
+          assert '20260913-card-product-system-v1.2-live-summary' in s
           for key in ['typhoon','weather','image','text','table','json']:
               assert key in js
-          for marker in ['product-group-title','product-filter-row','data-card-tier','P0']:
+          for marker in ['product-group-title','product-filter-row','data-card-tier','P0','product-live-summary','liveSummary']:
               assert marker in js
       - name: Commit published entry
         run: |
@@ -48,6 +48,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Publish WebDesk function center v1.1 [skip-card-product-publish]"
+          git commit -m "Publish WebDesk live summary cards v1.2 [skip-card-product-publish]"
           git pull --rebase origin master
           git push origin master
