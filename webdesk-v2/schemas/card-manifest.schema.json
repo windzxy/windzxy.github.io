@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windzxy.github.io/webdesk-v2/schemas/card-manifest.schema.json",
+  "title": "WebDesk V2 Card Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id","version","schemaVersion","name","description","icon","category","kind","order","platforms","entry","defaultSize","capabilities","permissions"],
+  "properties": {
+    "id": {"type":"string","pattern":"^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "version": {"type":"string","minLength":1},
+    "schemaVersion": {"type":"integer","minimum":1},
+    "name": {"$ref":"#/$defs/localized"},
+    "description": {"$ref":"#/$defs/localized"},
+    "icon": {"type":"string","minLength":1},
+    "category": {"type":"string","minLength":1},
+    "kind": {"enum":["live","tool","studio","utility","widget","game"]},
+    "order": {"type":"integer","minimum":0},
+    "platforms": {
+      "type":"array",
+      "minItems":1,
+      "uniqueItems":true,
+      "items":{"enum":["desktop","tablet","mobile"]}
+    },
+    "entry": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["desktop","tablet","mobile"],
+      "properties": {
+        "shared":{"type":"string"},
+        "desktop":{"$ref":"#/$defs/platformEntry"},
+        "tablet":{"$ref":"#/$defs/platformEntry"},
+        "mobile":{"$ref":"#/$defs/platformEntry"}
+      }
+    },
+    "defaultSize": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["desktop","tablet","mobile"],
+      "properties": {
+        "desktop":{"$ref":"#/$defs/size"},
+        "tablet":{"$ref":"#/$defs/size"},
+        "mobile":{"$ref":"#/$defs/size"}
+      }
+    },
+    "capabilities":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "permissions":{"type":"array","uniqueItems":true,"items":{"type":"string"}}
+  },
+  "$defs": {
+    "localized": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["zh-CN","zh-HK"],
+      "properties": {
+        "zh-CN":{"type":"string","minLength":1},
+        "zh-HK":{"type":"string","minLength":1}
+      }
+    },
+    "platformEntry": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["card"],
+      "properties": {
+        "card":{"type":"string","pattern":"^\\./(?:desktop|tablet|mobile)/.+\\.js$"},
+        "cardStyle":{"type":"string"},
+        "app":{"type":"string"},
+        "appStyle":{"type":"string"}
+      }
+    },
+    "size": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["w","h"],
+      "properties": {
+        "w":{"type":"integer","minimum":1},
+        "h":{"type":"integer","minimum":1}
+      }
+    }
+  }
+}
