@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/ensure-typhoon-post-settle-stagger.yml'
       - 'Html_tools/global-weather-lazy-v1.js'
+      - 'Html_tools/typhoon-radar-v4-1.js'
       - 'Html_tools/typhoon-weather-layer-interaction-fix-v1.js'
       - 'Html_tools/typhoon-dynamic-city-labels-v1.js'
       - 'Html_tools/typhoon-zoom-motion-v2-1.js'
@@ -27,14 +28,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Verify post-settle and visibility-idle runtime stack
+      - name: Verify current post-settle and visibility-idle runtime stack
         run: |
           python - <<'PY'
           from pathlib import Path
 
           expected = {
               'Html_tools/global-weather-lazy-v1.js': [
-                  '20260912-global-weather-lazy-v3.2-raster-visibility-idle',
+                  '20260913-global-weather-lazy-v3.3-radar-visibility-idle',
+                  '20260913-typhoon-radar-v4.6-visibility-idle',
                   '20260912-typhoon-layer-interaction-v10-post-settle-stagger',
                   '20260912-typhoon-dynamic-city-labels-v2.1-visibility-idle',
                   '20260912-typhoon-zoom-motion-v2.5-visibility-idle',
@@ -42,6 +44,14 @@ jobs:
                   'post-settle-staggered-forecast-city-vector',
                   'visibility-idle',
                   'satellite-visibility-idle',
+                  'radar-visibility-idle',
+              ],
+              'Html_tools/typhoon-radar-v4-1.js': [
+                  '20260913-typhoon-radar-v4.6-visibility-idle',
+                  'sharedMotionCoordinator:true',
+                  'visibilityIdle:true',
+                  'offscreenPlaybackPause:true',
+                  'generationGuard:true',
               ],
               'Html_tools/typhoon-weather-layer-interaction-fix-v1.js': [
                   '20260912-typhoon-layer-interaction-v10-post-settle-stagger',
@@ -61,7 +71,7 @@ jobs:
                   'visibilityIdle',
               ],
               'index.html': [
-                  'Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v3.2-raster-visibility-idle',
+                  'Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle',
               ],
           }
 
@@ -74,10 +84,15 @@ jobs:
 
           forbidden = {
               'Html_tools/global-weather-lazy-v1.js': [
+                  '20260912-global-weather-lazy-v3.2-raster-visibility-idle',
                   '20260912-global-weather-lazy-v3.0-post-settle-stagger',
+                  '20260912-typhoon-radar-v4.5-overlay-motion',
                   '20260912-typhoon-dynamic-city-labels-v2.0-post-settle-stagger',
                   '20260912-typhoon-zoom-motion-v2.4-post-settle-stagger',
                   '20260912-typhoon-satellite-pan-v1.3',
+              ],
+              'index.html': [
+                  'Html_tools/global-weather-lazy-v1.js?v=20260912-global-weather-lazy-v3.2-raster-visibility-idle',
               ],
           }
           for path, markers in forbidden.items():
@@ -88,5 +103,5 @@ jobs:
 
           if failures:
               raise SystemExit('\n'.join(failures))
-          print('Post-settle + visibility-idle runtime stack verified; no legacy rewrite performed.')
+          print('Current WebDesk post-settle + visibility-idle runtime stack verified; no legacy rewrite performed.')
           PY
