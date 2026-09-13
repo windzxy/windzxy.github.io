@@ -1,23 +1,72 @@
-const APPS=[
-{id:'weather',title:'天氣',icon:'☁',group:'即時資訊',summary:'即時天氣與預報',live:'24°C · 多雲'},
-{id:'typhoon',title:'全球氣象',icon:'🌦️',group:'即時資訊',summary:'風場 / 雷達 / 衛星 / 颱風',live:'風場 · 雷達 · 衛星'},
-{id:'image',title:'圖片處理',icon:'◎',group:'生產力',summary:'裁切、去背景、壓縮、OCR'},
-{id:'text',title:'文字整理',icon:'Aa',group:'生產力',summary:'清理、統計、簡繁轉換'},
-{id:'table',title:'表格轉換',icon:'▦',group:'生產力',summary:'CSV / TSV / Markdown'},
-{id:'json',title:'JSON 工具',icon:'{}',group:'生產力',summary:'格式化、驗證、Path'},
-{id:'date',title:'日期計算',icon:'31',group:'實用工具',summary:'日期差與工作日'}
-];
-const state={cards:[
-{id:'typhoon',x:32,y:32,w:360},
-{id:'weather',x:420,y:32,w:330},
-{id:'image',x:32,y:230,w:330}
-]};
+import {loadRegistry,registryIndex} from '../core/registry.js';
+import {createPlatformResolver} from '../core/platform.js';
+import {mountCard,unmountCard,bindCardRecovery} from '../core/card-host.js';
+
 const $=s=>document.querySelector(s);
-const desktop=$('#desktop'),drawer=$('#drawer'),library=$('#toolLibrary');
-function app(id){return APPS.find(x=>x.id===id)}
-function cardTemplate(item){const a=app(item.id);return `<article class="wd-card" data-id="${a.id}" style="left:${item.x||0}px;top:${item.y||0}px;width:${item.w||320}px"><header class="wd-card-head"><div class="wd-card-title"><span class="wd-card-icon">${a.icon}</span><span>${a.title}</span></div><button data-remove="${a.id}" aria-label="移除">×</button></header><div class="wd-card-body"><div class="wd-live"><strong>${a.live||a.summary}</strong><small>${a.summary}</small></div><button class="wd-card-cta" data-open="${a.id}">打開 ${a.title}</button></div></article>`}
-function renderDesktop(){desktop.innerHTML=state.cards.map(cardTemplate).join('');bindCards()}
-function renderLibrary(q=''){const text=q.trim().toLowerCase();library.innerHTML=APPS.filter(a=>!text||`${a.title} ${a.summary} ${a.group}`.toLowerCase().includes(text)).map(a=>`<div class="wd-tool"><span class="wd-card-icon">${a.icon}</span><div><strong>${a.title}</strong><small style="display:block;color:#667085">${a.group} · ${a.summary}</small></div><button data-add="${a.id}">加入</button></div>`).join('');library.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{if(!state.cards.some(c=>c.id===b.dataset.add)){state.cards.push({id:b.dataset.add,x:40+state.cards.length*22,y:80+state.cards.length*22,w:330});renderDesktop()}drawer.classList.remove('open')})}
-function openWindow(id){const a=app(id);const layer=$('#windowLayer');layer.innerHTML=`<section class="wd-window" data-window="${id}"><header class="wd-window-head"><strong>${a.icon} ${a.title}</strong><button data-close-window>關閉</button></header><div class="wd-window-body"><h2>${a.title}</h2><p>${a.summary}</p><p>這裡是 V2 的 App 容器。後續會把現有功能逐一遷移進獨立模組，不再直接嵌在桌面卡片裡。</p></div></section>`;layer.querySelector('[data-close-window]').onclick=()=>layer.innerHTML=''}
-function bindCards(){desktop.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openWindow(b.dataset.open));desktop.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{state.cards=state.cards.filter(c=>c.id!==b.dataset.remove);renderDesktop()});if(innerWidth>820)desktop.querySelectorAll('.wd-card-head').forEach(head=>{head.onpointerdown=e=>{if(e.target.closest('button'))return;const card=head.closest('.wd-card'),item=state.cards.find(x=>x.id===card.dataset.id);const sx=e.clientX,sy=e.clientY,ox=item.x||0,oy=item.y||0;head.setPointerCapture(e.pointerId);const move=ev=>{item.x=Math.max(0,ox+ev.clientX-sx);item.y=Math.max(0,oy+ev.clientY-sy);card.style.left=item.x+'px';card.style.top=item.y+'px';desktop.style.minHeight=Math.max(innerHeight,item.y+card.offsetHeight+160)+'px'};const up=()=>{head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up)};head.addEventListener('pointermove',move);head.addEventListener('pointerup',up,{once:true})}})}
-document.addEventListener('click',e=>{const action=e.target.closest('[data-action]')?.dataset.action;if(action==='library')drawer.classList.add('open');if(action==='close-drawer')drawer.classList.remove('open');const id=e.target.closest('[data-app]')?.dataset.app;if(id)openWindow(id)});$('#toolSearch').addEventListener('input',e=>renderLibrary(e.target.value));addEventListener('resize',renderDesktop,{passive:true});renderLibrary();renderDesktop();
+const desktop=$('#desktop'),drawer=$('#drawer'),library=$('#toolLibrary'),dock=$('#quickDock');
+const state={cards:[],registry:null,index:new Map(),platform:null};
+const platformResolver=createPlatformResolver();
+state.platform=platformResolver.get();
+
+function title(card){return card?.name?.['zh-HK']||card?.name?.['zh-CN']||card?.id||'Card'}
+function description(card){return card?.description?.['zh-HK']||card?.description?.['zh-CN']||''}
+function sizeFor(card){return card?.defaultSize?.[state.platform.name]||{width:320,height:180}}
+function placed(id){return state.cards.some(x=>x.id===id)}
+
+function createHost(item,card){
+  const host=document.createElement('article');
+  const size=sizeFor(card);
+  host.className='wd-card';host.dataset.cardHost='1';host.dataset.id=card.id;host._manifest=card;
+  if(state.platform.name==='desktop'){
+    host.style.left=`${item.x||24}px`;host.style.top=`${item.y||24}px`;host.style.width=`${item.w||size.width}px`;host.style.minHeight=`${size.height}px`;
+  }
+  host.innerHTML=`<header class="wd-card-head"><div class="wd-card-title"><span class="wd-card-icon">${card.icon||'•'}</span><span>${title(card)}</span></div><button data-remove="${card.id}" aria-label="移除">×</button></header><div class="wd-card-mount" data-card-mount></div>`;
+  return host;
+}
+
+async function renderDesktop(){
+  const old=[...desktop.querySelectorAll('[data-card-host]')];
+  await Promise.all(old.map(unmountCard));
+  desktop.replaceChildren();
+  for(const item of state.cards){
+    const card=state.index.get(item.id);if(!card)continue;
+    const shell=createHost(item,card);desktop.appendChild(shell);
+    await mountCard(shell.querySelector('[data-card-mount]'),card,state.platform.name);
+  }
+  bindCards();
+}
+
+function renderLibrary(q=''){
+  const text=q.trim().toLowerCase();
+  const cards=(state.registry?.cards||[]).filter(card=>!text||`${title(card)} ${description(card)} ${card.category}`.toLowerCase().includes(text));
+  library.innerHTML=cards.length?cards.map(card=>`<div class="wd-tool"><span class="wd-card-icon">${card.icon||'•'}</span><div><strong>${title(card)}</strong><small>${card.category} · ${description(card)}</small></div><button data-add="${card.id}" ${placed(card.id)?'disabled':''}>${placed(card.id)?'已加入':'加入'}</button></div>`).join(''):'<p class="wd-empty">目前沒有可用卡片</p>';
+  library.querySelectorAll('[data-add]:not([disabled])').forEach(button=>button.onclick=()=>{const card=state.index.get(button.dataset.add);const size=sizeFor(card);state.cards.push({id:card.id,x:28+state.cards.length*26,y:34+state.cards.length*26,w:size.width});renderDesktop();renderLibrary($('#toolSearch').value);drawer.classList.remove('open')});
+}
+
+function renderDock(){
+  const cards=(state.registry?.cards||[]).slice(0,3);
+  dock.innerHTML=cards.map(card=>`<button data-quick-add="${card.id}" title="${title(card)}">${card.icon||'•'}</button>`).join('')+'<button data-action="library" title="功能中心">＋</button>';
+}
+
+function bindCards(){
+  desktop.querySelectorAll('[data-remove]').forEach(button=>button.onclick=()=>{state.cards=state.cards.filter(card=>card.id!==button.dataset.remove);renderDesktop();renderLibrary($('#toolSearch').value)});
+  if(state.platform.name!=='desktop')return;
+  desktop.querySelectorAll('.wd-card-head').forEach(head=>{head.onpointerdown=e=>{if(e.target.closest('button'))return;const shell=head.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id);const sx=e.clientX,sy=e.clientY,ox=item.x||0,oy=item.y||0;head.setPointerCapture(e.pointerId);const move=ev=>{item.x=Math.max(0,ox+ev.clientX-sx);item.y=Math.max(0,oy+ev.clientY-sy);shell.style.left=item.x+'px';shell.style.top=item.y+'px';desktop.style.minHeight=Math.max(innerHeight,item.y+shell.offsetHeight+160)+'px'};const up=()=>{head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up)};head.addEventListener('pointermove',move);head.addEventListener('pointerup',up,{once:true})}});
+}
+
+function openApp(id){const card=state.index.get(id);if(!card)return;$('#windowLayer').innerHTML=`<section class="wd-window"><header class="wd-window-head"><strong>${card.icon||'•'} ${title(card)}</strong><button data-close-window>關閉</button></header><div class="wd-window-body"><h2>${title(card)}</h2><p>${description(card)}</p><p>V2 App Host 尚在遷移中；Card 已使用獨立三端模組。</p></div></section>`;$('#windowLayer [data-close-window]').onclick=()=>$('#windowLayer').replaceChildren()}
+
+document.addEventListener('webdesk:open-app',e=>openApp(e.detail?.id));
+document.addEventListener('click',e=>{const action=e.target.closest('[data-action]')?.dataset.action;if(action==='library')drawer.classList.add('open');if(action==='close-drawer')drawer.classList.remove('open');const quick=e.target.closest('[data-quick-add]')?.dataset.quickAdd;if(quick&&!placed(quick)){const card=state.index.get(quick),size=sizeFor(card);state.cards.push({id:quick,x:32,y:32,w:size.width});renderDesktop();renderLibrary($('#toolSearch').value)}});
+$('#toolSearch').addEventListener('input',e=>renderLibrary(e.target.value));
+bindCardRecovery(document,()=>state.platform.name);
+platformResolver.subscribe(next=>{state.platform=next;renderDesktop();renderLibrary($('#toolSearch').value)});
+
+async function boot(){
+  try{
+    state.registry=await loadRegistry();state.index=registryIndex(state.registry);
+    const first=state.registry.cards[0];if(first)state.cards=[{id:first.id,x:32,y:32,w:sizeFor(first).width}];
+    renderDock();renderLibrary();await renderDesktop();
+  }catch(error){console.error(error);library.innerHTML='<p class="wd-empty">Card Registry 載入失敗</p>';}
+}
+boot();
