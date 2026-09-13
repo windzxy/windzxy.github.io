@@ -23,7 +23,7 @@ jobs:
           p=Path('index.html')
           page=p.read_text(encoding='utf-8')
           page=re.sub(r'\n?<script src="Html_tools/webdesk-mobile-responsive-v2\.js\?v=[^"]+"></script>','',page)
-          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260913-webdesk-mobile-responsive-v2.4-compact-mobile-cards"></script>'
+          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260913-webdesk-mobile-responsive-v2.5-inner-width-containment"></script>'
           page=page.replace('</body>',tag+'\n</body>',1)
           p.write_text(page,encoding='utf-8')
           PY
@@ -33,6 +33,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Load compact mobile card UI'
+          git commit -m 'Load mobile width containment runtime'
           git pull --rebase origin master
           git push
