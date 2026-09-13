@@ -1,0 +1,24 @@
+{
+  "id": "weather",
+  "version": "0.1.0",
+  "schemaVersion": 1,
+  "name": {"zh-CN": "天气", "zh-HK": "天氣"},
+  "description": {"zh-CN": "实时天气与预报", "zh-HK": "即時天氣與預報"},
+  "icon": "☁️",
+  "category": "live",
+  "kind": "live-card",
+  "order": 10,
+  "platforms": ["desktop", "tablet", "mobile"],
+  "capabilities": ["network"],
+  "permissions": [],
+  "defaultSize": {
+    "desktop": {"width": 360, "height": 220},
+    "tablet": {"width": 420, "height": 210},
+    "mobile": {"width": 320, "height": 180}
+  },
+  "entry": {
+    "desktop": {"card": "desktop/card.js", "cardStyle": "desktop/card.css"},
+    "tablet": {"card": "tablet/card.js", "cardStyle": "tablet/card.css"},
+    "mobile": {"card": "mobile/card.js", "cardStyle": "mobile/card.css"}
+  }
+}
