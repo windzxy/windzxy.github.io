@@ -35,6 +35,7 @@
     "defaultSize": {"$ref":"#/$defs/platformSizes"},
     "minSize": {"$ref":"#/$defs/platformSizes"},
     "maxSize": {"$ref":"#/$defs/platformSizes"},
+    "sizeTiers": {"$ref":"#/$defs/platformTiers"},
     "capabilities":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
     "permissions":{"type":"array","uniqueItems":true,"items":{"type":"string"}}
   },
@@ -53,6 +54,14 @@
     "platformSizes": {
       "type":"object","additionalProperties":false,"required":["desktop","tablet","mobile"],
       "properties":{"desktop":{"$ref":"#/$defs/size"},"tablet":{"$ref":"#/$defs/size"},"mobile":{"$ref":"#/$defs/size"}}
+    },
+    "platformTiers": {
+      "type":"object","additionalProperties":false,"required":["desktop","tablet","mobile"],
+      "properties":{"desktop":{"$ref":"#/$defs/tiers"},"tablet":{"$ref":"#/$defs/tiers"},"mobile":{"$ref":"#/$defs/tiers"}}
+    },
+    "tiers": {
+      "type":"object","additionalProperties":false,"required":["mini","compact","standard","large"],
+      "properties":{"mini":{"$ref":"#/$defs/size"},"compact":{"$ref":"#/$defs/size"},"standard":{"$ref":"#/$defs/size"},"large":{"$ref":"#/$defs/size"}}
     },
     "size": {
       "type":"object","additionalProperties":false,"required":["w","h"],
