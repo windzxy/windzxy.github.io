@@ -1,6 +1,6 @@
 {
   "id": "weather",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "schemaVersion": 1,
   "name": {"zh-CN": "天气", "zh-HK": "天氣"},
   "description": {"zh-CN": "三端独立设计的实时天气卡片与预报。", "zh-HK": "三端獨立設計的即時天氣卡片與預報。"},
@@ -15,6 +15,16 @@
     "desktop": {"w": 430, "h": 310},
     "tablet": {"w": 520, "h": 270},
     "mobile": {"w": 360, "h": 190}
+  },
+  "minSize": {
+    "desktop": {"w": 330, "h": 230},
+    "tablet": {"w": 420, "h": 230},
+    "mobile": {"w": 320, "h": 170}
+  },
+  "maxSize": {
+    "desktop": {"w": 760, "h": 620},
+    "tablet": {"w": 720, "h": 560},
+    "mobile": {"w": 430, "h": 520}
   },
   "entry": {
     "shared": "./shared/weather-service.js",
