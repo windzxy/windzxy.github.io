@@ -1,6 +1,6 @@
 {
   "id": "weather",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "schemaVersion": 1,
   "name": {"zh-CN": "天气", "zh-HK": "天氣"},
   "description": {"zh-CN": "实时天气与预报", "zh-HK": "即時天氣與預報"},
