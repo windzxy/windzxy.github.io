@@ -24,7 +24,7 @@ jobs:
           import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="Html_tools/card-product-system-v1.js?v=20260913-card-product-system-v1.0"></script>'
+          tag='<script src="Html_tools/card-product-system-v1.js?v=20260913-card-product-system-v1.1-function-center"></script>'
           s=re.sub(r'\n?<script src="Html_tools/card-product-system-v1\.js[^>]*></script>', '', s)
           marker='</body>'
           if marker not in s:
@@ -37,16 +37,17 @@ jobs:
           from pathlib import Path
           s=Path('index.html').read_text(encoding='utf-8')
           js=Path('Html_tools/card-product-system-v1.js').read_text(encoding='utf-8')
-          assert '20260913-card-product-system-v1.0' in s
+          assert '20260913-card-product-system-v1.1-function-center' in s
           for key in ['typhoon','weather','image','text','table','json']:
               assert key in js
-          assert 'product-group-title' in js
+          for marker in ['product-group-title','product-filter-row','data-card-tier','P0']:
+              assert marker in js
       - name: Commit published entry
         run: |
           if git diff --quiet -- index.html; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Publish WebDesk product card hierarchy [skip-card-product-publish]"
+          git commit -m "Publish WebDesk function center v1.1 [skip-card-product-publish]"
           git pull --rebase origin master
           git push origin master
