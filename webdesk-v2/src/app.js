@@ -3,95 +3,12 @@ import {createPlatformResolver} from '../core/platform.js';
 import {mountCard,unmountCard,bindCardRecovery} from '../core/card-host.js';
 import {openApp as openHostedApp,closeApp as closeHostedApp} from '../core/app-host.js';
 import {loadShellState,saveShellState,pruneMissingCards} from '../core/storage.js';
-
-const $=s=>document.querySelector(s);
-const desktop=$('#desktop'),drawer=$('#drawer'),library=$('#toolLibrary'),dock=$('#quickDock'),windowLayer=$('#windowLayer');
-const state={cards:[],registry:null,index:new Map(),platform:null};
-const platformResolver=createPlatformResolver();
-state.platform=platformResolver.get();
-
-function title(card){return card?.name?.['zh-HK']||card?.name?.['zh-CN']||card?.id||'Card'}
-function description(card){return card?.description?.['zh-HK']||card?.description?.['zh-CN']||''}
-function sizeFor(card){return card?.defaultSize?.[state.platform.name]||{w:320,h:180}}
-function boundsFor(card){
-  const platform=state.platform.name,base=sizeFor(card);
-  const min=card?.minSize?.[platform]||{w:Math.max(280,Math.round(base.w*.68)),h:Math.max(170,Math.round(base.h*.62))};
-  const max=card?.maxSize?.[platform]||{w:960,h:900};
-  return {min,max};
-}
-function clamp(value,min,max){return Math.min(max,Math.max(min,value))}
-function placed(id){return state.cards.some(x=>x.id===id)}
-function persist(){saveShellState({cards:state.cards})}
-
-function createHost(item,card){
-  const host=document.createElement('article');
-  const size=sizeFor(card),bounds=boundsFor(card);
-  host.className='wd-card';host.dataset.cardHost='1';host.dataset.id=card.id;
-  if(state.platform.name==='desktop'){
-    const width=clamp(item.w||size.w,bounds.min.w,bounds.max.w);
-    const height=item.h?clamp(item.h,bounds.min.h,bounds.max.h):null;
-    item.w=Math.round(width);if(height)item.h=Math.round(height);
-    host.style.left=`${item.x||24}px`;host.style.top=`${item.y||24}px`;host.style.width=`${width}px`;host.style.minWidth=`${bounds.min.w}px`;host.style.minHeight=`${bounds.min.h}px`;host.style.maxWidth=`${bounds.max.w}px`;host.style.maxHeight=`${bounds.max.h}px`;
-    if(height){host.style.height=`${height}px`;host.dataset.userSized='1'}
-  }
-  host.innerHTML=`<header class="wd-card-head"><div class="wd-card-title"><span class="wd-card-icon">${card.icon||'•'}</span><span>${title(card)}</span></div><button data-remove="${card.id}" aria-label="移除">×</button></header><div class="wd-card-mount" data-card-mount></div>${state.platform.name==='desktop'?'<div class="wd-card-resize" data-resize-card role="button" aria-label="調整卡片大小" tabindex="0"></div>':''}`;
-  const mount=host.querySelector('[data-card-mount]');mount._manifest=card;
-  return host;
-}
-
-async function renderDesktop(){
-  const old=[...desktop.querySelectorAll('[data-card-mount]')];
-  await Promise.all(old.map(unmountCard));
-  desktop.replaceChildren();
-  for(const item of state.cards){
-    const card=state.index.get(item.id);if(!card)continue;
-    const shell=createHost(item,card);desktop.appendChild(shell);
-    await mountCard(shell.querySelector('[data-card-mount]'),card,state.platform.name);
-  }
-  bindCards();
-}
-
-function addCard(card){
-  if(!card||placed(card.id))return;
-  const size=sizeFor(card);
-  state.cards.push({id:card.id,x:28+state.cards.length*26,y:34+state.cards.length*26,w:size.w});
-  persist();
-}
-
-function renderLibrary(q=''){
-  const text=q.trim().toLowerCase();
-  const cards=(state.registry?.cards||[]).filter(card=>!text||`${title(card)} ${description(card)} ${card.category}`.toLowerCase().includes(text));
-  library.innerHTML=cards.length?cards.map(card=>`<div class="wd-tool"><span class="wd-card-icon">${card.icon||'•'}</span><div><strong>${title(card)}</strong><small>${card.category} · ${description(card)}</small></div><button data-add="${card.id}" ${placed(card.id)?'disabled':''}>${placed(card.id)?'已加入':'加入'}</button></div>`).join(''):'<p class="wd-empty">目前沒有可用卡片</p>';
-  library.querySelectorAll('[data-add]:not([disabled])').forEach(button=>button.onclick=()=>{const card=state.index.get(button.dataset.add);addCard(card);renderDesktop();renderLibrary($('#toolSearch').value);drawer.classList.remove('open')});
-}
-
-function renderDock(){
-  const cards=(state.registry?.cards||[]).slice(0,3);
-  dock.innerHTML=cards.map(card=>`<button data-quick-add="${card.id}" title="${title(card)}">${card.icon||'•'}</button>`).join('')+'<button data-action="library" title="功能中心">＋</button>';
-}
-
-function bindCards(){
-  desktop.querySelectorAll('[data-remove]').forEach(button=>button.onclick=()=>{state.cards=state.cards.filter(card=>card.id!==button.dataset.remove);persist();renderDesktop();renderLibrary($('#toolSearch').value)});
-  if(state.platform.name!=='desktop')return;
-  desktop.querySelectorAll('.wd-card-head').forEach(head=>{head.onpointerdown=e=>{if(e.target.closest('button'))return;const shell=head.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id);const sx=e.clientX,sy=e.clientY,ox=item.x||0,oy=item.y||0;head.setPointerCapture(e.pointerId);const move=ev=>{item.x=Math.max(0,ox+ev.clientX-sx);item.y=Math.max(0,oy+ev.clientY-sy);shell.style.left=item.x+'px';shell.style.top=item.y+'px';desktop.style.minHeight=Math.max(innerHeight,item.y+shell.offsetHeight+160)+'px'};const up=()=>{persist();head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up)};head.addEventListener('pointermove',move);head.addEventListener('pointerup',up,{once:true})}});
-  desktop.querySelectorAll('[data-resize-card]').forEach(handle=>{handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();const shell=handle.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id),card=state.index.get(shell.dataset.id),bounds=boundsFor(card);const sx=e.clientX,sy=e.clientY,sw=shell.offsetWidth,sh=shell.offsetHeight;handle.setPointerCapture(e.pointerId);shell.dataset.userSized='1';const move=ev=>{const workspaceMaxW=Math.max(bounds.min.w,desktop.clientWidth-(item.x||0)-24);const maxW=Math.min(bounds.max.w,workspaceMaxW);item.w=Math.round(clamp(sw+ev.clientX-sx,bounds.min.w,maxW));item.h=Math.round(clamp(sh+ev.clientY-sy,bounds.min.h,bounds.max.h));shell.style.width=item.w+'px';shell.style.height=item.h+'px';desktop.style.minHeight=Math.max(innerHeight,(item.y||0)+item.h+160)+'px'};const up=()=>{persist();handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',up)};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',up,{once:true})}});
-}
-
-async function openApp(id){const card=state.index.get(id);if(!card)return;try{await openHostedApp(windowLayer,card,state.platform.name)}catch(error){console.error('[WebDesk V2 app]',error)}}
-
-document.addEventListener('webdesk:open-app',e=>openApp(e.detail?.id));
-document.addEventListener('click',e=>{const action=e.target.closest('[data-action]')?.dataset.action;if(action==='library')drawer.classList.add('open');if(action==='close-drawer')drawer.classList.remove('open');const quick=e.target.closest('[data-quick-add]')?.dataset.quickAdd;if(quick&&!placed(quick)){const card=state.index.get(quick);addCard(card);renderDesktop();renderLibrary($('#toolSearch').value)}});
-$('#toolSearch').addEventListener('input',e=>renderLibrary(e.target.value));
-bindCardRecovery(document,()=>state.platform.name);
-platformResolver.subscribe(async next=>{state.platform=next;await closeHostedApp(windowLayer);renderDesktop();renderLibrary($('#toolSearch').value)});
-
-async function boot(){
-  try{
-    state.registry=await loadRegistry();state.index=registryIndex(state.registry);
-    const restored=pruneMissingCards(loadShellState(),state.index);
-    state.cards=restored.cards;
-    if(!state.cards.length){const first=state.registry.cards[0];if(first)state.cards=[{id:first.id,x:32,y:32,w:sizeFor(first).w}]}
-    persist();renderDock();renderLibrary();await renderDesktop();
-  }catch(error){console.error(error);library.innerHTML='<p class="wd-empty">Card Registry 載入失敗</p>';}
-}
-boot();
+const $=s=>document.querySelector(s),desktop=$('#desktop'),drawer=$('#drawer'),library=$('#toolLibrary'),dock=$('#quickDock'),windowLayer=$('#windowLayer');const state={cards:[],registry:null,index:new Map(),platform:null},platformResolver=createPlatformResolver();state.platform=platformResolver.get();
+function title(c){return c?.name?.['zh-HK']||c?.name?.['zh-CN']||c?.id||'Card'}function description(c){return c?.description?.['zh-HK']||c?.description?.['zh-CN']||''}function sizeFor(c){return c?.defaultSize?.[state.platform.name]||{w:320,h:180}}function boundsFor(c){const p=state.platform.name,b=sizeFor(c),min=c?.minSize?.[p]||{w:Math.max(280,Math.round(b.w*.68)),h:Math.max(170,Math.round(b.h*.62))},max=c?.maxSize?.[p]||{w:960,h:900};return{min,max}}function clamp(v,min,max){return Math.min(max,Math.max(min,v))}function placed(id){return state.cards.some(x=>x.id===id)}function persist(){saveShellState({cards:state.cards})}
+function createHost(item,card){const host=document.createElement('article'),size=sizeFor(card),bounds=boundsFor(card);host.className='wd-card';host.dataset.cardHost='1';host.dataset.id=card.id;if(state.platform.name==='desktop'){const width=clamp(item.w||size.w,bounds.min.w,bounds.max.w),height=item.h?clamp(item.h,bounds.min.h,bounds.max.h):null;item.w=Math.round(width);if(height)item.h=Math.round(height);Object.assign(host.style,{left:`${item.x||24}px`,top:`${item.y||24}px`,width:`${width}px`,minWidth:`${bounds.min.w}px`,minHeight:`${bounds.min.h}px`,maxWidth:`${bounds.max.w}px`,maxHeight:`${bounds.max.h}px`});if(height){host.style.height=`${height}px`;host.dataset.userSized='1'}}host.innerHTML=`<header class="wd-card-head"><div class="wd-card-title"><span class="wd-card-icon">${card.icon||'•'}</span><span>${title(card)}</span></div><button data-remove="${card.id}" aria-label="移除">×</button></header><div class="wd-card-mount" data-card-mount></div>${state.platform.name==='desktop'?'<div class="wd-card-resize" data-resize-card role="button" aria-label="調整卡片大小" tabindex="0"></div>':''}`;host.querySelector('[data-card-mount]')._manifest=card;return host}
+async function renderDesktop(){await Promise.all([...desktop.querySelectorAll('[data-card-mount]')].map(unmountCard));desktop.replaceChildren();for(const item of state.cards){const card=state.index.get(item.id);if(!card)continue;const shell=createHost(item,card);desktop.appendChild(shell);await mountCard(shell.querySelector('[data-card-mount]'),card,state.platform.name)}bindCards()}
+function addCard(card){if(!card||placed(card.id))return;const size=sizeFor(card);state.cards.push({id:card.id,x:28+state.cards.length*26,y:34+state.cards.length*26,w:size.w});persist()}
+function renderLibrary(q=''){const text=q.trim().toLowerCase(),cards=(state.registry?.cards||[]).filter(c=>!text||`${title(c)} ${description(c)} ${c.category}`.toLowerCase().includes(text));library.innerHTML=cards.length?cards.map(c=>`<div class="wd-tool"><span class="wd-card-icon">${c.icon||'•'}</span><div><strong>${title(c)}</strong><small>${description(c)}</small></div><button data-add="${c.id}" ${placed(c.id)?'disabled':''} aria-label="${placed(c.id)?'已加入':'加入'} ${title(c)}">${placed(c.id)?'✓':'＋'}</button></div>`).join(''):'<p class="wd-empty">沒有結果</p>';library.querySelectorAll('[data-add]:not([disabled])').forEach(b=>b.onclick=()=>{const c=state.index.get(b.dataset.add);addCard(c);renderDesktop();renderLibrary($('#toolSearch').value);drawer.classList.remove('open')})}
+function renderDock(){const cards=(state.registry?.cards||[]).slice(0,3);dock.innerHTML=cards.map(c=>`<button data-quick-add="${c.id}" title="${title(c)}">${c.icon||'•'}</button>`).join('')+'<button data-action="library" title="功能中心">＋</button>'}
+function bindCards(){desktop.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{state.cards=state.cards.filter(c=>c.id!==b.dataset.remove);persist();renderDesktop();renderLibrary($('#toolSearch').value)});if(state.platform.name!=='desktop')return;desktop.querySelectorAll('.wd-card-head').forEach(head=>{head.onpointerdown=e=>{if(e.target.closest('button'))return;const shell=head.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id),sx=e.clientX,sy=e.clientY,ox=item.x||0,oy=item.y||0;head.setPointerCapture(e.pointerId);const move=ev=>{item.x=Math.max(0,ox+ev.clientX-sx);item.y=Math.max(0,oy+ev.clientY-sy);shell.style.left=item.x+'px';shell.style.top=item.y+'px';desktop.style.minHeight=Math.max(innerHeight,item.y+shell.offsetHeight+160)+'px'},up=()=>{persist();head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up)};head.addEventListener('pointermove',move);head.addEventListener('pointerup',up,{once:true})}});desktop.querySelectorAll('[data-resize-card]').forEach(handle=>{handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();const shell=handle.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id),card=state.index.get(shell.dataset.id),bounds=boundsFor(card),sx=e.clientX,sy=e.clientY,sw=shell.offsetWidth,sh=shell.offsetHeight;handle.setPointerCapture(e.pointerId);shell.dataset.userSized='1';const move=ev=>{const maxW=Math.min(bounds.max.w,Math.max(bounds.min.w,desktop.clientWidth-(item.x||0)-24));item.w=Math.round(clamp(sw+ev.clientX-sx,bounds.min.w,maxW));item.h=Math.round(clamp(sh+ev.clientY-sy,bounds.min.h,bounds.max.h));shell.style.width=item.w+'px';shell.style.height=item.h+'px';desktop.style.minHeight=Math.max(innerHeight,(item.y||0)+item.h+160)+'px'},up=()=>{persist();handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',up)};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',up,{once:true})}})}
+async function openApp(id){const card=state.index.get(id);if(!card)return;try{await openHostedApp(windowLayer,card,state.platform.name)}catch(e){console.error('[WebDesk V2 app]',e)}}document.addEventListener('webdesk:open-app',e=>openApp(e.detail?.id));document.addEventListener('click',e=>{const a=e.target.closest('[data-action]')?.dataset.action;if(a==='library')drawer.classList.add('open');if(a==='close-drawer')drawer.classList.remove('open');const quick=e.target.closest('[data-quick-add]')?.dataset.quickAdd;if(quick&&!placed(quick)){addCard(state.index.get(quick));renderDesktop();renderLibrary($('#toolSearch').value)}});$('#toolSearch').addEventListener('input',e=>renderLibrary(e.target.value));bindCardRecovery(document,()=>state.platform.name);platformResolver.subscribe(async next=>{state.platform=next;await closeHostedApp(windowLayer);renderDesktop();renderLibrary($('#toolSearch').value)});async function boot(){try{state.registry=await loadRegistry();state.index=registryIndex(state.registry);state.cards=pruneMissingCards(loadShellState(),state.index).cards;if(!state.cards.length){const first=state.registry.cards[0];if(first)state.cards=[{id:first.id,x:32,y:32,w:sizeFor(first).w}]}persist();renderDock();renderLibrary();await renderDesktop()}catch(e){console.error(e);library.innerHTML='<p class="wd-empty">載入失敗</p>'}}boot();
