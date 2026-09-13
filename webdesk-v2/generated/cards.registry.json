@@ -1,11 +1,61 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T13:53:42.357Z",
-  "cards": [],
-  "errors": [
+  "generatedAt": "2026-09-13T13:54:42.854Z",
+  "cards": [
     {
-      "folder": "weather",
-      "error": "weather: invalid kind"
+      "id": "weather",
+      "version": "0.1.1",
+      "schemaVersion": 1,
+      "name": {
+        "zh-CN": "天气",
+        "zh-HK": "天氣"
+      },
+      "description": {
+        "zh-CN": "实时天气与预报",
+        "zh-HK": "即時天氣與預報"
+      },
+      "icon": "☁️",
+      "category": "live",
+      "kind": "live",
+      "order": 10,
+      "platforms": [
+        "desktop",
+        "tablet",
+        "mobile"
+      ],
+      "capabilities": [
+        "network"
+      ],
+      "permissions": [],
+      "defaultSize": {
+        "desktop": {
+          "w": 360,
+          "h": 220
+        },
+        "tablet": {
+          "w": 420,
+          "h": 210
+        },
+        "mobile": {
+          "w": 320,
+          "h": 180
+        }
+      },
+      "entry": {
+        "desktop": {
+          "card": "./desktop/card.js",
+          "cardStyle": "./desktop/card.css"
+        },
+        "tablet": {
+          "card": "./tablet/card.js",
+          "cardStyle": "./tablet/card.css"
+        },
+        "mobile": {
+          "card": "./mobile/card.js",
+          "cardStyle": "./mobile/card.css"
+        }
+      }
     }
-  ]
+  ],
+  "errors": []
 }
