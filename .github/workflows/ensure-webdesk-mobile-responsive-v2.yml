@@ -15,37 +15,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Keep mobile responsive runtime efficient and loaded
+      - name: Keep mobile responsive runtime loaded
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          runtime=Path('Html_tools/webdesk-mobile-responsive-v2.js')
-          s=runtime.read_text(encoding='utf-8')
-          old_version="const VERSION='20260912-webdesk-mobile-responsive-v2.2-swipe-cards';"
-          new_version="const VERSION='20260912-webdesk-mobile-responsive-v2.3-targeted-card-observer';"
-          if old_version in s:
-              s=s.replace(old_version,new_version,1)
-          old="function boot(){\n  installStyle();installFab();bindSwipe();syncCards();\n  new MutationObserver(()=>{bindSwipe();syncCards()}).observe(document.body,{childList:true,subtree:true});\n  window.addEventListener('resize',()=>{if(innerWidth<=820)syncCards();else leaveMobile()});\n  window.addEventListener('orientationchange',()=>setTimeout(syncCards,100));\n}"
-          new="let syncFrame=0,resizeTimer=0;\nfunction scheduleSync(){\n  if(syncFrame)return;\n  syncFrame=requestAnimationFrame(()=>{syncFrame=0;bindSwipe();syncCards()});\n}\nfunction boot(){\n  installStyle();installFab();bindSwipe();syncCards();\n  const canvas=document.getElementById('desktopCanvas');\n  if(canvas){\n    new MutationObserver(records=>{\n      if(records.some(r=>r.type==='childList'&&(r.addedNodes.length||r.removedNodes.length)))scheduleSync();\n    }).observe(canvas,{childList:true,subtree:false});\n  }\n  window.addEventListener('resize',()=>{\n    clearTimeout(resizeTimer);\n    resizeTimer=setTimeout(()=>{if(innerWidth<=820)scheduleSync();else leaveMobile()},120);\n  },{passive:true});\n  window.addEventListener('orientationchange',()=>setTimeout(scheduleSync,140),{passive:true});\n}"
-          if old in s:
-              s=s.replace(old,new,1)
-          elif 'targeted-card-observer' not in s or 'subtree:false' not in s:
-              raise SystemExit('Unexpected mobile runtime; refusing unsafe patch')
-          runtime.write_text(s,encoding='utf-8')
           p=Path('index.html')
           page=p.read_text(encoding='utf-8')
           page=re.sub(r'\n?<script src="Html_tools/webdesk-mobile-responsive-v2\.js\?v=[^"]+"></script>','',page)
-          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260912-webdesk-mobile-responsive-v2.3-targeted-card-observer"></script>'
+          tag='<script src="Html_tools/webdesk-mobile-responsive-v2.js?v=20260913-webdesk-mobile-responsive-v2.4-compact-mobile-cards"></script>'
           page=page.replace('</body>',tag+'\n</body>',1)
           p.write_text(page,encoding='utf-8')
           PY
-      - name: Commit runtime and loader
+      - name: Commit loader
         run: |
-          if git diff --quiet -- Html_tools/webdesk-mobile-responsive-v2.js index.html; then exit 0; fi
+          if git diff --quiet -- index.html; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Html_tools/webdesk-mobile-responsive-v2.js index.html
-          git commit -m 'Reduce WebDesk mobile card observer overhead'
+          git add index.html
+          git commit -m 'Load compact mobile card UI'
           git pull --rebase origin master
           git push
