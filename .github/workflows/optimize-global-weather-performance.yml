@@ -1,0 +1,89 @@
+name: Optimize Global Weather Performance
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/optimize-global-weather-performance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    if: ${{ !contains(github.event.head_commit.message || '', '[skip-weather-perf]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reduce Global Weather main-thread work
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          remount = Path('Html_tools/typhoon-weather-p0-remount.js')
+          s = remount.read_text(encoding='utf-8')
+          old_ver = "const VER='20260909-typhoon-weather-p0-remount-v9-grouped-controller';"
+          new_ver = "const VER='20260913-typhoon-weather-p0-remount-v9.1-mutation-light';"
+          if old_ver in s:
+              s = s.replace(old_ver, new_ver, 1)
+          old_boot = "function boot(){ensureStyle();cleanupStale();scan();const host=document.getElementById('windowLayer')||document.body;new MutationObserver(ms=>{for(const m of ms){if(m.target?.nodeType===1){scan(m.target);const r=m.target.closest?.('[data-typhoon-root]');if(r)hideLegacy(r)}for(const n of m.addedNodes)if(n.nodeType===1){scan(n);const r=n.closest?.('[data-typhoon-root]');if(r)hideLegacy(r)}}}).observe(host,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']});setInterval(refresh,1600);addEventListener('resize',refresh,{passive:true});window.WebDeskTyphoonWeatherP0={version:'v9',runtimeRemount:true,singleController:true,anchoredController:true,groupedLiveForecast:true,freshnessStatus:true,legacyUiHardHidden:true,noNativeClickBridge:true}}"
+          new_boot = "function boot(){ensureStyle();cleanupStale();scan();const host=document.getElementById('windowLayer')||document.body;new MutationObserver(ms=>{let removed=false;for(const m of ms){for(const n of m.addedNodes){if(n.nodeType!==1)continue;if(n.matches?.('[data-typhoon-root]'))ensure(n);n.querySelectorAll?.('[data-typhoon-root]').forEach(ensure)}if(m.removedNodes?.length)removed=true}if(removed)cleanupStale()}).observe(host,{childList:true,subtree:true});setInterval(()=>{if(!document.hidden)refresh()},5000);let resizeRaf=0;addEventListener('resize',()=>{if(resizeRaf)return;resizeRaf=requestAnimationFrame(()=>{resizeRaf=0;refresh()})},{passive:true});window.WebDeskTyphoonWeatherP0={version:'v9.1',runtimeRemount:true,singleController:true,anchoredController:true,groupedLiveForecast:true,freshnessStatus:true,legacyUiHardHidden:true,noNativeClickBridge:true,mutationLight:true,leafletAttributeObserver:false}}"
+          if old_boot not in s:
+              raise SystemExit('P0 remount boot marker not found')
+          s = s.replace(old_boot, new_boot, 1)
+          s = s.replace("p0-remount-v9-'+now", "p0-remount-v9.1-'+now", 1)
+          remount.write_text(s, encoding='utf-8')
+
+          vector = Path('Html_tools/typhoon-zoom-motion-v2-1.js')
+          v = vector.read_text(encoding='utf-8')
+          old_motion = "else if(s.canvas)s.canvas.classList.add('is-moving')"
+          new_motion = "else if(s.canvas){s.canvas.classList.add('is-moving');if(s.raf){cancelAnimationFrame(s.raf);s.raf=0}}"
+          if old_motion not in v:
+              raise SystemExit('Vector motion-start marker not found')
+          v = v.replace(old_motion, new_motion, 1)
+          old_export = "postSettleStagger:true,visibilityIdle:true};"
+          new_export = "postSettleStagger:true,visibilityIdle:true,pauseVectorDuringMapMotion:true};"
+          if old_export in v:
+              v = v.replace(old_export, new_export, 1)
+          vector.write_text(v, encoding='utf-8')
+
+          loader = Path('Html_tools/global-weather-lazy-v1.js')
+          l = loader.read_text(encoding='utf-8')
+          old_load = "s.src=src+'?v='+v;"
+          new_load = "s.src=src+'?v='+v+((src.includes('typhoon-weather-p0-remount.js')||src.includes('typhoon-zoom-motion-v2-1.js'))?'&perf=20260913-mainthread1':'');"
+          if old_load not in l:
+              raise SystemExit('Global Weather lazy load marker not found')
+          l = l.replace(old_load, new_load, 1)
+          loader.write_text(l, encoding='utf-8')
+
+          index = Path('index.html')
+          i = index.read_text(encoding='utf-8')
+          old_index = 'Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle"'
+          new_index = 'Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle&perf=20260913-mainthread1"'
+          if old_index in i:
+              i = i.replace(old_index, new_index, 1)
+          elif new_index not in i:
+              raise SystemExit('Global Weather loader tag marker not found')
+          index.write_text(i, encoding='utf-8')
+          PY
+      - name: Verify performance markers
+        run: |
+          grep -q "mutationLight:true" Html_tools/typhoon-weather-p0-remount.js
+          grep -q "leafletAttributeObserver:false" Html_tools/typhoon-weather-p0-remount.js
+          grep -q "pauseVectorDuringMapMotion:true" Html_tools/typhoon-zoom-motion-v2-1.js
+          grep -q "perf=20260913-mainthread1" Html_tools/global-weather-lazy-v1.js
+          grep -q "perf=20260913-mainthread1" index.html
+      - name: Commit performance fix
+        run: |
+          if git diff --quiet -- Html_tools/typhoon-weather-p0-remount.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js index.html; then
+            echo "Performance fix already present"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Html_tools/typhoon-weather-p0-remount.js Html_tools/typhoon-zoom-motion-v2-1.js Html_tools/global-weather-lazy-v1.js index.html
+          git commit -m "Reduce Global Weather interaction jank [skip-weather-perf]"
+          git push
