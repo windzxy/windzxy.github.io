@@ -15,16 +15,9 @@
     "category": {"type":"string","minLength":1},
     "kind": {"enum":["live","tool","studio","utility","widget","game"]},
     "order": {"type":"integer","minimum":0},
-    "platforms": {
-      "type":"array",
-      "minItems":1,
-      "uniqueItems":true,
-      "items":{"enum":["desktop","tablet","mobile"]}
-    },
+    "platforms": {"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["desktop","tablet","mobile"]}},
     "entry": {
-      "type":"object",
-      "additionalProperties":false,
-      "required":["desktop","tablet","mobile"],
+      "type":"object","additionalProperties":false,"required":["desktop","tablet","mobile"],
       "properties": {
         "shared":{"type":"string"},
         "desktop":{"$ref":"#/$defs/platformEntry"},
@@ -32,48 +25,31 @@
         "mobile":{"$ref":"#/$defs/platformEntry"}
       }
     },
-    "defaultSize": {
-      "type":"object",
-      "additionalProperties":false,
-      "required":["desktop","tablet","mobile"],
-      "properties": {
-        "desktop":{"$ref":"#/$defs/size"},
-        "tablet":{"$ref":"#/$defs/size"},
-        "mobile":{"$ref":"#/$defs/size"}
-      }
-    },
+    "defaultSize": {"$ref":"#/$defs/platformSizes"},
+    "minSize": {"$ref":"#/$defs/platformSizes"},
+    "maxSize": {"$ref":"#/$defs/platformSizes"},
     "capabilities":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
     "permissions":{"type":"array","uniqueItems":true,"items":{"type":"string"}}
   },
   "$defs": {
     "localized": {
-      "type":"object",
-      "additionalProperties":false,
-      "required":["zh-CN","zh-HK"],
-      "properties": {
-        "zh-CN":{"type":"string","minLength":1},
-        "zh-HK":{"type":"string","minLength":1}
-      }
+      "type":"object","additionalProperties":false,"required":["zh-CN","zh-HK"],
+      "properties":{"zh-CN":{"type":"string","minLength":1},"zh-HK":{"type":"string","minLength":1}}
     },
     "platformEntry": {
-      "type":"object",
-      "additionalProperties":false,
-      "required":["card"],
+      "type":"object","additionalProperties":false,"required":["card"],
       "properties": {
         "card":{"type":"string","pattern":"^\\./(?:desktop|tablet|mobile)/.+\\.js$"},
-        "cardStyle":{"type":"string"},
-        "app":{"type":"string"},
-        "appStyle":{"type":"string"}
+        "cardStyle":{"type":"string"},"app":{"type":"string"},"appStyle":{"type":"string"}
       }
     },
+    "platformSizes": {
+      "type":"object","additionalProperties":false,"required":["desktop","tablet","mobile"],
+      "properties":{"desktop":{"$ref":"#/$defs/size"},"tablet":{"$ref":"#/$defs/size"},"mobile":{"$ref":"#/$defs/size"}}
+    },
     "size": {
-      "type":"object",
-      "additionalProperties":false,
-      "required":["w","h"],
-      "properties": {
-        "w":{"type":"integer","minimum":1},
-        "h":{"type":"integer","minimum":1}
-      }
+      "type":"object","additionalProperties":false,"required":["w","h"],
+      "properties":{"w":{"type":"integer","minimum":1},"h":{"type":"integer","minimum":1}}
     }
   }
 }
