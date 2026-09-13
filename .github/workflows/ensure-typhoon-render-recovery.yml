@@ -39,9 +39,9 @@ jobs:
               'Html_tools/global-weather-lazy-v1.js?v=20260913-global-weather-lazy-v3.3-radar-visibility-idle'
           ]
           required_runtime = [
-              (ui, 'selfHeal'),
-              (remount, 'grouped'),
-              (health, 'dataTimeCoherence'),
+              (ui, 'selfHealing:true'),
+              (remount, 'groupedLiveForecast:true'),
+              (health, '1.2-data-time-coherence'),
           ]
           forbidden_index = [
               'Html_tools/typhoon-render-recovery-v1.js',
