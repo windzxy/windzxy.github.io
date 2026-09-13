@@ -1,0 +1,40 @@
+(()=>{
+'use strict';
+const VERSION='20260913-flight-chess-product-v5.0-boardgame';
+if(window.__webdeskFlightChessProductV5===VERSION)return;
+window.__webdeskFlightChessProductV5=VERSION;
+const COLOR={red:'#ff5d68',yellow:'#f2c94c',blue:'#4b8df8',green:'#42c98a'};
+const NAME={red:'紅方',yellow:'黃方',blue:'藍方',green:'綠方'};
+function css(){if(document.getElementById('flightChessProductV5Style'))return;const s=document.createElement('style');s.id='flightChessProductV5Style';s.textContent=`
+.flight3-app{--fc-ink:#182234;--fc-muted:#758094;--fc-panel:rgba(255,255,255,.92);font-family:Inter,"PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+.flight3-app{background:linear-gradient(180deg,rgba(250,252,255,.96),rgba(243,247,252,.96));border-radius:28px;overflow:hidden}
+.flight3-app .flight5-hud{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 12px}
+.flight3-app .flight5-player{position:relative;display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:16px;background:rgba(255,255,255,.76);border:1px solid rgba(28,42,67,.08);box-shadow:0 4px 14px rgba(31,47,78,.06)}
+.flight3-app .flight5-player:before{content:'';width:10px;height:10px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 4px color-mix(in srgb,var(--pc) 14%,transparent)}
+.flight3-app .flight5-player b{font-size:12px;color:var(--fc-ink)}.flight3-app .flight5-player small{display:block;font-size:10px;color:var(--fc-muted);margin-top:1px}
+.flight3-app .flight5-player.active{border-color:color-mix(in srgb,var(--pc) 44%,white);box-shadow:0 8px 22px color-mix(in srgb,var(--pc) 16%,transparent);transform:translateY(-1px)}
+.flight3-app .flight5-player.human:after{content:'YOU';position:absolute;right:8px;top:7px;font-size:8px;font-weight:900;letter-spacing:.08em;color:var(--pc);background:color-mix(in srgb,var(--pc) 10%,white);padding:3px 5px;border-radius:7px}
+.flight3-app .flight3-board-wrap,.flight3-app .flight3-board,.flight3-app .flight3-stage{background:linear-gradient(145deg,#edf1f6,#dfe5ed)!important;border:8px solid #e6ebf1!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 20px 50px rgba(32,47,75,.18)!important;border-radius:34px!important;padding:12px!important}
+.flight3-svg{background:linear-gradient(145deg,#fbfcfe,#f3f6f9);border-radius:24px;filter:drop-shadow(0 8px 14px rgba(34,49,78,.09))}
+.flight3-svg .f3-cell{stroke:rgba(50,62,82,.11)!important;stroke-width:1!important;filter:none!important}
+.flight3-svg .f3-cell.safe{stroke:#64748b!important;stroke-width:1.6!important}
+.flight3-svg .flight3-plane{filter:drop-shadow(0 5px 6px rgba(31,43,66,.22))!important}
+.flight3-svg .flight3-plane.movable{animation:f5PlaneReady .8s ease-in-out infinite alternate!important;filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px rgba(70,110,255,.45))!important}
+@keyframes f5PlaneReady{from{opacity:.82}to{opacity:1}}
+.flight3-app .flight5-caption{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;margin:8px 0 0;border-radius:15px;background:rgba(24,34,52,.88);color:#fff}
+.flight3-app .flight5-caption strong{font-size:12px}.flight3-app .flight5-caption span{font-size:11px;opacity:.72}
+.flight3-app .flight5-badge{font-size:10px;font-weight:800;padding:5px 7px;border-radius:8px;background:rgba(255,255,255,.12)}
+.flight3-app .flight3-console,.flight3-app .flight3-side,.flight3-app .flight3-panel{background:rgba(255,255,255,.88)!important;border:1px solid rgba(28,42,67,.08)!important;box-shadow:0 10px 30px rgba(32,47,75,.08)!important;border-radius:22px!important}
+.flight3-app button{font-weight:800}.flight3-app [data-flight3-roll]{min-height:58px;border-radius:18px!important;font-size:18px!important;box-shadow:0 10px 24px rgba(66,104,196,.18)!important}
+.flight3-app .flight5-rule-strip{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 2px}.flight3-app .flight5-rule-strip span{font-size:10px;font-weight:700;color:#5f6b7c;background:#eef2f6;border:1px solid rgba(28,42,67,.06);padding:5px 7px;border-radius:999px}
+@media(max-width:820px){.flight3-app{border-radius:20px}.flight3-app .flight5-hud{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.flight3-app .flight5-player{padding:8px 9px}.flight3-app .flight3-board-wrap,.flight3-app .flight3-board,.flight3-app .flight3-stage{border-width:5px!important;border-radius:24px!important;padding:6px!important}.flight3-app .flight5-caption{position:sticky;bottom:0;z-index:8;margin-top:6px}.flight3-app .flight5-rule-strip{display:none}}
+@media(prefers-reduced-motion:reduce){.flight3-svg .flight3-plane.movable{animation:none!important}}
+`;document.head.appendChild(s)}
+function stateFor(root){const cardEl=root.closest('.desktop-card[data-card-id]');try{const card=activeWorkspace().cards.find(c=>c.id===cardEl?.dataset.cardId);return card?.data?.flightChessV3||null}catch(_){return null}}
+function enhancePlanes(root){root.querySelectorAll('.flight3-plane').forEach(g=>{if(g.dataset.v5==='1')return;g.dataset.v5='1';const ns='http://www.w3.org/2000/svg';const nose=document.createElementNS(ns,'path');nose.setAttribute('d','M-12 1 L-3 -4 L1 -15 L5 -15 L4 -5 L15 0 L4 5 L5 15 L1 15 L-3 4 Z');nose.setAttribute('fill','rgba(255,255,255,.94)');nose.setAttribute('stroke','rgba(0,0,0,.08)');nose.setAttribute('stroke-width','1');nose.setAttribute('pointer-events','none');g.appendChild(nose);const cockpit=document.createElementNS(ns,'ellipse');cockpit.setAttribute('cx','1');cockpit.setAttribute('cy','-4');cockpit.setAttribute('rx','3.4');cockpit.setAttribute('ry','5');cockpit.setAttribute('fill','rgba(75,96,124,.52)');cockpit.setAttribute('pointer-events','none');g.appendChild(cockpit)})}
+function enhance(root){if(!root)return;const s=stateFor(root);if(!s)return;enhancePlanes(root);let hud=root.querySelector('.flight5-hud');if(!hud){hud=document.createElement('div');hud.className='flight5-hud';const head=root.querySelector('.flight3-head,.flight3-header')||root.firstElementChild;if(head?.parentNode)head.parentNode.insertBefore(hud,head.nextSibling);else root.prepend(hud)}hud.innerHTML=s.players.map((p,i)=>{const done=p.planes.filter(x=>x.finished).length;const human=p.type==='human';return `<div class="flight5-player ${i===s.turn?'active':''} ${human?'human':''}" style="--pc:${COLOR[p.color]}"><div><b>${NAME[p.color]}</b><small>${human?'玩家':'AI'} · ${done}/4 到達</small></div></div>`}).join('');let strip=root.querySelector('.flight5-rule-strip');if(!strip){strip=document.createElement('div');strip.className='flight5-rule-strip';strip.innerHTML='<span>5 / 6 起飛</span><span>6 再擲</span><span>同色 +4</span><span>飛行線 +12</span><span>安全格不撞機</span><span>精確點數入終點</span>';hud.insertAdjacentElement('afterend',strip)}let cap=root.querySelector('.flight5-caption');if(!cap){cap=document.createElement('div');cap.className='flight5-caption';const board=root.querySelector('.flight3-board-wrap,.flight3-board,.flight3-stage,.flight3-svg')?.parentElement||root;board.insertAdjacentElement('afterend',cap)}const p=s.players[s.turn];cap.innerHTML=`<div><strong>${s.message||'準備開始'}</strong><span> · ${s.mode==='solo'?'單人挑戰':s.mode==='duo'?'雙人對戰':'四人同樂'}</span></div><div class="flight5-badge">${p?.type==='ai'?'AI 回合':'你的回合'}</div>`}
+function scan(root=document){root.querySelectorAll?.('.flight3-app').forEach(enhance);if(root.matches?.('.flight3-app'))enhance(root)}
+function boot(){css();scan(document);const host=document.getElementById('desktopCanvas');if(!host)return;let raf=0;new MutationObserver(ms=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1)scan(n)})}).observe(host,{childList:true,subtree:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+window.WebDeskFlightChessProductV5={version:VERSION,boardgameHUD:true,planeUpgrade:true,mobileHUD:true};
+})();
