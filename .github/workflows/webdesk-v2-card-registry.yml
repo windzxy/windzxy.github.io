@@ -1,0 +1,41 @@
+name: WebDesk V2 Card Registry
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'webdesk-v2/cards/**'
+      - 'webdesk-v2/scripts/generate-card-registry.mjs'
+      - 'webdesk-v2/schemas/card-manifest.schema.json'
+      - '.github/workflows/webdesk-v2-card-registry.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    if: "!contains(github.event.head_commit.message, '[skip-webdesk-v2-registry]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate registry
+        run: node webdesk-v2/scripts/generate-card-registry.mjs
+      - name: Verify registry
+        run: |
+          node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('webdesk-v2/generated/cards.registry.json','utf8'));if(r.schemaVersion!==1||!Array.isArray(r.cards)||!Array.isArray(r.errors))process.exit(1);console.log('cards',r.cards.length,'errors',r.errors.length)"
+      - name: Commit registry
+        run: |
+          if git diff --quiet -- webdesk-v2/generated/cards.registry.json; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add webdesk-v2/generated/cards.registry.json
+          git commit -m "Generate WebDesk V2 card registry [skip-webdesk-v2-registry]"
+          git pull --rebase origin master
+          git push origin master
