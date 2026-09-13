@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260913-webdesk-mobile-swipe-fix-v1.0';
+const VERSION='20260913-webdesk-mobile-swipe-fix-v1.1-board-safe';
 if(window.__webdeskMobileSwipeFix===VERSION)return;
 window.__webdeskMobileSwipeFix=VERSION;
 let start=null,lastSwitch=0;
@@ -8,10 +8,10 @@ const isMobile=()=>innerWidth<=820;
 const cards=()=>[...document.querySelectorAll('#desktopCanvas .desktop-card')];
 function blocked(el){
   if(!el?.closest)return false;
-  if(el.closest('.table-output,.table-wrap,.table-scroll,.schedule-table-wrap,input,textarea,select,a,[contenteditable=true]'))return true;
-  const btn=el.closest('button');
-  if(!btn)return false;
-  return !btn.matches('.gomoku-cell,.chess-square,.xq-cell,[data-gomoku-cell],[data-chess-square],[data-xq-cell]');
+  /* Game boards are interaction zones, never card-swipe zones. */
+  if(el.closest('.gomoku-board,.chess-board,.xq-board,.gomoku-board-wrap,.chess-board-wrap,[data-gomoku-cell],[data-chess-square],[data-xq-cell],.gomoku-cell,.chess-square,.xq-cell'))return true;
+  if(el.closest('.table-output,.table-wrap,.table-scroll,.schedule-table-wrap,input,textarea,select,button,a,[contenteditable=true]'))return true;
+  return false;
 }
 function currentIndex(list){
   const i=list.findIndex(x=>x.classList.contains('mobile-active-card'));
@@ -29,9 +29,9 @@ function updateIndicator(list,index){
 }
 function escapeHtml(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function switchTo(delta){
-  const now=Date.now();if(now-lastSwitch<220)return;
+  const now=Date.now();if(now-lastSwitch<260)return;
   const list=cards();if(list.length<2)return;
-  let i=currentIndex(list);const next=Math.max(0,Math.min(list.length-1,i+delta));if(next===i)return;
+  const i=currentIndex(list),next=Math.max(0,Math.min(list.length-1,i+delta));if(next===i)return;
   lastSwitch=now;
   list.forEach((c,n)=>c.classList.toggle('mobile-active-card',n===next));
   localStorage.setItem('webdesk-mobile-card-index:'+workspaceKey(),String(next));
@@ -39,20 +39,20 @@ function switchTo(delta){
   const canvas=document.getElementById('desktopCanvas');
   if(canvas){const y=canvas.getBoundingClientRect().top+scrollY-8;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})}
 }
-function begin(x,y,target){if(!isMobile()||blocked(target))return;start={x,y,t:Date.now()}}
+function begin(x,y,target){if(!isMobile()||blocked(target)){start=null;return}start={x,y,t:Date.now()}}
 function finish(x,y){
   if(!start||!isMobile())return;
   const dx=x-start.x,dy=y-start.y,dt=Date.now()-start.t;start=null;
-  if(dt>1100||Math.abs(dx)<38||Math.abs(dx)<Math.abs(dy)*1.05)return;
+  if(dt>1000||Math.abs(dx)<52||Math.abs(dx)<Math.abs(dy)*1.25)return;
   switchTo(dx<0?1:-1);
 }
 function boot(){
-  const canvas=document.getElementById('desktopCanvas');if(!canvas||canvas.dataset.mobileSwipeFix==='1')return;canvas.dataset.mobileSwipeFix='1';
+  const canvas=document.getElementById('desktopCanvas');if(!canvas||canvas.dataset.mobileSwipeFixV11==='1')return;canvas.dataset.mobileSwipeFixV11='1';
   canvas.addEventListener('touchstart',e=>{const p=e.touches?.[0];if(p)begin(p.clientX,p.clientY,e.target)},{passive:true,capture:true});
   canvas.addEventListener('touchend',e=>{const p=e.changedTouches?.[0];if(p)finish(p.clientX,p.clientY)},{passive:true,capture:true});
   canvas.addEventListener('touchcancel',()=>{start=null},{passive:true,capture:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 new MutationObserver(()=>{if(isMobile())boot()}).observe(document.documentElement,{childList:true,subtree:true});
-window.WebDeskMobileSwipeFix={version:VERSION};
+window.WebDeskMobileSwipeFix={version:VERSION,boardSafe:true};
 })();
