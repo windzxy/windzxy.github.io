@@ -1,6 +1,6 @@
 (()=>{
   "use strict";
-  const VERSION="20260913-card-product-system-v1.2-live-summary";
+  const VERSION="20260913-card-product-system-v1.3-image-launcher";
   const meta={
     typhoon:{tier:"P0",type:"live",group:"即時資訊",label:"Live",hint:"全球氣象 · 雷達 / 衛星 / 風場"},
     weather:{tier:"P0",type:"live",group:"即時資訊",label:"Live",hint:"即時天氣 · 預報"},
@@ -44,7 +44,8 @@
       .desktop-card[data-card-product-type="live"]::before{background:color-mix(in srgb,var(--blue1) 12%,var(--panel));color:color-mix(in srgb,var(--blue1) 70%,var(--ink))}
       .product-live-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:0 0 10px;padding:9px 11px;border:1px solid color-mix(in srgb,var(--blue1) 16%,var(--line));border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--blue1) 8%,var(--panel)),color-mix(in srgb,var(--panel2) 88%,transparent));font-size:11px;color:var(--muted)}
       .product-live-summary strong{display:block;color:var(--ink);font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.product-live-summary span{white-space:nowrap}.product-live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--blue1);box-shadow:0 0 0 4px color-mix(in srgb,var(--blue1) 12%,transparent)}
-      @media(max-width:700px){.desktop-card[data-card-product-type]::before{display:none}.product-group-title{position:sticky;top:0;z-index:2;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(16px)}.product-live-summary{grid-template-columns:1fr}.product-live-summary span{white-space:normal}}
+      .product-image-launcher{height:100%;min-height:150px;display:grid;grid-template-rows:1fr auto;gap:12px}.product-image-drop{display:grid;place-items:center;text-align:center;padding:18px;border:1px dashed color-mix(in srgb,var(--blue1) 35%,var(--line));border-radius:18px;background:linear-gradient(145deg,color-mix(in srgb,var(--blue1) 7%,var(--panel)),color-mix(in srgb,var(--panel2) 86%,transparent));cursor:pointer}.product-image-drop strong{display:block;font-size:14px;color:var(--ink)}.product-image-drop span{display:block;margin-top:4px;font-size:11px;color:var(--muted)}.product-image-actions{display:flex;gap:8px}.product-image-actions button{flex:1;min-height:36px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--ink);font:inherit;font-size:12px;font-weight:750;cursor:pointer}.product-image-actions button:first-child{background:var(--ink);color:var(--panel);border-color:transparent}.product-image-file{display:none}
+      @media(max-width:700px){.desktop-card[data-card-product-type]::before{display:none}.product-group-title{position:sticky;top:0;z-index:2;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(16px)}.product-live-summary{grid-template-columns:1fr}.product-live-summary span{white-space:normal}.product-image-launcher{min-height:132px}.product-image-actions{flex-direction:column}}
     `;
     document.head.appendChild(s);
   }
@@ -93,7 +94,23 @@
       box.innerHTML=`<strong><i class="product-live-dot"></i>全球氣象即時圖層</strong><span>${txt||"風場 / 雷達 / 衛星"} · ${stamp}</span>`;
     }
   }
-  function decorateCards(){document.querySelectorAll(".desktop-card[data-card-id]").forEach(el=>{const app=resolveApp(el);const m=meta[app];if(m){el.dataset.cardProductType=m.type;el.dataset.cardProductLabel=m.label;el.dataset.cardProductTier=m.tier}liveSummary(el,app)})}
+  function openImageStudio(file){
+    if(typeof window.openApp==="function")window.openApp("image","圖片處理","");
+    else document.querySelector('.dock-tool[data-id="image"]')?.click();
+    if(file){setTimeout(()=>{const input=document.querySelector('.desktop-window[data-key="app-image"] input[type="file"],#imgFile');if(!input)return;try{const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;input.dispatchEvent(new Event("change",{bubbles:true}))}catch(e){}},80)}
+  }
+  function imageLauncher(el,app){
+    if(app!=="image"||el.dataset.imageLauncherReady==="1")return;
+    const body=el.querySelector(".card-body");if(!body)return;
+    body.innerHTML=`<div class="product-image-launcher"><label class="product-image-drop"><input class="product-image-file" type="file" accept="image/*"><div><strong>拖入圖片或點擊選擇</strong><span>尺寸 · 裁切 · 去背景 · 調色 · OCR</span></div></label><div class="product-image-actions"><button type="button" data-image-open>打開 Image Studio</button><button type="button" data-image-paste>貼上圖片</button></div></div>`;
+    const fileInput=body.querySelector(".product-image-file");const drop=body.querySelector(".product-image-drop");
+    fileInput?.addEventListener("change",()=>{const f=fileInput.files?.[0];if(f)openImageStudio(f)});
+    drop?.addEventListener("dragover",e=>{e.preventDefault();drop.dataset.drag="1"});drop?.addEventListener("dragleave",()=>delete drop.dataset.drag);drop?.addEventListener("drop",e=>{e.preventDefault();delete drop.dataset.drag;const f=[...(e.dataTransfer?.files||[])].find(x=>x.type.startsWith("image/"));if(f)openImageStudio(f)});
+    body.querySelector("[data-image-open]")?.addEventListener("click",()=>openImageStudio());
+    body.querySelector("[data-image-paste]")?.addEventListener("click",async()=>{try{const items=await navigator.clipboard.read();for(const item of items){const type=item.types.find(t=>t.startsWith("image/"));if(type){openImageStudio(await item.getType(type));return}}}catch(e){}openImageStudio()});
+    el.dataset.imageLauncherReady="1";
+  }
+  function decorateCards(){document.querySelectorAll(".desktop-card[data-card-id]").forEach(el=>{const app=resolveApp(el);const m=meta[app];if(m){el.dataset.cardProductType=m.type;el.dataset.cardProductLabel=m.label;el.dataset.cardProductTier=m.tier}liveSummary(el,app);imageLauncher(el,app)})}
   function apply(){css();ensureFilters();decorateShelf();decorateCards();document.documentElement.dataset.cardProductSystem=VERSION}
   let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply()})};
   const obs=new MutationObserver(schedule);
