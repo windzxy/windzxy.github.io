@@ -4,9 +4,47 @@ const active=new WeakMap();
 const cssCache=new Map();
 
 async function ensureStyle(path){if(!path||cssCache.has(path))return;const link=document.createElement('link');link.rel='stylesheet';link.href=new URL(path,location.href).href;const ready=new Promise((resolve,reject)=>{link.onload=resolve;link.onerror=()=>reject(new Error(`style load failed: ${path}`))});document.head.appendChild(link);await ready;cssCache.set(path,link)}
-function clamp(v,min,max){return Math.min(max,Math.max(min,v))}
-function bindWindowInteractions(shell,platform){if(platform==='mobile')return;const head=shell.querySelector('.wd-window-head'),handle=shell.querySelector('[data-window-resize]');if(!head||!handle)return;head.style.touchAction='none';head.onpointerdown=e=>{if(e.target.closest('button'))return;const r=shell.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,startLeft=r.left,startTop=r.top;head.setPointerCapture(e.pointerId);const move=ev=>{const maxX=Math.max(0,innerWidth-shell.offsetWidth),maxY=Math.max(0,innerHeight-shell.offsetHeight);shell.style.left=clamp(startLeft+ev.clientX-sx,0,maxX)+'px';shell.style.top=clamp(startTop+ev.clientY-sy,0,maxY)+'px'};const up=()=>{head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up)};head.addEventListener('pointermove',move);head.addEventListener('pointerup',up,{once:true})};handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();const r=shell.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,sw=r.width,sh=r.height,minW=platform==='tablet'?480:520,minH=360,maxW=Math.max(minW,innerWidth-r.left-12),maxH=Math.max(minH,innerHeight-r.top-12);handle.setPointerCapture(e.pointerId);const move=ev=>{shell.style.width=clamp(sw+ev.clientX-sx,minW,maxW)+'px';shell.style.height=clamp(sh+ev.clientY-sy,minH,maxH)+'px'};const up=()=>{handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',up)};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',up,{once:true})}}
 
-export async function closeApp(layer){const rec=active.get(layer);if(rec){rec.abort.abort();try{await rec.cleanup?.()}catch(error){console.warn('[WebDesk V2 app cleanup]',error)}try{rec.sdk.destroy()}catch{}active.delete(layer)}layer.replaceChildren();document.body.classList.remove('wd-app-open')}
+export async function closeApp(target){
+  if(!target)return;
+  const rec=active.get(target);
+  if(rec){
+    rec.abort.abort();
+    try{await rec.cleanup?.()}catch(error){console.warn('[WebDesk V2 app cleanup]',error)}
+    try{rec.sdk.destroy()}catch{}
+    active.delete(target);
+    const onClose=rec.onClose;
+    if(onClose){await onClose();return}
+  }
+  target.replaceChildren();
+  document.body.classList.remove('wd-app-open');
+}
 
-export async function openApp(layer,manifest,platform){await closeApp(layer);const entry=manifest?.entry?.[platform];if(!entry?.app)throw new Error(`${manifest?.id||'card'} missing ${platform} app entry`);const abort=new AbortController();const shell=document.createElement('section');shell.className=`wd-window wd-window-${platform}`;shell.innerHTML=`<header class="wd-window-head"><strong>${manifest.icon||'•'} ${manifest.name?.['zh-HK']||manifest.id}</strong><button type="button" data-close-window>關閉</button></header><div class="wd-window-body" data-app-mount aria-busy="true"></div>${platform==='mobile'?'':'<div class="wd-window-resize" data-window-resize role="button" tabindex="0" aria-label="調整視窗大小"></div>'}`;layer.replaceChildren(shell);document.body.classList.add('wd-app-open');shell.querySelector('[data-close-window]').onclick=()=>closeApp(layer);bindWindowInteractions(shell,platform);const mount=shell.querySelector('[data-app-mount]');const sdk=createCardSDK({manifest,platform,host:mount});active.set(layer,{abort,sdk,cleanup:null});try{if(entry.appStyle)await ensureStyle(`./cards/${manifest.id}/${entry.appStyle}`);const url=new URL(`./cards/${manifest.id}/${entry.app}`,location.href);url.searchParams.set('v',manifest.version);let timeoutId;const timeout=new Promise((_,reject)=>{timeoutId=setTimeout(()=>reject(new Error('app load timeout')),10000)});const mod=await Promise.race([import(url.href),timeout]);clearTimeout(timeoutId);if(abort.signal.aborted)return;mount.replaceChildren();const cleanup=await mod.mount?.({host:mount,sdk,manifest,platform,signal:abort.signal});const rec=active.get(layer);if(rec)rec.cleanup=typeof cleanup==='function'?cleanup:null}catch(error){if(!abort.signal.aborted)mount.innerHTML=`<div class="wd-card-error"><strong>App 載入失敗</strong><small>${String(error?.message||error)}</small></div>`}finally{mount.removeAttribute('aria-busy')}}
+export async function openApp(target,manifest,platform,{inline=false,onClose=null}={}){
+  if(!target)throw new Error('missing app host');
+  await closeApp(target);
+  const entry=manifest?.entry?.[platform];
+  if(!entry?.app)throw new Error(`${manifest?.id||'card'} missing ${platform} app entry`);
+  const abort=new AbortController();
+  const shell=inline?target:document.createElement('section');
+  if(!inline){shell.className=`wd-window wd-window-${platform}`;target.replaceChildren(shell)}
+  else{shell.classList.add('wd-card-detail');shell.dataset.detailOpen='1'}
+  shell.innerHTML=`<header class="wd-window-head"><strong>${manifest.icon||'•'} ${manifest.name?.['zh-HK']||manifest.id}</strong><button type="button" data-close-window>關閉</button></header><div class="wd-window-body" data-app-mount aria-busy="true"></div>`;
+  document.body.classList.add('wd-app-open');
+  shell.querySelector('[data-close-window]').onclick=()=>closeApp(target);
+  const mount=shell.querySelector('[data-app-mount]');
+  const sdk=createCardSDK({manifest,platform,host:mount});
+  active.set(target,{abort,sdk,cleanup:null,onClose,inline});
+  try{
+    if(entry.appStyle)await ensureStyle(`./cards/${manifest.id}/${entry.appStyle}`);
+    const url=new URL(`./cards/${manifest.id}/${entry.app}`,location.href);url.searchParams.set('v',manifest.version);
+    let timeoutId;const timeout=new Promise((_,reject)=>{timeoutId=setTimeout(()=>reject(new Error('app load timeout')),10000)});
+    const mod=await Promise.race([import(url.href),timeout]);clearTimeout(timeoutId);
+    if(abort.signal.aborted)return;
+    mount.replaceChildren();
+    const cleanup=await mod.mount?.({host:mount,sdk,manifest,platform,signal:abort.signal});
+    const rec=active.get(target);if(rec)rec.cleanup=typeof cleanup==='function'?cleanup:null;
+  }catch(error){
+    if(!abort.signal.aborted)mount.innerHTML=`<div class="wd-card-error"><strong>App 載入失敗</strong><small>${String(error?.message||error)}</small></div>`;
+  }finally{mount.removeAttribute('aria-busy')}
+}
