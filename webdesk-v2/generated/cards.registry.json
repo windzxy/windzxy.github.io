@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T16:31:15.746Z",
+  "generatedAt": "2026-09-13T16:31:31.949Z",
   "cards": [
     {
       "id": "weather",
@@ -154,7 +154,7 @@
     },
     {
       "id": "global-weather",
-      "version": "0.2.5",
+      "version": "0.2.6",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "全球天气",
@@ -206,7 +206,7 @@
         },
         "mobile": {
           "w": 320,
-          "h": 150
+          "h": 76
         }
       },
       "maxSize": {
@@ -221,6 +221,62 @@
         "mobile": {
           "w": 430,
           "h": 520
+        }
+      },
+      "sizeTiers": {
+        "desktop": {
+          "mini": {
+            "w": 360,
+            "h": 76
+          },
+          "compact": {
+            "w": 420,
+            "h": 180
+          },
+          "standard": {
+            "w": 520,
+            "h": 360
+          },
+          "large": {
+            "w": 900,
+            "h": 700
+          }
+        },
+        "tablet": {
+          "mini": {
+            "w": 360,
+            "h": 76
+          },
+          "compact": {
+            "w": 420,
+            "h": 170
+          },
+          "standard": {
+            "w": 540,
+            "h": 300
+          },
+          "large": {
+            "w": 760,
+            "h": 620
+          }
+        },
+        "mobile": {
+          "mini": {
+            "w": 320,
+            "h": 76
+          },
+          "compact": {
+            "w": 340,
+            "h": 128
+          },
+          "standard": {
+            "w": 360,
+            "h": 180
+          },
+          "large": {
+            "w": 420,
+            "h": 480
+          }
         }
       },
       "entry": {
