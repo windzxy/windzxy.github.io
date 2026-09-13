@@ -9,6 +9,19 @@ export const layers=[
 export const DEFAULT_CENTER={name:'深圳',lat:22.5431,lon:114.0579};
 export function layerById(id){return layers.find(x=>x.id===id)||layers[0]}
 
+// Compatibility shim for older cached card modules. New code uses fetchPointWeather,
+// but keeping this synchronous export prevents stale browser modules from crashing
+// during rolling GitHub Pages deployments.
+export function initialGlobalWeather(){
+  return{
+    place:DEFAULT_CENTER.name,
+    updatedAt:new Date().toISOString(),
+    activeLayer:'wind',
+    summary:{wind:'—',gust:'—',rain:'—',temp:'—',pressure:'—'},
+    alerts:[]
+  };
+}
+
 export async function fetchPointWeather(lat,lon,{signal}={}){
   const q=new URLSearchParams({
     latitude:String(lat),longitude:String(lon),
