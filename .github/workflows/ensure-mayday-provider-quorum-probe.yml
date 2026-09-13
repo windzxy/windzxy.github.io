@@ -33,12 +33,14 @@ jobs:
               'function probeRasterProvider', 'function rasterProbeCoords()', 'function rasterProbeSignature(tiles)',
               'function cancelRasterProviderProbe(which)', 'function waitRasterProbeSettle(seq,generation,signature,which)',
               'windowMs=8000,maxStarts=3', 'probeRasterImage(spec,tile,timeout,aborters)',
-              'map.setRenderWorldCopies?.(true)', '@media(max-width:720px)'
+              '@media(max-width:720px)', 'MAYDAYLAND_MAP_INTERACTION', 'requestResize'
           ]
           html_required=[
-              'stall-aware-watchdog','adaptive-provider-backoff','provider-recovery-probe',
+              'world-wrap-tour-map','stall-aware-watchdog','adaptive-provider-backoff','provider-recovery-probe',
               'viewport-quorum-probe','probe-generation-cancel','probe-request-budget','probe-settle-budget',
-              'tour-map-interaction-guard-v1.1-resize-coordinator','tour-map-stability-v1.4-shared-resize-coordinator'
+              'shared-resize-owner','raster-owner-aware','fallback-status-recovery',
+              'tour-map-interaction-guard-v1.1-resize-coordinator','tour-map-stability-v1.5-raster-owner-aware',
+              'tour-map-fallback-status-v1.2-recovery'
           ]
           missing=[x for x in js_required if x not in js]+[x for x in html_required if x not in html]
           if missing:
