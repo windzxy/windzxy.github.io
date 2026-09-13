@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>WebDesk V2</title>
+  <meta name="description" content="WebDesk V2 clean architecture preview">
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+  <div id="app" class="wd-shell">
+    <header class="wd-topbar">
+      <div class="wd-brand">WebDesk <span>V2</span></div>
+      <div class="wd-top-actions">
+        <button data-action="workspace">工作區</button>
+        <button data-action="library">功能中心</button>
+      </div>
+    </header>
+
+    <main id="desktop" class="wd-desktop" aria-label="WebDesk V2 desktop"></main>
+    <div id="windowLayer" class="wd-window-layer"></div>
+
+    <nav class="wd-dock" aria-label="快速工具">
+      <button data-app="weather">天氣</button>
+      <button data-app="typhoon">全球氣象</button>
+      <button data-app="image">圖片</button>
+      <button data-action="library">＋</button>
+    </nav>
+
+    <aside id="drawer" class="wd-drawer" aria-hidden="true">
+      <div class="wd-drawer-head">
+        <div>
+          <small>FUNCTION CENTER</small>
+          <h2>功能中心</h2>
+        </div>
+        <button data-action="close-drawer">×</button>
+      </div>
+      <input id="toolSearch" class="wd-search" type="search" placeholder="搜尋工具">
+      <div id="toolLibrary" class="wd-library"></div>
+    </aside>
+  </div>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
