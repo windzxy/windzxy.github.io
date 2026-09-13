@@ -1,24 +1,24 @@
 {
   "id": "weather",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "schemaVersion": 1,
   "name": {"zh-CN": "天气", "zh-HK": "天氣"},
   "description": {"zh-CN": "实时天气与预报", "zh-HK": "即時天氣與預報"},
   "icon": "☁️",
   "category": "live",
-  "kind": "live-card",
+  "kind": "live",
   "order": 10,
   "platforms": ["desktop", "tablet", "mobile"],
   "capabilities": ["network"],
   "permissions": [],
   "defaultSize": {
-    "desktop": {"width": 360, "height": 220},
-    "tablet": {"width": 420, "height": 210},
-    "mobile": {"width": 320, "height": 180}
+    "desktop": {"w": 360, "h": 220},
+    "tablet": {"w": 420, "h": 210},
+    "mobile": {"w": 320, "h": 180}
   },
   "entry": {
-    "desktop": {"card": "desktop/card.js", "cardStyle": "desktop/card.css"},
-    "tablet": {"card": "tablet/card.js", "cardStyle": "tablet/card.css"},
-    "mobile": {"card": "mobile/card.js", "cardStyle": "mobile/card.css"}
+    "desktop": {"card": "./desktop/card.js", "cardStyle": "./desktop/card.css"},
+    "tablet": {"card": "./tablet/card.js", "cardStyle": "./tablet/card.css"},
+    "mobile": {"card": "./mobile/card.js", "cardStyle": "./mobile/card.css"}
   }
 }
