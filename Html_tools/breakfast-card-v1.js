@@ -1,66 +1,66 @@
 (()=>{
 'use strict';
-const VERSION='20260913-breakfast-card-v1.0';
+const VERSION='20260913-breakfast-card-v2.0-child-nutrition-planner';
 if(window.__windzxyBreakfastCard===VERSION)return;
 window.__windzxyBreakfastCard=VERSION;
 
+const MEALS=[
+ {id:'oats',icon:'🥣',name:'燕麥水果牛奶',tags:['主食','奶類','水果'],note:'全穀物＋奶類＋水果',score:'纖維、鈣、維生素'},
+ {id:'sandwich',icon:'🥪',name:'全麥雞蛋三明治',tags:['主食','蛋白質','蔬菜'],note:'全麥麵包＋雞蛋＋生菜番茄',score:'蛋白質、鐵、纖維'},
+ {id:'eggfruit',icon:'🥚',name:'水煮蛋水果牛奶',tags:['蛋白質','水果','奶類'],note:'水煮蛋＋當季水果＋牛奶',score:'優質蛋白、鈣、維生素'},
+ {id:'vegwrap',icon:'🌯',name:'蔬菜雞蛋餅',tags:['主食','蛋白質','蔬菜'],note:'少油蛋餅＋多色蔬菜',score:'蛋白質、蔬菜、碳水'},
+ {id:'sweetpotato',icon:'🍠',name:'地瓜豆漿水果',tags:['主食','豆類','水果'],note:'蒸地瓜＋無糖豆漿＋水果',score:'纖維、植物蛋白'},
+ {id:'yogurt',icon:'🥛',name:'水果優格堅果杯',tags:['奶類','水果','堅果'],note:'原味低糖優格＋水果＋少量堅果',score:'鈣、益生菌、好脂肪'},
+ {id:'congee',icon:'🍲',name:'雜糧粥雞蛋青菜',tags:['主食','蛋白質','蔬菜'],note:'雜糧粥＋雞蛋＋燙青菜',score:'溫和易入口、均衡'},
+ {id:'corn',icon:'🌽',name:'玉米雞肉蔬菜杯',tags:['主食','蛋白質','蔬菜'],note:'玉米＋雞肉丁＋彩椒',score:'蛋白質、維生素'},
+ {id:'noodles',icon:'🍜',name:'番茄雞蛋麵',tags:['主食','蛋白質','蔬菜'],note:'少油湯麵＋番茄＋雞蛋',score:'碳水、蛋白質、茄紅素'},
+ {id:'pancake',icon:'🥞',name:'香蕉燕麥鬆餅',tags:['主食','水果','蛋白質'],note:'燕麥＋香蕉＋雞蛋，少糖',score:'纖維、鉀、蛋白質'},
+ {id:'riceball',icon:'🍙',name:'紫菜雞肉飯糰',tags:['主食','蛋白質','蔬菜'],note:'米飯＋雞肉＋紫菜＋青瓜',score:'能量、蛋白質、礦物質'},
+ {id:'tofu',icon:'🥛',name:'豆腐蛋花粥',tags:['主食','豆類','蛋白質'],note:'粥＋嫩豆腐＋蛋花＋青菜',score:'植物蛋白、優質蛋白'}
+];
+const WEEK=['一','二','三','四','五','六','日'];
+const DEFAULT_WEEK=['oats','sandwich','eggfruit','pancake','vegwrap','yogurt','sweetpotato'];
+function meal(id){return MEALS.find(x=>x.id===id)||MEALS[0]}
+function esc(s){return typeof escapeHtml==='function'?escapeHtml(String(s??'')):String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function register(){
-  if(typeof apps==='undefined'||!Array.isArray(apps))return false;
-  if(!apps.some(x=>x&&x.id==='breakfast')){
-    const weatherIndex=apps.findIndex(x=>x&&x.id==='weather');
-    const item={id:'breakfast',kind:'widget',title:'早餐',desc:'記錄今天早餐、飲品與備註，快速規劃早晨。',icon:'☕',tone:'t-breakfast'};
-    if(weatherIndex>=0)apps.splice(weatherIndex,0,item);else apps.push(item);
-  }
-  return true;
+ if(typeof apps==='undefined'||!Array.isArray(apps))return false;
+ let item=apps.find(x=>x&&x.id==='breakfast');
+ const next={id:'breakfast',kind:'widget',title:'早餐',desc:'兒童營養早餐庫、每週計劃、月度記錄與漫畫插圖。',icon:'☀️',tone:'t-breakfast'};
+ if(item)Object.assign(item,next);else{const weatherIndex=apps.findIndex(x=>x&&x.id==='weather');weatherIndex>=0?apps.splice(weatherIndex,0,next):apps.push(next)}
+ return true;
 }
-
-function breakfastHtml(card){
-  const data=card?.data||{};
-  const food=data.breakfastFood||'';
-  const drink=data.breakfastDrink||'';
-  const note=data.breakfastNote||'';
-  return '<div class="breakfast-widget">'
-    +'<div class="breakfast-hero"><span class="breakfast-emoji">☀️</span><div><strong data-i18n="早安">早安</strong><small data-i18n="今天早餐吃什麼？">今天早餐吃什麼？</small></div></div>'
-    +'<label class="breakfast-field"><span data-i18n="早餐">早餐</span><input data-field="breakfastFood" value="'+escapeHtml(food)+'" placeholder="麵包、雞蛋、粥…"></label>'
-    +'<label class="breakfast-field"><span data-i18n="飲品">飲品</span><input data-field="breakfastDrink" value="'+escapeHtml(drink)+'" placeholder="咖啡、牛奶、豆漿…"></label>'
-    +'<label class="breakfast-field"><span data-i18n="備註">備註</span><textarea data-field="breakfastNote" placeholder="今天早上的提醒…">'+escapeHtml(note)+'</textarea></label>'
-    +'</div>';
+function comicSvg(kind='kid'){
+ if(kind==='dietitian')return `<svg class="bf-comic-svg" viewBox="0 0 150 120" aria-hidden="true"><circle cx="74" cy="42" r="25" fill="#ffd7bd"/><path d="M48 42c2-29 52-35 55 0-8-8-16-12-28-12-11 0-20 4-27 12z" fill="#714432"/><circle cx="66" cy="44" r="2.8"/><circle cx="83" cy="44" r="2.8"/><path d="M68 55q7 7 14 0" fill="none" stroke="#ad5b59" stroke-width="2.5" stroke-linecap="round"/><path d="M47 112c4-34 52-36 57 0" fill="#fff" stroke="#8ec5e9" stroke-width="3"/><path d="M73 77v35M58 90h31" stroke="#8ec5e9" stroke-width="3"/><rect x="94" y="76" width="31" height="38" rx="5" fill="#4c88c7"/><path d="M102 88h15M102 96h15" stroke="#fff" stroke-width="2"/></svg>`;
+ return `<svg class="bf-comic-svg" viewBox="0 0 160 120" aria-hidden="true"><circle cx="82" cy="45" r="27" fill="#ffd8b5"/><path d="M54 42c2-30 55-39 57 2-10-9-19-14-29-14-11 0-19 4-28 12z" fill="#69402f"/><circle cx="72" cy="46" r="3"/><circle cx="91" cy="46" r="3"/><path d="M73 57q9 9 18 0" fill="none" stroke="#d66a66" stroke-width="3" stroke-linecap="round"/><path d="M51 116c3-34 59-39 64 0" fill="#4aa4df"/><path d="M82 78l7 10 12 2-9 9 2 12-12-6-12 6 2-12-9-9 12-2z" fill="#ffd345"/><path d="M43 79q-16 12-18 29M119 80q16 11 19 27" fill="none" stroke="#ffd8b5" stroke-width="10" stroke-linecap="round"/></svg>`;
 }
-
-function installBody(){
-  if(typeof bodyHtml!=='function'||bodyHtml.__breakfastWrapped)return;
-  const base=bodyHtml;
-  const wrapped=function(card,info){
-    if(card?.appId==='breakfast')return breakfastHtml(card);
-    return base(card,info);
-  };
-  wrapped.__breakfastWrapped=true;
-  bodyHtml=wrapped;
-}
-
-function style(){
-  if(document.getElementById('breakfastCardV1Css'))return;
-  const s=document.createElement('style');s.id='breakfastCardV1Css';
-  s.textContent=`
-  .t-breakfast{--card-accent:#f6a84d}
-  .breakfast-widget{display:grid;gap:9px;height:100%;box-sizing:border-box;padding:2px}
-  .breakfast-hero{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:12px;background:linear-gradient(135deg,rgba(255,193,92,.20),rgba(255,255,255,.06))}
-  .breakfast-emoji{font-size:26px}.breakfast-hero div{display:grid;gap:2px}.breakfast-hero strong{font-size:14px}.breakfast-hero small{font-size:10px;opacity:.66}
-  .breakfast-field{display:grid;grid-template-columns:48px 1fr;align-items:center;gap:7px;font-size:10px}.breakfast-field span{opacity:.72;font-weight:700}
-  .breakfast-field input,.breakfast-field textarea{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.13);border-radius:9px;background:rgba(255,255,255,.08);color:inherit;padding:8px 9px;font:inherit;outline:none}
-  .breakfast-field textarea{min-height:48px;resize:none}.breakfast-field input:focus,.breakfast-field textarea:focus{border-color:rgba(246,168,77,.68);box-shadow:0 0 0 2px rgba(246,168,77,.12)}
-  @media(max-width:620px){.breakfast-widget{gap:7px}.breakfast-hero{padding:7px 9px}.breakfast-field{grid-template-columns:42px 1fr}.breakfast-field textarea{min-height:40px}}
-  `;
-  document.head.appendChild(s);
-}
-
-function refresh(){
-  const ok=register();
-  installBody();style();
-  if(ok&&typeof renderShelf==='function')renderShelf();
-}
-
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh,{once:true});else refresh();
-setTimeout(refresh,0);
-window.WebDeskBreakfastCard={version:VERSION,registered:true};
+function weekIds(data){return Array.from({length:7},(_,i)=>data['breakfastWeek'+i]||DEFAULT_WEEK[i])}
+function libraryHtml(){return `<section class="bf-library"><div class="bf-section-head"><div><b>早餐種類</b><small>從兒童營養角度，以「主食＋蛋白質＋蔬果／奶類」做搭配</small></div></div><div class="bf-meal-grid">${MEALS.map(x=>`<button type="button" class="bf-meal" data-bf-pick="${x.id}" title="${esc(x.note)}"><span>${x.icon}</span><strong>${esc(x.name)}</strong><small>${esc(x.score)}</small></button>`).join('')}</div></section>`}
+function weekHtml(data){const ids=weekIds(data);return `<section class="bf-week"><div class="bf-section-head"><div><b>本週早餐計劃</b><small>每天換一種組合，避免長期單一食物</small></div><span class="bf-badge">7 天</span></div><div class="bf-week-grid">${ids.map((id,i)=>{const m=meal(id);return `<label class="bf-day"><b>週${WEEK[i]}</b><span class="bf-day-icon">${m.icon}</span><select data-bf-week="${i}">${MEALS.map(x=>`<option value="${x.id}"${x.id===id?' selected':''}>${esc(x.name)}</option>`).join('')}</select><small>${esc(m.note)}</small></label>`}).join('')}</div></section>`}
+function monthHtml(data){const now=new Date();const y=now.getFullYear(),mo=now.getMonth();const first=new Date(y,mo,1);const days=new Date(y,mo+1,0).getDate();const offset=(first.getDay()+6)%7;const done=data.breakfastMonthDone||{};const ids=weekIds(data);let cells='';for(let i=0;i<offset;i++)cells+='<span class="bf-cal-empty"></span>';for(let d=1;d<=days;d++){const key=`${y}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const mi=(new Date(y,mo,d).getDay()+6)%7;const m=meal(ids[mi]);cells+=`<button type="button" class="bf-cal-day${done[key]?' is-done':''}" data-bf-date="${key}"><b>${d}</b><span>${m.icon}</span><i>${done[key]?'✓':''}</i></button>`}return `<section class="bf-month"><div class="bf-section-head"><div><b>${y} 年 ${mo+1} 月早餐記錄</b><small>點日期標記「已吃早餐」</small></div><span class="bf-badge">完成 ${Object.keys(done).filter(k=>k.startsWith(`${y}-${String(mo+1).padStart(2,'0')}`)&&done[k]).length} 天</span></div><div class="bf-weeknames">${WEEK.map(x=>`<b>${x}</b>`).join('')}</div><div class="bf-calendar">${cells}</div></section>`}
+function breakfastHtml(card){const data=card?.data||{};const tab=data.breakfastTab||'library';const selected=meal(data.breakfastSelected||DEFAULT_WEEK[new Date().getDay()?Math.max(0,new Date().getDay()-1):6]);return `<div class="breakfast-widget" data-bf-card="${esc(card.id)}">
+ <div class="bf-hero"><div class="bf-title"><span class="bf-sun">☀️</span><div><strong>健康早餐 · 快樂成長</strong><small>每天一份均衡早餐，幫助補充早晨所需能量</small></div></div><div class="bf-hero-comic">${comicSvg('kid')}</div></div>
+ <nav class="bf-tabs"><button type="button" data-bf-tab="library" class="${tab==='library'?'is-active':''}">早餐種類</button><button type="button" data-bf-tab="week" class="${tab==='week'?'is-active':''}">週計劃</button><button type="button" data-bf-tab="month" class="${tab==='month'?'is-active':''}">月記錄</button></nav>
+ <div class="bf-main">${tab==='week'?weekHtml(data):tab==='month'?monthHtml(data):libraryHtml()}</div>
+ <aside class="bf-today"><div class="bf-today-art">${comicSvg('dietitian')}</div><div><span>今日推薦</span><strong>${selected.icon} ${esc(selected.name)}</strong><small>${esc(selected.note)}</small><em>營養重點：${esc(selected.score)}</em></div></aside>
+ <div class="bf-tip"><b>兒童營養小貼士</b><span>優先原型食物；少糖、少油、少加工；奶類或豆類可輪換；水果以整顆為主而非果汁。若孩子有食物過敏或特殊疾病，餐單應按專業醫療建議調整。</span></div>
+ </div>`}
+function installBody(){if(typeof bodyHtml!=='function'||bodyHtml.__breakfastWrapped)return;const base=bodyHtml;const wrapped=function(card,info){if(card?.appId==='breakfast')return breakfastHtml(card);return base(card,info)};wrapped.__breakfastWrapped=true;bodyHtml=wrapped}
+function installAdd(){if(typeof addCard!=='function'||addCard.__breakfastWrapped)return;const base=addCard;const wrapped=function(appId){if(appId!=='breakfast')return base(appId);const i=activeWorkspace().cards.length;activeWorkspace().cards.push({id:'card-'+Date.now()+'-'+Math.random().toString(16).slice(2),appId:'breakfast',x:42+(i%4)*34,y:62+(i%5)*28,w:760,h:620,collapsed:false,data:{breakfastTab:'library'}});save();renderAll()};wrapped.__breakfastWrapped=true;addCard=wrapped}
+function installBind(){if(typeof bindCard!=='function'||bindCard.__breakfastWrapped)return;const base=bindCard;const wrapped=function(el){base(el);const id=el.dataset.cardId;const card=activeWorkspace().cards.find(x=>x.id===id);if(!card||card.appId!=='breakfast')return;el.querySelectorAll('[data-bf-tab]').forEach(b=>b.onclick=()=>{card.data.breakfastTab=b.dataset.bfTab;save();renderAll()});el.querySelectorAll('[data-bf-pick]').forEach(b=>b.onclick=()=>{card.data.breakfastSelected=b.dataset.bfPick;save();renderAll()});el.querySelectorAll('[data-bf-week]').forEach(s=>s.onchange=()=>{card.data['breakfastWeek'+s.dataset.bfWeek]=s.value;save();renderAll()});el.querySelectorAll('[data-bf-date]').forEach(b=>b.onclick=()=>{card.data.breakfastMonthDone=card.data.breakfastMonthDone||{};const k=b.dataset.bfDate;card.data.breakfastMonthDone[k]=!card.data.breakfastMonthDone[k];save();renderAll()})};wrapped.__breakfastWrapped=true;bindCard=wrapped}
+function style(){let s=document.getElementById('breakfastCardV2Css');if(!s){s=document.createElement('style');s.id='breakfastCardV2Css';document.head.appendChild(s)}s.textContent=`
+.t-breakfast{--card-accent:#4aa4df}.desktop-card.t-breakfast{min-width:340px;min-height:360px}.t-breakfast .card-body{overflow:auto!important;background:linear-gradient(180deg,#eefaff 0,#fafff7 55%,#fff9e9 100%);color:#244a68}
+.breakfast-widget{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:12px;padding:12px;box-sizing:border-box;min-height:100%;font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif}
+.bf-hero{grid-column:1/-1;min-height:116px;border-radius:22px;background:linear-gradient(135deg,#dff4ff,#fff4c9 58%,#e8ffd8);display:flex;align-items:center;justify-content:space-between;padding:10px 18px 0;overflow:hidden;border:1px solid rgba(89,169,217,.18)}.bf-title{display:flex;gap:10px;align-items:center}.bf-title strong{display:block;font-size:22px;color:#17598a}.bf-title small{display:block;margin-top:5px;color:#4a718b}.bf-sun{font-size:34px}.bf-hero-comic{width:160px;align-self:end}.bf-comic-svg{display:block;width:100%;height:auto}
+.bf-tabs{grid-column:1/-1;display:flex;gap:8px}.bf-tabs button{border:0;border-radius:999px;padding:8px 15px;background:#eaf3f8;color:#477089;font-weight:800;cursor:pointer}.bf-tabs button.is-active{background:#4ea6dc;color:white;box-shadow:0 6px 16px rgba(57,145,201,.24)}
+.bf-main{min-width:0}.bf-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.bf-section-head b{display:block;font-size:16px;color:#245f86}.bf-section-head small{display:block;margin-top:2px;color:#718b99;font-size:10px}.bf-badge{font-size:10px;font-weight:800;background:#e8f7ff;color:#2a7bab;border-radius:999px;padding:5px 8px;white-space:nowrap}
+.bf-meal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.bf-meal{min-width:0;border:1px solid #e6edf0;border-radius:15px;background:#fff;padding:10px 7px;display:grid;gap:4px;text-align:center;color:#345b72;cursor:pointer;box-shadow:0 5px 14px rgba(52,100,130,.07)}.bf-meal span{font-size:30px}.bf-meal strong{font-size:11px;line-height:1.25}.bf-meal small{font-size:8px;color:#79919d}.bf-meal:hover{transform:translateY(-1px);border-color:#86c9ef}
+.bf-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.bf-day{background:#fff;border:1px solid #e5eef2;border-radius:14px;padding:8px 6px;display:grid;gap:5px;text-align:center}.bf-day>b{color:#4784a9;font-size:10px}.bf-day-icon{font-size:25px}.bf-day select{width:100%;border:1px solid #dbe8ee;border-radius:8px;padding:5px 3px;font-size:8px;color:#345b72;background:#f9fdff}.bf-day small{font-size:7.5px;line-height:1.3;color:#78919f}
+.bf-weeknames,.bf-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.bf-weeknames b{text-align:center;font-size:9px;color:#5482a0;padding:3px}.bf-cal-day,.bf-cal-empty{aspect-ratio:1;border-radius:9px}.bf-cal-day{position:relative;border:1px solid #dfecef;background:#fff;display:grid;place-items:center;padding:2px;color:#4b7187;cursor:pointer}.bf-cal-day b{position:absolute;left:5px;top:3px;font-size:8px}.bf-cal-day span{font-size:18px}.bf-cal-day i{position:absolute;right:4px;bottom:3px;font-size:9px;color:#31aa68;font-style:normal}.bf-cal-day.is-done{background:#eaffef;border-color:#85d9a4}
+.bf-today{background:white;border:1px solid #e6edf0;border-radius:18px;padding:10px;display:grid;grid-template-columns:84px 1fr;gap:8px;align-items:center;box-shadow:0 7px 18px rgba(58,106,133,.08)}.bf-today-art{align-self:end}.bf-today span,.bf-today small,.bf-today em{display:block}.bf-today span{font-size:9px;color:#e49b22;font-weight:800}.bf-today strong{display:block;font-size:12px;color:#2c6385;margin:4px 0}.bf-today small{font-size:9px;color:#728b98;line-height:1.4}.bf-today em{margin-top:5px;font-size:8px;color:#4ba16c;font-style:normal;font-weight:700}
+.bf-tip{grid-column:1/-1;border-radius:15px;background:linear-gradient(90deg,#fff4ce,#f4ffe8);padding:9px 12px;display:flex;gap:10px;align-items:flex-start}.bf-tip b{white-space:nowrap;font-size:10px;color:#c9861d}.bf-tip span{font-size:9px;line-height:1.45;color:#637b74}
+@media(max-width:800px){.breakfast-widget{grid-template-columns:1fr;padding:9px}.bf-hero,.bf-tabs,.bf-tip{grid-column:1}.bf-hero{min-height:96px}.bf-title strong{font-size:17px}.bf-title small{font-size:9px}.bf-hero-comic{width:112px}.bf-meal-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bf-week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bf-day:last-child{grid-column:1/-1}.bf-today{grid-template-columns:70px 1fr}}
+@media(max-width:480px){.bf-meal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bf-title small{display:none}.bf-hero-comic{width:86px}.bf-tabs{gap:5px}.bf-tabs button{flex:1;padding:7px 5px;font-size:10px}}
+`}
+function refresh(){const ok=register();installBody();installAdd();installBind();style();if(ok&&typeof renderShelf==='function')renderShelf()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh,{once:true});else refresh();setTimeout(refresh,0);window.WebDeskBreakfastCard={version:VERSION,registered:true,nutritionLibrary:MEALS.length,weekPlanner:true,monthTracker:true,comicIllustrations:true};
 })();
