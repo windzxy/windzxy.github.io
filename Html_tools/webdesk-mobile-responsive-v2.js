@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const VERSION='20260913-webdesk-mobile-responsive-v2.4-compact-mobile-cards';
+const VERSION='20260913-webdesk-mobile-responsive-v2.5-inner-width-containment';
 if(window.__webdeskMobileResponsive===VERSION)return;
 window.__webdeskMobileResponsive=VERSION;
 let activeIndex=0,lastIds=[],touch=null,indicator=null;
@@ -13,29 +13,45 @@ function installStyle(){
   @media (max-width:820px){
     html,body{width:100%!important;min-height:100%!important;height:auto!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
     body.desktop-home{position:static!important}
-    #desktopApp,.web-desktop{position:relative!important;width:100%!important;min-height:100vh!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:8px 0 calc(72px + env(safe-area-inset-bottom))!important;box-sizing:border-box!important}
-    #desktopCanvas,.desktop-surface{position:relative!important;inset:auto!important;width:100%!important;min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;box-sizing:border-box!important;padding:8px max(8px,env(safe-area-inset-right)) 10px max(8px,env(safe-area-inset-left))!important;touch-action:pan-y!important}
-    #windowLayer,.window-layer{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;max-height:none!important;overflow:visible!important;box-sizing:border-box!important}
+    #desktopApp,.web-desktop{position:relative!important;width:100%!important;min-width:0!important;min-height:100vh!important;height:auto!important;max-height:none!important;overflow-x:hidden!important;overflow-y:visible!important;padding:8px 0 calc(72px + env(safe-area-inset-bottom))!important;box-sizing:border-box!important}
+    #desktopCanvas,.desktop-surface{position:relative!important;inset:auto!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-x:hidden!important;overflow-y:visible!important;box-sizing:border-box!important;padding:8px max(8px,env(safe-area-inset-right)) 10px max(8px,env(safe-area-inset-left))!important;touch-action:pan-y!important}
+    #windowLayer,.window-layer{position:relative!important;inset:auto!important;width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;overflow-x:hidden!important;overflow-y:visible!important;box-sizing:border-box!important}
 
     /* Mobile uses one compact app-card at a time. */
     .desktop-card{display:none!important;position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:min(82dvh,760px)!important;margin:0!important;box-sizing:border-box!important;overflow:hidden!important;border-radius:18px!important}
     .desktop-card.mobile-active-card{display:flex!important;flex-direction:column!important;animation:webdesk-card-in .18s ease-out}
     @keyframes webdesk-card-in{from{opacity:.35;transform:translateX(10px)}to{opacity:1;transform:none}}
-    .desktop-card .card-bar{flex:0 0 auto!important;min-height:52px!important;padding:8px 10px!important}
-    .desktop-card .card-bar h3{font-size:18px!important;line-height:1.15!important}
+    .desktop-card .card-bar{flex:0 0 auto!important;min-width:0!important;min-height:52px!important;padding:8px 10px!important;box-sizing:border-box!important}
+    .desktop-card .card-bar h3{min-width:0!important;max-width:100%!important;font-size:18px!important;line-height:1.15!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
     .desktop-card .card-body,.desktop-card .card-content,.desktop-card .desktop-card-body,.desktop-card [data-card-body]{width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:calc(min(82dvh,760px) - 52px)!important;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;box-sizing:border-box!important}
     .desktop-card .resize-grip,.desktop-card .card-resize,.desktop-card .resize-handle,[data-card-resize]{display:none!important}
+
+    /* Hard containment: desktop children must never make the whole card wider than the phone. */
+    .desktop-card *{box-sizing:border-box!important;max-width:100%}
+    .desktop-card :where(section,article,main,aside,header,footer,div,form,fieldset,label,nav,ul,ol,li){min-width:0!important}
+    .desktop-card :where(.app-panel,.app-controls,.tool-panel,.tool-grid,.widget-body,.widget-content,.game-shell,.game-panel,.game-toolbar,.boardgame-main,.boardgame-side,.xq-main,.xq-side,.gomoku-main,.chess-main,.calendar-wrap,.schedule-wrap,.weather-wrap,.metals-wrap,.fx-wrap){width:100%!important;max-width:100%!important;min-width:0!important}
+    .desktop-card :where(.app-controls,.toolbar,.game-toolbar,.boardgame-toolbar,.xq-toolbar,.button-row,.actions,.controls,.segmented-control){display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+    .desktop-card :where(button,select,input,textarea){max-width:100%!important;min-width:0!important}
+    .desktop-card :where(input,textarea,select){width:100%;}
+    .desktop-card :where(pre,code){white-space:pre-wrap!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+    .desktop-card :where(p,span,strong,small,h1,h2,h3,h4,h5,h6){overflow-wrap:anywhere!important}
+    .desktop-card :where(img,canvas,svg,video,iframe){display:block;max-width:100%!important;height:auto}
 
     /* Mobile visual density is intentionally different from desktop. */
     .desktop-card .card-body{padding:10px!important}
     .desktop-card button,.desktop-card select,.desktop-card input{min-height:36px}
     .desktop-card .panel-title,.desktop-card .game-tip,.desktop-card .lesson-card,.desktop-card .xq-card{margin-block:6px!important}
-    .weather-card,.calendar-card,.class-schedule-card,.metals-card,.fx-card,.image-workbench,.text-tool,.table-tool,.json-tool,.date-tool,.gomoku-app,.chess-app,.xq-app{width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;box-sizing:border-box!important}
-    img,canvas,svg,video,iframe,table{max-width:100%!important}
-    .gomoku-main,.chess-main,.xq-main{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;overflow:visible!important;gap:8px!important}
-    .gomoku-board,.chess-board{width:min(100%,68dvh)!important;max-width:100%!important;aspect-ratio:1/1!important;margin:0 auto!important;box-sizing:border-box!important}
-    .xq-board{width:min(100%,61dvh)!important;max-width:100%!important;aspect-ratio:9/10!important;margin:0 auto!important;box-sizing:border-box!important}
-    .gomoku-app .boardgame-side,.chess-app .boardgame-side,.xq-app .xq-side{position:static!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;overflow:visible!important;box-sizing:border-box!important}
+    .weather-card,.calendar-card,.class-schedule-card,.metals-card,.fx-card,.image-workbench,.text-tool,.table-tool,.json-tool,.date-tool,.gomoku-app,.chess-app,.xq-app{width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;box-sizing:border-box!important;overflow-x:hidden!important}
+
+    /* Only data tables may scroll horizontally, inside their own local wrapper. */
+    .desktop-card :where(.table-output,.table-wrap,.table-scroll,.schedule-table-wrap){width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+    .desktop-card table{width:100%!important;max-width:100%!important;min-width:100%!important;table-layout:fixed!important}
+    .desktop-card th,.desktop-card td{min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+
+    .gomoku-main,.chess-main,.xq-main{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;overflow-x:hidden!important;overflow-y:visible!important;gap:8px!important}
+    .gomoku-board,.chess-board{width:min(100%,68dvh)!important;max-width:100%!important;min-width:0!important;aspect-ratio:1/1!important;margin:0 auto!important;box-sizing:border-box!important;overflow:hidden!important}
+    .xq-board{width:min(100%,61dvh)!important;max-width:100%!important;min-width:0!important;aspect-ratio:9/10!important;margin:0 auto!important;box-sizing:border-box!important;overflow:hidden!important}
+    .gomoku-app .boardgame-side,.chess-app .boardgame-side,.xq-app .xq-side{position:static!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;overflow-x:hidden!important;overflow-y:visible!important;box-sizing:border-box!important}
 
     /* The desktop workspace/taskbar (including Kids label) has no role on phone. */
     .desktop-taskbar{display:none!important}
@@ -51,7 +67,7 @@ function installStyle(){
     .desktop-dock button{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;border-radius:14px!important}
     .webdesk-mobile-fab{display:flex!important;position:fixed!important;right:max(12px,env(safe-area-inset-right))!important;bottom:max(18px,calc(env(safe-area-inset-bottom) + 12px))!important;width:54px!important;height:54px!important;z-index:12021!important;align-items:center!important;justify-content:center!important;border:0!important;border-radius:18px!important;background:linear-gradient(145deg,#ff9800,#ff7a00)!important;color:#fff!important;font:800 26px/1 system-ui!important;box-shadow:0 12px 30px rgba(0,0,0,.28)!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important}
     body.webdesk-dock-open .webdesk-mobile-fab{transform:rotate(45deg)!important}
-    .desktop-drawer{max-height:calc(100dvh - 20px)!important;overflow-y:auto!important}
+    .desktop-drawer{max-height:calc(100dvh - 20px)!important;overflow-x:hidden!important;overflow-y:auto!important}
   }
   `;
 }
@@ -88,7 +104,7 @@ function syncCards(){
 }
 function bindSwipe(){
   const canvas=document.getElementById('desktopCanvas');if(!canvas||canvas.dataset.mobileSwipeBound==='1')return;canvas.dataset.mobileSwipeBound='1';
-  canvas.addEventListener('pointerdown',e=>{if(innerWidth>820||e.pointerType==='mouse'&&e.button!==0)return;if(e.target.closest('input,textarea,select,button,a,[contenteditable=true]'))return;touch={x:e.clientX,y:e.clientY,t:Date.now()}} ,{passive:true});
+  canvas.addEventListener('pointerdown',e=>{if(innerWidth>820||e.pointerType==='mouse'&&e.button!==0)return;if(e.target.closest('input,textarea,select,button,a,[contenteditable=true],.table-output,.table-wrap,.table-scroll,.schedule-table-wrap'))return;touch={x:e.clientX,y:e.clientY,t:Date.now()}} ,{passive:true});
   canvas.addEventListener('pointerup',e=>{if(!touch||innerWidth>820)return;const dx=e.clientX-touch.x,dy=e.clientY-touch.y,dt=Date.now()-touch.t;touch=null;if(dt>900||Math.abs(dx)<48||Math.abs(dx)<Math.abs(dy)*1.2)return;if(dx<0)show(activeIndex+1);else show(activeIndex-1)},{passive:true});
 }
 function closeDock(){document.body.classList.remove('webdesk-dock-open');const b=document.querySelector('.webdesk-mobile-fab');if(b)b.setAttribute('aria-expanded','false')}
@@ -111,5 +127,5 @@ function boot(){
   window.addEventListener('orientationchange',()=>setTimeout(scheduleSync,140),{passive:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.WebDeskMobileResponsive={version:VERSION,features:['safe-floating-dock','single-card-mobile-view','swipe-card-switching','compact-card-height','scrollable-card-body','hide-mobile-taskbar','mobile-specific-density','card-position-indicator']};
+window.WebDeskMobileResponsive={version:VERSION,features:['safe-floating-dock','single-card-mobile-view','swipe-card-switching','compact-card-height','scrollable-card-body','hide-mobile-taskbar','mobile-specific-density','card-position-indicator','inner-width-containment','local-table-horizontal-scroll-only']};
 })();
