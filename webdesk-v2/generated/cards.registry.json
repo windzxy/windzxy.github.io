@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T14:23:00.090Z",
+  "generatedAt": "2026-09-13T14:23:15.730Z",
   "cards": [
     {
       "id": "weather",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "天气",
