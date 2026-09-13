@@ -1,24 +1,25 @@
 {
   "id": "weather",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "schemaVersion": 1,
   "name": {"zh-CN": "天气", "zh-HK": "天氣"},
-  "description": {"zh-CN": "实时天气与预报", "zh-HK": "即時天氣與預報"},
+  "description": {"zh-CN": "三端独立设计的实时天气卡片与预报。", "zh-HK": "三端獨立設計的即時天氣卡片與預報。"},
   "icon": "☁️",
   "category": "live",
   "kind": "live",
   "order": 10,
   "platforms": ["desktop", "tablet", "mobile"],
-  "capabilities": ["network"],
+  "capabilities": ["network", "location-optional"],
   "permissions": [],
   "defaultSize": {
-    "desktop": {"w": 360, "h": 220},
-    "tablet": {"w": 420, "h": 210},
-    "mobile": {"w": 320, "h": 180}
+    "desktop": {"w": 430, "h": 310},
+    "tablet": {"w": 520, "h": 270},
+    "mobile": {"w": 360, "h": 190}
   },
   "entry": {
-    "desktop": {"card": "./desktop/card.js", "cardStyle": "./desktop/card.css"},
-    "tablet": {"card": "./tablet/card.js", "cardStyle": "./tablet/card.css"},
-    "mobile": {"card": "./mobile/card.js", "cardStyle": "./mobile/card.css"}
+    "shared": "./shared/weather-service.js",
+    "desktop": {"card": "./desktop/card.js", "cardStyle": "./desktop/card.css", "app": "./desktop/app.js", "appStyle": "./desktop/app.css"},
+    "tablet": {"card": "./tablet/card.js", "cardStyle": "./tablet/card.css", "app": "./tablet/app.js", "appStyle": "./tablet/app.css"},
+    "mobile": {"card": "./mobile/card.js", "cardStyle": "./mobile/card.css", "app": "./mobile/app.js", "appStyle": "./mobile/app.css"}
   }
 }
