@@ -1,6 +1,6 @@
 {
   "id":"global-weather",
-  "version":"0.2.1",
+  "version":"0.2.2",
   "schemaVersion":1,
   "name":{"zh-CN":"全球天气","zh-HK":"全球天氣"},
   "description":{"zh-CN":"全球天气地图与图层","zh-HK":"全球天氣地圖與圖層"},
@@ -12,7 +12,7 @@
   "capabilities":["network"],
   "permissions":[],
   "defaultSize":{"desktop":{"w":520,"h":360},"tablet":{"w":540,"h":300},"mobile":{"w":360,"h":180}},
-  "minSize":{"desktop":{"w":400,"h":280},"tablet":{"w":420,"h":240},"mobile":{"w":320,"h":150}},
+  "minSize":{"desktop":{"w":360,"h":76},"tablet":{"w":360,"h":76},"mobile":{"w":320,"h":150}},
   "maxSize":{"desktop":{"w":980,"h":760},"tablet":{"w":820,"h":680},"mobile":{"w":430,"h":520}},
   "entry":{"shared":"./shared/global-weather-service.js","desktop":{"card":"./desktop/card.js","cardStyle":"./desktop/card.css","app":"./desktop/app.js","appStyle":"./desktop/app.css"},"tablet":{"card":"./tablet/card.js","cardStyle":"./tablet/card.css","app":"./tablet/app.js","appStyle":"./tablet/app.css"},"mobile":{"card":"./mobile/card.js","cardStyle":"./mobile/card.css","app":"./mobile/app.js","appStyle":"./mobile/app.css"}}
 }
