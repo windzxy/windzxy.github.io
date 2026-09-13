@@ -32,7 +32,7 @@ function fallbackMap(container,{center,onMove}={}){
   iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#dbe7ef';
   const label=document.createElement('div');label.textContent='地圖備援模式';label.style.cssText='position:absolute;left:10px;bottom:10px;z-index:2;padding:5px 8px;border-radius:9px;background:rgba(0,0,0,.5);color:#fff;font:11px -apple-system,BlinkMacSystemFont,sans-serif;pointer-events:none';
   wrap.append(iframe,label);container.appendChild(wrap);onMove?.({lat,lon,zoom:4});
-  return{map:null,isFallback:true,setBasemap(){return'fallback'},flyTo(){},destroy(){wrap.remove()}};
+  return{map:null,isFallback:true,setBasemap(){return'fallback'},flyTo(){},resize(){},destroy(){wrap.remove()}};
 }
 
 export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,basemap='weather',onMove}={}){
@@ -45,13 +45,14 @@ export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,bas
     map.addControl(new gl.NavigationControl({showCompass:false}),'bottom-right');
     let settled=false,failed=false,ro=null,watchdog=0;
     const notify=()=>{const c=map.getCenter();onMove?.({lat:c.lat,lon:c.lng,zoom:map.getZoom()})};
-    const markReady=()=>{settled=true;clearTimeout(watchdog);notify()};
+    const resize=()=>{if(!container.isConnected||container.clientWidth<1||container.clientHeight<1)return;try{map.resize()}catch{}};
+    const markReady=()=>{settled=true;clearTimeout(watchdog);resize();notify()};
     const failover=reason=>{if(failed||settled||!container.isConnected)return;failed=true;clearTimeout(watchdog);console.warn('[Global Weather] map render failed, using OSM fallback',reason);try{ro?.disconnect?.();map.remove()}catch{}fallbackMap(container,{center,onMove})};
     map.on('moveend',notify);map.on('load',markReady);map.on('idle',markReady);
     map.on('error',e=>{console.warn('[Global Weather map]',e?.error||e);if(!settled)failover(e?.error||e)});
     watchdog=setTimeout(()=>failover(new Error('map first render timeout')),6500);
-    try{ro=new ResizeObserver(()=>{if(container.clientWidth>0&&container.clientHeight>0)map.resize()});ro.observe(container)}catch{}
-    requestAnimationFrame(()=>{try{map.resize()}catch{}});
-    return{map,isFallback:false,setBasemap(id){const spec=specFor(id);settled=false;failed=false;clearTimeout(watchdog);watchdog=setTimeout(()=>failover(new Error('basemap render timeout')),6500);try{map.setStyle(spec.style(),{diff:true})}catch{map.setStyle(spec.style())}return spec.id},flyTo(lon,lat,z=Math.max(map.getZoom(),6)){map.flyTo({center:[lon,lat],zoom:z,essential:false,duration:550})},destroy(){clearTimeout(watchdog);ro?.disconnect?.();map.off('moveend',notify);map.off('load',markReady);map.off('idle',markReady);try{map.remove()}catch{}}};
+    try{ro=new ResizeObserver(()=>resize());ro.observe(container)}catch{}
+    requestAnimationFrame(()=>{resize();requestAnimationFrame(resize)});
+    return{map,isFallback:false,resize,setBasemap(id){const spec=specFor(id);settled=false;failed=false;clearTimeout(watchdog);watchdog=setTimeout(()=>failover(new Error('basemap render timeout')),6500);try{map.setStyle(spec.style(),{diff:true})}catch{map.setStyle(spec.style())}setTimeout(resize,60);return spec.id},flyTo(lon,lat,z=Math.max(map.getZoom(),6)){map.flyTo({center:[lon,lat],zoom:z,essential:false,duration:550})},destroy(){clearTimeout(watchdog);ro?.disconnect?.();map.off('moveend',notify);map.off('load',markReady);map.off('idle',markReady);try{map.remove()}catch{}}};
   }catch(e){console.warn('[Global Weather] map init failed, using OSM fallback',e);return fallbackMap(container,{center,onMove})}
 }
