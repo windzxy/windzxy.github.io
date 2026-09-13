@@ -24,26 +24,34 @@ function specFor(id){return basemaps.find(x=>x.id===id)||basemaps[0]}
 function fallbackMap(container,{center,onMove}={}){
   const [lon,lat]=center||[114.0579,22.5431];
   container.innerHTML='';
+  const wrap=document.createElement('div');wrap.className='gw-map-fallback-wrap';wrap.style.cssText='position:absolute;inset:0;background:#dbe7ef';
   const iframe=document.createElement('iframe');
-  iframe.className='gw-map-fallback';iframe.title='全球天氣地圖';iframe.loading='eager';iframe.referrerPolicy='no-referrer';
+  iframe.className='gw-map-fallback';iframe.title='全球天氣地圖';iframe.loading='eager';iframe.referrerPolicy='no-referrer-when-downgrade';
   const span=7,box=[lon-span,lat-span*.65,lon+span,lat+span*.65].join('%2C');
   iframe.src=`https://www.openstreetmap.org/export/embed.html?bbox=${box}&layer=mapnik&marker=${lat}%2C${lon}`;
-  iframe.style.cssText='width:100%;height:100%;border:0;display:block;background:#dbe7ef';
-  container.appendChild(iframe);onMove?.({lat,lon,zoom:4});
-  return{map:null,isFallback:true,setBasemap(){return'fallback'},flyTo(){},destroy(){iframe.remove()}};
+  iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#dbe7ef';
+  const label=document.createElement('div');label.textContent='地圖備援模式';label.style.cssText='position:absolute;left:10px;bottom:10px;z-index:2;padding:5px 8px;border-radius:9px;background:rgba(0,0,0,.5);color:#fff;font:11px -apple-system,BlinkMacSystemFont,sans-serif;pointer-events:none';
+  wrap.append(iframe,label);container.appendChild(wrap);onMove?.({lat,lon,zoom:4});
+  return{map:null,isFallback:true,setBasemap(){return'fallback'},flyTo(){},destroy(){wrap.remove()}};
 }
 
 export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,basemap='weather',onMove}={}){
   if(!container||!document.body.contains(container))return null;
+  container.style.minHeight='220px';
   let gl;try{gl=await load()}catch(e){console.warn('[Global Weather] MapLibre unavailable, using OSM fallback',e);return fallbackMap(container,{center,onMove})}
   if(!container||!document.body.contains(container))return null;
   try{
     const map=new gl.Map({container,style:specFor(basemap).style(),center,zoom,minZoom:1.6,maxZoom:16,renderWorldCopies:true,attributionControl:true,fadeDuration:0});
     map.addControl(new gl.NavigationControl({showCompass:false}),'bottom-right');
+    let settled=false,failed=false,ro=null,watchdog=0;
     const notify=()=>{const c=map.getCenter();onMove?.({lat:c.lat,lon:c.lng,zoom:map.getZoom()})};
-    map.on('moveend',notify);map.on('load',notify);
-    map.on('error',e=>console.warn('[Global Weather map]',e?.error||e));
-    let ro=null;try{ro=new ResizeObserver(()=>map.resize());ro.observe(container)}catch{}
-    return{map,isFallback:false,setBasemap(id){const spec=specFor(id);try{map.setStyle(spec.style(),{diff:true})}catch{map.setStyle(spec.style())}return spec.id},flyTo(lon,lat,z=Math.max(map.getZoom(),6)){map.flyTo({center:[lon,lat],zoom:z,essential:false,duration:550})},destroy(){ro?.disconnect?.();map.off('moveend',notify);try{map.remove()}catch{}}};
+    const markReady=()=>{settled=true;clearTimeout(watchdog);notify()};
+    const failover=reason=>{if(failed||settled||!container.isConnected)return;failed=true;clearTimeout(watchdog);console.warn('[Global Weather] map render failed, using OSM fallback',reason);try{ro?.disconnect?.();map.remove()}catch{}fallbackMap(container,{center,onMove})};
+    map.on('moveend',notify);map.on('load',markReady);map.on('idle',markReady);
+    map.on('error',e=>{console.warn('[Global Weather map]',e?.error||e);if(!settled)failover(e?.error||e)});
+    watchdog=setTimeout(()=>failover(new Error('map first render timeout')),6500);
+    try{ro=new ResizeObserver(()=>{if(container.clientWidth>0&&container.clientHeight>0)map.resize()});ro.observe(container)}catch{}
+    requestAnimationFrame(()=>{try{map.resize()}catch{}});
+    return{map,isFallback:false,setBasemap(id){const spec=specFor(id);settled=false;failed=false;clearTimeout(watchdog);watchdog=setTimeout(()=>failover(new Error('basemap render timeout')),6500);try{map.setStyle(spec.style(),{diff:true})}catch{map.setStyle(spec.style())}return spec.id},flyTo(lon,lat,z=Math.max(map.getZoom(),6)){map.flyTo({center:[lon,lat],zoom:z,essential:false,duration:550})},destroy(){clearTimeout(watchdog);ro?.disconnect?.();map.off('moveend',notify);map.off('load',markReady);map.off('idle',markReady);try{map.remove()}catch{}}};
   }catch(e){console.warn('[Global Weather] map init failed, using OSM fallback',e);return fallbackMap(container,{center,onMove})}
 }
