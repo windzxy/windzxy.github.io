@@ -24,7 +24,7 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
           s=re.sub(r'\n?<script src="Html_tools/flight-chess-ai-controller-v1\.js\?v=[^"]+"></script>','',s)
-          tag='<script src="Html_tools/flight-chess-ai-controller-v1.js?v=20260913-flight-chess-ai-controller-v1.0"></script>'
+          tag='<script src="Html_tools/flight-chess-ai-controller-v1.js?v=20260913-flight-chess-ai-controller-v1.1-color-choice"></script>'
           s=s.replace('</body>',tag+'\n</body>')
           p.write_text(s,encoding='utf-8')
           PY
@@ -34,5 +34,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Load Flight Chess AI turn-chain hotfix'
+          git commit -m 'Load Flight Chess color-select AI controller'
           git push origin master
