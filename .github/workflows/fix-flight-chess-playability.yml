@@ -1,0 +1,61 @@
+name: Fix Flight Chess Playability
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/fix-flight-chess-playability.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Patch Flight Chess core safely
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('Html_tools/flight-chess-card-v1.js')
+          s=p.read_text()
+          old="if(x.state==='base')return d===6;"
+          new="if(x.state==='base')return d===5||d===6;"
+          assert old in s, 'takeoff rule anchor missing'
+          s=s.replace(old,new,1)
+          old="s.message=NAME[p.color]+' 擲出 '+d;persist();redraw();const moves=movable(s,s.turn);"
+          new="s.message=NAME[p.color]+' 擲出 '+d+(d===5||d===6?' · 可起飛，點擊發光飛機':'');persist();redraw();const moves=movable(s,s.turn);"
+          assert old in s, 'roll message anchor missing'
+          s=s.replace(old,new,1)
+          old="if(!moves.length){setTimeout(()=>{"
+          new="if(!moves.length){s.message=NAME[p.color]+' 擲出 '+d+' · 沒有可走的飛機，自動換手';persist();redraw();setTimeout(()=>{"
+          assert old in s, 'no-move anchor missing'
+          s=s.replace(old,new,1)
+          old="const keep=d===6&&!s.winner;"
+          new="const keep=d===6&&!s.winner;"
+          assert old in s
+          # Improve visible affordance and touch targets without adding observers.
+          oldcss=".flight-plane.movable{cursor:pointer;filter:drop-shadow(0 0 7px rgba(14,165,233,.85))}"
+          newcss=".flight-plane.movable{cursor:pointer;filter:drop-shadow(0 0 10px rgba(14,165,233,.95));animation:flight-ready-pulse .85s ease-in-out infinite alternate}@keyframes flight-ready-pulse{to{filter:drop-shadow(0 0 16px rgba(14,165,233,1));transform:scale(1.08)}}"
+          assert oldcss in s, 'movable css anchor missing'
+          s=s.replace(oldcss,newcss,1)
+          s=s.replace("const VERSION='20260913-flight-chess-v1.0-product';","const VERSION='20260913-flight-chess-v1.1-playable';",1)
+          p.write_text(s)
+          PY
+      - name: Refresh loader version
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html'); s=p.read_text()
+          import re
+          s,n=re.subn(r'Html_tools/flight-chess-card-v1\.js\?v=[^"<]+','Html_tools/flight-chess-card-v1.js?v=20260913-flight-chess-v1.1-playable',s,count=1)
+          assert n==1, 'flight loader missing'
+          p.write_text(s)
+          PY
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add Html_tools/flight-chess-card-v1.js index.html
+          git diff --cached --quiet || git commit -m 'Make Flight Chess movement obvious and playable'
+          git push
