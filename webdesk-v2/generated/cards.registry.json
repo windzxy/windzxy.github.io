@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T16:25:16.731Z",
+  "generatedAt": "2026-09-13T16:31:15.746Z",
   "cards": [
     {
       "id": "weather",
-      "version": "0.3.2",
+      "version": "0.3.3",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "天气",
@@ -57,7 +57,7 @@
         },
         "mobile": {
           "w": 320,
-          "h": 150
+          "h": 76
         }
       },
       "maxSize": {
@@ -72,6 +72,62 @@
         "mobile": {
           "w": 430,
           "h": 520
+        }
+      },
+      "sizeTiers": {
+        "desktop": {
+          "mini": {
+            "w": 330,
+            "h": 76
+          },
+          "compact": {
+            "w": 360,
+            "h": 170
+          },
+          "standard": {
+            "w": 430,
+            "h": 310
+          },
+          "large": {
+            "w": 700,
+            "h": 560
+          }
+        },
+        "tablet": {
+          "mini": {
+            "w": 360,
+            "h": 76
+          },
+          "compact": {
+            "w": 420,
+            "h": 160
+          },
+          "standard": {
+            "w": 520,
+            "h": 270
+          },
+          "large": {
+            "w": 680,
+            "h": 520
+          }
+        },
+        "mobile": {
+          "mini": {
+            "w": 320,
+            "h": 76
+          },
+          "compact": {
+            "w": 340,
+            "h": 128
+          },
+          "standard": {
+            "w": 360,
+            "h": 190
+          },
+          "large": {
+            "w": 420,
+            "h": 480
+          }
         }
       },
       "entry": {
