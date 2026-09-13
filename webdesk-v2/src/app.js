@@ -21,9 +21,10 @@ function createHost(item,card){
   const size=sizeFor(card);
   host.className='wd-card';host.dataset.cardHost='1';host.dataset.id=card.id;
   if(state.platform.name==='desktop'){
-    host.style.left=`${item.x||24}px`;host.style.top=`${item.y||24}px`;host.style.width=`${item.w||size.w}px`;host.style.minHeight=`${size.h}px`;
+    host.style.left=`${item.x||24}px`;host.style.top=`${item.y||24}px`;host.style.width=`${item.w||size.w}px`;host.style.minHeight=`${Math.max(170,Math.round(size.h*.72))}px`;
+    if(item.h){host.style.height=`${item.h}px`;host.dataset.userSized='1'}
   }
-  host.innerHTML=`<header class="wd-card-head"><div class="wd-card-title"><span class="wd-card-icon">${card.icon||'•'}</span><span>${title(card)}</span></div><button data-remove="${card.id}" aria-label="移除">×</button></header><div class="wd-card-mount" data-card-mount></div>`;
+  host.innerHTML=`<header class="wd-card-head"><div class="wd-card-title"><span class="wd-card-icon">${card.icon||'•'}</span><span>${title(card)}</span></div><button data-remove="${card.id}" aria-label="移除">×</button></header><div class="wd-card-mount" data-card-mount></div>${state.platform.name==='desktop'?'<div class="wd-card-resize" data-resize-card role="button" aria-label="調整卡片大小" tabindex="0"></div>':''}`;
   const mount=host.querySelector('[data-card-mount]');mount._manifest=card;
   return host;
 }
@@ -63,6 +64,7 @@ function bindCards(){
   desktop.querySelectorAll('[data-remove]').forEach(button=>button.onclick=()=>{state.cards=state.cards.filter(card=>card.id!==button.dataset.remove);persist();renderDesktop();renderLibrary($('#toolSearch').value)});
   if(state.platform.name!=='desktop')return;
   desktop.querySelectorAll('.wd-card-head').forEach(head=>{head.onpointerdown=e=>{if(e.target.closest('button'))return;const shell=head.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id);const sx=e.clientX,sy=e.clientY,ox=item.x||0,oy=item.y||0;head.setPointerCapture(e.pointerId);const move=ev=>{item.x=Math.max(0,ox+ev.clientX-sx);item.y=Math.max(0,oy+ev.clientY-sy);shell.style.left=item.x+'px';shell.style.top=item.y+'px';desktop.style.minHeight=Math.max(innerHeight,item.y+shell.offsetHeight+160)+'px'};const up=()=>{persist();head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up)};head.addEventListener('pointermove',move);head.addEventListener('pointerup',up,{once:true})}});
+  desktop.querySelectorAll('[data-resize-card]').forEach(handle=>{handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();const shell=handle.closest('.wd-card'),item=state.cards.find(x=>x.id===shell.dataset.id),card=state.index.get(shell.dataset.id),base=sizeFor(card);const sx=e.clientX,sy=e.clientY,sw=shell.offsetWidth,sh=shell.offsetHeight;const minW=Math.max(280,Math.round(base.w*.68)),minH=Math.max(170,Math.round(base.h*.62));handle.setPointerCapture(e.pointerId);shell.dataset.userSized='1';const move=ev=>{const maxW=Math.max(minW,Math.min(960,desktop.clientWidth-(item.x||0)-24));const nextW=Math.min(maxW,Math.max(minW,sw+ev.clientX-sx));const nextH=Math.min(900,Math.max(minH,sh+ev.clientY-sy));item.w=Math.round(nextW);item.h=Math.round(nextH);shell.style.width=item.w+'px';shell.style.height=item.h+'px';desktop.style.minHeight=Math.max(innerHeight,(item.y||0)+item.h+160)+'px'};const up=()=>{persist();handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',up)};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',up,{once:true})}});
 }
 
 async function openApp(id){const card=state.index.get(id);if(!card)return;try{await openHostedApp(windowLayer,card,state.platform.name)}catch(error){console.error('[WebDesk V2 app]',error)}}
