@@ -1,0 +1,1 @@
+.weather-v2-tablet{display:grid;gap:14px;padding:18px}.weather-v2-tablet-main{display:flex;align-items:end;gap:12px}.weather-v2-tablet-main strong{font-size:46px}.weather-v2-tablet-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:13px}
