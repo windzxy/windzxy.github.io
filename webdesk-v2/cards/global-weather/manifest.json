@@ -1,6 +1,6 @@
 {
   "id":"global-weather",
-  "version":"0.4.3",
+  "version":"0.4.4",
   "schemaVersion":1,
   "name":{"zh-CN":"全球天气","zh-HK":"全球天氣"},
   "description":{"zh-CN":"全球天气地图与图层","zh-HK":"全球天氣地圖與圖層"},
@@ -12,7 +12,7 @@
   "interaction":{"mode":"app-first","appLaunch":"whole-card"},
   "capabilities":["network"],
   "permissions":[],
-  "defaultSize":{"desktop":{"w":520,"h":360},"tablet":{"w":540,"h":300},"mobile":{"w":360,"h":180}},
+  "defaultSize":{"desktop":{"w":360,"h":76},"tablet":{"w":360,"h":76},"mobile":{"w":320,"h":76}},
   "minSize":{"desktop":{"w":360,"h":76},"tablet":{"w":360,"h":76},"mobile":{"w":320,"h":76}},
   "maxSize":{"desktop":{"w":980,"h":760},"tablet":{"w":820,"h":680},"mobile":{"w":430,"h":520}},
   "sizeTiers":{
