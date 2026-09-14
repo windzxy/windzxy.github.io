@@ -1,7 +1,7 @@
 {
-  "id":"json","version":"0.1.0","schemaVersion":1,
+  "id":"json","version":"0.1.1","schemaVersion":1,
   "name":{"zh-CN":"JSON 工具","zh-HK":"JSON 工具"},
-  "description":{"zh-CN":"本地 JSON 验证、格式化、压缩与错误定位","zh-HK":"本機 JSON 驗證、格式化、壓縮與錯誤定位"},
+  "description":{"zh-CN":"本地 JSON 验证、格式化、压缩、复制与错误定位","zh-HK":"本機 JSON 驗證、格式化、壓縮、複製與錯誤定位"},
   "icon":"{}","category":"tools","kind":"tool","order":60,
   "platforms":["desktop","tablet","mobile"],
   "interaction":{"mode":"card-app","appLaunch":"explicit"},
