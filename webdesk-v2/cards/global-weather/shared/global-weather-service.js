@@ -17,6 +17,7 @@ const GRID_FIELDS='temperature_2m,precipitation,relative_humidity_2m,pressure_ms
 const GRID_CACHE=new Map();
 const GRID_TTL=300000;
 const GRID_MAX=8;
+const GRID_BATCH=48;
 export function layerById(id){return layers.find(x=>x.id===id)||layers[0]}
 export function supportsVisualOverlay(id){return VISUAL_OVERLAY_LAYERS.has(id)}
 export function supportsWindField(id){return WIND_FIELD_LAYERS.has(id)}
@@ -38,9 +39,9 @@ export async function fetchPointWeather(lat,lon,{signal,offsetHours=0}={}){
 function wrapLon(v){return((Number(v)+540)%360)-180}
 function gridDensity({zoom=4,lonSpan=20,latSpan=12}={}){
   const z=Number(zoom)||4,area=Math.max(1,Number(lonSpan)*Number(latSpan));
-  if(z>=7||area<90)return{nx:9,ny:7};
-  if(z>=5||area<600)return{nx:10,ny:8};
-  return{nx:11,ny:8};
+  if(z>=7||area<90)return{nx:20,ny:16};
+  if(z>=5||area<600)return{nx:18,ny:14};
+  return{nx:16,ny:12};
 }
 function gridSpec({lat,lon,zoom=4,bounds}={}){
   let lonSpan=Math.max(2.2,Math.min(90,(360/Math.pow(2,Math.max(1.6,Number(zoom)||4)))*1.45));
@@ -48,8 +49,8 @@ function gridSpec({lat,lon,zoom=4,bounds}={}){
   if(bounds&&[bounds.west,bounds.east,bounds.south,bounds.north].every(Number.isFinite)){
     let rawLon=Math.abs(Number(bounds.east)-Number(bounds.west));if(rawLon>180)rawLon=360-rawLon;
     const rawLat=Math.abs(Number(bounds.north)-Number(bounds.south));
-    if(rawLon>0.2)lonSpan=Math.max(2.2,Math.min(120,rawLon*1.42));
-    if(rawLat>0.2)latSpan=Math.max(1.6,Math.min(70,rawLat*1.42));
+    if(rawLon>0.2)lonSpan=Math.max(2.2,Math.min(120,rawLon*1.34));
+    if(rawLat>0.2)latSpan=Math.max(1.6,Math.min(70,rawLat*1.34));
   }
   const{nx,ny}=gridDensity({zoom,lonSpan,latSpan}),cLat=Number(lat),cLon=Number(lon),points=[];
   for(let y=0;y<ny;y++)for(let x=0;x<nx;x++){
@@ -59,24 +60,30 @@ function gridSpec({lat,lon,zoom=4,bounds}={}){
   return{nx,ny,points,lonSpan,latSpan,coverage:{west:wrapLon(cLon-lonSpan/2),east:wrapLon(cLon+lonSpan/2),south:Math.max(-84,cLat-latSpan/2),north:Math.min(84,cLat+latSpan/2)}};
 }
 function gridKey({lat,lon,zoom=4,bounds}={}){const s=gridSpec({lat,lon,zoom,bounds});return`${Math.round(Number(zoom)||4)}|${Math.round(Number(lat)*2)/2}|${Math.round(Number(lon)*2)/2}|${s.nx}x${s.ny}|${Math.round(s.lonSpan)}x${Math.round(s.latSpan)}`}
+function chunks(items,size){const out=[];for(let i=0;i<items.length;i+=size)out.push(items.slice(i,i+size));return out}
+async function fetchGridBatch(points){
+  const q=new URLSearchParams({latitude:points.map(p=>p.lat).join(','),longitude:points.map(p=>p.lon).join(','),hourly:GRID_FIELDS,wind_speed_unit:'kmh',timezone:'GMT',forecast_days:'3'});
+  const r=await fetch(`https://api.open-meteo.com/v1/forecast?${q}`,{cache:'default'});if(!r.ok)throw new Error(`weather grid ${r.status}`);
+  const raw=await r.json(),rows=Array.isArray(raw)?raw:[raw];if(rows.length!==points.length)throw new Error('incomplete weather grid batch');return rows;
+}
 async function loadGridBundle({lat,lon,zoom=4,bounds,signal}={}){
   const spec=gridSpec({lat,lon,zoom,bounds}),key=gridKey({lat,lon,zoom,bounds}),now=Date.now(),cached=GRID_CACHE.get(key);
   if(cached&&cached.data&&now-cached.at<GRID_TTL)return cached.data;
   if(cached?.promise)return withSignal(cached.promise,signal);
-  const q=new URLSearchParams({latitude:spec.points.map(p=>p.lat).join(','),longitude:spec.points.map(p=>p.lon).join(','),hourly:GRID_FIELDS,wind_speed_unit:'kmh',timezone:'GMT',forecast_days:'3'});
-  const promise=fetch(`https://api.open-meteo.com/v1/forecast?${q}`,{cache:'default'}).then(r=>{if(!r.ok)throw new Error(`weather grid ${r.status}`);return r.json()}).then(raw=>{const rows=Array.isArray(raw)?raw:[raw];if(rows.length!==spec.points.length)throw new Error('incomplete weather grid');const data={key,at:Date.now(),rows,points:spec.points,nx:spec.nx,ny:spec.ny,coverage:spec.coverage};GRID_CACHE.set(key,{at:data.at,data});while(GRID_CACHE.size>GRID_MAX)GRID_CACHE.delete(GRID_CACHE.keys().next().value);return data}).catch(e=>{if(GRID_CACHE.get(key)?.promise===promise)GRID_CACHE.delete(key);throw e});
+  const batches=chunks(spec.points,GRID_BATCH);
+  const promise=Promise.all(batches.map(fetchGridBatch)).then(parts=>{const rows=parts.flat();if(rows.length!==spec.points.length)throw new Error('incomplete weather grid');const data={key,at:Date.now(),rows,points:spec.points,nx:spec.nx,ny:spec.ny,coverage:spec.coverage,batches:batches.length};GRID_CACHE.set(key,{at:data.at,data});while(GRID_CACHE.size>GRID_MAX)GRID_CACHE.delete(GRID_CACHE.keys().next().value);return data}).catch(e=>{if(GRID_CACHE.get(key)?.promise===promise)GRID_CACHE.delete(key);throw e});
   GRID_CACHE.set(key,{at:now,promise});
   return withSignal(promise,signal);
 }
 export async function fetchWeatherGrid({lat,lon,zoom=4,bounds,layer='temp',signal,offsetHours=0}={}){
   if(!supportsVisualOverlay(layer))return null;const variable={temp:'temperature_2m',rain:'precipitation',humidity:'relative_humidity_2m',pressure:'pressure_msl'}[layer],bundle=await loadGridBundle({lat,lon,zoom,bounds,signal});
   const featureRows=bundle.rows.map((row,i)=>{const p=bundle.points[i],hv=hourlyValue(row,variable,offsetHours),value=Number(hv.value);if(!Number.isFinite(value))return null;return{type:'Feature',geometry:{type:'Point',coordinates:[p.lon,p.lat]},properties:{value,layer,label:formatOverlayValue(layer,value),updatedAt:hv.time}}}).filter(Boolean);
-  return{layer,source:'Open-Meteo',updatedAt:featureRows.find(f=>f.properties.updatedAt)?.properties.updatedAt||new Date().toISOString(),forecastOffset:Number(offsetHours)||0,grid:{nx:bundle.nx,ny:bundle.ny},coverage:bundle.coverage,geojson:{type:'FeatureCollection',features:featureRows},sampleCount:featureRows.length,cached:true};
+  return{layer,source:'Open-Meteo',updatedAt:featureRows.find(f=>f.properties.updatedAt)?.properties.updatedAt||new Date().toISOString(),forecastOffset:Number(offsetHours)||0,grid:{nx:bundle.nx,ny:bundle.ny},coverage:bundle.coverage,geojson:{type:'FeatureCollection',features:featureRows},sampleCount:featureRows.length,batchCount:bundle.batches,cached:true};
 }
 export async function fetchWindField({lat,lon,zoom=4,bounds,layer='wind',signal,offsetHours=0}={}){
   if(!supportsWindField(layer))return null;const bundle=await loadGridBundle({lat,lon,zoom,bounds,signal}),speedKey=layer==='gust'?'wind_gusts_10m':'wind_speed_10m';
   const features=bundle.rows.map((row,i)=>{const p=bundle.points[i],s=hourlyValue(row,speedKey,offsetHours),d=hourlyValue(row,'wind_direction_10m',offsetHours),speed=Number(s.value),direction=Number(d.value);if(!Number.isFinite(speed)||!Number.isFinite(direction))return null;return{type:'Feature',geometry:{type:'Point',coordinates:[p.lon,p.lat]},properties:{speed,direction,layer,label:`${Math.round(speed)} km/h`,updatedAt:s.time||d.time||''}}}).filter(Boolean);
-  return{layer,source:'Open-Meteo',updatedAt:features.find(f=>f.properties.updatedAt)?.properties.updatedAt||new Date().toISOString(),forecastOffset:Number(offsetHours)||0,grid:{nx:bundle.nx,ny:bundle.ny},coverage:bundle.coverage,geojson:{type:'FeatureCollection',features},sampleCount:features.length,cached:true};
+  return{layer,source:'Open-Meteo',updatedAt:features.find(f=>f.properties.updatedAt)?.properties.updatedAt||new Date().toISOString(),forecastOffset:Number(offsetHours)||0,grid:{nx:bundle.nx,ny:bundle.ny},coverage:bundle.coverage,geojson:{type:'FeatureCollection',features},sampleCount:features.length,batchCount:bundle.batches,cached:true};
 }
 export function formatOverlayValue(layer,value){const n=Number(value);if(!Number.isFinite(n))return'—';if(layer==='temp')return`${n.toFixed(0)}°`;if(layer==='rain')return`${n.toFixed(n<1?1:0)} mm`;if(layer==='humidity')return`${n.toFixed(0)}%`;if(layer==='pressure')return`${n.toFixed(0)} hPa`;return String(n)}
 function round(v,d=0){const n=Number(v);return Number.isFinite(n)?Number(n.toFixed(d)):'—'}
