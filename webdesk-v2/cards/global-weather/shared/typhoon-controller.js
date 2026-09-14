@@ -58,7 +58,7 @@ async function fetchWarnings(signal){
 function intensityColor(){return['match',['get','intensity'],'Super Typhoon','#9c4dcc','Severe Typhoon','#d34676','Typhoon','#e85d3f','Severe Tropical Storm','#ef9b36','Tropical Storm','#e2c84b','Tropical Depression','#54b9d5','#d6dde6']}
 
 export function createTyphoonController(mapApi,{signal,onChange}={}){
-  const map=mapApi?.map;let visible=true,destroyed=false,abort=null,state={state:'loading',source:'香港天文台 HKO',storms:[],warning:null,tips:[],updatedAt:''};
+  const map=mapApi?.map;let visible=false,destroyed=false,abort=null,loaded=false,state={state:'idle',visible:false,source:'香港天文台 HKO',storms:[],warning:null,tips:[],updatedAt:''};
   const emit=patch=>{state={...state,...patch};onChange?.(state)};
   const clearLayers=()=>{if(!map)return;try{[LABELS,POINTS,FCST_LINE,PAST_LINE].forEach(id=>{if(map.getLayer(id))map.removeLayer(id)});if(map.getSource(SOURCE))map.removeSource(SOURCE)}catch{}};
   const apply=()=>{
@@ -73,15 +73,15 @@ export function createTyphoonController(mapApi,{signal,onChange}={}){
     }catch(e){console.warn('[Global Weather typhoon layer]',e);return false}
   };
   const refresh=async()=>{
-    abort?.abort();abort=new AbortController();const onAbort=()=>abort?.abort();signal?.addEventListener?.('abort',onAbort,{once:true});emit({state:'loading'});
+    if(!visible||destroyed)return state;
+    abort?.abort();abort=new AbortController();const onAbort=()=>abort?.abort();signal?.addEventListener?.('abort',onAbort,{once:true});emit({state:'loading',visible:true});
     try{
-      const [storms,warnings]=await Promise.all([fetchStorms(abort.signal),fetchWarnings(abort.signal)]);if(destroyed||signal?.aborted)return state;
+      const [storms,warnings]=await Promise.all([fetchStorms(abort.signal),fetchWarnings(abort.signal)]);if(destroyed||signal?.aborted||!visible)return state;
       const updatedAt=storms.map(s=>s.bulletinTime).filter(Boolean).sort().at(-1)||warnings.signal?.updateTime||warnings.tips?.[0]?.updateTime||'';
-      emit({state:'ready',storms,warning:warnings.signal,tips:warnings.tips,updatedAt});apply();return state;
-    }catch(e){if(e?.name==='AbortError'||destroyed)return state;console.warn('[Global Weather HKO typhoon]',e);emit({state:'error',error:String(e?.message||e),storms:[]});clearLayers();return state}
+      loaded=true;emit({state:'ready',visible:true,storms,warning:warnings.signal,tips:warnings.tips,updatedAt});apply();return state;
+    }catch(e){if(e?.name==='AbortError'||destroyed)return state;console.warn('[Global Weather HKO typhoon]',e);emit({state:'error',visible:true,error:String(e?.message||e),storms:[]});clearLayers();return state}
     finally{signal?.removeEventListener?.('abort',onAbort)}
   };
   const onStyle=()=>{if(visible)apply()};map?.on?.('style.load',onStyle);
-  refresh();
-  return{get state(){return state},refresh,setVisible(v){visible=!!v;if(visible)apply();else clearLayers();emit({visible});return visible},destroy(){destroyed=true;abort?.abort();map?.off?.('style.load',onStyle);clearLayers()}};
+  return{get state(){return state},refresh,setVisible(v){visible=!!v;if(visible){emit({visible:true});if(loaded)apply();else refresh()}else{abort?.abort();clearLayers();emit({state:'idle',visible:false})}return visible},destroy(){destroyed=true;abort?.abort();map?.off?.('style.load',onStyle);clearLayers()}};
 }
