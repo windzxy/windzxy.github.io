@@ -1,0 +1,1 @@
+export async function mount({host,sdk}){host.innerHTML=`<section class="js-card"><div><strong>{} JSON</strong><small>驗證 · 格式化</small></div><button type="button">開啟</button></section>`;const btn=host.querySelector('button');btn.onclick=()=>sdk.openApp();return()=>{btn.onclick=null}}
