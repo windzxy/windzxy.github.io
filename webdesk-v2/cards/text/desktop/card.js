@@ -1,0 +1,1 @@
+export async function mount({host,sdk}){host.innerHTML=`<section class="tx-card" tabindex="0"><div><strong>✍️ Text</strong><small>字數 · 清理 · 大小寫</small></div><button type="button">開啟</button></section>`;const root=host.firstElementChild,btn=host.querySelector('button'),open=()=>sdk.openApp();btn.onclick=open;root.ondblclick=open;return()=>{btn.onclick=null;root.ondblclick=null}}
