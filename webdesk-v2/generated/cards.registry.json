@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T20:03:18.652Z",
+  "generatedAt": "2026-09-14T20:03:52.175Z",
   "cards": [
     {
       "id": "weather",
@@ -750,15 +750,15 @@
     },
     {
       "id": "json",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "JSON 工具",
         "zh-HK": "JSON 工具"
       },
       "description": {
-        "zh-CN": "本地 JSON 验证、格式化、压缩与错误定位",
-        "zh-HK": "本機 JSON 驗證、格式化、壓縮與錯誤定位"
+        "zh-CN": "本地 JSON 验证、格式化、压缩、复制与错误定位",
+        "zh-HK": "本機 JSON 驗證、格式化、壓縮、複製與錯誤定位"
       },
       "icon": "{}",
       "category": "tools",
