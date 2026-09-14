@@ -1,0 +1,29 @@
+{
+  "id":"image-studio",
+  "version":"0.1.0",
+  "schemaVersion":1,
+  "name":{"zh-CN":"图片工具","zh-HK":"圖片工具"},
+  "description":{"zh-CN":"本地图片缩放、预览与导出","zh-HK":"本機圖片縮放、預覽與匯出"},
+  "icon":"🖼️",
+  "category":"tools",
+  "kind":"tool",
+  "order":30,
+  "platforms":["desktop","tablet","mobile"],
+  "interaction":{"mode":"card-app","appLaunch":"explicit"},
+  "capabilities":["local-file"],
+  "permissions":[],
+  "defaultSize":{"desktop":{"w":420,"h":180},"tablet":{"w":420,"h":170},"mobile":{"w":340,"h":128}},
+  "minSize":{"desktop":{"w":330,"h":76},"tablet":{"w":340,"h":76},"mobile":{"w":320,"h":76}},
+  "maxSize":{"desktop":{"w":980,"h":760},"tablet":{"w":820,"h":680},"mobile":{"w":430,"h":560}},
+  "sizeTiers":{
+    "desktop":{"mini":{"w":330,"h":76},"compact":{"w":420,"h":180},"standard":{"w":620,"h":420},"large":{"w":900,"h":700}},
+    "tablet":{"mini":{"w":340,"h":76},"compact":{"w":420,"h":170},"standard":{"w":560,"h":360},"large":{"w":760,"h":620}},
+    "mobile":{"mini":{"w":320,"h":76},"compact":{"w":340,"h":128},"standard":{"w":360,"h":220},"large":{"w":420,"h":500}}
+  },
+  "entry":{
+    "shared":"./shared/image-service.js",
+    "desktop":{"card":"./desktop/card.js","cardStyle":"./desktop/card.css","app":"./desktop/app.js","appStyle":"./desktop/app.css"},
+    "tablet":{"card":"./tablet/card.js","cardStyle":"./tablet/card.css","app":"./tablet/app.js","appStyle":"./tablet/app.css"},
+    "mobile":{"card":"./mobile/card.js","cardStyle":"./mobile/card.css","app":"./mobile/app.js","appStyle":"./mobile/app.css"}
+  }
+}
