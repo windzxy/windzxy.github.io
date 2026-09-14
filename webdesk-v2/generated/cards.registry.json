@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T04:52:58.757Z",
+  "generatedAt": "2026-09-14T04:53:11.366Z",
   "cards": [
     {
       "id": "weather",
@@ -154,7 +154,7 @@
     },
     {
       "id": "global-weather",
-      "version": "0.4.5",
+      "version": "0.4.6",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "全球天气",
