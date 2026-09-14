@@ -35,27 +35,43 @@ export async function fetchPointWeather(lat,lon,{signal,offsetHours=0}={}){
   const j=await r.json(),h=j.hourly||{},i=nearestIndex(h.time||[],offsetHours),pick=k=>h[k]?.[i];
   return{lat:Number(j.latitude??lat),lon:Number(j.longitude??lon),updatedAt:h.time?.[i]||new Date().toISOString(),source:'Open-Meteo',forecastOffset:Number(offsetHours)||0,summary:{wind:round(pick('wind_speed_10m')),gust:round(pick('wind_gusts_10m')),rain:round(pick('precipitation'),1),temp:round(pick('temperature_2m'),1),humidity:round(pick('relative_humidity_2m')),pressure:round(pick('pressure_msl'))},code:Number(pick('weather_code')||0)};
 }
-function gridSpec({lat,lon,zoom=4}={}){const nx=7,ny=5,lonSpan=Math.max(2.2,Math.min(90,(360/Math.pow(2,Math.max(1.6,Number(zoom)||4)))*1.45)),latSpan=Math.max(1.6,Math.min(50,lonSpan*.62)),points=[];for(let y=0;y<ny;y++)for(let x=0;x<nx;x++){const px=Number(lon)-lonSpan/2+lonSpan*(x/(nx-1)),py=Math.max(-84,Math.min(84,Number(lat)-latSpan/2+latSpan*(y/(ny-1))));points.push({lat:Number(py.toFixed(4)),lon:Number((((px+540)%360)-180).toFixed(4))})}return{nx,ny,points}}
-function gridKey({lat,lon,zoom=4}={}){return`${Math.round(Number(zoom)||4)}|${Math.round(Number(lat)*2)/2}|${Math.round(Number(lon)*2)/2}`}
-async function loadGridBundle({lat,lon,zoom=4,signal}={}){
-  const key=gridKey({lat,lon,zoom}),now=Date.now(),cached=GRID_CACHE.get(key);
+function wrapLon(v){return((Number(v)+540)%360)-180}
+function gridSpec({lat,lon,zoom=4,bounds}={}){
+  const nx=7,ny=5;
+  let lonSpan=Math.max(2.2,Math.min(90,(360/Math.pow(2,Math.max(1.6,Number(zoom)||4)))*1.45));
+  let latSpan=Math.max(1.6,Math.min(50,lonSpan*.62));
+  if(bounds&&[bounds.west,bounds.east,bounds.south,bounds.north].every(Number.isFinite)){
+    let rawLon=Math.abs(Number(bounds.east)-Number(bounds.west));if(rawLon>180)rawLon=360-rawLon;
+    const rawLat=Math.abs(Number(bounds.north)-Number(bounds.south));
+    if(rawLon>0.2)lonSpan=Math.max(2.2,Math.min(120,rawLon*1.42));
+    if(rawLat>0.2)latSpan=Math.max(1.6,Math.min(70,rawLat*1.42));
+  }
+  const cLat=Number(lat),cLon=Number(lon),points=[];
+  for(let y=0;y<ny;y++)for(let x=0;x<nx;x++){
+    const px=cLon-lonSpan/2+lonSpan*(x/(nx-1)),py=Math.max(-84,Math.min(84,cLat-latSpan/2+latSpan*(y/(ny-1))));
+    points.push({lat:Number(py.toFixed(4)),lon:Number(wrapLon(px).toFixed(4))});
+  }
+  return{nx,ny,points,lonSpan,latSpan,coverage:{west:wrapLon(cLon-lonSpan/2),east:wrapLon(cLon+lonSpan/2),south:Math.max(-84,cLat-latSpan/2),north:Math.min(84,cLat+latSpan/2)}};
+}
+function gridKey({lat,lon,zoom=4,bounds}={}){const s=gridSpec({lat,lon,zoom,bounds});return`${Math.round(Number(zoom)||4)}|${Math.round(Number(lat)*2)/2}|${Math.round(Number(lon)*2)/2}|${Math.round(s.lonSpan)}x${Math.round(s.latSpan)}`}
+async function loadGridBundle({lat,lon,zoom=4,bounds,signal}={}){
+  const spec=gridSpec({lat,lon,zoom,bounds}),key=gridKey({lat,lon,zoom,bounds}),now=Date.now(),cached=GRID_CACHE.get(key);
   if(cached&&cached.data&&now-cached.at<GRID_TTL)return cached.data;
   if(cached?.promise)return withSignal(cached.promise,signal);
-  const spec=gridSpec({lat,lon,zoom});
   const q=new URLSearchParams({latitude:spec.points.map(p=>p.lat).join(','),longitude:spec.points.map(p=>p.lon).join(','),hourly:GRID_FIELDS,wind_speed_unit:'kmh',timezone:'GMT',forecast_days:'3'});
-  const promise=fetch(`https://api.open-meteo.com/v1/forecast?${q}`,{cache:'default'}).then(r=>{if(!r.ok)throw new Error(`weather grid ${r.status}`);return r.json()}).then(raw=>{const rows=Array.isArray(raw)?raw:[raw];if(rows.length!==spec.points.length)throw new Error('incomplete weather grid');const data={key,at:Date.now(),rows,points:spec.points,nx:spec.nx,ny:spec.ny};GRID_CACHE.set(key,{at:data.at,data});while(GRID_CACHE.size>GRID_MAX)GRID_CACHE.delete(GRID_CACHE.keys().next().value);return data}).catch(e=>{if(GRID_CACHE.get(key)?.promise===promise)GRID_CACHE.delete(key);throw e});
+  const promise=fetch(`https://api.open-meteo.com/v1/forecast?${q}`,{cache:'default'}).then(r=>{if(!r.ok)throw new Error(`weather grid ${r.status}`);return r.json()}).then(raw=>{const rows=Array.isArray(raw)?raw:[raw];if(rows.length!==spec.points.length)throw new Error('incomplete weather grid');const data={key,at:Date.now(),rows,points:spec.points,nx:spec.nx,ny:spec.ny,coverage:spec.coverage};GRID_CACHE.set(key,{at:data.at,data});while(GRID_CACHE.size>GRID_MAX)GRID_CACHE.delete(GRID_CACHE.keys().next().value);return data}).catch(e=>{if(GRID_CACHE.get(key)?.promise===promise)GRID_CACHE.delete(key);throw e});
   GRID_CACHE.set(key,{at:now,promise});
   return withSignal(promise,signal);
 }
-export async function fetchWeatherGrid({lat,lon,zoom=4,layer='temp',signal,offsetHours=0}={}){
-  if(!supportsVisualOverlay(layer))return null;const variable={temp:'temperature_2m',rain:'precipitation',humidity:'relative_humidity_2m',pressure:'pressure_msl'}[layer],bundle=await loadGridBundle({lat,lon,zoom,signal});
+export async function fetchWeatherGrid({lat,lon,zoom=4,bounds,layer='temp',signal,offsetHours=0}={}){
+  if(!supportsVisualOverlay(layer))return null;const variable={temp:'temperature_2m',rain:'precipitation',humidity:'relative_humidity_2m',pressure:'pressure_msl'}[layer],bundle=await loadGridBundle({lat,lon,zoom,bounds,signal});
   const featureRows=bundle.rows.map((row,i)=>{const p=bundle.points[i],hv=hourlyValue(row,variable,offsetHours),value=Number(hv.value);if(!Number.isFinite(value))return null;return{type:'Feature',geometry:{type:'Point',coordinates:[p.lon,p.lat]},properties:{value,layer,label:formatOverlayValue(layer,value),updatedAt:hv.time}}}).filter(Boolean);
-  return{layer,source:'Open-Meteo',updatedAt:featureRows.find(f=>f.properties.updatedAt)?.properties.updatedAt||new Date().toISOString(),forecastOffset:Number(offsetHours)||0,grid:{nx:bundle.nx,ny:bundle.ny},geojson:{type:'FeatureCollection',features:featureRows},sampleCount:featureRows.length,cached:true};
+  return{layer,source:'Open-Meteo',updatedAt:featureRows.find(f=>f.properties.updatedAt)?.properties.updatedAt||new Date().toISOString(),forecastOffset:Number(offsetHours)||0,grid:{nx:bundle.nx,ny:bundle.ny},coverage:bundle.coverage,geojson:{type:'FeatureCollection',features:featureRows},sampleCount:featureRows.length,cached:true};
 }
-export async function fetchWindField({lat,lon,zoom=4,layer='wind',signal,offsetHours=0}={}){
-  if(!supportsWindField(layer))return null;const bundle=await loadGridBundle({lat,lon,zoom,signal}),speedKey=layer==='gust'?'wind_gusts_10m':'wind_speed_10m';
+export async function fetchWindField({lat,lon,zoom=4,bounds,layer='wind',signal,offsetHours=0}={}){
+  if(!supportsWindField(layer))return null;const bundle=await loadGridBundle({lat,lon,zoom,bounds,signal}),speedKey=layer==='gust'?'wind_gusts_10m':'wind_speed_10m';
   const features=bundle.rows.map((row,i)=>{const p=bundle.points[i],s=hourlyValue(row,speedKey,offsetHours),d=hourlyValue(row,'wind_direction_10m',offsetHours),speed=Number(s.value),direction=Number(d.value);if(!Number.isFinite(speed)||!Number.isFinite(direction))return null;return{type:'Feature',geometry:{type:'Point',coordinates:[p.lon,p.lat]},properties:{speed,direction,layer,label:`${Math.round(speed)} km/h`,updatedAt:s.time||d.time||''}}}).filter(Boolean);
-  return{layer,source:'Open-Meteo',updatedAt:features.find(f=>f.properties.updatedAt)?.properties.updatedAt||new Date().toISOString(),forecastOffset:Number(offsetHours)||0,grid:{nx:bundle.nx,ny:bundle.ny},geojson:{type:'FeatureCollection',features},sampleCount:features.length,cached:true};
+  return{layer,source:'Open-Meteo',updatedAt:features.find(f=>f.properties.updatedAt)?.properties.updatedAt||new Date().toISOString(),forecastOffset:Number(offsetHours)||0,grid:{nx:bundle.nx,ny:bundle.ny},coverage:bundle.coverage,geojson:{type:'FeatureCollection',features},sampleCount:features.length,cached:true};
 }
 export function formatOverlayValue(layer,value){const n=Number(value);if(!Number.isFinite(n))return'—';if(layer==='temp')return`${n.toFixed(0)}°`;if(layer==='rain')return`${n.toFixed(n<1?1:0)} mm`;if(layer==='humidity')return`${n.toFixed(0)}%`;if(layer==='pressure')return`${n.toFixed(0)} hPa`;return String(n)}
 function round(v,d=0){const n=Number(v);return Number.isFinite(n)?Number(n.toFixed(d)):'—'}
