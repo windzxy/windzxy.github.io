@@ -1,3 +1,5 @@
+const SOURCE='gw-continuous-weather-field';
+const LAYER='gw-continuous-weather-field-raster';
 const PALETTES={
   temp:[[-30,[70,78,170]],[-10,[70,125,205]],[5,[63,173,215]],[18,[74,194,158]],[26,[237,211,88]],[34,[241,145,65]],[45,[210,65,77]]],
   rain:[[0,[0,0,0,0]],[0.2,[70,170,215]],[2,[60,185,200]],[8,[73,111,215]],[20,[112,72,192]],[50,[228,72,125]]],
@@ -5,15 +7,33 @@ const PALETTES={
 };
 const LEGENDS={temp:'°C',rain:'mm',pressure:'hPa'};
 function mix(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
-function colorFor(layer,value){const p=PALETTES[layer]||PALETTES.temp;const v=Number(value);if(!Number.isFinite(v))return[0,0,0,0];if(v<=p[0][0])return [...p[0][1],155];for(let i=1;i<p.length;i++){if(v<=p[i][0]){const [v0,c0]=p[i-1],[v1,c1]=p[i];const c=mix(c0,c1,(v-v0)/(v1-v0||1));return[c[0]||0,c[1]||0,c[2]||0,layer==='rain'&&v<.05?0:155]}}const c=p[p.length-1][1];return[c[0],c[1],c[2],155]}
+function colorFor(layer,value){const p=PALETTES[layer]||PALETTES.temp,v=Number(value);if(!Number.isFinite(v))return[0,0,0,0];if(layer==='rain'&&v<.03)return[0,0,0,0];if(v<=p[0][0]){const c=p[0][1];return[c[0]||0,c[1]||0,c[2]||0,layer==='rain'?0:172]}for(let i=1;i<p.length;i++){if(v<=p[i][0]){const[v0,c0]=p[i-1],[v1,c1]=p[i],c=mix(c0,c1,(v-v0)/(v1-v0||1));return[c[0]||0,c[1]||0,c[2]||0,layer==='rain'?Math.min(190,85+v*6):172]}}const c=p[p.length-1][1];return[c[0],c[1],c[2],190]}
 function samplesFrom(geojson){return geojson?.features?.map(f=>({lon:Number(f.geometry?.coordinates?.[0]),lat:Number(f.geometry?.coordinates?.[1]),value:Number(f.properties?.value)})).filter(x=>Number.isFinite(x.lon)&&Number.isFinite(x.lat)&&Number.isFinite(x.value))||[]}
-function interpolate(px,py,pts){let num=0,den=0;for(const p of pts){const dx=px-p.x,dy=py-p.y,d2=dx*dx+dy*dy;if(d2<4)return p.value;const w=1/Math.pow(Math.max(12,d2),1.15);num+=p.value*w;den+=w}return den?num/den:NaN}
+function nearestIndex(sorted,v){let best=0,d=Infinity;for(let i=0;i<sorted.length;i++){const nd=Math.abs(sorted[i]-v);if(nd<d){d=nd;best=i}}return best}
+function buildGrid(samples){
+  const lats=[...new Set(samples.map(s=>s.lat))].sort((a,b)=>b-a),lons=[...new Set(samples.map(s=>s.lon))].sort((a,b)=>a-b);
+  if(lats.length<2||lons.length<2)return null;
+  const matrix=Array.from({length:lats.length},()=>Array(lons.length).fill(NaN));
+  for(const s of samples)matrix[nearestIndex(lats,s.lat)][nearestIndex(lons,s.lon)]=s.value;
+  return{lats,lons,matrix,north:lats[0],south:lats[lats.length-1],west:lons[0],east:lons[lons.length-1]};
+}
+function locate(sortedAsc,v){if(v<=sortedAsc[0])return[0,0,0];const last=sortedAsc.length-1;if(v>=sortedAsc[last])return[last,last,0];for(let i=1;i<sortedAsc.length;i++){if(v<=sortedAsc[i]){const a=sortedAsc[i-1],b=sortedAsc[i];return[i-1,i,(v-a)/(b-a||1)]}}return[last,last,0]}
+function sampleGrid(grid,lon,lat){
+  const latAsc=[...grid.lats].reverse(),[x0,x1,tx]=locate(grid.lons,lon),[ay0,ay1,ty]=locate(latAsc,lat),y1=grid.lats.length-1-ay0,y0=grid.lats.length-1-ay1;
+  const q00=grid.matrix[y0]?.[x0],q10=grid.matrix[y0]?.[x1],q01=grid.matrix[y1]?.[x0],q11=grid.matrix[y1]?.[x1];
+  const vals=[q00,q10,q01,q11].filter(Number.isFinite);if(!vals.length)return NaN;
+  if(vals.length<4)return vals.reduce((a,b)=>a+b,0)/vals.length;
+  const top=q00+(q10-q00)*tx,bottom=q01+(q11-q01)*tx;return top+(bottom-top)*ty;
+}
+function firstSymbolLayer(map){return(map.getStyle?.()?.layers||[]).find(l=>l.type==='symbol')?.id}
 export function createContinuousWeatherField(mapApi,container){
   const map=mapApi?.map;if(!map||mapApi?.isFallback||!container)return{setField(){return false},clear(){},destroy(){}};
-  let layer=null,geojson=null,destroyed=false,raf=0;
-  const canvas=document.createElement('canvas');canvas.className='gw-continuous-field';canvas.setAttribute('aria-hidden','true');canvas.style.cssText='position:absolute;inset:0;z-index:2;pointer-events:none;width:100%;height:100%;opacity:.88;';container.appendChild(canvas);
-  const legend=document.createElement('div');legend.className='gw-field-legend';legend.style.cssText='display:none;position:absolute;right:16px;bottom:54px;z-index:4;padding:7px 9px;border-radius:12px;background:rgba(18,24,31,.58);color:#fff;font:600 10px -apple-system,BlinkMacSystemFont,sans-serif;backdrop-filter:blur(14px);pointer-events:none';container.appendChild(legend);
-  const render=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{if(destroyed||!layer||!geojson)return;const rect=container.getBoundingClientRect();if(rect.width<2||rect.height<2)return;const cssW=rect.width,cssH=rect.height,w=Math.max(96,Math.min(240,Math.round(cssW/4))),h=Math.max(70,Math.min(160,Math.round(cssH/4)));canvas.width=w;canvas.height=h;const pts=samplesFrom(geojson).map(s=>{const p=map.project([s.lon,s.lat]);return{x:p.x/cssW*w,y:p.y/cssH*h,value:s.value}});if(!pts.length)return;const ctx=canvas.getContext('2d'),img=ctx.createImageData(w,h),d=img.data;for(let y=0;y<h;y++){for(let x=0;x<w;x++){const v=interpolate(x,y,pts),c=colorFor(layer,v),i=(y*w+x)*4;d[i]=c[0];d[i+1]=c[1];d[i+2]=c[2];d[i+3]=c[3]}}ctx.putImageData(img,0,0);canvas.style.display='block';legend.textContent=`${layer==='temp'?'溫度':layer==='rain'?'降雨':'氣壓'} · ${LEGENDS[layer]||''}`;legend.style.display='block'})};
-  const onMoveStart=()=>{canvas.style.opacity='.22'};const onMoveEnd=()=>{canvas.style.opacity='.88';render()};const onResize=()=>render();map.on('movestart',onMoveStart);map.on('moveend',onMoveEnd);map.on('zoomend',onMoveEnd);map.on('resize',onResize);
-  return{setField(nextLayer,nextGeojson){layer=nextLayer;geojson=nextGeojson;render();return samplesFrom(geojson).length>0},clear(){layer=null;geojson=null;canvas.style.display='none';legend.style.display='none';const c=canvas.getContext('2d');c?.clearRect(0,0,canvas.width,canvas.height)},destroy(){destroyed=true;cancelAnimationFrame(raf);try{map.off('movestart',onMoveStart);map.off('moveend',onMoveEnd);map.off('zoomend',onMoveEnd);map.off('resize',onResize)}catch{}canvas.remove();legend.remove()}};
+  let fieldLayer=null,fieldGeojson=null,destroyed=false;
+  const canvas=document.createElement('canvas');canvas.width=320;canvas.height=220;canvas.setAttribute('aria-hidden','true');canvas.style.cssText='position:absolute;width:1px;height:1px;left:-9999px;top:-9999px;pointer-events:none';canvas.id=`gw-field-canvas-${Math.random().toString(36).slice(2)}`;container.appendChild(canvas);
+  const legend=document.createElement('div');legend.className='gw-field-legend';legend.style.cssText='display:none;position:absolute;right:16px;bottom:54px;z-index:5;padding:7px 9px;border-radius:12px;background:rgba(18,24,31,.58);color:#fff;font:600 10px -apple-system,BlinkMacSystemFont,sans-serif;backdrop-filter:blur(14px);pointer-events:none';container.appendChild(legend);
+  const removeLayer=()=>{try{if(map.getLayer(LAYER))map.removeLayer(LAYER);if(map.getSource(SOURCE))map.removeSource(SOURCE)}catch{}};
+  const renderCanvas=(layer,geojson)=>{const samples=samplesFrom(geojson),grid=buildGrid(samples);if(!grid)return null;const w=canvas.width,h=canvas.height,ctx=canvas.getContext('2d'),img=ctx.createImageData(w,h),d=img.data;for(let y=0;y<h;y++){const lat=grid.north-(grid.north-grid.south)*(y/(h-1));for(let x=0;x<w;x++){const lon=grid.west+(grid.east-grid.west)*(x/(w-1)),v=sampleGrid(grid,lon,lat),c=colorFor(layer,v),i=(y*w+x)*4;d[i]=c[0];d[i+1]=c[1];d[i+2]=c[2];d[i+3]=c[3]}}ctx.putImageData(img,0,0);return grid};
+  const apply=()=>{if(destroyed||!fieldLayer||!fieldGeojson||!map.isStyleLoaded?.())return false;const grid=renderCanvas(fieldLayer,fieldGeojson);if(!grid)return false;try{removeLayer();map.addSource(SOURCE,{type:'canvas',canvas,animate:false,coordinates:[[grid.west,grid.north],[grid.east,grid.north],[grid.east,grid.south],[grid.west,grid.south]]});map.addLayer({id:LAYER,type:'raster',source:SOURCE,paint:{'raster-opacity':fieldLayer==='rain'?.78:.72,'raster-fade-duration':0,'raster-resampling':'linear'}},firstSymbolLayer(map));legend.textContent=`${fieldLayer==='temp'?'溫度':fieldLayer==='rain'?'降雨':'氣壓'} · ${LEGENDS[fieldLayer]||''}`;legend.style.display='block';return true}catch(e){console.warn('[Global Weather continuous field]',e);return false}};
+  const onStyleLoad=()=>{if(fieldLayer&&fieldGeojson)setTimeout(apply,0)};map.on('style.load',onStyleLoad);
+  return{setField(nextLayer,nextGeojson){fieldLayer=nextLayer;fieldGeojson=nextGeojson;return apply()},clear(){fieldLayer=null;fieldGeojson=null;removeLayer();legend.style.display='none'},refresh(){return apply()},destroy(){destroyed=true;try{map.off('style.load',onStyleLoad)}catch{}removeLayer();canvas.remove();legend.remove()}};
 }
