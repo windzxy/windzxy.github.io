@@ -36,8 +36,13 @@ export async function fetchPointWeather(lat,lon,{signal,offsetHours=0}={}){
   return{lat:Number(j.latitude??lat),lon:Number(j.longitude??lon),updatedAt:h.time?.[i]||new Date().toISOString(),source:'Open-Meteo',forecastOffset:Number(offsetHours)||0,summary:{wind:round(pick('wind_speed_10m')),gust:round(pick('wind_gusts_10m')),rain:round(pick('precipitation'),1),temp:round(pick('temperature_2m'),1),humidity:round(pick('relative_humidity_2m')),pressure:round(pick('pressure_msl'))},code:Number(pick('weather_code')||0)};
 }
 function wrapLon(v){return((Number(v)+540)%360)-180}
+function gridDensity({zoom=4,lonSpan=20,latSpan=12}={}){
+  const z=Number(zoom)||4,area=Math.max(1,Number(lonSpan)*Number(latSpan));
+  if(z>=7||area<90)return{nx:9,ny:7};
+  if(z>=5||area<600)return{nx:10,ny:8};
+  return{nx:11,ny:8};
+}
 function gridSpec({lat,lon,zoom=4,bounds}={}){
-  const nx=7,ny=5;
   let lonSpan=Math.max(2.2,Math.min(90,(360/Math.pow(2,Math.max(1.6,Number(zoom)||4)))*1.45));
   let latSpan=Math.max(1.6,Math.min(50,lonSpan*.62));
   if(bounds&&[bounds.west,bounds.east,bounds.south,bounds.north].every(Number.isFinite)){
@@ -46,14 +51,14 @@ function gridSpec({lat,lon,zoom=4,bounds}={}){
     if(rawLon>0.2)lonSpan=Math.max(2.2,Math.min(120,rawLon*1.42));
     if(rawLat>0.2)latSpan=Math.max(1.6,Math.min(70,rawLat*1.42));
   }
-  const cLat=Number(lat),cLon=Number(lon),points=[];
+  const{nx,ny}=gridDensity({zoom,lonSpan,latSpan}),cLat=Number(lat),cLon=Number(lon),points=[];
   for(let y=0;y<ny;y++)for(let x=0;x<nx;x++){
     const px=cLon-lonSpan/2+lonSpan*(x/(nx-1)),py=Math.max(-84,Math.min(84,cLat-latSpan/2+latSpan*(y/(ny-1))));
     points.push({lat:Number(py.toFixed(4)),lon:Number(wrapLon(px).toFixed(4))});
   }
   return{nx,ny,points,lonSpan,latSpan,coverage:{west:wrapLon(cLon-lonSpan/2),east:wrapLon(cLon+lonSpan/2),south:Math.max(-84,cLat-latSpan/2),north:Math.min(84,cLat+latSpan/2)}};
 }
-function gridKey({lat,lon,zoom=4,bounds}={}){const s=gridSpec({lat,lon,zoom,bounds});return`${Math.round(Number(zoom)||4)}|${Math.round(Number(lat)*2)/2}|${Math.round(Number(lon)*2)/2}|${Math.round(s.lonSpan)}x${Math.round(s.latSpan)}`}
+function gridKey({lat,lon,zoom=4,bounds}={}){const s=gridSpec({lat,lon,zoom,bounds});return`${Math.round(Number(zoom)||4)}|${Math.round(Number(lat)*2)/2}|${Math.round(Number(lon)*2)/2}|${s.nx}x${s.ny}|${Math.round(s.lonSpan)}x${Math.round(s.latSpan)}`}
 async function loadGridBundle({lat,lon,zoom=4,bounds,signal}={}){
   const spec=gridSpec({lat,lon,zoom,bounds}),key=gridKey({lat,lon,zoom,bounds}),now=Date.now(),cached=GRID_CACHE.get(key);
   if(cached&&cached.data&&now-cached.at<GRID_TTL)return cached.data;
