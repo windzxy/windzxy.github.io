@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T23:03:22.135Z",
+  "generatedAt": "2026-09-14T23:03:38.570Z",
   "cards": [
     {
       "id": "weather",
@@ -303,7 +303,7 @@
     },
     {
       "id": "image-studio",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "图片工具",
