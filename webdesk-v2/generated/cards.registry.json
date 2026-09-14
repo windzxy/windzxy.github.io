@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T03:01:18.196Z",
+  "generatedAt": "2026-09-14T03:01:52.646Z",
   "cards": [
     {
       "id": "weather",
@@ -303,7 +303,7 @@
     },
     {
       "id": "image-studio",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "图片工具",
@@ -332,16 +332,16 @@
       "permissions": [],
       "defaultSize": {
         "desktop": {
-          "w": 420,
-          "h": 180
+          "w": 330,
+          "h": 76
         },
         "tablet": {
-          "w": 420,
-          "h": 170
+          "w": 340,
+          "h": 76
         },
         "mobile": {
-          "w": 340,
-          "h": 128
+          "w": 320,
+          "h": 76
         }
       },
       "minSize": {
