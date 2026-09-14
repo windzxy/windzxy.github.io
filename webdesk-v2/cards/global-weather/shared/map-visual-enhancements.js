@@ -1,34 +1,20 @@
-const CITY_SOURCE='gw-city-labels';
-const CITY_LAYERS=['gw-city-labels-major','gw-city-labels-regional','gw-city-labels-local'];
+const CITY_SOURCE='gw-city-weather-labels';
+const CITY_LAYER='gw-city-weather-labels';
 const TYPHOON_FIRST='gw-typhoon-past-line';
 const CITIES=[
-  ['深圳',114.0579,22.5431,1],['香港',114.1694,22.3193,1],['廣州',113.2644,23.1291,1],['澳門',113.5439,22.1987,2],
-  ['台北',121.5654,25.0330,1],['高雄',120.3014,22.6273,2],['上海',121.4737,31.2304,1],['北京',116.4074,39.9042,1],
-  ['成都',104.0665,30.5728,2],['武漢',114.3054,30.5931,2],['杭州',120.1551,30.2741,2],['南京',118.7969,32.0603,2],
-  ['重慶',106.5516,29.5630,2],['福州',119.2965,26.0745,3],['廈門',118.0894,24.4798,3],['南寧',108.3200,22.8240,3],
-  ['海口',110.1983,20.0440,3],['三亞',109.5119,18.2528,3],['長沙',112.9388,28.2282,3],['昆明',102.8329,24.8801,3],
-  ['東京',139.6917,35.6895,1],['大阪',135.5023,34.6937,2],['福岡',130.4017,33.5904,3],['沖繩',127.6809,26.2124,3],
-  ['首爾',126.9780,37.5665,1],['釜山',129.0756,35.1796,3],['新加坡',103.8198,1.3521,1],['曼谷',100.5018,13.7563,2],
-  ['河內',105.8342,21.0278,3],['胡志明市',106.6297,10.8231,3],['馬尼拉',120.9842,14.5995,2],['雅加達',106.8456,-6.2088,2],
-  ['吉隆坡',101.6869,3.1390,2],['悉尼',151.2093,-33.8688,1],['墨爾本',144.9631,-37.8136,2],['倫敦',-0.1276,51.5072,1],
-  ['巴黎',2.3522,48.8566,1],['柏林',13.4050,52.5200,2],['紐約',-74.0060,40.7128,1],['洛杉磯',-118.2437,34.0522,2],
-  ['舊金山',-122.4194,37.7749,3],['溫哥華',-123.1207,49.2827,3],['多倫多',-79.3832,43.6532,2]
+['深圳',114.0579,22.5431,1],['香港',114.1694,22.3193,1],['廣州',113.2644,23.1291,1],['澳門',113.5439,22.1987,2],['台北',121.5654,25.0330,1],['高雄',120.3014,22.6273,2],['上海',121.4737,31.2304,1],['北京',116.4074,39.9042,1],['成都',104.0665,30.5728,2],['武漢',114.3054,30.5931,2],['杭州',120.1551,30.2741,2],['南京',118.7969,32.0603,2],['重慶',106.5516,29.5630,2],['福州',119.2965,26.0745,3],['廈門',118.0894,24.4798,3],['南寧',108.3200,22.8240,3],['海口',110.1983,20.0440,3],['三亞',109.5119,18.2528,3],['長沙',112.9388,28.2282,3],['昆明',102.8329,24.8801,3],['東京',139.6917,35.6895,1],['大阪',135.5023,34.6937,2],['福岡',130.4017,33.5904,3],['沖繩',127.6809,26.2124,3],['首爾',126.9780,37.5665,1],['釜山',129.0756,35.1796,3],['新加坡',103.8198,1.3521,1],['曼谷',100.5018,13.7563,2],['河內',105.8342,21.0278,3],['胡志明市',106.6297,10.8231,3],['馬尼拉',120.9842,14.5995,2],['雅加達',106.8456,-6.2088,2],['吉隆坡',101.6869,3.1390,2],['悉尼',151.2093,-33.8688,1],['墨爾本',144.9631,-37.8136,2],['倫敦',-0.1276,51.5072,1],['巴黎',2.3522,48.8566,1],['柏林',13.4050,52.5200,2],['紐約',-74.0060,40.7128,1],['洛杉磯',-118.2437,34.0522,2],['舊金山',-122.4194,37.7749,3],['溫哥華',-123.1207,49.2827,3],['多倫多',-79.3832,43.6532,2]
 ];
-const cityGeoJSON={type:'FeatureCollection',features:CITIES.map(([name,lon,lat,rank])=>({type:'Feature',geometry:{type:'Point',coordinates:[lon,lat]},properties:{name,rank}}))};
-const LOCALIZED_NAME=['coalesce',['get','name:zh-Hant'],['get','name:zh'],['get','name:zh-Hans'],['get','name_en'],['get','name']];
-function cityLayer(id,rank,minzoom){return{id,type:'symbol',source:CITY_SOURCE,minzoom,filter:['==',['get','rank'],rank],layout:{'text-field':['get','name'],'text-size':['interpolate',['linear'],['zoom'],2,11,4.5,12.5,7,14,10,15],'text-allow-overlap':false,'text-ignore-placement':false,'text-padding':['interpolate',['linear'],['zoom'],2,8,8,4],'symbol-sort-key':['get','rank']},paint:{'text-color':'#ffffff','text-halo-color':'rgba(14,20,30,.92)','text-halo-width':2,'text-halo-blur':0.6}}}
-function isBaseCityLayer(layer){
-  if(!layer||layer.type!=='symbol'||CITY_LAYERS.includes(layer.id)||String(layer.id).startsWith('gw-'))return false;
-  const id=String(layer.id||'').toLowerCase(),text=JSON.stringify(layer.layout?.['text-field']??'').toLowerCase();
-  return /(^|[-_])(city|town|place|settlement)([-_]|$)/.test(id)||/place[-_](city|town)/.test(id)||/settlement[-_](city|town)/.test(id)||(/name/.test(text)&&/(place|city|town)/.test(id));
-}
+const CACHE=new Map(),TTL=300000;
+function weatherIcon(code){code=Number(code);if(code===0)return'☀';if(code<=3)return code===1?'🌤':'☁';if(code<=48)return'🌫';if(code<=67)return'🌧';if(code<=77)return'🌨';if(code<=82)return'🌦';if(code<=86)return'🌨';return'⛈'}
+function visibleCities(map){const b=map.getBounds?.(),z=map.getZoom?.()||4;if(!b)return CITIES.filter(c=>c[3]===1);const west=b.getWest(),east=b.getEast(),south=b.getSouth(),north=b.getNorth(),wrap=west>east;const maxRank=z<3?1:z<5?2:3;return CITIES.filter(([,lon,lat,rank])=>rank<=maxRank&&lat>=south&&lat<=north&&(wrap?(lon>=west||lon<=east):(lon>=west&&lon<=east))).slice(0,z<3?18:z<5?30:44)}
+async function fetchCityWeather(cities,signal){if(!cities.length)return[];const key=cities.map(c=>c[0]).join('|'),hit=CACHE.get(key);if(hit&&Date.now()-hit.at<TTL)return hit.data;const q=new URLSearchParams({latitude:cities.map(c=>c[2]).join(','),longitude:cities.map(c=>c[1]).join(','),current:'temperature_2m,weather_code,wind_speed_10m',wind_speed_unit:'kmh',timezone:'auto'});const r=await fetch(`https://api.open-meteo.com/v1/forecast?${q}`,{signal});if(!r.ok)throw new Error(`city weather ${r.status}`);const raw=await r.json(),rows=Array.isArray(raw)?raw:[raw];const data=cities.map((c,i)=>{const cur=rows[i]?.current||{};return{name:c[0],lon:c[1],lat:c[2],rank:c[3],temp:Number(cur.temperature_2m),code:Number(cur.weather_code),wind:Number(cur.wind_speed_10m)}});CACHE.set(key,{at:Date.now(),data});return data}
+function geojson(rows){return{type:'FeatureCollection',features:rows.map(x=>({type:'Feature',geometry:{type:'Point',coordinates:[x.lon,x.lat]},properties:{name:x.name,rank:x.rank,temp:Number.isFinite(x.temp)?x.temp:null,wind:Number.isFinite(x.wind)?x.wind:null,label:`${x.name}  ${Number.isFinite(x.temp)?Math.round(x.temp)+'°':'—'} ${weatherIcon(x.code)}`}}))}}
 export function attachMapVisualEnhancements(mapApi){
-  const map=mapApi?.map;if(!map||mapApi?.isFallback)return{destroy(){}};let destroyed=false;
-  const baseCityLayers=()=> (map.getStyle?.()?.layers||[]).filter(isBaseCityLayer);
-  const localizeBaseCityLabels=()=>{for(const layer of baseCityLayers()){try{map.setLayoutProperty(layer.id,'visibility','visible');map.setLayoutProperty(layer.id,'text-field',LOCALIZED_NAME)}catch{}}};
-  const removeFallbackCities=()=>{for(const id of CITY_LAYERS){try{if(map.getLayer(id))map.removeLayer(id)}catch{}}try{if(map.getSource(CITY_SOURCE))map.removeSource(CITY_SOURCE)}catch{}};
-  const ensureFallbackCities=()=>{if(baseCityLayers().length){removeFallbackCities();return}if(!map.getSource(CITY_SOURCE))map.addSource(CITY_SOURCE,{type:'geojson',data:cityGeoJSON});const specs=[cityLayer(CITY_LAYERS[0],1,1.7),cityLayer(CITY_LAYERS[1],2,3),cityLayer(CITY_LAYERS[2],3,5)];specs.forEach(spec=>{if(!map.getLayer(spec.id))map.addLayer(spec)});const before=map.getLayer(TYPHOON_FIRST)?TYPHOON_FIRST:undefined;for(const id of CITY_LAYERS){if(!map.getLayer(id))continue;try{before?map.moveLayer(id,before):map.moveLayer(id)}catch{}}};
-  const refresh=()=>{if(destroyed||!map.isStyleLoaded?.())return;try{localizeBaseCityLabels();ensureFallbackCities()}catch(e){console.warn('[Global Weather city labels]',e)}};
-  map.on('style.load',refresh);refresh();
-  return{refresh,destroy(){destroyed=true;try{map.off('style.load',refresh)}catch{}}};
+ const map=mapApi?.map;if(!map||mapApi?.isFallback)return{refresh(){},destroy(){}};let destroyed=false,abort=null,timer=0,lastData=null;
+ const addLayer=()=>{if(!map.isStyleLoaded?.())return false;try{if(!map.getSource(CITY_SOURCE))map.addSource(CITY_SOURCE,{type:'geojson',data:lastData||{type:'FeatureCollection',features:[]}});if(!map.getLayer(CITY_LAYER))map.addLayer({id:CITY_LAYER,type:'symbol',source:CITY_SOURCE,minzoom:1.5,layout:{'text-field':['get','label'],'text-size':['interpolate',['linear'],['zoom'],2,11,5,12.5,8,14],'text-allow-overlap':false,'text-ignore-placement':false,'text-padding':7,'text-offset':[0,-1.15],'text-anchor':'bottom','symbol-sort-key':['get','rank']},paint:{'text-color':'#fff','text-halo-color':'rgba(13,20,30,.94)','text-halo-width':2,'text-halo-blur':.5}},map.getLayer(TYPHOON_FIRST)?TYPHOON_FIRST:undefined);return true}catch(e){console.warn('[Global Weather city labels]',e);return false}};
+ const render=rows=>{lastData=geojson(rows);if(!addLayer())return;try{map.getSource(CITY_SOURCE)?.setData?.(lastData)}catch{}};
+ const refresh=(delay=80)=>{clearTimeout(timer);timer=setTimeout(async()=>{if(destroyed||!map.isStyleLoaded?.())return;abort?.abort();abort=new AbortController();const cities=visibleCities(map);try{render(await fetchCityWeather(cities,abort.signal))}catch(e){if(e?.name!=='AbortError')console.warn('[Global Weather city weather]',e)}},delay)};
+ const styleRefresh=()=>{addLayer();if(lastData)try{map.getSource(CITY_SOURCE)?.setData?.(lastData)}catch{}refresh(0)};
+ map.on('style.load',styleRefresh);map.on('moveend',refresh);refresh(0);
+ return{refresh:()=>refresh(0),destroy(){destroyed=true;clearTimeout(timer);abort?.abort();try{map.off('style.load',styleRefresh);map.off('moveend',refresh)}catch{}}};
 }
