@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T20:02:58.105Z",
+  "generatedAt": "2026-09-14T20:03:18.652Z",
   "cards": [
     {
       "id": "weather",
@@ -747,12 +747,156 @@
           "appStyle": "./mobile/app.css"
         }
       }
+    },
+    {
+      "id": "json",
+      "version": "0.1.0",
+      "schemaVersion": 1,
+      "name": {
+        "zh-CN": "JSON 工具",
+        "zh-HK": "JSON 工具"
+      },
+      "description": {
+        "zh-CN": "本地 JSON 验证、格式化、压缩与错误定位",
+        "zh-HK": "本機 JSON 驗證、格式化、壓縮與錯誤定位"
+      },
+      "icon": "{}",
+      "category": "tools",
+      "kind": "tool",
+      "order": 60,
+      "platforms": [
+        "desktop",
+        "tablet",
+        "mobile"
+      ],
+      "interaction": {
+        "mode": "card-app",
+        "appLaunch": "explicit"
+      },
+      "capabilities": [
+        "clipboard"
+      ],
+      "permissions": [],
+      "defaultSize": {
+        "desktop": {
+          "w": 340,
+          "h": 76
+        },
+        "tablet": {
+          "w": 340,
+          "h": 76
+        },
+        "mobile": {
+          "w": 320,
+          "h": 76
+        }
+      },
+      "minSize": {
+        "desktop": {
+          "w": 340,
+          "h": 76
+        },
+        "tablet": {
+          "w": 340,
+          "h": 76
+        },
+        "mobile": {
+          "w": 320,
+          "h": 76
+        }
+      },
+      "maxSize": {
+        "desktop": {
+          "w": 980,
+          "h": 720
+        },
+        "tablet": {
+          "w": 780,
+          "h": 640
+        },
+        "mobile": {
+          "w": 430,
+          "h": 620
+        }
+      },
+      "sizeTiers": {
+        "desktop": {
+          "mini": {
+            "w": 340,
+            "h": 76
+          },
+          "compact": {
+            "w": 430,
+            "h": 180
+          },
+          "standard": {
+            "w": 680,
+            "h": 440
+          },
+          "large": {
+            "w": 920,
+            "h": 680
+          }
+        },
+        "tablet": {
+          "mini": {
+            "w": 340,
+            "h": 76
+          },
+          "compact": {
+            "w": 420,
+            "h": 170
+          },
+          "standard": {
+            "w": 580,
+            "h": 380
+          },
+          "large": {
+            "w": 740,
+            "h": 600
+          }
+        },
+        "mobile": {
+          "mini": {
+            "w": 320,
+            "h": 76
+          },
+          "compact": {
+            "w": 340,
+            "h": 132
+          },
+          "standard": {
+            "w": 370,
+            "h": 250
+          },
+          "large": {
+            "w": 420,
+            "h": 560
+          }
+        }
+      },
+      "entry": {
+        "shared": "./shared/json-service.js",
+        "desktop": {
+          "card": "./desktop/card.js",
+          "cardStyle": "./desktop/card.css",
+          "app": "./desktop/app.js",
+          "appStyle": "./desktop/app.css"
+        },
+        "tablet": {
+          "card": "./tablet/card.js",
+          "cardStyle": "./tablet/card.css",
+          "app": "./tablet/app.js",
+          "appStyle": "./tablet/app.css"
+        },
+        "mobile": {
+          "card": "./mobile/card.js",
+          "cardStyle": "./mobile/card.css",
+          "app": "./mobile/app.js",
+          "appStyle": "./mobile/app.css"
+        }
+      }
     }
   ],
-  "errors": [
-    {
-      "folder": "json",
-      "error": "json: missing ./mobile/card.css"
-    }
-  ]
+  "errors": []
 }
