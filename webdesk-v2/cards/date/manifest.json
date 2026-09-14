@@ -1,5 +1,5 @@
 {
-  "id":"date","version":"0.1.0","schemaVersion":1,
+  "id":"date","version":"0.1.1","schemaVersion":1,
   "name":{"zh-CN":"日期工具","zh-HK":"日期工具"},
   "description":{"zh-CN":"日期差、日期加减、星期与 ISO 日期转换","zh-HK":"日期差、日期加減、星期與 ISO 日期轉換"},
   "icon":"📅","category":"tools","kind":"tool","order":70,
