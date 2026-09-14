@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T20:02:24.593Z",
+  "generatedAt": "2026-09-14T20:02:34.497Z",
   "cards": [
     {
       "id": "weather",
@@ -752,7 +752,7 @@
   "errors": [
     {
       "folder": "json",
-      "error": "json: missing ./tablet/app.css"
+      "error": "json: missing ./mobile/card.js"
     }
   ]
 }
