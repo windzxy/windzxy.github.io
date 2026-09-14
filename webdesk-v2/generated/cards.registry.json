@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T18:03:01.287Z",
+  "generatedAt": "2026-09-14T19:03:31.687Z",
   "cards": [
     {
       "id": "weather",
@@ -600,5 +600,10 @@
       }
     }
   ],
-  "errors": []
+  "errors": [
+    {
+      "folder": "table",
+      "error": "table: missing ./desktop/card.js"
+    }
+  ]
 }
