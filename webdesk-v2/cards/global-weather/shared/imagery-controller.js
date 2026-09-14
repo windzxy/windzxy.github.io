@@ -1,114 +1,32 @@
 const SOURCE_ID='gw-remote-imagery';
 const LAYER_ID='gw-remote-imagery-layer';
 const RAINVIEWER_META='https://api.rainviewer.com/public/weather-maps.json';
-const NASA_LAYER='VIIRS_SNPP_CorrectedReflectance_TrueColor_v1_NRT';
-const NASA_ROOT='https://gibs.earthdata.nasa.gov/wmts/epsg3857/nrt';
+const JMA_TIMES='https://www.jma.go.jp/bosai/himawari/data/satimg/targetTimes_fd.json';
 
 export const imageryModes=[
   {id:'off',label:'無疊圖'},
   {id:'radar',label:'雷達'},
   {id:'satellite',label:'衛星雲圖'}
 ];
-
-function isoDay(daysAgo=0){
-  const d=new Date(Date.now()-daysAgo*86400000);
-  return d.toISOString().slice(0,10);
-}
 function emit(cb,payload){try{cb?.(payload)}catch{}}
-function rainviewerDescriptor(meta){
-  const frames=meta?.radar?.past||[];
-  const frame=frames[frames.length-1];
-  if(!meta?.host||!frame?.path)throw new Error('RainViewer radar frame unavailable');
-  return{
-    mode:'radar',source:'RainViewer',updatedAt:new Date(Number(frame.time)*1000).toISOString(),
-    tiles:[`${meta.host}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`],tileSize:256,maxzoom:7,opacity:.72,
-    attribution:'Weather radar © <a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>'
-  };
-}
-function satelliteDescriptor(daysAgo){
-  const date=isoDay(daysAgo);
-  return{
-    mode:'satellite',source:'NASA GIBS · VIIRS SNPP NRT',updatedAt:date,date,daysAgo,
-    tiles:[`${NASA_ROOT}/${NASA_LAYER}/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`],tileSize:256,maxzoom:9,opacity:.82,
-    attribution:'Satellite imagery © <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA GIBS</a>'
-  };
-}
+function jmaIso(v){if(!/^\d{14}$/.test(String(v||'')))return'';const s=String(v);return new Date(Date.UTC(+s.slice(0,4),+s.slice(4,6)-1,+s.slice(6,8),+s.slice(8,10),+s.slice(10,12),+s.slice(12,14))).toISOString()}
+function radarFrames(meta){if(!meta?.host)throw new Error('RainViewer host unavailable');const list=(meta?.radar?.past||[]).filter(f=>f?.path&&f?.time);if(!list.length)throw new Error('RainViewer radar frames unavailable');return list.map((f,i)=>({index:i,mode:'radar',source:'RainViewer',updatedAt:new Date(Number(f.time)*1000).toISOString(),tiles:[`${meta.host}${f.path}/256/{z}/{x}/{y}/2/1_1.png`],tileSize:256,maxzoom:7,opacity:.68,attribution:'Weather radar © <a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>'}))}
+function himawariFrames(raw){const list=(Array.isArray(raw)?raw:[]).slice(-18).filter(f=>f?.basetime&&f?.validtime);if(!list.length)throw new Error('JMA Himawari frames unavailable');return list.map((f,i)=>({index:i,mode:'satellite',source:'JMA Himawari',updatedAt:jmaIso(f.validtime),tiles:[`https://www.jma.go.jp/bosai/himawari/data/satimg/${f.basetime}/fd/${f.validtime}/REP/ETC/{z}/{x}/{y}.jpg`],tileSize:256,maxzoom:5,opacity:.74,attribution:'Himawari © Japan Meteorological Agency'}))}
 
 export function createImageryController(mapApi,{signal,onChange}={}){
   const map=mapApi?.map||null;
-  let active='off',descriptor=null,destroyed=false,requestSeq=0,satelliteFallbacks=[2,3,4],satelliteIndex=0,errorTimer=0;
-  const clearRaster=()=>{
-    if(!map)return;
-    try{if(map.getLayer(LAYER_ID))map.removeLayer(LAYER_ID)}catch{}
-    try{if(map.getSource(SOURCE_ID))map.removeSource(SOURCE_ID)}catch{}
-  };
-  const apply=desc=>{
-    descriptor=desc;
-    if(!map||destroyed||!map.isStyleLoaded?.())return false;
-    clearRaster();
-    try{
-      map.addSource(SOURCE_ID,{type:'raster',tiles:desc.tiles,tileSize:desc.tileSize||256,maxzoom:desc.maxzoom||9,attribution:desc.attribution});
-      map.addLayer({id:LAYER_ID,type:'raster',source:SOURCE_ID,paint:{'raster-opacity':desc.opacity??.78,'raster-fade-duration':120}});
-      emit(onChange,{state:'ready',...desc});
-      return true;
-    }catch(e){
-      emit(onChange,{state:'error',mode:active,source:desc.source,updatedAt:desc.updatedAt,error:String(e?.message||e)});
-      return false;
-    }
-  };
-  const loadRadar=async seq=>{
-    emit(onChange,{state:'loading',mode:'radar',source:'RainViewer'});
-    const r=await fetch(RAINVIEWER_META,{signal,cache:'no-store'});
-    if(!r.ok)throw new Error(`RainViewer ${r.status}`);
-    const desc=rainviewerDescriptor(await r.json());
-    if(destroyed||seq!==requestSeq||active!=='radar')return false;
-    return apply(desc);
-  };
-  const loadSatellite=seq=>{
-    satelliteIndex=0;
-    const desc=satelliteDescriptor(satelliteFallbacks[satelliteIndex]);
-    emit(onChange,{state:'loading',mode:'satellite',source:desc.source,updatedAt:desc.updatedAt});
-    if(destroyed||seq!==requestSeq||active!=='satellite')return false;
-    return apply(desc);
-  };
-  const set=async mode=>{
-    active=imageryModes.some(x=>x.id===mode)?mode:'off';
-    requestSeq++;
-    const seq=requestSeq;
-    clearTimeout(errorTimer);
-    if(active==='off'){
-      descriptor=null;clearRaster();emit(onChange,{state:'off',mode:'off',source:'',updatedAt:''});return true;
-    }
-    if(!map){emit(onChange,{state:'unavailable',mode:active,source:'地圖備援模式',updatedAt:'',error:'MapLibre raster overlay unavailable'});return false}
-    try{return active==='radar'?await loadRadar(seq):loadSatellite(seq)}catch(e){
-      if(!destroyed&&seq===requestSeq)emit(onChange,{state:'error',mode:active,source:active==='radar'?'RainViewer':'NASA GIBS',updatedAt:'',error:String(e?.message||e)});
-      return false;
-    }
-  };
+  let active='off',descriptor=null,frames=[],index=0,destroyed=false,requestSeq=0,timer=0,playing=false;
+  const clearRaster=()=>{if(!map)return;try{if(map.getLayer(LAYER_ID))map.removeLayer(LAYER_ID)}catch{}try{if(map.getSource(SOURCE_ID))map.removeSource(SOURCE_ID)}catch{}};
+  const snapshot=(state='ready',extra={})=>({state,mode:active,source:descriptor?.source||'',updatedAt:descriptor?.updatedAt||'',frameCount:frames.length,index,playing,...extra});
+  const apply=desc=>{descriptor=desc;if(!map||destroyed||!map.isStyleLoaded?.())return false;clearRaster();try{map.addSource(SOURCE_ID,{type:'raster',tiles:desc.tiles,tileSize:desc.tileSize||256,maxzoom:desc.maxzoom||9,attribution:desc.attribution});map.addLayer({id:LAYER_ID,type:'raster',source:SOURCE_ID,paint:{'raster-opacity':desc.opacity??.74,'raster-fade-duration':80}});emit(onChange,snapshot('ready'));return true}catch(e){emit(onChange,snapshot('error',{error:String(e?.message||e)}));return false}};
+  const showFrame=i=>{if(!frames.length)return false;index=Math.max(0,Math.min(frames.length-1,Number(i)||0));return apply(frames[index])};
+  const stop=()=>{playing=false;if(timer){clearInterval(timer);timer=0}if(active!=='off')emit(onChange,snapshot(descriptor?'ready':'loading'))};
+  const play=()=>{if(!frames.length||active==='off')return false;if(playing){stop();return false}playing=true;emit(onChange,snapshot('ready'));timer=setInterval(()=>{if(destroyed||document.hidden){stop();return}showFrame((index+1)%frames.length)},active==='radar'?720:900);return true};
+  const loadRadar=async seq=>{emit(onChange,{state:'loading',mode:'radar',source:'RainViewer',frameCount:0,index:0,playing:false});const r=await fetch(RAINVIEWER_META,{signal,cache:'no-store'});if(!r.ok)throw new Error(`RainViewer ${r.status}`);const next=radarFrames(await r.json());if(destroyed||seq!==requestSeq||active!=='radar')return false;frames=next;index=frames.length-1;return showFrame(index)};
+  const loadSatellite=async seq=>{emit(onChange,{state:'loading',mode:'satellite',source:'JMA Himawari',frameCount:0,index:0,playing:false});const r=await fetch(JMA_TIMES,{signal,cache:'no-store'});if(!r.ok)throw new Error(`JMA Himawari ${r.status}`);const next=himawariFrames(await r.json());if(destroyed||seq!==requestSeq||active!=='satellite')return false;frames=next;index=frames.length-1;return showFrame(index)};
+  const set=async mode=>{stop();active=imageryModes.some(x=>x.id===mode)?mode:'off';requestSeq++;const seq=requestSeq;if(active==='off'){frames=[];index=0;descriptor=null;clearRaster();emit(onChange,{state:'off',mode:'off',source:'',updatedAt:'',frameCount:0,index:0,playing:false});return true}if(!map){emit(onChange,{state:'unavailable',mode:active,source:'地圖備援模式',updatedAt:'',frameCount:0,index:0,playing:false,error:'MapLibre raster overlay unavailable'});return false}try{return active==='radar'?await loadRadar(seq):await loadSatellite(seq)}catch(e){if(!destroyed&&seq===requestSeq)emit(onChange,{state:'error',mode:active,source:active==='radar'?'RainViewer':'JMA Himawari',updatedAt:'',frameCount:0,index:0,playing:false,error:String(e?.message||e)});return false}};
   const onStyleLoad=()=>{if(descriptor&&active!=='off')setTimeout(()=>apply(descriptor),0)};
-  const onMapError=e=>{
-    if(destroyed||active==='off'||!descriptor)return;
-    const sourceId=e?.sourceId||e?.error?.sourceId||'';
-    const message=String(e?.error?.message||e?.message||'');
-    if(sourceId&&sourceId!==SOURCE_ID)return;
-    if(!sourceId&&!message.includes(SOURCE_ID)&&!message.includes('raster')&&!message.includes('tile'))return;
-    if(active==='satellite'&&satelliteIndex<satelliteFallbacks.length-1){
-      clearTimeout(errorTimer);
-      errorTimer=setTimeout(()=>{
-        if(destroyed||active!=='satellite')return;
-        satelliteIndex++;
-        const next=satelliteDescriptor(satelliteFallbacks[satelliteIndex]);
-        emit(onChange,{state:'fallback',mode:'satellite',source:next.source,updatedAt:next.updatedAt,error:'較新影像載入失敗，改用較早日期'});
-        apply(next);
-      },280);
-    }else{
-      emit(onChange,{state:'error',mode:active,source:descriptor.source,updatedAt:descriptor.updatedAt,error:'影像 tile 載入失敗'});
-    }
-  };
-  map?.on?.('style.load',onStyleLoad);
-  map?.on?.('error',onMapError);
-  return{
-    set,get mode(){return active},get meta(){return descriptor},
-    destroy(){destroyed=true;requestSeq++;clearTimeout(errorTimer);clearRaster();map?.off?.('style.load',onStyleLoad);map?.off?.('error',onMapError)}
-  };
+  const onVisibility=()=>{if(document.hidden&&playing)stop()};
+  map?.on?.('style.load',onStyleLoad);document.addEventListener('visibilitychange',onVisibility);
+  return{set,setFrame(i){stop();return showFrame(i)},play,stop,get mode(){return active},get meta(){return snapshot(descriptor?'ready':'loading')},get frames(){return frames.map(f=>({index:f.index,updatedAt:f.updatedAt,source:f.source}))},destroy(){destroyed=true;requestSeq++;stop();clearRaster();map?.off?.('style.load',onStyleLoad);document.removeEventListener('visibilitychange',onVisibility)}};
 }
