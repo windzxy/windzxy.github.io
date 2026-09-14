@@ -1,9 +1,9 @@
 {
   "id":"image-studio",
-  "version":"0.1.1",
+  "version":"0.2.0",
   "schemaVersion":1,
   "name":{"zh-CN":"图片工具","zh-HK":"圖片工具"},
-  "description":{"zh-CN":"本地图片缩放、预览与导出","zh-HK":"本機圖片縮放、預覽與匯出"},
+  "description":{"zh-CN":"本地图片裁切、缩放、预览与导出","zh-HK":"本機圖片裁切、縮放、預覽與匯出"},
   "icon":"🖼️",
   "category":"tools",
   "kind":"tool",
