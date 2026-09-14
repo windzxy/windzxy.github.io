@@ -27,10 +27,22 @@ export function centerCropRect(srcW,srcH,ratio){
   if(current>target){const cw=h*target;return{x:(w-cw)/2,y:0,w:cw,h}}
   const ch=w/target;return{x:0,y:(h-ch)/2,w,h:ch};
 }
-export function renderPreview(canvas,image,w,h,{cropRatio=0}={}){
+export function normalizeCropRect(srcW,srcH,rect,ratio=0){
+  const sw=Math.max(1,Number(srcW)||1),sh=Math.max(1,Number(srcH)||1),target=Number(ratio)||0;
+  if(!rect)return centerCropRect(sw,sh,target);
+  let w=Math.max(1,Math.min(sw,Number(rect.w)||sw)),h=Math.max(1,Math.min(sh,Number(rect.h)||sh));
+  if(target){
+    if(w/h>target)w=h*target;else h=w/target;
+    if(w>sw){w=sw;h=w/target}if(h>sh){h=sh;w=h*target}
+  }
+  let x=Number(rect.x)||0,y=Number(rect.y)||0;
+  x=Math.max(0,Math.min(sw-w,x));y=Math.max(0,Math.min(sh-h,y));
+  return{x,y,w,h};
+}
+export function renderPreview(canvas,image,w,h,{cropRatio=0,cropRect=null}={}){
   const outW=Math.max(1,Math.round(Number(w)||1)),outH=Math.max(1,Math.round(Number(h)||1));
   const ctx=canvas.getContext('2d',{alpha:true});canvas.width=outW;canvas.height=outH;ctx.clearRect(0,0,outW,outH);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-  const src=centerCropRect(image.naturalWidth||image.width,image.naturalHeight||image.height,cropRatio);
+  const src=normalizeCropRect(image.naturalWidth||image.width,image.naturalHeight||image.height,cropRect,cropRatio);
   ctx.drawImage(image,src.x,src.y,src.w,src.h,0,0,outW,outH);
   return src;
 }
