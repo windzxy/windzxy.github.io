@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-15T00:00:39.741Z",
+  "generatedAt": "2026-09-15T00:00:47.590Z",
   "cards": [
     {
       "id": "weather",
@@ -452,15 +452,15 @@
     },
     {
       "id": "text",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "schemaVersion": 1,
       "name": {
         "zh-CN": "文字工具",
         "zh-HK": "文字工具"
       },
       "description": {
-        "zh-CN": "本地文字统计、清理、大小写转换与复制",
-        "zh-HK": "本機文字統計、清理、大小寫轉換與複製"
+        "zh-CN": "本地文字统计、查找替换、去重排序、清理与大小写转换",
+        "zh-HK": "本機文字統計、查找替換、去重排序、清理與大小寫轉換"
       },
       "icon": "✍️",
       "category": "tools",
