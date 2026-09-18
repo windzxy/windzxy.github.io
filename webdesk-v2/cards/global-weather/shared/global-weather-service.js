@@ -38,6 +38,24 @@ export async function fetchPointWeather(lat,lon,{signal,offsetHours=0}={}){
   throw last||new Error('weather unavailable');
 }
 function wrapLon(v){return((Number(v)+540)%360)-180}
+function unwrapLon(v,reference){let n=wrapLon(v),r=wrapLon(reference);while(n-r>180)n-=360;while(n-r<-180)n+=360;return n}
+function coverageContains(coverage,bounds){
+  if(!coverage||!bounds||![coverage.west,coverage.east,coverage.south,coverage.north,bounds.west,bounds.east,bounds.south,bounds.north].every(Number.isFinite))return false;
+  if(Number(bounds.south)<Number(coverage.south)+.01||Number(bounds.north)>Number(coverage.north)-.01)return false;
+  const cw=Number(coverage.west),ce=unwrapLon(coverage.east,cw),center=(cw+ce)/2,bw=unwrapLon(bounds.west,center),be=unwrapLon(bounds.east,center),lo=Math.min(bw,be),hi=Math.max(bw,be),clo=Math.min(cw,ce),chi=Math.max(cw,ce);
+  return lo>=clo+.01&&hi<=chi-.01;
+}
+function reusableGrid(bounds,quality,now){
+  if(!bounds)return null;
+  let best=null,bestArea=Infinity;
+  for(const entry of GRID_CACHE.values()){
+    const data=entry?.data;
+    if(!data||data.quality!==quality||now-entry.at>=GRID_TTL||!coverageContains(data.coverage,bounds))continue;
+    const c=data.coverage,lon=Math.abs(unwrapLon(c.east,c.west)-Number(c.west)),area=lon*Math.abs(Number(c.north)-Number(c.south));
+    if(area<bestArea){best=data;bestArea=area}
+  }
+  return best;
+}
 function gridDensity({zoom=4,lonSpan=20,latSpan=12,quality='full'}={}){if(quality==='preview')return{nx:8,ny:6};const z=Number(zoom)||4,area=Math.max(1,Number(lonSpan)*Number(latSpan));if(z>=7||area<90)return{nx:20,ny:16};if(z>=5||area<600)return{nx:18,ny:14};return{nx:16,ny:12}}
 function gridSpec({lat,lon,zoom=4,bounds,quality='full'}={}){let lonSpan=Math.max(2.2,Math.min(90,(360/Math.pow(2,Math.max(1.6,Number(zoom)||4)))*1.45)),latSpan=Math.max(1.6,Math.min(50,lonSpan*.62));if(bounds&&[bounds.west,bounds.east,bounds.south,bounds.north].every(Number.isFinite)){let rawLon=Math.abs(Number(bounds.east)-Number(bounds.west));if(rawLon>180)rawLon=360-rawLon;const rawLat=Math.abs(Number(bounds.north)-Number(bounds.south));if(rawLon>.2)lonSpan=Math.max(2.2,Math.min(120,rawLon*1.34));if(rawLat>.2)latSpan=Math.max(1.6,Math.min(70,rawLat*1.34))}const{nx,ny}=gridDensity({zoom,lonSpan,latSpan,quality}),cLat=Number(lat),cLon=Number(lon),points=[];for(let y=0;y<ny;y++)for(let x=0;x<nx;x++){const px=cLon-lonSpan/2+lonSpan*(x/(nx-1)),py=Math.max(-84,Math.min(84,cLat-latSpan/2+latSpan*(y/(ny-1))));points.push({lat:Number(py.toFixed(4)),lon:Number(wrapLon(px).toFixed(4))})}return{nx,ny,points,lonSpan,latSpan,quality,coverage:{west:wrapLon(cLon-lonSpan/2),east:wrapLon(cLon+lonSpan/2),south:Math.max(-84,cLat-latSpan/2),north:Math.min(84,cLat+latSpan/2)}}}
 function gridKey({lat,lon,zoom=4,bounds,quality='full'}={}){const s=gridSpec({lat,lon,zoom,bounds,quality});return`${quality}|${Math.round(Number(zoom)||4)}|${Math.round(Number(lat)*2)/2}|${Math.round(Number(lon)*2)/2}|${s.nx}x${s.ny}|${Math.round(s.lonSpan)}x${Math.round(s.latSpan)}`}
@@ -54,7 +72,8 @@ async function fetchGridBatch(points,signal,allowSplit=true){
 }
 async function fetchBatchesLimited(batches,signal){const parts=new Array(batches.length);let cursor=0;async function worker(){while(true){const i=cursor++;if(i>=batches.length)return;parts[i]=await fetchGridBatch(batches[i],signal)}}await Promise.all(Array.from({length:Math.min(GRID_CONCURRENCY,batches.length)},worker));return parts}
 async function loadGridBundle({lat,lon,zoom=4,bounds,quality='full',signal}={}){
-  const spec=gridSpec({lat,lon,zoom,bounds,quality}),key=gridKey({lat,lon,zoom,bounds,quality}),now=Date.now(),cached=GRID_CACHE.get(key),staleData=cached?.data;
+  const spec=gridSpec({lat,lon,zoom,bounds,quality}),key=gridKey({lat,lon,zoom,bounds,quality}),now=Date.now(),cached=GRID_CACHE.get(key),staleData=cached?.data,reusable=reusableGrid(bounds,quality,now);
+  if(reusable)return reusable;
   if(staleData&&now-cached.at<GRID_TTL)return staleData;
   if(cached?.promise)return withSignal(cached.promise,signal);
   const batches=chunks(spec.points,GRID_BATCH);
