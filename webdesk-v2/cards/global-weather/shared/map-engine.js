@@ -61,13 +61,14 @@ export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,bas
     const resizeWind=()=>{if(!windCanvas)return;const r=container.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);windCanvas.width=Math.max(1,Math.round(r.width*dpr));windCanvas.height=Math.max(1,Math.round(r.height*dpr));windCanvas.style.width=r.width+'px';windCanvas.style.height=r.height+'px';windCtx=windCanvas.getContext('2d');windCtx?.setTransform(dpr,0,0,dpr,0,0);particles=[]};
     const resize=()=>{if(destroyed||!container.isConnected||container.clientWidth<1||container.clientHeight<1)return;try{map.resize()}catch{}resizeWind()};
     const clearOverlay=()=>{try{if(map.getLayer(OVERLAY_LABEL))map.removeLayer(OVERLAY_LABEL);if(map.getLayer(OVERLAY_FIELD))map.removeLayer(OVERLAY_FIELD);if(map.getSource(OVERLAY_SOURCE))map.removeSource(OVERLAY_SOURCE)}catch{}};
+    const firstBasemapSymbol=()=>{try{return map.getStyle()?.layers?.find(x=>x.type==='symbol'&&x.id!==OVERLAY_LABEL)?.id}catch{return undefined}};
     const applyOverlay=()=>{
       if(destroyed||!activeOverlay||!map.isStyleLoaded())return false;
       const {layer,geojson}=activeOverlay;if(!geojson?.features?.length)return false;
       try{
         const existing=map.getSource(OVERLAY_SOURCE);
         if(existing?.setData)existing.setData(geojson);else map.addSource(OVERLAY_SOURCE,{type:'geojson',data:geojson});
-        if(!map.getLayer(OVERLAY_FIELD))map.addLayer({id:OVERLAY_FIELD,type:'circle',source:OVERLAY_SOURCE,paint:{'circle-radius':['interpolate',['linear'],['zoom'],2,34,5,54,8,82],'circle-color':overlayColor(layer),'circle-opacity':layer==='rain'?0.48:0.52,'circle-blur':0.78}});else{map.setPaintProperty(OVERLAY_FIELD,'circle-color',overlayColor(layer));map.setPaintProperty(OVERLAY_FIELD,'circle-opacity',layer==='rain'?0.48:0.52)}
+        if(!map.getLayer(OVERLAY_FIELD))map.addLayer({id:OVERLAY_FIELD,type:'circle',source:OVERLAY_SOURCE,paint:{'circle-radius':['interpolate',['linear'],['zoom'],2,34,5,54,8,82],'circle-color':overlayColor(layer),'circle-opacity':layer==='rain'?0.48:0.52,'circle-blur':0.78}},firstBasemapSymbol());else{map.setPaintProperty(OVERLAY_FIELD,'circle-color',overlayColor(layer));map.setPaintProperty(OVERLAY_FIELD,'circle-opacity',layer==='rain'?0.48:0.52)}
         if(!map.getLayer(OVERLAY_LABEL))map.addLayer({id:OVERLAY_LABEL,type:'symbol',source:OVERLAY_SOURCE,minzoom:2.6,layout:{'text-field':['get','label'],'text-size':11,'text-allow-overlap':false},paint:{'text-color':'#fff','text-halo-color':'rgba(25,30,40,.75)','text-halo-width':1.4}});
         return true;
       }catch(e){console.warn('[Global Weather overlay]',e);return false}
