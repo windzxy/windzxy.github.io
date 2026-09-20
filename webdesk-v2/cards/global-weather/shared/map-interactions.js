@@ -5,7 +5,7 @@ export function enableMapInteractions(mapApi,container){
   const canvasContainer=map.getCanvasContainer?.();
   const canvas=map.getCanvas?.();
   let restoreRaf=0,destroyed=false;
-  const normalizeSurface=el=>{if(!el)return;el.style.pointerEvents='auto';el.style.touchAction='none';el.style.userSelect='none';el.style.webkitUserSelect='none'};
+  const normalizeSurface=el=>{if(!el)return;const s=el.style;if(s.pointerEvents!=='auto')s.pointerEvents='auto';if(s.touchAction!=='none')s.touchAction='none';if(s.userSelect!=='none')s.userSelect='none';if(s.webkitUserSelect!=='none')s.webkitUserSelect='none'};
   const keepEnabled=()=>{if(destroyed)return;try{
     map.dragPan?.enable?.();
     map.scrollZoom?.enable?.();
