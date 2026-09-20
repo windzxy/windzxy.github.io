@@ -73,7 +73,7 @@ export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,bas
         return true;
       }catch(e){console.warn('[Global Weather overlay]',e);return false}
     };
-    const ensureWindCanvas=()=>{if(windCanvas)return windCanvas;windCanvas=document.createElement('canvas');windCanvas.className='gw-wind-canvas';windCanvas.setAttribute('aria-hidden','true');windCanvas.style.cssText='position:absolute;inset:0;z-index:3;pointer-events:none';container.appendChild(windCanvas);resizeWind();return windCanvas};
+    const ensureWindCanvas=()=>{if(windCanvas)return windCanvas;windCanvas=document.createElement('canvas');windCanvas.className='gw-wind-canvas';windCanvas.setAttribute('aria-hidden','true');windCanvas.style.cssText='position:absolute;inset:0;z-index:4;display:block;visibility:visible;opacity:.96;mix-blend-mode:screen;pointer-events:none';container.appendChild(windCanvas);resizeWind();return windCanvas};
     const samples=()=>windField?.geojson?.features?.map(f=>({lon:Number(f.geometry?.coordinates?.[0]),lat:Number(f.geometry?.coordinates?.[1]),speed:Number(f.properties?.speed),direction:Number(f.properties?.direction)})).filter(s=>Number.isFinite(s.lon)&&Number.isFinite(s.lat)&&Number.isFinite(s.speed)&&Number.isFinite(s.direction))||[];
     const nearest=(lng,lat,list)=>{let best=null,bd=Infinity,cos=Math.max(.15,Math.cos(lat*Math.PI/180));for(const s of list){let dx=Math.abs(s.lon-lng);dx=Math.min(dx,360-dx)*cos;const dy=s.lat-lat,d=dx*dx+dy*dy;if(d<bd){bd=d;best=s}}return best};
     const resetParticle=(p,w,h)=>{p.x=Math.random()*w;p.y=Math.random()*h;p.age=Math.random()*80;p.max=70+Math.random()*100};
