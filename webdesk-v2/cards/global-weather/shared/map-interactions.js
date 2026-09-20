@@ -6,16 +6,17 @@ export function enableMapInteractions(mapApi,container){
   const canvas=map.getCanvas?.();
   let restoreRaf=0,destroyed=false;
   const normalizeSurface=el=>{if(!el)return;const s=el.style;if(s.pointerEvents!=='auto')s.pointerEvents='auto';if(s.touchAction!=='none')s.touchAction='none';if(s.userSelect!=='none')s.userSelect='none';if(s.webkitUserSelect!=='none')s.webkitUserSelect='none'};
+  const setHandler=(handler,enabled)=>{if(!handler)return;const current=handler.isEnabled?.();if(current===enabled)return;(enabled?handler.enable:handler.disable)?.call(handler)};
   const keepEnabled=()=>{if(destroyed)return;try{
-    map.dragPan?.enable?.();
-    map.scrollZoom?.enable?.();
-    map.boxZoom?.enable?.();
-    map.doubleClickZoom?.enable?.();
-    map.keyboard?.enable?.();
-    map.touchZoomRotate?.enable?.();
+    setHandler(map.dragPan,true);
+    setHandler(map.scrollZoom,true);
+    setHandler(map.boxZoom,true);
+    setHandler(map.doubleClickZoom,true);
+    setHandler(map.keyboard,true);
+    setHandler(map.touchZoomRotate,true);
     map.touchZoomRotate?.disableRotation?.();
-    map.dragRotate?.disable?.();
-    map.touchPitch?.disable?.();
+    setHandler(map.dragRotate,false);
+    setHandler(map.touchPitch,false);
     normalizeSurface(target);normalizeSurface(canvasContainer);normalizeSurface(canvas);
   }catch(e){console.warn('[Global Weather map interactions]',e)}};
   keepEnabled();
