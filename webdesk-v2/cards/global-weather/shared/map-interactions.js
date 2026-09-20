@@ -4,8 +4,9 @@ export function enableMapInteractions(mapApi,container){
   const target=container||map.getContainer?.();
   const canvasContainer=map.getCanvasContainer?.();
   const canvas=map.getCanvas?.();
+  let restoreRaf=0,destroyed=false;
   const normalizeSurface=el=>{if(!el)return;el.style.pointerEvents='auto';el.style.touchAction='none';el.style.userSelect='none';el.style.webkitUserSelect='none'};
-  const keepEnabled=()=>{try{
+  const keepEnabled=()=>{if(destroyed)return;try{
     map.dragPan?.enable?.();
     map.scrollZoom?.enable?.();
     map.boxZoom?.enable?.();
@@ -18,12 +19,11 @@ export function enableMapInteractions(mapApi,container){
     normalizeSurface(target);normalizeSurface(canvasContainer);normalizeSurface(canvas);
   }catch(e){console.warn('[Global Weather map interactions]',e)}};
   keepEnabled();
-  // MapLibre rebuilds handlers/canvas state while a basemap style is being replaced.
-  // Restore pan/zoom on both style lifecycle events so weather-layer or basemap
-  // switches cannot leave desktop, tablet, or one-finger mobile panning inert.
-  const restoreAfterStyle=()=>requestAnimationFrame(keepEnabled);
+  // Style replacement can emit several styledata events in one paint cycle.
+  // Coalesce them so restoring gestures never adds redundant work to map redraws.
+  const restoreAfterStyle=()=>{if(destroyed||restoreRaf)return;restoreRaf=requestAnimationFrame(()=>{restoreRaf=0;keepEnabled()})};
   map.on?.('style.load',restoreAfterStyle);
   map.on?.('styledata',restoreAfterStyle);
   map.on?.('resize',keepEnabled);
-  return{destroy(){try{map.off?.('style.load',restoreAfterStyle);map.off?.('styledata',restoreAfterStyle);map.off?.('resize',keepEnabled)}catch{}}};
+  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;try{map.off?.('style.load',restoreAfterStyle);map.off?.('styledata',restoreAfterStyle);map.off?.('resize',keepEnabled)}catch{}}};
 }
