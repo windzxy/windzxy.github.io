@@ -68,7 +68,8 @@ export async function mountMap(container,{center=[114.0579,22.5431],zoom=4.2,bas
       try{
         const existing=map.getSource(OVERLAY_SOURCE);
         if(existing?.setData)existing.setData(geojson);else map.addSource(OVERLAY_SOURCE,{type:'geojson',data:geojson});
-        if(!map.getLayer(OVERLAY_FIELD))map.addLayer({id:OVERLAY_FIELD,type:'circle',source:OVERLAY_SOURCE,paint:{'circle-radius':['interpolate',['linear'],['zoom'],2,34,5,54,8,82],'circle-color':overlayColor(layer),'circle-opacity':layer==='rain'?0.48:0.52,'circle-blur':0.78}},firstBasemapSymbol());else{map.setPaintProperty(OVERLAY_FIELD,'circle-color',overlayColor(layer));map.setPaintProperty(OVERLAY_FIELD,'circle-opacity',layer==='rain'?0.48:0.52)}
+        const before=firstBasemapSymbol();
+        if(!map.getLayer(OVERLAY_FIELD))map.addLayer({id:OVERLAY_FIELD,type:'circle',source:OVERLAY_SOURCE,paint:{'circle-radius':['interpolate',['linear'],['zoom'],2,34,5,54,8,82],'circle-color':overlayColor(layer),'circle-opacity':layer==='rain'?0.48:0.52,'circle-blur':0.78}},before);else{map.setPaintProperty(OVERLAY_FIELD,'circle-color',overlayColor(layer));map.setPaintProperty(OVERLAY_FIELD,'circle-opacity',layer==='rain'?0.48:0.52);map.moveLayer(OVERLAY_FIELD,before)}
         if(!map.getLayer(OVERLAY_LABEL))map.addLayer({id:OVERLAY_LABEL,type:'symbol',source:OVERLAY_SOURCE,minzoom:2.6,layout:{'text-field':['get','label'],'text-size':11,'text-allow-overlap':false},paint:{'text-color':'#fff','text-halo-color':'rgba(25,30,40,.75)','text-halo-width':1.4}});
         return true;
       }catch(e){console.warn('[Global Weather overlay]',e);return false}
