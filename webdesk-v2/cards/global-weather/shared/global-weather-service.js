@@ -77,7 +77,7 @@ async function loadGridBundle({lat,lon,zoom=4,bounds,quality='full',signal}={}){
   if(staleData&&now-cached.at<GRID_TTL)return staleData;
   if(cached?.promise)return withSignal(cached.promise,signal);
   const batches=chunks(spec.points,GRID_BATCH);
-  const promise=fetchBatchesLimited(batches,signal).then(parts=>{const rows=parts.flat();if(rows.length!==spec.points.length)throw new Error('incomplete weather grid');const data={key,at:Date.now(),rows,points:spec.points,nx:spec.nx,ny:spec.ny,quality,coverage:spec.coverage,batches:batches.length,stale:false};GRID_CACHE.set(key,{at:data.at,data});trimCache(GRID_CACHE,GRID_MAX);return data}).catch(e=>{if(e?.name==='AbortError')throw e;if(staleData&&now-cached.at<STALE_TTL){const data={...staleData,stale:true,dataAgeMs:now-cached.at};GRID_CACHE.set(key,{at:cached.at,data:staleData});return data}if(GRID_CACHE.get(key)?.promise===promise)GRID_CACHE.delete(key);throw e});
+  const promise=fetchBatchesLimited(batches,signal).then(parts=>{const rows=parts.flat();if(rows.length!==spec.points.length)throw new Error('incomplete weather grid');const data={key,at:Date.now(),rows,points:spec.points,nx:spec.nx,ny:spec.ny,quality,coverage:spec.coverage,batches:batches.length,stale:false};GRID_CACHE.set(key,{at:data.at,data});trimCache(GRID_CACHE,GRID_MAX);return data}).catch(e=>{if(e?.name==='AbortError'){if(GRID_CACHE.get(key)?.promise===promise)GRID_CACHE.delete(key);throw e}if(staleData&&now-cached.at<STALE_TTL){const data={...staleData,stale:true,dataAgeMs:now-cached.at};GRID_CACHE.set(key,{at:cached.at,data:staleData});return data}if(GRID_CACHE.get(key)?.promise===promise)GRID_CACHE.delete(key);throw e});
   GRID_CACHE.set(key,{at:cached?.at||now,data:staleData,promise});
   return withSignal(promise,signal);
 }
