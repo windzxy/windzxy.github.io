@@ -17,6 +17,10 @@ export function enableMapInteractions(mapApi,container){
     map.touchZoomRotate?.disableRotation?.();
     setHandler(map.dragRotate,false);
     setHandler(map.touchPitch,false);
+    // Global Weather must remain directly draggable inside WebDesk on desktop, tablet and phone.
+    // If a host/style enables MapLibre cooperative gestures, one-finger drag can be intercepted
+    // (or require modifier/two-finger input) even though dragPan itself is enabled.
+    setHandler(map.cooperativeGestures,false);
     normalizeSurface(target);normalizeSurface(canvasContainer);normalizeSurface(canvas);
   }catch(e){console.warn('[Global Weather map interactions]',e)}};
   keepEnabled();
