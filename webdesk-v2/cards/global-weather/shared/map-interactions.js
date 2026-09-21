@@ -20,10 +20,10 @@ export function enableMapInteractions(mapApi,container){
     normalizeSurface(target);normalizeSurface(canvasContainer);normalizeSurface(canvas);
   }catch(e){console.warn('[Global Weather map interactions]',e)}};
   keepEnabled();
-  // A completed style replacement is the only lifecycle point that needs gesture restoration.
-  // Avoid styledata: it also fires repeatedly while sources/layers update and can compete with drag redraws.
+  // Style replacements and responsive resize bursts only need one gesture restoration per frame.
+  // Avoid styledata: it fires repeatedly while sources/layers update and can compete with drag redraws.
   const restoreAfterStyle=()=>{if(destroyed||restoreRaf)return;restoreRaf=requestAnimationFrame(()=>{restoreRaf=0;keepEnabled()})};
   map.on?.('style.load',restoreAfterStyle);
-  map.on?.('resize',keepEnabled);
-  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',keepEnabled)}catch{}}};
+  map.on?.('resize',restoreAfterStyle);
+  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
 }
