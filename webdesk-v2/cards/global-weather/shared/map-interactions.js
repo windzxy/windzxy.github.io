@@ -4,7 +4,7 @@ export function enableMapInteractions(mapApi,container){
   const target=container||map.getContainer?.();
   const canvasContainer=map.getCanvasContainer?.();
   const canvas=map.getCanvas?.();
-  let restoreRaf=0,destroyed=false;
+  let restoreRaf=0,destroyed=false,resizeObserver=null,lastWidth=0,lastHeight=0;
   const normalizeSurface=el=>{if(!el)return;const s=el.style;if(s.pointerEvents!=='auto')s.pointerEvents='auto';if(s.touchAction!=='none')s.touchAction='none';if(s.overscrollBehavior!=='contain')s.overscrollBehavior='contain';if(s.userSelect!=='none')s.userSelect='none';if(s.webkitUserSelect!=='none')s.webkitUserSelect='none'};
   const setHandler=(handler,enabled)=>{if(!handler)return;const current=handler.isEnabled?.();if(current===enabled)return;(enabled?handler.enable:handler.disable)?.call(handler)};
   const keepEnabled=()=>{if(destroyed)return;try{
@@ -37,5 +37,12 @@ export function enableMapInteractions(mapApi,container){
   // Browser back/forward cache can restore the whole WebDesk without a visibilitychange event.
   // pageshow covers that resume path so MapLibre recalculates its canvas before the next drag.
   window.addEventListener('pageshow',restoreAfterResume);
-  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;document.removeEventListener('visibilitychange',restoreAfterResume);window.removeEventListener('pageshow',restoreAfterResume);try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
+  // WebDesk card/workspace switches can hide and reveal this surface while the document itself
+  // remains visible, so visibilitychange/pageshow never fire. Observe the actual map box and resize
+  // MapLibre only when it becomes non-zero or its dimensions really change.
+  if(target&&typeof ResizeObserver!=='undefined'){
+    resizeObserver=new ResizeObserver(entries=>{if(destroyed)return;const rect=entries[0]?.contentRect,w=Math.round(rect?.width||0),h=Math.round(rect?.height||0);if(w<2||h<2||(w===lastWidth&&h===lastHeight))return;lastWidth=w;lastHeight=h;restoreAfterResume()});
+    resizeObserver.observe(target);
+  }
+  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;resizeObserver?.disconnect();resizeObserver=null;document.removeEventListener('visibilitychange',restoreAfterResume);window.removeEventListener('pageshow',restoreAfterResume);try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
 }
