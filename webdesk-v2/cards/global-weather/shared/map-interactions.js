@@ -34,5 +34,8 @@ export function enableMapInteractions(mapApi,container){
   map.on?.('style.load',restoreAfterStyle);
   map.on?.('resize',restoreAfterStyle);
   document.addEventListener('visibilitychange',restoreAfterResume);
-  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;document.removeEventListener('visibilitychange',restoreAfterResume);try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
+  // Browser back/forward cache can restore the whole WebDesk without a visibilitychange event.
+  // pageshow covers that resume path so MapLibre recalculates its canvas before the next drag.
+  window.addEventListener('pageshow',restoreAfterResume);
+  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;document.removeEventListener('visibilitychange',restoreAfterResume);window.removeEventListener('pageshow',restoreAfterResume);try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
 }
