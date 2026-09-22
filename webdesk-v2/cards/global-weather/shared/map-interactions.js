@@ -27,7 +27,12 @@ export function enableMapInteractions(mapApi,container){
   // Style replacements and responsive resize bursts only need one gesture restoration per frame.
   // Avoid styledata: it fires repeatedly while sources/layers update and can compete with drag redraws.
   const restoreAfterStyle=()=>{if(destroyed||restoreRaf)return;restoreRaf=requestAnimationFrame(()=>{restoreRaf=0;keepEnabled()})};
+  // WebDesk can suspend a card while another workspace/card is active. On resume the map may have
+  // missed its responsive resize and gesture normalization, leaving a visible map that no longer
+  // drags until another resize occurs. Restore both once when the document becomes visible again.
+  const restoreAfterResume=()=>{if(document.hidden||destroyed)return;try{map.resize?.()}catch{}restoreAfterStyle()};
   map.on?.('style.load',restoreAfterStyle);
   map.on?.('resize',restoreAfterStyle);
-  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
+  document.addEventListener('visibilitychange',restoreAfterResume);
+  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;document.removeEventListener('visibilitychange',restoreAfterResume);try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
 }
