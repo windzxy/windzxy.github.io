@@ -27,6 +27,7 @@ function specFor(id){return basemaps.find(x=>x.id===id)||basemaps[0]}
 function overlayColor(layer){
   if(layer==='temp')return['interpolate',['linear'],['get','value'],-25,'#5537a8',-5,'#2678d8',10,'#46b9b0',22,'#72c66b',32,'#f3b43f',42,'#df554f'];
   if(layer==='rain')return['interpolate',['linear'],['get','value'],0,'rgba(105,170,205,0.10)',.2,'#67c6d3',2,'#3d9bd8',8,'#5361c9',20,'#9a4bb8',50,'#d14d86'];
+  if(layer==='humidity')return['interpolate',['linear'],['get','value'],0,'#cddce0',25,'#8ac9d3',50,'#46abcd',70,'#2b84be',85,'#3e5aaf',100,'#4c3291'];
   return['interpolate',['linear'],['get','value'],970,'#4968b8',990,'#5ca8ca',1010,'#73c39b',1025,'#e2c75d',1045,'#d27a55'];
 }
 function fallbackMap(container,{center,onMove,onStatus,reason}={}){
