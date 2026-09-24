@@ -18,6 +18,6 @@ export function attachMapVisualEnhancements(mapApi){
  const render=rows=>{lastData=geojson(rows);if(!addLayer())return;try{map.getSource(CITY_SOURCE)?.setData?.(lastData)}catch{}};
  const refresh=(delay=80,force=false)=>{clearTimeout(timer);timer=setTimeout(async()=>{if(destroyed||!map.isStyleLoaded?.())return;const cities=visibleCities(map),cityKey=cities.map(c=>c[0]).join('|'),now=Date.now();if(!force&&cityKey===lastCityKey&&lastData&&now-lastCityAt<TTL){addLayer();return}abort?.abort();abort=new AbortController();try{const rows=await fetchCityWeather(cities,abort.signal);if(destroyed||abort.signal.aborted)return;lastCityKey=cityKey;lastCityAt=Date.now();render(rows)}catch(e){if(e?.name!=='AbortError'&&!destroyed){lastCityKey=cityKey;lastCityAt=Date.now();render(cityFallback(cities));console.warn('[Global Weather city weather]',e)}}},delay)};
  const styleRefresh=()=>{addLayer();if(lastData)try{map.getSource(CITY_SOURCE)?.setData?.(lastData)}catch{}refresh(0,true)};
- map.on('style.load',styleRefresh);map.on('moveend',refresh);refresh(0,true);
- return{refresh:()=>refresh(0,true),destroy(){destroyed=true;clearTimeout(timer);abort?.abort();try{map.off('style.load',styleRefresh);map.off('moveend',refresh)}catch{}}};
+ map.on('style.load',styleRefresh);map.on('moveend',refresh);map.on('zoomend',refresh);refresh(0,true);
+ return{refresh:()=>refresh(0,true),destroy(){destroyed=true;clearTimeout(timer);abort?.abort();try{map.off('style.load',styleRefresh);map.off('moveend',refresh);map.off('zoomend',refresh)}catch{}}};
 }
