@@ -27,6 +27,10 @@ export function enableMapInteractions(mapApi,container){
   // Style replacements and responsive resize bursts only need one gesture restoration per frame.
   // Avoid styledata: it fires repeatedly while sources/layers update and can compete with drag redraws.
   const restoreAfterStyle=()=>{if(destroyed||restoreRaf)return;restoreRaf=requestAnimationFrame(()=>{restoreRaf=0;keepEnabled()})};
+  // A WebDesk host can change gesture state after mount (workspace drag/resize, card resume, etc.).
+  // Re-normalize immediately before the user's next gesture so the first drag is not swallowed.
+  const restoreBeforeGesture=()=>{if(destroyed)return;keepEnabled()};
+  target?.addEventListener?.('pointerdown',restoreBeforeGesture,{capture:true,passive:true});
   // WebDesk can suspend a card while another workspace/card is active. On resume the map may have
   // missed its responsive resize and gesture normalization, leaving a visible map that no longer
   // drags until another resize occurs. Restore both once when the document becomes visible again.
@@ -44,5 +48,5 @@ export function enableMapInteractions(mapApi,container){
     resizeObserver=new ResizeObserver(entries=>{if(destroyed)return;const rect=entries[0]?.contentRect,w=Math.round(rect?.width||0),h=Math.round(rect?.height||0);if(w<2||h<2||(w===lastWidth&&h===lastHeight))return;lastWidth=w;lastHeight=h;restoreAfterResume()});
     resizeObserver.observe(target);
   }
-  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;resizeObserver?.disconnect();resizeObserver=null;document.removeEventListener('visibilitychange',restoreAfterResume);window.removeEventListener('pageshow',restoreAfterResume);try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
+  return{destroy(){destroyed=true;if(restoreRaf)cancelAnimationFrame(restoreRaf);restoreRaf=0;resizeObserver?.disconnect();resizeObserver=null;target?.removeEventListener?.('pointerdown',restoreBeforeGesture,true);document.removeEventListener('visibilitychange',restoreAfterResume);window.removeEventListener('pageshow',restoreAfterResume);try{map.off?.('style.load',restoreAfterStyle);map.off?.('resize',restoreAfterStyle)}catch{}}};
 }
