@@ -1,0 +1,12 @@
+{
+  "name":"How To Chat Better",
+  "short_name":"Chat Better",
+  "start_url":"/HowToChatBetter/",
+  "scope":"/HowToChatBetter/",
+  "display":"standalone",
+  "background_color":"#f5f5f2",
+  "theme_color":"#f5f5f2",
+  "icons":[
+    {"src":"/HowToChatBetter/favicon-v5.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
