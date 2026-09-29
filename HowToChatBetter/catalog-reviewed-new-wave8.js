@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new22',domain:'business',domainLabel:{hant:'商務',hans:'商务',en:'Business'},relation:{hant:'客戶',hans:'客户',en:'Client'},goal:{hant:'先確認授權再開工',hans:'先确认授权再开工',en:'Require authorisation before starting'},title:{hant:'客戶要求你先開工，合約、採購單或訂金之後再補',hans:'客户要求你先开工，合同、采购单或定金之后再补',en:'A client asks you to start work before the contract, purchase order, or deposit is in place'}},[
+["收到簽署合約和訂金後，我就會安排正式開工。","收到已签合同和定金后，我会安排正式开工。","I will schedule the formal start once the signed contract and deposit are received.","收到簽好合約同訂金之後，我就會安排正式開工。"],
+["在採購單核准前，我不能投入交付工時。","采购单批准之前，我不能投入正式交付工时。","I cannot allocate delivery hours until the purchase order is approved.","採購單批咗之前，我唔可以投入正式交付工時。"],
+["請先用電郵確認範圍、費用和授權人，我再保留檔期。","请先通过邮件确认范围、费用和授权人，我再保留档期。","Please confirm the scope, fee, and authorised approver by email before I reserve the schedule.","請先用電郵確認範圍、費用同授權人，我先再留檔期。"],
+["內部流程我理解，但不能由我們承擔未獲授權開工的風險。","我理解你们的内部流程，但未获授权就开工的风险不能由我们承担。","I understand your internal process, but we cannot carry the risk of beginning without authorisation.","我明你哋內部流程，但未有授權就開工嘅風險唔可以由我哋承擔。"],
+["如果文件今天完成，原定開始日期仍可保留；否則時程會順延。","如果文件今天办妥，原定开始日期还能保留；否则时间表会顺延。","If the paperwork is completed today, the original start date can remain; otherwise, the schedule will move.","如果今日辦妥文件，原定開始日期仲可以保留；否則時間會順延。"],
+["我們可以先做付費探索階段，主項目等合約簽好再開始。","我们可以先做一个付费探索阶段，主项目等合同签好再启动。","We can begin with a paid discovery phase and hold the main project until the contract is signed.","我哋可以先做付費探索階段，主項目等簽好合約先開始。"],
+["我可以參加一次準備會議，但不會先製作可交付成果。","我可以参加一次准备会议，但不会提前制作可交付成果。","I can attend one preparation meeting, but I will not create deliverables before approval.","我可以參加一次準備會議，但唔會預先製作交付成果。"],
+["若只是採購單延誤，請由有權限的人書面確認付款責任。","如果只是采购单延误，请由有权限的人书面确认付款责任。","If only the purchase order is delayed, an authorised person must confirm payment responsibility in writing.","如果只係採購單延誤，請有權限嘅人書面確認付款責任。"],
+["請不要把『先做一點』當成沒有成本，前期工作同樣會佔用資源。","请不要把“先做一点”当成没有成本，前期工作一样会占用资源。","Please do not treat “just start a little” as cost-free; preliminary work still consumes resources.","請唔好當『先做少少』冇成本，前期工作一樣會用資源。"],
+["檔期只會在訂金到帳後鎖定，口頭確認不會保留人手。","档期只有在定金到账后才会锁定，口头确认无法保留人手。","The slot is secured only when the deposit clears; a verbal go-ahead does not reserve the team.","檔期要訂金到帳先鎖定，口頭確認唔會留住人手。"],
+["請把正式工作指令或訂單編號發來，之後產生的工時才有依據。","请发来正式工作指令或订单编号，之后产生的工时才有依据。","Please send the formal work order or order number so subsequent hours are properly authorised.","請發正式工作指令或者訂單編號過嚟，之後啲工時先有依據。"],
+["如果範圍尚未定稿，現在開工只會增加返工，我建議先把附件確認完。","如果范围还没有定稿，现在开工只会增加返工，我建议先确认完附件。","If the scope is not final, starting now will only create rework. Let's approve the schedule and exhibits first.","如果範圍仲未定稿，依家開工只會多返工，我建議先確認晒附件。"],
+["我可以先開發票，款項收到後立即啟動。","我可以先开具发票，款项到账后马上启动。","I can issue the invoice now and begin as soon as payment arrives.","我可以先開發票，收到款就即刻啟動。"],
+["若項目真的緊急，可以走加急核准和加急費流程。","如果项目确实紧急，可以走加急审批并支付加急费用。","If the project is genuinely urgent, we can use the expedited approval and rush-fee process.","如果項目真係急，可以行加急審批同加急費流程。"],
+["沒有合約也沒有訂金的情況下，我無法向團隊下達開工指令。","合同和定金都没有到位，我无法要求团队开工。","Without a contract or deposit, I cannot instruct the team to begin.","合約同訂金都未有，我冇辦法叫團隊開工。"],
+["你們可以先簽簡版工作確認書，完整合約再按時補齊。","你们可以先签一份简版工作确认书，完整合同随后按期补齐。","You can sign a short-form work authorisation now and complete the full agreement by a stated date.","你哋可以先簽簡版工作確認書，完整合約再按期補齊。"],
+["若取消或暫停，已投入工時由誰負責？請先在文件裡寫清楚。","如果项目取消或暂停，已经投入的工时由谁承担？请先写进文件。","Who covers time already spent if the project is cancelled or paused? That needs to be documented first.","如果項目取消或者暫停，已經投入嘅工時邊個負責？請先寫清楚。"],
+["我們過往的合作紀錄很好，但這次仍需要按流程留痕。","我们过去合作得很好，但这次仍然需要按流程留下记录。","Our past work together has gone well, but this engagement still needs a documented approval trail.","我哋過往合作得好好，但今次都要按流程留記錄。"],
+["信任可以讓流程更順，不等於把流程全部省掉。","信任可以让流程更顺畅，但不等于把流程全部省略。","Trust can make the process smoother; it does not make the process unnecessary.","信任可以令流程順啲，唔等於成個流程都唔使。"],
+["請確認這封電郵是否構成正式委託，以及核准的最高金額。","请确认这封邮件是否构成正式委托，以及批准的最高金额。","Please confirm whether this email constitutes formal engagement and state the approved spending cap.","請確認呢封電郵係咪正式委託，同埋批核最高金額。"],
+["我們不會以『文件之後補』作為開工依據，因為後續責任無法界定。","我们不会以“文件以后补”为开工依据，因为后续责任无法界定。","We do not begin on the basis that paperwork will follow, because accountability remains undefined.","我哋唔會用『文件之後補』做開工依據，因為之後責任講唔清。"],
+["若預算仍在審批，我們可以先把需求會議排好，不啟動製作。","如果预算还在审批，我们可以先安排需求会议，但不启动制作。","While the budget is pending, we can schedule the requirements meeting without beginning production.","如果預算仲批緊，我哋可以先排需求會議，但唔啟動製作。"],
+["你們的截止日不會因文件未完成而自動變成我們的無償風險。","你们的截止日期不会因为文件没办完，就自动变成我们的无偿风险。","Your deadline does not turn incomplete paperwork into unpaid risk for us.","你哋嘅死線唔會因為文件未搞掂，就自動變成我哋嘅無償風險。"],
+["要我們先跑，至少先把起跑線畫出來。","想让我们先跑，至少先把起跑线画清楚。","If you want us to start running, at least mark the starting line first.","要我哋先跑，起碼先畫清楚條起跑線。"],
+["『放心，肯定會付』不是採購單號。","“放心，肯定会付款”不是采购单号。","“Do not worry, you will be paid” is not a purchase order number.","『放心，一定會俾』唔係採購單號。"],
+["文件還在路上，人手不會先上路。","文件还在路上，人手就不会先上路。","While the paperwork is still on its way, the team will not set off ahead of it.","文件仲喺路上，人手唔會行先。"],
+["我願意配合速度，但不會跳過付款和責任邊界。","我愿意配合进度，但不会跳过付款和责任边界。","I am willing to move quickly, but not by skipping payment and accountability boundaries.","我願意配合速度，但唔會跳過付款同責任界線。"],
+["今天可以完成行政手續，明天就能開始；現在先做不會更快，只會更亂。","今天把手续办完，明天就能开始；现在抢跑不会更快，只会更乱。","Finish the administration today and we can start tomorrow. Beginning prematurely will create confusion, not speed.","今日搞掂手續，聽日就開得工；依家偷步唔會快啲，只會亂啲。"],
+["在正式確認前，我只能提供報價與時程建議，不會交付工作成果。","正式确认之前，我只能提供报价和时间建议，不会交付工作成果。","Until formal approval, I can provide estimates and scheduling advice, but no project output.","正式確認之前，我只可以提供報價同時間建議，唔會交付成果。"],
+["先簽、先批或先付款，三者至少完成一項並明確責任，才談開工。","先签署、先审批或先付款，三项至少完成一项并明确责任，才能谈开工。","Before work starts, at least one of three things must be complete: signature, formal approval, or payment—with clear responsibility.","先簽、先批或者先付款，三樣至少完成一樣兼講清責任，先再傾開工。"]
+]);
+
+add({id:'new23',domain:'family',domainLabel:{hant:'家庭',hans:'家庭',en:'Family'},relation:{hant:'親戚',hans:'亲戚',en:'Relative'},goal:{hant:'保護聯絡私隱',hans:'保护联系方式隐私',en:'Protect contact privacy'},title:{hant:'親戚未經同意，把你的電話或聯絡方式給了媒人、推銷員或其他熟人',hans:'亲戚未经同意，把你的电话或联系方式给了介绍对象、推销员或其他熟人',en:'A relative shares your phone number or contact details with a matchmaker, salesperson, or acquaintance without permission'}},[
+["以後把我的電話給別人之前，請先問我。","以后把我的电话给别人之前，请先征得我的同意。","Please ask me before giving my phone number to anyone in future.","以後將我電話俾人之前，請先問我。"],
+["我沒有同意這次轉交，請你現在通知對方不要再聯絡我。","这次转交并没有经过我同意，请你现在通知对方不要再联系我。","I did not consent to this. Please tell the person now not to contact me again.","今次轉交冇經過我同意，請你依家通知對方唔好再聯絡我。"],
+["你把哪些資料給了誰？我需要知道完整範圍。","你把哪些信息给了谁？我需要知道完整范围。","What information did you share, and with whom? I need the full extent of it.","你將咩資料俾咗邊個？我要知道完整範圍。"],
+["請直接請對方刪除我的電話，也不要再轉給其他人。","请直接要求对方删除我的号码，也不要继续转给其他人。","Please ask them to delete my number and not pass it on to anyone else.","請直接叫對方刪除我電話，亦唔好再轉俾其他人。"],
+["你可能是好意，但聯絡方式仍然要由我決定是否分享。","你可能是出于好意，但联系方式仍然应该由我决定是否分享。","You may have meant well, but I still decide whether my contact details are shared.","你可能係好意，但聯絡方式都應該由我決定分唔分享。"],
+["介紹之前可以先把對方資料給我，由我決定要不要主動聯絡。","介绍之前可以先把对方的信息发给我，由我决定是否主动联系。","Before making an introduction, send me the person's details and let me decide whether to reach out.","介紹之前可以先將對方資料俾我，由我決定要唔要主動聯絡。"],
+["不要用『都是熟人』代替我的同意，我跟對方並不熟。","不要用“都是熟人”代替我的同意，我和对方并不熟。","“They are known to the family” does not replace my consent; I do not know them.","唔好用『都係熟人』代替我同意，我同對方唔熟。"],
+["如果是推銷聯絡，請告訴對方你無權代表我表示有興趣。","如果是销售联系，请告诉对方你无权代表我表示有兴趣。","If this is a sales lead, tell them you were not authorised to say I was interested.","如果係推銷，請話俾對方知你冇權代表我話有興趣。"],
+["媒人可以先問我的意願，不應該直接拿到我的私人電話。","介绍对象之前可以先问我愿不愿意，不应该直接把私人号码交出去。","A matchmaker can ask whether I am interested before receiving my private number.","媒人可以先問我意願，唔應該直接攞到我私人電話。"],
+["這次我會自行封鎖，但請不要再有下一次。","这次我会自己拉黑，但请不要再发生下一次。","I will block the contact this time, but please do not let it happen again.","今次我會自己封鎖，但請唔好再有下一次。"],
+["我的電話不是家庭公用資料，不能誰想要就給誰。","我的号码不是家庭公用信息，不能谁想要就给谁。","My phone number is not family property to distribute whenever someone asks.","我電話唔係家庭公用資料，唔可以邊個想要就俾邊個。"],
+["如果有人再來問，請只說需要本人同意，不要替我答應。","如果以后还有人来问，请只说需要本人同意，不要替我答应。","If anyone asks again, say they need my permission rather than agreeing on my behalf.","如果再有人問，請淨係話要本人同意，唔好代我應承。"],
+["你可以幫忙牽線，但程序應該是先問兩邊，再交換聯絡方式。","你可以帮忙介绍，但应该先问过双方，再交换联系方式。","You are welcome to introduce people, but ask both sides before exchanging contact details.","你可以幫手牽線，但應該先問兩邊，再交換聯絡方式。"],
+["請把這項要求也告訴家裡其他人：我的資料不能代為分享。","也请把这项要求告诉家里其他人：不要代我分享个人信息。","Please tell the rest of the family as well: no one may share my details on my behalf.","請將呢個要求都話俾屋企其他人知：唔好代我分享個人資料。"],
+["如果你不記得給過哪些人，就翻一下聊天記錄，我需要逐一處理。","如果你不记得发给过谁，请翻一下聊天记录，我需要逐个处理。","If you cannot remember who received it, check your chat history so I can address each case.","如果你唔記得俾過邊個，請睇返聊天記錄，我要逐個處理。"],
+["請不要再把我的工作電話用於私人介紹，這會影響正常工作。","请不要再用我的工作号码做私人介绍，这会影响正常工作。","Do not use my work number for personal introductions; it disrupts my work.","請唔好再用我工作電話做私人介紹，會影響正常工作。"],
+["公開社交帳號不代表任何人都可以取得我的私人電話。","公开的社交账号不代表任何人都可以拿到我的私人号码。","A public social profile does not mean anyone is entitled to my private phone number.","公開社交帳號唔代表任何人都可以攞我私人電話。"],
+["若真有緊急情況，可以請對方先透過你留言，不要直接給號碼。","如果确实有急事，可以让对方先通过你留言，不要直接给号码。","If something is genuinely urgent, let the person leave a message through you instead of giving out my number.","如果真係有急事，可以叫對方先經你留言，唔好直接俾號碼。"],
+["我知道你想幫我，但不請自來的電話只會增加壓力。","我知道你是想帮我，但突然打来的陌生电话只会增加压力。","I know you wanted to help, but unsolicited calls only create stress for me.","我知你想幫我，但突然打嚟嘅陌生電話只會增加壓力。"],
+["我不需要向陌生人解釋為甚麼沒興趣，請不要替我開這個頭。","我不需要向陌生人解释为什么没兴趣，请不要替我开启这种联系。","I should not have to explain my lack of interest to strangers. Please do not initiate that contact for me.","我唔需要向陌生人解釋點解冇興趣，請唔好代我開呢個頭。"],
+["好意我收到，號碼請收回。","好意我收到了，号码请收回。","I appreciate the intention; please withdraw the number.","好意我收到，號碼請收返。"],
+["我不是介意那個人，我介意的是你沒有先問。","我不是针对那个人，我介意的是你没有先问我。","My issue is not that particular person; it is that you did not ask me first.","我唔係針對嗰個人，我介意係你冇先問我。"],
+["即使這次對方很可靠，也不能把未經同意變成合理。","就算这次对方很可靠，也不能让未经同意变得合理。","Even if this person is trustworthy, that does not make sharing without consent acceptable.","就算今次對方好可靠，都唔代表未經同意就合理。"],
+["你若想介紹，可以先傳一句『有人想認識你』，等我回覆就好。","如果你想介绍，可以先发一句“有人想认识你”，等我回复就行。","If you want to introduce someone, send me a brief message first and wait for my answer.","你想介紹，可以先傳句『有人想識你』，等我覆就得。"],
+["我的電話最近很忙，原來親戚還兼任客服派號。","我的电话最近这么忙，原来是亲戚兼职做号码分发。","My phone has been unusually busy; apparently the family has opened a number-distribution service.","我電話最近咁忙，原來親戚仲兼職派號碼。"],
+["別人問一句你就給，那我是不是該先換號碼再通知家裡？","别人一问你就给，那我是不是该先换号码再通知家里？","If one request is enough for you to share it, should I change my number before telling the family next time?","人哋問一句你就俾，咁我係咪應該換咗號碼先通知屋企？"],
+["介紹人可以熱心，但不能熱心到越過本人。","介绍人可以热心，但不能热心到绕过本人。","An introducer may be enthusiastic, but not so enthusiastic that the person concerned is bypassed.","介紹人可以熱心，但唔可以熱心到越過本人。"],
+["這是我的私隱界線，不需要大家投票決定。","这是我的隐私边界，不需要全家投票决定。","This is my privacy boundary; it is not a matter for a family vote.","呢個係我私隱界線，唔需要成家人投票決定。"],
+["如果再未經同意外傳，我之後只會留一個不常用的聯絡方式。","如果再未经同意对外分享，以后我只会留下一个不常用的联系方式。","If my details are shared again without permission, I will only give the family a secondary contact method.","如果再未經同意外傳，我之後只會留一個唔常用嘅聯絡方式。"],
+["請先協助刪除和澄清，之後我們再談；現在不是解釋好意的時候。","请先帮我让对方删除并说明情况，之后我们再谈；现在不是解释好意的时候。","Please arrange deletion and clarify the situation first. We can discuss your intentions afterward.","請先幫我叫對方刪除同澄清，之後再傾；依家唔係解釋好意嘅時候。"]
+]);
+})();
