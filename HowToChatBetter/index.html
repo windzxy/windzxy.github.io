@@ -50,11 +50,22 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 .play-card.throw-left{transform:translateX(-155%) translateY(12px) rotate(-14deg)!important;opacity:0}
 .play-card.throw-right{transform:translateX(55%) translateY(12px) rotate(14deg)!important;opacity:0}
 .play-card.dragging{transition:none!important}
+.card-inner{position:relative;min-height:294px;transform-style:preserve-3d;transition:transform .46s cubic-bezier(.2,.75,.2,1)}
+.play-card.flipped .card-inner{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column}
+.card-back{transform:rotateY(180deg)}
+.suit-corner{position:absolute;right:0;top:0;display:flex;flex-direction:column;align-items:center;line-height:1}
+.suit-symbol{font-size:34px;font-weight:800;letter-spacing:-.08em}
+.suit-label{font-size:10px;color:#999;margin-top:5px;max-width:82px;text-align:center}
+.face-center{flex:1;display:flex;flex-direction:column;justify-content:center}
+.back-label{font-size:11px;font-weight:800;letter-spacing:.08em;color:#999;text-transform:uppercase;margin-bottom:10px}
+.flip{border:0;background:transparent;padding:8px 0;color:#777}
+.play-card[data-depth="1"] .card-inner,.play-card[data-depth="2"] .card-inner{pointer-events:none}
 .card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:24px}
 .meta{font-size:13px;color:var(--muted)}
 .card-no{font-size:12px;color:#a0a099}
-.play-card h2{font-size:clamp(25px,4vw,36px);line-height:1.22;letter-spacing:-.04em;margin:0 0 22px;max-width:92%}
-.reply{background:var(--soft);border-radius:18px;padding:18px 19px;line-height:1.8;font-size:16px;min-height:115px;display:flex;align-items:center}
+.play-card h2{font-size:clamp(27px,4vw,38px);line-height:1.2;letter-spacing:-.045em;margin:0;max-width:84%}
+.reply{background:var(--soft);border-radius:18px;padding:20px;line-height:1.8;font-size:17px;min-height:150px;display:flex;align-items:center}
 .card-actions{display:flex;align-items:center;justify-content:space-between;margin-top:20px}
 .copy{border:1px solid var(--line);background:#fff;border-radius:13px;padding:9px 13px;color:#555}
 .hint{font-size:12px;color:#aaa}
@@ -117,17 +128,18 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js"></script><script src="./catalog-extra.js"></script>
+<script src="./catalog.js"></script><script src="./catalog-extra.js"></script><script src="./catalog-wave3.js"></script><script src="./catalog-wave4.js"></script>
 <script>
 (function(){
 var RAW=window.CHAT_SCENARIOS||[];
 var ui="hant",domain="all",replyLang="zh",style="formal",deckIndex=0,currentRows=[];
-var dragStartX=0,dragX=0,dragging=false;
+var dragStartX=0,dragX=0,dragging=false,flippedId=null;
+var suits={workplace:"♠",study:"♦",family:"♥",parenting:"★",elder:"♣",friends:"☻",relationship:"♥",social:"✦",service:"◇",job:"↑",business:"◆",travel:"✈",medical:"+",online:"@"};
 
 var T={
- hant:{title:"同一句話，換個更合適的說法。",search:"搜尋情境…",random:"隨機",domain:"情境",replyLang:"回話語言",style:"風格",copy:"複製",copied:"已複製",empty:"沒有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粵語",prev:"上一張",next:"下一張",shuffle:"洗牌",swipe:"左右滑動"},
- hans:{title:"同一句话，换个更合适的说法。",search:"搜索情境…",random:"随机",domain:"情境",replyLang:"回复语言",style:"风格",copy:"复制",copied:"已复制",empty:"没有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粤语",prev:"上一张",next:"下一张",shuffle:"洗牌",swipe:"左右滑动"},
- en:{title:"Same words. A better way to say them.",search:"Search situations…",random:"Random",domain:"Situation",replyLang:"Reply language",style:"Style",copy:"Copy",copied:"Copied",empty:"No matching situation",all:"All",formal:"Formal",dark:"Dark",roast:"Roast",zh:"Chinese",en:"English",yue:"Cantonese",prev:"Previous",next:"Next",shuffle:"Shuffle",swipe:"Swipe left or right"}
+ hant:{title:"同一句話，換個更合適的說法。",search:"搜尋情境…",random:"隨機",domain:"情境",replyLang:"回話語言",style:"風格",copy:"複製",copied:"已複製",empty:"沒有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粵語",prev:"上一張",next:"下一張",shuffle:"洗牌",swipe:"左右滑動",flip:"翻牌",front:"看情境",answer:"建議說法"},
+ hans:{title:"同一句话，换个更合适的说法。",search:"搜索情境…",random:"随机",domain:"情境",replyLang:"回复语言",style:"风格",copy:"复制",copied:"已复制",empty:"没有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粤语",prev:"上一张",next:"下一张",shuffle:"洗牌",swipe:"左右滑动",flip:"翻牌",front:"看情境",answer:"建议说法"},
+ en:{title:"Same words. A better way to say them.",search:"Search situations…",random:"Random",domain:"Situation",replyLang:"Reply language",style:"Style",copy:"Copy",copied:"Copied",empty:"No matching situation",all:"All",formal:"Formal",dark:"Dark",roast:"Roast",zh:"Chinese",en:"English",yue:"Cantonese",prev:"Previous",next:"Next",shuffle:"Shuffle",swipe:"Swipe left or right",flip:"Flip",front:"Situation",answer:"Suggested reply"}
 };
 var replyLangs=["zh","en","yue"],styles=["formal","dark","roast"];
 
@@ -190,12 +202,23 @@ function buildRows(){
 }
 
 function cardHTML(s,depth,index){
- return '<article class="play-card" data-depth="'+depth+'" data-id="'+esc(s.id)+'">'+
-   '<div class="card-top"><div class="meta">'+esc(meta(s))+'</div><div class="card-no">'+(index+1)+' / '+currentRows.length+'</div></div>'+
-   '<h2>'+esc(title(s))+'</h2>'+
-   '<div class="reply">'+esc(getReply(s))+'</div>'+
-   '<div class="card-actions"><button class="copy" data-id="'+esc(s.id)+'">'+T[ui].copy+'</button><span class="hint">'+T[ui].swipe+'</span></div>'+
-  '</article>';
+ var isFlip=depth===0&&flippedId===s.id;
+ var suit=suits[s.domain]||"•";
+ return '<article class="play-card '+(isFlip?'flipped':'')+'" data-depth="'+depth+'" data-id="'+esc(s.id)+'">'+
+  '<div class="card-inner">'+
+   '<section class="card-face card-front">'+
+    '<div class="card-top"><div class="meta">'+esc(meta(s))+'</div><div class="card-no">'+(index+1)+' / '+currentRows.length+'</div></div>'+
+    '<div class="suit-corner"><span class="suit-symbol">'+suit+'</span><span class="suit-label">'+esc(txt(s.domainLabel))+'</span></div>'+
+    '<div class="face-center"><h2>'+esc(title(s))+'</h2></div>'+
+    '<div class="card-actions"><button class="flip" data-flip="'+esc(s.id)+'">'+T[ui].flip+'</button><span class="hint">'+T[ui].swipe+'</span></div>'+
+   '</section>'+
+   '<section class="card-face card-back">'+
+    '<div class="card-top"><div class="back-label">'+T[ui].answer+'</div><div class="card-no">'+(index+1)+' / '+currentRows.length+'</div></div>'+
+    '<div class="face-center"><div class="reply">'+esc(getReply(s))+'</div></div>'+
+    '<div class="card-actions"><button class="copy" data-id="'+esc(s.id)+'">'+T[ui].copy+'</button><button class="flip" data-flip="'+esc(s.id)+'">'+T[ui].front+'</button></div>'+
+   '</section>'+
+  '</div>'+
+ '</article>';
 }
 
 function renderDeck(){
@@ -220,6 +243,7 @@ function renderDeck(){
 }
 
 function moveNext(direction){
+ flippedId=null;
  if(currentRows.length<2)return;
  var top=document.querySelector('.play-card[data-depth="0"]');
  if(top){
@@ -233,11 +257,13 @@ function moveNext(direction){
  }
 }
 function movePrev(){
+ flippedId=null;
  if(!currentRows.length)return;
  deckIndex=(deckIndex-1+currentRows.length)%currentRows.length;
  renderDeck();
 }
 function shuffle(){
+ flippedId=null;
  for(var i=currentRows.length-1;i>0;i--){
   var j=Math.floor(Math.random()*(i+1)),tmp=currentRows[i];currentRows[i]=currentRows[j];currentRows[j]=tmp;
  }
@@ -271,10 +297,12 @@ function bindDrag(){
 
 document.addEventListener("click",function(e){
  var v;
- if((v=e.target.getAttribute("data-ui"))){ui=v;localStorage.setItem("htcb-ui",ui);renderControls();renderDeck();return}
- if((v=e.target.getAttribute("data-domain"))){domain=v;deckIndex=0;renderControls();renderDeck();return}
- if((v=e.target.getAttribute("data-replylang"))){replyLang=v;deckIndex=0;renderControls();renderDeck();return}
- if((v=e.target.getAttribute("data-style"))){style=v;deckIndex=0;renderControls();renderDeck();return}
+ if((v=e.target.getAttribute("data-ui"))){ui=v;flippedId=null;localStorage.setItem("htcb-ui",ui);renderControls();renderDeck();return}
+ if((v=e.target.getAttribute("data-domain"))){domain=v;deckIndex=0;flippedId=null;renderControls();renderDeck();return}
+ if((v=e.target.getAttribute("data-replylang"))){replyLang=v;deckIndex=0;flippedId=null;renderControls();renderDeck();return}
+ if((v=e.target.getAttribute("data-style"))){style=v;deckIndex=0;flippedId=null;renderControls();renderDeck();return}
+ var fid=e.target.getAttribute("data-flip");
+ if(fid){flippedId=flippedId===fid?null:fid;renderDeck();return}
  if(e.target.classList.contains("copy")){
   var id=e.target.getAttribute("data-id"),s=S.find(function(x){return x.id===id});
   navigator.clipboard.writeText(getReply(s));
