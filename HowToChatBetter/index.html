@@ -367,7 +367,10 @@ document.addEventListener("keydown",function(e){
 });
 
 ui=localStorage.getItem("htcb-ui")||"hant";if(!T[ui])ui="hant";
-renderControls();renderDeck();
+renderControls();
+buildRows();
+if(currentRows.length)deckIndex=Math.floor(Math.random()*currentRows.length);
+renderDeck();
 })();
 </script>
 </body>
