@@ -175,6 +175,28 @@ function stripGenerated(scene){
   for(const k of Object.keys(box)) if(/^persona-/.test(k)||/^qv2-/.test(k)) delete box[k];
  }
 }
+const KEEP_PRIORITY=["formal","direct","roast","short","shorter","tiny","brief","raw","rude","reprimand","hard-stop","matter-of-fact","light-blame","humor","wry","yin","tea","soft","cold","dark"];
+function pruneExisting(scene){
+ const keys=Object.keys(scene.replies?.zh||{});
+ keys.sort((a,b)=>{
+  const ai=KEEP_PRIORITY.indexOf(a),bi=KEEP_PRIORITY.indexOf(b);
+  const ar=ai<0?999:ai,br=bi<0?999:bi;
+  if(ar!==br)return ar-br;
+  const al=(scene.replies.zh[a]?.hant||"").length,bl=(scene.replies.zh[b]?.hant||"").length;
+  return al-bl;
+ });
+ const kept=[],keptText=[];
+ for(const k of keys){
+  const h=scene.replies.zh[k]?.hant||"";
+  if(!h)continue;
+  if(keptText.some(t=>similarity(h,t)>=0.52||norm(h)===norm(t))){
+   delete scene.replies.zh[k];delete scene.replies.en[k];delete scene.replies.yue[k];
+   continue;
+  }
+  kept.push(k);keptText.push(h);
+ }
+ return kept;
+}
 function textFor(scene,key,lang,script){
  const v=scene.replies?.[lang]?.[key];
  return lang==="zh"?(v?.[script]||""):(typeof v==="string"?v:"");
@@ -197,6 +219,7 @@ function tooClose(line,chosen){
 }
 for(const scene of scenes){
  stripGenerated(scene);
+ pruneExisting(scene);
  const type=intent(scene), bank=BANKS[type];
  const existing=Object.keys(scene.replies.zh||{});
  const chosenH=existing.map(k=>textFor(scene,k,"zh","hant")).filter(Boolean);
