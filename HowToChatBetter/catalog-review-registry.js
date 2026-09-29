@@ -7,8 +7,8 @@ window.CHAT_REVIEWED_REPLY_KEYS=window.CHAT_REVIEWED_REPLY_KEYS||{};
 window.CHAT_REVIEWED_SCENES["w01"]=true;
 window.CHAT_REVIEWED_SCENES["s02"]=true;
 
-// Individually audited in reviewed batches 10–13 and new waves 3–4.
-for(const id of ["w06","so03","s01","new13","new14","f02","fr07","t02","new15"]){
+// Individually audited in reviewed batches 10–14 and new waves 3–5.
+for(const id of ["w06","so03","s01","new13","new14","f02","fr07","t02","new15","w21","p09","sv07","new16","new17"]){
  window.CHAT_REVIEWED_SCENES[id]=true;
 }
 

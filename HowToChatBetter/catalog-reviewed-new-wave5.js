@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new16',domain:'medical',domainLabel:{hant:'醫療',hans:'医疗',en:'Medical'},relation:{hant:'醫生',hans:'医生',en:'Doctor'},goal:{hant:'要求直接溝通',hans:'要求直接沟通',en:'Request direct communication'},title:{hant:'看診時醫生一直對著陪同家人說話，沒有直接跟你本人溝通',hans:'看诊时医生一直对着陪同家人说话，没有直接和你本人沟通',en:'During your appointment, the doctor speaks to your companion instead of directly to you'}},[
+["醫生，這是我的診症，可以請你直接跟我說嗎？","医生，这是我的就诊，可以请你直接和我说吗？","Doctor, this is my appointment. Could you speak directly to me, please?","醫生，呢個係我嘅診症，可以直接同我講嗎？"],
+["我可以自己回答，請先問我；需要補充時再問家人。","我可以自己回答，请先问我；需要补充时再问家人。","I can answer for myself. Please ask me first and involve my family only for clarification.","我可以自己答，請先問我；要補充嗰陣再問屋企人。"],
+["請看著我解釋，我想親自理解自己的情況。","请看着我解释，我想亲自了解自己的情况。","Please address the explanation to me. I want to understand my own condition directly.","請望住我解釋，我想親自了解自己嘅情況。"],
+["家人是陪我來的，不是代替我作答的。","家人是陪我来的，不是代替我回答的。","My family member is here to support me, not to answer in my place.","屋企人係陪我嚟，唔係代我回答。"],
+["你剛才問的問題，我來回答：症狀是從上週開始的。","你刚才问的问题由我回答：症状是从上周开始的。","I'll answer the question you just asked: the symptoms began last week.","你頭先問嗰條問題我嚟答：症狀係上星期開始。"],
+["我聽得到也能理解，請把問題直接問我。","我听得见也能理解，请把问题直接问我。","I can hear and understand you, so please direct the questions to me.","我聽到亦明白，請直接問我。"],
+["有些細節我想自己說，麻煩先讓我完整講完。","有些细节我想自己说，麻烦先让我完整说完。","There are details I want to explain myself. Please let me finish first.","有啲細節我想自己講，麻煩先俾我完整講完。"],
+["請先取得我的同意，再向陪同家人討論我的病情。","请先征得我的同意，再和陪同家人讨论我的病情。","Please ask for my consent before discussing my condition with my companion.","請先得到我同意，再同陪診家人討論我病情。"],
+["我想先單獨回答幾個問題，可以請家人暫時在門外等嗎？","我想先单独回答几个问题，可以请家人暂时在门外等吗？","I'd like to answer a few questions privately. Could my family member wait outside for a moment?","我想先單獨答幾條問題，可以請屋企人暫時喺門口等嗎？"],
+["麻煩把治療選項直接向我說明，決定需要由我參與。","麻烦把治疗选项直接向我说明，决定需要由我参与。","Please explain the treatment options directly to me. I need to be part of the decision.","麻煩直接向我講治療選項，決定需要有我參與。"],
+["家人可以幫我記錄，但請不要跳過我這位病人。","家人可以帮我记录，但请不要略过我这个患者。","My companion can take notes, but please do not bypass me as the patient.","屋企人可以幫我記錄，但請唔好跳過我呢位病人。"],
+["我留意到你一直在跟他說話，我希望接下來由我們直接溝通。","我注意到你一直在和他说话，希望接下来由我们直接沟通。","I've noticed you are speaking mostly to them. I'd like us to communicate directly from here.","我留意到你一直同佢講，希望之後由我哋直接溝通。"],
+["如果我有聽不明白的地方，我會請他幫忙，不用預先替我回答。","如果我有听不明白的地方，我会请他帮忙，不用提前替我回答。","If I need help understanding, I'll ask them. There is no need for them to answer in advance.","如果我有聽唔明，我會請佢幫手，唔使預先代我回答。"],
+["可以請你把剛才對家人說的內容，再向我說一次嗎？","可以请你把刚才对家人说的内容，再向我说一遍吗？","Could you repeat to me what you just explained to my family member?","可唔可以將頭先同屋企人講嘅內容，再同我講一次？"],
+["請用我能明白的方式直接說，不必透過家人轉述。","请用我能听懂的方式直接说，不必通过家人转述。","Please explain it to me in accessible language rather than through my family.","請用我明白到嘅方式直接講，唔使經屋企人轉述。"],
+["我需要多一點時間回答，不代表問題要改問別人。","我需要多一点时间回答，不代表问题要改问别人。","I may need more time to answer, but that does not mean the question should go to someone else.","我需要多少少時間答，唔代表問題要改問其他人。"],
+["請一次問一個問題，我可以自己跟上。","请一次问一个问题，我可以自己回答。","Please ask one question at a time. I can respond for myself.","請一次問一條問題，我可以自己答。"],
+["如果需要確認病史，可以讓我先答，再請家人補充。","如果需要核对病史，可以让我先回答，再请家人补充。","For the medical history, let me answer first and then invite my family to add anything missing.","如果要確認病歷，可以俾我先答，再請屋企人補充。"],
+["這個問題涉及我的私隱，我希望由我本人回答。","这个问题涉及我的隐私，我希望由我本人回答。","That question concerns my privacy, so I want to answer it myself.","呢條問題涉及我私隱，我想由我本人回答。"],
+["請不要在我面前用『他／她』談論我，好像我不在這裡。","请不要当着我的面用“他／她”谈论我，好像我不在场。","Please do not discuss me in the third person while I am sitting here.","請唔好當住我面用『佢』嚟講我，好似我唔喺度咁。"],
+["我的家人可能有他的觀察，但我的感受也需要先被聽見。","我的家人有他的观察，但我的感受也需要先被听见。","My family may have observations, but my own experience needs to be heard first.","屋企人可能有佢嘅觀察，但我嘅感受都需要先被聽到。"],
+["我想確認一下：最後的治療決定，你會直接和我討論，對嗎？","我想确认一下：最后的治疗决定，你会直接和我讨论，对吗？","To confirm, you will discuss the final treatment decision directly with me, correct?","我想確認：最後治療決定，你會直接同我傾，係咪？"],
+["請把檢查結果先告訴我，再由我決定要和家人分享多少。","请先把检查结果告诉我，再由我决定和家人分享多少。","Please give the results to me first, then let me decide how much to share with my family.","請先將檢查結果話我知，再由我決定同屋企人分享幾多。"],
+["我需要你把注意力放在病人身上，而病人就是我。","我需要你把注意力放在患者身上，而患者就是我。","I need your attention directed to the patient, and the patient is me.","我需要你將注意力放喺病人身上，而病人就係我。"],
+["陪診不是代診，請把主要對話交還給我。","陪诊不是代诊，请把主要对话交还给我。","A companion is not a substitute patient. Please return the main conversation to me.","陪診唔係代診，請將主要對話交返俾我。"],
+["如果溝通方式有困難，我們可以調整方式，不需要繞過我。","如果沟通方式有困难，我们可以调整方式，不需要绕过我。","If communication is difficult, we can adapt the method rather than bypassing me.","如果溝通方式有困難，我哋可以調整，唔需要繞過我。"],
+["我會請家人補充他觀察到的變化，但請先讓我描述自己的症狀。","我会请家人补充他观察到的变化，但请先让我描述自己的症状。","I'll invite my family member to add their observations after I describe my symptoms.","我會請屋企人補充佢觀察到嘅變化，但請先俾我講自己症狀。"],
+["剛才我還沒回答，你就轉問家人了；請讓我把答案說完。","刚才我还没回答，你就转问家人了；请让我把答案说完。","You turned to my family before I could answer. Please let me complete my response.","頭先我未答完你就轉問屋企人，請俾我講完。"],
+["我尊重家人的意見，但請先問我本人是否同意這個安排。","我尊重家人的意见，但请先问我本人是否同意这个安排。","I value my family's opinion, but please ask whether I agree with the plan myself.","我尊重屋企人意見，但請先問我本人係咪同意呢個安排。"],
+["如果接下來仍只和陪同者溝通，我會請另一位醫護人員協助。","如果接下来仍只和陪同者沟通，我会请另一位医护人员协助。","If the conversation continues to exclude me, I will ask another clinician to assist.","如果之後仍然淨係同陪診者溝通，我會請另一位醫護人員協助。"]
+]);
+
+add({id:'new17',domain:'friends',domainLabel:{hant:'朋友',hans:'朋友',en:'Friends'},relation:{hant:'朋友群組',hans:'朋友群聊',en:'Friend group'},goal:{hant:'結束反覆否決',hans:'结束反复否决',en:'End endless rejection'},title:{hant:'約聚餐時大家都說「隨便」，卻不停否決每個餐廳提議',hans:'约聚餐时大家都说“随便”，却不停否决每家餐厅',en:'Everyone says any restaurant is fine, then rejects every suggestion'}},[
+["既然大家都說隨便，那就定這家；有忌口現在提出。","既然大家都说随便，那就定这家；有忌口现在提出。","Since everyone said anywhere is fine, we'll book this one. Mention dietary restrictions now.","既然大家都話隨便，就定呢間；有忌口依家提出。"],
+["我列 A、B、C 三家，今晚八點前投票，票最多的就訂。","我列了 A、B、C 三家，今晚八点前投票，票最多的就订。","Here are A, B, and C. Vote by eight; I'll book the winner.","我列 A、B、C 三間，今晚八點前投票，最多票嗰間就訂。"],
+["否決的人要附一個替代選項，不然原提議保留。","否决的人要附一个替代选项，否则保留原提议。","Anyone rejecting an option needs to suggest an alternative; otherwise the original stands.","否決嗰個要附一個替代選項，否則保留原提議。"],
+["先說不能吃甚麼和預算，其他就交給一個人決定。","先说清楚不能吃什么和预算，其他就交给一个人决定。","State dietary limits and budget first; one person can decide the rest.","先講清楚唔食得乜同預算，其他交俾一個人決定。"],
+["這次我選，下次換下一個人，大家不用每次開餐廳聽證會。","这次我选，下次换下一个人，大家不用每次都开餐厅听证会。","I'll choose this time and someone else can choose next time. We do not need a restaurant hearing every week.","今次我揀，下次換下一個，唔使次次開餐廳聽證會。"],
+["如果十點前沒有共識，我就訂離大家最近的那家。","如果十点前没有共识，我就订离大家最近的那家。","If there is no agreement by ten, I'll book the place closest to everyone.","如果十點前冇共識，我就訂離大家最近嗰間。"],
+["你們不想去這幾家沒問題，請直接給一個都願意去的選擇。","你们不想去这几家没问题，请直接给一个大家都愿意去的选择。","It is fine to reject these, but please provide one option everyone can accept.","你哋唔想去呢幾間冇問題，請直接俾一個大家都肯去嘅選擇。"],
+["『隨便』的使用額度已經用完，現在請每人報一家。","“随便”的使用额度已经用完，现在请每人报一家。","We have exhausted the word anywhere. Everyone name one restaurant now.","『隨便』嘅使用額度已經用完，依家每人報一間。"],
+["這頓飯最大的難題看來不是吃甚麼，是誰肯做決定。","看来这顿饭最大的难题不是吃什么，而是谁愿意做决定。","The hardest part of this meal is apparently not the food but making a decision.","呢餐最大難題睇嚟唔係食乜，係邊個肯決定。"],
+["我已經提了四家，不再開第五輪；你們決定好再叫我。","我已经提了四家，不再开第五轮；你们决定好再叫我。","I've suggested four places and will not start a fifth round. Let me know when you decide.","我已經提咗四間，唔再開第五輪；你哋決定好再叫我。"],
+["不如分開選：先定菜系，再從附近評分高的店裡挑一家。","不如分两步选：先定菜系，再从附近评分高的店里挑一家。","Let's decide in two steps: cuisine first, then pick a well-rated nearby place.","不如分兩步揀：先定菜式，再喺附近高分餐廳揀一間。"],
+["價格上限每人多少？把這個定了，選項會少很多。","每人的预算上限是多少？定好这个，选择会少很多。","What is the per-person budget cap? That will narrow the options quickly.","每人預算上限幾多？定好呢樣，選項會少好多。"],
+["有人要清真、素食或避開過敏原嗎？先處理真正不能妥協的條件。","有人需要清真、素食或避开过敏原吗？先处理真正不能妥协的条件。","Does anyone need halal, vegetarian, or allergen-safe food? Let's handle real constraints first.","有冇人要清真、素食或者避開致敏原？先處理真正唔可以妥協嘅條件。"],
+["A 交通方便，B 價格低，大家各選一個最重要的條件吧。","A 交通方便，B 价格低，大家各选一个最重要的条件吧。","A is easier to reach and B is cheaper. Choose which criterion matters more.","A 交通方便，B 價錢平，大家揀一個最重要嘅條件啦。"],
+["這次選 A，真的不好吃我負責找下一場甜品。","这次选 A，如果真不好吃，我负责找下一场甜品。","Let's choose A. If the food disappoints, I'll find us dessert afterward.","今次揀 A，真係唔好食我負責搵下一場甜品。"],
+["不要求人人最愛，只要沒有人真的不能吃，就可以定了。","不要求每个人都最喜欢，只要没有人真的不能吃，就可以定了。","It need not be everyone's favorite. If no one genuinely cannot eat there, we can book it.","唔使人人最鍾意，只要冇人真係食唔到，就可以定。"],
+["先訂能取消的那家，明天有更好提議再換，沒有就照舊。","先订可以取消的那家，明天有更好建议再换，没有就照旧。","Book the cancellable option now. We can switch tomorrow if someone finds better.","先訂可以取消嗰間，聽日有更好提議再換，冇就照舊。"],
+["誰最在意餐廳，這次就由誰選；其他人別再只說不行。","谁最在意餐厅，这次就由谁选；其他人别再只说不行。","The person who cares most can choose this time; everyone else should stop offering only no.","邊個最在意餐廳，今次就由邊個揀；其他人唔好再淨係話唔得。"],
+["我們是去見面，不是參加最佳餐廳決賽，合適就好。","我们是去见面，不是参加最佳餐厅决赛，合适就好。","We are meeting each other, not judging a restaurant final. Suitable is good enough.","我哋係去見面，唔係參加最佳餐廳決賽，合適就得。"],
+["我把訂位連結放這裡，願意去的按一個；人數夠就成團。","我把订位链接放这里，愿意去的点一下；人数够就成行。","I'll post the booking link. React if you are in; if enough people join, we go.","我放訂位連結喺度，去嘅按一下；人數夠就成團。"],
+["如果每家都不合適，這週先取消，等有人有明確想法再約。","如果每家都不合适，这周就先取消，等有人有明确想法再约。","If every place is unsuitable, let's cancel this week and reschedule when someone has a clear idea.","如果間間都唔合適，今個星期先取消，等有人有明確想法再約。"],
+["我不介意幫忙訂位，但不會一個人負責猜中所有人的心思。","我不介意帮忙订位，但不会一个人负责猜中所有人的心思。","I do not mind booking, but I cannot also be responsible for reading everyone's mind.","我唔介意幫手訂位，但唔會一個人負責估中晒大家心思。"],
+["每否決一家就離吃飯遠一步，現在要不要先保住晚餐？","每否决一家就离吃饭远一步，现在要不要先保住晚餐？","Every rejection takes us one step farther from dinner. Shall we save the meal first?","每否決一間就離食飯遠一步，依家要唔要先保住晚餐？"],
+["今天只有兩個選項：A 或 B；『都不要』等於這次不參加。","今天只有两个选项：A 或 B；“都不要”就等于这次不参加。","Today there are two options, A or B. Neither means sitting this one out.","今日得兩個選項：A 或 B；『都唔要』就等於今次唔參加。"],
+["別再說『我都得』後面接三個不行，直接講你想吃甚麼。","别再说“我都可以”以后又连着否决三家，直接说你想吃什么。","Please stop saying anything is fine and then rejecting three places. Say what you want.","唔好再講『我都得』之後連續三個唔得，直接講你想食乜。"],
+["我先退出選店環節，訂好時間和地址再告訴我能不能到。","我先退出选店环节，定好时间和地址后再告诉我，我再确认能否参加。","I'm stepping out of the selection round. Send me the time and place once decided.","我先退出揀餐廳環節，定好時間地址再話我知去唔去到。"],
+["這回按少數服從多數；不滿意的人下次優先選。","这次少数服从多数；不满意的人下次优先选择。","Majority vote this time; anyone unhappy gets first choice next time.","今次少數服從多數；唔滿意嗰個下次優先揀。"],
+["我們用排除法：每人只能刪一家，剩下的直接抽。","我们用排除法：每人只能删掉一家，剩下的直接抽签。","Let's eliminate: each person may remove one place, then we draw from the rest.","我哋用排除法：每人只可以刪一間，剩低嘅直接抽。"],
+["再討論下去，餐廳要關門了。我現在訂 A，能來的來。","再讨论下去餐厅都要关门了。我现在订 A，能来的就来。","At this rate the restaurants will close. I'm booking A now; join if you can.","再傾落去餐廳都收舖。我依家訂 A，嚟到嘅就嚟。"],
+["選餐廳不是我的全職工作。A、B 二選一，五分鐘後截止。","选餐厅不是我的全职工作。A、B 二选一，五分钟后截止。","Restaurant selection is not my full-time job. Choose A or B within five minutes.","揀餐廳唔係我全職工作。A、B 二揀一，五分鐘後截止。"]
+]);
+})();
