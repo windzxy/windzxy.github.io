@@ -67,7 +67,7 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 .play-card h2{font-size:clamp(27px,4vw,38px);line-height:1.2;letter-spacing:-.045em;margin:0;max-width:84%}
 .reply{background:var(--soft);border-radius:18px;padding:20px;line-height:1.8;font-size:17px;min-height:150px;display:flex;align-items:center}
 .card-actions{display:flex;align-items:center;justify-content:space-between;margin-top:20px}
-.copy{border:1px solid var(--line);background:#fff;border-radius:13px;padding:9px 13px;color:#555}
+.copy{border:1px solid var(--line);background:#fff;border-radius:13px;padding:9px 13px;color:#555}.another{margin-left:7px}
 .hint{font-size:12px;color:#aaa}
 
 .deck-nav{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:22px}
@@ -109,7 +109,6 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 <div class="controls">
  <div class="control"><div class="label" id="domainLabel"></div><div class="row" id="domainFilters"></div></div>
  <div class="control"><div class="label" id="replyLangLabel"></div><div class="row" id="replyLangs"></div></div>
- <div class="control"><div class="label" id="styleLabel"></div><div class="row" id="styles"></div></div>
 </div>
 </section>
 
@@ -128,28 +127,28 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js"></script><script src="./catalog-extra.js"></script><script src="./catalog-wave3.js"></script><script src="./catalog-wave4.js"></script>
+<script src="./catalog.js"></script><script src="./catalog-extra.js"></script><script src="./catalog-variants.js"></script>
 <script>
 (function(){
 var RAW=window.CHAT_SCENARIOS||[];
-var ui="hant",domain="all",replyLang="zh",style="formal",deckIndex=0,currentRows=[];
+var ui="hant",domain="all",replyLang="zh",deckIndex=0,currentRows=[],variantPos={};
 var dragStartX=0,dragX=0,dragging=false,flippedId=null;
 var suits={workplace:"♠",study:"♦",family:"♥",parenting:"★",elder:"♣",friends:"☻",relationship:"♥",social:"✦",service:"◇",job:"↑",business:"◆",travel:"✈",medical:"+",online:"@"};
 
 var T={
- hant:{title:"同一句話，換個更合適的說法。",search:"搜尋情境…",random:"隨機",domain:"情境",replyLang:"回話語言",style:"風格",copy:"複製",copied:"已複製",empty:"沒有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粵語",prev:"上一張",next:"下一張",shuffle:"洗牌",swipe:"左右滑動",flip:"翻牌",front:"看情境",answer:"建議說法"},
- hans:{title:"同一句话，换个更合适的说法。",search:"搜索情境…",random:"随机",domain:"情境",replyLang:"回复语言",style:"风格",copy:"复制",copied:"已复制",empty:"没有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粤语",prev:"上一张",next:"下一张",shuffle:"洗牌",swipe:"左右滑动",flip:"翻牌",front:"看情境",answer:"建议说法"},
- en:{title:"Same words. A better way to say them.",search:"Search situations…",random:"Random",domain:"Situation",replyLang:"Reply language",style:"Style",copy:"Copy",copied:"Copied",empty:"No matching situation",all:"All",formal:"Formal",dark:"Dark",roast:"Roast",zh:"Chinese",en:"English",yue:"Cantonese",prev:"Previous",next:"Next",shuffle:"Shuffle",swipe:"Swipe left or right",flip:"Flip",front:"Situation",answer:"Suggested reply"}
+ hant:{title:"同一句話，換個更合適的說法。",search:"搜尋情境…",random:"隨機",domain:"情境",replyLang:"回話語言",copy:"複製",copied:"已複製",empty:"沒有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粵語",prev:"上一張",next:"下一張",shuffle:"洗牌",swipe:"左右滑動",flip:"翻牌",front:"看情境",answer:"建議說法",another:"換個說法"},
+ hans:{title:"同一句话，换个更合适的说法。",search:"搜索情境…",random:"随机",domain:"情境",replyLang:"回复语言",copy:"复制",copied:"已复制",empty:"没有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粤语",prev:"上一张",next:"下一张",shuffle:"洗牌",swipe:"左右滑动",flip:"翻牌",front:"看情境",answer:"建议说法",another:"换个说法"},
+ en:{title:"Same words. A better way to say them.",search:"Search situations…",random:"Random",domain:"Situation",replyLang:"Reply language",copy:"Copy",copied:"Copied",empty:"No matching situation",all:"All",formal:"Formal",dark:"Dark",roast:"Roast",zh:"Chinese",en:"English",yue:"Cantonese",prev:"Previous",next:"Next",shuffle:"Shuffle",swipe:"Swipe left or right",flip:"Flip",front:"Situation",answer:"Suggested reply",another:"Another way"}
 };
-var replyLangs=["zh","en","yue"],styles=["formal","dark","roast"];
+var replyLangs=["zh","en","yue"];
 
 function validTri(v){return v&&typeof v==="object"&&typeof v.hant==="string"&&typeof v.hans==="string"&&typeof v.en==="string"}
 function validReply(s){
  if(!s.replies||!s.replies.zh||!s.replies.en||!s.replies.yue)return false;
- return styles.every(function(k){
-  return s.replies.zh[k]&&typeof s.replies.zh[k].hant==="string"&&typeof s.replies.zh[k].hans==="string"&&
-         typeof s.replies.en[k]==="string"&&typeof s.replies.yue[k]==="string";
- });
+ var zh=Object.keys(s.replies.zh).filter(function(k){var v=s.replies.zh[k];return v&&typeof v.hant==="string"&&typeof v.hans==="string"});
+ var en=Object.keys(s.replies.en).filter(function(k){return typeof s.replies.en[k]==="string"});
+ var yue=Object.keys(s.replies.yue).filter(function(k){return typeof s.replies.yue[k]==="string"});
+ return zh.length>0&&en.length>0&&yue.length>0;
 }
 var S=RAW.filter(function(s){return validTri(s.domainLabel)&&validTri(s.relation)&&validTri(s.goal)&&validTri(s.title)&&validReply(s)});
 var domainLabels={};S.forEach(function(s){domainLabels[s.domain]=s.domainLabel});
@@ -157,9 +156,24 @@ var domains=["all"].concat(Array.from(new Set(S.map(function(s){return s.domain}
 
 function esc(s){return String(s||"").replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]})}
 function txt(v){return v[ui]}
+function replyKeys(s){
+ var box=s.replies[replyLang]||{};
+ return Object.keys(box).filter(function(k){
+  if(replyLang==="zh"){var v=box[k];return v&&typeof v.hant==="string"&&typeof v.hans==="string"}
+  return typeof box[k]==="string";
+ });
+}
 function getReply(s){
- if(replyLang==="zh")return s.replies.zh[style][ui==="hans"?"hans":"hant"];
- return s.replies[replyLang][style];
+ var keys=replyKeys(s);
+ if(!keys.length)return "";
+ var pos=(variantPos[s.id]||0)%keys.length;
+ var v=s.replies[replyLang][keys[pos]];
+ return replyLang==="zh"?v[ui==="hans"?"hans":"hant"]:v;
+}
+function nextReply(s){
+ var keys=replyKeys(s);
+ if(keys.length<2)return;
+ variantPos[s.id]=((variantPos[s.id]||0)+1)%keys.length;
 }
 function meta(s){return txt(s.domainLabel)+" · "+txt(s.relation)+" · "+txt(s.goal)}
 function title(s){return txt(s.title)}
@@ -171,7 +185,6 @@ function renderControls(){
  document.getElementById("randomBtn").textContent=T[ui].random;
  document.getElementById("domainLabel").textContent=T[ui].domain;
  document.getElementById("replyLangLabel").textContent=T[ui].replyLang;
- document.getElementById("styleLabel").textContent=T[ui].style;
  document.getElementById("prevBtn").textContent=T[ui].prev;
  document.getElementById("nextBtn").textContent=T[ui].next;
  document.getElementById("shuffleBtn").textContent=T[ui].shuffle;
@@ -184,9 +197,6 @@ function renderControls(){
  }).join("");
  document.getElementById("replyLangs").innerHTML=replyLangs.map(function(k){
   return '<button class="chip '+(replyLang===k?'active':'')+'" data-replylang="'+k+'">'+T[ui][k]+'</button>'
- }).join("");
- document.getElementById("styles").innerHTML=styles.map(function(k){
-  return '<button class="chip '+(style===k?'active':'')+'" data-style="'+k+'">'+T[ui][k]+'</button>'
  }).join("");
 }
 
@@ -215,7 +225,7 @@ function cardHTML(s,depth,index){
    '<section class="card-face card-back">'+
     '<div class="card-top"><div class="back-label">'+T[ui].answer+'</div></div>'+
     '<div class="face-center"><div class="reply">'+esc(getReply(s))+'</div></div>'+
-    '<div class="card-actions"><button class="copy" data-id="'+esc(s.id)+'">'+T[ui].copy+'</button><button class="flip" data-flip="'+esc(s.id)+'">'+T[ui].front+'</button></div>'+
+    '<div class="card-actions"><div><button class="copy" data-id="'+esc(s.id)+'">'+T[ui].copy+'</button><button class="copy another" data-another="'+esc(s.id)+'">'+T[ui].another+'</button></div><button class="flip" data-flip="'+esc(s.id)+'">'+T[ui].front+'</button></div>'+
    '</section>'+
   '</div>'+
  '</article>';
@@ -299,8 +309,9 @@ document.addEventListener("click",function(e){
  var v;
  if((v=e.target.getAttribute("data-ui"))){ui=v;flippedId=null;localStorage.setItem("htcb-ui",ui);renderControls();renderDeck();return}
  if((v=e.target.getAttribute("data-domain"))){domain=v;deckIndex=0;flippedId=null;renderControls();renderDeck();return}
- if((v=e.target.getAttribute("data-replylang"))){replyLang=v;deckIndex=0;flippedId=null;renderControls();renderDeck();return}
- if((v=e.target.getAttribute("data-style"))){style=v;deckIndex=0;flippedId=null;renderControls();renderDeck();return}
+ if((v=e.target.getAttribute("data-replylang"))){replyLang=v;variantPos={};deckIndex=0;flippedId=null;renderControls();renderDeck();return}
+ var aid=e.target.getAttribute("data-another");
+ if(aid){var as=S.find(function(x){return x.id===aid});if(as){nextReply(as);flippedId=aid;renderDeck()}return}
  var fid=e.target.getAttribute("data-flip");
  if(fid){flippedId=flippedId===fid?null:fid;renderDeck();return}
  if(e.target.classList.contains("copy")){
