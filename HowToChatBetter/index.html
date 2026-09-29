@@ -44,7 +44,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(245,245,242,.9);backdrop
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="./data.js"></script><script src="./i18n-data.js"></script>
+<script src="./data.js"></script><script src="./i18n-data.js"></script><script src="./bulk-a.js"></script><script src="./bulk-b.js"></script>
 <script>
 (function(){
 var S=window.CHAT_SCENARIOS||[];
@@ -54,7 +54,7 @@ var T={
  hans:{title:"把话说得更合适。",search:"搜索情境…",random:"随机",domain:"情境",replyLang:"回复语言",style:"风格",copy:"复制",copied:"已复制",empty:"没有找到相符情境",all:"全部",workplace:"职场",study:"学习",family:"家庭",parenting:"育儿",elder:"长辈",friends:"朋友",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粤语"},
  en:{title:"Say it better.",search:"Search situations…",random:"Random",domain:"Situation",replyLang:"Reply language",style:"Style",copy:"Copy",copied:"Copied",empty:"No matching situation",all:"All",workplace:"Work",study:"Study",family:"Family",parenting:"Parenting",elder:"Elders",friends:"Friends",formal:"Formal",dark:"Dark",roast:"Roast",zh:"Chinese",en:"English",yue:"Cantonese"}
 };
-var domains=["all","workplace","study","family","parenting","elder","friends"];
+var domainLabels={}; S.forEach(function(s){if(s.domain&&s.domainLabel)domainLabels[s.domain]=s.domainLabel}); var domains=["all"].concat(Array.from(new Set(S.map(function(s){return domainKey(s)}).filter(function(k){return k&&k!=="all"}))));
 var replyLangs=["zh","en","yue"],styles=["formal","dark","roast"];
 function esc(s){return String(s||"").replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]})}
 function txt(v){if(v==null)return"";if(typeof v==="string")return v;return v[ui]||v.hant||v.hans||v.en||""}
@@ -86,7 +86,7 @@ function renderControls(){
  document.getElementById("uiLangs").innerHTML=[
   ["hans","简中"],["hant","繁中"],["en","EN"]
  ].map(function(x){return '<button class="langbtn '+(ui===x[0]?'active':'')+'" data-ui="'+x[0]+'">'+x[1]+'</button>'}).join("");
- document.getElementById("domainFilters").innerHTML=domains.map(function(k){return '<button class="chip '+(domain===k?'active':'')+'" data-domain="'+k+'">'+T[ui][k]+'</button>'}).join("");
+ document.getElementById("domainFilters").innerHTML=domains.map(function(k){var label=k==="all"?T[ui].all:txt(domainLabels[k]||k);return '<button class="chip '+(domain===k?'active':'')+'" data-domain="'+k+'">'+label+'</button>'}).join("");
  document.getElementById("replyLangs").innerHTML=replyLangs.map(function(k){return '<button class="chip '+(replyLang===k?'active':'')+'" data-replylang="'+k+'">'+T[ui][k]+'</button>'}).join("");
  document.getElementById("styles").innerHTML=styles.map(function(k){return '<button class="chip '+(style===k?'active':'')+'" data-style="'+k+'">'+T[ui][k]+'</button>'}).join("");
 }
