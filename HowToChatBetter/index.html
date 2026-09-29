@@ -369,7 +369,15 @@ document.addEventListener("keydown",function(e){
 ui=localStorage.getItem("htcb-ui")||"hant";if(!T[ui])ui="hant";
 renderControls();
 buildRows();
-if(currentRows.length)deckIndex=Math.floor(Math.random()*currentRows.length);
+if(currentRows.length){
+ var lastOpen=localStorage.getItem("htcb-last-open")||"";
+ var choices=[];
+ for(var oi=0;oi<currentRows.length;oi++){
+  if(currentRows.length===1||currentRows[oi].id!==lastOpen)choices.push(oi);
+ }
+ deckIndex=choices[Math.floor(Math.random()*choices.length)];
+ localStorage.setItem("htcb-last-open",currentRows[deckIndex].id);
+}
 renderDeck();
 })();
 </script>
