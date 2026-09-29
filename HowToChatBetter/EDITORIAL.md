@@ -1,0 +1,12 @@
+# 情境編輯備忘
+
+每個新情境要有具體對象、摩擦點和可執行的下一句；換渠道或改同義詞不算新情境。標題、關係、目標分別撰寫繁中、简中、English；回話分別撰寫繁中、简中、English、粵語，不以字形替換生成文本。語氣名稱只供資料維護，前台不顯示。新增後執行 `node HowToChatBetter/validate-catalog.cjs`。
+
+這批例句由情境重新撰寫，沒有複製資料來源的句子。參考的原則包括：
+
+- 職場：釐清具體問題、分工和下一步；參考 [Acas 的職場問題溝通指引](https://www.acas.org.uk/how-to-raise-a-problem-at-work)。
+- 育兒：先聆聽感受，再給清楚的界線；參考 [UNICEF 的親子溝通建議](https://www.unicef.org/asia-pacific/place-for-parents/positive-parenting-ages-0-5)。
+- 醫療：詢問用藥與警示徵狀，必要時重述以確認理解；參考 [AHRQ 的 teach-back 方法](https://www.ahrq.gov/health-literacy/improve/precautions/tool5.html)。醫療情境避免以諷刺取代清楚問題。
+- 網上交易：留在平台內付款和溝通；參考 [FTC 的網上市集購物建議](https://consumer.ftc.gov/articles/buying-online-marketplace)。
+
+目標是逐批擴展至 1000 個以上經去重、審校的情境；不要以模板排列組合冒充獨立情境。
