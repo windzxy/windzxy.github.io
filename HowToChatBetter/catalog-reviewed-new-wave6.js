@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new18',domain:'elder',domainLabel:{hant:'長輩',hans:'长辈',en:'Elders'},relation:{hant:'家中長輩',hans:'家中长辈',en:'Older relative'},goal:{hant:'阻止可疑轉帳',hans:'阻止可疑转账',en:'Stop a suspicious transfer'},title:{hant:'長輩接到可疑電話，堅信對方是銀行或政府人員並準備轉帳',hans:'长辈接到可疑电话，坚信对方是银行或政府人员并准备转账',en:'An older relative trusts a suspicious caller claiming to be a bank or government officer and is about to transfer money'}},[
+["先不要轉帳，也不要掛念來不及；我們花十分鐘一起核實。","先别转账，也不用担心来不及；我们花十分钟一起核实。","Do not transfer anything yet. We can take ten minutes to verify it together.","先唔好轉帳，亦唔使驚趕唔切；我哋用十分鐘一齊核實。"],
+["我不是說你判斷錯，只是涉及錢，我們多做一步確認。","我不是说你判断错，只是涉及钱，我们多做一步确认。","I am not saying your judgment is wrong; money deserves one extra verification step.","我唔係話你判斷錯，只係涉及錢，我哋多做一步確認。"],
+["先把電話掛掉，我們自己找卡背面的官方號碼打回銀行。","先挂断电话，我们自己找银行卡背面的官方号码打回银行。","Hang up first. We'll call the bank ourselves using the number on the back of the card.","先收線，我哋自己搵銀行卡背面官方電話打返去。"],
+["真正重要的通知經得起核實，不會怕你先問家人。","真正重要的通知经得起核实，不会怕你先问家人。","A legitimate urgent notice will withstand verification and will not fear you asking family.","真正重要嘅通知經得起核實，唔會怕你先問屋企人。"],
+["任何人問驗證碼、密碼或銀行 PIN 都先不要給。","任何人询问验证码、密码或银行卡 PIN 都先别提供。","Do not give anyone a verification code, password, or bank PIN.","任何人問驗證碼、密碼或者銀行 PIN 都先唔好俾。"],
+["對方越催你立即處理，我們越要停下來查清楚。","对方越催你马上处理，我们越要停下来核实。","The more they rush you, the more important it is to stop and verify.","對方越催你即刻處理，我哋越要停低查清楚。"],
+["政府或銀行的身分不能靠來電顯示證明，號碼也可能被偽裝。","政府或银行的身份不能只靠来电显示证明，号码也可能被伪装。","Caller ID alone cannot prove someone is from a bank or government office; numbers can be spoofed.","政府或者銀行身分唔可以淨靠來電顯示證明，號碼都可以偽裝。"],
+["把對方的姓名、部門和案件編號記下，我們從官方渠道另行查詢。","把对方的姓名、部门和案件编号记下来，我们通过官方渠道另行查询。","Write down their name, department, and case number. We'll verify through an official channel separately.","記低對方姓名、部門同案件編號，我哋經官方渠道另外查。"],
+["先不要按他給的連結，也不要安裝他叫你下載的程式。","先别点对方发来的链接，也不要安装他让你下载的软件。","Do not open their link or install any app they tell you to download.","先唔好撳佢俾嘅連結，亦唔好裝佢叫你下載嘅程式。"],
+["如果真是銀行要求處理，我陪你直接去分行問清楚。","如果真是银行要求处理，我陪你直接去网点问清楚。","If the bank truly needs action, I will go with you to a branch and confirm it.","如果真係銀行要處理，我陪你直接去分行問清楚。"],
+["先把轉帳頁面關掉，錢留在帳戶裡不會妨礙我們核實。","先把转账页面关掉，钱留在账户里不影响我们核实。","Close the transfer screen. Leaving the money in the account does not prevent verification.","先閂咗轉帳頁面，啲錢留喺戶口唔影響我哋核實。"],
+["對方若不准你告訴家人，這本身就是很大的警號。","如果对方不准你告诉家人，这本身就是很大的警示。","If they tell you not to inform family, that alone is a major warning sign.","對方唔准你話屋企人知，呢樣本身就係好大警號。"],
+["他知道你的名字不代表是真的，個人資料可能從其他地方流出。","他知道你的名字也不代表是真的，个人资料可能从别处泄露。","Knowing your name does not prove legitimacy; personal details can come from elsewhere.","佢知你個名都唔代表係真，個人資料可能由其他地方流出。"],
+["我們先打給你平常聯絡的銀行職員，而不是回撥對方留下的號碼。","我们先联系你平时认识的银行工作人员，不回拨对方留下的号码。","Let's call your usual bank contact, not the number the caller provided.","我哋先打俾你平時聯絡嗰位銀行職員，唔好打對方留低個號碼。"],
+["現在先不爭真假，只做一件最安全的事：暫停付款。","我们先不争真假，只做一件最安全的事：暂停付款。","We do not need to argue whether it is real yet. The safest step is simply to pause payment.","依家先唔拗真定假，只做一件最安全嘅事：暫停付款。"],
+["你可以讓對方明天再聯絡；真的機構不會因為核實就沒收你的錢。","你可以让对方明天再联系；正规机构不会因为你核实身份就没收你的钱。","Tell them to call tomorrow. A legitimate institution will not take your money because you verified first.","你可以叫對方聽日再聯絡；真正機構唔會因為你核實就沒收你啲錢。"],
+["如果對方說家人涉案，更不要轉錢；我們直接聯絡那位家人確認。","如果对方说家人出事，更不要转钱；我们直接联系那位家人确认。","If they claim a relative is in trouble, do not pay. We will contact that relative directly.","如果對方話屋企人出事，更加唔好轉錢；我哋直接聯絡嗰位屋企人確認。"],
+["如果對方自稱警察，我們自己查官方電話，再到附近警署詢問。","如果对方自称警察，我们自己查询官方电话，再到附近派出所询问。","If they claim to be police, we will find the official number ourselves or visit a local station.","如果對方自稱警察，我哋自己查官方電話，再去附近警署問。"],
+["你把電話交給我也可以，我只會說我們需要先核實。","你也可以把电话给我，我只会告诉对方我们需要先核实。","You can hand me the phone. I will only tell them we need to verify first.","你可以將電話俾我，我只會同佢講我哋要先核實。"],
+["別擔心被笑，騙局就是利用緊張和信任，先停手最重要。","不用担心被笑，骗局就是利用紧张和信任，先停下来最重要。","There is nothing embarrassing here. Scams exploit urgency and trust; stopping is what matters.","唔使驚俾人笑，騙局就係利用緊張同信任，先停手最重要。"],
+["如果你已經給過資料，先別自責，我們現在聯絡銀行處理。","如果你已经提供过资料，先别自责，我们现在联系银行处理。","If you already shared information, do not blame yourself. Let's contact the bank now.","如果你已經俾過資料，先唔好怪自己，我哋依家聯絡銀行處理。"],
+["如果錢已經轉出，立即告訴我時間和金額，我們馬上找銀行協助。","如果钱已经转出，马上告诉我时间和金额，我们立即联系银行。","If money has already gone, tell me the time and amount so we can contact the bank immediately.","如果錢已經轉咗，立即話我知時間同金額，我哋馬上搵銀行幫手。"],
+["先截圖保存電話號碼和訊息，但不要再和對方糾纏。","先截图保存电话号码和消息，但不要再和对方纠缠。","Save screenshots of the number and messages, but do not continue engaging with the caller.","先截圖保存電話號碼同訊息，但唔好再同對方糾纏。"],
+["我們可以一起打防騙查詢電話，讓第三方幫忙判斷。","我们可以一起拨打反诈咨询电话，让第三方协助判断。","We can call an official anti-fraud helpline together and ask for an independent assessment.","我哋可以一齊打防騙查詢電話，等第三方幫手判斷。"],
+["今後遇到要轉錢的電話，我們約定先互相通一個電話再做。","以后遇到电话里要求转钱，我们约定先互相打个电话再处理。","From now on, let's agree to call each other before acting on any phone request for money.","之後遇到電話叫轉錢，我哋約定先互相打個電話再做。"],
+["我們設一個只有家人知道的確認問題，遇到冒充親友時先問。","我们设一个只有家人知道的确认问题，遇到冒充亲友时先问。","Let's create a family verification question for calls from anyone claiming to be a relative.","我哋設一條淨係屋企人知嘅確認問題，遇到人扮親友就先問。"],
+["銀行不會嫌你多問一次，先確認永遠比事後追回容易。","银行不会嫌你多问一次，事先确认永远比事后追回容易。","The bank will not mind one extra check. Verification is easier than recovering money later.","銀行唔會嫌你問多一次，事先確認永遠容易過事後追返。"],
+["你保護好積蓄不是不合作，是對自己多年辛苦負責。","保护好积蓄不是不配合，而是对自己多年的辛苦负责。","Protecting your savings is not being uncooperative; it respects years of your hard work.","你保護好積蓄唔係唔合作，係對自己多年辛苦負責。"],
+["對方如果是真的，晚十分鐘仍然是真的；如果是假的，這十分鐘很重要。","对方如果是真的，晚十分钟仍然是真的；如果是假的，这十分钟很重要。","If the caller is genuine, they will still be genuine in ten minutes. If not, those minutes matter.","對方如果係真，遲十分鐘都仲係真；如果係假，呢十分鐘好重要。"],
+["今天任何轉帳都先不做。核實清楚後，我陪你一起處理下一步。","今天先不做任何转账。核实清楚以后，我陪你一起处理下一步。","No transfers today. Once we verify everything, I will help you with the next step.","今日任何轉帳都先唔做。核實清楚之後，我陪你一齊處理下一步。"]
+]);
+
+add({id:'new19',domain:'relationship',domainLabel:{hant:'感情',hans:'感情',en:'Relationship'},relation:{hant:'伴侶',hans:'伴侣',en:'Partner'},goal:{hant:'建立爭吵私隱界線',hans:'建立争吵隐私边界',en:'Set privacy boundaries around conflict'},title:{hant:'伴侶未經你同意，把你們爭吵的細節告訴雙方家長',hans:'伴侣没经过你同意，就把你们争吵的细节告诉双方父母',en:'Your partner shares details of your argument with both families without asking you'}},[
+["我們的爭吵不應該未經同意就變成兩家人的話題。","我们的争吵不该在没经过同意的情况下变成两家人的话题。","Our argument should not become a topic for both families without agreement.","我哋嘅爭吵唔應該未經同意就變成兩家人話題。"],
+["你需要找人傾訴我能理解，但請先告訴我會分享哪些內容。","我理解你需要找人倾诉，但请先告诉我准备分享哪些内容。","I understand needing support, but tell me first what you plan to share.","我明你需要搵人傾，但請先話我知你打算分享咩內容。"],
+["我最難受的不是你有情緒，而是我在不知情下被公開討論。","最让我难受的不是你有情绪，而是我在不知情时被公开讨论。","What hurts is not that you had feelings, but that I was discussed without knowing.","我最難受唔係你有情緒，係我唔知情下俾人公開討論。"],
+["請你向父母說明這只是爭吵中的一面，不要讓他們把它當成完整事實。","请你向父母说明这只是争吵中的一面，别让他们把它当作全部事实。","Please tell our parents they heard one side during an argument, not the complete picture.","請你同父母講清楚，呢個只係爭吵其中一面，唔係完整事實。"],
+["之後有矛盾，我希望我們先彼此談，再決定是否需要找第三方。","以后有矛盾，我希望我们先彼此沟通，再决定是否需要找第三方。","In future, I want us to talk to each other first before involving anyone else.","之後有矛盾，我想我哋先彼此傾，再決定要唔要搵第三方。"],
+["父母一旦介入，事情很難只停在我們兩個人之間，請你理解這個後果。","父母一旦介入，事情就很难只停留在我们两个人之间，请你考虑这个后果。","Once parents are involved, the conflict no longer stays between us. Please consider that consequence.","父母一介入，件事就好難淨係留喺我哋兩個之間，請你諗下後果。"],
+["你可以說自己的感受，但不要轉發我的訊息或替我下結論。","你可以表达自己的感受，但不要转发我的消息或替我下结论。","You may share your feelings, but do not forward my messages or define my motives for me.","你可以講自己感受，但唔好轉發我訊息或者代我下結論。"],
+["如果你已經發了截圖，請叫他們刪除，也不要再轉給其他親戚。","如果你已经发了截图，请让他们删除，也不要再转给其他亲戚。","If you sent screenshots, ask them to delete them and not forward them to relatives.","如果你已經發咗截圖，請叫佢哋刪除，亦唔好再轉俾其他親戚。"],
+["我們需要訂一條規則：私密對話沒有雙方同意就不外傳。","我们需要定一条规则：私密对话没有双方同意就不外传。","We need a rule: private conversations stay private unless both of us agree.","我哋要定一條規則：私人對話冇雙方同意就唔外傳。"],
+["我不想下次見家長時，還要面對一場我沒參加的審判。","我不想下次见父母时，还要面对一场我没有参加的审判。","I do not want the next family visit to become a trial I was never invited to.","我唔想下次見家長，仲要面對一場我冇參加嘅審判。"],
+["兩個人的矛盾請先留在兩個人能解決的範圍裡。","两个人的矛盾，请先留在两个人能够解决的范围里。","Keep a conflict between two people within the two-person space where it can be resolved.","兩個人嘅矛盾，請先留喺兩個人解決到嘅範圍。"],
+["請不要每次吵架都召開家庭聯席會議，我們先把自己的會開完。","请别每次吵架都召开家庭联席会议，我们先把自己的会开完。","Please do not convene a family summit after every argument. Let us finish our own meeting first.","唔好次次吵架都開家庭聯席會議，我哋先開完自己嗰個。"],
+["你把氣話告訴父母，他們可能會記很久，但我們明天可能已經和好了。","你把气话告诉父母，他们可能记很久，但我们明天也许已经和好了。","Parents may remember words said in anger long after we have reconciled.","你將氣話講俾父母聽，佢哋可能記好耐，但我哋聽日已經和好。"],
+["我需要知道你具體說了甚麼，才能處理現在造成的誤會。","我需要知道你具体说了什么，才能处理现在造成的误会。","I need to know exactly what you shared so we can address the misunderstanding it created.","我要知道你具體講咗乜，先可以處理依家造成嘅誤會。"],
+["請不要叫我自己去向父母解釋；這個局面是你帶進來的，需要你一起澄清。","请不要让我自己去向父母解释；这个局面是你造成的，需要你一起澄清。","Do not leave me to explain alone. You brought them into this, so help clarify it.","唔好叫我自己同父母解釋；呢個局面係你帶入嚟，要你一齊澄清。"],
+["我願意聽你為甚麼需要求助，但求助不等於公開所有細節。","我愿意听你为什么需要求助，但求助不等于公开所有细节。","I am willing to understand why you sought support, but support does not require every detail.","我願意聽你點解要求助，但求助唔等於公開所有細節。"],
+["如果涉及安全或你感到受威脅，當然應該求助；一般爭執則請先和我說。","如果涉及安全或你感到受威胁，当然应该求助；一般争执请先和我沟通。","If you feel unsafe or threatened, seek help immediately. For ordinary conflict, speak with me first.","如果涉及安全或者你覺得受威脅，當然要即刻求助；一般爭執請先同我講。"],
+["需要外部意見時，我更希望找中立的輔導者，而不是讓家人選邊站。","需要外部意见时，我更希望找中立的咨询师，而不是让家人选边站。","When we need outside input, I prefer a neutral counsellor rather than asking family to take sides.","要外部意見嗰陣，我更想搵中立輔導者，唔係叫家人揀邊站。"],
+["我不要求你完全不找支持，只要求不要用我的私隱換取支持。","我不要求你完全不找人支持，只是请你不要用我的隐私换取支持。","I am not asking you to go without support; I am asking you not to spend my privacy to get it.","我唔係要求你完全唔搵支持，只係唔好用我私隱換支持。"],
+["你可以概括說我們在鬧矛盾，不必把每一句對話完整轉播。","你可以简单说我们发生了矛盾，不必把每一句对话完整转播。","You can say we are having difficulties without broadcasting every sentence.","你可以概括話我哋有矛盾，唔使每一句對話完整轉播。"],
+["我希望你向雙方父母說，我們會自己處理，請他們暫時不要介入。","我希望你告诉双方父母，我们会自己处理，请他们暂时不要介入。","Please tell both families that we will handle this and ask them not to intervene for now.","我想你同雙方父母講，我哋會自己處理，請佢哋暫時唔好介入。"],
+["這件事讓我對私下和你說話變得不安心，我們需要把信任重新建立起來。","这件事让我不敢再放心和你私下说话，我们需要重新建立信任。","This has made private conversation with you feel unsafe. We need to rebuild that trust.","呢件事令我唔再放心私下同你講，我哋要重新建立信任。"],
+["下次想找父母談之前，先問我一句『這部分可以說嗎』。","下次想找父母谈之前，先问我一句“这部分可以说吗”。","Next time, ask me whether a detail can be shared before telling our parents.","下次想同父母傾之前，先問我一句『呢部分可唔可以講』。"],
+["我會為自己爭吵時說錯的話負責，但不接受被放到家族群裡公審。","我会为争吵时说错的话负责，但不接受被放进家族群里公开批评。","I will own what I said wrong, but I will not accept being put on trial in the family chat.","我會為自己爭吵嗰陣講錯嘅話負責，但唔接受俾人放入家族群公審。"],
+["這不是叫你偏袒我，而是請你不要在情緒最激動時替我們的關係定案。","这不是让你偏袒我，而是请你别在情绪最激动时替我们的关系下结论。","I am not asking you to protect me from criticism; do not define our relationship at peak anger.","呢個唔係叫你偏袒我，係請你唔好最激動嗰陣替段關係定案。"],
+["我們可以共同整理一個版本向父母說明，不要再各自拉人站隊。","我们可以一起整理一个说法向父母说明，不要再各自拉人站队。","We can agree on a joint explanation to our parents instead of recruiting opposing sides.","我哋可以一齊整理一個版本同父母講，唔好再各自拉人站隊。"],
+["今天先請你停止繼續更新爭吵進度，這不是家庭連續劇。","今天先请你停止继续更新争吵进度，这不是家庭连续剧。","Please stop sending live updates about the argument. This is not a family serial drama.","今日先請你停止更新爭吵進度，呢個唔係家庭連續劇。"],
+["如果每次衝突都向家長直播，我們永遠學不會自己修復關係。","如果每次冲突都向父母直播，我们永远学不会自己修复关系。","If every conflict is live-streamed to our parents, we will never learn to repair things ourselves.","如果每次衝突都向父母直播，我哋永遠學唔識自己修復關係。"],
+["若這個界線再次被越過，我會減少分享私密內容，也會重新考慮我們的溝通方式。","如果这个边界再次被越过，我会减少分享私密内容，并重新考虑我们的沟通方式。","If this boundary is crossed again, I will share less privately and reconsider how we communicate.","如果呢條界線再被越過，我會減少分享私密內容，亦會重新考慮溝通方式。"],
+["我說得很清楚：我們的私密爭吵，沒有雙方同意，不得再告訴家長。","我说清楚：我们的私密争吵，没有双方同意，不要再告诉父母。","To be clear: details of our private arguments are not to be shared with parents without mutual agreement.","我講清楚：我哋私人爭吵，冇雙方同意，唔可以再話俾父母知。"]
+]);
+})();
