@@ -3,110 +3,125 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f4f4f0">
 <title>How To Chat Better</title>
-<meta name="description" content="不同關係、不同場合、不同情緒下的情境回話資料庫。">
 <style>
-:root{--bg:#f4f4f0;--paper:#fff;--ink:#171717;--muted:#74746e;--line:#e8e8e2;--soft:#f8f8f5}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","PingFang SC","Microsoft JhengHei","Microsoft YaHei",sans-serif}
-button,input{font:inherit}button{cursor:pointer}.wrap{max-width:1180px;margin:auto;padding:0 22px}
-header{position:sticky;top:0;z-index:30;background:rgba(244,244,240,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,0,0,.05)}
-.nav{height:66px;display:flex;align-items:center;gap:16px}.brand{font-weight:800;letter-spacing:-.03em}.nav small,.nav a{color:var(--muted);font-size:13px;text-decoration:none}.spacer{flex:1}
-.hero{padding:70px 0 30px}.eyebrow{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-h1{font-size:clamp(44px,7vw,78px);line-height:.98;letter-spacing:-.065em;margin:14px 0 22px;max-width:900px}
-.sub{font-size:18px;line-height:1.7;color:#50504b;max-width:760px}
-.searchbox{margin-top:30px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:10px;display:flex;gap:9px;box-shadow:0 12px 34px rgba(0,0,0,.05)}
-.searchbox input{border:0;outline:0;flex:1;background:transparent;padding:12px 14px;font-size:17px;min-width:0}.primary{border:0;background:#171717;color:#fff;border-radius:14px;padding:0 17px;font-weight:700}
-.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.pill{background:rgba(255,255,255,.65);border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:#60605a;font-size:12px}
-.toolbar{padding:18px 0 20px;position:sticky;top:66px;z-index:20;background:linear-gradient(var(--bg) 78%,rgba(244,244,240,0))}
-.label{font-size:11px;color:#8a8a83;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:6px 0 7px}
-.filters,.tones{display:flex;gap:7px;overflow:auto;padding-bottom:7px;scrollbar-width:none}.filters::-webkit-scrollbar,.tones::-webkit-scrollbar{display:none}
-.chip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;color:#5b5b55}.chip.active{background:#171717;color:#fff;border-color:#171717}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;padding-bottom:70px}.card{background:#fff;border:1px solid var(--line);border-radius:19px;padding:19px;transition:.18s;box-shadow:0 5px 16px rgba(0,0,0,.02)}.card:hover{transform:translateY(-2px)}
-.meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;color:var(--muted);font-size:12px}.dot{width:4px;height:4px;border-radius:50%;background:#bbb}.badge{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:4px 7px;font-size:10px;color:#888}
-.card h3{font-size:20px;letter-spacing:-.025em;margin:10px 0 6px}.desc{font-size:13px;color:var(--muted);line-height:1.55}.reply{margin-top:14px;background:var(--soft);border-radius:14px;padding:14px 15px;line-height:1.7;min-height:82px;white-space:pre-line}.actions{display:flex;gap:8px;margin-top:11px}.ghost{border:1px solid var(--line);background:#fff;border-radius:11px;padding:8px 10px;color:#555}.empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}
-.section{padding:68px 0;border-top:1px solid var(--line)}.section h2{font-size:34px;letter-spacing:-.045em;margin:0 0 14px}.section p{max-width:820px;color:#5e5e58;line-height:1.8}.method{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-top:24px}.method div{background:#fff;border:1px solid var(--line);border-radius:17px;padding:17px}.method b{display:block;margin-bottom:6px}.method span{font-size:13px;line-height:1.6;color:var(--muted)}
-footer{padding:34px 0 56px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);background:#171717;color:white;padding:9px 13px;border-radius:11px;opacity:0;transition:.18s;pointer-events:none;z-index:90}.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:760px){.wrap{padding:0 15px}.nav{height:58px}.nav small,.hide-m{display:none}.hero{padding:44px 0 22px}h1{font-size:47px}.sub{font-size:16px}.toolbar{top:58px}.grid{grid-template-columns:1fr}.method{grid-template-columns:1fr 1fr}.card{padding:16px}}
+:root{--bg:#f5f5f2;--card:#fff;--ink:#151515;--muted:#73736d;--line:#e8e8e2;--soft:#f7f7f4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","PingFang SC","Microsoft JhengHei","Microsoft YaHei",sans-serif}
+button,input{font:inherit}.wrap{max-width:1140px;margin:auto;padding:0 20px}
+header{position:sticky;top:0;z-index:20;background:rgba(245,245,242,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(0,0,0,.05)}
+.nav{height:62px;display:flex;align-items:center;gap:10px}.brand{font-weight:800;letter-spacing:-.03em}.spacer{flex:1}
+.langs,.row{display:flex;gap:7px;overflow:auto;scrollbar-width:none}.langs::-webkit-scrollbar,.row::-webkit-scrollbar{display:none}
+.langbtn,.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;color:#5d5d57;white-space:nowrap;cursor:pointer}
+.langbtn{padding:7px 10px;font-size:12px}.active{background:#171717!important;color:#fff!important;border-color:#171717!important}
+.hero{padding:58px 0 28px}h1{font-size:clamp(42px,7vw,72px);line-height:1;letter-spacing:-.06em;margin:0 0 24px;max-width:860px}
+.search{display:flex;gap:8px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:9px;box-shadow:0 10px 28px rgba(0,0,0,.04)}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:12px 14px;font-size:16px}.search button{border:0;background:#171717;color:#fff;border-radius:13px;padding:0 16px;cursor:pointer}
+.controls{padding:10px 0 22px}.control{margin-top:12px}.label{font-size:11px;font-weight:800;letter-spacing:.09em;color:#8b8b84;margin-bottom:7px;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-bottom:60px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+.meta{font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center}.dot{width:4px;height:4px;border-radius:50%;background:#bbb}.card h3{font-size:20px;margin:10px 0 8px;letter-spacing:-.025em}.reply{background:var(--soft);border-radius:14px;padding:14px 15px;line-height:1.7;min-height:82px}
+.actions{margin-top:10px}.copy{border:1px solid var(--line);background:#fff;border-radius:11px;padding:8px 11px;cursor:pointer;color:#555}
+.empty{text-align:center;color:var(--muted);grid-column:1/-1;padding:60px 0}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,15px);opacity:0;background:#171717;color:#fff;border-radius:10px;padding:9px 13px;transition:.18s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:720px){.wrap{padding:0 14px}.nav{height:56px}.hero{padding:40px 0 22px}h1{font-size:46px}.grid{grid-template-columns:1fr}.card{padding:16px}}
 </style>
 </head>
 <body>
-<header><div class="wrap nav"><div class="brand">How To Chat Better</div><small>情境回話資料庫</small><div class="spacer"></div><a href="#library">場景庫</a><a class="hide-m" href="#method">方法</a><a class="hide-m" href="#sources">來源</a></div></header>
+<header><div class="wrap nav"><div class="brand">How To Chat Better</div><div class="spacer"></div><div class="langs" id="uiLangs"></div></div></header>
 
 <main>
 <section class="hero"><div class="wrap">
-<div class="eyebrow">Say the right thing, in the right way</div>
-<h1>不是更會說話，<br>而是把話說得更合適。</h1>
-<div class="sub">職場、學習、家庭、育兒、長輩、朋友。每個情境同時提供正式、自然、高情商、直接、腹黑、吐槽、粵語與英文版本。</div>
-<div class="searchbox"><input id="q" placeholder="例如：催同事交資料、拒絕長輩催婚、孩子不肯寫作業…"><button class="primary" id="randomBtn">隨機看看</button></div>
-<div class="stats"><span class="pill"><b id="count">0</b> 個首批情境</span><span class="pill">8 種回話風格</span><span class="pill">Mobile First</span><span class="pill">來源可追溯架構</span></div>
+<h1 id="heroTitle"></h1>
+<div class="search"><input id="q"><button id="randomBtn"></button></div>
 </div></section>
 
-<section id="library" class="wrap">
-<div class="toolbar"><div class="label">情境分類</div><div class="filters" id="domainFilters"></div><div class="label">回話風格</div><div class="tones" id="toneFilters"></div></div>
+<section class="wrap">
+<div class="controls">
+  <div class="control"><div class="label" id="domainLabel"></div><div class="row" id="domainFilters"></div></div>
+  <div class="control"><div class="label" id="replyLangLabel"></div><div class="row" id="replyLangs"></div></div>
+  <div class="control"><div class="label" id="styleLabel"></div><div class="row" id="styles"></div></div>
+</div>
 <div class="grid" id="grid"></div>
 </section>
-
-<section id="method" class="section"><div class="wrap">
-<h2>同一句話，不同關係要有不同說法。</h2>
-<p>How To Chat Better 的基本單位不是「金句」，而是一個完整情境：你在跟誰說、想達到什麼目的、雙方關係如何、目前情緒如何，再決定用什麼語氣。</p>
-<div class="method"><div><b>01 · 情境</b><span>先確定發生了什麼，不套萬能話術。</span></div><div><b>02 · 關係</b><span>上司、同事、伴侶、長輩、孩子不能照搬同一句。</span></div><div><b>03 · 目的</b><span>提醒、拒絕、安慰、催促、立界線，各有不同結構。</span></div><div><b>04 · 風格</b><span>正式到吐槽都能存在，但不靠羞辱、威脅或操控。</span></div></div>
-</div></section>
-
-<section id="sources" class="section"><div class="wrap">
-<h2>資料可以很大，但來源不能糊。</h2>
-<p>目前首頁內容標記為 <b>Seed</b>，代表第一批人工整理的高頻情境。後續加入公開對話語料、方言語料、公共領域書籍、研究與可合法引用資料時，會記錄 source、license、language、region、confidence 與 last_verified。</p>
-</div></section>
 </main>
 
-<footer><div class="wrap">How To Chat Better · Open situation-based communication library · v0.1</div></footer>
-<div class="toast" id="toast">已複製</div>
+<div class="toast" id="toast"></div>
 <script src="./data.js"></script>
 <script>
 (function(){
 var S=window.CHAT_SCENARIOS||[];
-var tones={formal:"正式",natural:"自然",eq:"高情商",direct:"直接",dark:"腹黑",roast:"吐槽",cantonese:"粵語",english:"English"};
-var domains=["全部","職場","學習","家庭","育兒","長輩","朋友"];
-var domain="全部", tone="natural";
+var ui="hant",domain="all",replyLang="zh",style="formal";
+var T={
+ hant:{title:"把話說得更合適。",search:"搜尋情境…",random:"隨機",domain:"情境",replyLang:"回話語言",style:"風格",copy:"複製",copied:"已複製",empty:"沒有找到相符情境",all:"全部",workplace:"職場",study:"學習",family:"家庭",parenting:"育兒",elder:"長輩",friends:"朋友",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粵語"},
+ hans:{title:"把话说得更合适。",search:"搜索情境…",random:"随机",domain:"情境",replyLang:"回复语言",style:"风格",copy:"复制",copied:"已复制",empty:"没有找到相符情境",all:"全部",workplace:"职场",study:"学习",family:"家庭",parenting:"育儿",elder:"长辈",friends:"朋友",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粤语"},
+ en:{title:"Say it better.",search:"Search situations…",random:"Random",domain:"Situation",replyLang:"Reply language",style:"Style",copy:"Copy",copied:"Copied",empty:"No matching situation",all:"All",workplace:"Work",study:"Study",family:"Family",parenting:"Parenting",elder:"Elders",friends:"Friends",formal:"Formal",dark:"Dark",roast:"Roast",zh:"Chinese",en:"English",yue:"Cantonese"}
+};
+var domains=["all","workplace","study","family","parenting","elder","friends"];
+var replyLangs=["zh","en","yue"],styles=["formal","dark","roast"];
 function esc(s){return String(s||"").replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]})}
-function renderFilters(){
- document.getElementById("domainFilters").innerHTML=domains.map(function(d){return '<button class="chip '+(d===domain?'active':'')+'" data-domain="'+d+'">'+d+'</button>'}).join("");
- document.getElementById("toneFilters").innerHTML=Object.keys(tones).map(function(k){return '<button class="chip '+(k===tone?'active':'')+'" data-tone="'+k+'">'+tones[k]+'</button>'}).join("");
+function txt(v){if(v==null)return"";if(typeof v==="string")return v;return v[ui]||v.hant||v.hans||v.en||""}
+function getReply(s){
+ if(s.replies&&s.replies[replyLang]){
+   var v=s.replies[replyLang][style];return txt(v);
+ }
+ if(replyLang==="zh")return s[style]||s.formal||"";
+ if(replyLang==="en")return s.english||"";
+ return s.cantonese||"";
 }
-function visible(){
+function meta(s){
+ if(s.relation)return txt(s.relation)+" · "+txt(s.goal);
+ return (s.r||"")+" · "+(s.g||"");
+}
+function title(s){return s.title?txt(s.title):(s.t||"")}
+function domainKey(s){
+ if(s.domain)return s.domain;
+ return {"職場":"workplace","學習":"study","家庭":"family","育兒":"parenting","長輩":"elder","朋友":"friends"}[s.d]||"all";
+}
+function renderControls(){
+ document.documentElement.lang=ui==="hans"?"zh-Hans":ui==="hant"?"zh-Hant":"en";
+ document.getElementById("heroTitle").textContent=T[ui].title;
+ document.getElementById("q").placeholder=T[ui].search;
+ document.getElementById("randomBtn").textContent=T[ui].random;
+ document.getElementById("domainLabel").textContent=T[ui].domain;
+ document.getElementById("replyLangLabel").textContent=T[ui].replyLang;
+ document.getElementById("styleLabel").textContent=T[ui].style;
+ document.getElementById("uiLangs").innerHTML=[
+  ["hans","简中"],["hant","繁中"],["en","EN"]
+ ].map(function(x){return '<button class="langbtn '+(ui===x[0]?'active':'')+'" data-ui="'+x[0]+'">'+x[1]+'</button>'}).join("");
+ document.getElementById("domainFilters").innerHTML=domains.map(function(k){return '<button class="chip '+(domain===k?'active':'')+'" data-domain="'+k+'">'+T[ui][k]+'</button>'}).join("");
+ document.getElementById("replyLangs").innerHTML=replyLangs.map(function(k){return '<button class="chip '+(replyLang===k?'active':'')+'" data-replylang="'+k+'">'+T[ui][k]+'</button>'}).join("");
+ document.getElementById("styles").innerHTML=styles.map(function(k){return '<button class="chip '+(style===k?'active':'')+'" data-style="'+k+'">'+T[ui][k]+'</button>'}).join("");
+}
+function rows(){
  var q=document.getElementById("q").value.trim().toLowerCase();
  return S.filter(function(s){
-   var hit=domain==="全部"||s.d===domain;
-   var hay=[s.d,s.r,s.g,s.t,s.x,s.formal,s.natural,s.eq,s.direct,s.dark,s.roast,s.cantonese,s.english].join(" ").toLowerCase();
-   return hit&&(!q||hay.indexOf(q)>=0);
+  if(domain!=="all"&&domainKey(s)!==domain)return false;
+  if(!q)return true;
+  var h=[title(s),meta(s),getReply(s),s.t,s.r,s.g,s.x].join(" ").toLowerCase();
+  return h.indexOf(q)>=0;
  });
 }
 function render(){
- var rows=visible(), grid=document.getElementById("grid");
- document.getElementById("count").textContent=S.length;
- if(!rows.length){grid.innerHTML='<div class="empty">沒有找到相符情境。換個關鍵字試試。</div>';return}
- grid.innerHTML=rows.map(function(s){
-   var idx=S.indexOf(s);
-   return '<article class="card"><div class="meta"><span>'+esc(s.d)+'</span><span class="dot"></span><span>'+esc(s.r)+'</span><span class="dot"></span><span>'+esc(s.g)+'</span><span class="badge">Seed</span></div><h3>'+esc(s.t)+'</h3><div class="desc">'+esc(s.x)+'</div><div class="reply">'+esc(s[tone])+'</div><div class="actions"><button class="ghost copy" data-i="'+idx+'">複製 '+tones[tone]+'</button><button class="ghost cycle">換一種說法</button></div></article>'
+ var r=rows(),grid=document.getElementById("grid");
+ if(!r.length){grid.innerHTML='<div class="empty">'+T[ui].empty+'</div>';return}
+ grid.innerHTML=r.map(function(s){
+  return '<article class="card"><div class="meta">'+esc(meta(s))+'</div><h3>'+esc(title(s))+'</h3><div class="reply">'+esc(getReply(s))+'</div><div class="actions"><button class="copy" data-id="'+esc(s.id||String(S.indexOf(s)))+'">'+T[ui].copy+'</button></div></article>';
  }).join("");
 }
 document.addEventListener("click",function(e){
- var d=e.target.getAttribute("data-domain"); if(d){domain=d;renderFilters();render()}
- var t=e.target.getAttribute("data-tone"); if(t){tone=t;renderFilters();render()}
+ var v;
+ if((v=e.target.getAttribute("data-ui"))){ui=v;localStorage.setItem("htcb-ui",ui);renderControls();render();return}
+ if((v=e.target.getAttribute("data-domain"))){domain=v;renderControls();render();return}
+ if((v=e.target.getAttribute("data-replylang"))){replyLang=v;renderControls();render();return}
+ if((v=e.target.getAttribute("data-style"))){style=v;renderControls();render();return}
  if(e.target.classList.contains("copy")){
-   var s=S[Number(e.target.getAttribute("data-i"))][tone];
-   navigator.clipboard.writeText(s);
-   var toast=document.getElementById("toast"); toast.classList.add("show"); setTimeout(function(){toast.classList.remove("show")},1100);
- }
- if(e.target.classList.contains("cycle")){
-   var ks=Object.keys(tones), i=ks.indexOf(tone); tone=ks[(i+1)%ks.length]; renderFilters(); render();
+  var id=e.target.getAttribute("data-id");
+  var s=S.find(function(x,i){return (x.id||String(i))===id});
+  navigator.clipboard.writeText(getReply(s));
+  var toast=document.getElementById("toast");toast.textContent=T[ui].copied;toast.classList.add("show");setTimeout(function(){toast.classList.remove("show")},900);
  }
 });
 document.getElementById("q").addEventListener("input",render);
-document.getElementById("randomBtn").addEventListener("click",function(){
- if(!S.length)return; var s=S[Math.floor(Math.random()*S.length)]; domain=s.d; document.getElementById("q").value=s.t; renderFilters(); render(); document.getElementById("library").scrollIntoView({behavior:"smooth"});
-});
-renderFilters();render();
+document.getElementById("randomBtn").addEventListener("click",function(){if(!S.length)return;var s=S[Math.floor(Math.random()*S.length)];document.getElementById("q").value=title(s);render()});
+ui=localStorage.getItem("htcb-ui")||"hant";renderControls();render();
 })();
 </script>
 </body>
