@@ -7,6 +7,11 @@ window.CHAT_REVIEWED_REPLY_KEYS=window.CHAT_REVIEWED_REPLY_KEYS||{};
 window.CHAT_REVIEWED_SCENES["w01"]=true;
 window.CHAT_REVIEWED_SCENES["s02"]=true;
 
+// Individually audited in reviewed batches 10–12 and new wave 3.
+for(const id of ["w06","so03","s01","new13","new14"]){
+ window.CHAT_REVIEWED_SCENES[id]=true;
+}
+
 for(const s of S){
  if(!window.CHAT_REVIEWED_SCENES[s.id])continue;
  const zh=Object.keys(s.replies?.zh||{});
