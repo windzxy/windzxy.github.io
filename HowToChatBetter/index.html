@@ -137,11 +137,11 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js"></script><script src="./catalog-extra.js"></script><script src="./catalog-wave3.js"></script><script src="./catalog-wave4.js"></script><script src="./catalog-wave5.js"></script><script src="./catalog-variants.js"></script><script src="./catalog-recovered.js"></script><script src="./catalog-wave6.js"></script><script src="./catalog-short.js"></script><script src="./catalog-voices.js"></script>
+<script src="./catalog.js"></script><script src="./catalog-extra.js"></script><script src="./catalog-wave3.js"></script><script src="./catalog-wave4.js"></script><script src="./catalog-wave5.js"></script><script src="./catalog-variants.js"></script><script src="./catalog-recovered.js"></script><script src="./catalog-wave6.js"></script><script src="./catalog-short.js"></script><script src="./catalog-voices.js"></script><script src="./reply-cycle.js"></script>
 <script>
 (function(){
 var RAW=window.CHAT_SCENARIOS||[];
-var ui="hant",domain="all",replyLang="zh",deckIndex=0,currentRows=[],variantPos={};
+var ui="hant",domain="all",replyLang="zh",deckIndex=0,currentRows=[],variantCycle=window.ChatReplyCycle();
 var dragStartX=0,dragX=0,dragging=false,flippedId=null,wasDragged=false;
 function topicIcon(k){
  var common='viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
@@ -165,9 +165,9 @@ function topicIcon(k){
 }
 
 var T={
- hant:{title:"同一句話，換個更合適的說法。",search:"搜尋情境…",random:"隨機",domain:"情境",replyLang:"回話語言",copy:"複製",copied:"已複製",empty:"沒有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粵語",prev:"上一張",next:"下一張",shuffle:"洗牌",swipe:"左右滑動",flip:"翻牌",front:"看情境",answer:"建議說法",another:"換個說法"},
- hans:{title:"同一句话，换个更合适的说法。",search:"搜索情境…",random:"随机",domain:"情境",replyLang:"回复语言",copy:"复制",copied:"已复制",empty:"没有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粤语",prev:"上一张",next:"下一张",shuffle:"洗牌",swipe:"左右滑动",flip:"翻牌",front:"看情境",answer:"建议说法",another:"换个说法"},
- en:{title:"Same words. A better way to say them.",search:"Search situations…",random:"Random",domain:"Situation",replyLang:"Reply language",copy:"Copy",copied:"Copied",empty:"No matching situation",all:"All",formal:"Formal",dark:"Dark",roast:"Roast",zh:"Chinese",en:"English",yue:"Cantonese",prev:"Previous",next:"Next",shuffle:"Shuffle",swipe:"Swipe left or right",flip:"Flip",front:"Situation",answer:"Suggested reply",another:"Another way"}
+ hant:{title:"同一句話，換個更合適的說法。",search:"搜尋情境…",random:"隨機",domain:"情境",replyLang:"回話語言",copy:"複製",copied:"已複製",empty:"沒有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粵語",prev:"上一張",next:"下一張",shuffle:"洗牌",swipe:"左右滑動",flip:"翻牌",front:"看情境",answer:"建議說法",another:"換個說法",exhausted:"已看完全部說法"},
+ hans:{title:"同一句话，换个更合适的说法。",search:"搜索情境…",random:"随机",domain:"情境",replyLang:"回复语言",copy:"复制",copied:"已复制",empty:"没有找到相符情境",all:"全部",formal:"正式",dark:"腹黑",roast:"吐槽",zh:"中文",en:"English",yue:"粤语",prev:"上一张",next:"下一张",shuffle:"洗牌",swipe:"左右滑动",flip:"翻牌",front:"看情境",answer:"建议说法",another:"换个说法",exhausted:"已看完全部说法"},
+ en:{title:"Same words. A better way to say them.",search:"Search situations…",random:"Random",domain:"Situation",replyLang:"Reply language",copy:"Copy",copied:"Copied",empty:"No matching situation",all:"All",formal:"Formal",dark:"Dark",roast:"Roast",zh:"Chinese",en:"English",yue:"Cantonese",prev:"Previous",next:"Next",shuffle:"Shuffle",swipe:"Swipe left or right",flip:"Flip",front:"Situation",answer:"Suggested reply",another:"Another way",exhausted:"All replies shown"}
 };
 var replyLangs=["zh","en","yue"];
 
@@ -192,20 +192,16 @@ function replyKeys(s){
   return typeof box[k]==="string";
  });
 }
+function replyPool(s){return s.id+"|"+replyLang+"|"+(replyLang==="zh"?(ui==="hans"?"hans":"hant"):"")}
+function repliesExhausted(s){return variantCycle.exhausted(replyPool(s),replyKeys(s))}
 function getReply(s){
  var keys=replyKeys(s);
  if(!keys.length)return "";
- var pos=(variantPos[s.id]||0)%keys.length;
- var v=s.replies[replyLang][keys[pos]];
+ var v=s.replies[replyLang][variantCycle.current(replyPool(s),keys)];
  return replyLang==="zh"?v[ui==="hans"?"hans":"hant"]:v;
 }
 function nextReply(s){
- var keys=replyKeys(s);
- if(keys.length<2)return;
- var current=(variantPos[s.id]||0)%keys.length;
- var next=current;
- while(next===current){next=Math.floor(Math.random()*keys.length)}
- variantPos[s.id]=next;
+ return variantCycle.advance(replyPool(s),replyKeys(s));
 }
 function meta(s){return txt(s.domainLabel)+" · "+txt(s.relation)+" · "+txt(s.goal)}
 function title(s){return txt(s.title)}
@@ -256,7 +252,7 @@ function cardHTML(s,depth,index){
    '<section class="card-face card-back">'+
     '<div class="card-top"><div class="back-label">'+T[ui].answer+'</div></div>'+
     '<div class="face-center"><div class="reply">'+esc(getReply(s))+'</div></div>'+
-    '<div class="card-actions"><div><button class="copy" data-id="'+esc(s.id)+'">'+T[ui].copy+'</button><button class="copy another" data-another="'+esc(s.id)+'">'+T[ui].another+'</button></div><button class="flip" data-flip="'+esc(s.id)+'">'+T[ui].front+'</button></div>'+
+    '<div class="card-actions"><div><button class="copy" data-id="'+esc(s.id)+'">'+T[ui].copy+'</button><button class="copy another" data-another="'+esc(s.id)+'"'+(repliesExhausted(s)?' disabled':'')+'>'+(repliesExhausted(s)?T[ui].exhausted:T[ui].another)+'</button></div><button class="flip" data-flip="'+esc(s.id)+'">'+T[ui].front+'</button></div>'+
    '</section>'+
   '</div>'+
  '</article>';
@@ -341,7 +337,7 @@ document.addEventListener("click",function(e){
  var v;
  if((v=e.target.getAttribute("data-ui"))){ui=v;flippedId=null;localStorage.setItem("htcb-ui",ui);renderControls();renderDeck();return}
  if((v=e.target.getAttribute("data-domain"))){domain=v;deckIndex=0;flippedId=null;renderControls();renderDeck();return}
- if((v=e.target.getAttribute("data-replylang"))){replyLang=v;variantPos={};deckIndex=0;flippedId=null;renderControls();renderDeck();return}
+ if((v=e.target.getAttribute("data-replylang"))){replyLang=v;deckIndex=0;flippedId=null;renderControls();renderDeck();return}
  var card=e.target.closest('.play-card[data-depth="0"]');
  if(card&&!e.target.closest("button")&&!wasDragged){var cid=card.getAttribute("data-id");flippedId=flippedId===cid?null:cid;renderDeck();return}
  if(wasDragged){wasDragged=false;return}
