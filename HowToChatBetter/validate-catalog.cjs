@@ -8,7 +8,9 @@ const scripts = [...html.matchAll(/<script src="\.\/(catalog[^\"]*\.js)"><\/scri
 const context = vm.createContext({window: {}});
 for (const file of scripts) vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context, {filename: file});
 const rows = context.window.CHAT_SCENARIOS || [];
+const reviewed = context.window.CHAT_REVIEWED_SCENES || {};
 const errors = [];
+const warnings = [];
 const seen = {id: new Map(), hant: new Map(), hans: new Map(), en: new Map()};
 const clean = value => value.normalize('NFKC').toLowerCase().replace(/[\s\p{P}\p{S}]/gu, '');
 function required(value, label) {
@@ -28,7 +30,12 @@ for (const scene of rows) {
     else seen[key].set(value, scene.id);
   }
   const keys = ['zh', 'en', 'yue'].map(lang => Object.keys(scene.replies?.[lang] || {}).sort());
-  if (keys[0].length < 30) errors.push(`${scene.id}: only ${keys[0].length} reply variants; minimum is 30`);
+  if (reviewed[scene.id]) {
+    if (keys[0].length < 30) errors.push(`${scene.id}: reviewed scene has only ${keys[0].length} reply variants; minimum is 30`);
+    if (keys[0].some(k => /^qv2-/.test(k))) errors.push(`${scene.id}: reviewed scene still contains generic qv2 fallback replies`);
+  } else if (keys[0].length < 30) {
+    warnings.push(`${scene.id}: unreviewed scene currently has ${keys[0].length} reply variants`);
+  }
   if (!keys[0].length || JSON.stringify(keys[0]) !== JSON.stringify(keys[1]) || JSON.stringify(keys[1]) !== JSON.stringify(keys[2])) {
     errors.push(`${scene.id}: reply languages have different or empty variant sets`);
   }
@@ -54,6 +61,8 @@ if (errors.length) {
   process.exitCode = 1;
 } else {
   const counts = Object.entries(rows.reduce((acc, s) => (acc[s.domain] = (acc[s.domain] || 0) + 1, acc), {}));
-  console.log(`${rows.length} distinct situations across ${counts.length} topics; complete UI metadata and three reply languages.`);
+  const reviewedCount = rows.filter(s => reviewed[s.id]).length;
+  console.log(`${rows.length} distinct situations across ${counts.length} topics; ${reviewedCount} manually reviewed.`);
   console.log(counts.map(([name, count]) => `${name}:${count}`).join('  '));
+  if (warnings.length) console.log(`${warnings.length} unreviewed scenes are below the 30+ reviewed-answer target.`);
 }
