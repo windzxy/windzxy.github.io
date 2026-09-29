@@ -18,7 +18,7 @@ const voices=[
  ["w01","mild-tease","我已經打開收件箱等它登場了。","我已经打开收件箱等它登场了。","My inbox is ready for its grand entrance.","我開定 inbox 等佢出場喇。"],
  ["w01","boundary","今天收不到，就要一起調整整合時間。","今天收不到，就得一起调整整合时间。","If it can't arrive today, we'll need to move the consolidation time.","今日收唔到，就要一齊調整整合時間。"],
  ["w01","wry","資料是還在路上，還是根本沒出門？","资料是在路上，还是还没出门？","Is the file on its way, or hasn't it left yet?","份資料係喺路上，定係仲未出門？"],
- ["w01","gentle-ping","輕輕敲一下：資料方便現在發嗎？","轻轻提醒一下：资料现在方便发吗？","A quick nudge: could you send the file now?","提一提：份資料而家發唔發到？"],
+ ["w01","gentle-ping","想跟進一下：資料現在方便發嗎？","想跟进一下：资料现在方便发吗？","A quick nudge: could you send the file now?","想問下：份資料而家發唔發到？"],
  ["r02","reflective","我想確認我們是不是在往同一個方向走。","我想确认我们是不是在往同一个方向走。","I want to know whether we're moving in the same direction.","我想知我哋係咪行緊同一個方向。"],
  ["r02","simple","你怎麼看我們現在的關係？","你怎么看我们现在的关系？","How do you see us right now?","你點睇我哋而家嘅關係？"],
  ["r02","space","不用立刻回答，但我希望我們找時間談清楚。","不用马上回答，但我希望我们找时间聊清楚。","You don't have to answer now, but I'd like us to talk clearly soon.","唔使即刻答，但我想我哋搵時間講清楚。"],
