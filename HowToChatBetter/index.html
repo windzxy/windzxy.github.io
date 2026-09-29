@@ -4,9 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>How To Chat Better</title>
-<link rel="icon" type="image/svg+xml" sizes="any" href="./favicon.svg?v=4">
-<link rel="shortcut icon" href="./favicon.svg?v=4">
+<link rel="icon" type="image/svg+xml" sizes="any" href="/HowToChatBetter/favicon-v5.svg">
+<link rel="shortcut icon" type="image/svg+xml" href="/HowToChatBetter/favicon-v5.svg">
+<link rel="apple-touch-icon" href="/HowToChatBetter/favicon-v5.svg">
+<link rel="manifest" href="/HowToChatBetter/site.webmanifest">
 <meta name="theme-color" content="#f5f5f2">
+<meta name="application-name" content="How To Chat Better">
 <style>
 :root{--bg:#f5f5f2;--card:#fff;--ink:#151515;--muted:#73736d;--line:#e8e8e2;--soft:#f7f7f4}
 *{box-sizing:border-box}
@@ -91,14 +94,41 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
  #domainFilters .chip{width:auto;padding:8px 12px}
 }
 @media(max-width:720px){
- .wrap{padding:0 14px}.nav{height:56px}.brand span{display:none}
- .hero{padding:34px 0 16px}h1{font-size:43px}
- .deck-section{padding-top:16px}.deck{height:430px}
- .play-card{padding:22px;border-radius:24px;min-height:365px}
- .play-card h2{font-size:27px;max-width:100%}
- .reply{font-size:15px;min-height:135px}
+ .wrap{padding:0 14px}
+ .nav{height:52px}
+ .brand span{display:none}
+ .brand svg{width:25px;height:25px}
+ .langs{gap:6px}
+ .langbtn{padding:6px 11px;font-size:12px}
+
+ .hero{padding:22px 0 10px}
+ h1{font-size:clamp(36px,10.5vw,40px);line-height:1.06;letter-spacing:-.052em;margin-bottom:16px;max-width:96%}
+ .search{padding:6px;border-radius:18px;gap:6px}
+ .search input{padding:10px 12px;font-size:15px}
+ .search button{border-radius:12px;padding:0 15px;min-height:44px}
+
+ .controls{padding:2px 0 4px}
+ .control{margin-top:9px}
+ .label{margin-bottom:6px;font-size:10px}
+ #domainFilters{gap:6px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding-bottom:2px}
+ #domainFilters .chip{padding:7px 11px;font-size:13px;scroll-snap-align:start}
+ #replyLangs .chip{padding:7px 12px;font-size:13px}
+
+ .deck-section{padding-top:10px;padding-bottom:58px}
+ .deck{height:404px}
+ .play-card{width:min(640px,94vw);padding:19px;border-radius:22px;min-height:345px}
+ .card-inner{min-height:305px}
+ .card-top{margin-bottom:18px}
+ .meta{font-size:12px}
+ .topic-icon{width:34px;height:34px}
+ .suit-label{font-size:9px;margin-top:4px}
+ .play-card h2{font-size:25px;line-height:1.18;max-width:100%}
+ .reply{font-size:15px;line-height:1.7;min-height:128px;padding:17px}
+ .card-actions{margin-top:16px}
+ .copy{padding:8px 11px}
  .hint{display:none}
- .deck-nav{gap:7px}.deck-btn{padding:10px 12px}
+ .deck-nav{gap:7px;margin-top:16px}
+ .deck-btn{padding:9px 11px}
 }
 </style>
 </head>
