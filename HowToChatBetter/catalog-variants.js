@@ -280,5 +280,77 @@ add("b01","yin",
 "I didn't realise the scope had self-replication enabled. This project really is full of life.",
 "原來 scope 都有自我繁殖功能，呢個 project 真係好有生命力。");
 
+add("w01","rude",
+"到底什麼時候能給？我這邊已經等到影響進度了，麻煩別再拖。",
+"到底什么时候能给？我这边已经等到影响进度了，麻烦别再拖。",
+"When exactly can you send it? This delay is already affecting my work, so please stop pushing it back.",
+"究竟幾時俾到？我呢邊已經等到影響進度，麻煩唔好再拖。");
+
+add("w03","rude",
+"我手上已經滿了，這件別直接丟給我。要我接就先拿走一件原本的工作。",
+"我手上已经满了，这件别直接丢给我。要我接就先拿走一件原本的工作。",
+"My plate is already full. Don't just dump this on me. If I take it, remove one of my existing tasks.",
+"我手上已經滿晒，呢件唔好直接掟俾我。要我接就先拎走一樣原本工作。");
+
+add("w07","rude",
+"這不是我的責任，別因為現在出了問題就往我這邊推。",
+"这不是我的责任，别因为现在出了问题就往我这边推。",
+"This isn't my responsibility. Don't shift it onto me just because there's now a problem.",
+"呢樣唔係我責任，唔好而家出咗問題先推過嚟。");
+
+add("w08","rude",
+"工作量和責任都加了，薪酬卻完全沒動，這件事我覺得需要正式談清楚。",
+"工作量和责任都加了，薪酬却完全没动，这件事我觉得需要正式谈清楚。",
+"The workload and responsibility have increased while compensation hasn't moved at all. We need to address that properly.",
+"工作量同責任都加咗，人工完全冇郁，呢件事我覺得要正式傾清楚。");
+
+add("s02","rude",
+"你那部分到底還交不交？明天就截止了，別讓其他人替你收尾。",
+"你那部分到底还交不交？明天就截止了，别让其他人替你收尾。",
+"Are you actually submitting your part? It's due tomorrow. Don't leave everyone else to finish it for you.",
+"你嗰部分究竟交唔交？聽日就 deadline，唔好等其他人幫你執尾。");
+
+add("f01","rude",
+"家務不是我一個人的事，別再默認我會全部做掉。",
+"家务不是我一个人的事，别再默认我会全部做掉。",
+"Housework isn't solely my job. Stop assuming I'll just do all of it.",
+"家務唔係我一個人嘅事，唔好再默認我會全部做晒。");
+
+add("e01","rude",
+"結不結婚是我的事，這個問題不用再問了。",
+"结不结婚是我的事，这个问题不用再问了。",
+"Whether I get married is my decision. You don't need to ask me about it again.",
+"結唔結婚係我嘅事，呢個問題唔使再問。");
+
+add("fr01","rude",
+"不借，這件事不用再勸我。",
+"不借，这件事不用再劝我。",
+"No. I'm not lending it, and I don't want to be persuaded further.",
+"唔借，呢件事唔使再勸我。");
+
+add("r01","rude",
+"現在先別說了，再說下去只會更難聽。等大家冷靜再談。",
+"现在先别说了，再说下去只会更难听。等大家冷静再谈。",
+"Stop for now. If we keep going, it's only going to get uglier. We'll talk when we're calmer.",
+"而家唔好再講，講落去只會更難聽。等大家冷靜先再傾。");
+
+add("sv01","rude",
+"商品明顯跟描述不符，我不接受扯其他理由，直接退款。",
+"商品明显跟描述不符，我不接受扯其他理由，直接退款。",
+"The item clearly doesn't match the description. I don't need excuses — process the refund.",
+"件貨明顯同描述唔符，我唔需要其他理由，直接退款。");
+
+add("j01","rude",
+"如果職位已經不考慮我，直接說就好，不需要一直沒有回覆。",
+"如果职位已经不考虑我，直接说就好，不需要一直没有回复。",
+"If I'm no longer being considered, just say so. There's no need to leave the process in silence.",
+"如果個職位已經唔考慮我，直接講就得，唔需要一路冇回覆。");
+
+add("b01","rude",
+"這不是原 scope，免費加是不可能的。要做就按新增需求走。",
+"这不是原 scope，免费加是不可能的。要做就按新增需求走。",
+"This is outside the original scope. Adding it for free isn't happening. If you want it, treat it as additional work.",
+"呢樣唔係原 scope，免費加冇可能。要做就按新增需求走。");
+
 window.CHAT_SCENARIOS=S;
 })();
