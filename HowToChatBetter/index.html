@@ -73,7 +73,7 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 .deck-nav{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:22px}
 .deck-btn{border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 15px;color:#555}
 .deck-btn.primary{background:#171717;color:#fff;border-color:#171717}
-.deck-status{min-width:74px;text-align:center;font-size:12px;color:#8d8d86}
+
 .empty{text-align:center;color:var(--muted);padding:90px 0}
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,15px);opacity:0;background:#171717;color:#fff;border-radius:10px;padding:9px 13px;transition:.18s;pointer-events:none;z-index:50}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -118,7 +118,7 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
   <div class="deck" id="deck"></div>
   <div class="deck-nav" id="deckNav">
    <button class="deck-btn" id="prevBtn"></button>
-   <span class="deck-status" id="deckStatus"></span>
+   
    <button class="deck-btn primary" id="nextBtn"></button>
    <button class="deck-btn" id="shuffleBtn"></button>
   </div>
@@ -207,13 +207,13 @@ function cardHTML(s,depth,index){
  return '<article class="play-card '+(isFlip?'flipped':'')+'" data-depth="'+depth+'" data-id="'+esc(s.id)+'">'+
   '<div class="card-inner">'+
    '<section class="card-face card-front">'+
-    '<div class="card-top"><div class="meta">'+esc(meta(s))+'</div><div class="card-no">'+(index+1)+' / '+currentRows.length+'</div></div>'+
+    '<div class="card-top"><div class="meta">'+esc(meta(s))+'</div></div>'+
     '<div class="suit-corner"><span class="suit-symbol">'+suit+'</span><span class="suit-label">'+esc(txt(s.domainLabel))+'</span></div>'+
     '<div class="face-center"><h2>'+esc(title(s))+'</h2></div>'+
     '<div class="card-actions"><button class="flip" data-flip="'+esc(s.id)+'">'+T[ui].flip+'</button><span class="hint">'+T[ui].swipe+'</span></div>'+
    '</section>'+
    '<section class="card-face card-back">'+
-    '<div class="card-top"><div class="back-label">'+T[ui].answer+'</div><div class="card-no">'+(index+1)+' / '+currentRows.length+'</div></div>'+
+    '<div class="card-top"><div class="back-label">'+T[ui].answer+'</div></div>'+
     '<div class="face-center"><div class="reply">'+esc(getReply(s))+'</div></div>'+
     '<div class="card-actions"><button class="copy" data-id="'+esc(s.id)+'">'+T[ui].copy+'</button><button class="flip" data-flip="'+esc(s.id)+'">'+T[ui].front+'</button></div>'+
    '</section>'+
@@ -226,7 +226,7 @@ function renderDeck(){
  var deck=document.getElementById("deck"),nav=document.getElementById("deckNav");
  if(!currentRows.length){
   deck.innerHTML='<div class="empty">'+T[ui].empty+'</div>';
-  document.getElementById("deckStatus").textContent="0 / 0";
+  
   nav.style.opacity=.45;
   return;
  }
@@ -238,7 +238,7 @@ function renderDeck(){
   html+=cardHTML(currentRows[idx],d,idx);
  }
  deck.innerHTML=html;
- document.getElementById("deckStatus").textContent=(deckIndex+1)+" / "+currentRows.length;
+ 
  bindDrag();
 }
 
