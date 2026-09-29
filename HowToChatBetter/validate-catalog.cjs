@@ -28,6 +28,7 @@ for (const scene of rows) {
     else seen[key].set(value, scene.id);
   }
   const keys = ['zh', 'en', 'yue'].map(lang => Object.keys(scene.replies?.[lang] || {}).sort());
+  if (keys[0].length < 30) errors.push(`${scene.id}: only ${keys[0].length} reply variants; minimum is 30`);
   if (!keys[0].length || JSON.stringify(keys[0]) !== JSON.stringify(keys[1]) || JSON.stringify(keys[1]) !== JSON.stringify(keys[2])) {
     errors.push(`${scene.id}: reply languages have different or empty variant sets`);
   }
