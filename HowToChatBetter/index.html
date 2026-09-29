@@ -139,7 +139,7 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 
 <div class="toast" id="toast"></div>
 
-<script src="./catalog.js"></script><script src="./catalog-extra.js"></script><script src="./catalog-wave3.js"></script><script src="./catalog-wave4.js"></script><script src="./catalog-wave5.js"></script><script src="./catalog-variants.js"></script><script src="./catalog-recovered.js"></script><script src="./catalog-wave6.js"></script><script src="./catalog-wave7.js"></script><script src="./catalog-wave8.js"></script><script src="./catalog-wave9.js"></script><script src="./catalog-wave10.js"></script><script src="./catalog-short.js"></script><script src="./catalog-voices.js"></script><script src="./catalog-retorts.js"></script><script src="./catalog-social-tones.js"></script><script src="./catalog-raw-tones.js"></script><script src="./catalog-bespoke-core1.js"></script><script src="./catalog-reviewed-core2.js"></script><script src="./catalog-reviewed-core3.js"></script><script src="./reply-cycle.js"></script>
+<script src="./catalog.js"></script><script src="./catalog-extra.js"></script><script src="./catalog-wave3.js"></script><script src="./catalog-wave4.js"></script><script src="./catalog-wave5.js"></script><script src="./catalog-variants.js"></script><script src="./catalog-recovered.js"></script><script src="./catalog-wave6.js"></script><script src="./catalog-wave7.js"></script><script src="./catalog-wave8.js"></script><script src="./catalog-wave9.js"></script><script src="./catalog-wave10.js"></script><script src="./catalog-short.js"></script><script src="./catalog-voices.js"></script><script src="./catalog-retorts.js"></script><script src="./catalog-social-tones.js"></script><script src="./catalog-raw-tones.js"></script><script src="./catalog-bespoke-core1.js"></script><script src="./catalog-reviewed-core2.js"></script><script src="./catalog-reviewed-core3.js"></script><script src="./catalog-review-registry.js"></script><script src="./reply-cycle.js"></script>
 <script>
 (function(){
 var RAW=window.CHAT_SCENARIOS||[];
@@ -181,7 +181,7 @@ function validReply(s){
  var yue=Object.keys(s.replies.yue).filter(function(k){return typeof s.replies.yue[k]==="string"});
  return zh.length>0&&en.length>0&&yue.length>0;
 }
-var S=RAW.filter(function(s){return validTri(s.domainLabel)&&validTri(s.relation)&&validTri(s.goal)&&validTri(s.title)&&validReply(s)});
+var REVIEWED=window.CHAT_REVIEWED_SCENES||{};var APPROVED=window.CHAT_REVIEWED_REPLY_KEYS||{};var S=RAW.filter(function(s){return !!REVIEWED[s.id]&&Array.isArray(APPROVED[s.id])&&APPROVED[s.id].length>=30&&validTri(s.domainLabel)&&validTri(s.relation)&&validTri(s.goal)&&validTri(s.title)&&validReply(s)});
 var domainLabels={};S.forEach(function(s){domainLabels[s.domain]=s.domainLabel});
 var domains=["all"].concat(Array.from(new Set(S.map(function(s){return s.domain}))));
 
@@ -189,7 +189,8 @@ function esc(s){return String(s||"").replace(/[&<>"']/g,function(m){return {"&":
 function txt(v){return v[ui]}
 function replyKeys(s){
  var box=s.replies[replyLang]||{};
- return Object.keys(box).filter(function(k){
+ var allow=APPROVED[s.id]||[];
+ return allow.filter(function(k){
   if(replyLang==="zh"){var v=box[k];return v&&typeof v.hant==="string"&&typeof v.hans==="string"}
   return typeof box[k]==="string";
  });
