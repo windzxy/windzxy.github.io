@@ -173,7 +173,10 @@ function getReply(s){
 function nextReply(s){
  var keys=replyKeys(s);
  if(keys.length<2)return;
- variantPos[s.id]=((variantPos[s.id]||0)+1)%keys.length;
+ var current=(variantPos[s.id]||0)%keys.length;
+ var next=current;
+ while(next===current){next=Math.floor(Math.random()*keys.length)}
+ variantPos[s.id]=next;
 }
 function meta(s){return txt(s.domainLabel)+" · "+txt(s.relation)+" · "+txt(s.goal)}
 function title(s){return txt(s.title)}
