@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new26',domain:'business',domainLabel:{hant:'商務',hans:'商务',en:'Business'},relation:{hant:'客戶',hans:'客户',en:'Client'},goal:{hant:'界定原始檔交付',hans:'界定源文件交付',en:'Define source-file delivery'},title:{hant:'客戶在成品完成後，要求免費取得合約未包含的原始檔或可編輯檔',hans:'客户在成品完成后，要求免费取得合同未包含的源文件或可编辑文件',en:'After final delivery, a client asks for source or editable files that were not included in the contract'}},[
+["目前合約包含最終成品，不包含原始檔；需要的話我可以另行報價。","目前合同包含最终成品，不包含源文件；如果需要，我可以另外报价。","The contract covers the final deliverable, not the source files. I can quote separately if you need them.","依家合約包括最終成品，唔包括原始檔；需要嘅話我可以另外報價。"],
+["請先說明需要哪些可編輯檔，以及預計如何使用，我再確認交付條件。","请先说明需要哪些可编辑文件以及用途，我再确认交付条件。","Please specify which editable files you need and how they will be used, then I can confirm the handover terms.","請先講明要邊啲可編輯檔同用途，我再確認交付條件。"],
+["原始檔交付涉及整理、打包和授權，不是匯出成品時自動附帶。","源文件交付涉及整理、打包和授权，并不是导出成品时自动附带。","Source-file delivery requires preparation, packaging, and licensing; it is not automatically included with an exported final.","原始檔交付涉及整理、打包同授權，唔係匯出成品就自動附送。"],
+["我可以提供一個乾淨的交接版本，費用包含整理和簡要說明。","我可以提供一套整理后的交接版本，费用包含文件整理和简要说明。","I can provide a clean handover package, with the fee covering organisation and brief documentation.","我可以提供一個整理好嘅交接版本，費用包括整理同簡單說明。"],
+["若只需要改文字，我可以提供指定欄位可編輯的版本，不必交出完整製作檔。","如果只是需要修改文字，我可以提供指定字段可编辑的版本，不必交付完整制作文件。","If you only need to edit text, I can provide a limited editable version without releasing the full production file.","如果只係要改文字，我可以提供指定欄位可編輯版本，唔使交完整製作檔。"],
+["原始檔包含我的工作模板和方法，不在本次買斷範圍內。","源文件包含我的工作模板和方法，不在本次买断范围内。","The source files contain my working templates and methods, which were not bought out under this engagement.","原始檔有我工作模板同方法，唔喺今次買斷範圍。"],
+["部分字體、圖片或外掛是第三方授權，我不能直接轉交授權給你們。","部分字体、图片或插件属于第三方授权，我不能直接把授权转给你们。","Some fonts, images, and plugins are third-party licensed and cannot be transferred directly.","部分字體、圖片或者外掛係第三方授權，我唔可以直接轉授權俾你哋。"],
+["我可以列出需要另外購買的素材授權，之後再交付可用版本。","我可以列出需要单独购买的素材许可，完成授权后再交付可用版本。","I can list the assets that require separate licences and deliver a usable package once those are secured.","我可以列出要另外買嘅素材授權，完成之後再交付可用版本。"],
+["若你們要交給另一家供應商繼續製作，需要加入完整交接授權。","如果你们要交给其他供应商继续制作，需要增加完整的交接授权。","If another supplier will continue the work, the handover needs an appropriate transfer licence.","如果你哋要交俾另一間供應商繼續做，需要加完整交接授權。"],
+["原始檔可以交付，但智慧財產權轉讓和檔案交付是兩個不同項目。","源文件可以交付，但知识产权转让与文件交付是两个不同项目。","Source files can be delivered, but file handover and intellectual-property transfer are separate items.","原始檔可以交，但知識產權轉讓同檔案交付係兩個唔同項目。"],
+["請確認你們需要的是使用權，還是完整所有權，兩者價格不同。","请确认你们需要的是使用许可还是完整所有权，两者价格不同。","Please confirm whether you need usage rights or full ownership; the pricing is different.","請確認你哋要使用權定完整所有權，兩者價錢唔同。"],
+["在尾款結清前，我不會交付可編輯原始檔。","尾款结清之前，我不会交付可编辑源文件。","Editable source files will not be released until the final balance is paid.","尾數未清之前，我唔會交付可編輯原始檔。"],
+["尾款和原始檔費用到帳後，我會在三個工作天內完成打包。","尾款和源文件费用到账后，我会在三个工作日内完成打包。","Once the balance and source-file fee are received, I will package the files within three business days.","尾數同原始檔費用到帳後，我會喺三個工作天內完成打包。"],
+["請把新增要求寫進補充協議，列明格式、版本和授權範圍。","请把新增要求写入补充协议，注明格式、版本和授权范围。","Add this request to a written amendment specifying formats, versions, and licence scope.","請將新增要求寫入補充協議，列明格式、版本同授權範圍。"],
+["我會交付本次核准版本，不包括未採用草稿和內部測試檔。","我会交付本次批准的版本，不包括未采用草稿和内部测试文件。","I will hand over the approved project version, excluding rejected drafts and internal test files.","我會交付今次核准版本，唔包括未採用草稿同內部測試檔。"],
+["可以提供扁平化素材和規格表，讓你們日後做一般更新。","我可以提供扁平化素材和规格表，方便你们以后做常规更新。","I can provide flattened assets and a specification sheet for routine future updates.","可以提供扁平化素材同規格表，方便你哋日後做一般更新。"],
+["若需要完整圖層、元件和連結素材，會按完整交接包計費。","如果需要完整图层、组件和链接素材，将按完整交接包收费。","Full layers, components, and linked assets are priced as a complete handover package.","如果要完整圖層、元件同連結素材，會按完整交接包收費。"],
+["我可以安排一小時交接會議，教你們如何開啟和維護檔案。","我可以安排一小时交接会议，说明如何打开和维护文件。","I can include a one-hour handover session explaining how to open and maintain the files.","我可以安排一個鐘交接會議，講解點樣開同維護檔案。"],
+["你們自行修改後的效果和相容性，不再屬於原交付保證範圍。","你们自行修改后的效果和兼容性，不再属于原交付保证范围。","Results and compatibility after your own edits will fall outside the original delivery warranty.","你哋自行修改後嘅效果同相容性，唔再屬於原交付保證範圍。"],
+["為避免版本混亂，我會標明最後核准檔和交接日期。","为避免版本混乱，我会标明最终批准文件和交接日期。","To prevent version confusion, I will label the final approved file and handover date.","為避免版本亂，我會標明最後核准檔同交接日期。"],
+["雲端工作檔含有其他客戶或內部資料，我只能匯出本項目的獨立副本。","云端工作文件包含其他客户或内部信息，我只能导出本项目的独立副本。","The cloud workspace contains other client or internal material, so I can only export a separate copy of this project.","雲端工作檔有其他客戶或者內部資料，我只可以匯出今個項目獨立副本。"],
+["我不能交出帳戶登入資料，但可以按約定轉移本項目檔案。","我不能提供账户登录信息，但可以按约定转移本项目文件。","I cannot share account credentials, but I can transfer the project files under agreed terms.","我唔可以交帳戶登入資料，但可以按約定轉移今個項目檔案。"],
+["合約只寫了 PDF 和圖片成品，不能事後把製作檔理解成同一項交付。","合同只列出 PDF 和图片成品，不能事后把制作文件视为同一项交付。","The contract lists PDF and image outputs; production files cannot be treated afterward as the same deliverable.","合約只寫 PDF 同圖片成品，唔可以事後將製作檔當同一項交付。"],
+["如果原始檔從一開始就是必要條件，應該在報價時納入，而不是完成後免費追加。","如果源文件从一开始就是必要条件，就应该在报价阶段纳入，而不是完成后免费追加。","If source files were essential from the start, they should have been included at quotation stage rather than added free after completion.","如果原始檔一開始就係必要條件，應該報價時納入，唔係完成後免費追加。"],
+["我願意配合交接，但不接受把新增權利包裝成『順手發個檔』。","我愿意配合交接，但不能把新增权利包装成“顺手发个文件”。","I am willing to support a handover, but additional rights are not simply a file sent as a favour.","我願意配合交接，但唔接受將新增權利包裝成『順手發個檔』。"],
+["買到成品不等於連廚房和食譜也一起買了。","购买成品不等于连厨房和配方也一并买下。","Buying the finished product does not automatically include the kitchen and recipe.","買咗成品唔等於連廚房同食譜都一齊買埋。"],
+["原始檔不是成品背後免費附送的彩蛋。","源文件不是藏在成品后面免费附送的彩蛋。","The source file is not a free bonus hidden behind the final deliverable.","原始檔唔係成品後面免費附送嘅彩蛋。"],
+["可以給，但要按未包含的交付項目處理。","可以提供，但需要按照合同外的交付项目处理。","I can provide it, but it must be handled as an out-of-scope deliverable.","可以俾，但要按合約未包括嘅交付項目處理。"],
+["免費交出完整原始檔不在本次合作範圍。","免费提供完整源文件不在本次合作范围内。","Free release of the complete source files is outside this engagement.","免費交完整原始檔唔喺今次合作範圍。"],
+["我的方案是：保留現有成品交付，或另簽原始檔交接；請選一項。","我的方案是：维持现有成品交付，或另签源文件交接协议；请选一项。","My options are the existing final delivery or a separate source-file handover agreement. Please choose one.","我嘅方案係：維持現有成品交付，或者另簽原始檔交接；請揀一項。"]
+]);
+
+add({id:'new27',domain:'travel',domainLabel:{hant:'旅行',hans:'旅行',en:'Travel'},relation:{hant:'住宿方',hans:'住宿方',en:'Accommodation provider'},goal:{hant:'安全提交證件資料',hans:'安全提交证件信息',en:'Submit identity details safely'},title:{hant:'酒店或民宿要求你把護照照片傳到房東的私人聊天帳號',hans:'酒店或民宿要求你把护照照片发送到房东的私人聊天账号',en:'A hotel or host asks you to send a passport photo to a personal messaging account'}},[
+["我可以配合合法登記，但不會把護照照片傳到私人聊天帳號。","我可以配合合法登记，但不会把护照照片发到私人聊天账号。","I will comply with lawful registration, but I will not send my passport image to a personal messaging account.","我可以配合法定登記，但唔會將護照相傳去私人聊天帳號。"],
+["請提供住宿平台內或官方網站的安全上傳入口。","请提供订房平台内或官方网站的安全上传入口。","Please provide a secure upload portal within the booking platform or official website.","請提供訂房平台內或者官方網站嘅安全上傳入口。"],
+["我可以入住時出示護照，由前台按規定登記。","我可以在入住时出示护照，由前台按照规定登记。","I can present my passport at check-in for the front desk to register as required.","我可以入住嗰陣出示護照，由前台按規定登記。"],
+["如果必須提前提交，請先說明法律依據和需要的具體欄位。","如果必须提前提交，请先说明法律依据和所需的具体信息。","If advance submission is mandatory, state the legal basis and the exact data fields required.","如果一定要提前交，請先講明法律依據同要邊啲資料。"],
+["請告訴我資料由誰查看、保存多久，以及何時刪除。","请说明谁能查看这些信息、保存多久，以及何时删除。","Tell me who can access the data, how long it is retained, and when it is deleted.","請話我知邊個會睇到啲資料、保存幾耐同幾時刪。"],
+["私人聊天軟件沒有顯示你們的資料保護政策，我不能直接傳送。","私人聊天软件没有显示你们的数据保护政策，我不能直接发送。","A personal messaging app does not show your data-protection process, so I cannot send it there.","私人聊天軟件冇顯示你哋資料保護政策，我唔可以直接傳。"],
+["請在訂房平台訊息裡確認這項要求，讓客服也能核實。","请在订房平台消息中确认这项要求，方便客服核实。","Confirm this request in the booking-platform messages so support can verify it.","請喺訂房平台訊息確認呢項要求，方便客服核實。"],
+["在平台客服確認前，我不會把證件照片傳給個人帳號。","在平台客服确认之前，我不会把证件照片发给个人账号。","I will not send an identity-document image to a personal account until platform support verifies the request.","平台客服確認之前，我唔會將證件相傳俾個人帳號。"],
+["你可以發正式入住表格，我只填登記所需的資料。","你可以发送正式入住表格，我只填写登记所必需的信息。","Send an official check-in form and I will provide only the information required for registration.","你可以發正式入住表，我只填登記需要嘅資料。"],
+["如果規定允許遮蓋非必要欄位，我會提供加水印和遮蓋後的副本。","如果规定允许遮挡非必要信息，我会提供加水印并遮挡后的副本。","If permitted, I will provide a watermarked copy with nonessential fields obscured.","如果規定容許遮住非必要資料，我會提供加水印同遮蓋後副本。"],
+["水印會寫明只限本次住宿登記，不得作其他用途。","水印会注明仅限本次住宿登记，不得用于其他用途。","The watermark will state that the copy is solely for this stay's registration and no other use.","水印會寫明只限今次住宿登記，唔可以用作其他用途。"],
+["請不要同時索取護照、自拍照和信用卡照片，這超出一般入住需要。","请不要同时索取护照、自拍照和银行卡照片，这超出一般入住需求。","Do not request passport, selfie, and card images together; that exceeds normal check-in needs.","請唔好同時要護照、自拍同信用卡相，呢個超出一般入住需要。"],
+["我不會提供護照完整頁面以外的其他證件或登入驗證碼。","我不会额外提供其他证件或登录验证码。","I will not provide additional identity documents or login verification codes.","我唔會額外提供其他證件或者登入驗證碼。"],
+["請提供住宿方的正式名稱、地址和資料負責人聯絡方式。","请提供住宿方的正式名称、地址和数据负责人联系方式。","Provide the accommodation's legal name, address, and privacy contact.","請提供住宿方正式名稱、地址同資料負責人聯絡方式。"],
+["這個帳號名稱和訂單上的房東不同，我需要先核實身分。","这个账号名称与订单上的房东不一致，我需要先核实身份。","This account name differs from the host shown on the booking, so I need to verify the identity first.","呢個帳號名同訂單房東唔同，我要先核實身份。"],
+["請從訂單內的官方帳號重新發送要求，不要用另一個私人號碼。","请从订单中的官方账号重新发送要求，不要使用另一个私人号码。","Resend the request from the official account linked to the booking, not another personal number.","請由訂單入面官方帳號重新發要求，唔好用另一個私人號碼。"],
+["如果上傳連結不是官方網域，我不會輸入護照資料。","如果上传链接不是官方域名，我不会输入护照信息。","I will not enter passport information on a link outside the official domain.","如果上傳連結唔係官方網域，我唔會輸入護照資料。"],
+["請確認傳輸是否加密，以及檔案會否下載到私人手機。","请确认传输是否加密，以及文件是否会下载到私人手机。","Confirm whether transmission is encrypted and whether the file will be downloaded to a personal phone.","請確認傳輸有冇加密，同埋檔案會唔會下載到私人手機。"],
+["同行人的證件也要由本人同意，不能由我代為發送。","同行人的证件也需要本人同意，我不能替他们发送。","Each traveller must consent to sharing their own document; I cannot send it on their behalf.","同行人證件都要本人同意，我唔可以代佢哋發送。"],
+["未成年人的資料更需要安全渠道，請提供正式登記方式。","未成年人的信息更需要安全渠道，请提供正规的登记方式。","A minor's information requires an especially secure channel. Please provide a formal registration method.","未成年人資料更加需要安全渠道，請提供正式登記方法。"],
+["如果只是核對姓名和證件號，請不要索取整張照片。","如果只需要核对姓名和证件号码，请不要索取整张照片。","If you only need to verify the name and document number, do not request a full image.","如果只係核對姓名同證件號，請唔好索取成張相。"],
+["我不是拒絕登記，而是拒絕用無法核實的私人渠道交證件。","我不是拒绝登记，而是拒绝通过无法核实的私人渠道提交证件。","I am not refusing registration; I am refusing to submit identity documents through an unverifiable personal channel.","我唔係拒絕登記，係拒絕用核實唔到嘅私人渠道交證件。"],
+["請給我二十四小時讓平台客服確認，不要以取消入住來催促。","请给我二十四小时让平台客服确认，不要以取消入住相逼。","Allow twenty-four hours for platform support to verify this request; do not threaten cancellation to rush me.","請俾我二十四個鐘等平台客服確認，唔好用取消入住催我。"],
+["如果安全提交是入住必要條件，請在訂單中正式補充並提供選擇。","如果安全提交是入住必要条件，请在订单中正式补充并提供可选方式。","If document submission is a condition of check-in, add it formally to the booking and offer a secure method.","如果安全交資料係入住必要條件，請喺訂單正式補充同提供選擇。"],
+["若你們只能接受私人聊天傳圖，請由住宿方取消並全額退款。","如果你们只接受通过私人聊天发送图片，请由住宿方取消并全额退款。","If personal messaging is the only accepted method, the property should cancel and provide a full refund.","如果你哋只接受私人聊天傳相，請由住宿方取消同全額退款。"],
+["我不會自行取消，因為未披露的證件傳送方式是住宿方新增的。","我不会自行取消，因为未提前披露的证件发送方式是住宿方新增的。","I will not cancel from my side because this undisclosed document-transfer method was added by the property.","我唔會自己取消，因為未披露嘅證件傳送方法係住宿方新增。"],
+["我會把這項要求交給平台客服核實，請暫停追問證件。","我会把这项要求提交给平台客服核实，请先停止催要证件。","I will ask platform support to verify this request. Stop pressing for the document meanwhile.","我會將呢項要求交俾平台客服核實，請暫停催證件。"],
+["護照不是入住前的聊天貼圖，請給一個正式渠道。","护照不是入住前随手发送的聊天图片，请提供正式渠道。","A passport is not a casual chat attachment. Provide a formal channel.","護照唔係入住前隨手傳嘅聊天圖片，請提供正式渠道。"],
+["一句『大家都這樣傳』不能代替資料保護措施。","一句“大家都这样发”不能代替数据保护措施。","“Everyone sends it this way” is not a substitute for data-protection safeguards.","一句『個個都係咁傳』唔可以代替資料保護措施。"],
+["安全入口、入住時查驗，兩者任選；私人帳號傳護照不考慮。","安全上传入口或入住时查验，两种方式任选；私人账号收护照不考虑。","Use a secure portal or inspect it at check-in. Sending a passport to a personal account is not an option.","安全入口或者入住時查驗，兩樣揀一樣；私人帳號收護照唔考慮。"]
+]);
+})();
