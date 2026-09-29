@@ -5,11 +5,19 @@
   random=random||Math.random;
   function state(id,keys){
    if(!states[id]){
-    var remaining=keys.slice(1);
-    for(var i=remaining.length-1;i>0;i--){
-     var j=Math.floor(random()*(i+1));
-     var temp=remaining[i];remaining[i]=remaining[j];remaining[j]=temp;
+    var specific=[],fallback=[];
+    for(var k=1;k<keys.length;k++){
+     (/^qv2-/.test(keys[k])?fallback:specific).push(keys[k]);
     }
+    function shuffle(a){
+     for(var i=a.length-1;i>0;i--){
+      var j=Math.floor(random()*(i+1));
+      var temp=a[i];a[i]=a[j];a[j]=temp;
+     }
+     return a;
+    }
+    // Pop from the end: scenario-specific authored lines are exhausted first.
+    var remaining=shuffle(fallback).concat(shuffle(specific));
     states[id]={current:keys[0],remaining:remaining};
    }
    return states[id];
