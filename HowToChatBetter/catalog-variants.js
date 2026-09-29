@@ -8,10 +8,10 @@ function add(id,key,hant,hans,en,yue){
  s.replies.yue[key]=yue;
 }
 add("w01","soft",
-"想再輕輕跟一下 XX 的進度，不急著要最終版，如果目前版本方便先給我，我這邊可以先開始。",
-"想再轻轻跟一下 XX 的进度，不急着要最终版，如果目前版本方便先给我，我这边可以先开始。",
+"想再跟進一下 XX 的進度，不急著要最終版，如果目前版本方便先給我，我這邊可以先開始。",
+"想再跟进一下 XX 的进度，不急着要最终版，如果目前版本方便先给我，我这边可以先开始。",
 "Just a gentle follow-up on XX. No need to wait for the final version — the current one would already help me get started.",
-"想輕輕跟一跟 XX 進度，唔使等 final version，而家版本方便嘅話俾住我先都得。");
+"想問一問 XX 進度，唔使等 final version，而家版本方便嘅話俾住我先都得。");
 add("w01","cold",
 "XX 現在方便提供到哪個版本？我這邊需要開始處理。",
 "XX 现在方便提供到哪个版本？我这边需要开始处理。",
