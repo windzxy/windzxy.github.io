@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new20',domain:'job',domainLabel:{hant:'求職',hans:'求职',en:'Job Search'},relation:{hant:'招聘方',hans:'招聘方',en:'Recruiter'},goal:{hant:'保護其他錄用資料',hans:'保护其他录用资料',en:'Protect another offer'},title:{hant:'招聘方要求你提供另一家公司的錄用信和薪資明細，才願意談待遇',hans:'招聘方要求你提供另一家公司的录用通知和薪资明细，才愿意谈待遇',en:'A recruiter demands another company’s offer letter and salary details before discussing compensation'}},[
+["我可以說明期望薪資和決定期限，但不會提供另一家公司的完整錄用信。","我可以说明期望薪资和决定期限，但不会提供另一家公司的完整录用通知。","I can share my expectations and decision deadline, but not another company's full offer letter.","我可以講期望薪酬同決定期限，但唔會提供另一間公司完整錄用信。"],
+["那份文件包含第三方資料，我需要尊重對方的保密要求。","那份文件包含第三方信息，我需要尊重对方的保密要求。","That document contains third-party information, and I need to respect its confidentiality.","嗰份文件有第三方資料，我需要尊重對方保密要求。"],
+["待遇應該根據職位價值和我的經驗討論，不必由另一份 offer 定價。","待遇应该根据岗位价值和我的经验讨论，不必由另一份 offer 定价。","Compensation should reflect this role and my experience, not be priced from another offer.","待遇應該按職位價值同我經驗傾，唔使由另一份 offer 定價。"],
+["我目前的期望範圍是 X 至 Y，這是我能提供的談薪依據。","我目前的期望范围是 X 到 Y，这就是我能提供的谈薪依据。","My expected range is X to Y; that is the basis I can provide for this discussion.","我依家期望範圍係 X 至 Y，呢個係我可以提供嘅談薪依據。"],
+["我可以確認手上有其他機會，但不方便披露公司名稱或文件內容。","我可以确认手上有其他机会，但不方便透露公司名称或文件内容。","I can confirm that I have another opportunity, but not disclose the company or its documents.","我可以確認手上有其他機會，但唔方便透露公司名或者文件內容。"],
+["請問索取完整錄用信的具體用途是甚麼？是否有其他驗證方式？","请问索取完整录用通知的具体用途是什么？有没有其他验证方式？","What exactly would the full letter be used for, and is there another way to proceed?","請問要完整錄用信具體做乜？有冇其他驗證方法？"],
+["如果只是確認期限，我可以提供截止日期，不需要交出薪資細項。","如果只是确认期限，我可以提供答复截止日期，不需要提交薪资明细。","If timing is the concern, I can share the response deadline without disclosing compensation details.","如果只係確認期限，我可以提供截止日期，唔使交出薪酬細項。"],
+["我不會把一家公司的內部文件交給另一家公司，希望你理解。","我不会把一家公司的内部文件交给另一家公司，希望你能理解。","I will not pass one company's internal document to another company. I hope you understand.","我唔會將一間公司內部文件交俾另一間公司，希望你理解。"],
+["如果貴司有既定薪資範圍，可以先直接告訴我是否匹配。","如果贵司有既定薪资范围，可以先直接告诉我是否匹配。","If the role has an approved salary band, please tell me whether my expectations fit it.","如果貴公司有既定薪酬範圍，可以先直接話我知係咪匹配。"],
+["我的市場價值不會因為有沒有把別人的 offer 拍照給你而改變。","我的市场价值不会因为有没有把别人的 offer 拍给你而改变。","My market value does not change based on whether I photograph someone else's offer for you.","我嘅市場價值唔會因為有冇影低人哋份 offer 俾你而改變。"],
+["我願意誠實談條件，但不會用洩露第三方資料來證明誠信。","我愿意诚实讨论条件，但不会通过泄露第三方信息来证明诚信。","I will discuss terms honestly, but I will not prove honesty by disclosing third-party information.","我願意誠實傾條件，但唔會用洩露第三方資料證明誠信。"],
+["可以先談你們願意為這個職位提供甚麼，再看雙方是否合適。","可以先谈谈你们愿意为这个岗位提供什么，再判断双方是否合适。","Let's first discuss what you offer for this role, then decide whether there is a fit.","可以先傾你哋願意為呢個職位提供乜，再睇雙方係咪合適。"],
+["我不希望談薪變成比對別家公司文件的拍賣。","我不希望谈薪变成拿别家公司文件互相竞价。","I do not want compensation discussions to become an auction of competitors' documents.","我唔想談薪變成拎其他公司文件嚟拍賣。"],
+["另一份錄用的總待遇較高，但我會綜合職責、發展和工作方式決定。","另一份录用的整体待遇更高，但我会综合职责、发展和工作方式决定。","The other package is higher overall, but I will weigh scope, growth, and working model as well.","另一份錄用整體待遇高啲，但我會綜合職責、發展同工作方式決定。"],
+["我可以分享不含公司名稱的待遇區間，但不會傳送原始文件。","我可以分享不含公司名称的待遇区间，但不会发送原始文件。","I can share an anonymized compensation range, but I will not send the original document.","我可以分享唔包括公司名嘅待遇範圍，但唔會傳原始文件。"],
+["即使遮掉名稱，文件格式和條款仍可能識別對方，所以我不會上傳。","即使遮住名称，文件格式和条款仍可能识别对方，所以我不会上传。","Even redacted, the format and terms may identify the company, so I will not upload it.","就算遮咗名，文件格式同條款都可能認得出對方，所以我唔會上傳。"],
+["若不提供文件就不能繼續，請直接告訴我，我會決定是否退出流程。","如果不提供文件就无法继续，请直接告诉我，我会决定是否退出流程。","If the process cannot continue without the document, tell me directly and I will decide whether to withdraw.","如果唔提供文件就繼續唔到，請直接話我知，我會決定係咪退出流程。"],
+["我接受背景和資歷核實，但另一家公司的薪資明細不屬於核實範圍。","我接受背景和资历核实，但另一家公司的薪资明细不属于核实范围。","I accept verification of my background and qualifications; another employer's salary details are separate.","我接受背景同資歷核實，但另一間公司薪酬明細唔屬於核實範圍。"],
+["請把這項要求和資料保存方式用電郵說明，我再評估是否提供任何摘要。","请用邮件说明这项要求和资料保存方式，我再考虑是否提供摘要。","Please explain the request and data-retention process by email, then I can consider a summary.","請用電郵講明呢項要求同資料保存方式，我再考慮會唔會提供摘要。"],
+["誰會看到這份文件、保存多久、用完會否刪除？這些需要先說清楚。","谁会看到这份文件、保存多久、用完是否删除？这些需要先说明。","Who would access it, how long would it be retained, and would it be deleted afterward?","邊個會睇到份文件、保存幾耐、用完會唔會刪？呢啲要先講清楚。"],
+["我不會提供能被轉發或存檔的截圖，可以在通話中口頭說明我的時間線。","我不会提供可以被转发或存档的截图，但可以在通话中口头说明时间安排。","I will not provide a screenshot that can be stored or forwarded, but I can explain my timeline verbally.","我唔會提供可以轉發或者存檔嘅截圖，但可以通話口頭講時間線。"],
+["如果你們只在有競爭 offer 時才談合理待遇，我想先了解這個政策。","如果只有拿到其他 offer 才能谈合理待遇，我想先了解这个政策。","If reasonable compensation is discussed only when a competing offer exists, I would like that policy clarified.","如果淨係有競爭 offer 先傾合理待遇，我想先了解呢個政策。"],
+["你們可以相信我的陳述，也可以按自身預算出價；我不會提交證物式談薪。","你们可以相信我的说明，也可以按自身预算出价；我不接受像提交证据一样谈薪。","You may rely on my statement or make an offer from your budget; I will not negotiate by submitting evidence exhibits.","你哋可以信我陳述，或者按自己預算出價；我唔會用交證物方式談薪。"],
+["談的是我加入後能創造的價值，不是另一家公司願意付多少。","现在谈的是我加入后能创造的价值，不是另一家公司愿意付多少。","We are discussing the value I can create here, not what another company will pay.","依家傾嘅係我加入後可以創造嘅價值，唔係另一間公司肯俾幾多。"],
+["我可以告訴你需要在星期五前決定，完整 offer 仍然不分享。","我可以告诉你需要在周五前决定，但仍不会分享完整 offer。","I can tell you I need a decision by Friday; the full offer remains private.","我可以話你知星期五前要決定，但完整 offer 仍然唔分享。"],
+["若你需要主管批准更高待遇，可以用我的期望範圍申請，不必附第三方文件。","如果需要主管批准更高待遇，可以用我的期望范围申请，不必附第三方文件。","If approval is needed for a higher package, use my stated range rather than attaching a third-party document.","如果要主管批准高啲待遇，可以用我期望範圍申請，唔使附第三方文件。"],
+["我不會因為被質疑就放棄基本私隱；我們可以在透明但有界線的前提下談。","我不会因为受到质疑就放弃基本隐私；我们可以透明沟通，但需要边界。","I will not abandon basic privacy because my statement is questioned; we can be transparent with boundaries.","我唔會因為俾人質疑就放棄基本私隱；我哋可以透明溝通，但要有界線。"],
+["如果這是不可協商的硬性要求，那我們對候選人私隱的看法可能不合適。","如果这是无法协商的硬性要求，我们对候选人隐私的看法可能不一致。","If this is non-negotiable, our views on candidate privacy may not be compatible.","如果呢個係冇得傾嘅硬性要求，我哋對候選人私隱睇法可能唔一致。"],
+["我已經清楚回答不提供原件；如果仍要繼續談，請回到職位和待遇本身。","我已经明确答复不提供原件；如果还要继续，请回到岗位和待遇本身。","I have clearly declined to provide the document. If we continue, let's return to the role and package.","我已經清楚答咗唔提供原件；如果仲要繼續，請返去傾職位同待遇本身。"],
+["完整錄用信不提供。我的期望是 X，決定期限是 Y，請按這些資訊評估。","完整录用通知不提供。我的期望是 X，决定期限是 Y，请根据这些信息评估。","I will not provide the full offer letter. My expectation is X and deadline is Y; please assess on that basis.","完整錄用信唔提供。我期望係 X，決定期限係 Y，請按呢啲資訊評估。"]
+]);
+
+add({id:'new21',domain:'travel',domainLabel:{hant:'旅行',hans:'旅行',en:'Travel'},relation:{hant:'住宿房東',hans:'住宿房东',en:'Accommodation host'},goal:{hant:'拒絕平台外付款',hans:'拒绝平台外付款',en:'Refuse off-platform payment'},title:{hant:'民宿入住前，房東突然要求你離開訂房平台私下支付一筆押金',hans:'民宿入住前，房东突然要求你离开订房平台私下支付一笔押金',en:'Before check-in, a host suddenly asks you to pay a deposit outside the booking platform'}},[
+["請把押金要求放回訂房平台處理，我不會私下轉帳。","请通过订房平台处理押金，我不会私下转账。","Please process the deposit through the booking platform; I will not transfer money privately.","請將押金要求放返訂房平台處理，我唔會私下轉帳。"],
+["原訂單沒有列出這筆費用，請先在平台上說明依據。","原订单没有列出这笔费用，请先在平台上说明依据。","This charge was not listed in the booking. Please explain it through the platform first.","原訂單冇列出呢筆費用，請先喺平台講明依據。"],
+["如果押金是必要條件，請發送平台認可的正式付款連結。","如果押金是必要条件，请发送平台认可的正式付款链接。","If the deposit is required, send an official payment link approved by the platform.","如果押金係必要條件，請發平台認可嘅正式付款連結。"],
+["我不會使用私人銀行帳戶、電子錢包或加密貨幣支付住宿押金。","我不会通过私人银行账户、电子钱包或加密货币支付住宿押金。","I will not pay an accommodation deposit to a personal bank account, wallet, or cryptocurrency address.","我唔會用私人銀行戶口、電子錢包或者加密貨幣交住宿押金。"],
+["請在平台訊息裡確認金額、退款條件和退還時間。","请在平台消息里确认金额、退款条件和退还时间。","Confirm the amount, refund conditions, and return timeline in the platform messages.","請喺平台訊息確認金額、退款條件同退還時間。"],
+["入住前突然增加費用，我需要先向平台客服核實。","入住前突然增加费用，我需要先向平台客服核实。","A new charge just before arrival needs verification with platform support.","入住前突然加費用，我要先向平台客服核實。"],
+["在客服回覆前，我不會點擊外部連結或付款。","在客服回复之前，我不会点击外部链接或付款。","I will not open an external link or pay until support confirms the request.","客服回覆之前，我唔會撳外部連結或者付款。"],
+["可以把押金加入原訂單嗎？這樣付款和退款都有紀錄。","可以把押金加入原订单吗？这样付款和退款都有记录。","Can you add the deposit to the original booking so payment and refund are recorded?","可唔可以將押金加入原訂單？咁付款同退款都有記錄。"],
+["若平台不支援這筆押金，請解釋為甚麼我要在平台外承擔風險。","如果平台不支持这笔押金，请说明为什么要让我在平台外承担风险。","If the platform does not support the deposit, explain why I should bear the off-platform risk.","如果平台唔支援呢筆押金，請解釋點解要我喺平台外承擔風險。"],
+["我可以在入住時按正式收據支付，但不會提前匯入私人帳戶。","我可以入住时凭正式收据支付，但不会提前转入私人账户。","I can pay against a formal receipt at check-in, but not send money to a private account beforehand.","我可以入住嗰陣按正式收據支付，但唔會預先轉入私人戶口。"],
+["請提供住宿的押金政策原文，以及我預訂時看到它的位置。","请提供住宿押金政策的原文，以及我预订时可以看到它的位置。","Please provide the original deposit policy and where it appeared when I booked.","請提供住宿押金政策原文，同埋我預訂嗰陣喺邊度睇到。"],
+["這不是小心過頭，是平台外付款沒有同樣的保障。","这不是过度谨慎，而是平台外付款没有同等保障。","This is not excessive caution; off-platform payments do not carry the same protection.","呢個唔係小心過頭，係平台外付款冇同樣保障。"],
+["你可以在平台內向我發出修改訂單，我確認後再付款。","你可以在平台内向我发出订单修改，我确认后再付款。","Send an official booking amendment through the platform and I can review it before paying.","你可以喺平台內發修改訂單俾我，我確認後再付款。"],
+["請不要用『不付款就不給地址』催促，我需要平台先確認。","请不要用“不付款就不给地址”催促，我需要平台先确认。","Please do not pressure me by withholding the address; I need platform confirmation first.","請唔好用『唔付款就唔俾地址』催我，我要平台先確認。"],
+["如果這筆費用未在預訂時披露，我希望維持原訂單條件。","如果这笔费用预订时没有披露，我希望维持原订单条件。","If this fee was not disclosed at booking, I expect the original terms to stand.","如果呢筆費用預訂嗰陣冇披露，我希望維持原訂單條件。"],
+["若你不能按原條件接待，請在平台內取消並全額退款。","如果你无法按原条件接待，请在平台内取消并全额退款。","If you cannot host under the original terms, cancel through the platform and issue a full refund.","如果你按原條件接待唔到，請喺平台內取消同全額退款。"],
+["我不會自行取消，因為額外付款要求是房東提出的。","我不会自行取消，因为额外付款要求是房东提出的。","I will not cancel on my side because the additional payment request came from the host.","我唔會自己取消，因為額外付款要求係房東提出。"],
+["所有討論請留在平台訊息，不要轉到私人通訊軟件。","所有讨论请保留在平台消息里，不要转到私人聊天软件。","Keep all discussion in the platform messages rather than moving to a private app.","所有討論請留喺平台訊息，唔好轉去私人通訊軟件。"],
+["我會把這項要求截圖交給平台客服，請暫停催款。","我会把这项要求截图发给平台客服，请先停止催款。","I am sending a screenshot of this request to platform support. Please stop the payment reminders.","我會將呢項要求截圖交俾平台客服，請暫停催款。"],
+["請提供房東或公司的正式名稱、收據資料和退款責任人。","请提供房东或公司的正式名称、收据信息和退款负责人。","Provide the legal host or company name, receipt details, and the party responsible for refunds.","請提供房東或者公司正式名稱、收據資料同退款負責人。"],
+["只說『大家都這樣付』不能代替訂單條款。","只说“大家都这样付”不能代替订单条款。","Everyone pays this way does not replace the written booking terms.","淨係話『大家都係咁俾』唔可以代替訂單條款。"],
+["如果只是防止損壞，可以在平台允許的範圍內做信用卡預授權。","如果只是防止损坏，可以在平台允许的范围内做信用卡预授权。","If this is only for damages, use a card pre-authorisation within the platform's permitted process.","如果只係防止損壞，可以喺平台容許範圍做信用卡預授權。"],
+["我不會提供卡號照片、驗證碼或網銀登入資料。","我不会提供银行卡照片、验证码或网银登录信息。","I will not provide card photos, verification codes, or online-banking credentials.","我唔會提供銀行卡相、驗證碼或者網上銀行登入資料。"],
+["付款頁如果不是平台官方網域，我不會輸入任何資料。","如果付款页面不是平台官方域名，我不会输入任何信息。","I will not enter any information on a payment page outside the platform's official domain.","付款頁如果唔係平台官方網域，我唔會輸入任何資料。"],
+["我已支付訂單列明的全部金額，新增押金需要正式修改訂單。","我已经支付订单列明的全部金额，新增押金需要正式修改订单。","I have paid the full amount shown. A new deposit requires a formal booking amendment.","我已經支付訂單列明全部金額，新增押金要正式修改訂單。"],
+["請給客服二十四小時確認，不要以即將入住為由逼我立即轉帳。","请给客服二十四小时核实，不要用即将入住为由逼我马上转账。","Allow support twenty-four hours to verify this; do not use the approaching check-in to force payment.","請俾客服二十四個鐘核實，唔好用就快入住逼我即刻轉帳。"],
+["你的帳戶名稱和住宿名稱不同，我不會在核實前付款。","你的收款账户名称和住宿名称不一致，我不会在核实前付款。","The payee name differs from the property name, so I will not pay before verification.","你收款戶口名同住宿名唔同，我核實前唔會付款。"],
+["把保障留在平台內，對房東和住客都比較清楚。","把保障留在平台内，对房东和住客都更清楚。","Keeping the transaction on-platform gives both host and guest a clearer record.","將保障留喺平台內，對房東同住客都清楚啲。"],
+["我不是拒絕合理押金，而是拒絕沒有訂單紀錄的私人收款。","我不是拒绝合理押金，而是拒绝没有订单记录的私人收款。","I am not rejecting a reasonable deposit; I am rejecting an unrecorded private payment.","我唔係拒絕合理押金，係拒絕冇訂單記錄嘅私人收款。"],
+["我的決定是：平台內付款，或按原訂單入住；其他方式不接受。","我的决定是：通过平台付款，或按原订单入住；其他方式不接受。","My position is platform payment or check-in under the original booking. I will not use another method.","我嘅決定係：平台內付款，或者按原訂單入住；其他方式唔接受。"]
+]);
+})();
