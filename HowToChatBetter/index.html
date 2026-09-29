@@ -18,9 +18,9 @@ header{position:sticky;top:0;z-index:20;background:rgba(245,245,242,.9);backdrop
 .brand{display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:-.03em}
 .brand svg{width:27px;height:27px;flex:none}
 .spacer{flex:1}
-.langs,.row{display:flex;gap:7px;overflow:auto;scrollbar-width:none}
+.langs,.row{display:flex;gap:7px;overflow:auto;scrollbar-width:none;flex-wrap:nowrap}
 .langs::-webkit-scrollbar,.row::-webkit-scrollbar{display:none}
-.langbtn,.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;color:#5d5d57;white-space:nowrap}
+.langbtn,.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;color:#5d5d57;white-space:nowrap;flex:0 0 auto}
 .langbtn{padding:7px 10px;font-size:12px}
 .active{background:#171717!important;color:#fff!important;border-color:#171717!important}
 
@@ -31,6 +31,12 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 .search button{border:0;background:#171717;color:#fff;border-radius:13px;padding:0 16px}
 
 .controls{padding:6px 0 8px}
+#domainFilters{gap:6px;overflow:visible}
+#domainFilters .chip{padding:7px 10px;font-size:14px}
+@media(min-width:900px){
+  #domainFilters{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);width:100%}
+  #domainFilters .chip{width:100%;padding:7px 6px;text-align:center}
+}
 .control{margin-top:11px}
 .label{font-size:11px;font-weight:800;letter-spacing:.09em;color:#8b8b84;margin-bottom:7px;text-transform:uppercase}
 
@@ -78,6 +84,10 @@ h1{font-size:clamp(42px,6.8vw,70px);line-height:1.02;letter-spacing:-.058em;marg
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,15px);opacity:0;background:#171717;color:#fff;border-radius:10px;padding:9px 13px;transition:.18s;pointer-events:none;z-index:50}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
+@media(max-width:899px){
+ #domainFilters{display:flex;overflow-x:auto}
+ #domainFilters .chip{width:auto;padding:8px 12px}
+}
 @media(max-width:720px){
  .wrap{padding:0 14px}.nav{height:56px}.brand span{display:none}
  .hero{padding:34px 0 16px}h1{font-size:43px}
