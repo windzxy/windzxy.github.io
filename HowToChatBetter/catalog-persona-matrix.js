@@ -119,7 +119,7 @@ const W={
  },
  en:{
   clarify:b=>"Let me make this clear: "+punct(b,"."),
-  empath:b=>"I understand there may be reasons, but "+punct(b,"."),
+  empath:b=>"I understand there may be reasons. Still: "+punct(b,"."),
   boundary:b=>"My boundary is simple: "+punct(b,"."),
   consequence:b=>punct(b,".")+" Otherwise I'll proceed with the current plan.",
   question:b=>"So how are you planning to handle this now? "+punct(b,"."),
@@ -128,13 +128,13 @@ const W={
   professional:b=>"To avoid any misunderstanding later, let me confirm: "+punct(b,"."),
   concise:b=>"Short version: "+punct(b,"."),
   detached:b=>"Leaving emotion aside, here's the issue: "+punct(b,"."),
-  warm:b=>"I know nobody wants this to become ugly, so "+punct(b,"."),
+  warm:b=>"I know nobody wants this to become ugly. Here's my point: "+punct(b,"."),
   assertive:b=>"I can work with this, but only on one condition: "+punct(b,"."),
   resigned:b=>"Fine. No more circling around it: "+punct(b,"."),
   dry:b=>"Right. One point only: "+punct(b,"."),
   wry:b=>"This situation clearly has a schedule of its own. "+punct(b,"."),
   sarcasm:b=>"Interesting. Apparently this is how we're handling it. In that case: "+punct(b,"."),
-  tea:b=>"Maybe my expectations are just unusually high, but "+punct(b,"."),
+  tea:b=>"Maybe my expectations are just unusually high. Either way: "+punct(b,"."),
   yin:b=>"No worries. I just didn't realise this counted as handling it. "+punct(b,"."),
   shade:b=>"No need for dramatic language; the facts already do the work: "+punct(b,"."),
   roast:b=>"I'm not following this plot any further. "+punct(b,"."),
@@ -215,13 +215,56 @@ const W={
  }
 };
 
+const PREF={
+ clarify:["formal","matter-of-fact","clarify","direct","soft"],
+ empath:["soft","warm","formal","considerate","reflective"],
+ boundary:["boundary","direct","matter-of-fact","formal","hard-stop"],
+ consequence:["boundary","deadline","direct","reprimand","matter-of-fact"],
+ question:["question","clarify","gentle-ping","formal","soft"],
+ face:["formal","soft","matter-of-fact","direct"],
+ soft:["soft","warm","gentle-ping","formal","considerate"],
+ professional:["formal","matter-of-fact","accountable","plan","steady"],
+ concise:["short","shorter","tiny","brief","direct"],
+ detached:["matter-of-fact","cold","direct","steady","formal"],
+ warm:["warm","soft","considerate","formal"],
+ assertive:["boundary","direct","hard-stop","reprimand","formal"],
+ resigned:["dry","cold","direct","wry","matter-of-fact"],
+ dry:["dry","wry","cold","short","direct"],
+ wry:["wry","light-blame","roast","dark","mild-tease"],
+ sarcasm:["yin","dark","roast","wry","light-blame","clean-swear"],
+ tea:["tea","soft","warm","light-blame","formal"],
+ yin:["yin","dark","wry","roast","light-blame"],
+ shade:["dark","wry","matter-of-fact","light-blame","direct"],
+ roast:["roast","wry","light-blame","mild-tease","humor"],
+ internet:["short","shorter","tiny","roast","wry"],
+ meme:["roast","humor","wry","light-blame","short"],
+ blunt:["direct","hard-stop","reprimand","cold","short"],
+ rude:["rude","reprimand","hard-stop","raw","direct"],
+ raw:["raw","rude","reprimand","hard-stop","direct"],
+ cleanSwear:["clean-swear","roast","wry","dark","reprimand"],
+ fire:["direct","hard-stop","reprimand","boundary","raw"],
+ earth:["matter-of-fact","formal","steady","plan","direct"],
+ air:["clarify","question","wry","direct","formal"],
+ water:["soft","reflective","warm","considerate","formal"],
+ infj:["reflective","soft","boundary","considerate","formal"],
+ entp:["question","wry","roast","direct","clarify"],
+ istj:["matter-of-fact","formal","deadline","steady","direct"],
+ enfp:["warm","playful","roast","soft","humor"],
+ boss:["hard-stop","direct","deadline","reprimand","matter-of-fact"],
+ hr:["formal","soft","matter-of-fact","boundary","professional"],
+ legal:["formal","matter-of-fact","reprimand","boundary","direct"],
+ cultured:["shade","formal","wry","boundary","matter-of-fact"],
+ lowEQ:["rude","raw","reprimand","direct","hard-stop"],
+ stoic:["matter-of-fact","cold","steady","direct","formal"],
+ playful:["roast","humor","mild-tease","light-blame","wry"],
+ reverse:["question","clarify","direct","boundary","wry"],
+ hardStop:["hard-stop","reprimand","direct","rude","boundary"],
+ command:["reprimand","hard-stop","direct","deadline","matter-of-fact"],
+ calmFirm:["boundary","matter-of-fact","direct","steady","formal"],
+ minimal:["shorter","short","tiny","brief","direct"]
+};
 const strategies=["clarify","empath","boundary","consequence","question","face","soft","professional","concise","detached","warm","assertive","resigned","dry","wry","sarcasm","tea","yin","shade","roast","internet","meme","blunt","rude","raw","cleanSwear","fire","earth","air","water","infj","entp","istj","enfp","boss","hr","legal","cultured","lowEQ","stoic","playful","reverse","hardStop","command","calmFirm","minimal"];
 
-function sourceTexts(scene,lang,script){
- const list=vals(scene,lang);
- if(lang==="zh") return list.map(v=>v[script]);
- return list;
-}
 function safeStrategy(scene,name){
  if(sensitive.has(scene.domain)&&["rude","raw","yin","sarcasm","lowEQ"].includes(name)){
   return name==="raw"?"calmFirm":name==="rude"?"assertive":name==="lowEQ"?"concise":"professional";
@@ -229,20 +272,29 @@ function safeStrategy(scene,name){
  if(protectedSoft.has(scene.domain)&&name==="raw") return "calmFirm";
  return name;
 }
+function authoredKeys(scene){
+ return Object.keys(scene.replies?.zh||{}).filter(k=>!k.startsWith("persona-"));
+}
+function seedKey(scene,strategy,index){
+ const available=authoredKeys(scene), prefs=PREF[strategy]||[];
+ const hits=prefs.filter(k=>available.includes(k));
+ if(hits.length)return hits[index%hits.length];
+ return available[index%available.length];
+}
 for(const scene of scenes){
- const h=sourceTexts(scene,"zh","hant"), s=sourceTexts(scene,"zh","hans"), e=sourceTexts(scene,"en"), y=sourceTexts(scene,"yue");
- if(!h.length||!s.length||!e.length||!y.length)continue;
+ const available=authoredKeys(scene);
+ if(!available.length)continue;
  const existing=new Set(Object.keys(scene.replies.zh||{}));
- let added=0;
  for(let i=0;i<strategies.length;i++){
   const key="persona-"+String(i+1).padStart(2,"0");
   if(existing.has(key))continue;
   const strategy=safeStrategy(scene,strategies[i]);
-  const hi=pick(h,(i*7+1)%h.length), si=pick(s,(i*7+1)%s.length), ei=pick(e,(i*7+1)%e.length), yi=pick(y,(i*7+1)%y.length);
-  scene.replies.zh[key]=z(W.hant[strategy](hi),W.hans[strategy](si));
-  scene.replies.en[key]=W.en[strategy](ei);
-  scene.replies.yue[key]=W.yue[strategy](yi);
-  added++;
+  const source=seedKey(scene,strategy,i);
+  const zv=scene.replies.zh[source], ev=scene.replies.en[source], yv=scene.replies.yue[source];
+  if(!zv||!zv.hant||!zv.hans||typeof ev!=="string"||typeof yv!=="string")continue;
+  scene.replies.zh[key]=z(W.hant[strategy](zv.hant),W.hans[strategy](zv.hans));
+  scene.replies.en[key]=W.en[strategy](ev);
+  scene.replies.yue[key]=W.yue[strategy](yv);
   if(Object.keys(scene.replies.zh).length>=36)break;
  }
 }
