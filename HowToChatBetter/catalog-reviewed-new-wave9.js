@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new24',domain:'family',domainLabel:{hant:'家庭',hans:'家庭',en:'Family'},relation:{hant:'同住家人',hans:'同住家人',en:'Family member'},goal:{hant:'保護私人郵件',hans:'保护私人邮件',en:'Protect private mail'},title:{hant:'同住家人未經同意，拆開寫著你名字的信件或包裹',hans:'同住家人未经同意，拆开写着你名字的信件或包裹',en:'A family member you live with opens mail or parcels addressed to you without permission'}},[
+["寫著我名字的信件和包裹，請等我自己拆。","写着我名字的信件和包裹，请留给我自己拆。","Please leave mail and parcels addressed to me for me to open.","寫住我個名嘅信同包裹，請留返俾我自己拆。"],
+["以後收到我的件，放在這個位置就好，不需要代我打開。","以后收到我的快件，放在这个位置就行，不需要替我打开。","In future, place my deliveries here; there is no need to open them for me.","以後收到我啲件，擺喺呢個位就得，唔使代我開。"],
+["你如果擔心是急件，可以先打電話問我，不要直接拆。","如果你担心是急件，可以先打电话问我，不要直接拆开。","If you think something is urgent, call me first instead of opening it.","如果你驚係急件，可以先打俾我問，唔好直接拆。"],
+["我知道你想幫忙，但沒有得到同意就拆信會讓我不舒服。","我知道你是想帮忙，但没有经过同意就拆信让我很不舒服。","I know you meant to help, but opening my mail without permission makes me uncomfortable.","我知你想幫手，但未經同意拆我啲信會令我唔舒服。"],
+["請告訴我這次拆了哪些東西，裡面的文件現在在哪裡。","请告诉我这次拆了哪些东西，里面的文件现在放在哪里。","Please tell me exactly what you opened and where the contents are now.","請話我知今次拆咗啲咩，入面啲文件依家喺邊。"],
+["這封信涉及個人資料，請不要拍照、轉發或拿給其他人看。","这封信包含个人信息，请不要拍照、转发或给其他人看。","This letter contains personal information. Do not photograph, forward, or show it to anyone.","呢封信有個人資料，請唔好影相、轉發或者俾其他人睇。"],
+["如果不小心拆錯，請原樣收好並立即告訴我。","如果是不小心拆错，请原样收好并马上告诉我。","If you open something by mistake, keep everything together and tell me immediately.","如果唔小心拆錯，請原樣收好同即刻話我知。"],
+["收件地址相同不代表內容也是全家共享。","收件地址相同，不代表里面的东西属于全家共享。","Sharing an address does not make the contents shared family property.","收件地址一樣，唔代表入面啲嘢係全家共享。"],
+["請先看清收件人，不要看到包裹就順手拆。","请先看清收件人，不要看到包裹就顺手打开。","Check the recipient's name before opening a parcel rather than opening whatever arrives.","請先睇清楚收件人，唔好見到包裹就順手拆。"],
+["日用品可以放在公共區，私人包裹請放到我房門旁。","日用品可以放在公共区域，私人包裹请放到我房门旁边。","Household supplies can go in the common area; please leave private parcels by my door.","日用品可以擺公共位，私人包裹請擺我房門口。"],
+["這可能是醫療、銀行或工作文件，不能靠猜測決定能不能拆。","这可能是医疗、银行或工作文件，不能凭猜测决定是否能拆。","It may contain medical, banking, or work information, so you cannot guess whether opening it is harmless.","呢啲可能係醫療、銀行或者工作文件，唔可以靠估決定拆唔拆得。"],
+["禮物包裹也請別先拆，我不想連驚喜都被提前公開。","即使是礼物包裹也别先拆，我不希望惊喜被提前揭晓。","Please do not open gift parcels either; I do not want the surprise revealed early.","就算係禮物包裹都唔好先拆，我唔想連驚喜都提早公開。"],
+["孩子若想幫忙拆快遞，也只能拆寫著自己名字或得到允許的。","孩子想帮忙拆快递，也只能拆写着自己名字或得到允许的。","If the children want to help open parcels, they may only open their own or one they have permission to open.","小朋友想幫手拆快遞，都只可以拆寫住自己名或者得到允許嘅。"],
+["我會在購物平台查看物流，不需要拆開來確認買了甚麼。","我会在购物平台查看物流，不需要通过拆包确认买了什么。","I can check deliveries in the shopping app; no one needs to open them to identify the contents.","我會喺購物平台睇物流，唔需要拆開先確認買咗咩。"],
+["如果快遞員要求驗貨，請先聯絡我，由我決定怎樣處理。","如果快递员要求验货，请先联系我，由我决定怎么处理。","If the courier requests inspection, contact me first and let me decide how to proceed.","如果快遞員要求驗貨，請先聯絡我，由我決定點處理。"],
+["這不是我在隱瞞甚麼，而是每個人都應有自己的私隱。","这不是因为我在隐瞒什么，而是每个人都应该有自己的隐私。","This is not about hiding something; everyone is entitled to personal privacy.","呢個唔係我隱瞞咩，係每個人都應該有自己私隱。"],
+["不要用『一家人有甚麼關係』帶過，我已經明確說這是界線。","不要用“一家人有什么关系”带过，我已经明确说明这是边界。","Please do not dismiss this with “we are family.” I have clearly stated the boundary.","唔好用『一家人有咩所謂』帶過，我已經清楚講咗呢條界線。"],
+["你好奇可以問，我可以選擇回答，但不能先拆再問。","你好奇可以问，我也可以选择是否回答，但不能先拆再问。","You may ask if you are curious, and I may choose whether to answer; opening it first is not acceptable.","你好奇可以問，我可以選擇答唔答，但唔可以拆咗先問。"],
+["這次請把包裝和所有內容交回來，缺少甚麼我需要核對。","这次请把包装和全部内容交还给我，我需要核对是否有遗漏。","Please return the packaging and all contents so I can check whether anything is missing.","今次請將包裝同所有內容交返俾我，我要核對有冇漏。"],
+["如果是寄錯給我的東西，也由我聯絡寄件人或安排退回。","如果东西误寄给我，也由我联系寄件人或安排退回。","If something was sent to me by mistake, I will contact the sender or arrange its return.","如果係寄錯俾我，都由我聯絡寄件人或者安排退返。"],
+["我會在門口放兩個收件籃，請按名字分開放。","我会在门口放两个收件篮，请按姓名分开放置。","I will place separate delivery baskets by the door; please sort items by name.","我會喺門口放兩個收件籃，請按名分開擺。"],
+["如果再發生，我會改用自提櫃或其他收件地址。","如果再次发生，我会改用快递柜或其他收件地址。","If this happens again, I will redirect my deliveries to a locker or another address.","如果再發生，我會改用自提櫃或者其他收件地址。"],
+["我不想為了一封信在家裡上鎖，所以請你尊重這個簡單要求。","我不希望为了一封信在家里上锁，所以请尊重这个简单要求。","I do not want to need locks for my mail at home, so please respect this straightforward request.","我唔想為咗一封信喺屋企都要上鎖，所以請尊重呢個簡單要求。"],
+["你替我簽收沒有問題，替我開封就越界了。","帮我签收没有问题，替我开封就越界了。","Signing for my parcel is helpful; opening it crosses the line.","幫我簽收冇問題，代我開封就越界。"],
+["代收可以，代拆不可以。","可以代收，但不可以代拆。","You may receive it for me; you may not open it for me.","代收可以，代拆唔可以。"],
+["我的快遞不是家庭盲盒，請不要搶先開獎。","我的快递不是家庭盲盒，请不要抢先开奖。","My parcel is not the family's mystery box, so please do not claim the reveal.","我啲快遞唔係家庭盲盒，請唔好搶先開獎。"],
+["包裹寫的是我的名字，不是『誰先看到誰先拆』。","包裹写的是我的名字，不是“谁先看到谁先拆”。","The parcel has my name on it, not “first person to see it gets to open it.”","包裹寫住我個名，唔係『邊個見到就邊個拆』。"],
+["我已經不是第一次提出，請不要再把它當成小事。","这不是我第一次提出，请不要再把它当成小事。","This is not the first time I have raised it. Please stop treating it as trivial.","呢個已經唔係我第一次提出，請唔好再當係小事。"],
+["再未經同意拆我的郵件，我會把所有個人物品改寄別處。","如果再未经同意拆我的邮件，我会把所有个人物品改寄到别处。","If my mail is opened without consent again, I will redirect all personal deliveries elsewhere.","如果再未經同意拆我啲郵件，我會將所有個人物品改寄第二度。"],
+["請停手，這是我的信。","请停下，这是我的信。","Stop, please. That mail is addressed to me.","停手，呢封係我嘅信。"]
+]);
+
+add({id:'new25',domain:'service',domainLabel:{hant:'服務',hans:'服务',en:'Service'},relation:{hant:'訂閱服務商',hans:'订阅服务商',en:'Subscription provider'},goal:{hant:'停止續扣並退款',hans:'停止续费并退款',en:'Stop billing and obtain a refund'},title:{hant:'你已收到取消服務的確認，帳戶卻仍被自動續費或扣款',hans:'你已经收到取消服务的确认，账户却仍被自动续费或扣款',en:'You received confirmation that a service was cancelled, but it continues to renew or charge you'}},[
+["我已在這個日期收到取消確認，請立即停止扣款並退回本次費用。","我在这个日期已经收到取消确认，请立即停止扣费并退还本次款项。","I received cancellation confirmation on this date. Stop billing immediately and refund this charge.","我喺呢個日期已經收到取消確認，請即刻停止扣款同退返今次費用。"],
+["附件是取消成功的電郵，請按你們的書面確認處理退款。","附件是取消成功的邮件，请按照你们的书面确认办理退款。","The attached email confirms cancellation. Please issue the refund in accordance with that written confirmation.","附件係取消成功嘅電郵，請按你哋書面確認辦理退款。"],
+["請確認訂閱狀態已關閉，而不是只把下一次帳單延後。","请确认订阅已经彻底关闭，而不是只把下次账单延期。","Confirm that the subscription is closed, not merely that the next bill has been postponed.","請確認訂閱已經完全關閉，唔係淨係將下次帳單延後。"],
+["請提供退款金額、處理日期和預計到帳時間。","请提供退款金额、处理日期和预计到账时间。","Please provide the refund amount, processing date, and expected arrival time.","請提供退款金額、處理日期同預計到帳時間。"],
+["我需要一個案件編號，之後跟進不用每次重新解釋。","我需要一个工单编号，之后跟进时不用每次重新说明。","I need a case number so I do not have to explain the issue from the beginning each time.","我要一個個案編號，之後跟進唔使次次由頭解釋。"],
+["取消後我沒有使用服務，這筆續費沒有相應的服務依據。","取消以后我没有使用过服务，这笔续费没有对应的服务依据。","I did not use the service after cancellation, so this renewal has no service basis.","取消之後我冇用過服務，呢筆續費冇相應服務依據。"],
+["請不要用代金券處理，我要求原路退回實際扣款。","请不要用优惠券处理，我要求把实际扣款原路退回。","Do not resolve this with account credit; I require the charged amount returned to the original payment method.","請唔好用代金券處理，我要求實際扣款原路退返。"],
+["客服之前已確認不會再收費，請調取該次聊天記錄。","客服之前已经确认不会再收费，请调取当时的聊天记录。","Your agent previously confirmed there would be no further charge. Please retrieve that chat record.","客服之前已經確認唔會再收費，請調返嗰次聊天記錄。"],
+["如果系統沒有同步取消，那是內部問題，不應由我承擔費用。","如果系统没有同步取消，那是你们的内部问题，不应由我承担费用。","If your systems failed to synchronise the cancellation, that is an internal error and not my cost to bear.","如果系統冇同步取消，係你哋內部問題，唔應該由我承擔費用。"],
+["請列明這筆扣款的服務期間，以及為甚麼在取消後仍產生。","请说明这笔费用对应的服务期间，以及为什么取消后仍会产生。","State the service period covered by this charge and why it arose after cancellation.","請列明呢筆扣款對應嘅服務期，同埋點解取消後仲會產生。"],
+["我的帳戶顯示已取消，付款頁卻仍續費；請由技術和帳務一起處理。","我的账户显示已取消，付款端却仍然续费；请让技术和账务共同处理。","My account shows cancelled while billing continued. Please have both technical and billing teams resolve the mismatch.","我帳戶顯示已取消，付款嗰邊仲續費；請技術同帳務一齊處理。"],
+["請同時移除所有已儲存的付款授權，避免再次扣款。","请同时删除所有已保存的付款授权，避免再次扣费。","Remove all stored recurring-payment authorisations as part of the resolution.","請同時移除所有已儲存付款授權，避免再扣款。"],
+["退款完成後，請發書面確認，列明餘額為零且沒有未結費用。","退款完成后，请发书面确认，注明余额为零且没有待付费用。","After refunding, send written confirmation that the balance is zero and no charges remain pending.","退款完成之後，請發書面確認，列明餘額係零同冇未結費用。"],
+["這不是我要再次取消，而是你們要修正上次取消後的錯誤扣款。","这不是让我重新取消一次，而是请你们纠正上次取消后的错误扣款。","I am not asking to cancel again; I am asking you to correct a charge made after the original cancellation.","呢個唔係要我再取消一次，係要你哋更正上次取消後嘅錯誤扣款。"],
+["不要把我轉回續訂頁面，我現在處理的是未經同意的收費。","不要再把我转到续订页面，我现在处理的是未经同意的收费。","Do not direct me to a renewal page. I am disputing a charge made without current authorisation.","唔好再轉我去續訂頁面，我依家處理係未經同意嘅收費。"],
+["如果一線客服沒有退款權限，請直接升級給帳務主管。","如果一线客服没有退款权限，请直接升级给账务主管。","If frontline support cannot issue the refund, escalate the case directly to a billing supervisor.","如果前線客服冇退款權限，請直接升級俾帳務主管。"],
+["請在三個工作天內給出處理結果，而不是只回覆『正在查看』。","请在三个工作日内给出处理结果，不要只回复“正在查看”。","Provide a resolution within three business days rather than another message saying the case is under review.","請喺三個工作天內俾處理結果，唔好淨係覆『睇緊』。"],
+["若款項已進入退款流程，請提供可追蹤的退款參考號。","如果款项已经进入退款流程，请提供可追踪的退款参考号。","If the refund has been submitted, provide the traceable refund reference number.","如果筆錢已經進入退款流程，請提供可以追蹤嘅退款參考號。"],
+["這個商戶名稱和服務名稱不同，請確認是不是你們的扣款。","这个商户名称与服务名称不一致，请确认是否由你们扣款。","The merchant descriptor differs from the service name. Confirm whether this charge belongs to your company.","呢個商戶名同服務名唔同，請確認係咪你哋扣款。"],
+["你們扣了兩次，請逐筆列出並退回重複和取消後的費用。","你们扣了两笔，请逐笔列明并退还重复及取消后的收费。","There are two charges. Itemise both and refund the duplicate and post-cancellation amounts.","你哋扣咗兩筆，請逐筆列明同退返重複、取消後嘅費用。"],
+["如果本次是年度續費，取消確認更應在續費日前生效。","如果这次是年度续费，取消确认更应该在续费日前生效。","If this was an annual renewal, the confirmed cancellation should have taken effect before the renewal date.","如果今次係年度續費，取消確認更加應該喺續費日前生效。"],
+["我接受取消前已產生的合理費用，不接受取消日之後的新收費。","我可以支付取消前已经产生的合理费用，但不接受取消日之后的新收费。","I will pay legitimate charges incurred before cancellation, but not new charges after the cancellation date.","我接受取消前已經產生嘅合理費用，但唔接受取消日之後新收費。"],
+["請按取消當天的條款處理，不要事後套用新版本政策。","请按照取消当天的条款处理，不要事后套用新版政策。","Apply the terms in effect on the cancellation date rather than a policy introduced afterward.","請按取消嗰日嘅條款處理，唔好事後套用新版政策。"],
+["如果你們拒絕退款，請用書面列出具體條款和拒絕理由。","如果你们拒绝退款，请书面列出具体条款和拒绝原因。","If you deny the refund, provide the exact contractual clause and reason in writing.","如果你哋拒絕退款，請書面列出具體條款同理由。"],
+["若今天仍無法確認停止扣款，我會聯絡發卡行撤銷後續授權。","如果今天仍无法确认停止扣费，我会联系发卡行撤销后续授权。","If you cannot confirm today that billing has stopped, I will ask my card issuer to revoke future authorisation.","如果今日仲確認唔到停止扣款，我會聯絡發卡行撤銷後續授權。"],
+["如果問題沒有解決，我會帶著取消確認和扣款紀錄向付款機構提出爭議。","如果问题得不到解决，我会凭取消确认和扣款记录向支付机构发起争议。","If this remains unresolved, I will dispute the charge with the payment provider using the cancellation and billing records.","如果問題解決唔到，我會拎取消確認同扣款記錄向付款機構提出爭議。"],
+["我希望你們自行修正，不想走申訴程序；請現在給出可執行方案。","我希望你们主动修正，不想进入申诉流程；请现在给出可执行方案。","I would prefer you to correct this directly rather than enter a formal dispute. Give me an actionable resolution now.","我希望你哋自行更正，唔想行申訴程序；請依家俾可執行方案。"],
+["取消按鈕工作得很好，只有停止扣款這部分似乎放假了。","取消按钮看起来正常，只有停止扣费这一步似乎休假了。","The cancellation button worked beautifully; apparently the part that stops billing took the day off.","取消按鈕做得幾好，係停止扣款嗰部分好似放咗假。"],
+["服務已經走了，帳單卻還很有毅力。請把它一起取消。","服务已经停了，账单倒是很有毅力。请把账单也一起停掉。","The service is gone, yet the bill remains remarkably persistent. Please cancel that too.","服務已經冇咗，張單就仲好有毅力。請將佢一齊取消。"],
+["已取消、仍扣款。請退款並永久停止續費。","已经取消，仍然扣费。请退款并永久停止续费。","Cancelled, yet still charged. Refund it and permanently stop renewals.","已取消、仲扣款。請退款同永久停止續費。"]
+]);
+})();
