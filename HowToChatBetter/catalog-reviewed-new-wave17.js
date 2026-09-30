@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(meta,rows){if(S.some(x=>x.id===meta.id))throw Error('Duplicate scene '+meta.id);const replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');replies.zh[k]={hant:r[0],hans:r[1]};replies.en[k]=r[2];replies.yue[k]=r[3]});S.push({...meta,replies});window.CHAT_REVIEWED_SCENES[meta.id]=true}
+
+add({id:'new41',domain:'service',domainLabel:{hant:'服務',hans:'服务',en:'Service'},relation:{hant:'維修服務商',hans:'维修服务商',en:'Repair provider'},goal:{hant:'取得可靠安排或退款',hans:'取得可靠安排或退款',en:'Get a reliable appointment or refund'},title:{hant:'上門維修人員已兩次沒有出現，也沒有提前通知，你為此反覆請假在家等候',hans:'上门维修人员已经两次爽约，也没有提前通知，你为此反复请假在家等候',en:'A repair technician has missed two appointments without notice, after you repeatedly took time off to wait at home'}},[
+["師傅已經兩次沒有按約到場，請今天給我一個可履行的安排。","师傅已经两次没有按约上门，请今天给我一个能落实的安排。","The technician has missed two appointments. I need a time you can actually honour.","師傅已經兩次冇按約上門，請今日俾我一個做得到嘅安排。"],
+["兩次都沒有人提前通知，我需要你們先說明原因。","两次都没人提前通知，我需要你们先说明原因。","No one notified me either time. I need an explanation first.","兩次都冇人提早通知，我要你哋先解釋原因。"],
+["我為這兩次預約請了假，不能再無限期在家等。","我为这两次预约请了假，不能再无限期在家等。","I took leave for both appointments and can't keep waiting at home indefinitely.","我為兩次預約請咗假，唔可以再無限期喺屋企等。"],
+["請安排明確的兩小時時段，不要只說『全天等候』。","请安排明确的两小时上门时段，不要只说“全天等候”。","Give me a specific two-hour window rather than asking me to wait all day.","請安排明確兩個鐘時段，唔好淨係話『全日等』。"],
+["下次出發前請讓師傅打電話確認，我確認後再上門。","下次出发前请让师傅打电话确认，我确认后再上门。","Have the technician call before leaving, and come only after I confirm.","下次出發前請師傅打電話確認，我確認後先上門。"],
+["可以改派另一位師傅嗎？原本的安排已經失信兩次。","可以换一位师傅吗？原来的安排已经失约两次了。","Can you assign someone else? The current arrangement has failed twice.","可唔可以改派另一位師傅？原本安排已經失約兩次。"],
+["請把預約日期、時段和工單號以短訊確認。","请用短信确认预约日期、时段和工单号。","Please confirm the date, time window, and job number by text.","請用短訊確認預約日期、時段同工單號。"],
+["我需要一位能跟進到底的客服，不想每次重新解釋。","我需要一位能跟进到底的客服，不想每次都重新解释。","I need one agent to own this case so I don't have to explain it again.","我要一位可以跟到底嘅客服，唔想每次重新解釋。"],
+["請在今天五點前回覆是否能安排，不能的話就取消。","请在今天五点前回复能否安排，不能就取消。","Confirm by five today whether you can attend; otherwise, cancel it.","請今日五點前回覆安排到未，唔得就取消。"],
+["若第三次仍無法準時，請提前至少兩小時通知。","如果第三次仍无法准时，请至少提前两小时通知。","If the third visit will be late, notify me at least two hours beforehand.","如果第三次都未能準時，請至少早兩個鐘通知。"],
+["設備仍在保養期內，請不要因排程問題延誤維修。","设备还在保修期内，请不要因为排期问题拖延维修。","The unit is under warranty; scheduling issues should not delay the repair.","設備仲喺保養期，請唔好因為排期問題拖延維修。"],
+["故障已影響基本使用，請將工單升級為緊急處理。","故障已经影响基本使用，请把工单升级为紧急处理。","The fault affects basic use, so please escalate the job as urgent.","故障已經影響基本使用，請將工單升級做緊急處理。"],
+["如果你們近期沒有維修能力，請直接告訴我可選方案。","如果你们近期没有维修能力，请直接告诉我有哪些其他方案。","If you have no near-term capacity, tell me the available alternatives directly.","如果你哋近期冇維修能力，請直接話我知有咩其他方案。"],
+["我接受改期，但不接受到了時段才發現沒人來。","我可以接受改期，但不能接受到了时间才发现没人来。","I can accept rescheduling; I can't accept finding out only when no one arrives.","我接受改期，但唔接受到咗時段先發現冇人嚟。"],
+["請確認今天不是又一個沒有師傅接單的空預約。","请确认今天不是又一个没有师傅接单的空预约。","Confirm that today's slot actually has a technician assigned.","請確認今日唔係又一個冇師傅接單嘅空預約。"],
+["你剛說『很快到』，請給我預計抵達時間。","你刚才说“很快到”，请给我一个预计抵达时间。","You said 'soon'; please give me an estimated arrival time.","你頭先話『好快到』，請俾我預計抵達時間。"],
+["我可以再等半小時，之後就必須離開。","我可以再等半小时，之后必须离开。","I can wait another thirty minutes; after that, I have to leave.","我可以再等半個鐘，之後一定要走。"],
+["請記錄我已兩次空等，別把這次當成普通首次改期。","请记录我已经空等两次，不要把这次当成普通的第一次改期。","Record that I've waited in vain twice; this isn't a routine first reschedule.","請記錄我已經空等兩次，唔好當今次係普通首次改期。"],
+["這項服務已預付款；如果無法履行，請啟動退款。","这项服务已经预付；如果无法履行，请开始退款。","The service was prepaid. If you can't deliver it, start the refund.","呢項服務已經預付；如果做唔到，請開始退款。"],
+["若取消有費用，這次不應由我承擔，因為是你們連續爽約。","如果取消要收费，这次不该由我承担，因为是你们连续失约。","Any cancellation fee should be waived because your team missed both visits.","如果取消要收費，今次唔應該由我承擔，因為係你哋連續失約。"],
+["我要求退回上門檢查費，因為根本沒有人上門。","我要求退还上门检查费，因为根本没有人上门。","I want the call-out fee refunded because no one came out.","我要求退返上門檢查費，因為根本冇人上門。"],
+["請將投訴編號發給我，並告訴我何時會有書面回覆。","请把投诉编号发给我，并说明何时会书面回复。","Send me the complaint reference and the deadline for a written response.","請將投訴編號發俾我，並話我知幾時有書面回覆。"],
+["如果前線無法處理，請轉接能決定改派或退款的主管。","如果前线客服无法处理，请转接能决定改派或退款的主管。","If you can't resolve this, transfer me to someone who can reassign or refund it.","如果前線處理唔到，請轉俾可以決定改派或者退款嘅主管。"],
+["我家地址沒有消失，消失的是兩次預約。","我家地址没有消失，消失的是两次预约。","My address didn't disappear; two appointments did.","我屋企地址冇消失，消失咗嘅係兩次預約。"],
+["這不是守株待兔服務，我也不能天天守在家裡。","这不是守株待兔服务，我也不能天天守在家里。","This isn't a waiting game, and I can't camp at home every day.","呢個唔係守株待兔服務，我都唔可以日日守喺屋企。"],
+["師傅還沒修設備，預約系統倒先需要維修。","师傅还没修设备，你们的预约系统倒是先需要维修。","The appliance is still broken, but your booking system seems to need repair first.","師傅仲未修設備，你哋預約系統反而先要維修。"],
+["我的假期不是你們排程的緩衝墊。","我的假期不是你们排期的缓冲时间。","My annual leave is not a buffer for your scheduling failures.","我啲假唔係你哋排期嘅緩衝墊。"],
+["給我一個確實會來的時間，否則退款。","给我一个确定会上门的时间，否则退款。","Give me an appointment you'll keep, or issue a refund.","俾我一個確實會嚟嘅時間，否則退款。"],
+["我不接受第三次空等。","我不接受第三次白等。","I will not wait in vain a third time.","我唔接受第三次白等。"],
+["請現在處理，不要再叫我耐心等候。","请现在处理，不要再让我耐心等待。","Resolve it now; don't ask me to be patient again.","請依家處理，唔好再叫我耐心等。"]
+]);
+
+add({id:'new42',domain:'medical',domainLabel:{hant:'醫療',hans:'医疗',en:'Medical'},relation:{hant:'藥劑師',hans:'药师',en:'Pharmacist'},goal:{hant:'暫停用藥並核對指示',hans:'暂停用药并核对说明',en:'Pause and verify conflicting instructions'},title:{hant:'藥袋標籤上的用法與醫生告訴你的不一致，你準備在服藥前向藥劑師核實',hans:'药袋标签上的用法与医生告诉你的不一致，你准备在服药前向药师核实',en:'The directions on a medicine label differ from what your doctor told you, and you want to verify them before taking it'}},[
+["藥袋寫的用法和醫生交代的不一樣，請先幫我核對。","药袋上写的用法和医生交代的不一样，请先帮我核对。","The label differs from my doctor's instructions. Please verify it before I take any.","藥袋寫嘅用法同醫生交代唔一樣，請先幫我核對。"],
+["我現在還沒服用，可以請藥劑師看一下處方原文嗎？","我现在还没服用，可以请药师查看一下处方原文吗？","I haven't taken it yet. Could the pharmacist check the original prescription?","我依家仲未服用，可唔可以請藥劑師睇下處方原文？"],
+["醫生說一天一次，標籤卻寫一天三次，哪一項才正確？","医生说一天一次，标签却写一天三次，哪一项才正确？","My doctor said once daily, but the label says three times. Which is correct?","醫生話一日一次，標籤就寫一日三次，邊樣先啱？"],
+["請不要靠猜測回答，能否直接聯絡開方醫生確認？","请不要凭猜测回答，能否直接联系开药医生确认？","Please don't guess. Can you contact the prescriber directly to confirm?","請唔好靠估，可唔可以直接聯絡開方醫生確認？"],
+["在你們確認之前，我應該先暫停服用，對嗎？","在你们确认之前，我应该先不要服用，对吗？","Until this is confirmed, should I hold off on taking it?","喺你哋確認之前，我應該先唔好服用，係咪？"],
+["可以把藥名、劑量、頻率和療程逐項讀給我聽嗎？","可以把药名、剂量、频率和疗程逐项读给我听吗？","Could you read back the medicine, dose, frequency, and duration one item at a time?","可唔可以將藥名、劑量、次數同療程逐樣讀俾我聽？"],
+["這是我的姓名和出生日期，請確認沒有拿到別人的藥。","这是我的姓名和出生日期，请确认我没有拿到别人的药。","Here are my name and date of birth. Please confirm this medicine is actually mine.","呢度係我姓名同出生日期，請確認冇攞錯人哋啲藥。"],
+["藥盒名稱和藥袋標籤也不同，請兩樣都一起核對。","药盒名称和药袋标签也不一样，请把两项一起核对。","The box and bag show different names too. Please check both.","藥盒名同藥袋標籤都唔同，請兩樣一齊核對。"],
+["我手上有出院摘要，可以和你們系統裡的處方比較嗎？","我手上有出院小结，可以和系统里的处方比较一下吗？","I have my discharge summary. Can we compare it with the prescription in your system?","我手上有出院摘要，可唔可以同你哋系統處方比較？"],
+["這是醫生寫給我的服藥時間表，請看看差異在哪裡。","这是医生给我的服药时间表，请看一下差异在哪里。","This is the schedule my doctor gave me. Please identify where it differs.","呢個係醫生俾我嘅服藥時間表，請睇下差異喺邊。"],
+["我正在服用其他藥物，也請確認這個用法不會混淆。","我还在服用其他药，也请确认这个用法不会弄混。","I'm taking other medicines too, so please make sure the directions aren't mixed up.","我仲食緊其他藥，亦請確認呢個用法冇撈亂。"],
+["我對這類藥曾經有過敏反應，核對時請一併查看紀錄。","我以前对这类药有过敏反应，核对时请一起查看记录。","I've reacted to this class of medicine before; please check my allergy record too.","我以前對呢類藥有敏感反應，核對時請一齊睇紀錄。"],
+["標籤上的單位看起來不同，是毫克還是毫升？","标签上的单位看起来不一样，是毫克还是毫升？","The units look different. Is this milligrams or millilitres?","標籤個單位睇落唔同，係毫克定毫升？"],
+["這瓶需要量取，請示範應該用哪個量具和刻度。","这瓶药需要量取，请示范该用哪种量具和刻度。","This liquid needs measuring. Please show me which device and marking to use.","呢樽藥要量取，請示範用邊個量具同刻度。"],
+["標籤寫飯前，醫生說飯後，請確認與食物的關係。","标签写饭前，医生说饭后，请确认应该什么时候吃。","The label says before food, but my doctor said after. Please confirm the timing.","標籤寫飯前，醫生話飯後，請確認應該幾時食。"],
+["請確認這顆藥能不能切開，不要只按外觀判斷。","请确认这片药能不能掰开，不要只凭外观判断。","Please verify whether this tablet can be split rather than judging by appearance.","請確認呢粒藥可唔可以切開，唔好淨係睇外觀判斷。"],
+["如果處方剛改過，請確認藥房收到的是最新版本。","如果处方刚刚改过，请确认药房收到的是最新版本。","If the prescription was recently changed, confirm you received the latest version.","如果處方啱啱改過，請確認藥房收到最新版本。"],
+["核實後請重新列印正確標籤，不要只在舊標籤上口頭補充。","核实后请重新打印正确标签，不要只对着旧标签口头补充。","Once verified, please print a corrected label rather than only explaining over the old one.","核實之後請重新印正確標籤，唔好淨係對住舊標籤口頭補充。"],
+["可以把更正原因記進藥房系統，避免下次重複嗎？","可以把更正原因记进药房系统，避免下次重复吗？","Can you record the correction in the pharmacy system so this doesn't recur?","可唔可以將更正原因記入藥房系統，避免下次再發生？"],
+["請在新標籤上寫清楚每次多少、一天幾次和服用多久。","请在新标签上写清楚每次多少、每天几次和服用多久。","The new label should clearly state how much, how often, and for how long.","請喺新標籤寫清楚每次幾多、一日幾次同食幾耐。"],
+["如果今天聯絡不到醫生，請告訴我可以向哪個值班人員確認。","如果今天联系不上医生，请告诉我可以找哪位值班人员确认。","If the doctor can't be reached today, who on call can verify it?","如果今日聯絡唔到醫生，請話我知可以搵邊個值班人員確認。"],
+["我今晚原本要開始服藥，請告訴我何時能收到核實結果。","我原本今晚要开始服药，请告诉我何时能得到核实结果。","I was due to start tonight. When can I expect a confirmed answer?","我原本今晚要開始食藥，請話我知幾時有核實結果。"],
+["這涉及用藥安全，我需要由藥劑師本人回覆。","这关系到用药安全，我需要药师本人回复。","This is a medication-safety issue, so I need the pharmacist to respond personally.","呢件事關乎用藥安全，我要藥劑師本人回覆。"],
+["我理解你們很忙，但劑量不一致不能當成小筆誤。","我理解你们很忙，但剂量不一致不能当作小笔误。","I understand you're busy, but a dose discrepancy isn't a minor typo.","我明你哋好忙，但劑量唔一致唔可以當小筆誤。"],
+["我不會在兩套指示中自己選一套，請你們查清楚。","我不会在两套说明里自己选一个，请你们查清楚。","I won't choose between two conflicting directions myself. Please resolve it.","我唔會喺兩套指示入面自己揀一套，請你哋查清楚。"],
+["藥不是食譜，份量不能靠個人口味調整。","药不是菜谱，剂量不能按个人口味调整。","Medicine isn't a recipe; the amount can't be adjusted to taste.","藥唔係食譜，份量唔可以靠個人口味調整。"],
+["兩個版本不能同時正確，麻煩找出哪個要更正。","两个版本不可能同时正确，请找出哪一个需要更正。","Both versions can't be right. Please determine which one needs correction.","兩個版本唔可能同時啱，麻煩搵出邊個要更正。"],
+["先核對，確認後我再服用。","先核对，确认后我再服用。","Verify it first; I'll take it after it's confirmed.","先核對，確認後我先服用。"],
+["請不要叫我照標籤吃，因為問題正是標籤可能有錯。","请不要让我直接按标签服用，因为问题正是标签可能写错了。","Don't tell me to follow the label when the label itself may be the error.","請唔好叫我照標籤食，因為問題正正係標籤可能有錯。"],
+["這件事未確認前，我不會拿健康來碰運氣。","这件事没确认前，我不会拿健康去碰运气。","I won't gamble with my health while this remains unverified.","呢件事未確認之前，我唔會攞健康嚟博。"]
+]);
+})();

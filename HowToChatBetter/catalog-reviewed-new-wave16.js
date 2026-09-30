@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(meta,rows){if(S.some(x=>x.id===meta.id))throw Error('Duplicate scene '+meta.id);const replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');replies.zh[k]={hant:r[0],hans:r[1]};replies.en[k]=r[2];replies.yue[k]=r[3]});S.push({...meta,replies});window.CHAT_REVIEWED_SCENES[meta.id]=true}
+
+add({id:'new39',domain:'workplace',domainLabel:{hant:'職場',hans:'职场',en:'Workplace'},relation:{hant:'同事',hans:'同事',en:'Colleague'},goal:{hant:'恢復內容並釐清修改責任',hans:'恢复内容并厘清修改责任',en:'Restore the work and clarify ownership'},title:{hant:'同事覆蓋了共享文件的重要內容，版本紀錄顯示是他修改的，卻要你重新做一遍',hans:'同事覆盖了共享文件的重要内容，版本记录显示是他修改的，却让你重新做一遍',en:'A colleague overwrote important content in a shared file; the history shows their edit, but they ask you to recreate it'}},[
+["先不要重做，我們可以從版本紀錄恢復被覆蓋的內容。","先别重做，我们可以从版本记录里恢复被覆盖的内容。","Don't recreate it yet; we can restore the overwritten content from version history.","先唔好重做，我哋可以由版本紀錄還原被覆蓋嘅內容。"],
+["紀錄顯示下午三點的修改來自你的帳號，請先一起核對。","记录显示下午三点的修改来自你的账号，请先一起核对。","The 3 p.m. edit is under your account. Let's review it together first.","紀錄顯示下晝三點嘅修改來自你帳號，請先一齊核對。"],
+["我保留了昨天的版本，可以恢復，但你新增的部分要先另外備份。","我保留了昨天的版本，可以恢复，但你新增的内容需要先单独备份。","I have yesterday's version. We can restore it after backing up your new additions separately.","我留咗琴日版本，可以恢復，但你新增嘅內容要先另外備份。"],
+["請先停止編輯五分鐘，否則我們可能再次互相覆蓋。","请先暂停编辑五分钟，否则我们可能再次互相覆盖。","Please pause editing for five minutes so we don't overwrite each other again.","請先停手五分鐘，否則我哋可能再互相覆蓋。"],
+["你改動前沒有通知我，現在我們先確認哪些段落需要保留。","你修改前没有通知我，现在先确认哪些段落需要保留。","You didn't flag the change beforehand. Let's identify which sections must be kept.","你修改之前冇通知我，依家先確認邊啲段落要保留。"],
+["我可以協助恢復檔案，但不會獨自重做所有被刪內容。","我可以协助恢复文件，但不会一个人重做全部被删内容。","I can help restore the file, but I won't recreate all the deleted work alone.","我可以幫手恢復文件，但唔會一個人重做晒所有刪咗嘅內容。"],
+["這次修復由我們共同完成：我還原，你核對自己的修改。","这次我们一起修复：我来恢复，你核对自己的修改。","Let's repair it together: I'll restore it, and you verify your changes.","今次我哋一齊修復：我還原，你核對自己嘅修改。"],
+["請把你原本想改的地方列出來，不要再直接整頁取代。","请把你原本想改的地方列出来，不要再直接替换整页。","List the changes you intended rather than replacing the entire page again.","請列出你本身想改嘅地方，唔好再直接成頁取代。"],
+["恢復前我會先下載目前版本，避免你的有效內容也消失。","恢复前我会先下载当前版本，避免你的有效内容也丢失。","I'll save the current version before restoring so your valid additions aren't lost.","恢復之前我會先下載現有版本，避免你有效內容都冇埋。"],
+["這份文件今天要交，我們先處理內容，責任稍後在回顧中說清楚。","这份文件今天要交，我们先处理内容，责任稍后在复盘时说清楚。","The file is due today. Let's recover it now and address responsibility in the review afterward.","份文件今日要交，我哋先處理內容，責任之後檢討時講清楚。"],
+["我需要你告訴我改動的原因，才能判斷恢復到哪個版本。","我需要知道你为什么修改，才能判断该恢复到哪个版本。","I need to know why you changed it before choosing which version to restore.","我要知你點解改，先判斷應該恢復到邊個版本。"],
+["如果是格式問題，只還原內容區；如果是內容誤刪，就整版回復。","如果只是格式问题，就只恢复内容区；如果误删了内容，就恢复整页。","If it was only formatting, we'll restore the content section; if text was deleted, we'll revert the page.","如果只係格式問題，就還原內容區；如果誤刪內容，就成頁回復。"],
+["你可以在副本重做修改，確認無誤後再合併。","你可以在副本里重新修改，确认无误后再合并。","Please redo your changes in a copy and merge them only after review.","你可以喺副本重新修改，確認冇問題先合併。"],
+["以後請開啟修訂模式，重大刪改先留言確認。","以后请打开修订模式，大幅删改前先留言确认。","Use tracked changes from now on and comment before making major deletions.","以後請開修訂模式，大幅刪改之前先留言確認。"],
+["這份文件需要設定編輯權限，避免任何人都能直接覆蓋。","这份文件需要设置编辑权限，避免任何人都能直接覆盖。","We need editing permissions so changes can't be overwritten without review.","呢份文件要設定編輯權限，避免任何人都可以直接覆蓋。"],
+["我會把恢復結果發到群裡，請你確認沒有遺漏。","我会把恢复结果发到群里，请你确认有没有遗漏。","I'll post the restored version in the group for you to confirm nothing is missing.","我會將恢復結果發去群組，請你確認有冇遺漏。"],
+["版本紀錄已經很清楚，請不要再說是文件自己消失。","版本记录已经很清楚，请不要再说是文件自己消失的。","The version history is clear; please stop saying the content disappeared on its own.","版本紀錄已經好清楚，請唔好再話係文件自己消失。"],
+["若你認為帳號被他人使用，請立即向資訊部查登入紀錄。","如果你认为账号被别人使用，请马上让信息部门查登录记录。","If you think someone else used your account, contact IT to check the login logs now.","如果你認為帳號俾人用過，請即刻搵資訊部查登入紀錄。"],
+["我不接受你刪、我重做這種分工。","我不接受你删掉、我重做这种分工。","I don't accept a division of labour where you delete and I recreate.","我唔接受你刪、我重做呢種分工。"],
+["這不是幫個小忙，是在補回已完成的工作量。","这不是帮个小忙，而是在补回已经完成的工作。","This isn't a quick favour; it's replacing completed work.","呢個唔係幫個小忙，係補返已完成嘅工作量。"],
+["如果你要我重做，請先請主管重新排期和分工。","如果你坚持让我重做，请先让主管重新安排时间和分工。","If you expect me to redo it, ask the manager to reset the deadline and ownership first.","如果你要我重做，請先叫主管重新排期同分工。"],
+["我今天已有其他任務，修復這份文件需要相應調整優先級。","我今天还有其他任务，修复这份文件需要相应调整优先级。","I have other work today; fixing this file requires a corresponding priority change.","我今日仲有其他工作，修復呢份文件要相應調整優先次序。"],
+["先截圖留存版本紀錄，再開始修復，免得之後又說不清。","先截图保存版本记录，再开始修复，免得之后又说不清。","Let's save the version history before repairing it so the facts remain clear.","先截圖留低版本紀錄，再開始修復，免得之後又講唔清。"],
+["共享文件不是擦寫板，改掉別人的內容要先說一聲。","共享文件不是随手擦写的白板，改掉别人的内容前要先说一声。","A shared file isn't a wipe board; ask before deleting someone else's work.","共享文件唔係任擦任寫嘅白板，改人哋內容之前要講聲。"],
+["文件沒有長腿，內容也沒有自己走掉。","文件没有长腿，内容也不会自己跑掉。","The file didn't grow legs, and the content didn't walk away by itself.","文件冇生腳，內容亦唔會自己走咗。"],
+["幸好版本紀錄不會失憶。","幸好版本记录不会失忆。","Good thing version history doesn't suffer memory loss.","好彩版本紀錄唔會失憶。"],
+["你按下覆蓋，我不能按下時光倒流；只能按流程恢復。","你点了覆盖，我没法让时间倒流，只能按流程恢复。","You clicked overwrite; I can't rewind time, only restore it properly.","你撳咗覆蓋，我冇得撳時光倒流，只可以按流程恢復。"],
+["請你先把文件恢復，再談要我協助哪一部分。","请你先恢复文件，再说需要我协助哪一部分。","Please restore the file first, then tell me which part you need help with.","請你先恢復文件，再講要我幫邊一部分。"],
+["誰改壞的，誰先負責復原；我可以提供原稿。","谁改坏的，谁先负责恢复；我可以提供原稿。","The person who broke it should lead the recovery; I can provide the source copy.","邊個改壞，邊個先負責復原；我可以提供原稿。"],
+["先還原，別甩鍋。","先恢复，别甩锅。","Restore it first. Don't pass the blame.","先還原，唔好甩鑊。"]
+]);
+
+add({id:'new40',domain:'family',domainLabel:{hant:'家庭',hans:'家庭',en:'Family'},relation:{hant:'親戚',hans:'亲戚',en:'Relative'},goal:{hant:'限制未經同意增加的客人',hans:'限制未经同意增加的客人',en:'Set a limit on uninvited extra guests'},title:{hant:'親戚臨時通知要多帶幾位你不認識的人來你家吃飯，還說「多幾雙筷子而已」',hans:'亲戚临时通知要多带几位你不认识的人来家里吃饭，还说“不过是多几双筷子”',en:'A relative announces they are bringing several people you do not know to dinner at your home, saying it is only a few extra places'}},[
+["今晚只準備了原本確認的人數，臨時加的人這次沒辦法招待。","今晚只准备了原先确认的人数，临时增加的人这次没办法招待。","We prepared for the confirmed number, so we can't host extra people tonight.","今晚只準備咗原本確認嘅人數，臨時加嘅人今次招待唔到。"],
+["帶客人來我家之前，需要先問我是否方便。","带客人来我家之前，需要先问我是否方便。","You need to ask before bringing guests to my home.","帶客人嚟我屋企之前，要先問我方唔方便。"],
+["不是多幾雙筷子的問題，座位、食物和我的安排都要改。","这不只是多几双筷子的事，座位、食物和我的安排都要改变。","It isn't just extra cutlery; it changes the food, seating, and my plans.","唔係多幾對筷子嘅問題，座位、食物同我安排都要改。"],
+["請按原本人數出席，其他朋友下次另約。","请按原定人数来，其他朋友我们下次另约。","Please come with the original party; we can arrange another time for the others.","請按原本人數嚟，其他朋友下次再約。"],
+["我不認識他們，也不想在沒有準備的情況下在家接待。","我不认识他们，也不想在没有准备的情况下在家接待。","I don't know them and I'm not comfortable hosting them at home without notice.","我唔識佢哋，亦唔想毫無準備喺屋企招待。"],
+["如果一定要大家一起，今晚可以改在餐廳並由各自付費。","如果一定要大家一起，今晚可以改去餐厅，各自结账。","If everyone must join, we can move dinner to a restaurant and pay separately.","如果一定要大家一齊，今晚可以改去餐廳，各自俾錢。"],
+["你已經答應他們了，也請你負責說明我家今天不方便。","你已经答应了他们，也请你负责说明我家今天不方便。","Since you invited them, please explain that my home isn't available tonight.","你已經應承咗佢哋，亦請你負責解釋我屋企今日唔方便。"],
+["下次若想加人，至少提前一天問，不要直接通知。","下次如果想加人，请至少提前一天询问，不要直接通知。","Next time, ask at least a day ahead rather than announcing it.","下次如果想加人，至少早一日問，唔好直接通知。"],
+["孩子已經睡了，家裡不適合突然來一群陌生人。","孩子已经睡了，家里不适合突然来一群陌生人。","The child is asleep; this isn't a good time for a group of strangers to arrive.","小朋友已經瞓咗，屋企唔適合突然嚟一班陌生人。"],
+["家裡有人身體不舒服，今晚需要安靜，不能加客人。","家里有人不舒服，今晚需要安静，不能再加客人。","Someone at home is unwell and needs quiet, so we can't add guests tonight.","屋企有人唔舒服，今晚要安靜，唔可以再加客人。"],
+["餐桌只能坐六個人，原本名單已經滿了。","餐桌只能坐六个人，原定名单已经满了。","The table seats six, and every place is already assigned.","餐枱只可以坐六個人，原本名單已經滿。"],
+["我買的食材是按人頭準備的，沒有足夠份量再加三位。","我买的食材是按人数准备的，没有足够分量再加三个人。","The ingredients were portioned for the confirmed guests; there isn't enough for three more.","我買嘅食材係按人數準備，冇足夠份量再加三位。"],
+["有食物敏感或飲食要求的客人，我今天也來不及安全準備。","如果客人有食物过敏或饮食要求，我今天也来不及妥善准备。","I also don't have time to prepare safely for unknown allergies or dietary needs.","如果客人有食物敏感或者飲食要求，我今日都趕唔切安全準備。"],
+["我想先知道你要帶誰、彼此是甚麼關係，再決定下次是否邀請。","我想先知道你要带谁、你们是什么关系，再决定下次是否邀请。","I'd like to know who they are and how you know them before considering a future invitation.","我想先知你帶邊個、大家咩關係，再決定下次邀唔邀請。"],
+["這是私人家庭聚餐，不是可以臨時擴大的開放活動。","这是私人家庭聚餐，不是可以临时扩大的开放活动。","This is a private family meal, not an open event that can expand at the last minute.","呢個係私人家庭聚餐，唔係可以臨時加人嘅開放活動。"],
+["今天有重要家事要談，不適合有不熟悉的人在場。","今天有重要的家事要谈，不适合有不熟悉的人在场。","We need to discuss a private family matter, so unfamiliar guests aren't appropriate.","今日有重要家事要傾，唔適合有唔熟嘅人喺度。"],
+["我歡迎你，不代表邀請權也一併交給你。","我欢迎你，不代表也把邀请别人的权利交给你。","You're welcome here, but that doesn't give you the right to invite others.","我歡迎你，唔代表連邀請其他人嘅權都交俾你。"],
+["請不要用『人都在路上了』逼我接受已經做好的決定。","请不要用“人都在路上了”逼我接受你已经做好的决定。","Don't use 'they're already on the way' to force me into a decision you made.","請唔好用『人都喺路上』逼我接受你自己做咗嘅決定。"],
+["即使他們已出發，我的答案仍然是不方便入屋。","即使他们已经出发，我的答复仍然是不方便来家里。","Even if they've left already, my answer is still that they can't come in.","就算佢哋已經出發，我答案仍然係唔方便入屋。"],
+["若客人到了，我會禮貌說明是溝通誤會，但不會臨時開席。","如果客人到了，我会礼貌说明是沟通误会，但不会临时加席。","If they arrive, I'll politely explain the misunderstanding, but I won't add places.","如果客人到咗，我會禮貌解釋係溝通誤會，但唔會臨時加位。"],
+["我不是針對你的朋友，只是在決定自己家裡接待誰。","我不是针对你的朋友，只是在决定自己家里接待谁。","This isn't personal toward your friends; I'm deciding who I host in my home.","我唔係針對你朋友，只係決定自己屋企接待邊個。"],
+["拒絕臨時加人，不代表我不重視親情。","拒绝临时加人，不代表我不重视亲情。","Refusing extra guests at short notice doesn't mean I don't value family.","拒絕臨時加人，唔代表我唔重視親情。"],
+["你覺得簡單，是因為買菜、煮飯和收拾都不是你負責。","你觉得简单，是因为买菜、做饭和收拾都不是你负责。","It feels simple when you're not the one shopping, cooking, and cleaning.","你覺得簡單，係因為買餸、煮飯同執拾都唔係你負責。"],
+["多幾雙筷子很輕，多幾份招待可不輕。","多几双筷子很轻，多几份招待可不轻。","A few chopsticks are light; the extra hosting isn't.","多幾對筷子好輕，多幾份招待可唔輕。"],
+["筷子有，座位和同意沒有。","筷子有，座位和同意没有。","We have chopsticks; we don't have seats or consent.","筷子有，座位同同意冇。"],
+["我家不是餐廳，也不接受臨時加桌。","我家不是餐厅，也不接受临时加桌。","My home isn't a restaurant, and it doesn't take walk-in extensions.","我屋企唔係餐廳，亦唔接受臨時加枱。"],
+["你先斬後奏，我也只能先拒絕後解釋。","你先斩后奏，我也只能先拒绝再解释。","You decided before asking, so I have to decline before explaining.","你先斬後奏，我亦只可以先拒絕再解釋。"],
+["今晚不加人。","今晚不能再带人来。","No extra guests tonight.","今晚唔加人。"],
+["沒有事先得到我同意的人，今天不能來家裡。","没有事先得到我同意的人，今天不能来家里。","Anyone I didn't approve in advance cannot come to the house today.","冇事先得到我同意嘅人，今日唔可以嚟屋企。"],
+["請現在通知他們另作安排，別等到門口才處理。","请现在通知他们另作安排，别等到门口再处理。","Tell them now to make other plans; don't leave it until they're at the door.","請依家通知佢哋另作安排，唔好等到門口先處理。"]
+]);
+})();
