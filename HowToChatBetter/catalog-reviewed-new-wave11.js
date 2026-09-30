@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new28',domain:'job',domainLabel:{hant:'求職',hans:'求职',en:'Job Search'},relation:{hant:'招聘方',hans:'招聘方',en:'Recruiter'},goal:{hant:'先取得書面錄用',hans:'先取得书面录用',en:'Require a written offer first'},title:{hant:'招聘方只有口頭承諾，卻要求你先辭掉現職再補正式錄用文件',hans:'招聘方只有口头承诺，却要求你先辞掉现职再补正式录用文件',en:'A recruiter gives only a verbal promise but asks you to resign before receiving a formal written offer'}},[
+["收到正式錄用文件並確認條款後，我才會向現公司提出離職。","收到正式录用文件并确认条款后，我才会向现公司提出离职。","I will resign from my current role only after receiving and reviewing the formal written offer.","收到正式錄用文件同確認條款之後，我先會向現公司辭職。"],
+["口頭確認不足以支持我作出不可逆的職涯決定。","口头确认不足以支持我作出不可逆的职业决定。","A verbal confirmation is not enough for me to make an irreversible career decision.","口頭確認唔足夠支持我作出不可逆嘅職涯決定。"],
+["請先發出列明職位、薪資、開始日期和條件的正式 offer。","请先发出写明职位、薪资、入职日期和条件的正式 offer。","Please issue a formal offer stating the role, compensation, start date, and conditions.","請先發一份列明職位、薪酬、入職日期同條件嘅正式 offer。"],
+["我可以確認有意加入，但不能在文件完成前先離職。","我可以确认有意加入，但不能在文件完成之前先辞职。","I can confirm my intention to join, but I cannot resign before the paperwork is complete.","我可以確認有意加入，但唔可以喺文件完成之前先辭職。"],
+["如果錄用仍需背景審查或內部批准，請等條件完成後再談離職日期。","如果录用仍取决于背景调查或内部审批，请等条件完成后再讨论离职日期。","If employment remains conditional on checks or approvals, we should discuss resignation only after those conditions are cleared.","如果錄用仲要背景審查或者內部批准，請等條件完成後再傾離職日期。"],
+["請標明這是無條件錄用，還是仍有尚未完成的前置條件。","请说明这是无条件录用，还是仍有未完成的前置条件。","Please clarify whether this is an unconditional offer or still subject to outstanding conditions.","請講明呢個係無條件錄用，定係仲有未完成嘅前置條件。"],
+["我需要知道匯報對象、工作地點、試用期和福利，再作最後決定。","我需要确认汇报对象、工作地点、试用期和福利，再作最终决定。","I need the reporting line, work location, probation terms, and benefits before making a final decision.","我要確認匯報對象、工作地點、試用期同福利，再作最後決定。"],
+["你們可以先提供草擬合約讓我審閱，不必等到入職後才看到。","你们可以先提供合同草案让我审阅，不必等到入职后才看到。","You can send a draft contract for review rather than waiting until after I join.","你哋可以先俾合約草稿我睇，唔使等入職後先見到。"],
+["若開始日期很急，請加快內部文件流程，而不是把風險轉給候選人。","如果入职时间很紧，请加快内部文件流程，而不是把风险转给候选人。","If the start date is urgent, expedite the internal paperwork rather than shifting the risk to the candidate.","如果入職時間好趕，請加快內部文件流程，唔好將風險轉俾候選人。"],
+["我的通知期會從正式接受錄用後開始計算。","我的离职通知期会从正式接受录用后开始计算。","My notice period will begin once I have formally accepted the written offer.","我嘅離職通知期會由正式接受錄用之後開始計。"],
+["請按我的通知期調整入職日，不要要求我在沒有保障時先辭職。","请根据我的离职通知期调整入职日期，不要要求我在没有保障时先辞职。","Adjust the start date around my notice period rather than asking me to resign without formal assurance.","請按我通知期調整入職日，唔好要我冇保障之下先辭職。"],
+["我不會向現公司謊報，也不會在正式文件前製造失業空窗。","我不会向现公司虚报情况，也不会在正式文件前制造失业空档。","I will not misrepresent the situation to my employer or create an employment gap before documents are final.","我唔會向現公司講假話，亦唔會喺正式文件前製造失業空窗。"],
+["如果公司確定錄用，書面確認應該不是困難的一步。","如果公司已经确定录用，提供书面确认应该不是困难的一步。","If the company has made a final hiring decision, written confirmation should not be difficult.","如果公司已經確定錄用，書面確認應該唔係困難一步。"],
+["請用公司電郵發送確認，並抄送有權核准錄用的人。","请通过公司邮箱发送确认，并抄送有权批准录用的负责人。","Send confirmation from a company email and copy the person authorised to approve the hire.","請用公司電郵發確認，同埋抄送有權批錄用嘅人。"],
+["我需要可以保存和核對的文件，不會只依靠通話內容。","我需要可以保存和核对的文件，不能只依靠通话内容。","I need a document I can retain and verify, not only a phone conversation.","我要一份可以保存同核對嘅文件，唔會淨係靠通話內容。"],
+["可以把剛才的口頭條件整理成電郵，我確認沒有差異後再推進。","可以把刚才的口头条件整理成邮件，我确认无误后再继续。","Put the verbal terms into an email, and I will proceed after confirming they match.","可以將啱啱口頭條件整理成電郵，我確認冇差異再推進。"],
+["如果薪資或職位仍可能變動，我更不會現在辭職。","如果薪资或职位仍有可能变化，我更不能现在辞职。","If the compensation or position may still change, I certainly cannot resign now.","如果薪酬或者職位仲可能變，我更加唔會依家辭職。"],
+["請告訴我文件卡在哪個審批環節，以及預計何時完成。","请告诉我文件卡在哪个审批环节，以及预计什么时候完成。","Tell me which approval is outstanding and when the document is expected to be ready.","請話我知文件卡喺邊個審批環節，同埋預計幾時完成。"],
+["我可以暫時保留入職意向到星期五，之後需要正式文件才能繼續。","我可以把入职意向保留到周五，之后必须收到正式文件才能继续。","I can hold my intention to join until Friday; after that, progress requires a written offer.","我可以暫時保留入職意向到星期五，之後要正式文件先可以繼續。"],
+["在 offer 確認前，我不會提供已離職的證明。","正式 offer 确认之前，我不会提供已经离职的证明。","I will not provide proof of resignation before the offer is formally confirmed.","正式 offer 確認之前，我唔會提供已離職證明。"],
+["離職證明是入職文件，不是換取錄用文件的前提。","离职证明可以作为入职文件，但不应成为换取录用文件的前提。","A resignation document may be part of onboarding; it should not be the price of receiving an offer.","離職證明可以係入職文件，但唔應該係換取錄用文件嘅前提。"],
+["我理解你們想確認我會加入，我可以簽署正式 offer 表達承諾。","我理解你们希望确认我会加入，我可以通过签署正式 offer 表达承诺。","I understand that you want commitment; I can demonstrate that by signing the formal offer.","我明你哋想確認我會加入，我可以簽正式 offer 表達承諾。"],
+["雙方的承諾應該同步：公司先正式錄用，我再正式離職。","双方的承诺应该同步：公司先正式录用，我再正式辞职。","The commitments should be reciprocal: the company issues the offer, then I submit my resignation.","雙方承諾應該同步：公司先正式錄用，我再正式辭職。"],
+["把候選人先放到沒有工作的狀態，不是合理的招聘流程。","先让候选人处于没有工作的状态，并不是合理的招聘流程。","Requiring a candidate to become unemployed first is not a reasonable hiring process.","要候選人先變成冇工返，唔係合理招聘流程。"],
+["『放心，一定會請你』很友善，但它不能代替 offer。","“放心，一定会录用你”很友善，但不能代替正式 offer。","“Do not worry, we will definitely hire you” is reassuring, but it is not an offer letter.","『放心，一定會請你』好友善，但代替唔到 offer。"],
+["我要轉工，不是先跳出飛機再問降落傘在哪裡。","我要换工作，不是先跳出飞机再问降落伞在哪里。","I am changing jobs, not jumping out of a plane before checking for a parachute.","我要轉工，唔係先跳出飛機再問降落傘喺邊。"],
+["先辭職、後補文件，這個次序我不接受。","先辞职、后补文件，这个顺序我不接受。","Resign first and receive documents later is not an order I will accept.","先辭職、後補文件，呢個次序我唔接受。"],
+["正式 offer 到手，我會立即確認通知期和可入職日期。","收到正式 offer 后，我会马上确认离职通知期和可入职日期。","Once I receive the formal offer, I will promptly confirm my notice period and available start date.","正式 offer 到手，我會即刻確認通知期同可入職日期。"],
+["沒有書面錄用，我不會辭職。","没有书面录用，我不会辞职。","No written offer, no resignation.","冇書面錄用，我唔會辭職。"],
+["請先完成公司的承諾，我再完成我的。","请先完成公司的正式承诺，我再履行我的承诺。","Please formalise the company's commitment first, and I will then formalise mine.","請先完成公司正式承諾，我再完成我嗰份。"]
+]);
+
+add({id:'new29',domain:'online',domainLabel:{hant:'網絡',hans:'网络',en:'Online'},relation:{hant:'自稱客服的人',hans:'自称客服的人',en:'Purported support agent'},goal:{hant:'拒絕遠端控制',hans:'拒绝远程控制',en:'Refuse remote access'},title:{hant:'自稱客服的人要求你安裝遠端控制軟件或共享螢幕，才可以退款或處理帳戶問題',hans:'自称客服的人要求你安装远程控制软件或共享屏幕，才可以退款或处理账户问题',en:'Someone claiming to be support asks you to install remote-access software or share your screen for a refund or account issue'}},[
+["我不會安裝遠端控制軟件，請提供官方退款流程。","我不会安装远程控制软件，请提供官方退款流程。","I will not install remote-access software. Provide the official refund process instead.","我唔會安裝遠端控制軟件，請提供官方退款流程。"],
+["客服不需要控制我的手機或電腦才能退款。","客服不需要控制我的手机或电脑才能退款。","Customer support does not need control of my phone or computer to issue a refund.","客服唔需要控制我手機或者電腦先可以退款。"],
+["我不會共享螢幕，尤其是在銀行、支付或驗證頁面。","我不会共享屏幕，尤其不会展示银行、支付或验证页面。","I will not share my screen, especially on banking, payment, or verification pages.","我唔會共享螢幕，尤其係銀行、付款或者驗證頁面。"],
+["請在官方應用程式內建立退款申請，不要引導我下載其他工具。","请在官方应用内建立退款申请，不要引导我下载其他工具。","Open the refund request in the official app rather than directing me to download another tool.","請喺官方應用程式建立退款申請，唔好引導我下載其他工具。"],
+["我會自己聯絡官網列出的客服，這次通話先結束。","我会自行联系官网列出的客服，这次通话先结束。","I will contact support through the number listed on the official website. This call is over.","我會自己聯絡官網列出嘅客服，今次通話先結束。"],
+["請提供案件編號，我會在官方渠道核實是否存在。","请提供工单编号，我会通过官方渠道核实是否存在。","Give me the case number and I will verify it through an official channel.","請提供個案編號，我會喺官方渠道核實係咪存在。"],
+["你若真是客服，可以把通知發到我的官方帳戶訊息中心。","如果你确实是客服，可以把通知发送到我的官方账户消息中心。","If you are legitimate support, send the notice to my official account's message centre.","如果你真係客服，可以將通知發去我官方帳戶訊息中心。"],
+["我不會點擊你發來的連結，會自己輸入官網地址。","我不会点击你发来的链接，我会自己输入官方网站地址。","I will not click your link; I will type the official website address myself.","我唔會撳你發嚟嘅連結，我會自己輸入官網地址。"],
+["我不會透露螢幕上的驗證碼、通知內容或帳戶餘額。","我不会透露屏幕上的验证码、通知内容或账户余额。","I will not reveal verification codes, notification text, or account balances shown on my screen.","我唔會透露螢幕上驗證碼、通知內容或者帳戶餘額。"],
+["不要叫我關閉安全提示或防毒軟件，這項要求不合理。","不要要求我关闭安全提示或杀毒软件，这种操作不合理。","Do not ask me to disable security warnings or antivirus protection; that request is not legitimate.","唔好叫我關閉安全提示或者防毒軟件，呢項要求唔合理。"],
+["我不會開啟無障礙權限、裝置管理或螢幕錄製權限。","我不会开启辅助功能、设备管理或屏幕录制权限。","I will not grant accessibility, device-administration, or screen-recording permissions.","我唔會開無障礙權限、裝置管理或者螢幕錄製權限。"],
+["退款應該退回原付款方式，不需要我轉帳到任何『安全帳戶』。","退款应该退回原支付方式，不需要我转账到所谓的“安全账户”。","A refund should return to the original payment method; I do not need to transfer money to a “safe account.”","退款應該退返原付款方式，唔需要我轉帳去咩『安全戶口』。"],
+["如果要我先付款、充值或購買禮品卡，這就不是退款。","如果要我先付款、充值或购买礼品卡，这就不是退款流程。","If I must pay, top up, or buy gift cards first, this is not a refund process.","如果要我先付款、充值或者買禮品卡，呢個就唔係退款。"],
+["我不會在共享畫面時登入網上銀行。","我不会在共享屏幕时登录网上银行。","I will not log into online banking while a screen-sharing session is active.","我唔會喺共享畫面時登入網上銀行。"],
+["請停止要求我操作銀行應用程式，這與處理訂單無關。","请停止要求我操作银行应用，这与处理订单无关。","Stop asking me to operate my banking app; it is unrelated to resolving the order.","請停止要我操作銀行應用程式，呢個同處理訂單無關。"],
+["我會截圖保留你提出的要求，交給平台安全團隊核實。","我会截图保留你的要求，并提交给平台安全团队核实。","I will preserve screenshots of these requests and send them to the platform's security team.","我會截圖保留你提出嘅要求，交俾平台安全團隊核實。"],
+["請不要再聯絡我，我會透過訂單頁自行申請售後。","请不要再联系我，我会通过订单页面自行申请售后。","Do not contact me again. I will request support directly from the order page.","請唔好再聯絡我，我會經訂單頁自己申請售後。"],
+["我已掛斷並會致電官方客服，不會使用你提供的號碼回撥。","我会挂断并拨打官方客服电话，不会使用你提供的号码回拨。","I am ending the call and will dial the official support number, not a number you provide.","我會收線再打官方客服，唔會用你提供嘅號碼回撥。"],
+["請說出我的訂單編號和退款金額，但我不會向你補充私人資料。","请说出我的订单号和退款金额，但我不会向你补充个人信息。","State my order number and refund amount, but I will not provide additional personal information.","請講出我訂單號同退款金額，但我唔會向你補充私人資料。"],
+["你無法在官方帳戶內驗證身分，我就不會繼續。","如果你无法在官方账户内验证身份，我不会继续沟通。","If you cannot verify your identity within my official account, I will not continue.","你核實唔到官方帳戶身份，我就唔會繼續。"],
+["即使畫面上沒有密碼，共享螢幕仍可能暴露通知和個人資料。","即使屏幕上没有密码，共享画面仍可能暴露通知和个人信息。","Even without passwords visible, screen sharing can expose notifications and personal data.","就算畫面冇密碼，共享螢幕都可能暴露通知同個人資料。"],
+["如果我已經安裝，現在先斷網、關閉遠端連線並卸載軟件。","如果我已经安装，现在先断网、关闭远程连接并卸载软件。","If it is already installed, I will disconnect from the network, end remote access, and uninstall it now.","如果我已經裝咗，依家先斷網、關閉遠端連線同卸載軟件。"],
+["如果已透露銀行資料，我會立即聯絡銀行凍結相關交易。","如果已经暴露银行信息，我会立即联系银行冻结相关交易。","If banking information was exposed, I will contact the bank immediately to secure the account and transactions.","如果已經透露銀行資料，我會即刻聯絡銀行凍結相關交易。"],
+["我會更改受影響帳戶的密碼，並檢查是否多了陌生裝置。","我会修改受影响账户的密码，并检查是否出现陌生设备。","I will change the affected account passwords and check for unfamiliar devices.","我會改受影響帳戶密碼，同埋檢查有冇陌生裝置。"],
+["我不接受『不共享就無法退款』這種說法，請書面拒絕我的正常申請。","我不接受“不共享就不能退款”这种说法，请书面说明拒绝正常申请的理由。","I do not accept “no screen share, no refund.” Put any denial of my standard refund request in writing.","我唔接受『唔共享就退唔到款』呢個講法，請書面拒絕我正常申請。"],
+["真正的客服會保護帳戶，你現在要求的是把帳戶打開給你看。","真正的客服会保护账户，而你现在要求的是让我把账户打开给你看。","Real support protects an account; you are asking me to open mine up for you.","真正客服會保護帳戶，你依家要求係將帳戶打開俾你睇。"],
+["退款還沒到，遠端權限倒先要齊了，這很可疑。","退款还没到账，远程权限倒是先要齐了，这很可疑。","The refund has not arrived, yet you need every remote permission first. That is highly suspicious.","退款未到，遠端權限就先要齊，呢個好可疑。"],
+["不用教我安裝，我只需要退款編號。","不用教我安装软件，我只需要退款编号。","Do not guide me through an installation. I only need the refund reference.","唔使教我安裝，我只需要退款編號。"],
+["不共享、不遠端、不轉帳。請走官方流程。","不共享、不远程控制、不转账。请走官方流程。","No screen sharing, no remote control, and no transfers. Use the official process.","唔共享、唔遠端、唔轉帳。請行官方流程。"],
+["我現在結束對話並舉報這個帳號。","我现在结束对话并举报这个账号。","I am ending this conversation and reporting this account now.","我依家結束對話同舉報呢個帳號。"]
+]);
+})();
