@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(meta,rows){if(S.some(x=>x.id===meta.id))throw Error('Duplicate scene '+meta.id);const replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');replies.zh[k]={hant:r[0],hans:r[1]};replies.en[k]=r[2];replies.yue[k]=r[3]});S.push({...meta,replies});window.CHAT_REVIEWED_SCENES[meta.id]=true}
+
+add({id:'new43',domain:'study',domainLabel:{hant:'學習',hans:'学习',en:'Study'},relation:{hant:'小組同學',hans:'小组同学',en:'Group member'},goal:{hant:'核查資料並阻止錯誤引用提交',hans:'核查资料并阻止错误引用提交',en:'Verify sources and stop false citations being submitted'},title:{hant:'小組同學放入多條查不到的引用，仍催大家直接以全組名義提交',hans:'小组同学加入了多条查不到的引用，还催大家直接以全组名义提交',en:'A group member adds several citations nobody can verify and urges everyone to submit them under the whole group’s name'}},[
+["這幾條引用查不到原文，先不要提交。","这几条引用找不到原文，先不要提交。","We can't find the original sources for these citations, so don't submit them yet.","呢幾條引用搵唔到原文，先唔好提交。"],
+["請把每條資料的作者、標題和可開啟連結補齊。","请补全每条资料的作者、标题和可打开的链接。","Please provide the author, title, and a working link for every source.","請補齊每條資料嘅作者、標題同開得到嘅連結。"],
+["我在圖書館資料庫也找不到這篇文章，你從哪裡取得的？","我在图书馆数据库里也找不到这篇文章，你从哪里获取的？","I can't find this article in the library database either. Where did it come from?","我喺圖書館資料庫都搵唔到呢篇文章，你喺邊度攞到？"],
+["如果只看過摘要，就不要寫成已讀完整研究。","如果只看过摘要，就不要写成已经读过完整研究。","If you only saw a summary, don't present it as though we read the full study.","如果只睇過摘要，就唔好寫成已經讀過完整研究。"],
+["這個頁碼超出文章總頁數，明顯需要重新核對。","这个页码超过了文章总页数，明显需要重新核对。","This page number exceeds the article's length, so it clearly needs checking.","呢個頁碼超出文章總頁數，明顯要重新核對。"],
+["作者和年份對不上，請不要把兩篇資料拼成一條。","作者和年份对不上，请不要把两篇资料拼成一条引用。","The author and year don't match. Don't combine two sources into one citation.","作者同年份對唔上，請唔好將兩篇資料拼成一條。"],
+["我們逐條打開原文，再決定哪些可以保留。","我们逐条打开原文，再决定哪些可以保留。","Let's open each original source before deciding what can stay.","我哋逐條打開原文，再決定邊啲可以保留。"],
+["查不到的先標紅，今晚各自分工找可驗證替代來源。","查不到的先标红，今晚分工找可以验证的替代来源。","Mark the unverifiable ones in red and split up finding reliable replacements tonight.","查唔到嘅先標紅，今晚分工搵可驗證替代來源。"],
+["我可以負責核對前三條，你負責後三條並附原文截圖。","我可以核对前三条，你负责后三条并附上原文截图。","I'll verify the first three; you verify the last three and attach the originals.","我可以核對頭三條，你負責後三條同附原文截圖。"],
+["先刪掉有疑問的引用，論證不足的段落之後再補。","先删除有疑问的引用，论据不足的段落之后再补。","Remove the questionable citations first; we can strengthen the affected paragraphs afterward.","先刪走有問題嘅引用，論據唔夠嘅段落之後再補。"],
+["不能因為快到截止時間，就把無法核實的內容交出去。","不能因为快到截止时间，就提交无法核实的内容。","A close deadline isn't a reason to submit claims we can't verify.","唔可以因為就到截止時間，就將核實唔到嘅內容交出去。"],
+["以全組名義提交，就要讓全組都能確認資料真實。","以全组名义提交，就要让全组都能确认资料真实。","If it goes under all our names, everyone must be able to verify the sources.","以全組名義提交，就要全組都確認到資料真實。"],
+["我不會在沒有核實的版本上署名。","我不会在没有核实的版本上署名。","I won't put my name on an unverified version.","我唔會喺未核實嘅版本上署名。"],
+["若你已使用生成工具，請按課程規則如實說明。","如果你使用了生成工具，请按照课程规定如实说明。","If you used a generative tool, disclose it according to the course rules.","如果你用咗生成工具，請按課程規則如實說明。"],
+["生成的參考文獻也要回到真實原文逐條檢查。","生成的参考文献也必须回到真实原文逐条检查。","Generated references still need to be checked against real originals one by one.","生成嘅參考文獻都要返去真實原文逐條檢查。"],
+["工具給出的內容不是來源，真正的文獻才是。","工具给出的内容不是来源，真实文献才是。","Tool output isn't a source; the actual publication is.","工具俾出嚟嘅內容唔係來源，真正文獻先係。"],
+["如果課程禁止這種用法，我們要立刻換掉相關內容。","如果课程禁止这种用法，我们要马上替换相关内容。","If the course prohibits this use, we need to replace the affected material now.","如果課程禁止呢種用法，我哋要即刻換走相關內容。"],
+["不確定規則的話，我們可以先問導師，不必隱瞞。","如果不确定规则，我们可以先问导师，不需要隐瞒。","If we're unsure about the rule, we can ask the instructor rather than hide it.","唔確定規則嘅話，我哋可以先問導師，唔使隱瞞。"],
+["我會在群組記錄目前發現的問題和修正決定。","我会在群里记录目前发现的问题和修正决定。","I'll document the issues and our correction decisions in the group chat.","我會喺群組記錄依家發現嘅問題同修正決定。"],
+["請不要刪除版本紀錄，方便大家追蹤改動。","请不要删除版本记录，方便大家追踪修改。","Don't delete the version history; we need a clear record of the changes.","請唔好刪版本紀錄，方便大家追蹤改動。"],
+["若你堅持保留，我會把異議寫給導師並退出該段署名。","如果你坚持保留，我会把异议告知导师，并退出该部分署名。","If you insist on keeping them, I'll notify the instructor and remove my name from that section.","如果你堅持保留，我會將異議寫俾導師，同退出嗰段署名。"],
+["這不只是格式問題，虛假來源會影響整份作業的可信度。","这不只是格式问题，虚假来源会影响整份作业的可信度。","This isn't a formatting issue; false sources undermine the entire submission.","呢個唔只係格式問題，虛假來源會影響成份作業可信度。"],
+["寧願少三條引用，也不要多三條不存在的文獻。","宁可少三条引用，也不要多三条不存在的文献。","Three fewer citations are better than three nonexistent ones.","寧願少三條引用，都唔好多三條唔存在嘅文獻。"],
+["參考文獻不是裝飾，不能看起來像真的就算。","参考文献不是装饰，不能看起来像真的就算数。","References aren't decoration; looking plausible isn't enough.","參考文獻唔係裝飾，唔可以睇落似真就算。"],
+["一鍵生成很快，逐條翻車也會很快。","一键生成很快，逐条出错也会很快。","One-click generation is fast; so is getting every source wrong.","一鍵生成好快，逐條出事都會好快。"],
+["這些文獻像幽靈：有名字，沒人找得到。","这些文献像幽灵：有名字，却没人找得到。","These papers are ghosts: they have names, but nobody can find them.","呢啲文獻似幽靈：有名，但冇人搵得到。"],
+["別催提交，先把來源救活。","别催着提交，先把来源查实。","Stop rushing the upload and make the sources real first.","唔好催提交，先將來源查實。"],
+["查不到就刪，不拿全組成績碰運氣。","查不到就删，不拿全组成绩碰运气。","If it can't be verified, delete it. We won't gamble the group's grade.","查唔到就刪，唔攞全組成績碰運氣。"],
+["我不同意提交目前版本。","我不同意提交当前版本。","I do not agree to submit this version.","我唔同意提交依家呢個版本。"],
+["先驗證，再署名。","先验证，再署名。","Verify first, then sign our names.","先驗證，再署名。"]
+]);
+
+add({id:'new44',domain:'business',domainLabel:{hant:'商務',hans:'商务',en:'Business'},relation:{hant:'客戶',hans:'客户',en:'Client'},goal:{hant:'先確認合約與付款再開工',hans:'先确认合同与付款再开工',en:'Confirm contract and payment before starting'},title:{hant:'客戶以項目很急為由，要求你在合約未簽、訂金未付前先開始工作',hans:'客户以项目很急为由，要求你在合同未签、定金未付前先开始工作',en:'A client says the project is urgent and asks you to start before the contract is signed or the deposit is paid'}},[
+["我可以預留檔期，但要在合約簽署和訂金到帳後開工。","我可以预留档期，但会在合同签署、定金到账后开工。","I can hold the slot, but work starts after the contract is signed and the deposit clears.","我可以預留檔期，但要簽好合約同訂金到帳先開工。"],
+["項目很急，更需要先把範圍和責任寫清楚。","项目越急，越需要先把范围和责任写清楚。","The urgency makes a clear scope and responsibilities more important, not less.","項目越急，越要先將範圍同責任寫清楚。"],
+["今天簽回文件並付款，我最快明早可以開始。","今天签回文件并付款，我最快明早可以开始。","Return the signed agreement and payment today, and I can start tomorrow morning.","今日簽返文件同付款，我最快聽朝可以開始。"],
+["在正式開工前，我可以先回答範圍問題，但不會製作交付內容。","正式开工前，我可以先回答范围问题，但不会制作交付内容。","Before kickoff I can clarify scope, but I won't produce deliverables.","正式開工之前，我可以先答範圍問題，但唔會製作交付內容。"],
+["請先確認報價、付款節點和交付日期，三項齊全才排進製作。","请先确认报价、付款节点和交付日期，三项齐全后才排进制作。","Please approve the quote, payment milestones, and delivery date before production is scheduled.","請先確認報價、付款節點同交付日期，三樣齊先排入製作。"],
+["口頭說開始不等於雙方已同意相同範圍。","口头说开始不代表双方已经同意相同范围。","A verbal go-ahead doesn't mean we've agreed on the same scope.","口頭話開始唔代表雙方已經同意相同範圍。"],
+["請用電郵確認最終版本，避免稍後說這不是你要的。","请用邮件确认最终版本，避免之后说这不是你要的。","Confirm the final brief by email so there is no later dispute about what was requested.","請用電郵確認最終版本，避免之後話唔係你要嘅。"],
+["訂金是啟動項目的條件，不是完成後才補的手續。","定金是项目启动条件，不是完成后再补的手续。","The deposit is a start condition, not paperwork to catch up after delivery.","訂金係啟動項目條件，唔係做完先補嘅手續。"],
+["財務一確認到帳，我會立即發出開工通知。","财务确认到账后，我会马上发出开工通知。","I'll issue the kickoff notice as soon as finance confirms receipt.","財務一確認到帳，我會即刻發出開工通知。"],
+["若付款系統有延遲，可以先提供可核實的轉帳憑證。","如果付款系统有延迟，可以先提供可核实的转账凭证。","If payment processing is delayed, send a verifiable transfer receipt for review.","如果付款系統有延遲，可以先提供核實到嘅轉帳憑證。"],
+["如果採購流程來不及，請提供正式採購單和批准人資料。","如果采购流程来不及，请提供正式采购单和批准人信息。","If procurement is delayed, provide an official purchase order and approver details.","如果採購流程趕唔切，請提供正式採購單同批准人資料。"],
+["我可以把合約縮短為簡明版本，但核心條款不能省略。","我可以把合同简化，但核心条款不能省略。","I can shorten the agreement, but the core terms cannot be omitted.","我可以將合約縮短做簡明版，但核心條款唔可以省。"],
+["若只需要緊急諮詢，可以先購買兩小時的獨立服務。","如果只需要紧急咨询，可以先购买两小时的独立服务。","If you only need urgent advice, you can book a separate two-hour consultation.","如果只係要緊急諮詢，可以先買兩個鐘獨立服務。"],
+["要趕工可以安排加急方案，但需要確認加急費和可行日期。","如果要赶工，可以选择加急方案，但需确认加急费和可行日期。","We can offer a rush option after confirming the fee and feasible deadline.","如果要趕工，可以安排加急方案，但要確認加急費同可行日期。"],
+["我不會承諾一個尚未評估就一定能做到的日期。","我不会承诺一个还没评估就肯定能做到的日期。","I won't promise a date before assessing whether it is achievable.","我唔會承諾一個未評估就一定做得到嘅日期。"],
+["若今天未完成手續，原本預留的檔期可能要讓給其他項目。","如果今天没完成手续，原先预留的档期可能会安排给其他项目。","If the paperwork isn't completed today, the held slot may go to another project.","如果今日未完成手續，原本預留檔期可能會俾其他項目。"],
+["我會保留報價到星期五，之後需要重新確認時間。","我会保留报价到周五，之后需要重新确认档期。","The quote remains open until Friday; after that, availability must be checked again.","我會保留報價到星期五，之後要重新確認檔期。"],
+["沒有簽約前投入的時間，也需要有人承擔成本。","没有签约前投入的时间，也需要有人承担成本。","Time spent before signing still has a cost that someone must carry.","未簽約之前投入嘅時間，都要有人承擔成本。"],
+["我們過去合作順利，但這次仍要按標準流程開始。","我们过去合作顺利，但这次仍要按标准流程启动。","Our past work went well, but this project still starts through the standard process.","我哋過去合作順利，但今次都要按標準流程開始。"],
+["信任不排斥合約；清楚的約定反而保護合作。","信任并不排斥合同；清楚的约定反而能保护合作。","Trust and contracts aren't opposites; clear terms protect the relationship.","信任唔排斥合約；清楚約定反而保護合作。"],
+["如果需求又變，未簽約開工會讓雙方都說不清。","如果需求再变，未签约就开工会让双方都说不清。","If requirements change, starting unsigned leaves both sides without a clear record.","如果需求再變，未簽約就開工會令雙方都講唔清。"],
+["請不要把你們內部延誤轉成我的無條件墊工。","请不要把你们内部的延误变成让我无条件垫工。","Please don't turn your internal delay into unpaid advance work on my side.","請唔好將你哋內部延誤變成要我無條件墊工。"],
+["『先做一點』通常不是一點，我們按流程來。","“先做一点”通常不会只有一点，我们还是按流程来。","'Just start a little' rarely stays little. We'll follow the process.","『先做少少』通常唔會只係少少，我哋按流程嚟。"],
+["急件可以加急，不能把合約也一起省略。","急件可以加急，但不能把合同也一起省略。","Urgent work can be expedited; the agreement cannot be skipped.","急件可以加急，唔可以連合約都省埋。"],
+["我提供的是專業服務，不是先試吃後決定付款。","我提供的是专业服务，不是先试用再决定要不要付款。","This is professional work, not a free sample before deciding whether to pay.","我提供嘅係專業服務，唔係先試食再決定俾唔俾錢。"],
+["你們的截止日期跑得很快，付款流程也要跟上。","你们的截止日期跑得很快，付款流程也要跟上。","Your deadline is moving fast; the payment process needs to keep pace.","你哋截止日期跑得好快，付款流程都要跟上。"],
+["合約未簽，項目未開。","合同未签，项目不启动。","No signed contract, no kickoff.","合約未簽，項目未開。"],
+["先付訂金，再排工作。","先付定金，再安排工作。","Deposit first, scheduling second.","先付訂金，再排工作。"],
+["我不接受無合約開工。","我不接受没有合同就开工。","I don't begin work without an agreement.","我唔接受冇合約就開工。"],
+["流程可以快，底線不能跳過。","流程可以加快，底线不能跳过。","The process can move quickly; the safeguards cannot be skipped.","流程可以快，底線唔可以跳過。"]
+]);
+})();

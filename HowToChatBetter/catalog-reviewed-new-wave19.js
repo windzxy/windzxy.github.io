@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(meta,rows){if(S.some(x=>x.id===meta.id))throw Error('Duplicate scene '+meta.id);const replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');replies.zh[k]={hant:r[0],hans:r[1]};replies.en[k]=r[2];replies.yue[k]=r[3]});S.push({...meta,replies});window.CHAT_REVIEWED_SCENES[meta.id]=true}
+
+add({id:'new45',domain:'travel',domainLabel:{hant:'旅行',hans:'旅行',en:'Travel'},relation:{hant:'住宿方',hans:'住宿方',en:'Accommodation host'},goal:{hant:'確認安全合規的身份核驗方式',hans:'确认安全合规的身份核验方式',en:'Confirm a safe, legitimate identity-check process'},title:{hant:'住宿方要求你把完整護照照片傳到他的私人聊天帳號，否則不提供入住資料',hans:'住宿方要求你把完整护照照片发到他的私人聊天账号，否则不提供入住信息',en:'An accommodation host asks you to send a full passport photo to a personal chat account or they will withhold check-in details'}},[
+["我不會把完整護照傳到私人帳號，請提供正式驗證渠道。","我不会把完整护照发到私人账号，请提供正式的验证渠道。","I won't send a full passport to a personal account. Please provide the official verification channel.","我唔會將完整護照傳去私人帳號，請提供正式驗證渠道。"],
+["平台內是否有加密的入住資料上傳頁面？","平台内有没有加密的入住资料上传页面？","Does the booking platform provide a secure check-in upload page?","平台入面有冇加密嘅入住資料上傳頁面？"],
+["請把要求寫在訂房平台訊息中，不要轉到私人聊天。","请把要求写在订房平台消息里，不要转到私人聊天。","Please keep this request in the booking platform messages rather than private chat.","請將要求寫喺訂房平台訊息，唔好轉去私人聊天。"],
+["我可以到店出示證件，但不會預先傳送完整影像。","我可以到店出示证件，但不会提前发送完整照片。","I can show my passport at check-in, but I won't send a full image in advance.","我可以到店出示證件，但唔會預先傳送完整相。"],
+["若當地規定需要登記，請提供法規或官方說明連結。","如果当地规定需要登记，请提供法规或官方说明链接。","If local law requires registration, please send the official rule or guidance.","如果當地規定要登記，請提供法規或者官方說明連結。"],
+["請說明需要哪些欄位、保存多久，以及誰可以查看。","请说明需要哪些信息、保存多久，以及谁可以查看。","Explain which fields are required, how long they are retained, and who can access them.","請講明需要邊啲資料、保存幾耐，同邊個可以查看。"],
+["如果只需要姓名和證件號，沒必要收集整張護照。","如果只需要姓名和证件号码，就没必要收集整张护照。","If only my name and document number are required, a full passport image is unnecessary.","如果只需要姓名同證件號碼，冇必要收集成張護照。"],
+["能否讓我遮住不需要的資料，只保留依法必需部分？","能否允许我遮住不需要的信息，只保留依法必需的部分？","May I redact data that isn't legally required?","可唔可以俾我遮住唔需要嘅資料，只保留依法必需部分？"],
+["請用住宿方的官方電郵發送資料處理說明。","请用住宿方的官方邮箱发送数据处理说明。","Send the data-handling notice from the property's official email address.","請用住宿方官方電郵發送資料處理說明。"],
+["這個帳號無法證明屬於住宿方，我需要先向平台核實。","这个账号无法证明属于住宿方，我需要先向平台核实。","This account doesn't prove it belongs to the property, so I'll verify it with the platform first.","呢個帳號證明唔到屬於住宿方，我要先向平台核實。"],
+["在平台確認前，我不會傳送任何證件資料。","在平台确认之前，我不会发送任何证件信息。","I won't send any identity document until the platform confirms the request.","喺平台確認之前，我唔會傳送任何證件資料。"],
+["請提供住宿名稱、登記地址和可回撥的公開電話。","请提供住宿名称、登记地址和可以回拨的公开电话。","Provide the property's registered name, address, and publicly listed phone number.","請提供住宿名稱、登記地址同可以回撥嘅公開電話。"],
+["我會直接致電訂房頁面上的電話確認，不使用你傳來的號碼。","我会直接拨打订房页面上的电话确认，不使用你发来的号码。","I'll call the number listed on the booking page, not a number sent in chat.","我會直接打訂房頁面上嘅電話確認，唔用你傳嚟嘅號碼。"],
+["若這是自助入住，請提供平台認可的身份驗證步驟。","如果是自助入住，请提供平台认可的身份验证步骤。","If this is self-check-in, provide the platform-approved identity process.","如果係自助入住，請提供平台認可嘅身份驗證步驟。"],
+["可以安排視像核對並只出示資料頁，不留下影像嗎？","可以安排视频核对，只出示资料页而不保存影像吗？","Can we verify by video while showing the data page without retaining an image?","可唔可以安排視像核對，只出示資料頁但唔留低影像？"],
+["如果沒有安全方法，我需要平台協助更換住宿。","如果没有安全的方式，我需要平台协助更换住宿。","If no secure method is available, I'll ask the platform to relocate me.","如果冇安全方法，我要平台協助更換住宿。"],
+["請不要以取消訂單威脅我繞過平台安全流程。","请不要用取消订单来逼我绕过平台的安全流程。","Do not threaten cancellation to make me bypass the platform's safety process.","請唔好用取消訂單威脅我繞過平台安全流程。"],
+["這項要求在預訂前沒有披露，我會請客服介入。","这项要求在预订前没有披露，我会请客服介入。","This requirement wasn't disclosed before booking, so I'll involve customer support.","呢項要求預訂之前冇披露，我會請客服介入。"],
+["如果因此拒絕入住，請在平台上正式說明原因。","如果因此拒绝入住，请在平台上正式说明原因。","If you refuse check-in over this, state the reason formally on the platform.","如果因此拒絕入住，請喺平台正式說明原因。"],
+["我會保存對話紀錄並向平台查證。","我会保存聊天记录并向平台核实。","I'll retain this conversation and verify it with the platform.","我會保存對話紀錄同向平台查證。"],
+["護照包含足以造成身份風險的資料，我不會隨意傳送。","护照包含可能造成身份风险的信息，我不会随意发送。","A passport contains data that can create identity risks, so I won't send it casually.","護照包含足以造成身份風險嘅資料，我唔會隨便傳送。"],
+["方便入住不能建立在不安全傳送證件之上。","入住方便不能建立在不安全传送证件之上。","Convenient check-in doesn't justify insecure document handling.","方便入住唔可以建立喺唔安全傳送證件之上。"],
+["『大家都這樣傳』不是資料安全措施。","“大家都这样发”并不算数据安全措施。","'Everyone sends it this way' is not a data-security measure.","『大家都係咁傳』唔係資料安全措施。"],
+["護照不是入住表情包，不會隨手丟進聊天視窗。","护照不是入住表情包，不能随手丢进聊天窗口。","My passport isn't a check-in sticker to drop casually into a chat window.","護照唔係入住表情包，唔會隨手掉入聊天視窗。"],
+["房門密碼可以稍後給，資料安全不能稍後補。","房门密码可以稍后给，信息安全不能事后补。","The door code can wait; data security can't be repaired after the fact.","房門密碼可以遲啲俾，資料安全唔可以事後補。"],
+["私人帳號不收護照，請換正式渠道。","私人账号不接收护照，请更换正式渠道。","No passport via personal chat. Use an official channel.","私人帳號唔收護照，請換正式渠道。"],
+["我拒絕透過這個帳號提交證件。","我拒绝通过这个账号提交证件。","I refuse to submit identity documents through this account.","我拒絕透過呢個帳號提交證件。"],
+["先由平台確認，再談上傳。","先让平台确认，再谈上传。","Platform confirmation first; upload discussion second.","先由平台確認，再傾上傳。"],
+["請提供安全方案，不要重複催照片。","请提供安全方案，不要反复催我要照片。","Provide a secure option instead of repeatedly asking for the photo.","請提供安全方案，唔好重複催相。"],
+["沒有安全渠道，我就不傳。","没有安全渠道，我就不发。","No secure channel, no document.","冇安全渠道，我就唔傳。"]
+]);
+
+add({id:'new46',domain:'online',domainLabel:{hant:'網絡',hans:'网络',en:'Online'},relation:{hant:'網友或熟人',hans:'网友或熟人',en:'Online contact'},goal:{hant:'要求撤下未經同意轉載的影像',hans:'要求删除未经同意转载的影像',en:'Have an image reposted without consent removed'},title:{hant:'有人未經同意轉載你的照片或影片，畫面還顯示你的臉和即時位置',hans:'有人未经同意转载你的照片或视频，画面还显示你的脸和实时位置',en:'Someone reposts your photo or video without permission, showing your face and live location'}},[
+["這張影像未經我同意轉載，請立即刪除。","这张影像未经我同意转载，请马上删除。","You reposted this image without my consent. Remove it immediately.","呢張影像冇經我同意轉載，請即刻刪除。"],
+["請連同限時動態、貼文和置頂內容一起撤下。","请把限时动态、帖子和置顶内容一并撤下。","Remove it from the story, post, and pinned content as well.","請連限時動態、貼文同置頂內容一齊撤下。"],
+["取消標註不夠，我的臉仍然清楚可辨。","取消标记还不够，我的脸仍然清晰可辨。","Removing the tag isn't enough; my face is still identifiable.","取消標註唔夠，我個樣仍然清楚認得到。"],
+["照片顯示我現在的位置，請先下架再回覆。","照片暴露了我现在的位置，请先下架再回复。","The image exposes my current location. Take it down before replying.","張相顯示我依家位置，請先下架再回覆。"],
+["請刪除地址、車牌和其他可識別資料。","请删除地址、车牌和其他可以识别身份的信息。","Remove the address, licence plate, and any other identifying details.","請刪走地址、車牌同其他可識別資料。"],
+["我從未授權你把私人帳號的內容搬到公開平台。","我从未授权你把私人账号的内容搬到公开平台。","I never authorised moving content from my private account to a public platform.","我從來冇授權你將私人帳號內容搬去公開平台。"],
+["即使原帖能看見，也不代表你可以另行下載和轉發。","即使原帖可以看到，也不代表你能另行下载并转发。","Being able to view the original does not grant permission to download and repost it.","就算原帖睇得到，都唔代表你可以另外下載同轉發。"],
+["請告訴我你還把這段影片發到哪些群組。","请告诉我你还把这段视频发到了哪些群聊。","Tell me which other groups you sent this video to.","請話我知你仲將段片發咗去邊啲群組。"],
+["麻煩通知收到的人不要再轉傳，並刪除副本。","请通知收到的人不要继续转发，并删除副本。","Ask everyone who received it to stop forwarding and delete their copies.","麻煩通知收到嘅人唔好再轉傳，同刪除副本。"],
+["如果你想分享活動照片，請先裁掉我的臉和位置資訊。","如果你想分享活动照片，请先遮住我的脸和位置信息。","If you want to share the event, crop or obscure my face and location first.","如果你想分享活動相，請先遮走我個樣同位置資料。"],
+["我可以提供一張願意公開的替代照片，這張請撤下。","我可以提供一张愿意公开的替代照片，这张请删除。","I can provide an alternative photo I'm comfortable sharing; take this one down.","我可以提供一張願意公開嘅替代相，呢張請撤下。"],
+["孩子也在畫面裡，請不要繼續公開或轉發。","孩子也在画面里，请不要继续公开或转发。","A child is visible too. Do not keep this public or forward it.","小朋友都喺畫面，請唔好再公開或者轉發。"],
+["這是在私人場合拍攝，不是供你經營帳號的素材。","这是在私人场合拍摄的，不是给你经营账号的素材。","This was filmed in a private setting, not created as content for your account.","呢個係私人場合拍攝，唔係俾你經營帳號嘅素材。"],
+["我願意讓你保留合照，不等於同意公開發布。","我同意你保留合影，不代表同意公开发布。","Allowing you to keep the photo isn't permission to publish it.","我俾你保留合照，唔等於同意公開發布。"],
+["你發文前沒有問我，現在我明確表示不同意。","你发帖前没有问我，现在我明确表示不同意。","You didn't ask before posting; I'm explicitly withholding consent now.","你發文之前冇問我，依家我明確表示唔同意。"],
+["請在今天內刪除，並回覆已處理。","请在今天之内删除，并回复确认。","Delete it today and confirm when it's done.","請今日之內刪除，同回覆已處理。"],
+["我已經保留貼文和時間的截圖，請不要再擴散。","我已经保存了帖子和时间截图，请不要继续扩散。","I've saved screenshots of the post and timestamp. Do not spread it further.","我已經保存貼文同時間截圖，請唔好再擴散。"],
+["若你拒絕刪除，我會向平台提交私隱申訴。","如果你拒绝删除，我会向平台提交隐私投诉。","If you refuse, I'll file a privacy report with the platform.","如果你拒絕刪除，我會向平台提交私隱申訴。"],
+["如果影像涉及安全風險，我也會聯絡相關機構尋求協助。","如果影像造成安全风险，我也会联系相关机构寻求帮助。","If the image creates a safety risk, I'll also seek help from the appropriate authorities.","如果影像造成安全風險，我亦會聯絡相關機構求助。"],
+["刪除原帖後，也請檢查是否同步到其他平台。","删除原帖后，也请检查是否同步到了其他平台。","After deleting the original, check whether it was cross-posted elsewhere.","刪除原帖之後，亦請檢查有冇同步去其他平台。"],
+["請不要用『已經很多人看過』當作不刪除的理由。","请不要用“已经很多人看过了”作为不删除的理由。","'People have already seen it' is not a reason to leave it up.","請唔好用『已經好多人睇過』做唔刪除嘅理由。"],
+["越多人看過，越應該盡快停止繼續傳播。","看过的人越多，越应该尽快停止继续传播。","The wider it has spread, the more urgent it is to stop further distribution.","越多人睇過，越應該盡快停止再傳播。"],
+["你覺得好笑，不代表我必須接受被公開。","你觉得好笑，不代表我必须接受被公开。","You finding it funny doesn't require me to accept being exposed.","你覺得好笑，唔代表我一定要接受被公開。"],
+["流量不是同意，按讚也不能代替我的許可。","流量不等于同意，点赞也不能代替我的许可。","Views aren't consent, and likes don't replace my permission.","流量唔係同意，讚好亦唔可以代替我許可。"],
+["我的臉不是你帳號的免費素材庫。","我的脸不是你账号的免费素材库。","My face is not free stock content for your account.","我個樣唔係你帳號嘅免費素材庫。"],
+["你借走的是畫面，欠下的是一句同意。","你拿走的是画面，缺少的是一句同意。","You took the image and skipped the one thing needed: consent.","你攞走嘅係畫面，欠低嘅係一句同意。"],
+["先刪掉，別跟我討論流量有多好。","先删除，别跟我讨论流量有多好。","Delete it first; I'm not discussing how well it performed.","先刪走，唔好同我討論流量有幾好。"],
+["這不是分享，是未經同意的曝光。","这不是分享，而是未经同意的曝光。","This isn't sharing; it's exposure without consent.","呢個唔係分享，係未經同意嘅曝光。"],
+["不要再轉發。","不要再转发。","Do not repost it again.","唔好再轉發。"],
+["現在下架。","现在就下架。","Take it down now.","依家下架。"]
+]);
+})();
