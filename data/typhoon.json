@@ -8,7 +8,7 @@
       "id": "2641",
       "name": "SURIGAE",
       "sourceUrl": "https://www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2641.xml",
-      "bulletinTime": "2026-09-30T22:00:48+08:00",
+      "bulletinTime": "2026-10-01T04:00:47+08:00",
       "points": [
         {
           "lat": 14.9,
@@ -264,127 +264,75 @@
           "time": "2026-09-30T12:00:00+00:00",
           "wind": "65km/h",
           "intensity": "Tropical Storm",
+          "kind": "past"
+        },
+        {
+          "lat": 32.2,
+          "lon": 139.7,
+          "time": "2026-09-30T18:00:00+00:00",
+          "wind": "65km/h",
+          "intensity": "Tropical Storm",
           "kind": "analysis"
         },
         {
-          "lat": 31.89,
-          "lon": 138.98,
+          "lat": 32.34,
+          "lon": 139.83,
           "kind": "forecast"
         },
         {
-          "lat": 31.99,
-          "lon": 139.08,
+          "lat": 32.53,
+          "lon": 140.0,
           "kind": "forecast"
         },
         {
-          "lat": 32.11,
-          "lon": 139.2,
+          "lat": 32.76,
+          "lon": 140.2,
           "kind": "forecast"
         },
         {
-          "lat": 32.25,
-          "lon": 139.32,
-          "kind": "forecast"
-        },
-        {
-          "lat": 32.4,
-          "lon": 139.46,
-          "kind": "forecast"
-        },
-        {
-          "lat": 32.56,
-          "lon": 139.61,
-          "kind": "forecast"
-        },
-        {
-          "lat": 32.73,
-          "lon": 139.77,
-          "kind": "forecast"
-        },
-        {
-          "lat": 32.9,
-          "lon": 139.94,
-          "kind": "forecast"
-        },
-        {
-          "lat": 33.08,
-          "lon": 140.12,
+          "lat": 33.0,
+          "lon": 140.43,
           "kind": "forecast"
         },
         {
           "lat": 33.26,
-          "lon": 140.31,
+          "lon": 140.66,
           "kind": "forecast"
         },
         {
-          "lat": 33.43,
-          "lon": 140.5,
+          "lat": 33.5,
+          "lon": 140.9,
           "kind": "forecast"
         },
         {
-          "lat": 33.6,
-          "lon": 140.7,
+          "lat": 33.76,
+          "lon": 141.16,
           "kind": "forecast"
         },
         {
-          "lat": 33.78,
-          "lon": 140.92,
+          "lat": 34.04,
+          "lon": 141.46,
           "kind": "forecast"
         },
         {
-          "lat": 33.97,
-          "lon": 141.17,
-          "kind": "forecast"
-        },
-        {
-          "lat": 34.17,
-          "lon": 141.44,
-          "kind": "forecast"
-        },
-        {
-          "lat": 34.39,
-          "lon": 141.72,
+          "lat": 34.33,
+          "lon": 141.78,
           "kind": "forecast"
         },
         {
           "lat": 34.6,
-          "lon": 142.02,
+          "lon": 142.07,
           "kind": "forecast"
         },
         {
-          "lat": 34.81,
-          "lon": 142.31,
+          "lat": 34.83,
+          "lon": 142.32,
           "kind": "forecast"
         },
         {
-          "lat": 35.02,
-          "lon": 142.6,
-          "kind": "forecast"
-        },
-        {
-          "lat": 35.21,
-          "lon": 142.88,
-          "kind": "forecast"
-        },
-        {
-          "lat": 35.4,
-          "lon": 143.13,
-          "kind": "forecast"
-        },
-        {
-          "lat": 35.56,
-          "lon": 143.36,
-          "kind": "forecast"
-        },
-        {
-          "lat": 35.69,
-          "lon": 143.55,
-          "kind": "forecast"
-        },
-        {
-          "lat": 35.8,
-          "lon": 143.7,
-          "time": "2026-10-01T12:00:00+00:00",
+          "lat": 35.0,
+          "lon": 142.5,
+          "time": "2026-10-01T06:00:00+00:00",
           "wind": "--",
           "intensity": "Extratropical Low",
           "kind": "forecast"
@@ -394,6 +342,6 @@
   ],
   "errors": [],
   "ok": true,
-  "sourceUpdatedAt": "2026-09-30T22:00:48+08:00",
-  "updatedAt": "2026-09-30T18:23:06.049910+00:00"
+  "sourceUpdatedAt": "2026-10-01T04:00:47+08:00",
+  "updatedAt": "2026-09-30T22:24:00.525040+00:00"
 }
