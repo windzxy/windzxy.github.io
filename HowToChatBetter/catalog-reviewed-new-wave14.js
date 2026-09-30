@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new35',domain:'job',domainLabel:{hant:'求職',hans:'求职',en:'Job Search'},relation:{hant:'招聘方',hans:'招聘方',en:'Recruiter'},goal:{hant:'釐清並拒絕入職押金',hans:'核实并拒绝入职押金',en:'Question an upfront hiring deposit'},title:{hant:'招聘方說錄用前必須先付培訓押金，還催你立即轉帳',hans:'招聘方说录用前必须先交培训押金，还催你马上转账',en:'A recruiter says you must pay a training deposit before being hired and presses you to transfer it immediately'}},[
+["在收到正式錄用條款之前，我不會支付培訓押金。","收到正式录用条件之前，我不会支付培训押金。","I won't pay a training deposit before receiving the formal employment terms.","未收到正式錄用條款之前，我唔會俾培訓按金。"],
+["請先用公司電郵說明費用用途、收款方和退還條件。","请先用公司邮箱说明费用用途、收款方和退款条件。","Please explain the fee, payee, and refund conditions from a company email first.","請先用公司電郵講明費用用途、收款方同退返條件。"],
+["這筆錢為甚麼需要候選人先付，而不是由公司安排培訓？","为什么要候选人先付这笔钱，而不是由公司安排培训？","Why is the candidate being asked to fund the training instead of the company?","點解呢筆錢要候選人先俾，唔係公司安排培訓？"],
+["如果這是正式流程，請提供可在公司網站核對的文件。","如果这是正式流程，请提供能在公司网站核实的文件。","If this is a formal process, please send documentation I can verify through the company website.","如果呢個係正式流程，請提供可以喺公司網站核對嘅文件。"],
+["我會自行致電官網上的人事部電話確認，不使用你傳來的號碼。","我会自己拨打官网公布的人事部电话核实，不使用你发来的号码。","I'll verify this with HR using the number on the company's website, not one sent in this chat.","我會自己打官網上面人事部電話核實，唔用你傳嚟嘅號碼。"],
+["請把職位、薪資、入職日期與押金條款放在同一份書面文件裡。","请把岗位、工资、入职日期和押金条款写在同一份正式文件里。","Put the role, salary, start date, and deposit terms in one written offer.","請將職位、人工、入職日期同按金條款寫喺同一份正式文件。"],
+["你說會退還，請明確寫出甚麼時間、按甚麼條件退。","你说会退钱，请写明何时退、满足哪些条件才退。","You say it's refundable. State exactly when and under what conditions.","你話會退，請寫清楚幾時退、要符合咩條件。"],
+["任何費用若要轉入個人帳戶，我不會付款。","如果费用要转进个人账户，我不会付款。","I won't transfer any hiring payment to a personal account.","任何費用要轉入私人戶口，我都唔會俾。"],
+["我不會在聊天軟件裡掃私人收款碼，請走公司正式流程。","我不会在聊天软件里扫私人收款码，请走公司正式流程。","I won't scan a personal payment code in a chat app. Use an official company process.","我唔會喺聊天軟件掃私人收款碼，請行公司正式流程。"],
+["若只是購買教材，請列出書名、單價和是否可以自行購買。","如果是购买教材，请列出书名、单价，以及能否自行购买。","If this is for materials, list the items, prices, and whether I can buy them independently.","如果係買教材，請列出書名、單價，同埋可唔可以自己買。"],
+["請說明培訓是否與正式工作有關，以及誰負擔授課成本。","请说明培训是否属于岗位要求，以及授课成本由谁承担。","Please clarify whether the training is required for the role and who bears its cost.","請講明培訓係咪職位要求，同埋邊個負擔授課費。"],
+["如果通過面試是以轉帳為前提，我選擇退出這次招聘。","如果面试通过还必须先转账，我选择退出这次招聘。","If a transfer is a condition of being hired, I'll withdraw from this process.","如果過到面試都要先轉帳，我會退出今次招聘。"],
+["我需要時間核對文件，不會因為今天截止就立即付款。","我需要时间核对文件，不会因为你说今天截止就立刻付款。","I need time to verify the paperwork; a same-day deadline won't make me pay immediately.","我要時間核對文件，唔會因為你話今日截止就即刻俾錢。"],
+["如果名額確實有限，請讓公司用正式電郵確認，而不是催私人轉帳。","如果名额确实有限，请让公司用正式邮件确认，不要催我私下转账。","If places are limited, have the company confirm that formally rather than press for a private transfer.","如果名額真係有限，請公司用正式電郵確認，唔好催私人轉帳。"],
+["請先給我合約草稿；只看收款通知，我無法評估這份工作。","请先给我合同草案；只有收款通知，我没法评估这份工作。","Please send the draft contract. A payment request alone tells me too little about the job.","請先俾合約草稿我；得收款通知，我評估唔到份工。"],
+["我不會以『保留職位』名義先交錢；你們可按正常程序通知結果。","我不会为了“保留岗位”先交钱；请按正常流程通知录用结果。","I won't pay to 'hold' a role. Please communicate the decision through the normal process.","我唔會為咗『留位』先俾錢；請照正常程序通知結果。"],
+["若是第三方培訓機構收費，請說明它與招聘公司的關係。","如果收费的是第三方培训机构，请说明它和招聘公司的关系。","If a training provider is charging this, please explain its relationship with the employer.","如果係第三方培訓機構收費，請講明佢同招聘公司咩關係。"],
+["請提供公司抬頭的正式收據與付款條款，讓我先審閱。","请提供公司抬头的正式收据样本和付款条款，我要先审阅。","Please provide the company's receipt format and payment terms for review.","請提供公司抬頭嘅正式收據樣本同付款條款，等我先睇。"],
+["押金若從第一個月薪資扣除，也需要先有書面合約，不能口頭說說。","如果押金要从首月工资里扣，也必须先有书面合同，不能只靠口头说明。","If you propose taking it from my first paycheck, I still need that in a written contract.","按金如果話喺第一個月人工扣，都要先有書面合約，唔可以淨係口頭講。"],
+["我已提供履歷和面試時間，不會再以付款證明『求職誠意』。","我已经提交简历并参加面试，不会再靠付款证明求职诚意。","My application and interview show my interest. I won't use a payment to prove commitment.","我已交履歷同參加面試，唔會再靠俾錢證明求職誠意。"],
+["你可以保留我的申請到文件核實完成，但請不要再發付款連結。","文件核实之前可以先保留我的申请，但请不要再发付款链接。","You may keep my application pending verification, but please stop sending payment links.","文件核實前可以保留我申請，但請唔好再發付款連結。"],
+["我不會為了趕進度提供銀行密碼、驗證碼或完整卡片資料。","为了赶流程，我也不会提供银行密码、验证码或完整银行卡资料。","I won't provide passwords, verification codes, or full card details to speed up hiring.","我唔會為咗趕流程提供銀行密碼、驗證碼或者完整卡資料。"],
+["請先確認我應聘的究竟是有薪職位，還是自費課程。","请先确认我申请的到底是带薪岗位，还是自费课程。","Please clarify whether I'm applying for a paid position or being sold a course.","請先確認我申請嘅究竟係有薪職位，定係自費課程。"],
+["如果這筆費用不是可選的，請直接寫明；我會據此決定是否繼續。","如果这笔费用不是自愿选择的，请直接写明；我会据此决定是否继续。","If the charge is mandatory, say so plainly and I'll decide whether to proceed.","如果呢筆費用唔係自願，請直接寫明；我會再決定繼唔繼續。"],
+["先說錄用，再叫我付款，這個次序我不能接受。","先说录用，再让我付款，这个顺序我不能接受。","An offer followed immediately by a payment demand isn't a process I'll accept.","先話錄用，跟住叫我俾錢，呢個次序我唔接受。"],
+["一份工作還沒開始，就先給我開帳單？","工作还没开始，就先给我开账单？","I haven't started the job and I'm already getting an invoice?","份工都未開始，就先開張單俾我？"],
+["如果工作真的需要我，請先談工作，不要只談轉帳。","如果你们真的需要我来工作，请先谈岗位内容，别只谈转账。","If you're hiring me to work, let's discuss the work before we discuss a transfer.","如果真係請我返工，請先傾工作，唔好淨係傾轉帳。"],
+["不付押金，請繼續正常招聘；不行的話我們到此為止。","我不会付押金。能按正常流程招聘就继续，否则到此为止。","I won't pay a deposit. If the standard hiring process can continue, fine; otherwise I'll stop here.","我唔會俾按金。可以照正常招聘就繼續，唔得就到此為止。"],
+["請停止催款，我會把這段對話提交招聘平台核實。","请停止催款，我会把这段对话提交招聘平台核实。","Stop pressing for payment. I'll send this exchange to the job platform for verification.","請停止催款，我會將呢段對話交俾招聘平台核實。"],
+["沒有可核實的書面條款，我不會轉帳。","没有能核实的书面条款，我不会转账。","No verifiable written terms, no transfer.","冇可核實嘅書面條款，我唔會轉帳。"]
+]);
+
+add({id:'new36',domain:'online',domainLabel:{hant:'網絡',hans:'网络',en:'Online'},relation:{hant:'把你拉入群組的熟人',hans:'把你拉进群聊的熟人',en:'Acquaintance who added you'},goal:{hant:'退出投資群並停止推銷',hans:'退出投资群并停止推销',en:'Leave an unsolicited investment group'},title:{hant:'熟人沒先問你就把你拉進投資群，群裡不斷催你轉帳或跟單',hans:'熟人没先问你就把你拉进投资群，群里不断催你转账或跟单',en:'An acquaintance adds you to an investment group without asking, where members press you to transfer money or copy their trades'}},[
+["你拉我進群前沒有問過我，我現在會退出。","你拉我进群前没有问过我，我现在要退群。","You added me without asking. I'm leaving the group now.","你拉我入群前冇問過我，我依家會退群。"],
+["我沒有打算參與投資，請不要再把我加回去。","我没有参与投资的打算，请别再把我拉回群里。","I'm not looking to invest. Please don't add me back.","我冇打算參與投資，請唔好再拉我返入去。"],
+["請從名單移除我，也別把我的電話轉給群管理員。","请把我从名单里删掉，也不要把我的号码给群管理员。","Remove me from the contact list and don't share my number with the admins.","請喺名單刪走我，亦唔好將我電話俾群管理員。"],
+["我不會因群裡說『今天最後機會』就轉帳。","我不会因为群里说“今天最后机会”就转账。","A 'last chance today' message isn't a reason for me to send money.","我唔會因為群度話『今日最後機會』就轉帳。"],
+["那些收益截圖我無法核實，也不會據此跟單。","那些收益截图我无法核实，也不会据此跟着交易。","I can't verify those profit screenshots and won't copy trades based on them.","嗰啲收益截圖我核實唔到，亦唔會照住跟單。"],
+["請停止私訊我入金連結；我不會在陌生頁面輸入資料。","请别再私信我入金链接；我不会在陌生页面填写资料。","Stop messaging me funding links. I won't enter my details on an unfamiliar site.","請停止私訊我入金連結；我唔會喺唔識嘅頁面填資料。"],
+["我不會把身份證、銀行資料或驗證碼交給群內的人。","我不会把身份证、银行信息或验证码交给群里的人。","I won't send identity documents, bank details, or verification codes to anyone in the group.","我唔會將身份證、銀行資料或者驗證碼交俾群入面嘅人。"],
+["你若真想分享資訊，先發公開來源，不要替我下投資決定。","如果你真想分享信息，可以发公开来源，但别替我做投资决定。","If you want to share information, send a public source; don't make my investment choices for me.","你如果真想分享資訊，可以發公開來源，但唔好幫我做投資決定。"],
+["朋友關係我珍惜，但不包括互相拉投資群。","我珍惜朋友关系，但不包括互相拉进投资群。","I value our friendship; being added to investment groups isn't part of it.","我珍惜朋友關係，但唔包括互相拉入投資群。"],
+["你可能覺得是機會，我聽到了；我已經決定不參加。","你可能觉得这是机会，我听到了；我已经决定不参加。","I hear that you see an opportunity. I've decided not to join.","你可能覺得係機會，我聽到喇；我已經決定唔參加。"],
+["請不要在群裡標註我說我已答應，我從未同意。","请别在群里艾特我说我答应了，我从没同意。","Don't tag me as having agreed. I never did.","請唔好喺群度標註我話我應承咗，我從來冇同意。"],
+["我不當你的推薦名額，也不拉自己的朋友進來。","我不做你的推荐名额，也不会把自己的朋友拉进来。","I won't be your referral, and I won't recruit my friends.","我唔會做你嘅推薦名額，亦唔會拉我朋友入嚟。"],
+["投資虧損不會由群聊承擔，所以決定只能由我自己做。","投资亏损不会由群聊承担，所以决定只能由我自己做。","The group won't bear my losses, so the decision is mine alone.","投資蝕錢唔會由個群負責，所以決定只可以由我自己做。"],
+["不要再用『你不信我』勸我轉帳，信任與付款是兩回事。","别再用“你不信我”劝我转账，信任和付款是两回事。","Please don't frame refusal as distrust. Trust and transferring money are separate matters.","唔好再用『你唔信我』勸我轉帳，信任同俾錢係兩回事。"],
+["你說保證回報，請別把這句話當作我應該立即付款的理由。","你说保证有回报，但这不能成为催我马上付款的理由。","You say returns are guaranteed. That doesn't justify pressuring me to pay now.","你話保證有回報，但唔可以用呢句催我即刻俾錢。"],
+["請別再讓其他群友輪流私訊我，這已經造成打擾。","请别再让群里的人轮流私信我，这已经打扰到我了。","Please stop having group members message me one after another. It's intrusive.","請唔好再叫群友輪流私訊我，已經打擾到我。"],
+["我會關掉陌生人私訊，後續投資內容請不要轉到別的平台找我。","我会关闭陌生人私信，也请不要换个平台继续给我发投资内容。","I'm closing unsolicited messages; don't move the pitch to another platform.","我會關掉陌生人私訊，之後唔好轉另一個平台繼續推銷。"],
+["群裡若有人冒用我的名字說已入金，請立刻更正。","如果群里有人冒用我的名字说我已经入金，请马上澄清。","If anyone claims I've deposited money, correct the record immediately.","如果群度有人用我個名話已入金，請即刻澄清。"],
+["我會保留催款和收款資料，再向平台核實這個群組。","我会保存催款消息和收款信息，再向平台核实这个群。","I'll save the payment requests and account details and ask the platform to review the group.","我會留低催款同收款資料，再向平台核實呢個群。"],
+["如果繼續私訊要我付款，我會封鎖帳號並舉報。","如果继续私信催我付款，我会拉黑并举报。","If the payment messages continue, I'll block the accounts and report them.","如果仲私訊催我俾錢，我會封鎖帳號同舉報。"],
+["我可以把這條風險提醒發給同樣被拉進群的朋友，但不會代你宣傳。","我可以提醒其他被拉进群的朋友注意风险，但不会替你宣传。","I may warn other friends who were added, but I won't promote the group for you.","我可以提醒同樣俾人拉入群嘅朋友留意風險，但唔會幫你宣傳。"],
+["如果你自己也投了錢又擔心，我可以陪你整理紀錄尋求協助。","如果你自己也投了钱、现在担心，我可以陪你整理记录并寻求帮助。","If you've paid in and are worried, I can help you gather the records and seek support.","如果你自己都投咗錢而家擔心，我可以陪你整理紀錄搵人幫手。"],
+["你下次想邀我入群，可以先問一句；這次我會退出。","下次想拉我进群，先问我一句；这次我会退出。","Ask before inviting me to a group next time. I'm leaving this one.","下次想拉我入群，先問我一句；今次我會退出。"],
+["我不是來到群裡就自動報了投資班。","我不是进了群就自动报了投资课。","Being added to a group isn't enrollment in an investment class.","我唔係入咗群就自動報咗投資班。"],
+["你們的倒數計時很努力，但我的錢包沒有報名參加。","你们的倒计时很卖力，但我的钱包没有报名参加。","The countdown is enthusiastic; my wallet hasn't signed up.","你哋個倒數好落力，但我個銀包冇報名參加。"],
+["如果賺錢要先拉滿一群熟人，我先不做這門生意。","如果赚钱先得拉满一群熟人，这门生意我先不做。","If making money starts with recruiting every friend, I'm sitting this one out.","如果搵錢要先拉晒啲熟人，我先唔做呢門生意。"],
+["退群了，別再發收款碼。","我退群了，别再给我发收款码。","I've left. Stop sending me payment codes.","我退群喇，唔好再發收款碼。"],
+["不跟單，不轉帳，也別再拉我。","不跟单，不转账，也别再拉我进群。","No copied trades, no transfers, and no more invitations.","唔跟單，唔轉帳，亦唔好再拉我。"],
+["你叫這是機會，我現在叫它不適合我。","你把这叫机会，我现在觉得它不适合我。","You call it an opportunity; I call it unsuitable for me.","你話呢個係機會，我依家覺得唔適合我。"],
+["請到此為止；再推銷，我會停止這段聯絡。","请到此为止；再继续推销，我会停止联系。","Let's stop here. If the pitches continue, I'll end contact.","請到此為止；再推銷，我會停止聯絡。"]
+]);
+})();

@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new37',domain:'travel',domainLabel:{hant:'旅行',hans:'旅行',en:'Travel'},relation:{hant:'航空公司職員',hans:'航空公司工作人员',en:'Airline staff'},goal:{hant:'安排孩子與照顧者同坐',hans:'安排孩子与照顾者坐在一起',en:'Seat a child with a caregiver'},title:{hant:'航班更換機型或座位後，孩子被安排與照顧者分開坐',hans:'航班更换机型或座位后，孩子被安排得离照顾者很远',en:'After an aircraft or seat change, your child is assigned a seat far from their caregiver'}},[
+["座位調整後，孩子和照顧者被分開了，請幫我們重新安排。","座位调整后，孩子和照顾者被分开了，请帮我们重新安排。","The seat change separated my child from their caregiver. Please help seat us together.","調位之後，小朋友同照顧者分開咗，請幫我哋重新安排。"],
+["孩子年紀還小，不能獨自在機艙另一端，請查看相鄰座位。","孩子还小，不适合独自坐在机舱另一头，请查看有没有相邻座位。","My child is young and can't sit alone at the other end of the cabin. Are adjacent seats available?","小朋友仲細，唔適合自己坐喺機艙另一邊，請睇下有冇隔籬位。"],
+["我們原本預訂了相鄰座位，這是訂位紀錄；請幫我核對變更。","我们原先订了相邻座位，这是预订记录，请帮我核对变动。","We booked adjacent seats. Here's the reservation; please check what changed.","我哋原本訂咗相鄰位，呢度有訂位紀錄，請幫我核對變更。"],
+["我們為選位付過費，請先協助恢復安排；費用問題可以之後處理。","我们付过选座费，请先帮忙恢复座位安排；费用可以之后再处理。","We paid for seat selection. Please address the seating first; we can discuss the fee afterward.","我哋俾過揀位費，請先幫手恢復安排；費用之後再處理。"],
+["可否先找兩個連在一起的座位，不一定要原本的排數？","能否先找两个挨着的座位？不一定非要原来那一排。","Could you find any two seats together? They needn't be in the original row.","可唔可以先搵兩個連住嘅位？唔一定要原本嗰排。"],
+["如果全家坐一起不行，至少安排一位照顧者坐在孩子旁邊。","如果全家不能坐在一起，至少请安排一位大人坐在孩子旁边。","If our whole family can't sit together, please seat one caregiver beside the child.","如果全家坐埋一齊唔得，至少安排一個大人坐喺小朋友隔籬。"],
+["請先查看是否有其他家庭也願意對調座位，我們可以配合。","请查看是否有其他乘客愿意互换座位，我们可以配合调整。","Could you check whether another passenger is willing to swap? We're flexible about where we sit.","請睇下有冇其他乘客願意交換座位，我哋可以配合。"],
+["我們不會直接要求乘客讓座，能請你幫忙協調嗎？","我们不会直接要求其他乘客让座，能请你协助协调吗？","We won't pressure another passenger to move. Could you coordinate possible swaps?","我哋唔會直接要求乘客讓位，可唔可以請你幫手協調？"],
+["如果登機口現在無法調整，請在登機後通知機組協助。","如果登机口现在调不了，麻烦登机后通知乘务组协助。","If the gate can't change it, please alert the cabin crew before boarding ends.","如果登機閘口依家改唔到，麻煩通知機組上機後幫手。"],
+["可以在登機前把我們的情況註記到訂位資料裡嗎？","能否在登机前把我们的情况备注在订票记录里？","Could you note the issue on our booking before boarding?","可唔可以登機前喺訂位資料註明我哋情況？"],
+["孩子第一次坐飛機，有些緊張；我需要在旁邊照顧他。","孩子第一次坐飞机，有点紧张，我需要在旁边照顾他。","It's my child's first flight and they're anxious; I need to be beside them.","小朋友第一次搭飛機，有啲緊張；我要坐喺隔籬照顧佢。"],
+["孩子需要我協助上廁所和拿藥，分隔太遠不方便照顧。","孩子需要我帮忙上厕所和拿药，隔得太远没法照顾。","My child needs help with the bathroom and medication; I can't provide it from far away.","小朋友要我幫手去廁所同攞藥，隔得太遠照顧唔到。"],
+["這是孩子的年齡和我們的訂位號，請問你現在能查到哪些選擇？","这是孩子的年龄和我们的订位号，请问目前可以查到哪些安排？","Here's my child's age and booking reference. What seating options can you see?","呢度係小朋友年齡同我哋訂位號，請問依家查到有咩選擇？"],
+["這次是航空公司改了機型，不是我們主動拆開座位，請幫忙追查。","这次是航空公司更换机型，不是我们主动拆开的座位，请帮忙查看。","The aircraft change caused the split; we didn't choose separate seats. Please review it.","今次係航空公司換機型，唔係我哋自己拆開座位，請幫手查下。"],
+["請不要只說『上機再看』；可以告訴我由誰接手這件事嗎？","请不要只说“上机再看”；能告诉我谁会接手处理吗？","Please don't leave it at 'ask on board.' Who will take ownership of the issue?","請唔好淨係話『上機再睇』；可唔可以話我知邊個接手？"],
+["如果只能安排前後排，能否確認孩子在我視線範圍內？","如果只能安排前后排，能否确认孩子在我能看见的位置？","If adjacent seats are impossible, could you at least keep my child within sight?","如果只安排到前後排，可唔可以確保小朋友喺我睇到嘅位置？"],
+["讓孩子獨自坐在陌生人中間不是可行方案，請再找其他座位。","让孩子独自坐在陌生人中间不可行，请再找别的座位。","Leaving my child alone between strangers isn't workable. Please look for another option.","要小朋友自己坐喺陌生人中間唔可行，請再搵其他位。"],
+["若現在有空位，我們可以先換到後排，重點是坐在一起。","如果后排有空位，我们愿意换过去，重点是坐在一起。","We're happy to move to the back if that gives us seats together.","如果後排有空位，我哋可以搬過去，重點係坐埋一齊。"],
+["我可以和另一位大人分開坐，讓孩子先跟主要照顧者同排。","我可以和另一位大人分开坐，让孩子先跟主要照顾者坐在同一排。","The adults can sit apart if it means the child sits with their main caregiver.","我可以同另一位大人分開坐，先俾小朋友同主要照顧者同排。"],
+["若座位已滿，請告訴我候補調位何時有結果。","如果座位已满，请告诉我候补调位什么时候能有结果。","If the flight is full, when will you know whether a seat swap is possible?","如果位已滿，請話我知候補調位幾時有結果。"],
+["如果這班機實在無法安排照顧者同行就座，有沒有改搭其他航班的選擇？","如果这班机实在无法让照顾者坐在孩子旁边，有没有改乘其他航班的选择？","If no caregiver can sit with the child on this flight, what options do we have on another flight?","如果呢班機點都安排唔到照顧者坐小朋友隔籬，有冇轉搭其他航班嘅選擇？"],
+["請先不要讓孩子單獨登機，座位安排未確認前我們留在登機口。","座位没确定前，请不要让孩子单独登机，我们会留在登机口等处理。","Please don't send my child aboard alone. We'll stay at the gate until there's a plan.","座位未確認前，請唔好要小朋友自己上機，我哋會喺登機口等。"],
+["請把調位結果記在登機證或系統裡，免得上機後又找不到座位。","请把换座结果更新到登机牌或系统里，免得上机后又对不上。","Please update the boarding passes or system so the new seats are clear on board.","請將調位結果更新落登機證或者系統，免得上機後對唔上。"],
+["若付費座位無法提供，請說明選位費如何申請退回。","如果付费座位无法提供，请说明选座费怎么申请退还。","If our paid seats can't be provided, please explain how to request the seat-selection fee back.","如果俾咗錢揀嘅位提供唔到，請講明揀位費點申請退返。"],
+["我們可以等你和主管確認，但請給我一個明確的回覆時間。","我们可以等你和主管确认，但请给我一个明确的回复时间。","We can wait while you check with a supervisor, but please give us a clear update time.","我哋可以等你同主管確認，但請俾個明確回覆時間。"],
+["我理解換機會打亂座位；也請理解孩子不能靠自己處理整段飛行。","我理解换飞机会打乱座位；也请理解孩子没法独自应付整段航程。","I understand aircraft changes disrupt seating. My child still needs a caregiver through the flight.","我明換機會打亂座位；亦請明小朋友唔可以自己應付成程機。"],
+["座位可以靈活，照顧孩子這件事不能靠運氣。","座位可以灵活调整，但照顾孩子不能靠碰运气。","We're flexible on seat numbers, but caring for my child can't be left to chance.","座位可以彈性調，但照顧小朋友唔可以靠彩數。"],
+["先幫孩子找個大人坐旁邊，其他座位我們再談。","先帮孩子安排一位照顾者坐旁边，其他座位之后再说。","Please seat one caregiver beside the child first. We can sort out the other seats afterward.","先安排一個照顧者坐小朋友隔籬，其他座位之後再傾。"],
+["請找能處理座位的同事過來，我們要在登機前解決。","请找能处理座位的同事过来，我们需要在登机前解决。","Please bring over someone who can change the seats; we need a plan before boarding.","請搵處理到座位嘅同事過嚟，我哋要登機前解決。"],
+["孩子不是一件可以先寄到另一排、落機再領回的行李。","孩子不是可以先放到另一排、落机再接回来的行李。","My child isn't luggage you can place in another row and collect on landing.","小朋友唔係可以先擺去另一排、落機先攞返嘅行李。"]
+]);
+
+add({id:'new38',domain:'relationship',domainLabel:{hant:'感情',hans:'感情',en:'Relationship'},relation:{hant:'伴侶',hans:'伴侣',en:'Partner'},goal:{hant:'請對方撤下公開爭吵內容',hans:'请对方撤下公开争吵内容',en:'Remove a public post about a private conflict'},title:{hant:'你們剛吵完架，伴侶把對話截圖及爭吵細節公開發文，還標註了你',hans:'你们刚吵完架，伴侣就公开发出聊天截图和争吵细节，还标记了你',en:'Right after an argument, your partner posts screenshots and details of the conflict publicly and tags you'}},[
+["我們的對話截圖沒有經我同意公開，請先撤下貼文。","我们的聊天截图未经我同意就被公开，请先撤下帖子。","I didn't agree to our messages being posted publicly. Please take the post down.","我哋對話截圖冇經我同意就公開，請先刪咗篇文。"],
+["你可以向信任的人求助，但請不要把私人訊息發到公開帳號。","你可以向信任的人求助，但请别把私人消息发到公开账号。","You can seek support from someone you trust without publishing our private messages.","你可以搵信任嘅人幫手，但請唔好將私人訊息放公開帳號。"],
+["先把我的名字、照片和標註移除，我們再談吵架的事。","请先删掉我的名字、照片和标记，我们再谈吵架的事。","Remove my name, photo, and tag first; then we can discuss the argument.","先刪走我個名、相同標註，我哋再傾吵架嗰件事。"],
+["截圖只截一半會讓人誤會，請不要讓陌生人替我們判案。","截图只截一半容易引起误解，请别让陌生人替我们裁判。","Partial screenshots can mislead people. Please don't ask strangers to judge our relationship.","截圖淨係截一半好易令人誤會，請唔好要陌生人幫我哋判案。"],
+["我願意對自己說錯的話負責，但不接受被公開圍觀。","我愿意为自己说错的话负责，但不接受被公开围观。","I'll own what I said wrong, but I won't accept being put on public display.","我願意為自己講錯嘅說話負責，但唔接受俾人公開圍觀。"],
+["你現在很生氣，我聽到了；發文前我們可以先暫停一晚。","我知道你现在很生气；发帖之前我们能不能先冷静一晚？","I hear that you're angry. Can we wait a night before posting anything else?","我知你依家好嬲；再發文之前我哋可唔可以先冷靜一晚？"],
+["請先停止讓朋友在留言區罵我，這不會幫我們解決問題。","请先阻止朋友在评论区骂我，这样解决不了我们的问题。","Please ask your friends to stop attacking me in the comments. It won't resolve this.","請先叫你朋友唔好喺留言區鬧我，咁解決唔到問題。"],
+["如果你要表達感受，可以說自己的經歷，不要上傳我的私訊原文。","如果你需要表达感受，可以说自己的经历，别上传我的私信原文。","You can describe your feelings without uploading my private messages word for word.","如果你要表達感受，可以講自己經歷，唔好上傳我私訊原文。"],
+["這篇文牽涉我們共同的朋友，請在他們被拉進來前先刪掉。","这篇帖子牵涉我们的共同朋友，请在他们被卷进来前先删掉。","Mutual friends are being pulled into this. Please delete the post before that spreads.","篇文牽涉我哋共同朋友，請喺佢哋俾人拉入嚟之前刪走。"],
+["我不會在公開留言區回應私人爭吵，請直接跟我談。","我不会在公开评论区回应私人争执，请直接跟我谈。","I won't argue about this in public comments. Please speak to me directly.","我唔會喺公開留言區回應私人爭吵，請直接同我傾。"],
+["我已經截圖保留現況，現在請你把原帖和限時動態都撤下。","我已经截图留存，现在请把原帖和限时动态都撤下。","I've saved a record of what's posted. Please remove both the post and the story now.","我已經截圖留底，依家請刪走原帖同限時動態。"],
+["只取消標註還不夠，截圖裡仍然看得出是我。","光取消标记还不够，截图里仍然能认出是我。","Removing the tag isn't enough; the screenshots still identify me.","淨係取消標註唔夠，截圖入面仍然認得出係我。"],
+["我們可以約今晚八點談，但我希望談話不會再被截圖公開。","我们可以约今晚八点谈，但我希望这次谈话不会再被截图发出去。","We can talk at eight tonight, but I need this conversation to stay private.","我哋可以約今晚八點傾，但希望今次傾嘅嘢唔會再俾人截圖公開。"],
+["如果你現在不想跟我談，可以找朋友陪你；請不要請網友替你傳話。","如果你现在不想跟我谈，可以找朋友陪你；请别让网友替你传话。","If you're not ready to speak to me, a friend can support you; please don't recruit strangers to relay messages.","如果你依家唔想同我傾，可以搵朋友陪你；請唔好叫網友幫你傳話。"],
+["我不會要求你對外假裝我們沒吵架，但具體截圖需要撤下。","我不会要求你对外假装我们没吵架，但具体聊天截图需要删除。","I'm not asking you to pretend we didn't argue. I am asking you to remove the screenshots.","我唔係要你對外扮冇吵架，但具體截圖要刪走。"],
+["如果我們需要第三方協助，可以一起找諮詢或調解，而不是開網上投票。","如果我们需要第三方帮忙，可以一起找咨询或调解，而不是在网上让人投票。","If we need outside help, let's seek counselling or mediation rather than hold an online vote.","如果我哋要第三方幫手，可以一齊搵輔導或者調解，唔係網上開投票。"],
+["你發文前至少該告訴我，現在請先停下後續更新。","你发帖之前至少该告诉我，现在请先停止继续更新。","You should have told me before posting. For now, please stop adding updates.","你發文之前至少應該話我知，依家請先停止再更新。"],
+["這次我不會去你的評論區辯解，避免讓事情越傳越廣。","这次我不会去你的评论区争辩，免得事情传得更广。","I won't defend myself in your comments and make the post spread further.","今次我唔會去你留言區辯解，免得件事傳得更廣。"],
+["如果你覺得自己不安全，請直接向可信的人或當地緊急服務求助。","如果你觉得自己不安全，请直接找可信的人或当地紧急服务求助。","If you feel unsafe, please contact someone you trust or local emergency services directly.","如果你覺得自己唔安全，請直接搵可信嘅人或者當地緊急服務幫手。"],
+["我提出刪帖，是因為有私隱資訊；不會阻止你尋求安全協助。","我请你删帖是因为有私人信息；这不妨碍你寻求安全方面的帮助。","I'm asking to remove private details; I'm not stopping you from seeking help to stay safe.","我請你刪帖係因為有私隱資料；唔會阻止你搵人保障安全。"],
+["這條貼文有我的電話和地址，請立即移除這些資訊。","帖子里有我的电话和地址，请马上删除这些信息。","The post shows my phone number and address. Remove those details immediately.","篇文有我電話同地址，請即刻刪走呢啲資料。"],
+["若你不願撤下個人資料，我會向平台申請移除。","如果你不愿删除个人信息，我会向平台申请移除。","If you won't remove my personal details, I'll ask the platform to do so.","如果你唔肯刪走個人資料，我會向平台申請移除。"],
+["我們需要一條共同界線：爭吵可以找人求助，截圖公開要先得到同意。","我们需要一个共同约定：吵架时可以求助，但公开聊天截图要先征得同意。","We need a shared rule: asking for support is fine; publishing our messages needs consent.","我哋要有條共同界線：吵架可以搵人幫手，但公開截圖要先問過。"],
+["把貼文刪掉後，我願意聽你真正想讓我明白的是甚麼。","删帖之后，我愿意听你真正想让我明白什么。","Once the post is down, I'm willing to hear what you wanted me to understand.","刪咗篇文之後，我願意聽你真正想我明白咩。"],
+["這件事已經影響我的工作和家人，請別再用標註推送給更多人。","这件事已经影响到我的工作和家人，请别再用标记推给更多人。","This is reaching my work and family. Please stop tagging people to amplify it.","呢件事已經影響我工作同屋企人，請唔好再標註更多人。"],
+["如果你想分開，可以直接告訴我，不需要靠公開貼文宣布。","如果你想分开，可以直接告诉我，不必靠公开帖子宣布。","If you want to separate, tell me directly rather than announcing it through a post.","如果你想分開，可以直接話我知，唔使靠公開貼文宣布。"],
+["我們的關係不是留言區的連載，請先收回截圖。","我们的关系不是评论区的连载，请先撤回截图。","Our relationship isn't a comment-section serial. Please take the screenshots down.","我哋段關係唔係留言區連載，請先收返啲截圖。"],
+["吵架已經夠累，別再加一場公開審判。","吵架已经够累了，别再加一场公开审判。","The argument is hard enough without a public trial on top of it.","吵架已經夠攰，唔好再加一場公開審判。"],
+["先刪帖，再談。","先把帖子删了，我们再谈。","Take it down first, then we can talk.","先刪帖，再傾。"],
+["我不接受把私訊變成給人圍觀的內容，請現在撤下。","我不接受把私聊变成公开围观的内容，请现在撤下。","I won't accept our private chat becoming public entertainment. Remove it now.","我唔接受將私訊變成俾人圍觀嘅內容，請依家刪走。"]
+]);
+})();
