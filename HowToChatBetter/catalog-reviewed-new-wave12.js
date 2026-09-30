@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(scene,rows){if(S.some(x=>x.id===scene.id))throw Error('Duplicate '+scene.id);scene.replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');scene.replies.zh[k]={hant:r[0],hans:r[1]};scene.replies.en[k]=r[2];scene.replies.yue[k]=r[3]});S.push(scene);window.CHAT_REVIEWED_SCENES[scene.id]=true}
+
+add({id:'new30',domain:'friends',domainLabel:{hant:'朋友',hans:'朋友',en:'Friends'},relation:{hant:'朋友群組的發起人',hans:'朋友群的发起人',en:'Group organiser'},goal:{hant:'拒絕未同意的高額平攤',hans:'拒绝未同意的高额平摊',en:'Decline an unagreed expensive split'},title:{hant:'朋友沒有先確認預算就買了昂貴的團體禮物，之後要求所有人平均分攤',hans:'朋友没有先确认预算就买了昂贵的集体礼物，之后要求所有人平均分摊',en:'A friend buys an expensive group gift without agreeing a budget first, then asks everyone to split the cost equally'}},[
+["這個金額事前沒有徵得我同意，我不能按人頭全額分攤。","这个金额事先没有征得我同意，我不能按人头全额分摊。","I did not agree to this amount beforehand, so I cannot pay a full equal share.","呢個金額事前冇問過我，我唔可以按人頭全額攤分。"],
+["我願意參與送禮，但我的預算上限是二百元。","我愿意一起送礼，但我的预算上限是两百元。","I am happy to join the gift, but my budget limit is two hundred.","我願意一齊送禮，但我預算上限係二百蚊。"],
+["我可以付原本以為的份額，超出的部分請另作安排。","我可以支付原本预期的份额，超出的部分请另作安排。","I can contribute the amount I originally expected; the excess will need another arrangement.","我可以俾原本預期嗰份，超出部分請另作安排。"],
+["先買後通知不等於大家已經同意價格。","先买后通知，不等于大家已经同意这个价格。","Buying first and informing us later does not mean the group approved the price.","買咗先通知，唔等於大家已經同意個價。"],
+["如果一定要平均分，應該在下單前讓每個人確認。","如果一定要平摊，应该在下单前让每个人确认。","If the cost must be split equally, everyone needs to confirm before the order is placed.","如果一定要平均分，應該落單前俾每個人確認。"],
+["請把收據和參與名單發出來，我們先把數目算清楚。","请把收据和参与名单发出来，我们先把金额算清楚。","Please share the receipt and participant list so we can check the numbers first.","請發收據同參與名單出嚟，我哋先算清楚條數。"],
+["這筆費用是否包含包裝、運費或其他沒有說明的項目？","这笔费用是否包含包装、运费或其他没有说明的项目？","Does this amount include wrapping, delivery, or other costs that were not mentioned?","呢筆錢係咪包咗包裝、運費或者其他冇講嘅項目？"],
+["沒有參與討論的人不應自動被列入付款名單。","没有参与讨论的人不应该自动被算进付款名单。","People who did not join the discussion should not be added to the payment list automatically.","冇參與討論嘅人唔應該自動入付款名單。"],
+["我這次不參加團體禮物，會自己準備一份心意。","这次我不参加集体礼物，我会自己准备一份心意。","I will sit out the group gift this time and prepare something myself.","今次我唔參加團體禮物，我會自己準備一份心意。"],
+["如果還能退換，我建議改成大家都能接受的預算。","如果还能退换，我建议换成大家都能接受的预算。","If it can still be returned, I suggest choosing something within a budget everyone accepts.","如果仲退換到，我建議改做大家都接受到嘅預算。"],
+["可以保留這份禮物，但由明確同意這個價位的人分攤。","可以保留这份礼物，但应由明确同意这个价位的人分摊。","The gift can be kept, but the cost should be shared by those who explicitly approved this price.","可以保留份禮物，但由明確同意呢個價位嘅人攤分。"],
+["你若想送更高價的款式，超過群組預算的差額需要由你承擔。","如果你想选更贵的款式，超出集体预算的差额需要由你承担。","If you prefer the more expensive option, you need to cover the amount above the group budget.","如果你想送貴啲嗰款，超過群組預算嘅差額要由你負責。"],
+["我們可以按各自事前承諾的金額出，不必勉強平均。","我们可以按照各自事先承诺的金额出，不必勉强平摊。","We can each pay the amount we actually committed to instead of forcing an equal split.","我哋可以按各自事前應承嘅金額出，唔使勉強平均。"],
+["如果有人自願多出，請在群組裡說清楚，不要私下向其他人追差額。","如果有人自愿多出，请在群里说清楚，不要私下向其他人追差额。","If anyone volunteers to pay more, state it clearly in the group rather than chasing others privately for the difference.","如果有人自願出多啲，請喺群組講清楚，唔好私下追其他人差額。"],
+["我今天可以轉我同意的金額，但不代表接受剩餘欠款。","我今天可以转账支付我同意的金额，但这不代表我接受剩余欠款。","I can transfer the amount I agreed to today, but that does not mean I accept liability for the balance.","我今日可以轉我同意嘅金額，但唔代表我接受剩低欠款。"],
+["請不要用付款期限迫大家接受一個從未確認的預算。","请不要用付款期限逼大家接受一个从未确认的预算。","Please do not use a payment deadline to force agreement to a budget we never approved.","請唔好用付款期限迫大家接受一個從未確認嘅預算。"],
+["我理解你先墊付款有壓力，但這不會把未同意的消費變成共同債務。","我理解你先垫付有压力，但这不会把未经同意的消费变成共同债务。","I understand that fronting the money is stressful, but it does not turn an unapproved purchase into a group debt.","我明你先墊錢有壓力，但唔會令未同意嘅消費變成共同債務。"],
+["你是好意挑禮物，我也珍惜；只是預算仍需要大家先同意。","你是好意挑选礼物，我也领情；只是预算仍然需要大家先同意。","I appreciate that you chose the gift with good intentions, but the budget still required group approval.","你係好意揀禮物，我都領情；但預算仍然要大家先同意。"],
+["這不是計較心意，而是每個人的財務情況不同。","这不是计较心意，而是每个人的经济情况不同。","This is not about measuring generosity; people have different financial circumstances.","呢個唔係計較心意，係每個人財務情況唔同。"],
+["不想付超預算不代表不重視收禮的人，請不要把兩件事綁在一起。","不愿意支付超出预算的金额，不代表不重视收礼的人，请不要把两件事绑在一起。","Declining an over-budget contribution does not mean I care less about the recipient; please do not conflate the two.","唔想出超預算唔代表唔重視收禮嗰位，請唔好綁埋兩件事。"],
+["不要在群組裡點名催我，我已經私下說明能出的金額。","不要在群里点名催我，我已经私下说明能出的金额。","Do not single me out in the group; I have already explained privately what I can contribute.","唔好喺群組點名催我，我已經私下講咗可以出幾多。"],
+["如果大家意見不同，先暫停收款，不要把沉默當同意。","如果大家意见不同，先暂停收款，不要把沉默当作同意。","If the group disagrees, pause collection rather than treating silence as consent.","如果大家意見唔同，先暫停收錢，唔好當沉默係同意。"],
+["下次先投票選預算區間，再由一個人下單。","下次先投票确定预算范围，再由一个人下单。","Next time, let us vote on a budget range before anyone orders.","下次先投票定預算範圍，再由一個人落單。"],
+["以後超過已定預算的購買，需要再次得到所有付款人的確認。","以后购买金额超过既定预算，需要再次得到所有付款人的确认。","In future, any purchase above the agreed budget needs fresh approval from everyone paying.","以後買嘢超過已定預算，要再得到所有付款人確認。"],
+["先報款式和總價，等大家回覆後再付款，這樣最簡單。","先发款式和总价，等大家回复后再付款，这样最简单。","The simplest process is to post the item and total price, then pay only after everyone replies.","先報款式同總價，等大家覆咗先付款，咁最簡單。"],
+["你替大家決定了驚喜，不能再替大家決定銀行餘額。","你替大家决定了惊喜，但不能替大家决定银行余额。","You chose the surprise for everyone; you cannot also choose everyone's bank balance.","你幫大家決定咗驚喜，唔可以再幫大家決定銀行餘額。"],
+["這份禮物很體面，付款方式倒有點不見外。","这份礼物很体面，付款方式倒是相当不见外。","The gift is very polished; the way its cost was assigned is remarkably familiar.","份禮物好體面，付款方法就真係幾唔見外。"],
+["群組禮物不是先斬後奏再開眾籌。","集体礼物不是先斩后奏再发起众筹。","A group gift is not a purchase first and a compulsory fundraiser afterward.","團體禮物唔係先斬後奏再開眾籌。"],
+["我最多出這個數，其他不攤。","我最多出这个数，其余部分不分摊。","This is my maximum contribution; I will not share the remainder.","我最多出呢個數，其他唔攤。"],
+["沒有先問價，就不要事後替我下單。","没有事先问过预算，就不要事后替我下单。","If you did not ask my budget first, do not place an order on my behalf afterward.","冇事先問過價，就唔好事後幫我落單。"]
+]);
+
+add({id:'new31',domain:'service',domainLabel:{hant:'服務',hans:'服务',en:'Service'},relation:{hant:'商家客服',hans:'商家客服',en:'Merchant support'},goal:{hant:'拒絕以刪評換退款',hans:'拒绝以删评换退款',en:'Reject review removal as a refund condition'},title:{hant:'商家要求你先刪除負面評價，才願意退款或處理售後問題',hans:'商家要求你先删除负面评价，才愿意退款或处理售后问题',en:'A merchant says it will only refund you or provide after-sales service after you delete a negative review'}},[
+["退款應按訂單問題處理，不應以刪除評價為前提。","退款应该根据订单问题处理，不应该以删除评价为前提。","The refund should be handled on the merits of the order, not made conditional on deleting my review.","退款應該按訂單問題處理，唔應該以刪評為前提。"],
+["請先完成售後；問題真正解決後，我會自行決定是否更新評價。","请先完成售后；问题真正解决后，我会自行决定是否更新评价。","Resolve the issue first. Once it is genuinely resolved, I will decide whether to update my review.","請先完成售後；問題真係解決咗，我會自己決定更唔更新評價。"],
+["我可以在評價中補充你們的處理結果，但不會先刪除事實。","我可以在评价中补充你们的处理结果，但不会先删除事实。","I can add the outcome of your response to my review, but I will not erase the facts first.","我可以喺評價補充你哋處理結果，但唔會先刪走事實。"],
+["如果商品符合退款條件，請直接按平台流程退款。","如果商品符合退款条件，请直接按照平台流程退款。","If the item meets the refund criteria, process it through the platform's standard procedure.","如果商品符合退款條件，請直接按平台流程退款。"],
+["請指出哪一條售後規則規定必須刪評，並以書面回覆。","请指出哪一条售后规则规定必须删评，并书面回复。","Please identify in writing the policy that requires review deletion before after-sales service.","請指出邊條售後規則規定一定要刪評，並書面回覆。"],
+["我不同意把正常退款和公開評價綁在一起。","我不同意把正常退款和公开评价绑在一起。","I do not agree to tie a standard refund to my public review.","我唔同意將正常退款同公開評價綁埋一齊。"],
+["退款是處理有問題的訂單，不是購買我的沉默。","退款是处理有问题的订单，不是购买我的沉默。","A refund remedies a faulty transaction; it does not purchase my silence.","退款係處理有問題嘅訂單，唔係買我收聲。"],
+["請建立正式售後工單，並提供案件編號和處理時限。","请建立正式售后工单，并提供工单编号和处理时限。","Open a formal support case and give me its reference number and resolution deadline.","請開正式售後工單，俾我個案編號同處理時限。"],
+["請把退貨地址、運費安排和退款時間一次說明清楚。","请一次说明退货地址、运费安排和退款时间。","Please provide the return address, shipping arrangement, and refund timeframe together.","請一次過講清退貨地址、運費安排同退款時間。"],
+["我會保留商品問題、聊天紀錄和你們提出刪評要求的截圖。","我会保留商品问题、聊天记录以及你们要求删评的截图。","I will preserve evidence of the product issue, the chat, and your request to delete the review.","我會保留商品問題、聊天紀錄同你哋要求刪評嘅截圖。"],
+["請不要轉到私人帳號處理，所有溝通留在平台內。","请不要转到私人账号处理，所有沟通请留在平台内。","Do not move this to a private account; keep all communication on the platform.","請唔好轉去私人帳號處理，所有溝通留喺平台入面。"],
+["我不接受先私下轉帳、再撤銷平台申請的安排。","我不接受先私下转账、再撤销平台申请的安排。","I will not accept an off-platform transfer in exchange for closing the platform claim.","我唔接受先私下轉帳、再撤銷平台申請嘅安排。"],
+["退款請退回原付款方式，不需要我提供額外銀行密碼或驗證碼。","退款请退回原支付方式，不需要我提供额外的银行密码或验证码。","Return the refund to the original payment method; you do not need bank passwords or verification codes.","退款請退返原付款方式，唔需要我提供銀行密碼或者驗證碼。"],
+["我不會為了退款改成虛假的五星評價。","我不会为了退款改成虚假的五星好评。","I will not post a false five-star review in exchange for a refund.","我唔會為咗退款改成假嘅五星好評。"],
+["可以請我描述解決結果，但不能指定我要寫甚麼。","你们可以请我描述处理结果，但不能指定我必须写什么。","You may ask me to describe the resolution, but you may not dictate what I write.","你哋可以請我描述處理結果，但唔可以指定我要寫咩。"],
+["若你們妥善處理，我會如實補充；是否改分仍由我決定。","如果你们妥善处理，我会如实补充；是否改分仍由我决定。","If you resolve it properly, I will add that truthfully; whether I change the rating remains my decision.","如果你哋妥善處理，我會如實補充；改唔改分仍然由我決定。"],
+["我的評價若有具體錯誤，請指出證據，我可以更正。","如果我的评价中有具体错误，请提供证据，我可以更正。","If my review contains a specific factual error, show me the evidence and I can correct it.","我嘅評價如果有具體錯誤，請俾證據，我可以更正。"],
+["不滿意評價內容和拒絕履行售後是兩回事，請分開處理。","对评价内容不满和拒绝履行售后是两回事，请分开处理。","Disliking the review and refusing after-sales service are separate matters; handle them separately.","唔滿意評價內容同拒絕做售後係兩回事，請分開處理。"],
+["如果你們拒絕退款，請提供與商品狀況相關的正式理由，而不是要求刪評。","如果你们拒绝退款，请提供与商品状况相关的正式理由，而不是要求删评。","If you deny the refund, give a formal reason related to the item's condition rather than demanding review removal.","如果你哋拒絕退款，請提供同商品狀況有關嘅正式理由，唔係要求刪評。"],
+["請在三個工作天內回覆處理方案，逾期我會請平台介入。","请在三个工作日内回复处理方案，逾期我会申请平台介入。","Please provide a resolution within three business days, after which I will ask the platform to intervene.","請喺三個工作天內回覆處理方案，逾期我會請平台介入。"],
+["若仍把刪評作為條件，我會把完整紀錄提交平台申訴。","如果仍然把删评作为条件，我会将完整记录提交平台申诉。","If review deletion remains a condition, I will submit the full record in a platform dispute.","如果仲係將刪評當條件，我會將完整紀錄交俾平台申訴。"],
+["我已要求平台客服加入對話，後續請在工單內回覆。","我已经要求平台客服介入，后续请在工单内回复。","I have asked platform support to join the case; reply through the ticket from now on.","我已經請平台客服介入，之後請喺工單入面覆。"],
+["如平台無法處理，我會按付款渠道提出交易爭議並附上證據。","如果平台无法处理，我会通过支付渠道提出交易争议并提交证据。","If the platform cannot resolve this, I will raise a payment dispute with supporting evidence.","如果平台處理唔到，我會經付款渠道提出交易爭議同附上證據。"],
+["我會按所在地的消費者保障渠道查詢，而不是接受私下交換條件。","我会向当地消费者保护渠道咨询，而不是接受私下交换条件。","I will consult the relevant consumer-protection channel rather than accept a private quid pro quo.","我會向所在地消費者保障渠道查詢，唔會接受私下交換條件。"],
+["請停止反覆致電催我刪評，後續只接受書面聯絡。","请停止反复打电话催我删评，后续我只接受书面联系。","Stop repeatedly calling me to remove the review; I will accept written communication only.","請停止反覆打電話催我刪評，之後我只接受書面聯絡。"],
+["如果再以退款施壓要求改評，我會連這段經歷一併如實記錄。","如果继续用退款施压要求改评价，我会把这段经历也如实记录下来。","If you keep using the refund to pressure me, I will truthfully document that experience as well.","如果再用退款施壓要我改評，我會連呢段經歷一齊如實記錄。"],
+["把問題解決，會比把評價藏起來更能改善商譽。","解决问题，比隐藏评价更能改善商誉。","Fixing the problem will do more for your reputation than hiding the review.","解決問題，好過收埋評價去改善商譽。"],
+["售後還沒做，控評流程倒是很完整。","售后还没开始，控评流程倒是很完整。","The after-sales process has barely started, but the review-control process seems very polished.","售後仲未做，控評流程就真係好完整。"],
+["先退款，評價是否更新由事實決定。","先退款，评价是否更新由事实决定。","Process the refund first; the facts will determine whether the review is updated.","先退款，評價更唔更新由事實決定。"],
+["不刪評，請正常售後。","不删评价，请正常处理售后。","I will not delete the review. Please provide the standard after-sales service.","唔刪評，請正常做售後。"]
+]);
+})();
