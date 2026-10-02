@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(meta,rows){if(S.some(x=>x.id===meta.id))throw Error('Duplicate scene '+meta.id);const replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');replies.zh[k]={hant:r[0],hans:r[1]};replies.en[k]=r[2];replies.yue[k]=r[3]});S.push({...meta,replies});window.CHAT_REVIEWED_SCENES[meta.id]=true}
+
+add({id:'new47',domain:'elder',domainLabel:{hant:'長輩',hans:'长辈',en:'Elder'},relation:{hant:'家中長輩',hans:'家中长辈',en:'Older family member'},goal:{hant:'安撫並阻止可疑轉帳',hans:'安抚并阻止可疑转账',en:'Reassure them and stop a suspicious transfer'},title:{hant:'長輩接到電話，對方聲稱家人出事並催他立刻秘密轉帳',hans:'长辈接到电话，对方声称家人出事，还催他马上秘密转账',en:'An older family member receives a call claiming a relative is in trouble and demanding an immediate secret transfer'}},[
+["先不要轉帳，我們現在一起核實家人是否安全。","先不要转账，我们现在一起确认家人是否安全。","Don't transfer anything yet. Let's verify that the family member is safe.","先唔好轉帳，我哋依家一齊確認屋企人係咪安全。"],
+["你先掛電話，不要照對方要求一直保持通話。","你先挂断电话，不要按对方要求一直保持通话。","Hang up first; don't stay on the line because they told you to.","你先收線，唔好照對方要求一直保持通話。"],
+["用我們平時保存的號碼回撥家人，不用對方給的號碼。","用我们平时保存的号码联系家人，不要用对方提供的号码。","Call the relative using the number already saved, not one the caller supplied.","用我哋平時保存嘅號碼打返俾屋企人，唔好用對方提供嘅號碼。"],
+["我知道你很擔心，越急越要先確認，不要一個人處理。","我知道你很担心，越着急越要先确认，不要一个人处理。","I know you're worried. The more urgent it feels, the more important it is to verify together.","我知你好擔心，越急越要先確認，唔好一個人處理。"],
+["真正需要幫忙的家人，不會要求你向全家保密。","真正需要帮助的家人，不会要求你瞒着全家。","A relative genuinely needing help would not demand secrecy from the whole family.","真正需要幫手嘅屋企人，唔會要求你瞞住全家。"],
+["對方叫你不能告訴任何人，這正是我們要警覺的地方。","对方让你不能告诉任何人，这正是需要警惕的地方。","Their demand for secrecy is exactly what makes this suspicious.","對方叫你唔可以話任何人知，呢點正正最可疑。"],
+["先問一個只有你和家人才知道的問題，不要提示答案。","先问一个只有你和家人才知道的问题，不要提示答案。","Ask a question only you and the relative know, without giving away the answer.","先問一個只有你同屋企人知嘅問題，唔好提示答案。"],
+["聲音像也不代表是真的，我們要用另一條渠道確認。","声音很像也不代表是真的，我们要通过另一种方式确认。","A familiar-sounding voice isn't proof; we'll verify through another channel.","把聲似都唔代表係真，我哋要用另一條渠道確認。"],
+["不要讀出驗證碼、密碼、銀行資料或身份證號。","不要念出验证码、密码、银行信息或身份证号码。","Do not read out verification codes, passwords, bank details, or ID numbers.","唔好讀出驗證碼、密碼、銀行資料或者身份證號。"],
+["也不要按他指示下載程式或開啟螢幕共享。","也不要按他的指示下载软件或打开屏幕共享。","Don't install an app or share your screen at the caller's request.","亦唔好跟佢指示下載程式或者開螢幕共享。"],
+["把來電號碼和訊息截圖保存，先不要再回覆。","把来电号码和消息截图保存，先不要继续回复。","Save screenshots of the number and messages, then stop responding.","將來電號碼同訊息截圖保存，先唔好再回覆。"],
+["如果對方再打來，讓它響，不需要跟他爭辯。","如果对方再打来，不用接，也不必跟他争辩。","If they call again, let it ring; there's no need to argue.","如果對方再打嚟，唔使接，亦唔使同佢爭辯。"],
+["我們直接聯絡當事人身邊的人，確認他現在在哪裡。","我们直接联系当事人身边的人，确认他现在在哪里。","We'll contact someone near the relative to confirm where they are.","我哋直接聯絡當事人身邊嘅人，確認佢依家喺邊。"],
+["如果真的有事故，我們會從醫院或警方的公開電話核實。","如果真的发生事故，我们会通过医院或警方的公开电话核实。","If there was an incident, we'll verify it through publicly listed hospital or police numbers.","如果真係有事故，我哋會用醫院或者警方公開電話核實。"],
+["不要用來電顯示直接回撥，我們自己查官方聯絡方式。","不要直接回拨来电号码，我们自己查官方联系方式。","Don't call the displayed number back; we'll find the official contact ourselves.","唔好直接回撥來電號碼，我哋自己查官方聯絡方式。"],
+["銀行不會要求你把錢轉到所謂安全帳戶。","银行不会要求你把钱转到所谓的安全账户。","A bank will not ask you to move money to a so-called safe account.","銀行唔會叫你將錢轉去所謂安全帳戶。"],
+["警方也不會靠電話催你秘密匯款來證明清白。","警方也不会通过电话催你秘密汇款来证明清白。","Police do not demand secret transfers by phone to prove innocence.","警方都唔會靠電話催你秘密匯款去證明清白。"],
+["任何要求立刻付款、不能掛線的電話，都先當成可疑。","凡是要求马上付款、不能挂电话的来电，都先当作可疑情况。","Treat any call demanding instant payment and no hang-up as suspicious.","任何要求即刻付款、唔俾收線嘅電話，都先當可疑。"],
+["如果已輸入銀行資料，現在就用官方電話聯絡銀行。","如果已经输入银行信息，现在就用官方电话联系银行。","If you entered bank details, call the bank now using its official number.","如果已經輸入銀行資料，依家就用官方電話聯絡銀行。"],
+["如果已轉帳，立即告訴銀行是疑似詐騙，詢問能否攔截。","如果已经转账，马上告知银行疑似诈骗，询问能否拦截。","If money was sent, tell the bank immediately it may be fraud and ask about stopping it.","如果已經轉帳，即刻話銀行知疑似詐騙，問可唔可以攔截。"],
+["這不是你的錯，先把損失控制住，再慢慢說經過。","这不是你的错，先控制损失，再慢慢说明经过。","This isn't your fault. Let's limit the damage first and review what happened later.","呢個唔係你錯，先控制損失，再慢慢講經過。"],
+["不用怕被責怪，現在告訴我們反而最能保護你。","不用怕被责怪，现在告诉我们反而最能保护你。","Don't fear blame; telling us now is the best way to protect you.","唔使驚俾人怪，依家話我哋知反而最保護到你。"],
+["我們可以一起報案或向反詐渠道求助，你不用獨自面對。","我们可以一起报警或联系反诈渠道，你不用独自面对。","We can report it or contact anti-fraud support together; you won't face it alone.","我哋可以一齊報案或者搵反詐渠道，你唔使自己面對。"],
+["以後遇到急轉帳，我們約定先打給兩位家人確認。","以后遇到紧急转账，我们约定先联系两位家人确认。","For future urgent transfers, let's agree to confirm with two family members first.","以後遇到急轉帳，我哋約定先搵兩位屋企人確認。"],
+["我們定一句家庭暗號，真正的緊急情況要答得出來。","我们定一个家庭暗号，真正的紧急情况必须答得出来。","Let's create a family code word for verifying real emergencies.","我哋定一句家庭暗號，真正緊急情況要答得出。"],
+["救人不差核實這兩分鐘，騙子才怕你停下來。","救人不差核实的这两分钟，骗子才怕你停下来。","A real rescue can spare two minutes for verification; scammers fear the pause.","救人唔差核實呢兩分鐘，騙子先怕你停落嚟。"],
+["越催越不轉，這條規則今天開始。","对方越催越不转账，这条规则从今天开始。","The harder they rush you, the less you transfer. That's the rule from today.","對方越催越唔轉，呢條規則今日開始。"],
+["先掛線，先核實，先不付款。","先挂断，先核实，先不付款。","Hang up, verify, and pay nothing.","先收線，先核實，先唔付款。"],
+["這筆錢現在不能轉。","这笔钱现在不能转。","Do not send this money now.","呢筆錢依家唔可以轉。"],
+["有我在，我們慢慢查，不讓恐慌替你作決定。","有我在，我们慢慢核实，不让恐慌替你做决定。","I'm here. We'll check calmly and won't let panic make the decision.","有我喺度，我哋慢慢查，唔俾恐慌替你決定。"]
+]);
+
+add({id:'new48',domain:'parenting',domainLabel:{hant:'育兒',hans:'育儿',en:'Parenting'},relation:{hant:'其他家長或老師',hans:'其他家长或老师',en:'Another parent or teacher'},goal:{hant:'撤下未經同意公開的孩子照片',hans:'删除未经同意公开的孩子照片',en:'Remove a child’s photo posted without consent'},title:{hant:'其他家長把有你孩子正臉和校名的照片發到公開帳號，事前沒有詢問',hans:'其他家长把带有你孩子正脸和校名的照片发到公开账号，事前没有询问',en:'Another parent posts a public photo showing your child’s face and school name without asking first'}},[
+["照片裡有我孩子的正臉和校名，請先撤下。","照片里有我孩子的正脸和学校名称，请先删除。","The photo shows my child's face and school name. Please take it down.","張相有我小朋友正面同校名，請先撤下。"],
+["我們沒有同意公開發布孩子照片，麻煩今天刪除。","我们没有同意公开发布孩子照片，请今天删除。","We did not consent to public posting. Please delete it today.","我哋冇同意公開發布小朋友相，麻煩今日刪除。"],
+["只取消標註不夠，孩子仍然可以被認出。","只取消标记还不够，孩子仍然能被认出来。","Removing the tag isn't enough; the child is still identifiable.","淨係取消標註唔夠，小朋友仍然認得到。"],
+["請把原帖、限時動態和轉發版本都一併移除。","请把原帖、限时动态和转发版本一并删除。","Remove the original post, story, and any reposted versions.","請將原帖、限時動態同轉發版本一齊移除。"],
+["如果要分享活動，請遮住我孩子的臉和姓名。","如果要分享活动，请遮住我孩子的脸和姓名。","If you share the event, obscure my child's face and name.","如果要分享活動，請遮住我小朋友個樣同姓名。"],
+["校服和校門已顯示位置資訊，也請裁掉。","校服和校门暴露了位置信息，也请裁掉。","The uniform and school entrance reveal location details; crop those out too.","校服同校門已顯示位置資料，亦請裁走。"],
+["我可以提供一張背影照，請用它替換目前照片。","我可以提供一张背影照片，请用它替换当前图片。","I can provide a photo from behind to replace the current one.","我可以提供一張背影相，請用佢換走依家張相。"],
+["孩子自己也說不想公開，請尊重他的感受。","孩子自己也说不想公开，请尊重他的感受。","My child has also said they don't want it public. Please respect that.","小朋友自己都話唔想公開，請尊重佢感受。"],
+["孩子年紀小，不代表大人可以替他忽略私隱。","孩子年纪小，不代表大人可以忽略他的隐私。","Being young doesn't mean adults can disregard a child's privacy.","小朋友年紀細，唔代表大人可以忽略佢私隱。"],
+["這不是責怪你拍照，是希望公開前先取得同意。","这不是责怪你拍照，而是希望公开前先征得同意。","I'm not objecting to the photo itself; I'm asking for consent before publication.","唔係怪你影相，係希望公開之前先得到同意。"],
+["群組內分享和公開帳號發布是兩回事。","在班级群分享和发到公开账号是两回事。","Sharing in a closed class group is different from posting publicly.","喺班群分享同公開帳號發布係兩回事。"],
+["我只同意在班級群留存，沒有同意再轉到其他平台。","我只同意在班级群里保存，没有同意转到其他平台。","I agreed to the class group only, not cross-posting elsewhere.","我只同意喺班群留存，冇同意轉去其他平台。"],
+["請告訴我照片還發到哪些群組，我們需要逐一撤回。","请告诉我照片还发到了哪些群，我们需要逐一撤回。","Tell me where else it was shared so it can be withdrawn everywhere.","請話我知張相仲發咗去邊啲群，我哋要逐一撤回。"],
+["麻煩通知已下載的人不要再轉傳。","请通知已经下载的人不要继续转发。","Please ask anyone who downloaded it not to share it further.","麻煩通知已下載嘅人唔好再轉傳。"],
+["下次拍合照前，可以先問哪些家庭不參與公開發布。","下次拍合照前，可以先询问哪些家庭不参加公开发布。","Before the next group photo, ask which families opt out of public posting.","下次影合照之前，可以先問邊啲家庭唔參與公開發布。"],
+["建議學校建立清楚的照片同意名單，不要靠臨時猜測。","建议学校建立清楚的照片授权名单，不要临时猜测。","The school should keep a clear photo-consent list rather than guess each time.","建議學校建立清楚相片同意名單，唔好臨時估。"],
+["可以用貼紙標記不公開的孩子，拍攝時就避開正臉。","可以用标记区分不公开的孩子，拍摄时避开正脸。","Mark children who opt out so their faces can be avoided during photography.","可以用標記分開唔公開嘅小朋友，拍攝時避開正面。"],
+["活動紀錄可以保留，但不是每個孩子都要成為宣傳素材。","活动记录可以保留，但不是每个孩子都要成为宣传素材。","The event can be documented without making every child promotional content.","活動紀錄可以保留，但唔係每個小朋友都要做宣傳素材。"],
+["如果是校方帳號，請由負責老師確認刪除結果。","如果是学校账号，请由负责老师确认删除结果。","If this is a school account, ask the responsible teacher to confirm removal.","如果係校方帳號，請由負責老師確認刪除結果。"],
+["若你無法刪除，請立即聯絡帳號管理員處理。","如果你无法删除，请马上联系账号管理员处理。","If you cannot remove it, contact the account administrator immediately.","如果你刪除唔到，請即刻聯絡帳號管理員處理。"],
+["我會保留截圖，但現在最重要的是停止繼續擴散。","我会保存截图，但现在最重要的是停止继续传播。","I'll keep a record, but the priority is stopping further spread.","我會保留截圖，但依家最重要係停止繼續擴散。"],
+["若照片仍不撤下，我會向平台和學校正式申訴。","如果照片仍不删除，我会向平台和学校正式投诉。","If it stays up, I'll file a formal report with the platform and school.","如果張相仍然唔撤下，我會向平台同學校正式申訴。"],
+["『其他家長都沒意見』不能代替我們家的同意。","“其他家长都没意见”不能代替我们家的同意。","Other parents being fine with it does not replace our consent.","『其他家長都冇意見』唔可以代替我哋屋企同意。"],
+["按讚很多也不會讓未經同意變成已經同意。","点赞很多也不会让未经同意变成已经同意。","Lots of likes don't turn a lack of consent into consent.","好多讚好都唔會令未經同意變成已同意。"],
+["家長群不是孩子肖像的自助取用區。","家长群不是孩子照片的自助取用区。","A parent group isn't a self-service library of children's images.","家長群唔係小朋友肖像嘅自助取用區。"],
+["照片很可愛，私隱仍然要問。","照片很可爱，隐私问题仍然要先问。","A cute photo still requires a privacy check.","張相好可愛，私隱仍然要問。"],
+["請先刪除，再談以後怎樣分享。","请先删除，再讨论以后怎么分享。","Delete it first; then we can discuss future sharing.","請先刪除，再傾以後點分享。"],
+["不要再轉發孩子照片。","不要继续转发孩子的照片。","Do not repost my child's photo.","唔好再轉發小朋友相。"],
+["這張不能公開。","这张照片不能公开。","This photo cannot remain public.","呢張相唔可以公開。"],
+["今天下架，謝謝。","请今天下架，谢谢。","Take it down today, please.","今日下架，唔該。"]
+]);
+})();

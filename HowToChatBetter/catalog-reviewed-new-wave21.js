@@ -1,0 +1,71 @@
+;(function(){
+const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];
+window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
+function add(meta,rows){if(S.some(x=>x.id===meta.id))throw Error('Duplicate scene '+meta.id);const replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');replies.zh[k]={hant:r[0],hans:r[1]};replies.en[k]=r[2];replies.yue[k]=r[3]});S.push({...meta,replies});window.CHAT_REVIEWED_SCENES[meta.id]=true}
+
+add({id:'new49',domain:'job',domainLabel:{hant:'求職',hans:'求职',en:'Job Search'},relation:{hant:'招聘方',hans:'招聘方',en:'Recruiter'},goal:{hant:'先確認薪資範圍再決定提供資料',hans:'先确认薪资范围再决定提供资料',en:'Confirm the range before sharing salary documents'},title:{hant:'招聘方尚未透露職位薪資範圍，卻要求你先提供現職薪資單及完整收入紀錄',hans:'招聘方还没透露岗位薪资范围，却要求你先提供当前工资单和完整收入记录',en:'A recruiter asks for current payslips and full compensation records before disclosing the role’s salary range'}},[
+["可以先分享這個職位的預算範圍嗎？","可以先说明这个岗位的预算范围吗？","Could you share the budgeted range for the role first?","可唔可以先分享呢個職位嘅預算範圍？"],
+["我願意談期望薪資，但不方便提供現職薪資單。","我愿意谈期望薪资，但不方便提供目前的工资单。","I'm happy to discuss expectations, but I won't provide my current payslip.","我願意傾期望人工，但唔方便提供現職糧單。"],
+["我的現有收入屬於私人資料，請以職位價值評估報價。","我目前的收入属于私人信息，请按岗位价值评估报价。","My current pay is private; please price the offer based on the role's value.","我現有收入屬於私人資料，請按職位價值評估報價。"],
+["我的目標區間是這個數字，是否符合你們預算？","我的目标区间是这个数字，请问是否符合你们的预算？","My target range is this amount. Does it fit your budget?","我目標區間係呢個數，請問符唔符合你哋預算？"],
+["在雙方確認大致範圍前，提交敏感文件還太早。","双方确认大致范围之前，提交敏感文件还太早。","It's too early to submit sensitive documents before we align on the range.","雙方確認大致範圍之前，提交敏感文件仲太早。"],
+["請說明收集薪資單的必要性、保存期限和查閱權限。","请说明收集工资单的必要性、保存期限和访问权限。","Please explain why the payslip is required, how long it is kept, and who can access it.","請講明收集糧單必要性、保存幾耐同邊個有權睇。"],
+["這是法定要求、公司政策，還是可選資料？","这是法律要求、公司政策，还是可以自愿提供的信息？","Is this a legal requirement, a company policy, or optional information?","呢個係法定要求、公司政策，定係可選資料？"],
+["若是背景查核，請在有條件錄用後由正式渠道進行。","如果用于背景核查，请在发出有条件录用后通过正式渠道进行。","If this is for screening, please use a formal channel after a conditional offer.","如果係背景查核，請有條件錄用之後用正式渠道進行。"],
+["我不會透過私人聊天傳送載有銀行資料的文件。","我不会通过私人聊天发送带有银行信息的文件。","I won't send documents containing bank data through private chat.","我唔會經私人聊天傳送有銀行資料嘅文件。"],
+["若之後確有需要，請提供公司安全上傳系統。","如果后续确实需要，请提供公司的安全上传系统。","If it becomes necessary later, provide the company's secure upload portal.","如果之後真係需要，請提供公司安全上傳系統。"],
+["我可以提供不含銀行帳號的在職證明。","我可以提供不含银行账号的在职证明。","I can provide an employment letter without bank details.","我可以提供冇銀行帳號嘅在職證明。"],
+["如需核實職級，可以由人事部確認任職日期和職稱。","如果需要核实职级，可以由人事部门确认任职日期和职位。","HR can verify my dates and title if you need to confirm seniority.","如果要核實職級，可以由人事部確認任職日期同職稱。"],
+["獎金和福利結構較複雜，單張薪資單不能代表總薪酬。","奖金和福利结构比较复杂，单张工资单不能代表总报酬。","My bonus and benefits vary, so one payslip doesn't represent total compensation.","獎金同福利結構較複雜，一張糧單代表唔到總薪酬。"],
+["我可以概述總薪酬組成，但不提供逐項證明。","我可以概括总报酬构成，但不会提供逐项证明。","I can summarise my compensation mix without supplying itemised proof.","我可以概述總薪酬組成，但唔提供逐項證明。"],
+["這次轉職看重的是職責與市場水平，不是現職加百分比。","这次换工作看重职责和市场水平，不是按现有工资加一个百分比。","I'm evaluating the role against market scope, not as a percentage over current pay.","今次轉職睇職責同市場水平，唔係現職加個百分比。"],
+["請按你們對這個級別的薪酬框架提出方案。","请按照你们对这个级别的薪酬框架提出方案。","Please make an offer within your compensation framework for this level.","請按你哋呢個級別嘅薪酬框架提出方案。"],
+["若薪資範圍與期望差距太大，我們可以現在坦誠停止流程。","如果薪资范围与期望差距太大，我们可以现在坦诚结束流程。","If the range is far apart, we can end the process candidly now.","如果薪資範圍同期望差太遠，我哋可以依家坦白停止流程。"],
+["先確認雙方預期，能節省彼此後續面試時間。","先确认双方预期，可以节省之后的面试时间。","Aligning expectations now saves both sides time later.","先確認雙方預期，可以節省大家之後面試時間。"],
+["我理解你要做內部審批，但不應以我的舊薪決定新職價值。","我理解你需要内部审批，但不该用我的旧工资决定新岗位的价值。","I understand internal approval, but my old pay shouldn't determine this role's value.","我明你要做內部審批，但唔應該用我舊人工決定新職價值。"],
+["如果這項文件是不可豁免條件，請以電郵正式確認。","如果这份文件是不能豁免的条件，请用邮件正式确认。","If the document is mandatory, please confirm that formally by email.","如果呢份文件係不可豁免條件，請用電郵正式確認。"],
+["我會先閱讀私隱聲明，再決定是否繼續。","我会先阅读隐私声明，再决定是否继续。","I'll review the privacy notice before deciding whether to proceed.","我會先睇私隱聲明，再決定係咪繼續。"],
+["不提供薪資單並不代表我拒絕透明溝通。","不提供工资单，不代表我拒绝透明沟通。","Declining a payslip doesn't mean I'm unwilling to communicate openly.","唔提供糧單唔代表我拒絕透明溝通。"],
+["你可以問我的期望，不需要審閱我的銀行生活。","你可以问我的期望，不需要查看我的银行生活。","You can ask my expectations without auditing my banking life.","你可以問我期望，唔需要審閱我銀行生活。"],
+["職位薪酬是你們的範圍，不是我薪資單上的猜謎。","岗位薪酬应该来自你们的范围，不是从我的工资单里猜。","The role's pay should come from your range, not a puzzle built from my payslip.","職位薪酬係你哋嘅範圍，唔係我糧單上嘅猜謎。"],
+["先亮預算，再談匹配，這樣比較公平。","先说明预算，再谈匹配，这样更公平。","Show the budget first, then discuss fit. That's fairer.","先亮預算，再傾匹配，咁比較公平。"],
+["薪資單不參加第一輪面試。","工资单不参加第一轮面试。","My payslip isn't attending the first-round interview.","糧單唔參加第一輪面試。"],
+["我不提供現職薪資證明。","我不提供目前的工资证明。","I don't provide proof of current salary.","我唔提供現職人工證明。"],
+["請先給職位區間。","请先提供岗位薪资范围。","Please provide the role's range first.","請先俾職位薪資區間。"],
+["沒有範圍，我不提交文件。","没有薪资范围，我不会提交文件。","No range, no documents.","冇薪資範圍，我唔提交文件。"],
+["我們可以談未來價值，不必翻閱過去收入。","我们可以谈未来价值，不必翻看过去收入。","We can discuss future value without examining past income.","我哋可以傾未來價值，唔使翻查過去收入。"]
+]);
+
+add({id:'new50',domain:'social',domainLabel:{hant:'社交',hans:'社交',en:'Social'},relation:{hant:'到訪的朋友',hans:'来访的朋友',en:'Visiting friend'},goal:{hant:'停止在家中拍攝或直播',hans:'停止在家中拍摄或直播',en:'Stop filming or livestreaming inside the home'},title:{hant:'朋友到你家作客後一直拍片直播，把住址線索、家人和私人空間都拍了進去',hans:'朋友来家里做客后一直拍视频直播，把住址线索、家人和私人空间都拍了进去',en:'A visiting friend keeps livestreaming inside your home, showing address clues, family members, and private spaces'}},[
+["先關直播，我家裡不接受未經同意拍攝。","先关掉直播，我家里不接受未经同意的拍摄。","Stop the livestream. Filming in my home requires permission.","先關直播，我屋企唔接受未經同意拍攝。"],
+["請把鏡頭轉開，家人沒有同意出鏡。","请把镜头移开，家人没有同意出镜。","Turn the camera away; my family did not consent to appear.","請將鏡頭轉開，屋企人冇同意出鏡。"],
+["畫面拍到門牌和窗外位置，請立即停止。","画面拍到了门牌和窗外位置，请马上停止。","The stream shows the door number and outside location. Stop now.","畫面影到門牌同窗外位置，請即刻停。"],
+["這是私人住所，不是公開拍攝場地。","这是私人住所，不是公开拍摄场地。","This is a private home, not a public filming location.","呢度係私人住所，唔係公開拍攝場地。"],
+["你可以拍自己的食物，不要拍房間和其他人。","你可以拍自己的食物，不要拍房间和其他人。","You can film your food, but not the rooms or other people.","你可以影自己食物，唔好影房間同其他人。"],
+["如果想拍合照，先問每個人是否願意。","如果想拍合照，请先问每个人是否愿意。","Ask everyone before taking or posting a group photo.","如果想影合照，先問每個人願唔願意。"],
+["孩子在這裡，請不要讓他出現在直播裡。","孩子在这里，请不要让他出现在直播里。","A child is present; keep them out of the livestream.","小朋友喺度，請唔好俾佢出現喺直播。"],
+["長輩不知道你在直播，先停下來向他說明。","长辈不知道你在直播，请先停下来向他说明。","Our elder doesn't know you're live. Stop and explain before filming.","長輩唔知你直播緊，先停低同佢講清楚。"],
+["家中的文件和照片屬於私人資料，請不要掃過鏡頭。","家里的文件和照片属于私人信息，请不要拍进镜头。","Documents and family photos are private; keep them out of frame.","屋企文件同相屬於私人資料，請唔好掃入鏡。"],
+["請不要拍臥室、工作桌或門鎖位置。","请不要拍卧室、工作桌或门锁位置。","Do not film bedrooms, workspaces, or door locks.","請唔好影睡房、工作枱或者門鎖位置。"],
+["你剛才那段已顯示地址線索，請從回放刪掉。","你刚才那段已经暴露地址线索，请从回放中删除。","The last segment revealed location clues; delete it from the replay.","你頭先嗰段已顯示地址線索，請喺回放刪走。"],
+["請確認平台沒有自動保存或同步到其他帳號。","请确认平台没有自动保存或同步到其他账号。","Check that the platform hasn't auto-saved or cross-posted the stream.","請確認平台冇自動保存或者同步去其他帳號。"],
+["如果有人錄屏，請在直播中要求不要再轉發。","如果有人录屏，请在直播中要求不要继续转发。","If viewers recorded it, ask them on stream not to redistribute it.","如果有人錄屏，請喺直播要求唔好再轉發。"],
+["我邀請你來作客，不等於邀請你的觀眾進我家。","我邀请你来做客，不等于邀请你的观众进我家。","I invited you, not your audience, into my home.","我請你嚟作客，唔等於請你啲觀眾入我屋企。"],
+["你想分享生活我理解，但不能拿我的私生活做背景。","我理解你想分享生活，但不能拿我的私人生活当背景。","I understand you share your life, but mine can't be used as the backdrop.","我明你想分享生活，但唔可以攞我私生活做背景。"],
+["下次要拍攝，請在來之前先問，不要到場才開播。","下次要拍摄，请来之前先问，不要到了才开播。","Next time, ask before visiting rather than going live on arrival.","下次要拍攝，請嚟之前先問，唔好到場先開播。"],
+["我們可以指定一個沒有私人資訊的角落拍五分鐘。","我们可以指定一个没有私人信息的角落拍五分钟。","We can designate one neutral corner for five minutes of filming.","我哋可以指定一個冇私人資料嘅角落影五分鐘。"],
+["拍完先讓我看畫面，確認沒有位置和家人資料再發。","拍完先让我看一下，确认没有位置和家人信息再发布。","Show me the footage before posting so I can check for location or family details.","拍完先俾我睇畫面，確認冇位置同家人資料先發。"],
+["若你一定要持續直播，請到戶外再繼續。","如果你一定要继续直播，请到户外再开。","If you must keep streaming, continue outside.","如果你一定要繼續直播，請去戶外再開。"],
+["你可以選擇收起手機留下，或帶著直播離開。","你可以选择收起手机留下，或者带着直播离开。","You can put the phone away and stay, or take the stream elsewhere.","你可以收起手機留低，或者帶住直播離開。"],
+["我已經說過一次，請不要再把鏡頭打開。","我已经说过一次，请不要再次打开镜头。","I've already said no; do not turn the camera on again.","我已經講過一次，請唔好再開鏡頭。"],
+["如果你繼續拍，我會請你現在離開。","如果你继续拍，我会请你现在离开。","If you continue filming, I'll ask you to leave now.","如果你繼續影，我會請你依家離開。"],
+["流量是你的，住址風險卻是我的，這不公平。","流量归你，住址风险却由我承担，这不公平。","The views are yours, but the address risk is mine. That's not fair.","流量係你嘅，住址風險就係我嘅，咁唔公平。"],
+["我的客廳不是你的免費直播棚。","我的客厅不是你的免费直播间。","My living room is not your free streaming studio.","我客廳唔係你免費直播棚。"],
+["作客帶禮物可以，帶幾百個觀眾不行。","来做客可以带礼物，不能带几百个观众。","A guest may bring a gift, not hundreds of viewers.","作客帶禮物可以，帶幾百個觀眾唔得。"],
+["鏡頭很廣角，界線也要看得見。","镜头很广角，界限也要看得见。","Your lens may be wide, but the boundary should still be visible.","鏡頭好廣角，界線都要睇得見。"],
+["別拍了。","不要再拍了。","Stop filming.","唔好再影。"],
+["現在關直播。","现在关闭直播。","End the livestream now.","依家關直播。"],
+["在我家，就按我家的私隱規則。","在我家，就要遵守我家的隐私规则。","In my home, you follow my privacy rules.","喺我屋企，就要守我屋企私隱規則。"],
+["不同意就是不同意，不需要觀眾投票。","不同意就是不同意，不需要让观众投票。","No means no; the audience doesn't get a vote.","唔同意就係唔同意，唔需要觀眾投票。"]
+]);
+})();
