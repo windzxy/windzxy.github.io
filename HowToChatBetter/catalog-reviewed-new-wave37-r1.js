@@ -1,4 +1,4 @@
-;(function(){
+;(()=>{
 const S=window.CHAT_SCENARIOS=window.CHAT_SCENARIOS||[];window.CHAT_REVIEWED_SCENES=window.CHAT_REVIEWED_SCENES||{};
 function add(meta,rows){if(S.some(x=>x.id===meta.id))throw Error('Duplicate scene '+meta.id);const replies={zh:{},en:{},yue:{}};rows.forEach((r,i)=>{const k='r'+String(i+1).padStart(2,'0');replies.zh[k]={hant:r[0],hans:r[1]};replies.en[k]=r[2];replies.yue[k]=r[3]});S.push({...meta,replies});window.CHAT_REVIEWED_SCENES[meta.id]=true}
 
