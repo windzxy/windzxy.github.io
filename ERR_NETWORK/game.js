@@ -7,7 +7,7 @@ function start(){reset();mode="running";overlay.hidden=true;last=performance.now
 function jump(){if(mode!=="running"){start();return}if(hero.grounded){hero.duck=false;hero.vy=JUMP;hero.grounded=false}}
 function finish(){if(mode!=="running")return;mode="over";if(score>best){best=score;try{localStorage.setItem(key,String(best))}catch(_){}}bestLabel.textContent=fmt(best);show("over")}
 function collision(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
-function playerBox(){const dh=hero.duck&&hero.grounded;return{x:hero.x+7,y:hero.y+(dh?24:7),w:dh?35:30,h:dh?17:37}}
+function playerBox(){const dh=hero.duck&&hero.grounded;return dh?{x:hero.x+6,y:GROUND-25,w:42,h:22}:{x:hero.x+10,y:hero.y+7,w:31,h:36}}
 function obstacleBox(o){return{x:o.x+5,y:o.y+3,w:o.w-10,h:o.h-5}}
 function spawn(){const bird=birdAllowed&&Math.random()<.23;let o;if(bird){o={kind:"bird",x:W+30,y:GROUND-68,w:48,h:23}}else{const big=Math.random()<.33;o={kind:big?"cactus2":"cactus",x:W+30,y:GROUND-(big?49:38),w:big?42:26,h:big?49:38}}obstacles.push(o);
 // Travel gap includes air-time and reaction buffer: gap grows with speed, not random per-frame clustering.
@@ -22,26 +22,28 @@ for(const o of obstacles)o.x-=speed*dt;obstacles=obstacles.filter(o=>o.x+o.w>=-5
 const p=playerBox();for(const o of obstacles){if(collision(p,obstacleBox(o))){finish();break}}}
 function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
 function cloud(x,y,s){const c="#dadddf";rect(x,y+11*s,64*s,13*s,c);rect(x+12*s,y+3*s,20*s,18*s,c);rect(x+29*s,y,20*s,23*s,c)}
-function cactus(o){const x=o.x,y=o.y;rect(x+o.w*.40,y+3,o.w*.25,o.h-3,"#535860");rect(x+3,y+o.h*.48,7,o.h*.25,"#535860");rect(x+3,y+o.h*.67,o.w*.48,6,"#535860");rect(x+o.w-9,y+o.h*.34,7,o.h*.33,"#535860");rect(x+o.w*.58,y+o.h*.54,o.w*.28,6,"#535860");}
+function cactus(o){const x=o.x,y=o.y;rect(x+o.w*.40,y+3,o.w*.25,o.h-3,"#505861");rect(x+3,y+o.h*.48,7,o.h*.25,"#505861");rect(x+3,y+o.h*.67,o.w*.48,6,"#505861");rect(x+o.w-9,y+o.h*.34,7,o.h*.33,"#505861");rect(x+o.w*.58,y+o.h*.54,o.w*.28,6,"#505861");rect(x+o.w*.43,y+6,3,o.h-11,"#848c95");rect(x+o.w*.58,y+4,3,o.h-9,"#353d45");rect(x+5,y+o.h*.55,2,7,"#879099");rect(x+o.w-7,y+o.h*.41,2,6,"#929aa2")}
 function bird(o){const flap=Math.sin(elapsed*19)>0, x=o.x,y=o.y;rect(x+13,y+11,25,10,"#535860");rect(x+32,y+5,13,9,"#535860");rect(x+43,y+10,7,3,"#535860");rect(x+18,y+(flap?0:17),18,7,"#535860");rect(x+34,y+9,3,3,"#fff");}
 function rounded(x,y,w,h,r,c){ctx.fillStyle=c;ctx.beginPath();ctx.roundRect(Math.round(x),Math.round(y),w,h,r);ctx.fill()}
-function dino(){const x=hero.x,y=hero.y,phase=Math.floor(elapsed*13)%2,grounded=hero.grounded,duck=hero.duck&&grounded,hop=grounded?Math.sin(elapsed*15)*1.6:0;
-ctx.save();ctx.translate(Math.round(x),Math.round(y+hop));if(duck)ctx.scale(1,0.82);
+function dino(){const x=hero.x,y=hero.y,phase=Math.floor(elapsed*13)%2,duck=hero.duck&&hero.grounded,grown=evolution===2,hop=hero.grounded&&!duck?Math.sin(elapsed*15)*.7:0;
+ctx.save();ctx.translate(Math.round(x),Math.round(y+hop));
+const ink="#755b43",egg="#fff2d8",eggShade="#e9cba0",chick=grown?"#edae3c":"#ffd55f",shade=grown?"#cd842c":"#eaa643",light="#fff2ac",feet="#b86f39";
+if(duck){
+// Individually drawn low poses; all sit on the SAME ground at local y=46.
+if(evolution===0){rounded(2,23,49,23,12,ink);rounded(5,25,43,19,10,eggShade);rounded(7,24,39,17,9,egg);rounded(12,26,15,5,3,"#fffefa");rect(37,35,5,3,eggShade);rect(15,43,7,3,ink);rect(35,43,7,3,ink)}
+else{rounded(2,25,45,19,9,ink);rounded(4,26,42,16,8,chick);rounded(25,19,26,21,10,chick);rounded(33,23,12,5,2,light);rect(42,27,4,4,"#3d342b");rect(43,27,2,2,"#fff");rect(49,34,10,4,"#df8231");rounded(6,32,20,7,4,shade);rect(14,43,7,3,feet);rect(35,43,7,3,feet);if(grown){rect(34,13,5,7,"#d45d47");rect(40,15,5,6,"#d45d47");rect(3,30,8,5,shade)}}
+ctx.restore();return}
 if(evolution===0){
-// Warm ivory egg with chocolate outline, soft shadow, tiny highlight and faint pixel speckles.
-rounded(6,6,37,42,17,"#6b625c");rounded(9,8,31,36,15,"#fff1d4");rounded(12,10,25,30,12,"#ffe9bf");rounded(15,11,12,7,5,"#fffdfa");
-rect(15,28,4,4,"#edcf9e");rect(34,22,3,3,"#edcf9e");rect(12,38,5,3,"#f6d9a5");
+// Egg: hand-crafted shell profile, glint, freckles, and a grounded base.
+rounded(7,3,39,43,18,ink);rounded(9,5,35,39,17,eggShade);rounded(12,5,30,35,15,egg);rounded(16,9,13,7,4,"#fffefa");rect(18,29,3,3,"#ebcb94");rect(36,22,3,4,"#ebcb94");rect(15,39,5,3,"#e7c38e");rect(15,44,7,2,ink);rect(33,44,7,2,ink);
 }else{
-// Distinct chick at 500 and grown bird at 1000, animated feet and wing.
-const grown=evolution===2,main=grown?"#f3b847":"#ffd56b",shadow=grown?"#d99630":"#ebaf4e",highlight=grown?"#ffe7a0":"#ffed9e";
-rounded(6,13,36,32,15,"#765a3e");rounded(8,13,33,29,14,main);
-rounded(grown?16:13,grown?3:7,grown?31:29,grown?31:28,13,main);
-rounded(18,12,15,10,6,highlight);
-rect(grown?37:35,19,5,5,"#3b3431");rect(grown?38:36,19,2,2,"#fff");
-ctx.fillStyle=grown?"#d77a37":"#ec9c3d";ctx.beginPath();ctx.moveTo(44,26);ctx.lineTo(grown?60:55,30);ctx.lineTo(44,35);ctx.closePath();ctx.fill();
-rounded(11,29+(phase?2:0),16,9,5,shadow);rounded(14,30+(phase?2:0),11,5,4,main);
-if(grown){rect(16,4,5,8,"#d9634c");rect(23,0,6,12,"#d9634c");rect(29,6,5,7,"#d9634c");rect(1,25,11,6,shadow)}
-const foot="#bd7942";rect(15,41,5,grounded&&phase?7:5,foot);rect(32,41,5,grounded&&!phase?7:5,foot);
+// Chick / adult: separate silhouette, animated wing, feather texture and footfall.
+rounded(7,16,37,28,13,ink);rounded(9,16,34,26,12,chick);rounded(16,grown?3:8,31,30,13,chick);rounded(20,12,14,8,5,light);
+rounded(9,27+(phase?1:0),17,12,6,shade);rounded(14,27+(phase?1:0),11,6,4,chick);
+rect(37,20,5,5,"#342b28");rect(38,20,2,2,"#fff");ctx.fillStyle="#d87e35";ctx.beginPath();ctx.moveTo(45,27);ctx.lineTo(grown?61:56,31);ctx.lineTo(45,36);ctx.closePath();ctx.fill();
+rect(15,42,5,phase?4:2,feet);rect(33,42,5,phase?2:4,feet);
+if(grown){rect(18,3,5,9,"#d7624d");rect(25,0,6,12,"#d7624d");rect(32,5,5,8,"#d7624d");rect(2,27,9,6,shade);rect(29,32,5,3,"#fbd279")}
+else{rect(18,8,4,4,light);rect(29,33,3,3,"#f9bd56")}
 }
 ctx.restore()}
 function evolutionEffect(){if(evolveFlash<=0)return;const a=Math.min(1,evolveFlash/.5);ctx.save();ctx.globalAlpha=a*.75;const cx=hero.x+26,cy=hero.y+20;for(let i=0;i<12;i++){const angle=i*Math.PI/6+elapsed*.7,rad=27+(2.2-evolveFlash)*25;rect(cx+Math.cos(angle)*rad,cy+Math.sin(angle)*rad,4+(i%3),4+(i%3),i%2?"#f7c861":"#ffe6a2")}ctx.restore();ctx.save();ctx.globalAlpha=Math.min(.8,evolveFlash*.5);ctx.fillStyle="#a66e21";ctx.textAlign="center";ctx.font="bold 15px Arial";ctx.fillText(evolution===1?"CHICK!":"EVOLVED!",hero.x+22,hero.y-20);ctx.restore()}
