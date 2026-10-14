@@ -25,40 +25,44 @@ function cloud(x,y,s){const c="#dadddf";rect(x,y+11*s,64*s,13*s,c);rect(x+12*s,y
 function cactus(o){const x=o.x,y=o.y;rect(x+o.w*.40,y+3,o.w*.25,o.h-3,"#505861");rect(x+3,y+o.h*.48,7,o.h*.25,"#505861");rect(x+3,y+o.h*.67,o.w*.48,6,"#505861");rect(x+o.w-9,y+o.h*.34,7,o.h*.33,"#505861");rect(x+o.w*.58,y+o.h*.54,o.w*.28,6,"#505861");rect(x+o.w*.43,y+6,3,o.h-11,"#848c95");rect(x+o.w*.58,y+4,3,o.h-9,"#353d45");rect(x+5,y+o.h*.55,2,7,"#879099");rect(x+o.w-7,y+o.h*.41,2,6,"#929aa2")}
 function bird(o){const flap=Math.sin(elapsed*19)>0, x=o.x,y=o.y;rect(x+13,y+11,25,10,"#535860");rect(x+32,y+5,13,9,"#535860");rect(x+43,y+10,7,3,"#535860");rect(x+18,y+(flap?0:17),18,7,"#535860");rect(x+34,y+9,3,3,"#fff");}
 function rounded(x,y,w,h,r,c){ctx.fillStyle=c;ctx.beginPath();ctx.roundRect(Math.round(x),Math.round(y),w,h,r);ctx.fill()}
-function dino(){
-const x=hero.x,y=hero.y,phase=Math.floor(elapsed*13)%2,duck=hero.duck&&hero.grounded,hop=hero.grounded&&!duck?Math.sin(elapsed*15)*.7:0;
-ctx.save();ctx.translate(Math.round(x),Math.round(y+hop));
-const ink="#755b43",feet="#b86f39";
-if(evolution===0){if(duck){rounded(2,23,49,23,12,ink);rounded(5,25,43,19,10,"#e9cba0");rounded(7,24,39,17,9,"#fff2d8");rounded(12,26,15,5,3,"#fffefa");rect(15,43,7,3,ink);rect(35,43,7,3,ink)}
-else{rounded(7,3,39,43,18,ink);rounded(9,5,35,39,17,"#e9cba0");rounded(12,5,30,35,15,"#fff2d8");rounded(16,9,13,7,4,"#fffefa");rect(18,29,3,3,"#ebcb94");rect(36,22,3,4,"#ebcb94");rect(15,44,7,2,ink);rect(33,44,7,2,ink)}ctx.restore();return}
-if(evolution===1){const yellow="#ffd55f";if(duck){rounded(2,25,45,19,9,ink);rounded(4,26,42,16,8,yellow);rounded(25,19,26,21,10,yellow);rect(42,27,4,4,"#342b28");rect(49,34,10,4,"#e88b32");rect(14,43,7,3,feet);rect(35,43,7,3,feet)}
-else{rounded(7,16,37,28,13,ink);rounded(9,16,34,26,12,yellow);rounded(16,8,31,30,13,yellow);rounded(20,12,14,8,5,"#fff2ac");rounded(9,27+(phase?1:0),17,12,6,"#eaa643");rect(37,20,5,5,"#342b28");rect(38,20,2,2,"#fff");rect(45,27,12,6,"#e88b32");rect(15,42,5,phase?4:2,feet);rect(33,42,5,phase?2:4,feet)}ctx.restore();return}
-// Wild pheasant: low horizontal body, distinctive dark teal ribbon tail and chestnut cap.
-// Phoenix: taller fiery crown, golden body and three sweeping flame plumes.
-const phoenix=evolution===3,body=phoenix?"#f28a2f":"#a97a4f",belly=phoenix?"#ffd97a":"#dcb991",wing=phoenix?"#dd4d2f":"#76553d",crest=phoenix?"#d72828":"#b23e36",beak=phoenix?"#ffe39f":"#d89d4d";
-const tailColors=phoenix?["#ffcf4c","#ff7b39","#cf2e2e"]:["#2e8a7f","#4fb0a1","#245b65"];
-// The plumes animate without affecting character hitbox.
-const wave=Math.sin(elapsed*9)*(duck?1.5:3);
-ctx.lineCap="round";
-for(let k=0;k<3;k++){ctx.strokeStyle=tailColors[k];ctx.lineWidth=phoenix?5:4;ctx.beginPath();if(duck){ctx.moveTo(9,30+k*3);ctx.bezierCurveTo(-4,20-k*3,-16,23-k*2+wave,-27-k*4,25-k*4+wave)}
-else{ctx.moveTo(13,29+k*2);ctx.bezierCurveTo(-4,17-k*6,-18,4-k*3+wave,-29-k*4,18-k*5+wave)}ctx.stroke()}
-if(duck){
-rounded(2,29,43,15,7,ink);rounded(4,30,41,12,6,body);rounded(28,22,22,18,8,body);
-rounded(11,31,19,8,4,wing);rect(41,27,4,4,"#29272a");rect(48,34,11,4,beak);
-rect(34,18,4,7,crest);rect(39,19,4,7,crest);
-rect(15,43,7,3,feet);rect(34,43,7,3,feet);
+// Pixel sprites are rendered at native resolution to offscreen sheets and cached.
+// Each evolution has distinct ready, runA, runB, jump and duck frames.
+const spriteSheets=new Map();
+function spriteShape(stage,pose,frame){
+const isDuck=pose==="duck",isJump=pose==="jump",moving=pose==="run",step=frame===1?3:0;
+const feather=(points,color,size=3)=>{ctx.strokeStyle=color;ctx.lineWidth=size;ctx.lineCap="square";ctx.lineJoin="miter";ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke()};
+if(stage<2){
+const shell=stage===0;
+if(shell){rounded(isDuck?12:18,isDuck?28:8,isDuck?42:31,isDuck?18:39,14,"#75604b");rounded(isDuck?14:20,isDuck?29:10,isDuck?38:27,isDuck?15:35,13,"#fff1d2");rounded(isDuck?19:25,isDuck?29:14,12,6,5,"#fffefa");rect(30,37,4,3,"#e3bd87");rect(42,31,3,3,"#e3bd87");return}
+rounded(12,isDuck?27:17,39,isDuck?17:27,12,"#9b642f");
+rounded(14,isDuck?28:18,35,isDuck?14:25,11,"#ffd55f");
+rounded(isDuck?35:26,isDuck?20:8,30,isDuck?23:31,14,"#ffd867");
+rounded(isDuck?39:31,isDuck?25:15,13,8,5,"#fff0a5");
+rounded(17,32,21,9,6,"#e8a441");rect(isDuck?57:49,isDuck?29:19,5,5,"#2d292d");
+rect(isDuck?63:55,isDuck?34:28,10,5,"#ed922f");
 }else{
-rounded(7,20,40,22,10,ink);rounded(9,20,37,20,9,body);
-rounded(30,8,19,25,8,body);rounded(32,12,12,8,4,belly);
-rounded(13,27+(phase?1:0),19,9,4,wing);
-rect(40,18,4,4,"#29272a");rect(41,18,2,2,"#fff");
-ctx.fillStyle=beak;ctx.beginPath();ctx.moveTo(47,25);ctx.lineTo(60,28);ctx.lineTo(47,33);ctx.closePath();ctx.fill();
-rect(33,3,4,9,crest);rect(38,0,5,11,crest);rect(43,5,4,7,crest);
-rect(16,41,5,phase?5:3,feet);rect(33,41,5,phase?3:5,feet);
+// Long pheasant tail curls upwards; phoenix has five heavy flame feathers.
+const fire=stage===3;const coat=fire?"#fa9635":"#b77a46",shade=fire?"#be3c31":"#674639",accent=fire?"#ffd25d":"#258c83";
+const ribbons=fire?["#f83f34","#ff812e","#ffd753","#e13f3a","#ffab35"]:["#26786f","#3cae91","#194d68","#80c8a8"];
+for(let k=0;k<ribbons.length;k++){const t=k/ribbons.length,shift=Math.sin(frame*1.8+k)*3,high=isDuck?27:10;feather([[23,32+k],[8,24-k*2],[-8-k*5,high-k*4+shift],[-18-k*6,14+k*3+shift]],ribbons[k],fire?5:4)}
+// Crest has its own silhouette, not reused between species.
+if(fire){feather([[52,17],[51,6],[45,-6],[47,-15]],"#e64235",6);feather([[59,18],[61,3],[67,-8]],"#ffb638",5);feather([[47,15],[41,3],[38,-7]],"#e73f36",5)}
+else{feather([[51,17],[48,8],[43,4]],"#8e343e",4);feather([[56,16],[59,7]],"#b64748",3)}
+rounded(15,isDuck?30:20,49,isDuck?15:25,11,shade);
+rounded(18,isDuck?31:21,45,isDuck?12:22,10,coat);
+rounded(isDuck?52:49,isDuck?24:8,22,isDuck?19:30,10,coat);
+rounded(52,isDuck?27:12,11,12,5,fire?"#ffe59c":"#efd0a9");
+// Layered wing shapes with contrasting edges and feather ridges.
+rounded(25,isDuck?33:29,28,12,5,fire?"#e94d30":"#355b65");
+rounded(28,isDuck?34:30,20,7,4,fire?"#ffba4b":"#58ac91");
+for(let k=0;k<3;k++)rect(30+k*6,isDuck?39:35,4,2,fire?"#ffe4a0":"#a9dcc4");
+rect(isDuck?66:65,isDuck?31:19,5,5,"#292937");rect(isDuck?67:66,isDuck?31:19,2,2,"#fff");
+feather([[isDuck?73:72,isDuck?37:28],[84,isDuck?38:31],[73,isDuck?41:34]],fire?"#ffe29b":"#d8ad67",4);
 }
-if(phoenix){rect(20,25,5,3,"#ffe8a3");rect(25,30,4,3,"#ffd16a");if(!duck){ctx.save();ctx.globalAlpha=.32;ctx.fillStyle="#ffba4e";ctx.beginPath();ctx.ellipse(23,25,28,28,0,0,Math.PI*2);ctx.strokeStyle="#ffa43c";ctx.lineWidth=2;ctx.stroke();ctx.restore()}}
-
-ctx.restore()}
+const low=isDuck?43:40;const legs=isDuck?2:isJump?2:frame===0?7:3;
+if(stage!==0){rect(29,low,5,legs,"#9e6639");rect(49,low,5,isDuck?2:isJump?2:frame===0?3:7,"#9e6639");rect(27,low+legs-2,10,3,"#bd7d41");rect(47,low+(frame===0?1:legs-2),10,3,"#bd7d41")}
+}
+function dino(){const pose=hero.duck&&hero.grounded?"duck":!hero.grounded?"jump":"run";const frame=Math.floor(elapsed*11)%2;ctx.save();ctx.translate(Math.round(hero.x-17),Math.round(hero.y));spriteShape(evolution,pose,frame);ctx.restore()}
 function evolutionEffect(){if(evolveFlash<=0)return;const a=Math.min(1,evolveFlash/.5);ctx.save();ctx.globalAlpha=a*.75;const cx=hero.x+26,cy=hero.y+20;for(let i=0;i<12;i++){const angle=i*Math.PI/6+elapsed*.7,rad=27+(2.2-evolveFlash)*25;rect(cx+Math.cos(angle)*rad,cy+Math.sin(angle)*rad,4+(i%3),4+(i%3),i%2?"#f7c861":"#ffe6a2")}ctx.restore();ctx.save();ctx.globalAlpha=Math.min(.8,evolveFlash*.5);ctx.fillStyle="#a66e21";ctx.textAlign="center";ctx.font="bold 15px Arial";ctx.fillText(["","CHICK!","PHEASANT!","PHOENIX!"][evolution],hero.x+22,hero.y-20);ctx.restore()}
 function scenery(){const parallax=(elapsed*speed*.09)%310;ctx.save();ctx.globalAlpha=.48;for(let i=-1;i<5;i++){const x=i*310-parallax;rect(x+35,170,84,52,"#edf0f3");rect(x+53,155,45,15,"#edf0f3");rect(x+164,186,72,36,"#e5eaef");rect(x+181,179,33,7,"#e5eaef");for(let w=0;w<3;w++)rect(x+46+w*21,183,7,10,"#fff");}ctx.restore();const scroll=(elapsed*speed*.12)%240;for(let i=-1;i<6;i++){const x=i*240-scroll;if(scene===0){rect(x+28,GROUND-31,7,28,"#91b49c");rect(x+20,GROUND-39,22,13,"#b2cfb5");rect(x+25,GROUND-49,13,15,"#c3dcbc")}else if(scene===1){rect(x+20,GROUND-33,35,32,"#d7a89a");rect(x+15,GROUND-37,46,8,"#e9bfa6");rect(x+71,GROUND-23,24,22,"#ebc4ac")}else if(scene===2){rect(x+22,GROUND-26,4,25,"#7e8ca8");rect(x+12,GROUND-33,25,8,"#a2adc6");rect(x+80,GROUND-40,3,3,"#fff9c2")}else{rect(x+14,GROUND-24,42,23,"#d4e7f1");rect(x+22,GROUND-37,25,14,"#ebf4fb");rect(x+70,GROUND-14,19,13,"#e6f3fc")}}for(let i=0;i<9;i++){const x=((i*137-groundShift*2.2)%1100+1100)%1100-60;rect(x,GROUND-5,16,3,"#e2e6df");rect(x+5,GROUND-9,3,4,"#d1d9d0");}}function milestone(){if(mode!=="running"||score<100)return;const mod=score%250;if(mod>36)return;ctx.save();ctx.globalAlpha=Math.max(0,Math.min(1,mod/6,(36-mod)/9));ctx.fillStyle="#9ca6b1";ctx.textAlign="center";ctx.font="bold 13px Arial";ctx.fillText(score<500?"KEEP GOING":score<1000?"HATCHED!":"FULLY GROWN",W/2,42);ctx.restore()}function starArt(star){const x=star.x,y=star.y+Math.sin(elapsed*4+star.phase)*3;if(star.gold){ctx.save();ctx.fillStyle="#a46d1b";ctx.beginPath();ctx.ellipse(x,y,11,14,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ffd15b";ctx.beginPath();ctx.ellipse(x-1,y-2,8,11,0,0,Math.PI*2);ctx.fill();rect(x-4,y-9,4,5,"#fff4bd");ctx.restore();return}ctx.save();ctx.translate(x,y);ctx.rotate(Math.sin(elapsed*3+star.phase)*.15);ctx.fillStyle="#e7aa39";ctx.beginPath();for(let i=0;i<10;i++){const a=i*Math.PI/5-Math.PI/2,r=i%2?5:12;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.fillStyle="#fff4b9";ctx.fillRect(-2,-7,4,5);ctx.restore()}function crateArt(o){const x=Math.round(o.x),y=o.y;rect(x+2,y+29,32,3,"#b4b8bd");rect(x,y,34,30,"#352b2a");rect(x+3,y+3,28,24,"#805037");rect(x+6,y+6,22,18,"#b97b4b");rect(x+8,y+8,18,14,"#955935");ctx.strokeStyle="#553b2c";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x+7,y+7);ctx.lineTo(x+27,y+23);ctx.moveTo(x+27,y+7);ctx.lineTo(x+7,y+23);ctx.stroke();rect(x+2,y+2,7,7,"#626773");rect(x+25,y+2,7,7,"#626773");rect(x+2,y+21,7,7,"#626773");rect(x+25,y+21,7,7,"#626773");for(const [dx,dy] of [[5,5],[28,5],[5,24],[28,24]])rect(x+dx,y+dy,2,2,"#d6dbe0")}function hazardArt(o){const x=o.x,y=o.y;if(o.kind==="fence"){rect(x,y+5,36,5,"#614c3b");rect(x,y+17,36,5,"#614c3b");rect(x+4,y,6,29,"#9b7250");rect(x+26,y,6,29,"#9b7250")}else if(o.kind==="barrel"){rect(x+2,y+3,26,36,"#65473b");rect(x+5,y+6,20,30,"#9e6651");rect(x+3,y+8,24,5,"#4f5962");rect(x+3,y+27,24,5,"#4f5962")}else if(o.kind==="bat"){rect(x+15,y+9,12,12,"#47445f");rect(x,y+5,16,8,"#62607b");rect(x+26,y+5,16,8,"#62607b");rect(x+20,y+12,3,3,"#ffb78b")}else if(o.kind==="ice"){rect(x+2,y+11,32,17,"#92c5dc");rect(x+9,y+1,20,12,"#bce9fb");rect(x+10,y+12,5,13,"#effaff");rect(x+24,y+15,4,10,"#6ea6c9")}}function render(){ctx.clearRect(0,0,W,H);const skies=["#fbfcfd","#fff4e7","#e5eafb","#f0f8ff"];rect(0,0,W,H,skies[scene]);for(const c of clouds)cloud(c.x,c.y,c.s);scenery();rect(0,GROUND,W,2,"#666c74");for(let x=-groundShift;x<W;x+=46){rect(x,GROUND+13,17,2,"#c7cbd0");rect(x+27,GROUND+23,7,2,"#c7cbd0")}for(const o of obstacles){if(o.kind==="bird")bird(o);else if(o.kind==="crate")crateArt(o);else if(["fence","barrel","bat","ice"].includes(o.kind))hazardArt(o);else cactus(o)}for(const star of stars)starArt(star);dino();evolutionEffect();milestone();if(eventActive>0){ctx.save();ctx.fillStyle="#c5882e";ctx.textAlign="right";ctx.font="bold 12px Arial";ctx.fillText("✦ GOLDEN RUSH "+Math.ceil(eventActive)+"s",W-20,25);ctx.restore()}if(flashFor>0){ctx.save();ctx.globalAlpha=Math.min(1,flashFor);ctx.fillStyle="#b67b2c";ctx.textAlign="center";ctx.font="bold 16px Arial";ctx.fillText(flashNote,W/2,62);ctx.restore()}if(mode==="running"&&score>0&&score%250>=240){rect(0,0,W,2,"#e5e8ed")}}
 function frame(t){let dt=last?clamp((t-last)/1000,0,.05):0;last=t;while(dt>0){const step=Math.min(dt,1/120);update(step);dt-=step;if(mode==="over")break}render();requestAnimationFrame(frame)}
