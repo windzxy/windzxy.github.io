@@ -7,3 +7,5 @@
 /* Quiet icon trigger: no native button frame, outline or hover styling. */
 .dino-mark,.dino-mark:hover,.dino-mark:focus,.dino-mark:focus-visible{display:block;appearance:none;-webkit-appearance:none;position:relative;width:54px;height:54px;margin:0 0 12px;padding:0;border:0!important;border-radius:0;outline:0!important;box-shadow:none!important;background:transparent!important;transform:none;opacity:1;color:inherit;line-height:normal;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
 .dino-mark-shape{position:absolute;left:6px;top:6px;width:40px;height:40px;background:#5e646d;clip-path:polygon(0 38%,48% 38%,48% 0,100% 0,100% 100%,0 100%);pointer-events:none}
+
+.duck-touch{display:none;border:1px solid #cdd2d9;background:#f6f7f9;color:#535c66;border-radius:9px;padding:10px 17px;font-weight:600;touch-action:none;user-select:none}.duck-touch:active{background:#e7ebf0}@media(pointer:coarse){.duck-touch{display:block}.footer{align-items:center}}
