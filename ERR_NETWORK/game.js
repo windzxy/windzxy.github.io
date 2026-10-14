@@ -75,7 +75,7 @@ spriteCache.set(key,surface);return surface
 const evolutionSheet=new Image();let evolutionSheetReady=false;
 evolutionSheet.onload=()=>{evolutionSheetReady=true};
 evolutionSheet.onerror=()=>{evolutionSheetReady=false};
-evolutionSheet.src="./assets/bird-evolution.png";
+evolutionSheet.src="./bird-evolution.png";
 function dino(){
 const pose=hero.duck&&hero.grounded?"duck":!hero.grounded?"jump":"run",frame=Math.floor(elapsed*11)%2;
 if(evolutionSheetReady){const col=pose==="duck"?3:pose==="jump"?2:frame;const sw=evolutionSheet.width/4,sh=evolutionSheet.height/4;
