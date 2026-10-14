@@ -9,3 +9,5 @@
 .dino-mark-shape{position:absolute;left:6px;top:6px;width:40px;height:40px;background:#5e646d;clip-path:polygon(0 38%,48% 38%,48% 0,100% 0,100% 100%,0 100%);pointer-events:none}
 
 .duck-touch{display:none;border:1px solid #cdd2d9;background:#f6f7f9;color:#535c66;border-radius:9px;padding:10px 17px;font-weight:600;touch-action:none;user-select:none}.duck-touch:active{background:#e7ebf0}@media(pointer:coarse){.duck-touch{display:block}.footer{align-items:center}}
+
+.achievements-toggle{background:#fff;color:#626c77;border:1px solid #d8dce2;border-radius:7px;padding:7px 11px;font-size:11px;cursor:pointer}.achievements-panel{flex-basis:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:7px;padding-top:8px}.achievements-panel[hidden]{display:none}.achievement{padding:10px;background:#f8f9fb;border:1px solid #e6e8ec;border-radius:8px;display:flex;gap:7px;align-items:center;color:#8c9299}.achievement.unlocked{background:#fff9e8;border-color:#eed8a9;color:#6a5636}.achievement b{font-size:11px}.achievement small{font-size:10px;display:block;margin-top:3px;color:#8d9195}
