@@ -38,8 +38,8 @@
   let last = 0, time = 0, score = 0, best = 0, speed = difficulty.speed;
   let distance = 0, nextSpawn = 680, groundOffset = 0;
   let evolution = 0, evolutionPulse = 0;
-  let obstacles = [], treasures = [], particles = [];
-  let streak = 0, collected = 0, golden = 0, bonus = 0;
+  let obstacles = [], treasures = [], powerups = [], particles = [];
+  let streak = 0, collected = 0, golden = 0, bonus = 0, shield = 0, comboTimer = 0, jumps = 0, coyote = 0;
   let scene = 0, scenePulse = 0, flash = "", flashTime = 0, lastFlightMilestone = 0;
   let flight = null, invulnerable = 0, shake = 0;
   let badges = {};
@@ -111,7 +111,7 @@
     gameState = "ready"; time=0; score=0; speed=difficulty.speed; distance=0; nextSpawn=680;
     obstacles=[]; treasures=[]; particles=[]; streak=0; collected=0; golden=0; bonus=0;
     evolution=0; evolutionPulse=0; scene=0; scenePulse=0; flash=""; flashTime=0;
-    flight=null; invulnerable=0; shake=0; player.y=GROUND-58; player.vy=0;
+    flight=null; invulnerable=0; shake=0; shield=0; comboTimer=0; jumps=0; coyote=0; lastFlightMilestone=0; player.y=GROUND-58; player.vy=0;
     player.duck=false; player.grounded=true; player.flap=0; player.blink=0;
     groundOffset=0; scoreLabel.textContent=fmt(0); bestLabel.textContent=fmt(best);
   }
@@ -158,11 +158,18 @@
   function jump() {
     if (gameState === "ready" || gameState === "over") { start(); return; }
     if (gameState === "flight") { player.vy = -720; player.flap = 1; burst(player.x+45,player.y+40,"#ffe09a",7); return; }
-    if (player.grounded) {
+    if (player.grounded || coyote > 0) {
       player.duck = false;
       player.vy = -710;
       player.grounded = false;
+      coyote = 0;
+      jumps = 1;
       burst(player.x+30, GROUND-4, "#e8c77a", 5);
+    } else if (evolution >= 1 && jumps < 2) {
+      player.duck = false;
+      player.vy = -620;
+      jumps = 2;
+      burst(player.x+30, player.y+playerBox().h, "#fff0a0", 8);
     }
   }
 
@@ -192,7 +199,7 @@
     flash="BACK TO THE CLOUD ROAD  +" + (180 + flight.collected*35);
     flashTime=2.5;
     burst(player.x+35,player.y+25,"#ffd36b",22);
-    flight=null; lastFlightMilestone=Math.floor(score/2500); nextSpawn=380;
+    flight=null; lastFlightMilestone=Math.floor(score/2500); powerups=[]; nextSpawn=380;
   }
 
   function playerBox() {
@@ -209,9 +216,9 @@
   function spawnGroundObstacle() {
     const r=Math.random();
     let o;
-    if (score>850 && r<0.15) o={kind:"bat",x:W+40,y:GROUND-rnd(105,132),w:76,h:54};
-    else if (score>550 && r<0.30) o={kind:["crate","barrel","fence","ice"][Math.floor(Math.random()*4)],x:W+40,y:0,w:0,h:0};
-    else o={kind:r<0.28?"cactus":r<0.42?"cactus":"cactus",x:W+40,y:0,w:0,h:0};
+    if (score>1200 && r<0.13) o={kind:"bat",x:W+40,y:GROUND-rnd(105,132),w:76,h:54};
+    else if (score>650 && r<0.42) o={kind:["crate","barrel","fence","ice"][Math.floor(Math.random()*4)],x:W+40,y:0,w:0,h:0};
+    else o={kind:"cactus",x:W+40,y:0,w:0,h:0};
 
     const dims={
       cactus:[34,52],crate:[48,48],barrel:[42,55],fence:[58,49],ice:[50,57]
@@ -238,6 +245,11 @@
     distance=0;
   }
 
+  function spawnPowerup() {
+    if (obstacles.some(o=>o.x>W-150)) return;
+    powerups.push({x:W+38,y:GROUND-rnd(88,135),kind:Math.random()<.65?"shield":"feather",phase:rnd(0,Math.PI*2)});
+  }
+
   function spawnTreasure() {
     if (obstacles.some(o=>o.x>W-100)) return;
     const goldChance = gameState==="flight" ? .16 : score>700 ? .11 : .05;
@@ -254,23 +266,43 @@
     distance+=speed*dt; groundOffset=(groundOffset+speed*dt)%64;
     if(distance>=nextSpawn) spawnGroundObstacle();
     if(Math.random()<dt*.32) spawnTreasure();
+    if(Math.random()<dt*.055 && score>350) spawnPowerup();
 
     player.vy+=2050*dt; player.y+=player.vy*dt;
-    if(player.y>=GROUND-58){player.y=GROUND-58;player.vy=0;player.grounded=true}
-    else player.grounded=false;
+    coyote=Math.max(0,coyote-dt);
+    if(player.y>=GROUND-58){
+      player.y=GROUND-58;player.vy=0;
+      if(!player.grounded) jumps=0;
+      player.grounded=true;coyote=.11;
+    } else {
+      if(player.grounded) coyote=.11;
+      player.grounded=false;
+    }
 
     for(const o of obstacles) o.x-=speed*dt;
     obstacles=obstacles.filter(o=>o.x+o.w>-40);
     for(const t of treasures) t.x-=speed*dt;
     treasures=treasures.filter(t=>t.x>-50);
+    for(const p of powerups) p.x-=speed*dt;
+    powerups=powerups.filter(p=>p.x>-50);
+    shield=Math.max(0,shield-dt);
+    comboTimer=Math.max(0,comboTimer-dt);
 
     const p=playerBox();
     for(const o of obstacles){
-      if(invulnerable<=0 && collision(p,obstacleBox(o))){streak=0;finish();return}
+      if(invulnerable<=0 && collision(p,obstacleBox(o))){
+        if(shield>0){
+          shield=0; invulnerable=1.15; shake=.45; streak=0;
+          flash="SHIELD BREAK"; flashTime=1.1;
+          burst(o.x+o.w/2,o.y+o.h/2,"#bce8ff",24);
+          o.x=-999;
+        } else {streak=0;finish();return}
+      }
       if(o.x+o.w<player.x&&!o.counted){
         o.counted=true; streak++;
         if(streak>=12) unlock("flow","Perfect Flow");
-        if(streak%4===0){bonus+=12;flash="FLOW +" + (streak*3);flashTime=.8}
+        if(streak%4===0){bonus+=12+streak;flash="FLOW +" + (streak*3);flashTime=.8}
+        comboTimer=2.4;
       }
     }
     for(const t of treasures){
@@ -283,6 +315,19 @@
       }
     }
     treasures=treasures.filter(t=>!t.taken);
+    for(const pwr of powerups){
+      if(!pwr.taken && collision(p,{x:pwr.x-13,y:pwr.y-13,w:26,h:26})){
+        pwr.taken=true;
+        if(pwr.kind==="shield"){
+          shield=7; flash="AURA SHIELD · 7s"; flashTime=1.2;
+          burst(pwr.x,pwr.y,"#bfeaff",18);
+        } else {
+          bonus+=70; flash="WIND FEATHER · +70"; flashTime=1.2;
+          burst(pwr.x,pwr.y,"#fff0a0",18);
+        }
+      }
+    }
+    powerups=powerups.filter(p=>!p.taken);
 
     const oldScene=Math.floor(score/500)%5;
     if(oldScene!==scene){scene=oldScene;scenePulse=1.8}
@@ -307,6 +352,7 @@
     groundOffset=(groundOffset+speed*dt)%64;
     if(distance>=nextSpawn) spawnFlightObstacle();
     if(Math.random()<dt*.42) spawnTreasure();
+    if(Math.random()<dt*.045) spawnPowerup();
 
     player.vy+=1320*dt; player.y+=player.vy*dt;
     player.y=clamp(player.y,34,H-82);
@@ -315,6 +361,8 @@
     obstacles=obstacles.filter(o=>o.x+o.w>-60);
     for(const t of treasures) t.x-=speed*dt;
     treasures=treasures.filter(t=>t.x>-60);
+    for(const pwr of powerups) pwr.x-=speed*dt;
+    powerups=powerups.filter(pwr=>pwr.x>-60);
 
     const p=playerBox();
     for(const o of obstacles){
@@ -330,6 +378,14 @@
       }
     }
     treasures=treasures.filter(t=>!t.taken);
+    for(const pwr of powerups){
+      if(!pwr.taken && collision(p,{x:pwr.x-13,y:pwr.y-13,w:26,h:26})){
+        pwr.taken=true; flight.energy=Math.min(100,flight.energy+12);
+        bonus+=55; flash="SKY FEATHER · +55"; flashTime=.8;
+        burst(pwr.x,pwr.y,"#d5f6ff",14);
+      }
+    }
+    powerups=powerups.filter(pwr=>!pwr.taken);
     if(flight.elapsed>=flight.duration) endFlight();
   }
 
@@ -343,7 +399,7 @@
     flashTime=Math.max(0,flashTime-dt);
     shake=Math.max(0,shake-dt);
     if(gameState==="running") updateGround(dt); else updateFlight(dt);
-    score=Math.floor(time*15*difficulty.score)+bonus+(gameState==="flight"?Math.floor(flight.elapsed*5):0);
+    score=Math.floor(time*15*difficulty.score)+bonus+(gameState==="flight"?Math.floor(flight.elapsed*5):0)+(streak>=4?Math.floor(streak*.35):0);
     scoreLabel.textContent=fmt(score);
   }
 
@@ -395,7 +451,9 @@
       else drawSprite("tree",x+152,GROUND-78,62,88,.58);
     }
     // foreground grass and stone details, drawn procedurally to avoid any atlas cropping.
-    rect(0,GROUND,W,H-GROUND,scene===3?"#273744":scene===4?"#d7ecea":"#f4f0e7");
+    const groundColor=scene===3?"#273744":scene===4?"#d7ecea":"#f4f0e7";
+    rect(0,GROUND,W,H-GROUND,groundColor);
+    rect(0,GROUND-22,W,22,scene===3?"rgba(22,37,55,.22)":"rgba(255,255,255,.22)");
     rect(0,GROUND,W,4,scene===3?"#e1bd70":"#7c858b");
     for(let x=-groundOffset;x<W;x+=64){
       rect(x,GROUND+20,25,3,scene===3?"#5c6d77":"#c8cdd1");
@@ -425,8 +483,22 @@
 
   function drawTreasure(t){
     const bob=Math.sin(time*5+t.phase)*5;
-    if(t.gold) drawSprite("golden",t.x-22,t.y-30,44,52);
-    else drawSprite("star",t.x-19,t.y-19,38,38);
+    if(t.gold) drawSprite("golden",t.x-22,t.y-30+bob,44,52);
+    else drawSprite("star",t.x-19,t.y-19+bob,38,38);
+  }
+
+  function drawPowerup(pwr){
+    const bob=Math.sin(time*5.5+pwr.phase)*5;
+    ctx.save();
+    ctx.globalAlpha=.95;
+    if(pwr.kind==="shield"){
+      ctx.strokeStyle="#8fd8ff";ctx.lineWidth=3;
+      ctx.beginPath();ctx.arc(pwr.x,pwr.y+bob,15,0,Math.PI*2);ctx.stroke();
+      drawSprite("star",pwr.x-10,pwr.y-10+bob,20,20,.9);
+    } else {
+      drawSprite("feather",pwr.x-18,pwr.y-28+bob,36,48,.95);
+    }
+    ctx.restore();
   }
 
   function drawPlayer(){
@@ -444,6 +516,7 @@
     }
     if(player.duck&&player.grounded){w*=1.12;h*=.66}
     const bob=player.grounded?Math.sin(time*13)*1.4:0;
+    if(player.duck&&player.grounded) player.y=GROUND-h;
     if(evolution>=2 && player.grounded) {
       const wingPulse=0.92+Math.sin(time*12)*.08;
       drawSprite(name,player.x,player.y+bob,w*wingPulse,h);
@@ -488,7 +561,15 @@
       ctx.fillStyle="rgba(255,255,255,.28)";ctx.fillRect(W-164,40,142,5);
       ctx.fillStyle="#ffd35a";ctx.fillRect(W-164,40,142*clamp(1-flight.elapsed/flight.duration,0,1),5);
     }
-    if(streak>=3){ctx.textAlign="center";ctx.font="700 13px Arial";ctx.fillStyle="#d08a34";ctx.fillText("FLOW ×"+streak,W/2,20)}
+    if(streak>=3){
+      ctx.textAlign="center";ctx.font="700 13px Arial";ctx.fillStyle=scene>=3?"#ffe7a0":"#d08a34";
+      ctx.fillText("FLOW ×"+streak,W/2,20);
+      if(comboTimer>0){ctx.font="600 10px Arial";ctx.fillText("keep the rhythm",W/2,37)}
+    }
+    if(shield>0 && gameState==="running"){
+      ctx.textAlign="left";ctx.font="700 10px Arial";ctx.fillStyle="#78bfe7";
+      ctx.fillText("AURA "+Math.ceil(shield)+"s",22,57);
+    }
     ctx.restore();
   }
 
@@ -504,6 +585,7 @@
     if(shake>0) ctx.translate(rnd(-3,3),rnd(-2,2));
     drawWorld();
     for(const t of treasures) drawTreasure(t);
+    for(const pwr of powerups) drawPowerup(pwr);
     for(const o of obstacles) drawObstacle(o);
     drawPlayer();drawParticles();drawHUD();drawFlash();
     if(evolutionPulse>0){
