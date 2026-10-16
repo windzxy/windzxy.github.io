@@ -1,9 +1,74 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><title>网页无法访问</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2724%27 fill=%27%23e5e8ed%27/%3E%3Cpath d=%27M21 32h22M32 21v22%27 stroke=%27%23777%27 stroke-width=%274%27/%3E%3C/svg%3E"><link rel="stylesheet" href="./style.css"></head>
-<body><main class="shell">
-<section class="error"><button class="dino-mark" id="secretToggle" type="button" aria-label="Connection status"><span class="dino-mark-shape" aria-hidden="true"></span></button><h1>No internet</h1><p class="intro">The webpage is not available.</p><p class="try">Try:</p><ul><li>Checking network cables and Wi-Fi</li><li>Reconnecting to the internet</li><li>Checking the proxy and firewall</li></ul><div class="error-bottom"><code>ERR_NETWORK</code><button class="reload" id="reload" type="button">Reload</button></div></section>
-<section hidden class="runner" id="runner" aria-label="Offline runner game"><header class="runner-header"><div><strong>Offline Run</strong><small>SPACE / ↑ jump · ↓ duck · tap to jump</small></div><div class="scores" aria-live="off"><span>HI <b id="best">00000</b></span><span id="scoreLabel">00000</span></div></header>
-<div class="stage" id="stage"><canvas id="game" width="960" height="280" aria-label="Side-scrolling pixel runner with a dinosaur"></canvas><div class="overlay" id="overlay"><div class="overlay-content"><div class="eyebrow" id="eyebrow">OFFLINE MODE</div><h2 id="overlayTitle">Ready to run?</h2><p id="overlayText">Press Space or tap to start</p><button id="overlayBadges" class="overlay-badges" type="button" hidden>Achievements</button><button id="action" type="button" class="play">Start running <span aria-hidden="true">→</span></button></div></div></div>
-<footer class="footer"><span>Jump over cacti · Duck under birds</span><span>Offline, no sign-in required</span><label class="difficulty-label" for="difficulty">Mode <select id="difficulty"><option value="relaxed">Relaxed</option><option value="classic" selected>Classic</option><option value="challenge">Challenge</option></select></label><button id="achievementsToggle" type="button" class="achievements-toggle" aria-expanded="false" aria-controls="achievementsPanel">Achievements</button><div id="achievementsPanel" class="achievements-panel" hidden></div><button id="duckTouch" class="duck-touch" type="button" aria-label="Hold to duck">↓ Duck</button></footer></section>
-</main><script src="./game.js" defer></script></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>网页无法访问</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="shell">
+  <section class="error" aria-label="Network error">
+    <button class="dino-mark" id="secretToggle" type="button" aria-label="Connection status">
+      <span class="dino-mark-shape" aria-hidden="true"></span>
+    </button>
+    <h1>No internet</h1>
+    <p class="intro">The webpage is not available.</p>
+    <p class="try">Try:</p>
+    <ul>
+      <li>Checking network cables and Wi-Fi</li>
+      <li>Reconnecting to the internet</li>
+      <li>Checking the proxy and firewall</li>
+    </ul>
+    <div class="error-bottom">
+      <code>ERR_NETWORK</code>
+      <button class="reload" id="reload" type="button">Reload</button>
+    </div>
+  </section>
+
+  <section hidden class="runner" id="runner" aria-label="Offline runner game">
+    <header class="runner-header">
+      <div>
+        <strong>Offline Run</strong>
+        <small>Click / tap to jump · hold ↓ to duck · later: take to the sky</small>
+      </div>
+      <div class="scores">
+        <span>HI <b id="best">00000</b></span>
+        <span id="scoreLabel">00000</span>
+      </div>
+    </header>
+
+    <div class="stage" id="stage">
+      <canvas id="game" width="1200" height="360" aria-label="Original fantasy pixel runner"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="overlay-content">
+          <div class="eyebrow" id="eyebrow">OFFLINE MODE</div>
+          <h2 id="overlayTitle">Ready to run?</h2>
+          <p id="overlayText">Click the game or press Space to start</p>
+          <button id="overlayBadges" class="overlay-badges" type="button" hidden>✦ 0/7 achievements</button>
+          <button id="action" type="button" class="play">Start running <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span>Jump · duck · collect · evolve · fly</span>
+      <span class="status" id="gameStatus">Offline, no sign-in required</span>
+      <label class="difficulty-label" for="difficulty">Mode
+        <select id="difficulty">
+          <option value="relaxed">Relaxed</option>
+          <option value="classic" selected>Classic</option>
+          <option value="challenge">Challenge</option>
+        </select>
+      </label>
+      <button id="achievementsToggle" type="button" class="achievements-toggle" aria-expanded="false" aria-controls="achievementsPanel">Achievements 0/7</button>
+      <div id="achievementsPanel" class="achievements-panel" hidden></div>
+      <button id="duckTouch" class="duck-touch" type="button" aria-label="Hold to duck">↓ Duck</button>
+    </footer>
+  </section>
+</main>
+<script src="./game.js" defer></script>
+</body>
+</html>
