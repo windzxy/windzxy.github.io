@@ -40,7 +40,7 @@
   let evolution = 0, evolutionPulse = 0;
   let obstacles = [], treasures = [], particles = [];
   let streak = 0, collected = 0, golden = 0, bonus = 0;
-  let scene = 0, scenePulse = 0, flash = "", flashTime = 0;
+  let scene = 0, scenePulse = 0, flash = "", flashTime = 0, lastFlightMilestone = 0;
   let flight = null, invulnerable = 0, shake = 0;
   let badges = {};
   try { best = Number(localStorage.getItem(STORE_BEST) || 0); } catch (_) {}
@@ -192,7 +192,7 @@
     flash="BACK TO THE CLOUD ROAD  +" + (180 + flight.collected*35);
     flashTime=2.5;
     burst(player.x+35,player.y+25,"#ffd36b",22);
-    flight=null; nextSpawn=380;
+    flight=null; lastFlightMilestone=Math.floor(score/2500); nextSpawn=380;
   }
 
   function playerBox() {
@@ -296,7 +296,7 @@
       flash=msg;flashTime=2.5;burst(player.x+34,player.y+28,evolution===3?"#ff9e39":"#ffe28a",32);
     }
     // Flight is a true second game mode, not a cosmetic jump.
-    if(evolution===3 && score>=2500 && !flight && time>8 && Math.floor(score/2500)>0) startFlight();
+    const flightMilestone=Math.floor(score/2500); if(evolution===3 && score>=2500 && !flight && time>8 && flightMilestone>lastFlightMilestone) startFlight();
   }
 
   function updateFlight(dt) {
