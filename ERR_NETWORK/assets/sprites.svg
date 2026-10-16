@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="768" viewBox="0 0 1024 768" shape-rendering="crispEdges">
+  <view id="egg" viewBox="0 0 128 128"/>
+  <view id="chick" viewBox="128 0 128 128"/>
+  <view id="jadebird" viewBox="256 0 160 128"/>
+  <view id="phoenix" viewBox="416 0 192 144"/>
+  <view id="cactus" viewBox="0 160 96 128"/>
+  <view id="crate" viewBox="96 160 112 112"/>
+  <view id="barrel" viewBox="208 160 96 128"/>
+  <view id="fence" viewBox="304 160 128 112"/>
+  <view id="ice" viewBox="432 160 112 128"/>
+  <view id="bat" viewBox="544 160 144 112"/>
+  <view id="star" viewBox="688 160 96 96"/>
+  <view id="golden" viewBox="784 160 96 112"/>
+  <view id="cloud" viewBox="880 160 144 80"/>
+  <view id="tree" viewBox="0 288 160 224"/>
+  <view id="shrine" viewBox="160 288 224 192"/>
+  <view id="mountain" viewBox="384 288 320 176"/>
+  <view id="lantern" viewBox="704 288 96 160"/>
+  <view id="feather" viewBox="800 288 96 128"/>
+  <view id="flame" viewBox="896 288 96 128"/>
+  <g transform="translate(0 0)">
+    <g id="eggArt">
+      <ellipse cx="64" cy="70" rx="43" ry="53" fill="#5a4b45"/>
+      <ellipse cx="64" cy="68" rx="37" ry="47" fill="#fff0c9"/>
+      <path d="M37 55h15v10H39zm40-17h12v10H77zM49 88h25v7H49z" fill="#f1c879"/>
+      <path d="M48 27q16-13 32 0l-5 10H53z" fill="#fff9e8"/>
+      <path d="M49 104q15 8 30 0" fill="none" stroke="#d9ad67" stroke-width="5"/>
+    </g>
+    <g id="chickArt" transform="translate(128 0)">
+      <path d="M22 82q2-50 43-55 47-6 52 38 3 38-37 50H45q-20-8-23-33z" fill="#6d4c35"/>
+      <path d="M28 80q2-43 39-47 39-5 44 31 4 31-34 42H49Q31 99 28 80z" fill="#f7b83e"/>
+      <path d="M72 42q18-17 34-5l-8 18H77z" fill="#ffdc63"/>
+      <path d="M103 69l23 7-23 9z" fill="#e96b2d"/>
+      <rect x="89" y="59" width="7" height="7" fill="#292936"/>
+      <rect x="90" y="59" width="3" height="3" fill="#fff"/>
+      <path d="M35 77q18 10 32 0l-5 16H39z" fill="#df8b2e"/>
+      <path d="M48 98v15M78 98v15M44 113h13M74 113h13" stroke="#8d5b32" stroke-width="6"/>
+      <path d="M38 38l-4-18 12 11 6-17 7 19" fill="#e86b34"/>
+      <circle cx="53" cy="69" r="5" fill="#fff1a4"/>
+    </g>
+    <g id="jadeArt" transform="translate(256 0)">
+      <path d="M22 76Q28 28 76 30q49 1 58 44 4 29-28 40H56Q27 106 22 76z" fill="#4e3a35"/>
+      <path d="M30 75q6-36 45-37 40 1 50 36 5 20-22 32H57Q34 98 30 75z" fill="#c98c45"/>
+      <path d="M52 54Q29 28 7 18l17 33-20 7 37 18z" fill="#2e8e84"/>
+      <path d="M59 57Q42 24 32 8l30 21 10-24 8 42z" fill="#56b9a0"/>
+      <path d="M76 55q20-24 35-39l-5 29 26-2-34 29z" fill="#25736f"/>
+      <path d="M105 40l20-17-7 24 20 4-31 11z" fill="#84c9a6"/>
+      <path d="M102 70l39 7-38 10z" fill="#e76f30"/>
+      <rect x="91" y="55" width="7" height="7" fill="#252633"/><rect x="92" y="55" width="3" height="3" fill="#fff"/>
+      <path d="M58 91l-9 23M90 91l6 23M43 114h18M89 114h18" stroke="#8d5b32" stroke-width="6"/>
+      <path d="M44 80h51v17H44z" fill="#315d63"/><path d="M52 84h35v8H52z" fill="#77c1a1"/>
+      <path d="M43 28l-2-20 13 12 8-17 7 23" fill="#9c3942"/>
+    </g>
+    <g id="phoenixArt" transform="translate(416 0)">
+      <path d="M50 92Q25 70 35 39q9-27 45-29 40-1 57 31 13 26-8 49-21 22-56 17z" fill="#713b37"/>
+      <path d="M56 89Q38 69 46 43q7-23 35-25 32 0 45 25 8 19-8 35-16 17-40 13z" fill="#d85a31"/>
+      <path d="M57 46Q31 22 7 18l18 30-23 9 42 17z" fill="#ef7b2d"/>
+      <path d="M70 45Q55 13 50 0l25 24 15-25 2 38z" fill="#ffd04b"/>
+      <path d="M87 47Q111 16 136 8l-14 29 29 0-44 24z" fill="#e64036"/>
+      <path d="M99 56q32-22 57-17l-23 18 24 11-52 8z" fill="#ffb536"/>
+      <path d="M49 72q-15 32-37 45 30-3 51-25zM117 73q19 29 43 36-27 3-53-18z" fill="#f2a83b"/>
+      <path d="M103 48l29-20-9 27 31 7-47 6z" fill="#ffdb5a"/>
+      <rect x="101" y="48" width="8" height="8" fill="#292936"/><rect x="102" y="48" width="3" height="3" fill="#fff"/>
+      <path d="M91 25l-4-23 15 13 10-14 2 28" fill="#f04b34"/>
+      <path d="M64 89l-8 35M98 89l10 35M51 124h21M101 124h21" stroke="#8d4d2e" stroke-width="7"/>
+      <path d="M58 66h55v22H58z" fill="#8f3434"/><path d="M66 71h38v10H66z" fill="#ffb13b"/>
+    </g>
+  </g>
+  <g transform="translate(0 160)">
+    <g id="cactusArt"><path d="M42 112V28h16v84zM42 60H18V45h24zm0 31H25V75h17zm16-53h21V23h-21zm0 25h31V48H58z" fill="#4e625d"/><path d="M47 31h5v76h-5zM67 51h5v24h-5z" fill="#82958c"/></g>
+    <g id="crateArt" transform="translate(96 0)"><rect x="8" y="10" width="94" height="92" rx="5" fill="#4b3831"/><rect x="15" y="17" width="80" height="78" fill="#b56f42"/><path d="M18 20l73 72M91 20L18 92" stroke="#6d4330" stroke-width="8"/><path d="M13 20h84M13 91h84" stroke="#d6a06a" stroke-width="7"/><rect x="11" y="13" width="18" height="18" fill="#69737a"/><rect x="81" y="13" width="18" height="18" fill="#69737a"/><rect x="11" y="79" width="18" height="18" fill="#69737a"/><rect x="81" y="79" width="18" height="18" fill="#69737a"/></g>
+    <g id="barrelArt" transform="translate(208 0)"><ellipse cx="48" cy="22" rx="34" ry="14" fill="#4d3b35"/><path d="M14 22v72q34 23 68 0V22Q48 39 14 22z" fill="#a85f45"/><path d="M16 33q32 15 64 0M16 79q32 15 64 0" fill="none" stroke="#4e5961" stroke-width="8"/><ellipse cx="48" cy="22" rx="24" ry="8" fill="#d08b5c"/></g>
+    <g id="fenceArt" transform="translate(304 0)"><path d="M8 96V15h17v81M78 96V15h17v81" fill="#8d6a4e"/><path d="M5 35h93v14H5zM5 68h93v14H5z" fill="#6e513e"/><path d="M19 23h13v12H19zm56 0h13v12H75z" fill="#b99263"/></g>
+    <g id="iceArt" transform="translate(432 0)"><path d="M10 103l7-67 27-24 27 23 31 9 1 59z" fill="#69a7c5"/><path d="M22 96l5-51 20-18 18 17 22 7-1 45z" fill="#b9e8f7"/><path d="M46 29l8 43 16-24M28 47l25 25 29-17" stroke="#f2fcff" stroke-width="6" fill="none"/></g>
+    <g id="batArt" transform="translate(544 0)"><path d="M62 58h20v23H62z" fill="#4c4660"/><path d="M62 66L8 39l12 33-18 10 52 8M82 66l54-27-12 33 18 10-52 8" fill="#615b79"/><circle cx="69" cy="66" r="3" fill="#ffb16b"/></g>
+    <g id="starArt" transform="translate(688 0)"><path d="M48 5l10 30 32 2-25 20 8 32-25-18-25 18 8-32L6 37l32-2z" fill="#e5a633"/><path d="M48 18l6 21 20 1-16 12 5 20-15-11-16 11 5-20-16-12 21-1z" fill="#ffd75a"/></g>
+    <g id="goldArt" transform="translate(784 0)"><ellipse cx="48" cy="62" rx="35" ry="46" fill="#8a5a25"/><ellipse cx="48" cy="59" rx="29" ry="40" fill="#f4bf43"/><path d="M29 34h22v9H29zM60 49h14v8H60zM33 75h25v8H33z" fill="#fff0a0"/><path d="M48 13l7 11-7 8-7-8z" fill="#ffe071"/></g>
+  </g>
+  <g transform="translate(0 288)">
+    <g id="cloudArt"><path d="M8 53h128v18H8z" fill="#d8dee2"/><path d="M28 37h82v30H28z" fill="#d8dee2"/><path d="M48 20h39v35H48z" fill="#d8dee2"/><path d="M19 43h18v17H19zM103 45h20v16h-20z" fill="#e9ecef"/></g>
+    <g id="treeArt" transform="translate(0 0)"><path d="M67 224h26V112H67z" fill="#7f9f88"/><path d="M80 32Q37 32 25 77 4 83 9 111h141q5-28-18-36-8-43-52-43z" fill="#9cc39b"/><path d="M32 98q25-25 50-15 31-18 60 13" fill="none" stroke="#cce2b8" stroke-width="18"/><path d="M80 67v128" stroke="#5f846d" stroke-width="7"/></g>
+    <g id="shrineArt" transform="translate(160 0)"><path d="M30 170h164v20H30z" fill="#b86643"/><path d="M44 150h136v20H44zM55 69h114v12H55z" fill="#d88b5e"/><path d="M69 78v72h18V78zm68 0v72h18V78z" fill="#a9563e"/><path d="M42 57h140l20 18H22z" fill="#8d4a39"/><path d="M57 45q55-27 110 0l-11 12H68z" fill="#b96545"/><rect x="100" y="92" width="24" height="58" fill="#f0d7a0"/><path d="M88 117h48" stroke="#7d4b3c" stroke-width="5"/></g>
+    <g id="mountainArt" transform="translate(384 0)"><path d="M0 160L82 62l42 51 48-78 148 125z" fill="#c9d7da"/><path d="M0 160l91-77 34 44 48-51 118 84z" fill="#aebfc5"/><path d="M76 70l8-10 42 53-17-11zM171 35l9 0 46 73-25-23z" fill="#eef4f1"/></g>
+    <g id="lanternArt" transform="translate(704 0)"><rect x="43" y="56" width="10" height="104" fill="#735b48"/><rect x="17" y="24" width="62" height="44" rx="5" fill="#7e5140"/><rect x="25" y="32" width="46" height="28" fill="#ffd36b"/><rect x="30" y="37" width="36" height="18" fill="#fff0a0"/><path d="M12 24h72M28 12h40M28 68h40" stroke="#9e6d4e" stroke-width="7"/></g>
+    <g id="featherArt" transform="translate(800 0)"><path d="M17 105Q20 28 83 8q-6 67-57 103z" fill="#f0a438"/><path d="M27 92q15-54 45-72M34 100q18-39 48-57" stroke="#fff0a0" stroke-width="6"/><path d="M18 104l-8 20" stroke="#8b5a35" stroke-width="7"/></g>
+    <g id="flameArt" transform="translate(896 0)"><path d="M48 120Q15 100 27 65q7-22 28-37 2 20 15 28 2-29 17-44 17 43 2 68-9 25-41 40z" fill="#df4a32"/><path d="M51 105Q35 91 41 71q4-12 14-20 2 16 11 22 1-16 8-24 7 27-1 40-6 13-22 16z" fill="#ffd04d"/></g>
+  </g>
+</svg>
