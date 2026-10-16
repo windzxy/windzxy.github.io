@@ -156,6 +156,7 @@
   }
 
   function jump() {
+    // Restart is deliberately handled before any movement logic.
     if (gameState === "ready" || gameState === "over") { start(); return; }
     if (gameState === "flight") { player.vy = -720; player.flap = 1; burst(player.x+45,player.y+40,"#ffe09a",7); return; }
     if (player.grounded || coyote > 0) {
@@ -706,6 +707,14 @@
   // Capture phase makes restart reliable even when the overlay/canvas has focus.
   window.addEventListener("keydown",handleGameKeyDown,true);
   window.addEventListener("keyup",handleGameKeyUp,true);
+  // Some Chromium/embedded shells suppress keydown on a focused canvas/overlay.
+  // keypress is a second, harmless fallback for restart keys.
+  window.addEventListener("keypress",(e)=>{
+    if(!document.body.classList.contains("playing")) return;
+    if((e.code==="Space"||e.key===" "||e.key==="Enter") && !e.repeat && (gameState==="over"||gameState==="ready")){
+      e.preventDefault(); e.stopPropagation(); start();
+    }
+  },true);
   duckTouch.addEventListener("pointerdown",(e)=>{e.preventDefault();duckTouch.setPointerCapture(e.pointerId);setDuck(true)});
   ["pointerup","pointercancel","lostpointercapture"].forEach(ev=>duckTouch.addEventListener(ev,()=>setDuck(false)));
   achievementToggle.addEventListener("click",()=>{
