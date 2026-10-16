@@ -41,7 +41,7 @@
   let obstacles = [], treasures = [], powerups = [], particles = [];
   let streak = 0, collected = 0, golden = 0, bonus = 0, shield = 0, comboTimer = 0, jumps = 0, coyote = 0;
   let scene = 0, scenePulse = 0, flash = "", flashTime = 0, lastFlightMilestone = 0;
-  let flight = null, invulnerable = 0, shake = 0;
+  let flight = null, invulnerable = 0, shake = 0, boss = null, eventTimer = 0, eventType = "", dashCooldown = 0;
   let badges = {};
   try { best = Number(localStorage.getItem(STORE_BEST) || 0); } catch (_) {}
   try { badges = JSON.parse(localStorage.getItem(STORE_BADGES) || "{}") || {}; } catch (_) {}
@@ -111,7 +111,7 @@
     gameState = "ready"; time=0; score=0; speed=difficulty.speed; distance=0; nextSpawn=680;
     obstacles=[]; treasures=[]; particles=[]; streak=0; collected=0; golden=0; bonus=0;
     evolution=0; evolutionPulse=0; scene=0; scenePulse=0; flash=""; flashTime=0;
-    flight=null; invulnerable=0; shake=0; shield=0; comboTimer=0; jumps=0; coyote=0; lastFlightMilestone=0; player.y=GROUND-58; player.vy=0;
+    flight=null; invulnerable=0; shake=0; shield=0; boss=null; eventTimer=0; eventType=""; dashCooldown=0; comboTimer=0; jumps=0; coyote=0; lastFlightMilestone=0; player.y=GROUND-58; player.vy=0;
     player.duck=false; player.grounded=true; player.flap=0; player.blink=0;
     groundOffset=0; scoreLabel.textContent=fmt(0); bestLabel.textContent=fmt(best);
   }
@@ -261,6 +261,33 @@
     });
   }
 
+  function spawnBoss(){
+    if(boss || score<3500 || evolution<3) return;
+    boss={x:W+170,y:74,w:145,h:150,hp:5,maxHp:5,phase:0,shot:1.2,active:true};
+    flash="ANCIENT SKY GUARDIAN";flashTime=2.4;shake=.2;
+    burst(W-90,130,"#ffb64b",35);
+  }
+  function updateBoss(dt){
+    if(gameState!=="running" || !boss) return;
+    boss.phase+=dt; boss.x=lerp(boss.x,W-245,Math.min(1,dt*1.8));
+    boss.y=74+Math.sin(boss.phase*1.7)*22;
+    boss.shot-=dt;
+    if(boss.shot<=0){
+      boss.shot=1.45;
+      obstacles.push({kind:"bat",x:boss.x-12,y:boss.y+75,w:70,h:50,counted:true});
+    }
+    // jumping into the guardian's crest damages it; contact is never an instant unfair death.
+    const p=playerBox(), hit={x:boss.x+28,y:boss.y+35,w:85,h:90};
+    if(invulnerable<=0 && collision(p,hit) && player.vy<40){
+      boss.hp--; invulnerable=.7; player.vy=-520; shake=.16;
+      burst(boss.x+70,boss.y+55,"#ffe08b",18);
+      if(boss.hp<=0){
+        bonus+=650;unlock("phoenix","Phoenix");flash="GUARDIAN DEFEATED  +650";flashTime=3;
+        burst(boss.x+70,boss.y+70,"#ffb13b",55);boss=null;nextSpawn=520;
+      } else {flash="CREST HIT  "+boss.hp+"/"+5;flashTime=.8}
+    }
+  }
+
   function updateGround(dt) {
     speed=Math.min(difficulty.cap,difficulty.speed+time*difficulty.accel);
     distance+=speed*dt; groundOffset=(groundOffset+speed*dt)%64;
@@ -341,7 +368,8 @@
       flash=msg;flashTime=2.5;burst(player.x+34,player.y+28,evolution===3?"#ff9e39":"#ffe28a",32);
     }
     // Flight is a true second game mode, not a cosmetic jump.
-    const flightMilestone=Math.floor(score/2500); if(evolution===3 && score>=2500 && !flight && time>8 && flightMilestone>lastFlightMilestone) startFlight();
+    const flightMilestone=Math.floor(score/2500); if(evolution===3 && score>=2500 && !flight && !boss && time>8 && flightMilestone>lastFlightMilestone) startFlight();
+    if(evolution===3 && score>=3500 && !flight && !boss && time>16) spawnBoss();
   }
 
   function updateFlight(dt) {
@@ -501,6 +529,18 @@
     ctx.restore();
   }
 
+  function drawBoss(){
+    if(!boss) return;
+    const bob=Math.sin(boss.phase*2.2)*4;
+    drawSprite("phoenix",boss.x,boss.y+bob,boss.w,boss.h,1,true);
+    ctx.save();
+    ctx.fillStyle="rgba(30,34,42,.45)";ctx.fillRect(boss.x,boss.y-13,boss.w,6);
+    ctx.fillStyle="#e9a43e";ctx.fillRect(boss.x,boss.y-13,boss.w*(boss.hp/boss.maxHp),6);
+    ctx.font="700 10px Arial";ctx.fillStyle="#6d5540";ctx.textAlign="center";
+    ctx.fillText("SKY GUARDIAN",boss.x+boss.w/2,boss.y-20);
+    ctx.restore();
+  }
+
   function drawPlayer(){
     const names=["egg","chick","jadebird","phoenix"];
     const name=names[evolution];
@@ -547,7 +587,7 @@
       const labels=["EGG","CHICK","JADE PLUME","PHOENIX"];
       ctx.fillText(labels[evolution],W-22,18);ctx.textAlign="right";
       if(evolution===3){
-        ctx.fillStyle="#d08b36";ctx.fillText("SKYBOUND 2500",W-22,39);
+        ctx.fillStyle="#d08b36";ctx.fillText(boss?"GUARDIAN":"SKYBOUND 2500",W-22,39);
       } else {
         const target=[500,1000,2000][evolution]||500;
         const prev=[0,500,1000,2000][evolution];
@@ -587,6 +627,7 @@
     for(const t of treasures) drawTreasure(t);
     for(const pwr of powerups) drawPowerup(pwr);
     for(const o of obstacles) drawObstacle(o);
+    if(boss) drawBoss();
     drawPlayer();drawParticles();drawHUD();drawFlash();
     if(evolutionPulse>0){
       ctx.save();ctx.globalAlpha=Math.min(.55,evolutionPulse*.35);
