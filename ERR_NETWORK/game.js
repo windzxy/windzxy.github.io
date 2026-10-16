@@ -41,7 +41,7 @@
   let obstacles = [], treasures = [], powerups = [], particles = [];
   let streak = 0, collected = 0, golden = 0, bonus = 0, shield = 0, comboTimer = 0, jumps = 0, coyote = 0;
   let scene = 0, scenePulse = 0, flash = "", flashTime = 0, lastFlightMilestone = 0;
-  let flight = null, invulnerable = 0, shake = 0, boss = null, eventTimer = 0, eventType = "", dashCooldown = 0;
+  let flight = null, invulnerable = 0, shake = 0, boss = null, eventTimer = 0, eventType = "", dashCooldown = 0, skillFlash = 0, skillName = "", wingCharge = 0, guardianPhase = 1;
   let badges = {};
   try { best = Number(localStorage.getItem(STORE_BEST) || 0); } catch (_) {}
   try { badges = JSON.parse(localStorage.getItem(STORE_BADGES) || "{}") || {}; } catch (_) {}
@@ -111,7 +111,7 @@
     gameState = "ready"; time=0; score=0; speed=difficulty.speed; distance=0; nextSpawn=680;
     obstacles=[]; treasures=[]; particles=[]; streak=0; collected=0; golden=0; bonus=0;
     evolution=0; evolutionPulse=0; scene=0; scenePulse=0; flash=""; flashTime=0;
-    flight=null; invulnerable=0; shake=0; shield=0; boss=null; eventTimer=0; eventType=""; dashCooldown=0; comboTimer=0; jumps=0; coyote=0; lastFlightMilestone=0; player.y=GROUND-58; player.vy=0;
+    flight=null; invulnerable=0; shake=0; shield=0; boss=null; eventTimer=0; eventType=""; dashCooldown=0; skillFlash=0; skillName=""; wingCharge=0; guardianPhase=1; comboTimer=0; jumps=0; coyote=0; lastFlightMilestone=0; player.y=GROUND-58; player.vy=0;
     player.duck=false; player.grounded=true; player.flap=0; player.blink=0;
     groundOffset=0; scoreLabel.textContent=fmt(0); bestLabel.textContent=fmt(best);
   }
@@ -263,7 +263,7 @@
 
   function spawnBoss(){
     if(boss || score<3500 || evolution<3) return;
-    boss={x:W+170,y:74,w:145,h:150,hp:5,maxHp:5,phase:0,shot:1.2,active:true};
+    boss={x:W+170,y:74,w:145,h:150,hp:5,maxHp:5,phase:0,shot:1.2,pattern:0,patternTimer:2.2,active:true};
     flash="ANCIENT SKY GUARDIAN";flashTime=2.4;shake=.2;
     burst(W-90,130,"#ffb64b",35);
   }
@@ -271,10 +271,21 @@
     if(gameState!=="running" || !boss) return;
     boss.phase+=dt; boss.x=lerp(boss.x,W-245,Math.min(1,dt*1.8));
     boss.y=74+Math.sin(boss.phase*1.7)*22;
-    boss.shot-=dt;
-    if(boss.shot<=0){
-      boss.shot=1.45;
-      obstacles.push({kind:"bat",x:boss.x-12,y:boss.y+75,w:70,h:50,counted:true});
+    boss.shot-=dt; boss.patternTimer-=dt;
+    if(boss.patternTimer<=0){
+      boss.pattern=(boss.pattern+1)%3;
+      boss.patternTimer=3.1-Math.min(.8,(5-boss.hp)*.18);
+      if(boss.pattern===0){
+        boss.shot=.15;
+        obstacles.push({kind:"bat",x:boss.x-12,y:boss.y+75,w:70,h:50,counted:true});
+      } else if(boss.pattern===1){
+        for(let i=0;i<2;i++) obstacles.push({kind:"bat",x:boss.x-12-i*35,y:GROUND-82-i*42,w:66,h:46,counted:true});
+        flash="GUARDIAN SWARM";flashTime=.7;
+      } else {
+        treasures.push({x:boss.x-30,y:boss.y+15,gold:false,phase:time,taken:false});
+        treasures.push({x:boss.x-70,y:boss.y-45,gold:false,phase:time+.7,taken:false});
+        flash="DIVE FOR THE STARS";flashTime=.8;
+      }
     }
     // jumping into the guardian's crest damages it; contact is never an instant unfair death.
     const p=playerBox(), hit={x:boss.x+28,y:boss.y+35,w:85,h:90};
@@ -282,7 +293,7 @@
       boss.hp--; invulnerable=.7; player.vy=-520; shake=.16;
       burst(boss.x+70,boss.y+55,"#ffe08b",18);
       if(boss.hp<=0){
-        bonus+=650;unlock("phoenix","Phoenix");flash="GUARDIAN DEFEATED  +650";flashTime=3;
+        bonus+=650;unlock("phoenix","Phoenix");unlock("guardian","Sky Guardian");flash="GUARDIAN DEFEATED  +650";flashTime=3;
         burst(boss.x+70,boss.y+70,"#ffb13b",55);boss=null;nextSpawn=520;
       } else {flash="CREST HIT  "+boss.hp+"/"+5;flashTime=.8}
     }
@@ -370,6 +381,12 @@
     // Flight is a true second game mode, not a cosmetic jump.
     const flightMilestone=Math.floor(score/2500); if(evolution===3 && score>=2500 && !flight && !boss && time>8 && flightMilestone>lastFlightMilestone) startFlight();
     if(evolution===3 && score>=3500 && !flight && !boss && time>16) spawnBoss();
+    // Phoenix skill: every 12 collected treasures charges a short, forgiving dash.
+    wingCharge=Math.min(100,wingCharge+dt*(streak>=3?2.4:1));
+    if(evolution===3 && wingCharge>=100 && dashCooldown<=0 && keys.shift){
+      wingCharge=0;dashCooldown=5;invulnerable=1.0;skillFlash=.9;skillName="PHOENIX DASH";
+      player.vy=-390;bonus+=45;burst(player.x+30,player.y+28,"#ffd36a",30);
+    }
   }
 
   function updateFlight(dt) {
@@ -583,11 +600,22 @@
     ctx.fillStyle=scene>=3?"#d9e5ee":"#77818b";
     ctx.fillText("BEST  "+fmt(best),22,39);
 
+    if(skillFlash>0){skillFlash=Math.max(0,skillFlash-dt)}
     if(gameState==="running"){
       const labels=["EGG","CHICK","JADE PLUME","PHOENIX"];
       ctx.fillText(labels[evolution],W-22,18);ctx.textAlign="right";
       if(evolution===3){
         ctx.fillStyle="#d08b36";ctx.fillText(boss?"GUARDIAN":"SKYBOUND 2500",W-22,39);
+    if(evolution===3){
+      ctx.textAlign="left";ctx.font="700 10px Arial";ctx.fillStyle="#6f7882";
+      ctx.fillText("WING CHARGE",22,39);
+      ctx.strokeStyle="rgba(80,90,105,.25)";ctx.strokeRect(22,45,90,5);
+      ctx.fillStyle="#e3a64a";ctx.fillRect(22,45,.9*wingCharge,5);
+    }
+    if(skillFlash>0){
+      ctx.textAlign="center";ctx.font="800 15px Arial";ctx.fillStyle="#e7a33b";
+      ctx.fillText(skillName,W/2,58);
+    }
       } else {
         const target=[500,1000,2000][evolution]||500;
         const prev=[0,500,1000,2000][evolution];
