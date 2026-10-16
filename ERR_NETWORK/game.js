@@ -688,13 +688,24 @@
     difficulty=modes[modeSelect.value]||modes.classic;
     if(gameState==="running"||gameState==="flight"){flash="MODE CHANGES NEXT RUN";flashTime=1.6}
   });
-  document.addEventListener("keydown",(e)=>{
+  function handleGameKeyDown(e){
     if(!document.body.classList.contains("playing")) return;
-    if(e.code==="Space"||e.code==="ArrowUp"){e.preventDefault();if(!e.repeat)jump()}
-    else if(e.code==="ArrowDown"){e.preventDefault();setDuck(true)}
-    else if(e.code==="Escape"){e.preventDefault();closeGame()}
-  });
-  document.addEventListener("keyup",(e)=>{if(e.code==="ArrowDown")setDuck(false)});
+    const isRestartKey=e.code==="Space"||e.code==="Enter"||e.code==="ArrowUp";
+    if(isRestartKey){
+      e.preventDefault();
+      e.stopPropagation();
+      if(!e.repeat) jump();
+      return;
+    }
+    if(e.code==="ArrowDown"){e.preventDefault();setDuck(true);return}
+    if(e.code==="Escape"){e.preventDefault();closeGame()}
+  }
+  function handleGameKeyUp(e){
+    if(e.code==="ArrowDown") setDuck(false);
+  }
+  // Capture phase makes restart reliable even when the overlay/canvas has focus.
+  window.addEventListener("keydown",handleGameKeyDown,true);
+  window.addEventListener("keyup",handleGameKeyUp,true);
   duckTouch.addEventListener("pointerdown",(e)=>{e.preventDefault();duckTouch.setPointerCapture(e.pointerId);setDuck(true)});
   ["pointerup","pointercancel","lostpointercapture"].forEach(ev=>duckTouch.addEventListener(ev,()=>setDuck(false)));
   achievementToggle.addEventListener("click",()=>{
