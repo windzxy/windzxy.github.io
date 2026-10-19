@@ -1,6 +1,6 @@
 {
   "version": "20260806-1",
-  "generatedAt": "2026-10-12T09:20:03.950114+00:00",
+  "generatedAt": "2026-10-19T07:52:16.106277+00:00",
   "manualCount": 20,
   "automaticCount": 63,
   "failures": [],
@@ -235,7 +235,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:59.410277+00:00"
+      "fetchedAt": "2026-10-19T07:52:12.404535+00:00"
     },
     {
       "id": "auto-biology-24054",
@@ -247,7 +247,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:59.410257+00:00"
+      "fetchedAt": "2026-10-19T07:52:12.404513+00:00"
     },
     {
       "id": "auto-cantonese-26022",
@@ -259,7 +259,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.035682+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.774005+00:00"
     },
     {
       "id": "auto-cantonese-11340",
@@ -271,7 +271,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.035668+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.773877+00:00"
     },
     {
       "id": "auto-cantonese-24120",
@@ -283,7 +283,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.035677+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.773884+00:00"
     },
     {
       "id": "auto-cantonese-26023",
@@ -295,7 +295,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.035685+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.774008+00:00"
     },
     {
       "id": "auto-cantonese-24095",
@@ -307,7 +307,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.035674+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.773881+00:00"
     },
     {
       "id": "auto-cantonese-10284",
@@ -319,7 +319,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.035650+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.773856+00:00"
     },
     {
       "id": "auto-chemistry-1767",
@@ -331,7 +331,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:58.868868+00:00"
+      "fetchedAt": "2026-10-19T07:52:11.776449+00:00"
     },
     {
       "id": "auto-chemistry-10937",
@@ -343,7 +343,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:58.868894+00:00"
+      "fetchedAt": "2026-10-19T07:52:11.776473+00:00"
     },
     {
       "id": "auto-chemistry-17175",
@@ -355,7 +355,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:58.868904+00:00"
+      "fetchedAt": "2026-10-19T07:52:11.776480+00:00"
     },
     {
       "id": "auto-chemistry-10938",
@@ -367,7 +367,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:58.868897+00:00"
+      "fetchedAt": "2026-10-19T07:52:11.776475+00:00"
     },
     {
       "id": "auto-chemistry-10832",
@@ -379,7 +379,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:58.868888+00:00"
+      "fetchedAt": "2026-10-19T07:52:11.776469+00:00"
     },
     {
       "id": "auto-chemistry-10941",
@@ -391,7 +391,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:58.868901+00:00"
+      "fetchedAt": "2026-10-19T07:52:11.776478+00:00"
     },
     {
       "id": "auto-chinese-19765",
@@ -403,7 +403,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:50.179735+00:00"
+      "fetchedAt": "2026-10-19T07:52:06.597652+00:00"
     },
     {
       "id": "auto-chinese-1002223",
@@ -415,7 +415,7 @@
       "source": "维基文库",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:46.282255+00:00"
+      "fetchedAt": "2026-10-19T07:52:05.428495+00:00"
     },
     {
       "id": "auto-chinese-1114055",
@@ -427,7 +427,7 @@
       "source": "维基文库",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:46.282260+00:00"
+      "fetchedAt": "2026-10-19T07:52:05.428498+00:00"
     },
     {
       "id": "auto-chinese-17168",
@@ -439,7 +439,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:50.179727+00:00"
+      "fetchedAt": "2026-10-19T07:52:06.597647+00:00"
     },
     {
       "id": "auto-chinese-761891",
@@ -451,7 +451,7 @@
       "source": "维基文库",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:46.282242+00:00"
+      "fetchedAt": "2026-10-19T07:52:05.428486+00:00"
     },
     {
       "id": "auto-chinese-109671",
@@ -463,7 +463,7 @@
       "source": "维基文库",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:46.282219+00:00"
+      "fetchedAt": "2026-10-19T07:52:05.428461+00:00"
     },
     {
       "id": "auto-chinese-879459",
@@ -475,7 +475,7 @@
       "source": "维基文库",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:46.282252+00:00"
+      "fetchedAt": "2026-10-19T07:52:05.428493+00:00"
     },
     {
       "id": "auto-chinese-10244",
@@ -487,7 +487,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:50.179707+00:00"
+      "fetchedAt": "2026-10-19T07:52:06.597626+00:00"
     },
     {
       "id": "auto-chinese-849804",
@@ -499,7 +499,7 @@
       "source": "维基文库",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:46.282248+00:00"
+      "fetchedAt": "2026-10-19T07:52:05.428490+00:00"
     },
     {
       "id": "auto-computing-233191",
@@ -511,7 +511,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:02.511528+00:00"
+      "fetchedAt": "2026-10-19T07:52:14.321750+00:00"
     },
     {
       "id": "auto-computing-266701",
@@ -523,7 +523,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:02.511538+00:00"
+      "fetchedAt": "2026-10-19T07:52:14.321757+00:00"
     },
     {
       "id": "auto-computing-266700",
@@ -535,7 +535,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:02.511532+00:00"
+      "fetchedAt": "2026-10-19T07:52:14.321753+00:00"
     },
     {
       "id": "auto-computing-4754",
@@ -547,7 +547,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:02.511479+00:00"
+      "fetchedAt": "2026-10-19T07:52:14.321707+00:00"
     },
     {
       "id": "auto-computing-27548",
@@ -559,7 +559,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:02.511503+00:00"
+      "fetchedAt": "2026-10-19T07:52:14.321727+00:00"
     },
     {
       "id": "auto-computing-192531",
@@ -571,7 +571,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:02.511509+00:00"
+      "fetchedAt": "2026-10-19T07:52:14.321745+00:00"
     },
     {
       "id": "auto-english-144988",
@@ -583,7 +583,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:55.423053+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.115451+00:00"
     },
     {
       "id": "auto-english-144989",
@@ -595,7 +595,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:55.423056+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.115453+00:00"
     },
     {
       "id": "auto-english-144990",
@@ -607,7 +607,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:55.423059+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.115455+00:00"
     },
     {
       "id": "auto-english-144991",
@@ -619,7 +619,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:55.423062+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.115457+00:00"
     },
     {
       "id": "auto-english-144651",
@@ -631,7 +631,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:55.423049+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.115448+00:00"
     },
     {
       "id": "auto-english-107185",
@@ -643,7 +643,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:55.423029+00:00"
+      "fetchedAt": "2026-10-19T07:52:08.115427+00:00"
     },
     {
       "id": "auto-finance-32532",
@@ -655,7 +655,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.114783+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.162183+00:00"
     },
     {
       "id": "auto-finance-286371",
@@ -667,7 +667,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.114815+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.162214+00:00"
     },
     {
       "id": "auto-finance-247810",
@@ -679,7 +679,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.114807+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.162209+00:00"
     },
     {
       "id": "auto-finance-211484",
@@ -691,7 +691,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.114803+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.162206+00:00"
     },
     {
       "id": "auto-finance-276398",
@@ -703,7 +703,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.114810+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.162211+00:00"
     },
     {
       "id": "auto-finance-306698",
@@ -715,7 +715,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.114818+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.162216+00:00"
     },
     {
       "id": "auto-geography-24338",
@@ -727,7 +727,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:01.984768+00:00"
+      "fetchedAt": "2026-10-19T07:52:13.732056+00:00"
     },
     {
       "id": "auto-geography-19446",
@@ -739,7 +739,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:01.984760+00:00"
+      "fetchedAt": "2026-10-19T07:52:13.732051+00:00"
     },
     {
       "id": "auto-geography-29975",
@@ -751,7 +751,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:01.984775+00:00"
+      "fetchedAt": "2026-10-19T07:52:13.732061+00:00"
     },
     {
       "id": "auto-geography-20337",
@@ -763,7 +763,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:01.984764+00:00"
+      "fetchedAt": "2026-10-19T07:52:13.732053+00:00"
     },
     {
       "id": "auto-geography-17237",
@@ -775,7 +775,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:01.984740+00:00"
+      "fetchedAt": "2026-10-19T07:52:13.732030+00:00"
     },
     {
       "id": "auto-geography-26115",
@@ -787,7 +787,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:01.984772+00:00"
+      "fetchedAt": "2026-10-19T07:52:13.732059+00:00"
     },
     {
       "id": "auto-history-23013",
@@ -799,7 +799,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:59.895518+00:00"
+      "fetchedAt": "2026-10-19T07:52:12.960388+00:00"
     },
     {
       "id": "auto-japanese-23345",
@@ -811,7 +811,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.516045+00:00"
+      "fetchedAt": "2026-10-19T07:52:09.370410+00:00"
     },
     {
       "id": "auto-japanese-12744",
@@ -823,7 +823,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.516020+00:00"
+      "fetchedAt": "2026-10-19T07:52:09.370387+00:00"
     },
     {
       "id": "auto-japanese-15054",
@@ -835,7 +835,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.516040+00:00"
+      "fetchedAt": "2026-10-19T07:52:09.370407+00:00"
     },
     {
       "id": "auto-japanese-330426",
@@ -847,7 +847,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:56.516052+00:00"
+      "fetchedAt": "2026-10-19T07:52:09.370415+00:00"
     },
     {
       "id": "auto-logic-210424",
@@ -859,7 +859,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.599910+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.756116+00:00"
     },
     {
       "id": "auto-logic-210410",
@@ -871,7 +871,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.599906+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.756114+00:00"
     },
     {
       "id": "auto-logic-223402",
@@ -883,7 +883,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.599923+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.756125+00:00"
     },
     {
       "id": "auto-logic-4540",
@@ -895,7 +895,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.599886+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.756094+00:00"
     },
     {
       "id": "auto-logic-213306",
@@ -907,7 +907,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.599913+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.756118+00:00"
     },
     {
       "id": "auto-logic-282952",
@@ -919,7 +919,7 @@
       "source": "Wikiversity",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:20:03.599933+00:00"
+      "fetchedAt": "2026-10-19T07:52:15.756133+00:00"
     },
     {
       "id": "auto-math-29847",
@@ -931,7 +931,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:50.691747+00:00"
+      "fetchedAt": "2026-10-19T07:52:07.243877+00:00"
     },
     {
       "id": "auto-science-29744",
@@ -943,7 +943,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:57.660033+00:00"
+      "fetchedAt": "2026-10-19T07:52:10.633736+00:00"
     },
     {
       "id": "auto-science-23954",
@@ -955,7 +955,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:57.660029+00:00"
+      "fetchedAt": "2026-10-19T07:52:10.633734+00:00"
     },
     {
       "id": "auto-science-13253",
@@ -967,7 +967,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:57.660022+00:00"
+      "fetchedAt": "2026-10-19T07:52:10.633729+00:00"
     },
     {
       "id": "auto-science-301",
@@ -979,7 +979,7 @@
       "source": "维基学院",
       "license": "Wikimedia项目许可；具体作品状态需逐项核对",
       "kind": "live-index",
-      "fetchedAt": "2026-10-12T09:19:57.660001+00:00"
+      "fetchedAt": "2026-10-19T07:52:10.633709+00:00"
     }
   ]
 }
