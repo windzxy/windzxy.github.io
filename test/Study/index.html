@@ -2,38 +2,67 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#f4f6fb">
-  <title>Wind 学堂</title>
-  <link rel="stylesheet" href="assets/ui-v4.css?v=20260805-12">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f3f6fb">
+  <meta name="description" content="面向学生学习、巩固练习、延伸拓展与家长陪学的 Wind 学堂。">
+  <title>Wind 学堂｜每天学懂一点</title>
+  <link rel="stylesheet" href="assets/platform-v1.css?v=20261026-1">
 </head>
-<body data-page="home">
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <a class="wordmark" href="index.html"><span>W</span><strong>Wind 学堂</strong></a>
-      <nav class="side-nav">
-        <a data-nav="home" href="index.html"><b>⌂</b><span>首页</span></a>
-        <a data-nav="courses" href="course.html"><b>▦</b><span>课程</span></a>
-        <a data-nav="practice" href="practice.html"><b>✎</b><span>题库</span></a>
-        <a data-nav="mistakes" href="mistakes.html"><b>↺</b><span>错题</span></a>
-        <a data-nav="progress" href="progress.html"><b>◔</b><span>进度</span></a>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <div class="platform-shell">
+    <header class="platform-header">
+      <a class="platform-brand" href="#home" aria-label="Wind 学堂首页">
+        <span class="brand-mark">W</span>
+        <span><strong>Wind 学堂</strong><small>每天学懂一点</small></span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="主导航">
+        <button class="nav-item active" data-view="home" type="button">今日</button>
+        <button class="nav-item" data-view="learn" type="button">知识点</button>
+        <button class="nav-item" data-view="practice" type="button">练习</button>
+        <button class="nav-item" data-view="parent" type="button">家长</button>
       </nav>
-      <div class="side-foot"><span id="side-stage">小学</span><span id="side-system">综合</span></div>
-    </aside>
-    <div class="workspace">
-      <header class="topbar">
-        <button class="menu-btn" id="menu-btn" type="button" aria-label="打开导航">☰</button>
-        <div class="page-title" id="page-title"></div>
-        <div class="top-actions"><button class="compact-btn" id="quick-practice" type="button">随机练习</button><div class="score-pill">★ <span id="star-count">0</span></div></div>
-      </header>
-      <main id="app"></main>
-    </div>
+
+      <div class="header-actions">
+        <label class="grade-picker" aria-label="选择年级">
+          <span id="grade-caption">一年级</span>
+          <select id="grade-select"></select>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg>
+        </label>
+        <button class="profile-button" id="profile-button" type="button" aria-label="学习档案">
+          <span id="profile-avatar">小</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="subject-bar" id="subject-bar" aria-label="选择学科"></div>
+
+    <main class="platform-main" id="app" aria-live="polite">
+      <div class="loading-view">
+        <span class="loading-orb"></span>
+        <p>正在准备今天的学习内容…</p>
+      </div>
+    </main>
   </div>
-  <div class="toast" id="toast"></div>
-  <script src="assets/pako_inflate.min.js?v=20260805-12"></script>
-  <script src="assets/bootstrap-v6.js?v=20260805-4"></script>
-  <script src="assets/catalog-v4.js?v=20260805-12"></script>
-  <script src="assets/questions-v4.js?v=20260805-12"></script>
-  <script src="assets/app-v4.js?v=20260805-12"></script>
+
+  <nav class="mobile-tabbar" aria-label="移动端导航">
+    <button class="mobile-tab active" data-view="home" type="button"><span data-icon="sun"></span><small>今日</small></button>
+    <button class="mobile-tab" data-view="learn" type="button"><span data-icon="map"></span><small>知识点</small></button>
+    <button class="mobile-tab" data-view="practice" type="button"><span data-icon="pencil"></span><small>练习</small></button>
+    <button class="mobile-tab" data-view="parent" type="button"><span data-icon="family"></span><small>家长</small></button>
+  </nav>
+
+  <div class="modal-layer" id="modal-layer" hidden>
+    <button class="modal-backdrop" type="button" data-close-modal aria-label="关闭"></button>
+    <section class="modal-card" id="modal-card" role="dialog" aria-modal="true"></section>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="math-path/assets/data-loader.js?v=20261026-1"></script>
+  <script src="assets/platform-v1.js?v=20261026-1"></script>
 </body>
 </html>
