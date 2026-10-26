@@ -421,7 +421,7 @@
         ' ', h('button', { onclick: function () { lsDel(sessionKey()); renderStart(); } }, '放弃存档')));
     }
     if (errMsg) page.append(h('p', { class: 'err', text: errMsg }));
-    page.append(childBar('start'));
+    append(page, childBar('start'));
 
     const st = getSettings();
     const limitInput = h('input', { type: 'number', min: LIMIT_MIN, max: LIMIT_MAX, step: 1, value: String(st.limit), id: 'limit-input', 'aria-label': '题量上限' });
@@ -736,7 +736,7 @@
       h('button', { class: 'small', onclick: function () { if (confirm('确定放弃当前诊断并回到开始页吗？')) restart(); } }, '重新开始')));
     const page = h('div');
     if (demo) page.append(demoBanner());
-    page.append(childBar('question'));
+    append(page, childBar('question'));
     page.append(card);
     show(page);
     const inp = document.getElementById('ans');
@@ -919,7 +919,7 @@
     const page = h('div');
     if (demo) page.append(demoBanner());
     saveToChild(sum);
-    page.append(childBar('result'));
+    append(page, childBar('result'));
 
     const targetsMastered = session.targets.every(function (id) { return E.statusOf(session, id) === 'mastered'; });
     const chapters = screen ? E.chapterSummary(D.graph, session) : null;
