@@ -1,6 +1,5 @@
 (function(){
   'use strict';
-  var mounted=false;
   function card(){
     var box=document.createElement('section');
     box.className='knowledge-entry';
@@ -9,11 +8,9 @@
     return box;
   }
   function mount(){
-    if(mounted)return;
     var app=document.getElementById('app');
     if(!app||!app.firstElementChild)return;
-    mounted=true;
-    app.insertBefore(card(),app.firstChild);
+    if(!app.querySelector('.knowledge-entry'))app.insertBefore(card(),app.firstChild);
     var nav=document.querySelector('.side-nav');
     if(nav&&!nav.querySelector('.math-path-nav')){
       var link=document.createElement('a');
@@ -24,6 +21,9 @@
       if(courses&&courses.nextSibling)nav.insertBefore(link,courses.nextSibling);else nav.appendChild(link);
     }
   }
-  var tries=0,timer=setInterval(function(){mount();if(mounted||++tries>80)clearInterval(timer);},100);
+  var tries=0,timer=setInterval(function(){mount();if(++tries>80)clearInterval(timer);},125);
+  var observer=new MutationObserver(function(){requestAnimationFrame(mount);});
+  observer.observe(document.documentElement,{childList:true,subtree:true});
+  setTimeout(function(){observer.disconnect();mount();},15000);
   document.addEventListener('DOMContentLoaded',mount);
 })();
