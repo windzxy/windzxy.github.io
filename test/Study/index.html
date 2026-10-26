@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f3f6fb">
   <meta name="description" content="面向学生学习、巩固练习、延伸拓展与家长陪学的 Wind 学堂。">
   <title>Wind 学堂｜每天学懂一点</title>
-  <link rel="stylesheet" href="assets/platform-v1.css?v=20261026-1">
+  <link rel="stylesheet" href="assets/platform-v1.css?v=20261026-2">
 </head>
 <body>
   <div class="ambient ambient-a"></div>
@@ -27,6 +27,11 @@
       </nav>
 
       <div class="header-actions">
+        <label class="grade-picker region-picker" aria-label="选择课程地区">
+          <span id="region-caption">中国内地</span>
+          <select id="region-select"></select>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg>
+        </label>
         <label class="grade-picker" aria-label="选择年级">
           <span id="grade-caption">一年级</span>
           <select id="grade-select"></select>
@@ -39,6 +44,7 @@
     </header>
 
     <div class="subject-bar" id="subject-bar" aria-label="选择学科"></div>
+    <div class="curriculum-context" id="curriculum-context" aria-live="polite"></div>
 
     <main class="platform-main" id="app" aria-live="polite">
       <div class="loading-view">
@@ -63,6 +69,6 @@
   <div class="toast" id="toast" role="status"></div>
 
   <script src="math-path/assets/data-loader.js?v=20261026-1"></script>
-  <script src="assets/platform-v1.js?v=20261026-1"></script>
+  <script src="assets/platform-v1.js?v=20261026-2"></script>
 </body>
 </html>

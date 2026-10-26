@@ -2,12 +2,37 @@
   'use strict';
 
   var STORE_KEY = 'wind-study-platform-v1';
-  var SUBJECTS = {
-    math: { name: '数学', mark: '∑', color: '#3478f6', grades: [1,2,3,4,5,6,7,8,9,10,11,12,13,14] },
-    chinese: { name: '语文', mark: '文', color: '#ef7d5b', grades: [1,2,3,4,5,6] },
-    english: { name: '英语', mark: 'A', color: '#7868e8', grades: [3,4,5,6,7,8,9,10,11,12,13,14,15,16] },
-    physics: { name: '物理', mark: 'Φ', color: '#20a77b', grades: [8,9,10,11,12,13,14,15] }
+  var ALL_GRADES = [1,2,3,4,5,6,7,8,9,10,11,12];
+  var REGIONS = {
+    cn: { name:'中国内地', short:'内地课程', framework:'国家课程标准', stages:['小学','初中','高中'], accent:'#e75757' },
+    hk: { name:'中国香港', short:'香港课程', framework:'香港课程发展议会 · KS1–KS4', stages:['小學','中學','高中'], accent:'#3478f6' },
+    mo: { name:'中国澳门', short:'澳门课程', framework:'澳门基本学力要求', stages:['小學','初中','高中'], accent:'#20a77b' },
+    sg: { name:'新加坡', short:'新加坡课程', framework:'MOE Primary & Secondary', stages:['Primary','Secondary','Pre-U'], accent:'#ef6b63' },
+    us: { name:'美国', short:'美国课程', framework:'Grade-level standards pathway', stages:['Elementary','Middle','High'], accent:'#7868e8' }
   };
+  var SUBJECTS = {
+    math: { name:'数学', names:{hk:'數學',mo:'數學',sg:'Mathematics',us:'Mathematics'}, mark:'∑', color:'#3478f6', grades:ALL_GRADES },
+    chinese: { name:'语文', names:{hk:'中文',mo:'中文',sg:'华文',us:'中文'}, mark:'文', color:'#ef7d5b', grades:ALL_GRADES },
+    english: { name:'英语', names:{hk:'英文',mo:'英文',sg:'English',us:'English'}, mark:'A', color:'#7868e8', grades:ALL_GRADES },
+    science: { name:'科学', names:{hk:'科學',mo:'科學',sg:'Science',us:'Science'}, mark:'◎', color:'#16a5a3', grades:ALL_GRADES },
+    physics: { name:'物理与工程', names:{hk:'物理與工程',mo:'物理與工程',sg:'Physics',us:'Physics & Engineering'}, mark:'Φ', color:'#20a77b', grades:ALL_GRADES },
+    social: { name:'人文与社会', names:{hk:'人文科',mo:'人文與社會',sg:'Social Studies',us:'Social Studies'}, mark:'地', color:'#d48a2f', grades:ALL_GRADES },
+    computing: { name:'数字与编程', names:{hk:'數字與編程',mo:'資訊與科技',sg:'Computing',us:'Computer Science'}, mark:'⌘', color:'#4d78d6', grades:ALL_GRADES },
+    arts: { name:'艺术', names:{hk:'藝術',mo:'藝術',sg:'Arts',us:'Arts'}, mark:'◒', color:'#d45f9b', grades:ALL_GRADES },
+    wellbeing: { name:'健康与生活', names:{hk:'健康與生活',mo:'健康與生活',sg:'Health & Life',us:'Health & SEL'}, mark:'♡', color:'#e56e58', grades:ALL_GRADES }
+  };
+  var FOUNDATION_TRACKS = {
+    math:[['数感与运算','用数量、符号和策略解决与年级相适应的问题。'],['图形与测量','观察形状、空间、长度、时间与测量。'],['数据与推理','整理信息，发现规律并解释思路。']],
+    chinese:[['阅读与理解','阅读适龄文本，找出关键信息并作出回应。'],['表达与沟通','清楚表达想法，并根据对象调整说法。'],['语言与文化','积累语言知识，理解文化与生活语境。']],
+    english:[['Reading','Read age-appropriate texts and locate key information.'],['Communication','Listen, speak and communicate ideas with growing confidence.'],['Writing','Build accurate sentences and organise ideas for a purpose.']],
+    science:[['科学探究','从观察提出问题，用证据解释发现。'],['生命与环境','认识生命、健康、生态与环境之间的关系。'],['物质与地球','探索材料、能量、天气、地球与太空。']],
+    physics:[['力与运动','从推拉、速度和平衡逐步建立物理模型。'],['光声电与能量','通过生活现象理解光、声音、电与能量。'],['工程设计','定义问题、制作方案、测试并改进。']],
+    social:[['自我与社区','认识家庭、学校、社区及彼此的责任。'],['地方与世界','理解地点、历史、文化与全球联系。'],['公民与媒体','学习规则、选择、财商与信息判断。']],
+    computing:[['数字公民','安全、负责、有礼地使用数字工具。'],['计算思维','把问题拆开，寻找模式并设计步骤。'],['编程与创作','用代码、数据与数字媒体表达和解决问题。']],
+    arts:[['视觉与设计','用线条、色彩、材料和设计表达想法。'],['音乐与节奏','聆听、演奏、创作并回应音乐。'],['戏剧与表演','通过动作、角色和故事发展表达力。']],
+    wellbeing:[['身体与健康','建立运动、饮食、睡眠与卫生习惯。'],['情绪与关系','识别情绪，学习沟通、同理与合作。'],['安全与生活能力','练习自理、风险判断与适龄生活技能。']]
+  };
+  var CROSS_SUBJECTS = {math:['science','computing'],chinese:['social','arts'],english:['social','computing'],science:['math','wellbeing'],physics:['math','computing'],social:['chinese','wellbeing'],computing:['math','arts'],arts:['chinese','computing'],wellbeing:['science','social']};
   var ICONS = {
     sun: '<circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
     map: '<path d="m3 6 5-2 8 2 5-2v14l-5 2-8-2-5 2Z"/><path d="M8 4v14M16 6v14"/>',
@@ -30,6 +55,9 @@
   var modalLayer = document.getElementById('modal-layer');
   var modalCard = document.getElementById('modal-card');
   var toastNode = document.getElementById('toast');
+  var regionSelect = document.getElementById('region-select');
+  var regionCaption = document.getElementById('region-caption');
+  var curriculumContext = document.getElementById('curriculum-context');
   var gradeSelect = document.getElementById('grade-select');
   var gradeCaption = document.getElementById('grade-caption');
   var profileButton = document.getElementById('profile-button');
@@ -40,13 +68,15 @@
   var learnDomain = 'all';
 
   function loadState() {
-    var base = { child: '小朋友', subject: 'math', grade: 1, view: hashView(), practiceCount: 5, progress: {}, history: [] };
+    var base = { child: '小朋友', region: 'cn', subject: 'math', grade: 1, view: hashView(), practiceCount: 5, progress: {}, history: [] };
     try {
       var saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
       Object.keys(base).forEach(function (k) { if (saved[k] !== undefined) base[k] = saved[k]; });
     } catch (e) { /* use defaults */ }
     base.progress = base.progress || {};
     base.history = Array.isArray(base.history) ? base.history : [];
+    if(!REGIONS[base.region])base.region='cn';
+    if(!SUBJECTS[base.subject])base.subject='math';
     return base;
   }
   var state = loadState();
@@ -54,6 +84,7 @@
   function hashView() { var h = location.hash.replace('#', '').split('&')[0]; return ['home','learn','practice','parent'].indexOf(h) >= 0 ? h : 'home'; }
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>'"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
   function icon(name) { return '<svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || ICONS.spark) + '</svg>'; }
+  function subjectName(key) { var s=SUBJECTS[key]||SUBJECTS.math; return (s.names&&s.names[state.region])||s.name; }
   function subjectOf(t) {
     if (t.subject) return t.subject;
     if (t.id.indexOf('cnc_') === 0) return 'chinese';
@@ -61,13 +92,14 @@
     if (t.id.indexOf('cnp_') === 0) return 'physics';
     return 'math';
   }
-  function gradeLabel(g, subject) {
-    if (subject === 'english' && g >= 10) return g <= 12 ? '高中必修' + '一二三'[g - 10] : '高中选必' + '一二三四'[g - 13];
-    if (subject === 'physics' && g >= 10) return g <= 12 ? '高中必修' + '一二三'[g - 10] : '高中选必' + '一二三'[g - 13];
-    if (g <= 6) return '一二三四五六'[g - 1] + '年级';
-    if (g <= 9) return '七八九'[g - 7] + '年级';
-    if (g === 10) return '高一'; if (g === 11) return '高二';
-    return '选必' + ('一二三四'[g - 12] || g);
+  function gradeLabel(g) {
+    var n='一二三四五六七八九';
+    if(state.region==='hk') return g<=6?'小'+n[g-1]:g<=12?'中'+(['一','二','三','四','五','六'][g-7]):'中学';
+    if(state.region==='mo') return g<=6?'小'+n[g-1]:g<=9?'初'+n[g-7]:'高'+n[g-10];
+    if(state.region==='sg') return g<=6?'Primary '+g:g<=10?'Secondary '+(g-6):'Pre-U '+(g-10);
+    if(state.region==='us') return 'Grade '+g;
+    if(g<=9)return n[g-1]+'年级';
+    return '高'+n[g-10];
   }
   function statusOf(id) {
     var p = state.progress[id];
@@ -77,8 +109,13 @@
     return 'learning';
   }
   function statusLabel(s) { return {new:'未开始',learning:'学习中',mastered:'已掌握',weak:'需巩固'}[s] || '未开始'; }
+  function availableInRegion(t) {
+    if(t.universal) return true;
+    if(state.region==='cn') return true;
+    return subjectOf(t)==='math' || subjectOf(t)==='physics';
+  }
   function currentTopics(allGrades) {
-    return D.topics.filter(function (t) { return subjectOf(t) === state.subject && (allGrades || Number(t.grade) === Number(state.grade)); });
+    return D.topics.filter(function (t) { return subjectOf(t) === state.subject && availableInRegion(t) && (allGrades || Number(t.grade) === Number(state.grade)); });
   }
   function progressStats(topics) {
     var mastered = 0, learning = 0, weak = 0;
@@ -88,6 +125,28 @@
     return { mastered: mastered, learning: learning, weak: weak, total: topics.length, accuracy: history.length ? Math.round(right / history.length * 100) : 0, answered: history.length };
   }
   function sortedTopics(topics) { return topics.slice().sort(function (a,b) { return Number(a.grade)-Number(b.grade) || String(a.chapter).localeCompare(String(b.chapter),'zh') || a.name.localeCompare(b.name,'zh'); }); }
+  function developmentCopy(g) {
+    if(g<=2)return '以观察、操作、讲述和生活例子为主。';
+    if(g<=4)return '开始比较、分类、记录，并用证据说明。';
+    if(g<=6)return '连接多个概念，选择策略并检查结果。';
+    if(g<=9)return '建立模型、分析信息，并迁移到新情境。';
+    return '综合论证、探究与真实任务，形成独立判断。';
+  }
+  function buildFoundationContent() {
+    var topics=[],questions=[],deps=[];
+    Object.keys(FOUNDATION_TRACKS).forEach(function(subject){
+      ALL_GRADES.forEach(function(g){
+        FOUNDATION_TRACKS[subject].forEach(function(track,i){
+          var id='wind_'+subject+'_g'+g+'_t'+(i+1), previous='wind_'+subject+'_g'+(g-1)+'_t'+(i+1);
+          topics.push({id:id,name:track[0],domain:track[0],grade:g,chapter:track[0],type:i===0?'conceptual':i===1?'application':'reasoning',description:track[1]+' '+developmentCopy(g),mastery_criteria:['能用自己的话说明核心概念','能完成一个与年龄相适应的示例','能把所学用到新的生活或学习情境'],subject:subject,universal:true,crossSubjects:CROSS_SUBJECTS[subject]||[]});
+          questions.push({id:id+'_q1',topicId:id,difficulty:'basic',type:'self',prompt:'关于「'+track[0]+'」，你能不用提示讲清楚，并举一个例子吗？',answer:'yes',explanation:'先讲清楚，再举例，最后尝试一个有变化的新情境。'});
+          questions.push({id:id+'_q2',topicId:id,difficulty:'standard',type:'choice',prompt:'哪一种表现最能说明你真正掌握了「'+track[0]+'」？',choices:[{key:'A',text:'能解释、示范，还能用在新情境'},{key:'B',text:'只记住标题'},{key:'C',text:'看过答案但说不出原因'},{key:'D',text:'只做过完全一样的一题'}],answer:'A',explanation:'真正掌握不只是记住，还包括解释、应用和迁移。'});
+          if(g>1)deps.push({topicId:id,prerequisiteId:previous,kind:'progression'});
+        });
+      });
+    });
+    return {topics:topics,questions:questions,deps:deps};
+  }
   function pickLearningTopics() {
     var topics = sortedTopics(currentTopics());
     var weak = topics.find(function (t) { return statusOf(t.id) === 'weak'; });
@@ -110,15 +169,24 @@
   function renderSubjectBar() {
     subjectBar.innerHTML = Object.keys(SUBJECTS).map(function (key) {
       var s = SUBJECTS[key];
-      return '<button class="subject-chip ' + (state.subject === key ? 'active' : '') + '" style="--subject:' + s.color + '" data-subject="' + key + '" type="button"><i>' + s.mark + '</i>' + s.name + '</button>';
+      return '<button class="subject-chip ' + (state.subject === key ? 'active' : '') + '" style="--subject:' + s.color + '" data-subject="' + key + '" type="button"><i>' + s.mark + '</i>' + esc(subjectName(key)) + '</button>';
     }).join('');
   }
+  function renderRegionSelect() {
+    regionSelect.innerHTML=Object.keys(REGIONS).map(function(k){return '<option value="'+k+'" '+(state.region===k?'selected':'')+'>'+REGIONS[k].name+'</option>';}).join('');
+    regionCaption.textContent=REGIONS[state.region].name;
+  }
   function renderGradeSelect() {
-    var grades = SUBJECTS[state.subject].grades.filter(function (g) { return D.topics.some(function (t) { return subjectOf(t) === state.subject && Number(t.grade) === Number(g); }); });
+    var grades = SUBJECTS[state.subject].grades;
     if (grades.indexOf(Number(state.grade)) < 0) state.grade = grades[0];
-    gradeSelect.innerHTML = grades.map(function (g) { return '<option value="' + g + '" ' + (Number(state.grade) === Number(g) ? 'selected' : '') + '>' + gradeLabel(g,state.subject) + '</option>'; }).join('');
-    gradeCaption.textContent = gradeLabel(Number(state.grade), state.subject);
+    gradeSelect.innerHTML = grades.map(function (g) { return '<option value="' + g + '" ' + (Number(state.grade) === Number(g) ? 'selected' : '') + '>' + gradeLabel(g) + '</option>'; }).join('');
+    gradeCaption.textContent = gradeLabel(Number(state.grade));
     document.getElementById('profile-avatar').textContent = (state.child || '小').slice(0,1);
+  }
+  function renderCurriculumContext() {
+    var r=REGIONS[state.region];
+    curriculumContext.style.setProperty('--region-color',r.accent);
+    curriculumContext.innerHTML='<span class="region-dot"></span><strong>'+esc(r.short)+'</strong><span>'+esc(gradeLabel(Number(state.grade)))+' · '+esc(subjectName(state.subject))+'</span><small>学习路径已按地区与年级调整</small>';
   }
   function updateNavigation() {
     document.querySelectorAll('[data-view]').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-view') === state.view); });
@@ -168,9 +236,7 @@
       '<div class="knowledge-list">' + (Object.keys(groups).length ? Object.keys(groups).map(function(k){return '<section class="knowledge-group"><div class="knowledge-group-title"><span>' + esc(k) + '</span><span>' + groups[k].length + ' 个</span></div>' + groups[k].map(knowledgeCard).join('') + '</section>';}).join('') : '<div class="ios-card empty-card">没有找到相关知识点</div>') + '</div></section>';
   }
   function chapterGroup(t) {
-    var c=String(t.chapter||gradeLabel(Number(t.grade),state.subject));
-    var m=c.match(/^(.+?(?:第\s*[一二三四五六七八九十百0-9]+\s*(?:章|单元)|上册|下册|全一册))/);
-    return m ? m[1].replace(/\s+/g,' ') : c.replace(/\s+\d+(?:\.\d+)*.*$/,'');
+    return gradeLabel(Number(t.grade))+' · '+String(t.domain||t.chapter||'核心能力');
   }
   function knowledgeCard(t) {
     var s=statusOf(t.id), symbol=s==='mastered'?'✓':s==='weak'?'!':s==='learning'?'•':'○';
@@ -195,7 +261,7 @@
     var topics=currentTopics(), stats=progressStats(topics), byDomain=domainStats(topics), weak=topics.filter(function(t){return statusOf(t.id)==='weak';}).slice(0,4);
     var accuracy=recentAccuracy(7), minutes=Math.max(0,state.history.filter(function(x){return Date.now()-new Date(x.date).getTime()<7*86400000;}).length*2);
     return '<section class="view parent-view">' + viewHead('家长陪学','看趋势、找重点，不用盯着每一道题','<button class="secondary-btn" data-action="settings" type="button">孩子资料</button>') +
-      '<article class="ios-card parent-hero"><div class="parent-child"><span class="large-avatar">' + esc((state.child||'小').slice(0,1)) + '</span><div><h2>' + esc(state.child) + '的学习周报</h2><p>' + gradeLabel(Number(state.grade),state.subject) + ' · ' + SUBJECTS[state.subject].name + '</p></div></div><div class="parent-score"><div><strong>' + minutes + '</strong><span>本周分钟</span></div><div><strong>' + accuracy + '%</strong><span>本周正确率</span></div><div><strong>' + stats.mastered + '</strong><span>已掌握</span></div></div></article>' +
+      '<article class="ios-card parent-hero"><div class="parent-child"><span class="large-avatar">' + esc((state.child||'小').slice(0,1)) + '</span><div><h2>' + esc(state.child) + '的学习周报</h2><p>' + gradeLabel(Number(state.grade)) + ' · ' + esc(subjectName(state.subject)) + '</p></div></div><div class="parent-score"><div><strong>' + minutes + '</strong><span>本周分钟</span></div><div><strong>' + accuracy + '%</strong><span>本周正确率</span></div><div><strong>' + stats.mastered + '</strong><span>已掌握</span></div></div></article>' +
       '<div class="parent-grid"><article class="ios-card parent-panel"><h3>领域掌握情况</h3><div class="strength-list">' + byDomain.map(function(x){return '<div class="strength-row"><span>' + esc(x.name) + '</span><div class="strength-track"><i style="width:' + x.pct + '%;background:' + x.color + '"></i></div><b>' + x.pct + '%</b></div>';}).join('') + '</div></article><article class="ios-card parent-panel"><h3>本周陪学建议</h3><div class="advice-list">' + parentAdvice(stats,weak).map(function(x,i){return '<div class="advice-item"><i>' + (i+1) + '</i><div><strong>' + esc(x.title) + '</strong><p>' + esc(x.copy) + '</p></div></div>';}).join('') + '</div></article></div>' +
       '<div class="section-row"><div><h2>优先关注</h2><p>从最基础的薄弱点开始</p></div></div><div class="wrong-list">' + (weak.length ? weak.map(function(t){return '<button class="wrong-item" data-action="show-topic" data-topic="' + esc(t.id) + '" type="button"><i class="wrong-dot"></i><span><strong>' + esc(t.name) + '</strong><span>' + esc(t.description) + '</span></span></button>';}).join('') : '<div class="ios-card empty-card" style="grid-column:1/-1">暂时没有明显薄弱点。可以继续保持短时、规律的练习。</div>') + '</div></section>';
   }
@@ -216,7 +282,7 @@
 
   function render() {
     if (!D) return;
-    renderSubjectBar(); renderGradeSelect(); updateNavigation();
+    renderRegionSelect(); renderSubjectBar(); renderGradeSelect(); renderCurriculumContext(); updateNavigation();
     app.innerHTML = state.view === 'learn' ? renderLearn() : state.view === 'practice' ? renderPractice() : state.view === 'parent' ? renderParent() : renderHome();
   }
   function toast(msg) { toastNode.textContent=msg; toastNode.classList.add('show'); clearTimeout(toastNode._t); toastNode._t=setTimeout(function(){toastNode.classList.remove('show');},2200); }
@@ -224,10 +290,26 @@
   function showTopic(id) {
     var t=D.topicById[id]; if(!t)return;
     var prereq=(D.pre[id]||[]).map(function(x){return D.topicById[x];}).filter(Boolean).slice(0,8);
+    var next=(D.next[id]||[]).map(function(x){return D.topicById[x];}).filter(function(x){return x&&availableInRegion(x);}).slice(0,8);
+    var related=currentTopics(true).filter(function(x){return x.id!==id&&x.domain===t.domain&&Math.abs(Number(x.grade)-Number(t.grade))<=1;}).slice(0,6);
+    var cross=[];(t.crossSubjects||CROSS_SUBJECTS[subjectOf(t)]||[]).forEach(function(s){var x=D.topics.find(function(y){return subjectOf(y)===s&&Number(y.grade)===Number(t.grade)&&y.universal;});if(x)cross.push(x);});
     var p=statusOf(id);
     var tip=t.type==='conceptual'?'请孩子不用背定义，先用自己的话解释，再举一个生活中的例子。':t.type==='procedural'?'让孩子把步骤写出来，并说出每一步为什么这样做。':'请孩子先说思路，再动笔完成。';
-    openModal('<div class="modal-head"><strong>知识点</strong><button class="close-btn" data-close-modal type="button">×</button></div><div class="modal-body"><div class="topic-kicker"><span class="mini-tag">' + esc(gradeLabel(Number(t.grade),subjectOf(t))) + '</span><span class="mini-tag">' + esc(t.domain) + '</span><span class="mini-tag">' + statusLabel(p) + '</span></div><h2 class="topic-title">' + esc(t.name) + '</h2><p class="topic-description">' + esc(t.description) + '</p><div class="mastery-box"><h4>学会的标准</h4><ul>' + (t.mastery_criteria||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('') + '</ul></div>' + (prereq.length?'<div class="relation-box"><h4>学之前最好会</h4><div class="relation-chips">'+prereq.map(function(x){return '<button class="relation-chip" data-action="show-topic" data-topic="'+esc(x.id)+'" type="button">'+esc(x.name)+'</button>';}).join('')+'</div></div>':'') + '<div class="parent-tip"><b>陪学提示</b><span>' + esc(tip) + '</span></div><div class="modal-actions"><button class="secondary-btn" data-action="mark-mastered" data-topic="' + esc(t.id) + '" type="button">标为已掌握</button><button class="primary-btn" data-action="practice-topic" data-topic="' + esc(t.id) + '" type="button">练习这个知识点</button></div></div>');
+    openModal('<div class="modal-head"><strong>知识点</strong><button class="close-btn" data-close-modal type="button">×</button></div><div class="modal-body"><div class="topic-kicker"><span class="mini-tag">' + esc(gradeLabel(Number(t.grade))) + '</span><span class="mini-tag">' + esc(subjectName(subjectOf(t))) + '</span><span class="mini-tag">' + statusLabel(p) + '</span></div><h2 class="topic-title">' + esc(t.name) + '</h2><p class="topic-description">' + esc(t.description) + '</p><div class="mastery-box"><h4>学会的标准</h4><ul>' + (t.mastery_criteria||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('') + '</ul></div>' + relationSection('学之前最好会',prereq) + relationSection('接下来可以学',next) + relationSection('同类概念',related) + relationSection('跨学科连接',cross,true) + '<div class="parent-tip"><b>陪学提示</b><span>' + esc(tip) + '</span></div><div class="modal-actions"><button class="secondary-btn" data-action="mark-mastered" data-topic="' + esc(t.id) + '" type="button">标为已掌握</button><button class="primary-btn" data-action="practice-topic" data-topic="' + esc(t.id) + '" type="button">练习这个知识点</button></div></div>');
   }
+  function relationSection(title,items,cross) {
+    if(!items||!items.length)return '';
+    return '<div class="relation-box"><h4>'+esc(title)+'</h4><div class="relation-chips">'+items.map(function(x){return '<button class="relation-chip '+(cross?'cross':'')+'" data-action="show-topic" data-topic="'+esc(x.id)+'" type="button">'+(cross?'<small>'+esc(subjectName(subjectOf(x)))+'</small>':'')+esc(x.name)+'</button>';}).join('')+'</div></div>';
+  }
+  function openKnowledgeMap() {
+    var topics=sortedTopics(currentTopics()),center=pickLearningTopics().main||topics[0];
+    if(!center){toast('这个范围暂时没有知识点');return;}
+    var before=(D.pre[center.id]||[]).map(function(id){return D.topicById[id];}).filter(Boolean).slice(0,5);
+    var after=(D.next[center.id]||[]).map(function(id){return D.topicById[id];}).filter(function(x){return x&&availableInRegion(x);}).slice(0,5);
+    var parallel=topics.filter(function(t){return t.id!==center.id&&t.domain===center.domain;}).slice(0,5);
+    openModal('<div class="modal-head"><strong>知识图谱</strong><button class="close-btn" data-close-modal type="button">×</button></div><div class="modal-body graph-body"><div class="graph-intro"><span>'+esc(gradeLabel(Number(state.grade)))+'</span><b>'+esc(subjectName(state.subject))+'</b><small>'+topics.length+' 个知识点 · 点击节点查看</small></div><div class="knowledge-graph"><div class="graph-lane before"><h4>先备</h4>'+graphNodes(before)+'</div><button class="graph-center" data-action="show-topic" data-topic="'+esc(center.id)+'" type="button"><small>当前建议</small><strong>'+esc(center.name)+'</strong><span>'+esc(center.domain)+'</span></button><div class="graph-lane after"><h4>延伸</h4>'+graphNodes(after)+'</div></div><div class="graph-related"><h4>同类连接</h4><div class="relation-chips">'+graphNodes(parallel,true)+'</div></div></div>');
+  }
+  function graphNodes(items,inline){if(!items.length)return '<span class="graph-empty">从这里开始</span>';return items.map(function(x){return '<button class="graph-node '+(inline?'inline':'')+'" data-action="show-topic" data-topic="'+esc(x.id)+'" type="button">'+esc(x.name)+'</button>';}).join('');}
   function openSettings() {
     openModal('<div class="modal-head"><strong>孩子资料</strong><button class="close-btn" data-close-modal type="button">×</button></div><div class="modal-body"><div class="settings-form"><label class="field-label">称呼<input id="child-name-input" maxlength="8" value="'+esc(state.child)+'"></label><p class="tiny-note">学习记录只保存在当前浏览器，不会上传个人资料。</p><button class="primary-btn" data-action="save-settings" type="button">保存</button></div></div>');
   }
@@ -304,21 +386,22 @@
     else if(a==='retry-quiz'){var mode=action.getAttribute('data-mode');closeModal();startQuiz(mode);}
     else if(a==='settings')openSettings();
     else if(a==='save-settings'){var name=document.getElementById('child-name-input');if(name&&name.value.trim())state.child=name.value.trim();saveState();closeModal();render();toast('资料已保存');}
-    else if(a==='open-map')location.href='math-path/explore/?subject='+encodeURIComponent(state.subject)+'&grade='+encodeURIComponent(state.grade);
+    else if(a==='open-map')openKnowledgeMap();
   });
   document.addEventListener('input',function(e){if(e.target.id==='knowledge-search'){learnSearch=e.target.value;clearTimeout(e.target._t);e.target._t=setTimeout(render,120);}});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modalLayer.hidden)closeModal();if(e.key==='Enter'&&e.target.id==='quiz-answer'&&quiz&&!quiz.feedback)recordAnswer(e.target.value);});
   gradeSelect.addEventListener('change',function(){state.grade=Number(this.value);saveState();render();});
+  regionSelect.addEventListener('change',function(){state.region=this.value;learnDomain='all';saveState();render();});
   profileButton.addEventListener('click',openSettings);
   window.addEventListener('hashchange',function(){state.view=hashView();render();});
   document.querySelectorAll('[data-icon]').forEach(function(n){n.innerHTML=icon(n.getAttribute('data-icon'));});
 
   Promise.all([WindData.load('topics.json'),WindData.load('questions.json'),WindData.load('dependencies.json')]).then(function(data){
-    var topics=data[0],questions=data[1],deps=data[2],topicById={},questionsByTopic={},pre={};
-    topics.forEach(function(t){topicById[t.id]=t;pre[t.id]=[];});
+    var foundation=buildFoundationContent(),topics=data[0].concat(foundation.topics),questions=data[1].concat(foundation.questions),deps=data[2].concat(foundation.deps),topicById={},questionsByTopic={},pre={},next={};
+    topics.forEach(function(t){topicById[t.id]=t;pre[t.id]=[];next[t.id]=[];});
     questions.forEach(function(q){(questionsByTopic[q.topicId]||(questionsByTopic[q.topicId]=[])).push(q);});
-    deps.forEach(function(d){if(pre[d.topicId])pre[d.topicId].push(d.prerequisiteId);});
-    D={topics:topics,questions:questions,deps:deps,topicById:topicById,questionsByTopic:questionsByTopic,pre:pre};
+    deps.forEach(function(d){if(pre[d.topicId])pre[d.topicId].push(d.prerequisiteId);if(next[d.prerequisiteId])next[d.prerequisiteId].push(d.topicId);});
+    D={topics:topics,questions:questions,deps:deps,topicById:topicById,questionsByTopic:questionsByTopic,pre:pre,next:next};
     state.view=hashView();render();
   }).catch(function(err){app.innerHTML='<div class="ios-card empty-card" style="margin-top:80px"><strong>学习内容暂时没有加载成功</strong><p>请稍后刷新页面。</p></div>';console.error(err);});
 })();
