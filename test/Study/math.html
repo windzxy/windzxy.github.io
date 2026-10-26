@@ -1,1 +1,671 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f4f6fb"><title>数学｜Wind 学堂</title><link rel="stylesheet" href="assets/ui-v4.css?v=20260805-12"><link rel="stylesheet" href="assets/math-path-entry-v1.css?v=20261026-1"></head><body data-page="course" data-subject="math"><div class="app-shell"><aside class="sidebar" id="sidebar"><a class="wordmark" href="index.html"><span>W</span><strong>Wind 学堂</strong></a><nav class="side-nav"><a data-nav="home" href="index.html"><b>⌂</b><span>首页</span></a><a data-nav="courses" href="course.html"><b>▦</b><span>课程</span></a><a data-nav="practice" href="practice.html"><b>✎</b><span>题库</span></a><a data-nav="mistakes" href="mistakes.html"><b>↺</b><span>错题</span></a><a data-nav="progress" href="progress.html"><b>◔</b><span>进度</span></a></nav><div class="side-foot"><span id="side-stage">小学</span><span id="side-system">综合</span></div></aside><div class="workspace"><header class="topbar"><button class="menu-btn" id="menu-btn" type="button" aria-label="打开导航">☰</button><div class="page-title" id="page-title"></div><div class="top-actions"><button class="compact-btn" id="quick-practice" type="button">随机练习</button><div class="score-pill">★ <span id="star-count">0</span></div></div></header><main id="app"></main></div></div><div class="toast" id="toast"></div><script src="assets/pako_inflate.min.js?v=20260805-12"></script><script src="assets/bootstrap-v6.js?v=20260805-4"></script><script src="assets/catalog-v4.js?v=20260805-12"></script><script src="assets/questions-v4.js?v=20260805-12"></script><script src="assets/app-v4.js?v=20260805-12"></script><script src="assets/math-path-entry-v1.js?v=20261026-2"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>數學計算練習</title>
+  <style>
+
+:root{--ink:#172034;--muted:#788195;--line:rgba(32,45,72,.1);--bg:#f3f6fb;--paper:#fff;--blue:#3478f6;--blue-dark:#285ed0;--blue-soft:#eaf2ff;--green:#20a77b;--green-soft:#e7f8f1;--orange:#f2a33a;--orange-soft:#fff3df;--purple:#7868e8;--purple-soft:#efedff;--red:#eb6262;--shadow:0 18px 55px rgba(35,54,92,.08),0 2px 10px rgba(35,54,92,.035);--radius:24px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 8% 5%,rgba(91,145,255,.12),transparent 28%),radial-gradient(circle at 95% 22%,rgba(54,203,158,.1),transparent 26%),var(--bg);color:var(--ink);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:inherit;text-decoration:none}
+.app{width:min(1180px,calc(100% - 32px));margin:16px auto 52px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:4px 2px 12px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#438cff,#6a63ee);box-shadow:0 8px 20px rgba(66,111,231,.23);color:#fff;font-size:20px;font-weight:900}
+.brand-copy strong,.brand-copy small{display:block}.brand-copy strong{font-size:16px;letter-spacing:-.02em}.brand-copy small{margin-top:1px;color:var(--muted);font-size:11px}
+.topbar-actions{display:flex;align-items:center;gap:12px}.back-link{color:#657084;font-size:12px;font-weight:750}.back-link:hover{color:var(--blue)}
+.star-wallet{display:flex;align-items:center;gap:9px;min-width:104px;padding:7px 13px;border:1px solid rgba(255,255,255,.9);border-radius:15px;background:rgba(255,255,255,.78);box-shadow:0 6px 18px rgba(35,54,92,.05)}
+.wallet-star{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:#fff3c9;color:#d99511;font-size:19px}.star-wallet strong,.star-wallet small{display:block;line-height:1.2}.star-wallet strong{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}.star-wallet small{margin-top:3px;color:var(--muted);font-size:10px}
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:20px;overflow:hidden;padding:28px 32px 22px;border-radius:28px;background:linear-gradient(125deg,#2e72ed 0%,#5268ed 52%,#7460e8 100%);box-shadow:0 24px 65px rgba(55,90,220,.2);color:#fff}
+.hero:before{content:"";position:absolute;right:-100px;top:-170px;width:420px;height:420px;border:1px solid rgba(255,255,255,.16);border-radius:50%;box-shadow:0 0 0 44px rgba(255,255,255,.045),0 0 0 90px rgba(255,255,255,.025);pointer-events:none}
+.hero-copy,.hero-art,.hero-stats{position:relative;z-index:1}.hero-kicker{display:inline-flex;align-items:center;gap:8px;margin-bottom:11px;color:rgba(255,255,255,.78);font-size:10px;font-weight:850;letter-spacing:.14em}.hero-kicker:before{content:"";width:7px;height:7px;border-radius:50%;background:#ffdf85;box-shadow:0 0 0 5px rgba(255,223,133,.16)}
+.hero h1{margin:0;font-size:clamp(28px,4vw,42px);line-height:1.12;letter-spacing:-.045em}.hero-copy>p{max-width:600px;margin:12px 0 0;color:rgba(255,255,255,.8);font-size:13px;line-height:1.75}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:19px}.hero-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(255,255,255,.12);font-size:11px;font-weight:750;backdrop-filter:blur(8px)}
+.hero-art{display:flex;align-items:center;justify-content:center;min-height:145px}.bead-orbit{position:relative;display:grid;place-items:center;width:150px;height:150px;border:1px solid rgba(255,255,255,.2);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),rgba(255,255,255,0) 70%)}.bead-orbit:before,.bead-orbit:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.2);border-radius:50%;transform:rotate(-30deg)}.bead-orbit:before{width:195px;height:74px}.bead-orbit:after{width:195px;height:74px;transform:rotate(58deg)}.orbit-core{display:grid;place-items:center;width:68px;height:68px;border:5px solid rgba(255,255,255,.8);border-radius:22px;background:linear-gradient(135deg,#ffcf6e,#ff8b9d);box-shadow:0 12px 28px rgba(24,37,83,.2);color:#fff;font-size:30px;font-weight:900;transform:rotate(-8deg)}.orbit-dot{position:absolute;width:20px;height:20px;border:3px solid rgba(255,255,255,.8);border-radius:7px;background:#ffd36c;box-shadow:0 5px 12px rgba(24,37,83,.16)}.orbit-dot.one{top:10px;right:14px;background:#7be0c1}.orbit-dot.two{bottom:8px;left:17px;background:#ff9eb8}.orbit-dot.three{right:3px;bottom:35px;background:#b9adff}
+.hero-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:2px}.hero-stat{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid rgba(255,255,255,.17);border-radius:15px;background:rgba(255,255,255,.1);backdrop-filter:blur(8px)}.hero-stat strong{display:block;font-size:21px;line-height:1.1;font-variant-numeric:tabular-nums}.hero-stat span{display:block;color:rgba(255,255,255,.75);font-size:10px}
+.feature-tabs{display:flex;gap:7px;margin:18px 0 4px;padding:5px;border:1px solid rgba(255,255,255,.8);border-radius:17px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(35,54,92,.04);backdrop-filter:blur(16px);overflow:auto;scrollbar-width:none}.feature-tabs::-webkit-scrollbar{display:none}.feature-tab{display:flex;flex:1 0 auto;align-items:center;justify-content:center;gap:8px;min-height:43px;padding:0 16px;border-radius:12px;background:transparent;color:#69758b;font-size:12px;font-weight:800;white-space:nowrap;transition:.18s}.feature-tab:hover{color:var(--ink)}.feature-tab.active{background:#fff;color:var(--blue);box-shadow:0 4px 14px rgba(35,54,92,.08)}.tab-symbol{font-size:16px}.feature-panel{display:none;animation:panel-in .24s ease}.feature-panel.active{display:block}@keyframes panel-in{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+.panel,.worksheet{margin-top:16px;border:1px solid rgba(255,255,255,.86);border-radius:var(--radius);background:rgba(255,255,255,.92);box-shadow:var(--shadow)}.panel{padding:23px}.panel-intro{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:20px}.panel-intro h2{margin:0;font-size:20px;letter-spacing:-.03em}.panel-intro p{max-width:560px;margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+.settings-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:end}.field{display:flex;flex-direction:column;gap:7px;min-width:0}.field label{color:#657084;font-size:11px;font-weight:800}.field select,.field input{width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid #e0e6f0;border-radius:12px;outline:none;background:#fff;color:var(--ink);font-size:12px;transition:.16s}.field select:focus,.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(52,120,246,.1)}.custom-limit{display:none}.custom-limit.show{display:flex}
+.checks{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:17px;padding-top:16px;border-top:1px dashed #e1e7f0}.check{display:inline-flex;align-items:center;gap:8px;color:#59657a;font-size:12px;user-select:none}.check input{width:16px;height:16px;accent-color:var(--blue)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 14px;border:1px solid transparent;border-radius:12px;font-size:12px;font-weight:800;transition:.16s}.btn:hover{transform:translateY(-1px)}.btn-primary{background:var(--blue);color:#fff;box-shadow:0 7px 17px rgba(52,120,246,.19)}.btn-secondary{border-color:#e1e7f0;background:#f7f9fc;color:#5d6b82}.btn-green{background:var(--green-soft);color:#167a59}.btn-orange{background:var(--orange-soft);color:#965a00}.btn-danger{background:#fff0ef;color:#a73d45}
+.notice{display:none;margin-top:13px;padding:10px 13px;border:1px solid #f0d483;border-radius:12px;background:#fff8df;color:#805a00;font-size:12px;line-height:1.6}.notice.show{display:block}
+.worksheet{padding:24px;min-height:350px}.sheet-page{position:relative;background:#fff}.sheet-page+.sheet-page{margin-top:30px;padding-top:25px;border-top:7px solid var(--bg)}.page-indicator{display:none!important}.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:17px;padding-bottom:13px;border-bottom:2px solid var(--ink)}.sheet-title h2{margin:0 0 5px;font-size:22px}.sheet-title p{margin:0;color:var(--muted);font-size:11px}.student-info{display:flex;align-items:flex-start;gap:14px;font-size:12px;white-space:nowrap}.time-box{display:none;padding-top:4px;color:var(--ink);font-weight:700}.time-box.visible{display:block}.time-value{font-weight:800}.score-box{display:none;color:#d83a3a;font-weight:900;line-height:1;font-family:"Segoe Print","Bradley Hand","Comic Sans MS",cursive;transform:rotate(-4deg);text-align:right}.score-box.visible{display:block}.score-box .score-value{display:inline-block;padding:0;border:0;text-align:center;font-size:29px}.line{display:inline-block;width:90px;border-bottom:1px solid #707887;transform:translateY(-2px)}
+.questions{display:grid;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));gap:12px}.question{position:relative;min-height:98px;padding:14px 12px 11px;border:1px solid #e4e9f2;border-radius:15px;background:#fff;break-inside:avoid;transition:border-color .15s,box-shadow .15s}.question:focus-within{border-color:#b7ceff;box-shadow:0 0 0 3px rgba(52,120,246,.06)}.q-index{position:absolute;top:7px;left:10px;color:#8791a3;font-size:10px;font-weight:800}.equation{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:14px;font-size:clamp(20px,2.5vw,27px);font-weight:900;letter-spacing:.2px}.answer-input{width:62px;min-height:34px;padding:2px 1px;border:0;border-bottom:2px solid #29354c;border-radius:0;outline:none;background:transparent;color:var(--blue-dark);text-align:center;font-weight:900;font-size:22px}.answer-input:focus{border-color:var(--blue);background:#f5f8ff}.answer-input.correct{border-color:var(--green);border-radius:6px 6px 0 0;background:#e9f8f2;color:var(--green)}.answer-input.wrong{border-color:var(--red);border-radius:6px 6px 0 0;background:#fff0f1;color:var(--red)}select.answer-input{width:70px;min-height:36px;cursor:pointer;appearance:auto;font-size:20px}.print-compare-line{display:none}.mark{width:22px;font-size:21px;font-weight:900;line-height:1;text-align:center}.mark.correct{color:var(--green)}.mark.wrong{color:var(--red)}.answer-text{display:none;min-width:58px;border-bottom:2px solid var(--red);color:var(--red);text-align:center;font-size:25px}.show-answers .answer-input{display:none}.show-answers .answer-text{display:inline-block}.strategy{margin-top:9px;padding:7px 8px;border:1px dashed #d4dced;border-radius:9px;background:#f7f8fe;color:#59647a;font-size:11px;line-height:1.5;text-align:center}.strategy strong{color:var(--blue-dark)}.strategy-placeholder{height:30px;margin-top:9px;border:1px dashed #d7dce7;border-radius:8px}
+.result{display:none;margin-top:16px;padding:14px 16px;border:1px solid #bce8d7;border-radius:14px;background:#effaf6;color:#176b50;font-size:13px;font-weight:800;line-height:1.7}.result.show{display:block}.footer-tip{margin-top:13px;color:var(--muted);font-size:11px;text-align:center}
+.bead-panel{padding:24px}.bead-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:22px}.bead-intro h2{margin:0;font-size:24px;letter-spacing:-.035em}.bead-intro p{max-width:600px;margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.7}.bead-wallet{display:flex;align-items:center;gap:7px;flex:0 0 auto;padding:9px 13px;border-radius:14px;background:#fff5d9;color:#a8730b;font-weight:850}.bead-wallet strong{font-size:18px;color:#81540a}
+.bead-layout{display:grid;grid-template-columns:minmax(235px,.72fr) minmax(0,1.28fr);gap:20px;align-items:start}.bead-tools{display:flex;flex-direction:column;gap:17px;padding:18px;border:1px solid #e8edf5;border-radius:20px;background:#f8faff}.tool-title{margin-bottom:9px;color:#35425a;font-size:12px;font-weight:850}.design-name-field{display:flex;flex-direction:column;gap:7px;color:#657084;font-size:11px;font-weight:800}.design-name-field input{width:100%;min-height:40px;padding:9px 11px;border:1px solid #e0e6f0;border-radius:11px;background:#fff;outline:none;font-size:12px}.design-name-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(52,120,246,.1)}
+.template-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.template-btn{min-height:39px;padding:7px 9px;border:1px solid #e1e7f0;border-radius:11px;background:#fff;color:#4c5870;font-size:11px;font-weight:750;transition:.15s}.template-btn:hover{border-color:#b8ceff;background:#f3f7ff}.bead-palette{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.palette-color{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;padding:8px 4px;border:1px solid #e1e7f0;border-radius:12px;background:#fff;color:#657084;font-size:10px;transition:.15s}.palette-color.selected{border-color:var(--blue);background:#f2f7ff;box-shadow:0 0 0 2px rgba(52,120,246,.08)}.palette-color.locked{background:#f5f6f9}.palette-color.locked:after{content:"";position:absolute;inset:0;border-radius:11px;background:rgba(245,246,249,.32);pointer-events:none}.palette-swatch{width:25px;height:25px;border:2px solid rgba(25,35,55,.09);border-radius:50%;background:var(--swatch);box-shadow:inset 0 -3px rgba(0,0,0,.07)}.palette-name{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.palette-color small{color:#8791a3;font-size:9px;font-weight:800}.palette-color.selected small{color:var(--blue)}.palette-color.locked small{color:#aa7b2b}
+.tool-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.tool-actions .btn{padding:0 8px;font-size:11px}.tool-actions .btn:last-child{grid-column:1/-1}.bead-tip{margin:0;color:#8791a3;font-size:10px;line-height:1.6}
+.board-area{min-width:0;padding:18px;border:1px solid #e7ecf4;border-radius:20px;background:linear-gradient(145deg,#fbfcff,#f7f9fd)}.board-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.board-head strong{font-size:14px}.board-head span{color:var(--muted);font-size:11px;font-weight:750}.bead-board{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;width:min(100%,520px);aspect-ratio:1;margin:0 auto;padding:8px;border:1px solid #e0e6f0;border-radius:17px;background:#e9edf5;box-shadow:inset 0 2px 5px rgba(35,54,92,.06);touch-action:manipulation}.bead-cell{min-width:0;aspect-ratio:1;padding:0;border:1px solid rgba(29,43,67,.08);border-radius:4px;background:var(--cell-color,#fff);box-shadow:inset 0 -2px rgba(0,0,0,.045);transition:transform .08s,filter .08s}.bead-cell:hover{z-index:1;filter:brightness(.97);transform:scale(1.06)}.board-hint{margin-top:12px;color:#7d8799;font-size:11px;text-align:center}
+.gallery-section{margin-top:26px;padding-top:21px;border-top:1px solid #e8edf4}.gallery-section h3,.achievement-wrap h3{margin:0 0 13px;font-size:15px}.saved-designs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.saved-design{position:relative;min-width:0;padding:10px;border:1px solid #e5eaf2;border-radius:15px;background:#fff}.saved-design-open{display:block;width:100%;padding:0;background:transparent;text-align:left}.saved-design-mini{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1px;aspect-ratio:1.6;overflow:hidden;margin-bottom:8px;border-radius:7px;background:#edf0f5}.saved-design-mini i{display:block;background:var(--cell-color,#fff)}.saved-design-open strong{display:block;overflow:hidden;color:#344056;font-size:11px;text-overflow:ellipsis;white-space:nowrap}.saved-design-open small{display:block;margin-top:3px;color:#8a93a4;font-size:9px}.saved-design-delete{position:absolute;top:7px;right:7px;display:grid;width:23px;height:23px;place-items:center;border-radius:8px;background:rgba(245,247,251,.94);color:#7d8799;font-size:15px}.saved-design-delete:hover{background:#fff0ef;color:#c14b53}.empty-gallery{grid-column:1/-1;padding:24px 15px;border:1px dashed #dce3ee;border-radius:14px;color:#8a93a4;font-size:12px;text-align:center}
+.growth-panel{padding:24px}.growth-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.growth-stat{padding:17px;border:1px solid #e8edf5;border-radius:16px;background:linear-gradient(145deg,#fff,#f9fbff)}.growth-stat span{display:block;color:#7b8597;font-size:11px}.growth-stat strong{display:block;margin-top:7px;color:#25324a;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}.achievement-wrap{margin-top:28px}.achievement-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.achievement{display:flex;align-items:center;gap:11px;padding:13px;border:1px solid #e8edf5;border-radius:15px;background:#fff}.achievement.locked{opacity:.55;background:#f7f8fb}.achievement-icon{display:grid;flex:0 0 39px;place-items:center;width:39px;height:39px;border-radius:13px;background:#fff3d4;color:#d49a18;font-size:19px}.achievement strong,.achievement small{display:block}.achievement strong{font-size:11px}.achievement small{margin-top:3px;color:#8791a3;font-size:10px;line-height:1.45}.growth-note{margin-top:18px;padding:14px 16px;border-radius:14px;background:#f3f7ff;color:#62718a;font-size:11px;line-height:1.7}
+.game-toast{position:fixed;z-index:99;left:50%;bottom:26px;max-width:calc(100% - 32px);padding:12px 18px;border:1px solid rgba(255,255,255,.8);border-radius:14px;background:rgba(23,32,52,.92);box-shadow:0 14px 40px rgba(23,32,52,.22);color:#fff;font-size:12px;font-weight:750;opacity:0;pointer-events:none;transform:translate(-50%,10px);transition:.2s}.game-toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:920px){.settings-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bead-layout{grid-template-columns:minmax(210px,.8fr) minmax(0,1.2fr)}.growth-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.achievement-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.app{width:calc(100% - 18px);margin:9px auto 34px}.topbar{gap:8px}.brand-mark{width:38px;height:38px;border-radius:12px}.brand-copy strong{font-size:14px}.brand-copy small{font-size:10px}.topbar-actions{gap:8px}.back-link{font-size:10px}.star-wallet{min-width:84px;padding:6px 9px;gap:6px}.wallet-star{width:27px;height:27px}.star-wallet strong{font-size:16px}.star-wallet small{font-size:9px}.hero{grid-template-columns:1fr;padding:22px 19px 17px;border-radius:22px}.hero-art{display:none}.hero h1{font-size:30px}.hero-copy>p{font-size:12px}.hero-stats{gap:7px}.hero-stat{display:block;padding:10px 9px;text-align:center}.hero-stat strong{font-size:18px}.hero-stat span{margin-top:4px;font-size:9px}.feature-tabs{margin-top:12px}.feature-tab{min-height:40px;padding:0 12px;font-size:11px}.panel,.worksheet,.bead-panel,.growth-panel{padding:16px 13px;border-radius:19px}.panel-intro{display:block;margin-bottom:16px}.panel-intro h2{font-size:18px}.settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field select,.field input{min-height:40px;padding:8px;font-size:11px}.checks{gap:10px 12px}.check{font-size:11px}.actions{gap:7px}.btn{min-height:38px;padding:0 10px;font-size:11px}.worksheet{padding:15px 10px;min-height:300px}.sheet-head{flex-direction:column;gap:8px}.sheet-title h2{font-size:19px}.student-info{gap:10px}.questions{grid-template-columns:1fr!important;gap:9px}.question{min-height:86px;padding:12px 10px}.equation{font-size:24px}.bead-intro{gap:8px}.bead-intro h2{font-size:21px}.bead-intro p{font-size:11px}.bead-wallet{padding:7px 9px;font-size:10px}.bead-wallet strong{font-size:15px}.bead-layout{grid-template-columns:1fr;gap:12px}.bead-tools{padding:14px}.bead-palette{grid-template-columns:repeat(4,minmax(0,1fr))}.palette-color{padding:7px 2px}.palette-swatch{width:23px;height:23px}.board-area{padding:12px 9px}.bead-board{gap:2px;padding:5px;border-radius:12px}.bead-cell{border-radius:3px}.saved-designs{grid-template-columns:repeat(2,minmax(0,1fr))}.growth-stats{gap:8px}.growth-stat{padding:13px}.growth-stat strong{font-size:23px}.achievement-list{grid-template-columns:1fr}.footer-tip{font-size:10px}}
+@page{size:A4;margin:9mm}
+@media print{body{background:#fff}.app{width:100%;margin:0}.topbar,.hero,.feature-tabs,.panel,.footer-tip,.result,.bead-panel,.growth-panel,.game-toast{display:none!important}.feature-panel{display:none!important}.feature-panel[data-feature-panel="practice"]{display:block!important}.worksheet{display:block!important;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;min-height:auto}.sheet-page{margin:0!important;padding:0!important;border:0!important;break-after:page;page-break-after:always}.sheet-page:last-child{break-after:auto;page-break-after:auto}.sheet-head{margin-bottom:4mm;padding-bottom:2.5mm}.sheet-title h2{font-size:18px;margin-bottom:2px}.sheet-title p{font-size:9.5px}.student-info{gap:10px;font-size:10.5px}.time-box{padding-top:2px}.score-box{color:#c33;transform:rotate(-3deg)}.score-box .score-value{font-size:24px}.line{width:60px}.questions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1.4mm 5mm!important}.question{height:8.25mm;min-height:0;padding:0 1.5mm;border:0;border-bottom:1px dotted #999;border-radius:0;display:flex;align-items:center;page-break-inside:avoid}.q-index{position:static;width:12mm;flex:0 0 12mm;color:#444;font-size:7.5px}.equation{flex:1;justify-content:flex-start;gap:4px;margin:0;font-size:16px;letter-spacing:0;white-space:nowrap}.answer-input{width:38px;padding:0;color:#000;border-color:#000;font-size:16px}select.answer-input{display:none!important}.print-compare-line{display:inline-block;width:45px;height:22px;border-bottom:2px solid #000;flex:0 0 45px}.show-answers .print-compare-line{display:none!important}.answer-text{width:38px;min-width:38px;color:#000;border-color:#000;font-size:16px}.strategy,.strategy-placeholder,.mark{display:none!important}}
+
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Wind 学堂首页">
+        <span class="brand-mark">W</span>
+        <span class="brand-copy"><strong>Wind 学堂</strong><small>数学成长乐园</small></span>
+      </a>
+      <div class="topbar-actions">
+        <a class="back-link" href="index.html">← 返回学堂</a>
+        <div class="star-wallet" aria-label="我的星星"><span class="wallet-star">★</span><div><strong id="starBalance">0</strong><small data-game-text="stars">星星余额</small></div></div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="hero-kicker" data-game-text="heroEyebrow">MATH QUEST · PLAY & LEARN</span>
+        <h1 data-i18n="title">數學計算練習</h1>
+        <p data-i18n="subtitle">2～4 個數字 · 加減乘除 · 奧數巧算 · 線上評分 · 多頁列印</p>
+        <div class="hero-pills">
+          <span class="hero-pill" data-game-text="heroPillOne">✦ 答對一題，點亮一顆星</span>
+          <span class="hero-pill" data-game-text="heroPillTwo">▦ 用星星解鎖拼豆顏色</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="bead-orbit"><div class="orbit-core">＋</div><i class="orbit-dot one"></i><i class="orbit-dot two"></i><i class="orbit-dot three"></i></div></div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div><strong id="heroStarBalance">0</strong><span data-game-text="stars">星星餘額</span></div></div>
+        <div class="hero-stat"><div><strong id="heroCorrectStat">0</strong><span data-game-text="correctTotal">累計答對</span></div></div>
+        <div class="hero-stat"><div><strong id="heroStreakStat">0</strong><span data-game-text="streak">連續練習天</span></div></div>
+      </div>
+    </section>
+
+    <nav class="feature-tabs" aria-label="數學學習功能">
+      <button class="feature-tab active" data-feature-tab="practice" type="button"><span class="tab-symbol">∑</span><span data-game-text="practiceTab">數學練習</span></button>
+      <button class="feature-tab" data-feature-tab="beads" type="button"><span class="tab-symbol">▦</span><span data-game-text="beadTab">拼豆工坊</span></button>
+      <button class="feature-tab" data-feature-tab="growth" type="button"><span class="tab-symbol">✦</span><span data-game-text="growthTab">成長記錄</span></button>
+    </nav>
+
+    <section class="feature-panel active" data-feature-panel="practice">
+    <section class="panel">
+      <div class="panel-intro"><div><h2 data-game-text="panelTitle">設定今日練習</h2><p data-game-text="panelCopy">依照孩子目前的能力選擇題型與難度；完成作答後即可領取星星。</p></div></div>
+      <div class="settings-grid">
+        <div class="field">
+          <label for="language" data-i18n="language">語言</label>
+          <select id="language">
+            <option value="zh-Hant">繁體中文</option>
+            <option value="zh-Hans" selected>简体中文</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="limit" data-i18n="range">計算範圍</label>
+          <select id="limit">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="custom" data-i18n="custom">自訂</option>
+          </select>
+        </div>
+
+        <div class="field custom-limit" id="customLimitWrap">
+          <label for="customLimit" data-i18n="customLimit">自訂上限</label>
+          <input id="customLimit" type="number" min="5" max="999" value="60" />
+        </div>
+
+        <div class="field">
+          <label for="operation" data-i18n="operation">運算類型</label>
+          <select id="operation">
+            <option value="addsub" data-i18n="addsub" selected>加減混合</option>
+            <option value="compare" data-i18n="compare">比較大小 ＞、＝、＜</option>
+            <option value="tensMixed" data-i18n="tensMixed">兩位數加減混合</option>
+            <option value="tensAdd" data-i18n="tensAdd">兩位數加法</option>
+            <option value="tensSub" data-i18n="tensSub">兩位數減法（AA − BB）</option>
+            <option value="chainSub" data-i18n="chainSub">連減 A−B−C</option>
+            <option value="chainAddSub" data-i18n="chainAddSub">連加減</option>
+            <option value="all" data-i18n="all">加減乘除混合</option>
+            <option value="add" data-i18n="add">只做加法</option>
+            <option value="sub" data-i18n="sub">只做減法</option>
+            <option value="mul" data-i18n="mul">只做乘法</option>
+            <option value="div" data-i18n="div">只做除法</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="operandCount" data-i18n="operandCount">每題數字個數</label>
+          <select id="operandCount">
+            <option value="2" data-i18n="twoNumbers">2 個</option>
+            <option value="3" data-i18n="threeNumbers" selected>3 個</option>
+            <option value="4" data-i18n="fourNumbers">4 個</option>
+            <option value="mixed" data-i18n="mixedCount">2～4 個混合</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="strategyMode" data-i18n="strategy">方法訓練</label>
+          <select id="strategyMode">
+            <option value="normal" data-i18n="normal">普通隨機</option>
+            <option value="auto" data-i18n="auto" selected>自動匹配方法</option>
+            <option value="make10" data-i18n="make10">專項：湊十法</option>
+            <option value="break10" data-i18n="break10">專項：破十法</option>
+            <option value="level10" data-i18n="level10">專項：平十法</option>
+            <option value="decompose" data-i18n="decompose">專項：拆分法</option>
+            <option value="makeWhole" data-i18n="makeWhole">專項：湊整法</option>
+            <option value="multiplication" data-i18n="multiplication">專項：乘法口訣</option>
+            <option value="division" data-i18n="division">專項：除法口訣</option>
+            <option value="distribute" data-i18n="distribute">專項：乘法分配律</option>
+            <option value="olympiadMixed" data-i18n="olympiadMixed">奧數：綜合巧算</option>
+            <option value="olympiadPairing" data-i18n="olympiadPairing">奧數：配對湊整</option>
+            <option value="olympiadReverse" data-i18n="olympiadReverse">奧數：逆向推理</option>
+            <option value="olympiadPattern" data-i18n="olympiadPattern">奧數：規律計算</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="level" data-i18n="level">難易度</label>
+          <select id="level">
+            <option value="easy" data-i18n="easy">容易</option>
+            <option value="medium" data-i18n="medium" selected>中等</option>
+            <option value="hard" data-i18n="hard">困難</option>
+            <option value="challenge" data-i18n="challenge">挑戰</option>
+            <option value="olympiad" data-i18n="olympiad">奧數</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="difficulty" data-i18n="carryMode">進位／退位設定</label>
+          <select id="difficulty">
+            <option value="mixed" data-i18n="mixed" selected>隨機混合</option>
+            <option value="cross" data-i18n="cross">需要進位／退位</option>
+            <option value="noCross" data-i18n="noCross">不進位／不退位</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="count" data-i18n="perPage">每頁題目數量</label>
+          <select id="count">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50" selected>50</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="totalPages" data-i18n="totalPages">總頁數</label>
+          <select id="totalPages">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="columns" data-i18n="columns">螢幕每行題數</label>
+          <select id="columns">
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="checks">
+        <label class="check">
+          <input id="nonNegative" type="checkbox" checked />
+          <span data-i18n="nonNegative">減法不出現負數</span>
+        </label>
+        <label class="check">
+          <input id="showHints" type="checkbox" checked />
+          <span data-i18n="showHints">顯示方法提示</span>
+        </label>
+        <label class="check">
+          <input id="includeZero" type="checkbox" />
+          <span data-i18n="includeZero">允許出現 0</span>
+        </label>
+        <label class="check">
+          <input id="avoidDuplicate" type="checkbox" checked />
+          <span data-i18n="avoidDuplicate">盡量避免重複題</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="generateBtn" data-i18n="generate">🎲 隨機出題</button>
+        <button class="btn btn-secondary" id="toggleAnswerBtn" data-i18n="showAnswers">👀 顯示答案</button>
+        <button class="btn btn-green" id="checkBtn" data-i18n="check">✓ 檢查作答</button>
+        <button class="btn btn-orange" id="printBlankBtn" data-i18n="printBlank">🖨️ 列印練習</button>
+        <button class="btn btn-orange" id="printAnswerBtn" data-i18n="printAnswer">📄 列印含答案</button>
+        <button class="btn btn-danger" id="clearBtn" data-i18n="clear">↺ 清空作答</button>
+      </div>
+      <div class="notice" id="notice"></div>
+    </section>
+
+    <section class="worksheet" id="worksheet">
+      <div class="pages" id="pages"></div>
+      <div class="result" id="result"></div>
+    </section>
+
+    <p class="footer-tip" data-i18n="footer">
+      每頁會依照所選題目數量自動分頁；所有頁面可一次列印，也可在列印視窗選擇另存為 PDF。
+    </p>
+    </section>
+
+    <section class="feature-panel" data-feature-panel="beads">
+      <section class="panel bead-panel">
+        <div class="bead-intro">
+          <div><h2 data-game-text="beadTitle">拼豆工坊</h2><p data-game-text="beadCopy">用練習獲得的星星解鎖更多顏色，在 12 × 12 畫布上創作自己的像素作品。</p></div>
+          <div class="bead-wallet">★ <strong id="beadStarBalance">0</strong></div>
+        </div>
+        <div class="bead-layout">
+          <aside class="bead-tools">
+            <label class="design-name-field"><span data-game-text="designName">作品名稱</span><input id="designName" maxlength="24" value="我的第一幅拼豆" placeholder="給作品取個名字"></label>
+            <div><div class="tool-title" data-game-text="templateTitle">快速圖案</div><div class="template-grid">
+              <button class="template-btn" data-template="heart" type="button" data-game-text="templateHeart">💗 愛心</button>
+              <button class="template-btn" data-template="flower" type="button" data-game-text="templateFlower">🌼 小花</button>
+              <button class="template-btn" data-template="smile" type="button" data-game-text="templateSmile">😊 笑臉</button>
+              <button class="template-btn" data-template="rainbow" type="button" data-game-text="templateRainbow">🌈 彩虹</button>
+            </div></div>
+            <div><div class="tool-title" data-game-text="paletteTitle">拼豆顏色 · 點選使用</div><div id="beadPalette" class="bead-palette"></div></div>
+            <div class="tool-actions">
+              <button id="clearBoardBtn" class="btn btn-secondary" type="button" data-game-text="clearBoard">清空畫布</button>
+              <button id="saveDesignBtn" class="btn btn-green" type="button" data-game-text="saveDesign">保存作品</button>
+              <button id="exportDesignBtn" class="btn btn-primary" type="button" data-game-text="exportDesign">下載 PNG</button>
+            </div>
+            <p class="bead-tip" data-game-text="beadTip">基礎顏色免費使用。更多顏色需要消耗星星解鎖；保存後的作品會留在這台裝置。</p>
+          </aside>
+          <div class="board-area">
+            <div class="board-head"><strong data-game-text="boardTitle">我的像素畫</strong><span id="boardProgress">0 / 144</span></div>
+            <div id="beadBoard" class="bead-board" role="grid" aria-label="拼豆畫布"></div>
+            <div class="board-hint" data-game-text="boardHint">先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。</div>
+          </div>
+        </div>
+        <div class="gallery-section"><h3 data-game-text="galleryTitle">我的作品</h3><div id="savedDesigns" class="saved-designs"></div></div>
+      </section>
+    </section>
+
+    <section class="feature-panel" data-feature-panel="growth">
+      <section class="panel growth-panel">
+        <div class="panel-intro"><div><h2 data-game-text="growthTitle">我的成長記錄</h2><p data-game-text="growthCopy">每一組練習都算數。看見自己的努力，再一步步解鎖新的創作。</p></div><div class="bead-wallet">★ <strong id="growthStarBalance">0</strong></div></div>
+        <div id="growthStats" class="growth-stats"></div>
+        <div class="achievement-wrap"><h3 data-game-text="achievementsTitle">成就徽章</h3><div id="achievementList" class="achievement-list"></div></div>
+        <div class="growth-note" data-game-text="growthNote">小提醒：星星不是考試分數，而是完成練習、訂正與持續努力的紀錄。學會解釋思路，比只追求速度更重要。</div>
+      </section>
+    </section>
+  </main>
+  <div id="gameToast" class="game-toast" role="status" aria-live="polite"></div>
+
+  <script>
+const $=id=>document.getElementById(id);
+const els={language:$("language"),limit:$("limit"),customLimitWrap:$("customLimitWrap"),customLimit:$("customLimit"),operation:$("operation"),operandCount:$("operandCount"),strategyMode:$("strategyMode"),level:$("level"),difficulty:$("difficulty"),count:$("count"),totalPages:$("totalPages"),columns:$("columns"),nonNegative:$("nonNegative"),showHints:$("showHints"),includeZero:$("includeZero"),avoidDuplicate:$("avoidDuplicate"),generateBtn:$("generateBtn"),toggleAnswerBtn:$("toggleAnswerBtn"),checkBtn:$("checkBtn"),printBlankBtn:$("printBlankBtn"),printAnswerBtn:$("printAnswerBtn"),clearBtn:$("clearBtn"),notice:$("notice"),worksheet:$("worksheet"),pages:$("pages"),result:$("result")};
+
+const I18N={
+"zh-Hant":{title:"數學計算練習",subtitle:"2～4 個數字 · 加減乘除 · 奧數巧算 · 線上評分 · 多頁列印",badge:"每天練一練 🌟",language:"語言",range:"計算範圍",custom:"自訂",customLimit:"自訂上限",operation:"運算類型",addsub:"加減混合",compare:"比較大小 ＞、＝、＜",tensMixed:"兩位數加減混合",tensAdd:"兩位數加法",tensSub:"兩位數減法（AA − BB）",hintCompare:"比較左右兩邊的大小，選出 ＞、＝ 或 ＜。",hintTens:"先算十位，再算個位；注意是否需要進位或退位。",methodCompare:"比較大小",methodTens:"兩位數運算",noticeTensRange:"兩位數練習需要把計算範圍設為 20 或以上。",noticeCompareRange:"兩位數比較請選擇 20 或以上的計算範圍。",chainSub:"連減 A−B−C",chainAddSub:"連加減",all:"加減乘除混合",add:"只做加法",sub:"只做減法",mul:"只做乘法",div:"只做除法",operandCount:"每題數字個數",twoNumbers:"2 個",threeNumbers:"3 個",fourNumbers:"4 個",mixedCount:"2～4 個混合",strategy:"方法訓練",normal:"普通隨機",auto:"自動匹配方法",make10:"專項：湊十法",break10:"專項：破十法",level10:"專項：平十法",decompose:"專項：拆分法",makeWhole:"專項：湊整法",multiplication:"專項：乘法口訣",division:"專項：除法口訣",distribute:"專項：乘法分配律",olympiadMixed:"奧數：綜合巧算",olympiadPairing:"奧數：配對湊整",olympiadReverse:"奧數：逆向推理",olympiadPattern:"奧數：規律計算",level:"難易度",easy:"容易",medium:"中等",hard:"困難",challenge:"挑戰",olympiad:"奧數",carryMode:"進位／退位設定",mixed:"隨機混合",cross:"需要進位／退位",noCross:"不進位／不退位",perPage:"每頁題目數量",totalPages:"總頁數",columns:"螢幕每行題數",nonNegative:"中間結果及答案不出現負數",showHints:"顯示方法提示",includeZero:"允許出現 0",avoidDuplicate:"盡量避免重複題",generate:"🎲 隨機出題",showAnswers:"👀 顯示答案並評分",hideAnswers:"🙈 隱藏答案",check:"✓ 檢查作答",printBlank:"🖨️ 列印練習",printAnswer:"📄 列印含答案",clear:"↺ 清空作答",name:"姓名",date:"日期",time:"用時",score:"得分",footer:"每頁會依所選題目數量自動分頁；所有頁面可一次列印，也可另存為一份 PDF。",within:"以內",question:"第 {n} 題",pageOf:"第 {page} 頁／共 {total} 頁",totalQuestionCount:"共 {count} 題",noticeOverride:"所選專項會自動調整運算類型或數字個數。",noticeOlympiad:"奧數模式會優先生成 3～4 個數字的巧算、逆向推理或規律題。",result:"總共 {total} 題：答對 {correct} 題，答錯 {wrong} 題，未答 {blank} 題，得分 {score} 分。",perfect:"太棒了，全部正確！🎉",retry:"請檢查標記為 × 的題目。",unfinished:"尚有空白題；顯示答案時空白題會按未答計分。",hintMake10:"把 {right} 拆開，先取出 {need} 讓 {left} 湊成下一個整十，再處理剩下部分。",hintBreak10:"把 {left} 看成整十和個位，先用整十部分減 {right}，再把個位加回。",hintLevel10:"先從 {left} 減到整十，再減去剩下部分。",hintDecompose:"把較大的數按十位和個位拆開，分步計算。",hintMakeWhole:"把接近整十的數先補成整十，另一部分作等量調整。",hintMultiplication:"回想 {a} 的乘法口訣，找出與 {b} 對應的一句。",hintDivision:"把除法轉成乘法，想「{b} × 幾 = {a}」。",hintDistribute:"找出共同乘數 {a}，先合併另一組數，或分別計算後再合併。",hintOrder:"先算乘除，再算加減；同級運算從左到右。",hintChain:"同級運算從左到右，也可先觀察能否湊整或配對。",hintPairing:"觀察哪些數可以兩兩配成相同的整十數，先配對再計算。",hintReverse:"從等號右邊開始，按照相反運算一步一步倒推未知數。",hintPattern:"觀察相鄰數的差，或首尾兩數的和，找出規律後再計算。",methodMake10:"湊十法",methodBreak10:"破十法",methodLevel10:"平十法",methodDecompose:"拆分法",methodMakeWhole:"湊整法",methodMultiplication:"乘法口訣",methodDivision:"除法口訣",methodDistribute:"乘法分配律",methodOrder:"運算順序",methodChain:"連續計算",methodPairing:"奧數配對湊整",methodReverse:"奧數逆向推理",methodPattern:"奧數規律計算",ordinary:"普通隨機",autoMode:"自動方法"},
+"zh-Hans":{title:"数学计算练习",subtitle:"2～4 个数字 · 加减乘除 · 奥数巧算 · 在线评分 · 多页打印",badge:"每天练一练 🌟",language:"语言",range:"计算范围",custom:"自定义",customLimit:"自定义上限",operation:"运算类型",addsub:"加减混合",compare:"比较大小 ＞、＝、＜",tensMixed:"两位数加减混合",tensAdd:"两位数加法",tensSub:"两位数减法（AA − BB）",hintCompare:"比较左右两边的大小，选出 ＞、＝ 或 ＜。",hintTens:"先算十位，再算个位；注意是否需要进位或退位。",methodCompare:"比较大小",methodTens:"两位数运算",noticeTensRange:"两位数练习需要把计算范围设为 20 或以上。",noticeCompareRange:"两位数比较请选择 20 或以上的计算范围。",chainSub:"连减 A−B−C",chainAddSub:"连加减",all:"加减乘除混合",add:"只做加法",sub:"只做减法",mul:"只做乘法",div:"只做除法",operandCount:"每题数字个数",twoNumbers:"2 个",threeNumbers:"3 个",fourNumbers:"4 个",mixedCount:"2～4 个混合",strategy:"方法训练",normal:"普通随机",auto:"自动匹配方法",make10:"专项：凑十法",break10:"专项：破十法",level10:"专项：平十法",decompose:"专项：拆分法",makeWhole:"专项：凑整法",multiplication:"专项：乘法口诀",division:"专项：除法口诀",distribute:"专项：乘法分配律",olympiadMixed:"奥数：综合巧算",olympiadPairing:"奥数：配对凑整",olympiadReverse:"奥数：逆向推理",olympiadPattern:"奥数：规律计算",level:"难易度",easy:"容易",medium:"中等",hard:"困难",challenge:"挑战",olympiad:"奥数",carryMode:"进位／退位设置",mixed:"随机混合",cross:"需要进位／退位",noCross:"不进位／不退位",perPage:"每页题目数量",totalPages:"总页数",columns:"屏幕每行题数",nonNegative:"中间结果及答案不出现负数",showHints:"显示方法提示",includeZero:"允许出现 0",avoidDuplicate:"尽量避免重复题",generate:"🎲 随机出题",showAnswers:"👀 显示答案并评分",hideAnswers:"🙈 隐藏答案",check:"✓ 检查作答",printBlank:"🖨️ 打印练习",printAnswer:"📄 打印含答案",clear:"↺ 清空作答",name:"姓名",date:"日期",time:"用时",score:"得分",footer:"每页会按所选题目数量自动分页；所有页面可一次打印，也可另存为一份 PDF。",within:"以内",question:"第 {n} 题",pageOf:"第 {page} 页／共 {total} 页",totalQuestionCount:"共 {count} 题",noticeOverride:"所选专项会自动调整运算类型或数字个数。",noticeOlympiad:"奥数模式会优先生成 3～4 个数字的巧算、逆向推理或规律题。",result:"总共 {total} 题：答对 {correct} 题，答错 {wrong} 题，未答 {blank} 题，得分 {score} 分。",perfect:"太棒了，全部正确！🎉",retry:"请检查标记为 × 的题目。",unfinished:"还有空白题；显示答案时空白题会按未答计分。",hintMake10:"把 {right} 拆开，先取出 {need} 让 {left} 凑成下一个整十，再处理剩下部分。",hintBreak10:"把 {left} 看成整十和个位，先用整十部分减 {right}，再把个位加回。",hintLevel10:"先从 {left} 减到整十，再减去剩下部分。",hintDecompose:"把较大的数按十位和个位拆开，分步计算。",hintMakeWhole:"把接近整十的数先补成整十，另一部分作等量调整。",hintMultiplication:"回想 {a} 的乘法口诀，找出与 {b} 对应的一句。",hintDivision:"把除法转成乘法，想“{b} × 几 = {a}”。",hintDistribute:"找出共同乘数 {a}，先合并另一组数，或分别计算后再合并。",hintOrder:"先算乘除，再算加减；同级运算从左到右。",hintChain:"同级运算从左到右，也可先观察能否凑整或配对。",hintPairing:"观察哪些数可以两两配成相同的整十数，先配对再计算。",hintReverse:"从等号右边开始，按照相反运算一步一步倒推未知数。",hintPattern:"观察相邻数的差，或首尾两数的和，找出规律后再计算。",methodMake10:"凑十法",methodBreak10:"破十法",methodLevel10:"平十法",methodDecompose:"拆分法",methodMakeWhole:"凑整法",methodMultiplication:"乘法口诀",methodDivision:"除法口诀",methodDistribute:"乘法分配律",methodOrder:"运算顺序",methodChain:"连续计算",methodPairing:"奥数配对凑整",methodReverse:"奥数逆向推理",methodPattern:"奥数规律计算",ordinary:"普通随机",autoMode:"自动方法"},
+"en":{title:"Math Practice",subtitle:"2–4 numbers · Four operations · Olympiad strategies · Scoring · Multi-page printing",badge:"Practice every day 🌟",language:"Language",range:"Number range",custom:"Custom",customLimit:"Custom maximum",operation:"Operations",addsub:"Mixed addition & subtraction",compare:"Compare ＞, ＝, ＜",tensMixed:"Two-digit add/subtract",tensAdd:"Two-digit addition",tensSub:"Two-digit subtraction (AA − BB)",hintCompare:"Compare the left and right values and choose ＞, ＝, or ＜.",hintTens:"Work with tens and ones; check whether you need to carry or borrow.",methodCompare:"Compare numbers",methodTens:"Two-digit arithmetic",noticeTensRange:"Set the number range to at least 20 for two-digit questions.",noticeCompareRange:"Choose a number range of 20 or above for two-digit comparisons.",chainSub:"Repeated subtraction A−B−C",chainAddSub:"Addition/subtraction chain",all:"Mixed four operations",add:"Addition only",sub:"Subtraction only",mul:"Multiplication only",div:"Division only",operandCount:"Numbers per expression",twoNumbers:"2 numbers",threeNumbers:"3 numbers",fourNumbers:"4 numbers",mixedCount:"Mixed 2–4",strategy:"Strategy practice",normal:"Standard random",auto:"Auto-match strategy",make10:"Focus: Make ten",break10:"Focus: Bridge through ten",level10:"Focus: Subtract to ten",decompose:"Focus: Decomposition",makeWhole:"Focus: Compensation",multiplication:"Focus: Times tables",division:"Focus: Division facts",distribute:"Focus: Distributive property",olympiadMixed:"Olympiad: Mixed strategies",olympiadPairing:"Olympiad: Pair and round",olympiadReverse:"Olympiad: Work backwards",olympiadPattern:"Olympiad: Pattern calculation",level:"Difficulty",easy:"Easy",medium:"Medium",hard:"Hard",challenge:"Challenge",olympiad:"Olympiad",carryMode:"Carrying / borrowing",mixed:"Mixed",cross:"With carrying/borrowing",noCross:"Without carrying/borrowing",perPage:"Questions per page",totalPages:"Total pages",columns:"Questions per screen row",nonNegative:"No negative intermediate results or answers",showHints:"Show strategy hints",includeZero:"Allow zero",avoidDuplicate:"Avoid duplicate questions",generate:"🎲 Generate",showAnswers:"👀 Show answers and score",hideAnswers:"🙈 Hide answers",check:"✓ Check answers",printBlank:"🖨️ Print worksheet",printAnswer:"📄 Print with answers",clear:"↺ Clear answers",name:"Name",date:"Date",time:"Time",score:"Score",footer:"Questions are divided into pages automatically. Print all pages together or save them as one PDF.",within:"or less",question:"Question {n}",pageOf:"Page {page} of {total}",totalQuestionCount:"{count} questions in total",noticeOverride:"The selected focus mode may adjust the operations or number count.",noticeOlympiad:"Olympiad mode prioritizes 3–4-number mental strategies, reverse reasoning, and patterns.",result:"Total {total}: correct {correct}, wrong {wrong}, blank {blank}, score {score}.",perfect:"Excellent — all correct! 🎉",retry:"Review the questions marked ×.",unfinished:"Some questions are blank. Showing answers will score them as unanswered.",hintMake10:"Split {right}; take {need} first so {left} reaches the next multiple of ten, then handle the remainder.",hintBreak10:"Split {left} into tens and ones; subtract {right} from the tens part, then add the ones back.",hintLevel10:"Subtract from {left} to reach a multiple of ten first, then subtract the remaining part.",hintDecompose:"Split the larger number into tens and ones, then calculate in steps.",hintMakeWhole:"Round a near-ten number first, then compensate by the same amount.",hintMultiplication:"Recall the {a} times table and find the fact matching {b}.",hintDivision:"Turn division into multiplication: think “{b} × what = {a}?”",hintDistribute:"Find the common factor {a}; combine the other numbers first, or multiply separately and combine.",hintOrder:"Do multiplication and division before addition and subtraction; work left to right within the same level.",hintChain:"Work left to right, while checking whether terms can be paired or rounded.",hintPairing:"Look for pairs that make the same multiple of ten; pair them before calculating.",hintReverse:"Start from the right-hand value and undo each operation in reverse order.",hintPattern:"Look at the common difference or pair the first and last terms before calculating.",methodMake10:"Make ten",methodBreak10:"Bridge through ten",methodLevel10:"Subtract to ten",methodDecompose:"Decomposition",methodMakeWhole:"Compensation",methodMultiplication:"Times tables",methodDivision:"Division facts",methodDistribute:"Distributive property",methodOrder:"Order of operations",methodChain:"Calculation chain",methodPairing:"Olympiad pairing",methodReverse:"Olympiad reverse reasoning",methodPattern:"Olympiad pattern",ordinary:"Standard random",autoMode:"Auto strategy"}}
+;
+let currentQuestions=[],showingAnswers=false,exerciseStartedAt=Date.now(),submittedElapsedMs=null;
+
+const GAME_KEY='wind-math-bead-garden-v1';
+const GRID_SIZE=12;
+const BEAD_COLORS=[
+  {name:'橡皮擦',hex:'#ffffff',cost:0},
+  {name:'莓果粉',hex:'#f56c91',cost:0},
+  {name:'陽光黃',hex:'#ffc857',cost:0},
+  {name:'薄荷綠',hex:'#59c7a5',cost:0},
+  {name:'天空藍',hex:'#5c8dff',cost:0},
+  {name:'薰衣草',hex:'#9b83e8',cost:0},
+  {name:'橙子橘',hex:'#f08a4b',cost:6},
+  {name:'草木綠',hex:'#76b852',cost:6},
+  {name:'巧克力',hex:'#8b5e4a',cost:8},
+  {name:'海軍藍',hex:'#2f456f',cost:8},
+  {name:'淺粉色',hex:'#ffb7ce',cost:10},
+  {name:'奶油白',hex:'#fff2cc',cost:10},
+  {name:'青檸綠',hex:'#b6d95c',cost:12},
+  {name:'冰川藍',hex:'#a7ddf2',cost:12},
+  {name:'紫水晶',hex:'#c3a6ff',cost:15},
+  {name:'石墨黑',hex:'#263247',cost:15}
+];
+const GAME_LABELS={
+ 'zh-Hant':{
+  stars:'星星餘額',heroEyebrow:'數學任務 · 邊學邊玩',heroPillOne:'✦ 答對一題，點亮一顆星',heroPillTwo:'▦ 用星星解鎖拼豆顏色',correctTotal:'累計答對',streak:'連續練習天',
+  practiceTab:'數學練習',beadTab:'拼豆工坊',growthTab:'成長記錄',panelTitle:'設定今日練習',panelCopy:'依照孩子目前的能力選擇題型與難度；完成作答後即可領取星星。',
+  beadTitle:'拼豆工坊',beadCopy:'用練習獲得的星星解鎖更多顏色，在 12 × 12 畫布上創作自己的像素作品。',designName:'作品名稱',templateTitle:'快速圖案',templateHeart:'💗 愛心',templateFlower:'🌼 小花',templateSmile:'😊 笑臉',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆顏色 · 點選使用',clearBoard:'清空畫布',saveDesign:'保存作品',exportDesign:'下載 PNG',beadTip:'基礎顏色免費使用。更多顏色需要消耗星星解鎖；保存後的作品會留在這台裝置。',boardTitle:'我的像素畫',boardHint:'先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品後，就可以保存到這裡。',growthTitle:'我的成長記錄',growthCopy:'每一組練習都算數。看見自己的努力，再一步步解鎖新的創作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考試分數，而是完成練習、訂正與持續努力的紀錄。學會解釋思路，比只追求速度更重要。',
+  statCorrect:'累計答對',statAnswered:'已作答題數',statStreak:'連續練習天數',statAccuracy:'整體正確率',statRounds:'完成練習組',statPerfect:'全對練習組',statDesigns:'收藏作品',
+  achFirst:'初次啟程',achFirstDesc:'完成第一組練習',achTen:'計算新星',achTenDesc:'累計答對 10 題',achPerfect:'完美一組',achPerfectDesc:'一整組全部答對',achStreak:'堅持不懈',achStreakDesc:'連續學習 3 天',achArtist:'像素創作者',achArtistDesc:'保存第一幅作品',achHundred:'百題達人',achHundredDesc:'累計答對 100 題',
+  unlocked:'已解鎖',locked:'待解鎖',starCost:'★ {n}',colorUnlocked:'顏色已解鎖！',needMoreStars:'還差一些星星，解鎖需要 {n} 顆。',designSaved:'作品已保存到「我的作品」。',designLoaded:'已載入作品，可以繼續修改。',designDeleted:'作品已刪除。',boardCleared:'畫布已清空。',downloadStarted:'作品 PNG 已準備好。',rewardEarned:'🌟 本次獲得 {n} 顆星星！',perfectBonus:'（全對加贈 3 顆）',rewardClaimed:'這組練習已領取過星星獎勵。',needAnswer:'先完成至少一道題，再領取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'刪除作品',loadDesign:'載入作品',emptyName:'我的拼豆作品'
+ },
+ 'zh-Hans':{
+  stars:'星星余额',heroEyebrow:'数学任务 · 边学边玩',heroPillOne:'✦ 答对一题，点亮一颗星',heroPillTwo:'▦ 用星星解锁拼豆颜色',correctTotal:'累计答对',streak:'连续练习天',
+  practiceTab:'数学练习',beadTab:'拼豆工坊',growthTab:'成长记录',panelTitle:'设置今日练习',panelCopy:'根据孩子目前的能力选择题型与难度；完成作答后即可领取星星。',
+  beadTitle:'拼豆工坊',beadCopy:'用练习获得的星星解锁更多颜色，在 12 × 12 画布上创作自己的像素作品。',designName:'作品名称',templateTitle:'快速图案',templateHeart:'💗 爱心',templateFlower:'🌼 小花',templateSmile:'😊 笑脸',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆颜色 · 点击使用',clearBoard:'清空画布',saveDesign:'保存作品',exportDesign:'下载 PNG',beadTip:'基础颜色免费使用。更多颜色需要消耗星星解锁；保存后的作品会留在这台设备。',boardTitle:'我的像素画',boardHint:'先选一种颜色，再点格子放入拼豆；点橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品后，就可以保存到这里。',growthTitle:'我的成长记录',growthCopy:'每一组练习都算数。看见自己的努力，再一步步解锁新的创作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考试分数，而是完成练习、订正与持续努力的记录。学会解释思路，比只追求速度更重要。',
+  statCorrect:'累计答对',statAnswered:'已作答题数',statStreak:'连续练习天数',statAccuracy:'整体正确率',statRounds:'完成练习组',statPerfect:'全对练习组',statDesigns:'收藏作品',
+  achFirst:'初次启程',achFirstDesc:'完成第一组练习',achTen:'计算新星',achTenDesc:'累计答对 10 题',achPerfect:'完美一组',achPerfectDesc:'一整组全部答对',achStreak:'坚持不懈',achStreakDesc:'连续学习 3 天',achArtist:'像素创作者',achArtistDesc:'保存第一幅作品',achHundred:'百题达人',achHundredDesc:'累计答对 100 题',
+  unlocked:'已解锁',locked:'待解锁',starCost:'★ {n}',colorUnlocked:'颜色已解锁！',needMoreStars:'还差一些星星，解锁需要 {n} 颗。',designSaved:'作品已保存到“我的作品”。',designLoaded:'已载入作品，可以继续修改。',designDeleted:'作品已删除。',boardCleared:'画布已清空。',downloadStarted:'作品 PNG 已准备好。',rewardEarned:'🌟 本次获得 {n} 颗星星！',perfectBonus:'（全对加赠 3 颗）',rewardClaimed:'这组练习已领取过星星奖励。',needAnswer:'先完成至少一道题，再领取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'删除作品',loadDesign:'载入作品',emptyName:'我的拼豆作品'
+ },
+ 'en':{
+  stars:'Star balance',heroEyebrow:'MATH QUEST · PLAY & LEARN',heroPillOne:'✦ Earn a star for each correct answer',heroPillTwo:'▦ Unlock bead colors with stars',correctTotal:'Correct answers',streak:'Practice streak',
+  practiceTab:'Math practice',beadTab:'Bead studio',growthTab:'My progress',panelTitle:'Set up today’s practice',panelCopy:'Choose operations and difficulty that fit the learner. Complete a set to collect stars.',
+  beadTitle:'Bead studio',beadCopy:'Spend earned stars to unlock colors and create your own pixel art on a 12 × 12 board.',designName:'Artwork name',templateTitle:'Quick patterns',templateHeart:'💗 Heart',templateFlower:'🌼 Flower',templateSmile:'😊 Smile',templateRainbow:'🌈 Rainbow',paletteTitle:'Bead colors · Select one',clearBoard:'Clear board',saveDesign:'Save artwork',exportDesign:'Download PNG',beadTip:'Basic colors are free. Unlock extra colors with stars. Saved artwork stays on this device.',boardTitle:'My pixel art',boardHint:'Choose a color, then tap cells to place beads. Select the eraser to remove beads.',galleryTitle:'My artwork',galleryEmpty:'Your saved bead artwork will appear here.',growthTitle:'My progress',growthCopy:'Every practice set counts. Celebrate your effort and unlock new creative choices.',achievementsTitle:'Achievements',growthNote:'Stars track practice, corrections, and effort — not exam grades. Explaining your thinking matters more than speed.',
+  statCorrect:'Correct answers',statAnswered:'Questions attempted',statStreak:'Practice streak',statAccuracy:'Overall accuracy',statRounds:'Practice sets',statPerfect:'Perfect sets',statDesigns:'Saved artworks',
+  achFirst:'First steps',achFirstDesc:'Complete your first set',achTen:'Math star',achTenDesc:'Answer 10 questions correctly',achPerfect:'Perfect set',achPerfectDesc:'Get every question right in a set',achStreak:'Keep going',achStreakDesc:'Practice for 3 consecutive days',achArtist:'Pixel artist',achArtistDesc:'Save your first artwork',achHundred:'Century club',achHundredDesc:'Answer 100 questions correctly',
+  unlocked:'Unlocked',locked:'Locked',starCost:'★ {n}',colorUnlocked:'Color unlocked!',needMoreStars:'You need {n} stars to unlock this color.',designSaved:'Artwork saved to My artwork.',designLoaded:'Artwork loaded. Keep creating!',designDeleted:'Artwork deleted.',boardCleared:'Board cleared.',downloadStarted:'Your PNG is ready.',rewardEarned:'🌟 You earned {n} stars!',perfectBonus:' (+3 perfect-set bonus)',rewardClaimed:'Stars for this set have already been collected.',needAnswer:'Answer at least one question before collecting stars.',defaultDesignName:'My bead artwork',deleteDesign:'Delete artwork',loadDesign:'Load artwork',emptyName:'My bead artwork'
+ }
+};
+function gt(key){const lang=els.language.value;return (GAME_LABELS[lang]&&GAME_LABELS[lang][key])||GAME_LABELS['zh-Hans'][key]||key}
+function gameFill(s,v){return String(s||'').replace(/\{(\w+)\}/g,function(_,k){return v[k]===undefined?'':v[k]})}
+function gameEscape(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
+function localDayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function loadGame(){
+  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],unlockedColors:[1,2,3,4,5],board:Array(GRID_SIZE*GRID_SIZE).fill(0),savedDesigns:[]};
+  try{const saved=JSON.parse(localStorage.getItem(GAME_KEY)||'{}');Object.keys(base).forEach(function(k){if(saved[k]!==undefined)base[k]=saved[k]})}catch(e){}
+  base.stars=Math.max(0,Math.floor(Number(base.stars)||0));
+  base.totalAnswered=Math.max(0,Math.floor(Number(base.totalAnswered)||0));
+  base.totalCorrect=Math.max(0,Math.floor(Number(base.totalCorrect)||0));
+  base.rounds=Math.max(0,Math.floor(Number(base.rounds)||0));
+  base.perfectRounds=Math.max(0,Math.floor(Number(base.perfectRounds)||0));
+  base.days=Array.isArray(base.days)?base.days:[];
+  base.rewarded=Array.isArray(base.rewarded)?base.rewarded:[];
+  base.unlockedColors=Array.from(new Set([1,2,3,4,5].concat(Array.isArray(base.unlockedColors)?base.unlockedColors:[]).map(Number).filter(function(n){return n>=1&&n<BEAD_COLORS.length})));
+  base.board=Array.isArray(base.board)&&base.board.length===GRID_SIZE*GRID_SIZE?base.board.map(function(n){n=Number(n)||0;return n>=0&&n<BEAD_COLORS.length?n:0}):Array(GRID_SIZE*GRID_SIZE).fill(0);
+  base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){return x&&Array.isArray(x.board)}).slice(-20):[];
+  return base;
+}
+let game=loadGame();
+let selectedBeadColor=1;
+function saveGame(){try{localStorage.setItem(GAME_KEY,JSON.stringify(game))}catch(e){}}
+function gameToast(message){const node=document.getElementById('gameToast');if(!node)return;node.textContent=message;node.classList.add('show');clearTimeout(gameToast.timer);gameToast.timer=setTimeout(function(){node.classList.remove('show')},2300)}
+function applyGameLabels(){document.querySelectorAll('[data-game-text]').forEach(function(node){const key=node.getAttribute('data-game-text');if(GAME_LABELS[els.language.value]&&GAME_LABELS[els.language.value][key])node.textContent=GAME_LABELS[els.language.value][key]})}
+function currentStreak(){
+  const days=new Set(game.days),today=new Date();let cursor=new Date(today);
+  if(!days.has(localDayKey(cursor))){cursor.setDate(cursor.getDate()-1);if(!days.has(localDayKey(cursor)))return 0}
+  let n=0;while(days.has(localDayKey(cursor))&&n<366){n++;cursor.setDate(cursor.getDate()-1)}return n
+}
+function markPracticeDay(){const key=localDayKey(new Date());if(game.days.indexOf(key)<0)game.days.push(key);game.days=game.days.slice(-365)}
+function renderBeadPalette(){
+  const root=document.getElementById('beadPalette');if(!root)return;
+  root.innerHTML=BEAD_COLORS.map(function(c,i){
+    const unlocked=i===0||c.cost===0||game.unlockedColors.indexOf(i)>=0;
+    const active=selectedBeadColor===i;
+    const label=i===0?gt('eraserLabel')||'橡皮擦':c.name;
+    const meta=unlocked?(active?'✓':gt('unlocked')):gameFill(gt('starCost'),{n:c.cost});
+    return '<button class="palette-color '+(active?'selected ':'')+(!unlocked?'locked':'')+'" type="button" data-bead-color="'+i+'" aria-pressed="'+active+'" title="'+gameEscape(label)+'"><span class="palette-swatch" style="--swatch:'+c.hex+'"></span><span class="palette-name">'+gameEscape(label)+'</span><small>'+gameEscape(meta)+'</small></button>'
+  }).join('')
+}
+function updateBoardProgress(){const n=game.board.filter(function(v){return v>0}).length;const node=document.getElementById('boardProgress');if(node)node.textContent=n+' / '+(GRID_SIZE*GRID_SIZE)}
+function renderBeadBoard(){
+  const root=document.getElementById('beadBoard');if(!root)return;
+  root.innerHTML=game.board.map(function(color,i){const hex=color>0?BEAD_COLORS[color].hex:'#ffffff';return '<button class="bead-cell" type="button" role="gridcell" data-cell="'+i+'" style="--cell-color:'+hex+'" aria-label="第 '+(i+1)+' 格"></button>'}).join('');
+  updateBoardProgress()
+}
+function renderSavedDesigns(){
+  const root=document.getElementById('savedDesigns');if(!root)return;
+  if(!game.savedDesigns.length){root.innerHTML='<div class="empty-gallery">'+gameEscape(gt('galleryEmpty'))+'</div>';return}
+  root.innerHTML=game.savedDesigns.slice().reverse().map(function(d){
+    const preview=(d.board||[]).slice(0,GRID_SIZE*GRID_SIZE).map(function(v){const color=Number(v)>0&&BEAD_COLORS[Number(v)]?BEAD_COLORS[Number(v)].hex:'#ffffff';return '<i style="--cell-color:'+color+'"></i>'}).join('');
+    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+gameEscape(d.name)+'"><span class="saved-design-mini">'+preview+'</span><strong>'+gameEscape(d.name||gt('defaultDesignName'))+'</strong><small>'+new Date(d.date||Date.now()).toLocaleDateString()+'</small></button><button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
+  }).join('')
+}
+function renderGrowth(){
+  const stats=document.getElementById('growthStats'),badges=document.getElementById('achievementList');if(!stats||!badges)return;
+  const accuracy=game.totalAnswered?Math.round(game.totalCorrect/game.totalAnswered*100):0;
+  const items=[
+    [gt('statCorrect'),game.totalCorrect],[gt('statAnswered'),game.totalAnswered],[gt('statStreak'),currentStreak()],[gt('statAccuracy'),accuracy+'%'],
+    [gt('statRounds'),game.rounds],[gt('statPerfect'),game.perfectRounds],[gt('statDesigns'),game.savedDesigns.length],[gt('stars'),game.stars]
+  ];
+  stats.innerHTML=items.map(function(x){return '<div class="growth-stat"><span>'+gameEscape(x[0])+'</span><strong>'+gameEscape(x[1])+'</strong></div>'}).join('');
+  const achievements=[
+    ['✦','achFirst','achFirstDesc',game.rounds>=1],['★','achTen','achTenDesc',game.totalCorrect>=10],['✧','achPerfect','achPerfectDesc',game.perfectRounds>=1],
+    ['♧','achStreak','achStreakDesc',currentStreak()>=3],['▦','achArtist','achArtistDesc',game.savedDesigns.length>=1],['✹','achHundred','achHundredDesc',game.totalCorrect>=100]
+  ];
+  badges.innerHTML=achievements.map(function(a){return '<article class="achievement '+(a[3]?'':'locked')+'"><span class="achievement-icon">'+a[0]+'</span><div><strong>'+gameEscape(gt(a[1]))+'</strong><small>'+gameEscape(gt(a[2]))+'</small></div></article>'}).join('')
+}
+function updateGameUI(){
+  const ids=['starBalance','heroStarBalance','beadStarBalance','growthStarBalance'];
+  ids.forEach(function(id){const node=document.getElementById(id);if(node)node.textContent=game.stars});
+  const correct=document.getElementById('heroCorrectStat');if(correct)correct.textContent=game.totalCorrect;
+  const streak=document.getElementById('heroStreakStat');if(streak)streak.textContent=currentStreak();
+  renderBeadPalette();renderBeadBoard();renderSavedDesigns();renderGrowth()
+}
+function applyBeadTemplate(type){
+  const board=Array(GRID_SIZE*GRID_SIZE).fill(0),put=function(r,c,color){if(r>=0&&r<GRID_SIZE&&c>=0&&c<GRID_SIZE)board[r*GRID_SIZE+c]=color};
+  if(type==='heart'){
+    ['000110011000','001111111100','011111111110','011111111110','001111111100','000111111000','000011110000','000001100000','000000000000','000000000000','000000000000','000000000000'].forEach(function(row,r){row.split('').forEach(function(v,c){if(v==='1')put(r,c,1)})})
+  }else if(type==='flower'){
+    [[4,5],[5,4],[5,6],[6,5]].forEach(function(p){for(let r=p[0]-1;r<=p[0]+1;r++)for(let c=p[1]-1;c<=p[1]+1;c++)if(Math.abs(r-p[0])+Math.abs(c-p[1])<=1)put(r,c,1)});
+    put(5,5,2);put(7,5,3);put(8,5,3);put(9,5,3);put(8,4,3);put(7,6,3)
+  }else if(type==='smile'){
+    for(let r=1;r<11;r++)for(let c=1;c<11;c++)if(Math.pow(r-5.5,2)+Math.pow(c-5.5,2)<=24)put(r,c,2);
+    [[3,4],[3,7],[4,4],[4,7],[7,3],[8,4],[8,5],[8,6],[8,7],[7,8]].forEach(function(p){put(p[0],p[1],4)})
+  }else if(type==='rainbow'){
+    const bands=[1,5,4,3,2];
+    for(let r=1;r<=8;r++)for(let c=0;c<GRID_SIZE;c++){
+      const dist=Math.sqrt(Math.pow(c-5.5,2)+Math.pow(r-11,2));
+      if(dist>=3.8&&dist<=10.6){const band=Math.max(0,Math.min(bands.length-1,Math.floor((10.6-dist)/1.35)));put(r,c,bands[band])}
+    }
+  }
+  game.board=board;saveGame();renderBeadBoard();gameToast(gt('templateApplied')||'圖案已放到畫布上，可以繼續修改。')
+}
+function saveBeadDesign(){
+  const name=(document.getElementById('designName').value||'').trim()||gt('emptyName');
+  game.savedDesigns.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name,board:game.board.slice(),date:new Date().toISOString()});
+  game.savedDesigns=game.savedDesigns.slice(-20);saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designSaved'))
+}
+function downloadBeadDesign(){
+  const size=36,gap=2,canvas=document.createElement('canvas');canvas.width=GRID_SIZE*size;canvas.height=GRID_SIZE*size;
+  const ctx=canvas.getContext('2d');if(!ctx){gameToast('PNG export is not supported in this browser.');return}
+  ctx.fillStyle='#f0f2f7';ctx.fillRect(0,0,canvas.width,canvas.height);
+  game.board.forEach(function(v,i){const r=Math.floor(i/GRID_SIZE),c=i%GRID_SIZE;ctx.fillStyle=v>0?BEAD_COLORS[v].hex:'#ffffff';ctx.fillRect(c*size+gap,r*size+gap,size-gap*2,size-gap*2);ctx.strokeStyle='rgba(30,45,70,.13)';ctx.strokeRect(c*size+gap+.5,r*size+gap+.5,size-gap*2-1,size-gap*2-1)});
+  const a=document.createElement('a'),raw=(document.getElementById('designName').value||gt('defaultDesignName')).trim();a.download=(raw||'bead-art').replace(/[\\/:*?"<>|]/g,'_')+'.png';a.href=canvas.toDataURL('image/png');a.click();gameToast(gt('downloadStarted'))
+}
+function awardStars(result){
+  const signature=currentQuestions.map(qKey).sort().join('||');if(!signature)return null;
+  if(game.rewarded.indexOf(signature)>=0)return{earned:0,already:true};
+  const attempted=result.correct+result.wrong;if(!attempted)return null;
+  const perfect=result.correct===result.total&&result.blank===0&&result.total>0;
+  const earned=result.correct+(perfect?3:0);
+  game.stars+=earned;game.totalAnswered+=attempted;game.totalCorrect+=result.correct;game.rounds++;
+  if(perfect)game.perfectRounds++;
+  markPracticeDay();game.rewarded.push(signature);game.rewarded=game.rewarded.slice(-240);
+  saveGame();updateGameUI();return{earned:earned,perfect:perfect,already:false}
+}
+function setFeatureTab(name){
+  document.querySelectorAll('[data-feature-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-feature-tab')===name)});
+  document.querySelectorAll('[data-feature-panel]').forEach(function(p){p.classList.toggle('active',p.getAttribute('data-feature-panel')===name)});
+  if(name==='beads'){renderBeadPalette();renderBeadBoard();renderSavedDesigns()}
+  if(name==='growth')renderGrowth()
+}
+function initGameUI(){
+  document.querySelectorAll('[data-feature-tab]').forEach(function(b){b.addEventListener('click',function(){setFeatureTab(b.getAttribute('data-feature-tab'))})});
+  const board=document.getElementById('beadBoard');
+  board.addEventListener('click',function(e){const cell=e.target.closest('[data-cell]');if(!cell)return;const index=Number(cell.getAttribute('data-cell'));game.board[index]=selectedBeadColor;saveGame();cell.style.setProperty('--cell-color',selectedBeadColor===0?'#ffffff':BEAD_COLORS[selectedBeadColor].hex);updateBoardProgress()});
+  document.getElementById('beadPalette').addEventListener('click',function(e){
+    const button=e.target.closest('[data-bead-color]');if(!button)return;const index=Number(button.getAttribute('data-bead-color')),color=BEAD_COLORS[index];
+    const unlocked=index===0||color.cost===0||game.unlockedColors.indexOf(index)>=0;
+    if(!unlocked){if(game.stars<color.cost){gameToast(gameFill(gt('needMoreStars'),{n:color.cost}));return}game.stars-=color.cost;game.unlockedColors.push(index);selectedBeadColor=index;saveGame();updateGameUI();gameToast(gt('colorUnlocked'));return}
+    selectedBeadColor=index;renderBeadPalette()
+  });
+  document.addEventListener('click',function(e){
+    const template=e.target.closest('[data-template]');if(template){applyBeadTemplate(template.getAttribute('data-template'));return}
+    if(e.target.closest('#clearBoardBtn')){game.board=Array(GRID_SIZE*GRID_SIZE).fill(0);saveGame();renderBeadBoard();gameToast(gt('boardCleared'));return}
+    if(e.target.closest('#saveDesignBtn')){saveBeadDesign();return}
+    if(e.target.closest('#exportDesignBtn')){downloadBeadDesign();return}
+    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){game.board=d.board.slice();document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();gameToast(gt('designLoaded'))}return}
+    const del=e.target.closest('[data-delete-design]');if(del){game.savedDesigns=game.savedDesigns.filter(function(x){return String(x.id)!==del.getAttribute('data-delete-design')});saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designDeleted'))}
+  });
+  updateGameUI()
+}
+
+const t=k=>I18N[els.language.value][k]??k;
+const fill=(s,v)=>s.replace(/\{(\w+)\}/g,(_,k)=>v[k]??"");
+const randInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function shuffle(a){a=[...a];for(let i=a.length-1;i;i--){const j=randInt(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+function getLimit(){return els.limit.value==="custom"?Math.max(5,Math.min(999,+els.customLimit.value||60)):+els.limit.value}
+function getN(){return els.operandCount.value==="mixed"?randInt(2,4):+els.operandCount.value}
+const isOlympiad=m=>m.startsWith("olympiad");
+function strategyLabel(m){const x={normal:"ordinary",auto:"autoMode",make10:"methodMake10",break10:"methodBreak10",level10:"methodLevel10",decompose:"methodDecompose",makeWhole:"methodMakeWhole",multiplication:"methodMultiplication",division:"methodDivision",distribute:"methodDistribute",olympiadMixed:"olympiadMixed",olympiadPairing:"olympiadPairing",olympiadReverse:"olympiadReverse",olympiadPattern:"olympiadPattern"};return t(x[m]||"ordinary")}
+const crosses=(a,b)=>(a%10)+(b%10)>=10,borrows=(a,b)=>a>=10&&(a%10)<(b%10);
+function evaluate(nums,ops,nonNeg=true){if(nums.length!==ops.length+1)return null;const vals=[nums[0]],low=[];for(let i=0;i<ops.length;i++){const op=ops[i],n=nums[i+1];if(op==="×"||op==="÷"){let a=vals.pop(),v;if(op==="×")v=a*n;else{if(!n||a%n)return null;v=a/n}if(nonNeg&&v<0)return null;vals.push(v)}else{low.push(op);vals.push(n)}}let r=vals[0];for(let i=0;i<low.length;i++){r=low[i]==="+"?r+vals[i+1]:r-vals[i+1];if(nonNeg&&r<0)return null}return Number.isInteger(r)?r:null}
+function band(level,limit){const m={easy:[.12,.62],medium:[.28,.86],hard:[.45,1],challenge:[.62,1],olympiad:[.25,1]}[level]||[.28,.86];return{min:limit<=10?1:Math.max(3,Math.ceil(limit*m[0])),max:Math.max(2,Math.floor(limit*m[1]))}}
+function carry(nums,ops){let x=nums[0],hit=false;for(let i=0;i<ops.length;i++){if(ops[i]==="+"){hit||=crosses(x,nums[i+1]);x+=nums[i+1]}else if(ops[i]==="−"){hit||=borrows(x,nums[i+1]);x-=nums[i+1]}else return null}return hit}
+function valid(nums,ops,answer,s){if(answer<0||answer>s.limit||nums.some(n=>n<0||n>s.limit))return false;if(!s.includeZero&&(answer===0||nums.includes(0)))return false;const b=band(s.level,s.limit),measure=Math.max(answer,...nums);if(measure<b.min||measure>b.max)return false;const c=carry(nums,ops);if(c!==null&&s.difficulty==="cross"&&!c)return false;if(c!==null&&s.difficulty==="noCross"&&c)return false;if(s.level==="challenge"&&nums.length<3)return false;return true}
+function addQ(n,s){let target=randInt(Math.max(n,band(s.level,s.limit).min),band(s.level,s.limit).max),left=target,nums=[];for(let i=0;i<n-1;i++){let max=Math.max(1,left-(n-i-1)),v=randInt(1,max);nums.push(v);left-=v}nums.push(left);return{nums:shuffle(nums),ops:Array(n-1).fill("+")}}
+function subQ(n,s){let a=randInt(Math.max(n,band(s.level,s.limit).min),s.limit),nums=[a],cur=a;for(let i=1;i<n;i++){let max=Math.max(1,cur-(n-i)),v=randInt(1,max);nums.push(v);cur-=v}return{nums,ops:Array(n-1).fill("−")}}
+function addSubQ(n,s,both=false){let nums=[randInt(1,s.limit)],ops=[],cur=nums[0];for(let i=1;i<n;i++){let op=Math.random()<.5?"+":"−";if(both&&i===n-1&&!ops.includes("+"))op="+";if(both&&i===n-1&&!ops.includes("−"))op="−";if(op==="+"&&s.limit-cur<1)op="−";if(op==="−"&&cur<2)op="+";let v=op==="+"?randInt(1,Math.max(1,s.limit-cur)):randInt(1,Math.max(1,cur-1));nums.push(v);ops.push(op);cur=op==="+"?cur+v:cur-v}return{nums,ops}}
+function mulQ(n,s){let nums=[],p=1,maxF=s.level==="easy"?5:s.level==="medium"?8:12;for(let i=0;i<n;i++){let max=Math.max(1,Math.min(maxF,Math.floor(s.limit/p))),v=randInt(1,max);nums.push(v);p*=v}return{nums,ops:Array(n-1).fill("×")}}
+function divQ(n,s){let ds=[],p=1,maxF=s.level==="easy"?4:s.level==="medium"?7:10;for(let i=0;i<n-1;i++){let d=randInt(1,Math.max(1,Math.min(maxF,Math.floor(s.limit/p))));ds.push(d);p*=d}let q=randInt(1,Math.max(1,Math.floor(s.limit/p)));return{nums:[q*p,...ds],ops:Array(n-1).fill("÷")}}
+function allQ(n,s){const tm={2:[["+"],["−"],["×"],["÷"]],3:[["+","×"],["×","−"],["÷","+"],["+","−"],["×","÷"]],4:[["+","×","−"],["×","+","÷"],["÷","+","×"],["+","−","+"],["×","−","+"]]}[n];const ops=tm[randInt(0,tm.length-1)],nums=Array.from({length:n},()=>randInt(1,Math.max(2,Math.min(12,s.limit))));for(let i=0;i<ops.length;i++)if(ops[i]==="÷"&&!nums[i+1])nums[i+1]=1;return{nums,ops}}
+function hint(nums,ops,m){if(m==="normal")return null;for(let i=0;i<ops.length;i++)if((m==="make10"||m==="auto")&&ops[i]==="+"&&crosses(nums[i],nums[i+1])){let l=nums[i],r=nums[i+1],need=10-l%10;if(need===10||r<need){[l,r]=[r,l];need=10-l%10}if(need>0&&need<10&&r>=need)return{type:"methodMake10",text:"hintMake10",data:{left:l,right:r,need}}}for(let i=0;i<ops.length;i++)if((m==="break10"||m==="auto")&&ops[i]==="−"&&borrows(nums[i],nums[i+1])&&nums[i]%10)return{type:"methodBreak10",text:"hintBreak10",data:{left:nums[i],right:nums[i+1]}};for(let i=0;i<ops.length;i++)if((m==="level10"||m==="auto")&&ops[i]==="−"&&borrows(nums[i],nums[i+1]))return{type:"methodLevel10",text:"hintLevel10",data:{left:nums[i]}};if(m==="decompose")return{type:"methodDecompose",text:"hintDecompose",data:{}};if(m==="makeWhole")return{type:"methodMakeWhole",text:"hintMakeWhole",data:{}};if(m==="multiplication")return{type:"methodMultiplication",text:"hintMultiplication",data:{a:nums[0],b:nums[1]}};if(m==="division")return{type:"methodDivision",text:"hintDivision",data:{a:nums[0],b:nums[1]}};if(ops.some(x=>x==="×"||x==="÷")&&ops.some(x=>x==="+"||x==="−"))return{type:"methodOrder",text:"hintOrder",data:{}};if(nums.length>2)return{type:"methodChain",text:"hintChain",data:{}};return null}
+function distributeQ(s){for(let z=0;z<400;z++){let a=randInt(2,Math.min(9,s.limit)),b=randInt(1,9),c=randInt(1,9),nums=[a,b,a,c],ops=["×","+","×"],ans=evaluate(nums,ops,s.nonNegative);if(ans!==null&&valid(nums,ops,ans,s))return{kind:"expression",nums,ops,answer:ans,hint:{type:"methodDistribute",text:"hintDistribute",data:{a}}}}return null}
+// Two-digit questions always use numbers 10–99 and respect the selected upper bound.
+function tensQ(s){
+  const cap=Math.min(99,s.limit);
+  if(cap<(s.operation==='tensSub'?11:20))return null;
+  for(let i=0;i<1600;i++){
+    let op=s.operation==='tensMixed'?(Math.random()<.5?'+':'−'):(s.operation==='tensAdd'?'+':'−');
+    let a=randInt(10,cap),b=randInt(10,cap);
+    if(op==='−'&&a<b)[a,b]=[b,a];
+    let answer=op==='+'?a+b:a-b;
+    if(answer>s.limit||answer<0||(!s.includeZero&&answer===0))continue;
+    let crossed=op==='+'?crosses(a,b):borrows(a,b);
+    if(s.difficulty==='cross'&&!crossed)continue;
+    if(s.difficulty==='noCross'&&crossed)continue;
+    return{kind:'expression',nums:[a,b],ops:[op],answer,hint:{type:'methodTens',text:'hintTens',data:{}}};
+  }
+  return null;
+}
+// Includes equality, less-than and greater-than examples; shuffled left/right sides.
+function compareQ(s){
+  // Both sides are two-digit integers; respect the selected upper bound.
+  const low=10,cap=Math.min(99,s.limit);
+  if(cap<11)return null;
+  // Target distribution: equality 10%, less-than 45%, greater-than 45%.
+  const roll=Math.random();
+  const mode=roll<0.10?0:roll<0.55?1:2;
+  let left,right;
+  if(mode===0){left=randInt(low,cap);right=left}
+  else if(mode===1){left=randInt(low,cap-1);right=randInt(left+1,cap)}
+  else{left=randInt(low+1,cap);right=randInt(low,left-1)}
+  return{kind:'compare',left,right,answer:left>right?'＞':left<right?'＜':'＝',hint:{type:'methodCompare',text:'hintCompare',data:{}}};
+}
+function standardQ(s){let n=getN(),op=s.operation,m=s.mode;if(op==="chainSub"){op="sub";n=Math.max(3,n)}if(op==="chainAddSub"){op="addsub";n=Math.max(3,n)}if(m==="make10")op="add";if(m==="break10"||m==="level10")op="sub";if(m==="multiplication")op="mul";if(m==="division")op="div";if(m==="distribute")return distributeQ(s);if((m==="decompose"||m==="makeWhole")&&!['add','sub','addsub','chainSub','chainAddSub'].includes(s.operation))op="addsub";for(let z=0;z<1200;z++){let q=op==="add"?addQ(n,s):op==="sub"?subQ(n,s):op==="mul"?mulQ(n,s):op==="div"?divQ(n,s):op==="all"?allQ(n,s):addSubQ(n,s,s.operation==="chainAddSub");let ans=evaluate(q.nums,q.ops,s.nonNegative);if(ans===null||!valid(q.nums,q.ops,ans,s))continue;let h=hint(q.nums,q.ops,m);if(['make10','break10','level10'].includes(m)&&!h)continue;return{kind:"expression",nums:q.nums,ops:q.ops,answer:ans,hint:h}}return null}
+function pairingQ(s){let target=Math.max(5,Math.floor(s.limit/2));for(let z=0;z<300;z++){let a=randInt(1,target-1),b=randInt(1,target-1),nums=shuffle([a,target-a,b,target-b]),answer=target*2;if(answer<=s.limit)return{kind:"expression",nums,ops:["+","+","+"],answer,hint:{type:"methodPairing",text:"hintPairing",data:{}}}}return null}
+function reverseQ(s){let n=Math.max(3,getN());for(let z=0;z<600;z++){let q=addSubQ(Math.min(4,n),{...s,includeZero:false},true),target=evaluate(q.nums,q.ops,true);if(target===null||target<1||target>s.limit)continue;let u=randInt(0,q.nums.length-1);return{kind:"missing",nums:q.nums,ops:q.ops,unknownIndex:u,target,answer:q.nums[u],hint:{type:"methodReverse",text:"hintReverse",data:{}}}}return null}
+function patternQ(s){let n=Math.max(3,getN());for(let z=0;z<500;z++){let count=Math.min(4,n),d=randInt(1,Math.max(1,Math.floor(s.limit/(count*2)))),start=randInt(1,Math.max(1,Math.floor(s.limit/count)-d*(count-1))),nums=Array.from({length:count},(_,i)=>start+i*d),answer=nums.reduce((a,b)=>a+b,0);if(answer<=s.limit)return{kind:"expression",nums,ops:Array(count-1).fill("+"),answer,hint:{type:"methodPattern",text:"hintPattern",data:{}}}}return null}
+function olympiadQ(s){let m=s.mode;if(m==="olympiadMixed"||!isOlympiad(m))m=['olympiadPairing','olympiadReverse','olympiadPattern'][randInt(0,2)];return m==="olympiadPairing"?pairingQ(s):m==="olympiadReverse"?reverseQ(s):patternQ(s)}
+function fallback(s){let a=Math.max(3,Math.floor(s.limit*.7)),b=Math.max(1,Math.floor(a/3)),c=Math.max(1,Math.floor(b/2)),nums=[a,b,c],ops=["−","−"];return{kind:"expression",nums,ops,answer:evaluate(nums,ops,true),hint:{type:"methodChain",text:"hintChain",data:{}}}}
+function config(){return{limit:getLimit(),operation:els.operation.value,mode:els.strategyMode.value,level:els.level.value,difficulty:els.difficulty.value,includeZero:els.includeZero.checked,nonNegative:els.nonNegative.checked}}
+function buildQ(s){
+  if(s.operation==='compare')return compareQ(s);
+  if(['tensMixed','tensAdd','tensSub'].includes(s.operation))return tensQ(s);
+  return(s.level==="olympiad"||isOlympiad(s.mode)?olympiadQ(s):standardQ(s))||fallback(s)}
+function qKey(q){
+  if(q.kind==='compare')return `C:${Math.min(q.left,q.right)}:${Math.max(q.left,q.right)}`;
+  if(q.kind==='missing')return `M:${q.nums.join(',')}:${q.ops.join(',')}:${q.unknownIndex}:${q.target}`;
+  if(q.ops.every(x=>x==='+')||q.ops.every(x=>x==='×'))return `${q.ops[0]}:${[...q.nums].sort((a,b)=>a-b).join(',')}`;
+  return `${q.nums.join(',')}:${q.ops.join(',')}`;
+}
+function showNotice(x){els.notice.textContent=x;els.notice.classList.add('show')}
+function hideNotice(){els.notice.textContent='';els.notice.classList.remove('show')}
+// Prepare all distinct comparisons, keeping = uncommon and the unordered pair unique.
+function comparisonPool(s){
+  const cap=Math.min(99,s.limit),greater=[],less=[],equal=[];
+  for(let a=10;a<=cap;a++){
+    equal.push({kind:'compare',left:a,right:a,answer:'＝',hint:{type:'methodCompare',text:'hintCompare',data:{}}});
+    for(let b=a+1;b<=cap;b++){
+      const hint={type:'methodCompare',text:'hintCompare',data:{}};
+      greater.push({kind:'compare',left:b,right:a,answer:'＞',hint});
+      less.push({kind:'compare',left:a,right:b,answer:'＜',hint});
+    }
+  }
+  return {greater:shuffle(greater),less:shuffle(less),equal:shuffle(equal)};
+}
+function generateQuestions(){
+  hideNotice();els.result.classList.remove('show');
+  const per=+els.count.value,pages=+els.totalPages.value,total=per*pages,s=config();
+  if(s.operation==='compare'&&s.limit<11){showNotice(t('noticeCompareRange'));return;}
+  if(['tensMixed','tensAdd','tensSub'].includes(s.operation)&&s.limit<(s.operation==='tensSub'?11:20)){showNotice(t('noticeTensRange'));return;}
+  if(s.level==='olympiad'||isOlympiad(s.mode))showNotice(t('noticeOlympiad'));
+  else if(['make10','break10','level10','multiplication','division','distribute'].includes(s.mode))showNotice(t('noticeOverride'));
+  currentQuestions=[];
+  const globalUsed=new Set(),globalCounts=new Map();
+  const pool=s.operation==='compare'?comparisonPool(s):null;
+  for(let page=0;page<pages;page++){
+    const pageUsed=new Set(),pageCounts=new Map();
+    // Each worksheet gets its own balance: roughly 45% >, 45% <, 10% =.
+    const comparisons=pool?shuffle(Array.from({length:per},(_,i)=>{
+      const equalCount=Math.round(per*.10),greaterCount=Math.floor((per-equalCount)/2);
+      return i<equalCount?'equal':i<equalCount+greaterCount?'greater':'less';
+    })):null;
+    for(let j=0;j<per;j++){
+      let chosen=null;
+      if(pool){
+        const desired=comparisons[j],groups=[desired,...shuffle(['greater','less','equal'].filter(x=>x!==desired))];
+        for(const group of groups){
+          const arr=pool[group];
+          const idx=arr.findIndex(q=>!pageUsed.has(qKey(q))&&!globalUsed.has(qKey(q)));
+          if(idx>=0){chosen=arr.splice(idx,1)[0];break;}
+        }
+        // Only reuse a pair when the entire set of combinations has been exhausted.
+        if(!chosen){
+          let options=[];for(const g of groups)options.push(...comparisonPool(s)[g]);
+          options=options.filter(q=>!pageUsed.has(qKey(q)));
+          if(!options.length)options=groups.flatMap(g=>comparisonPool(s)[g]);
+          options.sort((a,b)=>(globalCounts.get(qKey(a))||0)-(globalCounts.get(qKey(b))||0));
+          chosen=options[0]||compareQ(s);
+        }
+      }else{
+        let best=null,bestScore=Infinity;
+        for(let attempt=0;attempt<280;attempt++){
+          const q=buildQ(s);if(!q)continue;
+          const key=qKey(q);
+          const score=(pageUsed.has(key)?100000:0)+(globalUsed.has(key)?2000:0)
+            +(globalCounts.get(key)||0)*100+Math.random();
+          if(score<bestScore){best=q;bestScore=score;}
+          if(score<1)break;
+        }
+        chosen=best||buildQ(s);
+      }
+      if(!chosen)continue;
+      const key=qKey(chosen);pageUsed.add(key);globalUsed.add(key);
+      globalCounts.set(key,(globalCounts.get(key)||0)+1);
+      currentQuestions.push(chosen);
+    }
+  }
+  showingAnswers=false;els.worksheet.classList.remove('show-answers');els.toggleAnswerBtn.textContent=t('showAnswers');
+  render(false);updateHeader();exerciseStartedAt=Date.now();submittedElapsedMs=null;setPageScores('');setPageTimes('');
+}
+function compareSlot(i,a){return `<select class="answer-input" data-index="${i}" aria-label="${t('methodCompare')}"><option value=""></option><option value="＞">＞</option><option value="＝">＝</option><option value="＜">＜</option></select><span class="print-compare-line" aria-hidden="true"></span><span class="answer-text">${a}</span>`}
+function slot(i,a){return`<input class="answer-input" inputmode="numeric" data-index="${i}" autocomplete="off"><span class="answer-text">${a}</span>`}
+function equation(q,i){let h="";if(q.kind==='compare')return `<span>${q.left}</span>${compareSlot(i,q.answer)}<span>${q.right}</span><span class="mark"></span>`;if(q.kind==="missing"){q.nums.forEach((n,j)=>{h+=j===q.unknownIndex?slot(i,q.answer):`<span>${n}</span>`;if(j<q.ops.length)h+=`<span>${q.ops[j]}</span>`});h+=`<span>=</span><span>${q.target}</span>`}else{q.nums.forEach((n,j)=>{h+=`<span>${n}</span>`;if(j<q.ops.length)h+=`<span>${q.ops[j]}</span>`});h+=`<span>=</span>${slot(i,q.answer)}`}return h+`<span class="mark"></span>`}
+function hintHTML(q){if(!els.showHints.checked||!q.hint)return"";return`<div class="strategy"><strong>${t(q.hint.type)}</strong>：${fill(t(q.hint.text),q.hint.data||{})}</div>`}
+function pageHead(i,p){let total=+els.count.value*p,sub=`${getLimit()} ${t("within")} · ${t(els.operation.value)} · ${t(els.level.value)} · ${strategyLabel(els.strategyMode.value)} · ${fill(t("totalQuestionCount"),{count:total})}`;return`<span class="page-indicator">${fill(t("pageOf"),{page:i+1,total:p})}</span><header class="sheet-head"><div class="sheet-title"><h2 class="page-title">${t("title")}</h2><p class="page-subtitle">${sub}</p></div><div class="student-info">
+            <div class="time-box"><b>${t("time")}</b>：<span class="time-value"></span></div>
+            <div class="score-box"><span class="score-value"></span></div>
+          </div></header>`}
+function saved(){let v={};els.pages.querySelectorAll('.answer-input').forEach(x=>v[x.dataset.index]=x.value);return v}function restore(v){els.pages.querySelectorAll('.answer-input').forEach(x=>{if(v[x.dataset.index]!==undefined)x.value=v[x.dataset.index]})}
+function render(preserve=true){let v=preserve?saved():{},per=+els.count.value,pages=+els.totalPages.value;els.pages.style.setProperty('--cols',els.columns.value);els.pages.innerHTML="";for(let pi=0;pi<pages;pi++){let page=document.createElement('section');page.className='sheet-page';page.innerHTML=pageHead(pi,pages);let grid=document.createElement('div');grid.className='questions',start=pi*per,end=Math.min(start+per,currentQuestions.length);currentQuestions.slice(start,end).forEach((q,j)=>{let i=start+j,card=document.createElement('article');card.className='question';card.innerHTML=`<span class="q-index">${fill(t("question"),{n:i+1})}</span><div class="equation">${equation(q,i)}</div>${hintHTML(q)}`;grid.appendChild(card)});page.appendChild(grid);els.pages.appendChild(page)}restore(v);let inputs=[...els.pages.querySelectorAll('.answer-input')];inputs.forEach((x,i)=>{x.addEventListener('change',()=>{x.classList.remove('correct','wrong');let m=x.closest('.equation').querySelector('.mark');m.textContent='';m.className='mark'});x.addEventListener('input',()=>{x.classList.remove('correct','wrong');let m=x.closest('.equation').querySelector('.mark');m.textContent='';m.className='mark'});x.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inputs[i+1]?inputs[i+1].focus():checkAnswers(false)}})})}
+function updateHeader(){let p=+els.totalPages.value,total=+els.count.value*p,sub=`${getLimit()} ${t("within")} · ${t(els.operation.value)} · ${t(els.level.value)} · ${strategyLabel(els.strategyMode.value)} · ${fill(t("totalQuestionCount"),{count:total})}`;els.pages.querySelectorAll('.page-title').forEach(x=>x.textContent=t('title'));els.pages.querySelectorAll('.page-subtitle').forEach(x=>x.textContent=sub);els.pages.querySelectorAll('.page-indicator').forEach((x,i)=>x.textContent=fill(t('pageOf'),{page:i+1,total:p}))}function setPageScores(v=''){els.pages.querySelectorAll('.score-box').forEach(box=>{let value=box.querySelector('.score-value');value.textContent=v;box.classList.toggle('visible',v!=='')})}
+function setPageTimes(v=''){els.pages.querySelectorAll('.time-box').forEach(box=>{let value=box.querySelector('.time-value');value.textContent=v;box.classList.toggle('visible',v!=='')})}
+function formatElapsed(ms){let total=Math.max(0,Math.floor(ms/1000)),h=Math.floor(total/3600),m=Math.floor(total%3600/60),s=total%60;if(els.language.value==='en')return h?`${h}h ${m}m ${s}s`:m?`${m}m ${s}s`:`${s}s`;return h?`${h}时${m}分${s}秒`:m?`${m}分${s}秒`:`${s}秒`}
+function checkAnswers(scoreBlank=false,recordSubmission=true){let correct=0,wrong=0,blank=0;els.pages.querySelectorAll('.answer-input').forEach(x=>{let q=currentQuestions[+x.dataset.index],v=x.value.trim(),m=x.closest('.equation').querySelector('.mark');x.classList.remove('correct','wrong');m.textContent='';m.className='mark';if(v===''){blank++;if(scoreBlank){m.textContent='×';m.classList.add('wrong')}return}if((q.kind==='compare'&&v===q.answer)||(q.kind!=='compare'&&v!==''&&Number(v)===q.answer)){correct++;x.classList.add('correct');m.textContent='✓';m.classList.add('correct')}else{wrong++;x.classList.add('wrong');m.textContent='×';m.classList.add('wrong')}});let total=currentQuestions.length,score=Math.round(correct/Math.max(1,total)*100),extra=correct===total?t('perfect'):blank&&!scoreBlank?t('unfinished'):t('retry');if(recordSubmission||submittedElapsedMs===null)submittedElapsedMs=Date.now()-exerciseStartedAt;const reward=recordSubmission?awardStars({correct:correct,wrong:wrong,blank:blank,total:total}):null;let rewardText='';if(reward&&reward.earned>0)rewardText=' '+gameFill(gt('rewardEarned'),{n:reward.earned})+(reward.perfect?' '+gt('perfectBonus'):'');else if(reward&&reward.already)rewardText=' '+gt('rewardClaimed');els.result.textContent=fill(t('result'),{total,correct,wrong,blank,score})+' '+extra+rewardText;els.result.classList.add('show');setPageScores(String(score));setPageTimes(formatElapsed(submittedElapsedMs));return{correct,wrong,blank,score}}
+function toggleAnswers(force){let next=typeof force==='boolean'?force:!showingAnswers;if(next&&!showingAnswers)checkAnswers(true,false);showingAnswers=next;els.worksheet.classList.toggle('show-answers',next);els.toggleAnswerBtn.textContent=next?t('hideAnswers'):t('showAnswers')}
+function clearAnswers(){els.pages.querySelectorAll('.answer-input').forEach(x=>{x.value='';x.classList.remove('correct','wrong')});els.pages.querySelectorAll('.mark').forEach(x=>{x.textContent='';x.className='mark'});els.result.classList.remove('show');showingAnswers=false;els.worksheet.classList.remove('show-answers');els.toggleAnswerBtn.textContent=t('showAnswers');exerciseStartedAt=Date.now();submittedElapsedMs=null;setPageScores('');setPageTimes('')}
+function printSheet(withAnswers){if(!currentQuestions.length)generateQuestions();let prev=showingAnswers;showingAnswers=withAnswers;els.worksheet.classList.toggle('show-answers',withAnswers);setTimeout(()=>{window.print();setTimeout(()=>toggleAnswers(prev),200)},80)}
+function setLanguage(){let v=saved();document.documentElement.lang=els.language.value;applyGameLabels();document.title=t('title');document.querySelectorAll('[data-i18n]').forEach(x=>x.textContent=t(x.dataset.i18n));render(false);restore(v);els.toggleAnswerBtn.textContent=showingAnswers?t('hideAnswers'):t('showAnswers');updateHeader();if(els.result.classList.contains('show'))checkAnswers(showingAnswers,false)}
+els.language.addEventListener('change',setLanguage);els.limit.addEventListener('change',()=>{els.customLimitWrap.classList.toggle('show',els.limit.value==='custom');updateHeader()});els.customLimit.addEventListener('input',updateHeader);els.operation.addEventListener('change',updateHeader);els.operandCount.addEventListener('change',updateHeader);els.strategyMode.addEventListener('change',updateHeader);els.level.addEventListener('change',updateHeader);els.difficulty.addEventListener('change',updateHeader);els.count.addEventListener('change',generateQuestions);els.totalPages.addEventListener('change',generateQuestions);els.columns.addEventListener('change',()=>els.pages.style.setProperty('--cols',els.columns.value));els.showHints.addEventListener('change',()=>render(true));els.generateBtn.addEventListener('click',generateQuestions);els.toggleAnswerBtn.addEventListener('click',()=>toggleAnswers());els.checkBtn.addEventListener('click',()=>checkAnswers(false));els.printBlankBtn.addEventListener('click',()=>printSheet(false));els.printAnswerBtn.addEventListener('click',()=>printSheet(true));els.clearBtn.addEventListener('click',clearAnswers);initGameUI();setLanguage();generateQuestions();
+</script>
+</body>
+</html>
