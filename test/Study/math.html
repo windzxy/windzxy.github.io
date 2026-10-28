@@ -353,6 +353,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
               <button id="clearBoardBtn" class="btn btn-secondary" type="button" data-game-text="clearBoard">清空畫布</button>
               <button id="saveDesignBtn" class="btn btn-green" type="button" data-game-text="saveDesign">保存作品</button>
               <button id="exportDesignBtn" class="btn btn-primary" type="button" data-game-text="exportDesign">下載 PNG</button>
+              <button id="exportPixelBtn" class="btn btn-secondary" type="button" data-game-text="exportPixel">像素高清图</button>
             </div>
             <p class="bead-tip" data-game-text="beadTip">基礎顏色免費使用。更多顏色需要消耗星星解鎖；保存後的作品會留在這台裝置。</p>
           </aside>
@@ -363,10 +364,21 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
                 <option value="12">12 × 12</option>
                 <option value="16">16 × 16</option>
                 <option value="24">24 × 24</option>
+                <option value="32">32 × 32</option>
+                <option value="48">48 × 48</option>
               </select>
               <span data-game-text="gridSizeHint">切换画布时会保留中央图案</span>
             </div>
-            <div id="beadBoard" class="bead-board" role="grid" aria-label="拼豆畫布"></div>
+            <div class="board-toolbar" id="boardToolbar">
+              <div class="board-mode-picker" role="group" aria-label="画布工具">
+                <button id="boardPaintMode" class="mode-switch active" type="button" aria-pressed="true" data-game-text="paintMode">✎ 画笔</button>
+                <button id="boardPanMode" class="mode-switch" type="button" aria-pressed="false" data-game-text="panMode">✥ 移动画布</button>
+              </div>
+              <span class="board-mode-tip" data-game-text="zoomHint">高清画布可拖动平移、精细上色</span>
+            </div>
+            <div class="board-viewport" id="boardViewport">
+              <div id="beadBoard" class="bead-board" role="grid" aria-label="拼豆畫布"></div>
+            </div>
             <div class="board-hint" data-game-text="boardHint">先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。</div>
           </div>
         </div>
@@ -395,6 +407,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
   <div id="gameToast" class="game-toast" role="status" aria-live="polite"></div>
 
   <script src="assets/bead-art-v1.js?v=20261028-1"></script>
+  <script src="assets/bead-art-hd-v1.js?v=20261028-5"></script>
   <script>
 const $=id=>document.getElementById(id);
 const els={language:$("language"),limit:$("limit"),customLimitWrap:$("customLimitWrap"),customLimit:$("customLimit"),operation:$("operation"),operandCount:$("operandCount"),strategyMode:$("strategyMode"),level:$("level"),difficulty:$("difficulty"),count:$("count"),totalPages:$("totalPages"),columns:$("columns"),nonNegative:$("nonNegative"),showHints:$("showHints"),includeZero:$("includeZero"),avoidDuplicate:$("avoidDuplicate"),generateBtn:$("generateBtn"),toggleAnswerBtn:$("toggleAnswerBtn"),checkBtn:$("checkBtn"),printBlankBtn:$("printBlankBtn"),printAnswerBtn:$("printAnswerBtn"),clearBtn:$("clearBtn"),notice:$("notice"),worksheet:$("worksheet"),pages:$("pages"),result:$("result")};
@@ -408,7 +421,7 @@ let currentQuestions=[],showingAnswers=false,exerciseStartedAt=Date.now(),submit
 
 const GAME_KEY='wind-math-bead-garden-v1';
 let GRID_SIZE=12;
-const GRID_OPTIONS=[12,16,24];
+const GRID_OPTIONS=[12,16,24,32,48];
 const boardSizeValid=n=>GRID_OPTIONS.includes(Number(n));
 const BEAD_COLORS=[
   {name:'橡皮擦',hex:'#ffffff',cost:0},
@@ -426,16 +439,32 @@ const BEAD_COLORS=[
   {name:'青檸綠',hex:'#b6d95c',cost:12},
   {name:'冰川藍',hex:'#a7ddf2',cost:12},
   {name:'紫水晶',hex:'#c3a6ff',cost:15},
-  {name:'石墨黑',hex:'#263247',cost:15}
+  {name:'石墨黑',hex:'#263247',cost:15},
+  {name:'奶霜白',hex:'#fff8ed',cost:8},
+  {name:'蜜桃色',hex:'#ffc3aa',cost:8},
+  {name:'珊瑚红',hex:'#e9697f',cost:10},
+  {name:'焦糖棕',hex:'#aa6c50',cost:10},
+  {name:'可可深棕',hex:'#583f43',cost:12},
+  {name:'雾蓝',hex:'#dceeff',cost:10},
+  {name:'湖水青',hex:'#3fa8ba',cost:12},
+  {name:'森林绿',hex:'#367b64',cost:12},
+  {name:'麦芽金',hex:'#edaa42',cost:12},
+  {name:'云雾紫',hex:'#e7d9ff',cost:14},
+  {name:'莓果紫',hex:'#76547e',cost:14},
+  {name:'深描边',hex:'#33405c',cost:0},
+  {name:'石榴红',hex:'#c94368',cost:15},
+  {name:'牛奶白',hex:'#fffaf6',cost:0},
+  {name:'柔粉',hex:'#ffdaea',cost:12},
+  {name:'银灰',hex:'#a5b0c6',cost:12}
 ];
 const BEAD_COLOR_NAMES={
-  'zh-Hant':['橡皮擦','莓果粉','陽光黃','薄荷綠','天空藍','薰衣草','橙子橘','草木綠','巧克力','海軍藍','淺粉色','奶油白','青檸綠','冰川藍','紫水晶','石墨黑'],
-  'zh-Hans':['橡皮擦','莓果粉','阳光黄','薄荷绿','天空蓝','薰衣草','橙子橘','草木绿','巧克力','海军蓝','浅粉色','奶油白','青柠绿','冰川蓝','紫水晶','石墨黑'],
-  en:['Eraser','Berry pink','Sunshine','Mint','Sky blue','Lavender','Orange','Leaf green','Chocolate','Navy','Blush','Cream','Lime','Ice blue','Amethyst','Charcoal']
+  'zh-Hant':['橡皮擦','莓果粉','陽光黃','薄荷綠','天空藍','薰衣草','橙子橘','草木綠','巧克力','海軍藍','淺粉色','奶油白','青檸綠','冰川藍','紫水晶','石墨黑','奶霜白','蜜桃色','珊瑚紅','焦糖棕','可可深棕','霧藍','湖水青','森林綠','麥芽金','雲霧紫','莓果紫','深描邊','石榴紅','牛奶白','柔粉','銀灰'],
+  'zh-Hans':['橡皮擦','莓果粉','阳光黄','薄荷绿','天空蓝','薰衣草','橙子橘','草木绿','巧克力','海军蓝','浅粉色','奶油白','青柠绿','冰川蓝','紫水晶','石墨黑','奶霜白','蜜桃色','珊瑚红','焦糖棕','可可深棕','雾蓝','湖水青','森林绿','麦芽金','云雾紫','莓果紫','深描边','石榴红','牛奶白','柔粉','银灰'],
+  en:['Eraser','Berry pink','Sunshine','Mint','Sky blue','Lavender','Orange','Leaf green','Chocolate','Navy','Blush','Cream','Lime','Ice blue','Amethyst','Charcoal','Ivory','Peach','Coral','Caramel','Cocoa','Mist blue','Lagoon','Forest','Honey gold','Cloud lilac','Berry violet','Outline','Pomegranate','Milk','Blush','Silver']
 };
 const GAME_LABELS={
- 'zh-Hant':{
-  templateHelp:"精細 24×24 拼豆圖案，點選後自動填入畫布，也可自行修改。",
+ 'zh-Hant':{paintMode:"✎ 畫筆",panMode:"✥ 移動畫布",zoomHint:"高清畫布可用拖動模式移動後再上色",exportPixel:"高清像素 PNG",
+  templateHelp:"17 款精細 24×24 及 8 款原生 48×48 圖案，點選後可修改。",
   designLimitConfirm:'作品已達到 20 件，繼續保存會刪除最早的作品。確定保存嗎？',storageFull:'本機儲存空間不足，無法儲存；請先匯出備份或清理瀏覽器空間。',
   dailyGoalTitle:'今天的小目標',dailyGoalDesc:'完成 3 組至少 10 題的練習',dailyGoalDone:'今日目標已達成！',dailyGoalProgress:'已完成 {done} / 3 組',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天練習的題數和正確率',recentPracticeEmpty:'從今天開始，累積自己的學習軌跡吧。',questionsUnit:'題',
   templateStar:'⭐ 星星',templateCat:'🐱 小貓',templateHouse:'🏡 小房子',templateRocket:'🚀 小火箭',gridSelect:'畫布大小',gridSizeHint:'切換畫布時會保留中央圖案',gridResizeConfirm:'縮小畫布會裁掉部分拼豆，確定繼續嗎？',retryWrong:'↻ 只練錯題',feedbackPerfect:'太棒了！全部答對！繼續練習，或者去拼豆工坊創作吧。',feedbackMistakes:'有 {n} 題需要再想一想。先試試只練錯題，再查看解析。',feedbackUnfinished:'還有 {n} 題未完成，全部做完後再來檢查吧。',feedbackEmpty:'先完成幾道題，再點擊檢查。',
@@ -443,13 +472,13 @@ const GAME_LABELS={
   undoBoard:'↶ 復原',redoBoard:'↷ 重做',backupTitle:'學習資料備份',backupDesc:'更換裝置時可匯出星星與作品，再從備份還原。',backupExport:'匯出備份',backupImport:'匯入備份',backupSuccess:'備份匯入成功，星星及作品已還原。',backupInvalid:'無法讀取備份，請選擇有效的 Wind 學堂 JSON 檔。',backupConfirm:'匯入將覆蓋目前的星星和作品，確定繼續嗎？',backupSaved:'備份已匯出。',answerShownNoReward:'已查看答案，本組不再發放星星；重新出題即可繼續挑戰。',completeBonus:'（完成整組加贈 2 顆）',presetGrade1:'一年級口算',presetGrade1Sub:'20以內 · 10題',presetTens:'兩位數計算',presetTensSub:'100以內 · 10題',presetCompare:'數字比大小',presetCompareSub:'兩位數 · 10題',presetMultiply:'乘法口訣',presetMultiplySub:'100以內 · 10題',
   stars:'星星餘額',eraserLabel:'橡皮擦',templateApplied:'圖案已放到畫布上，可以繼續修改。',heroEyebrow:'數學任務 · 邊學邊玩',heroPillOne:'✦ 答對一題，點亮一顆星',heroPillTwo:'▦ 用星星解鎖拼豆顏色',correctTotal:'累計答對',streak:'連續練習天',
   practiceTab:'數學練習',beadTab:'拼豆工坊',growthTab:'成長記錄',panelTitle:'設定今日練習',panelCopy:'依照孩子目前的能力選擇題型與難度；完成作答後即可領取星星。',
-  beadTitle:'拼豆工坊',beadCopy:'用練習獲得的星星解鎖更多顏色，在 12 × 12 畫布上創作自己的像素作品。',designName:'作品名稱',templateTitle:'快速圖案',templateHeart:'💗 愛心',templateFlower:'🌼 小花',templateSmile:'😊 笑臉',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆顏色 · 點選使用',clearBoard:'清空畫布',saveDesign:'保存作品',exportDesign:'下載 PNG',beadTip:"快速圖案可免費使用完整配色；自由繪製的更多顏色可用星星解鎖。作品存於此裝置，請定期備份。",boardTitle:'我的像素畫',boardHint:'先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品後，就可以保存到這裡。',growthTitle:'我的成長記錄',growthCopy:'每一組練習都算數。看見自己的努力，再一步步解鎖新的創作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考試分數，而是完成練習、訂正與持續努力的紀錄。學會解釋思路，比只追求速度更重要。',
+  beadTitle:'拼豆工坊',beadCopy:"用練習星星解鎖顏色，12～48 格自由拼豆，精緻圖案直接開始創作。",designName:'作品名稱',templateTitle:'快速圖案',templateHeart:'💗 愛心',templateFlower:'🌼 小花',templateSmile:'😊 笑臉',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆顏色 · 點選使用',clearBoard:'清空畫布',saveDesign:'保存作品',exportDesign:'下載 PNG',beadTip:"快速圖案可免費使用完整配色；自由繪製的更多顏色可用星星解鎖。作品存於此裝置，請定期備份。",boardTitle:'我的像素畫',boardHint:'先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品後，就可以保存到這裡。',growthTitle:'我的成長記錄',growthCopy:'每一組練習都算數。看見自己的努力，再一步步解鎖新的創作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考試分數，而是完成練習、訂正與持續努力的紀錄。學會解釋思路，比只追求速度更重要。',
   statCorrect:'累計答對',statAnswered:'已作答題數',statStreak:'連續練習天數',statAccuracy:'整體正確率',statRounds:'完成練習組',statPerfect:'全對練習組',statDesigns:'收藏作品',
   achFirst:'初次啟程',achFirstDesc:'完成第一組練習',achTen:'計算新星',achTenDesc:'累計答對 10 題',achPerfect:'完美一組',achPerfectDesc:'一整組全部答對',achStreak:'堅持不懈',achStreakDesc:'連續學習 3 天',achArtist:'像素創作者',achArtistDesc:'保存第一幅作品',achHundred:'百題達人',achHundredDesc:'累計答對 100 題',
   unlocked:'已解鎖',locked:'待解鎖',starCost:'★ {n}',colorUnlocked:'顏色已解鎖！',needMoreStars:'還差一些星星，解鎖需要 {n} 顆。',designSaved:'作品已保存到「我的作品」。',designLoaded:'已載入作品，可以繼續修改。',designDeleted:'作品已刪除。',boardCleared:'畫布已清空。',downloadStarted:'作品 PNG 已準備好。',rewardEarned:'🌟 本次獲得 {n} 顆星星！',perfectBonus:'（全對加贈 3 顆）',rewardClaimed:'這組練習已領取過星星獎勵。',needAnswer:'先完成至少一道題，再領取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'刪除作品',loadDesign:'載入作品',emptyName:'我的拼豆作品'
  },
- 'zh-Hans':{
-  templateHelp:"精细 24×24 拼豆图案，点选后自动填入画布，还可以自行修改。",
+ 'zh-Hans':{paintMode:"✎ 画笔",panMode:"✥ 移动画布",zoomHint:"高清画布可用拖动模式移动后再上色",exportPixel:"高清像素 PNG",
+  templateHelp:"17 款精细 24×24 与 8 款原生 48×48 图案，点选后可修改。",
   designLimitConfirm:'作品已达到 20 件，继续保存会删除最早的作品。确定保存吗？',storageFull:'本机存储空间不足，无法保存；请先导出备份或清理浏览器空间。',
   dailyGoalTitle:'今天的小目标',dailyGoalDesc:'完成 3 组至少 10 题的练习',dailyGoalDone:'今日目标已达成！',dailyGoalProgress:'已完成 {done} / 3 组',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天练习的题数和正确率',recentPracticeEmpty:'今天开始，积累自己的学习轨迹吧。',questionsUnit:'题',
   templateStar:'⭐ 星星',templateCat:'🐱 小猫',templateHouse:'🏡 小房子',templateRocket:'🚀 小火箭',gridSelect:'画布大小',gridSizeHint:'切换画布时会保留中央图案',gridResizeConfirm:'缩小画布会裁掉部分拼豆，确定继续吗？',retryWrong:'↻ 只练错题',feedbackPerfect:'太棒了！全对！继续练习，或者去拼豆工坊创作吧。',feedbackMistakes:'有 {n} 道题需要再想想。先试试只练错题，再查看解析。',feedbackUnfinished:'还有 {n} 道题没有完成，全部做完后再来检查吧。',feedbackEmpty:'先完成几道题，再点击检查。',
@@ -457,13 +486,13 @@ const GAME_LABELS={
   undoBoard:'↶ 撤销',redoBoard:'↷ 重做',backupTitle:'学习数据备份',backupDesc:'更换设备时可导出星星和作品，再从备份恢复。',backupExport:'导出备份',backupImport:'导入备份',backupSuccess:'备份导入成功，星星和作品已恢复。',backupInvalid:'无法读取备份，请选择有效的 Wind 学堂 JSON 文件。',backupConfirm:'导入将覆盖目前的星星和作品，确定继续吗？',backupSaved:'备份已导出。',answerShownNoReward:'已查看答案，本组不再发放星星；重新出题即可继续挑战。',completeBonus:'（完成整组加赠 2 颗）',presetGrade1:'一年级口算',presetGrade1Sub:'20以内 · 10题',presetTens:'两位数计算',presetTensSub:'100以内 · 10题',presetCompare:'数字比大小',presetCompareSub:'两位数 · 10题',presetMultiply:'乘法口诀',presetMultiplySub:'100以内 · 10题',
   stars:'星星余额',eraserLabel:'橡皮擦',templateApplied:'图案已放到画布上，可以继续修改。',heroEyebrow:'数学任务 · 边学边玩',heroPillOne:'✦ 答对一题，点亮一颗星',heroPillTwo:'▦ 用星星解锁拼豆颜色',correctTotal:'累计答对',streak:'连续练习天',
   practiceTab:'数学练习',beadTab:'拼豆工坊',growthTab:'成长记录',panelTitle:'设置今日练习',panelCopy:'根据孩子目前的能力选择题型与难度；完成作答后即可领取星星。',
-  beadTitle:'拼豆工坊',beadCopy:'用练习获得的星星解锁更多颜色，在 12 × 12 画布上创作自己的像素作品。',designName:'作品名称',templateTitle:'快速图案',templateHeart:'💗 爱心',templateFlower:'🌼 小花',templateSmile:'😊 笑脸',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆颜色 · 点击使用',clearBoard:'清空画布',saveDesign:'保存作品',exportDesign:'下载 PNG',beadTip:"快速图案可免费使用完整配色；自由绘制的更多颜色可用星星解锁。作品保存在此设备，请定期备份。",boardTitle:'我的像素画',boardHint:'先选一种颜色，再点格子放入拼豆；点橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品后，就可以保存到这里。',growthTitle:'我的成长记录',growthCopy:'每一组练习都算数。看见自己的努力，再一步步解锁新的创作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考试分数，而是完成练习、订正与持续努力的记录。学会解释思路，比只追求速度更重要。',
+  beadTitle:'拼豆工坊',beadCopy:"用练习星星解锁颜色，12～48 格自由拼豆，精致图案直接开始创作。",designName:'作品名称',templateTitle:'快速图案',templateHeart:'💗 爱心',templateFlower:'🌼 小花',templateSmile:'😊 笑脸',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆颜色 · 点击使用',clearBoard:'清空画布',saveDesign:'保存作品',exportDesign:'下载 PNG',beadTip:"快速图案可免费使用完整配色；自由绘制的更多颜色可用星星解锁。作品保存在此设备，请定期备份。",boardTitle:'我的像素画',boardHint:'先选一种颜色，再点格子放入拼豆；点橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品后，就可以保存到这里。',growthTitle:'我的成长记录',growthCopy:'每一组练习都算数。看见自己的努力，再一步步解锁新的创作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考试分数，而是完成练习、订正与持续努力的记录。学会解释思路，比只追求速度更重要。',
   statCorrect:'累计答对',statAnswered:'已作答题数',statStreak:'连续练习天数',statAccuracy:'整体正确率',statRounds:'完成练习组',statPerfect:'全对练习组',statDesigns:'收藏作品',
   achFirst:'初次启程',achFirstDesc:'完成第一组练习',achTen:'计算新星',achTenDesc:'累计答对 10 题',achPerfect:'完美一组',achPerfectDesc:'一整组全部答对',achStreak:'坚持不懈',achStreakDesc:'连续学习 3 天',achArtist:'像素创作者',achArtistDesc:'保存第一幅作品',achHundred:'百题达人',achHundredDesc:'累计答对 100 题',
   unlocked:'已解锁',locked:'待解锁',starCost:'★ {n}',colorUnlocked:'颜色已解锁！',needMoreStars:'还差一些星星，解锁需要 {n} 颗。',designSaved:'作品已保存到“我的作品”。',designLoaded:'已载入作品，可以继续修改。',designDeleted:'作品已删除。',boardCleared:'画布已清空。',downloadStarted:'作品 PNG 已准备好。',rewardEarned:'🌟 本次获得 {n} 颗星星！',perfectBonus:'（全对加赠 3 颗）',rewardClaimed:'这组练习已领取过星星奖励。',needAnswer:'先完成至少一道题，再领取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'删除作品',loadDesign:'载入作品',emptyName:'我的拼豆作品'
  },
- 'en':{
-  templateHelp:"Detailed 24×24 bead art. Choose a pattern, then customize it on your canvas.",
+ 'en':{paintMode:"✎ Draw",panMode:"✥ Pan",zoomHint:"Use Pan to move the HD canvas, then Draw to color",exportPixel:"HD pixel PNG",
+  templateHelp:"17 detailed 24×24 and 8 original native 48×48 bead artworks, ready to customize.",
   designLimitConfirm:'You have 20 artworks. Saving another will remove the oldest. Continue?',storageFull:'Device storage is full, so your changes cannot be saved. Export a backup or free up space.',
   dailyGoalTitle:'Today’s small goal',dailyGoalDesc:'Finish 3 sets of at least 10 questions',dailyGoalDone:'Today’s goal completed!',dailyGoalProgress:'Completed {done} / 3 sets',recentPracticeTitle:'Last 7 days',recentPracticeDesc:'Questions practiced and accuracy each day',recentPracticeEmpty:'Start today to build your own learning journey.',questionsUnit:'Q',
   templateStar:'⭐ Star',templateCat:'🐱 Cat',templateHouse:'🏡 House',templateRocket:'🚀 Rocket',gridSelect:'Canvas size',gridSizeHint:'Keeps the artwork centered when resized',gridResizeConfirm:'Smaller canvas will crop some beads. Continue?',retryWrong:'↻ Retry missed questions',feedbackPerfect:'Amazing work! All correct. Keep practicing or create bead art!',feedbackMistakes:'{n} questions need another try. Practice just those questions, then check the hints.',feedbackUnfinished:'You have {n} unanswered questions. Finish them before checking.',feedbackEmpty:'Answer a few questions first, then check your work.',
@@ -471,7 +500,7 @@ const GAME_LABELS={
   undoBoard:'↶ Undo',redoBoard:'↷ Redo',backupTitle:'Learning data backup',backupDesc:'Export your stars and artwork, then restore on another device.',backupExport:'Export backup',backupImport:'Import backup',backupSuccess:'Backup imported. Stars and artwork restored.',backupInvalid:'This is not a valid Wind Study JSON backup.',backupConfirm:'Importing will replace your current stars and artwork. Continue?',backupSaved:'Backup exported.',answerShownNoReward:'Stars are disabled after revealing answers. Generate new questions to try again.',completeBonus:' (+2 for completing the set)',presetGrade1:'Grade 1 mental math',presetGrade1Sub:'Up to 20 · 10 questions',presetTens:'Two-digit maths',presetTensSub:'Up to 100 · 10 questions',presetCompare:'Compare numbers',presetCompareSub:'Two digits · 10 questions',presetMultiply:'Times tables',presetMultiplySub:'Up to 100 · 10 questions',
   stars:'Star balance',eraserLabel:'Eraser',templateApplied:'Pattern added to the board. You can keep editing it.',heroEyebrow:'MATH QUEST · PLAY & LEARN',heroPillOne:'✦ Earn a star for each correct answer',heroPillTwo:'▦ Unlock bead colors with stars',correctTotal:'Correct answers',streak:'Practice streak',
   practiceTab:'Math practice',beadTab:'Bead studio',growthTab:'My progress',panelTitle:'Set up today’s practice',panelCopy:'Choose operations and difficulty that fit the learner. Complete a set to collect stars.',
-  beadTitle:'Bead studio',beadCopy:'Spend earned stars to unlock colors and create your own pixel art on a 12 × 12 board.',designName:'Artwork name',templateTitle:'Quick patterns',templateHeart:'💗 Heart',templateFlower:'🌼 Flower',templateSmile:'😊 Smile',templateRainbow:'🌈 Rainbow',paletteTitle:'Bead colors · Select one',clearBoard:'Clear board',saveDesign:'Save artwork',exportDesign:'Download PNG',beadTip:"Template colors are free to use. Unlock more colors for painting with stars. Designs stay on this device; back up often.",boardTitle:'My pixel art',boardHint:'Choose a color, then tap cells to place beads. Select the eraser to remove beads.',galleryTitle:'My artwork',galleryEmpty:'Your saved bead artwork will appear here.',growthTitle:'My progress',growthCopy:'Every practice set counts. Celebrate your effort and unlock new creative choices.',achievementsTitle:'Achievements',growthNote:'Stars track practice, corrections, and effort — not exam grades. Explaining your thinking matters more than speed.',
+  beadTitle:'Bead studio',beadCopy:"Earn stars, unlock colors, and design detailed bead art on 12–48 pixel grids.",designName:'Artwork name',templateTitle:'Quick patterns',templateHeart:'💗 Heart',templateFlower:'🌼 Flower',templateSmile:'😊 Smile',templateRainbow:'🌈 Rainbow',paletteTitle:'Bead colors · Select one',clearBoard:'Clear board',saveDesign:'Save artwork',exportDesign:'Download PNG',beadTip:"Template colors are free to use. Unlock more colors for painting with stars. Designs stay on this device; back up often.",boardTitle:'My pixel art',boardHint:'Choose a color, then tap cells to place beads. Select the eraser to remove beads.',galleryTitle:'My artwork',galleryEmpty:'Your saved bead artwork will appear here.',growthTitle:'My progress',growthCopy:'Every practice set counts. Celebrate your effort and unlock new creative choices.',achievementsTitle:'Achievements',growthNote:'Stars track practice, corrections, and effort — not exam grades. Explaining your thinking matters more than speed.',
   statCorrect:'Correct answers',statAnswered:'Questions attempted',statStreak:'Practice streak',statAccuracy:'Overall accuracy',statRounds:'Practice sets',statPerfect:'Perfect sets',statDesigns:'Saved artworks',
   achFirst:'First steps',achFirstDesc:'Complete your first set',achTen:'Math star',achTenDesc:'Answer 10 questions correctly',achPerfect:'Perfect set',achPerfectDesc:'Get every question right in a set',achStreak:'Keep going',achStreakDesc:'Practice for 3 consecutive days',achArtist:'Pixel artist',achArtistDesc:'Save your first artwork',achHundred:'Century club',achHundredDesc:'Answer 100 questions correctly',
   unlocked:'Unlocked',locked:'Locked',starCost:'★ {n}',colorUnlocked:'Color unlocked!',needMoreStars:'You need {n} stars to unlock this color.',designSaved:'Artwork saved to My artwork.',designLoaded:'Artwork loaded. Keep creating!',designDeleted:'Artwork deleted.',boardCleared:'Board cleared.',downloadStarted:'Your PNG is ready.',rewardEarned:'🌟 You earned {n} stars!',perfectBonus:' (+3 perfect-set bonus)',rewardClaimed:'Stars for this set have already been collected.',needAnswer:'Answer at least one question before collecting stars.',defaultDesignName:'My bead artwork',deleteDesign:'Delete artwork',loadDesign:'Load artwork',emptyName:'My bead artwork'
@@ -565,7 +594,7 @@ function scaledTemplate(template,from,to){
 }
 
 
-const BEAD_ART_NAMES={"zh-Hans":{"heart":"甜心糖","flower":"微笑花盆","smile":"元气太阳","rainbow":"彩虹云朵","star":"许愿星","cat":"奶油小猫","house":"童话小屋","rocket":"星际火箭","strawberry":"草莓宝宝","moon":"晚安月亮","whale":"泡泡鲸鱼","cupcake":"樱桃杯糕","mushroom":"点点蘑菇","fox":"软萌小狐","frog":"大眼青蛙","cactus":"开心仙人掌","butterfly":"糖果蝴蝶"},"zh-Hant":{"heart":"甜心糖","flower":"微笑花盆","smile":"元氣太陽","rainbow":"彩虹雲朵","star":"許願星","cat":"奶油小貓","house":"童話小屋","rocket":"星際火箭","strawberry":"草莓寶寶","moon":"晚安月亮","whale":"泡泡鯨魚","cupcake":"櫻桃杯糕","mushroom":"點點蘑菇","fox":"軟萌小狐","frog":"大眼青蛙","cactus":"開心仙人掌","butterfly":"糖果蝴蝶"},"en":{"heart":"Candy Heart","flower":"Happy Bloom","smile":"Sunny Smile","rainbow":"Cloud Rainbow","star":"Wish Star","cat":"Creamy Cat","house":"Cozy Cottage","rocket":"Space Rocket","strawberry":"Berry Buddy","moon":"Sleepy Moon","whale":"Bubble Whale","cupcake":"Cherry Cupcake","mushroom":"Dotty Mushroom","fox":"Friendly Fox","frog":"Happy Frog","cactus":"Cute Cactus","butterfly":"Candy Butterfly"}};
+const BEAD_ART_NAMES={"zh-Hans":{"fox_hd":"暖阳小狐狸","kitten_hd":"午茶小猫","whale_hd":"泡泡小鲸","rabbit_moon_hd":"月光兔兔","blossom_hd":"樱花盆景","cake_hd":"草莓蛋糕","rocket_hd":"宇宙漫游","butterfly_hd":"花园蝶舞","heart":"甜心糖","flower":"微笑花盆","smile":"元气太阳","rainbow":"彩虹云朵","star":"许愿星","cat":"奶油小猫","house":"童话小屋","rocket":"星际火箭","strawberry":"草莓宝宝","moon":"晚安月亮","whale":"泡泡鲸鱼","cupcake":"樱桃杯糕","mushroom":"点点蘑菇","fox":"软萌小狐","frog":"大眼青蛙","cactus":"开心仙人掌","butterfly":"糖果蝴蝶"},"zh-Hant":{"fox_hd":"暖陽小狐狸","kitten_hd":"午茶小貓","whale_hd":"泡泡小鯨","rabbit_moon_hd":"月光兔兔","blossom_hd":"櫻花盆景","cake_hd":"草莓蛋糕","rocket_hd":"宇宙漫遊","butterfly_hd":"花園蝶舞","heart":"甜心糖","flower":"微笑花盆","smile":"元氣太陽","rainbow":"彩虹雲朵","star":"許願星","cat":"奶油小貓","house":"童話小屋","rocket":"星際火箭","strawberry":"草莓寶寶","moon":"晚安月亮","whale":"泡泡鯨魚","cupcake":"櫻桃杯糕","mushroom":"點點蘑菇","fox":"軟萌小狐","frog":"大眼青蛙","cactus":"開心仙人掌","butterfly":"糖果蝴蝶"},"en":{"fox_hd":"Sunlit Fox","kitten_hd":"Teacup Kitten","whale_hd":"Bubble Whale HD","rabbit_moon_hd":"Moon Bunny","blossom_hd":"Cherry Blossoms","cake_hd":"Strawberry Cake","rocket_hd":"Space Voyage","butterfly_hd":"Butterfly Garden","heart":"Candy Heart","flower":"Happy Bloom","smile":"Sunny Smile","rainbow":"Cloud Rainbow","star":"Wish Star","cat":"Creamy Cat","house":"Cozy Cottage","rocket":"Space Rocket","strawberry":"Berry Buddy","moon":"Sleepy Moon","whale":"Bubble Whale","cupcake":"Cherry Cupcake","mushroom":"Dotty Mushroom","fox":"Friendly Fox","frog":"Happy Frog","cactus":"Cute Cactus","butterfly":"Candy Butterfly"}};
 const BEAD_ART_CATEGORIES={"zh-Hans":{"all":"全部","animal":"萌宠","nature":"自然","food":"甜点","sky":"星空","love":"心意"},"zh-Hant":{"all":"全部","animal":"萌寵","nature":"自然","food":"甜點","sky":"星空","love":"心意"},"en":{"all":"All","animal":"Animals","nature":"Nature","food":"Treats","sky":"Space","love":"Love"}};
 let currentTemplateFilter='all';
 function renderBeadTemplatePicker(){
@@ -583,19 +612,19 @@ function renderBeadTemplatePicker(){
   document.getElementById('templateTotal').textContent=String(visible.length)+' / '+String(library.length);
   root.innerHTML=visible.map(function(item){
     const label=labels[item.id]||item.id;
-    return '<button class="template-btn" type="button" data-template="'+item.id+'" aria-label="'+gameEscape(label)+' 24×24">'+
-      '<span class="template-art-frame"><canvas class="template-thumbnail" width="24" height="24" data-art-id="'+item.id+'" aria-hidden="true"></canvas></span>'+
-      '<strong class="template-name">'+gameEscape(label)+'</strong><span class="template-size">24 × 24</span></button>'
+    return '<button class="template-btn" type="button" data-template="'+item.id+'" aria-label="'+gameEscape(label)+' '+item.size+'×'+item.size+'">'+
+      '<span class="template-art-frame"><canvas class="template-thumbnail" width="'+item.size+'" height="'+item.size+'" data-art-id="'+item.id+'" aria-hidden="true"></canvas></span>'+
+      '<strong class="template-name">'+gameEscape(label)+'</strong><span class="template-size">'+item.size+' × '+item.size+'</span></button>'
   }).join('');
   root.querySelectorAll('.template-thumbnail').forEach(function(canvas){
     if(typeof getPixels!=='function')return;
     const pixels=getPixels(canvas.dataset.artId),ctx=canvas.getContext('2d');
     if(!pixels||!ctx)return;
-    ctx.clearRect(0,0,24,24);
+    const size=canvas.width;ctx.clearRect(0,0,size,size);
     for(let i=0;i<pixels.length;i++){
       if(pixels[i]>0&&BEAD_COLORS[pixels[i]]){
         ctx.fillStyle=BEAD_COLORS[pixels[i]].hex;
-        ctx.fillRect(i%24,Math.floor(i/24),1,1)
+        ctx.fillRect(i%size,Math.floor(i/size),1,1)
       }
     }
   });
