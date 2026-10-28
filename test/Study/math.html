@@ -420,6 +420,7 @@ const BEAD_COLOR_NAMES={
 };
 const GAME_LABELS={
  'zh-Hant':{
+  designLimitConfirm:'作品已達到 20 件，繼續保存會刪除最早的作品。確定保存嗎？',storageFull:'本機儲存空間不足，無法儲存；請先匯出備份或清理瀏覽器空間。',
   dailyGoalTitle:'今天的小目標',dailyGoalDesc:'完成 3 組至少 10 題的練習',dailyGoalDone:'今日目標已達成！',dailyGoalProgress:'已完成 {done} / 3 組',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天練習的題數和正確率',recentPracticeEmpty:'從今天開始，累積自己的學習軌跡吧。',questionsUnit:'題',
   templateStar:'⭐ 星星',templateCat:'🐱 小貓',templateHouse:'🏡 小房子',templateRocket:'🚀 小火箭',gridSelect:'畫布大小',gridSizeHint:'切換畫布時會保留中央圖案',gridResizeConfirm:'縮小畫布會裁掉部分拼豆，確定繼續嗎？',retryWrong:'↻ 只練錯題',feedbackPerfect:'太棒了！全部答對！繼續練習，或者去拼豆工坊創作吧。',feedbackMistakes:'有 {n} 題需要再想一想。先試試只練錯題，再查看解析。',feedbackUnfinished:'還有 {n} 題未完成，全部做完後再來檢查吧。',feedbackEmpty:'先完成幾道題，再點擊檢查。',
   eraserLabel:'橡皮擦',deleteConfirm:'確定刪除這幅作品嗎？',
@@ -432,6 +433,7 @@ const GAME_LABELS={
   unlocked:'已解鎖',locked:'待解鎖',starCost:'★ {n}',colorUnlocked:'顏色已解鎖！',needMoreStars:'還差一些星星，解鎖需要 {n} 顆。',designSaved:'作品已保存到「我的作品」。',designLoaded:'已載入作品，可以繼續修改。',designDeleted:'作品已刪除。',boardCleared:'畫布已清空。',downloadStarted:'作品 PNG 已準備好。',rewardEarned:'🌟 本次獲得 {n} 顆星星！',perfectBonus:'（全對加贈 3 顆）',rewardClaimed:'這組練習已領取過星星獎勵。',needAnswer:'先完成至少一道題，再領取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'刪除作品',loadDesign:'載入作品',emptyName:'我的拼豆作品'
  },
  'zh-Hans':{
+  designLimitConfirm:'作品已达到 20 件，继续保存会删除最早的作品。确定保存吗？',storageFull:'本机存储空间不足，无法保存；请先导出备份或清理浏览器空间。',
   dailyGoalTitle:'今天的小目标',dailyGoalDesc:'完成 3 组至少 10 题的练习',dailyGoalDone:'今日目标已达成！',dailyGoalProgress:'已完成 {done} / 3 组',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天练习的题数和正确率',recentPracticeEmpty:'今天开始，积累自己的学习轨迹吧。',questionsUnit:'题',
   templateStar:'⭐ 星星',templateCat:'🐱 小猫',templateHouse:'🏡 小房子',templateRocket:'🚀 小火箭',gridSelect:'画布大小',gridSizeHint:'切换画布时会保留中央图案',gridResizeConfirm:'缩小画布会裁掉部分拼豆，确定继续吗？',retryWrong:'↻ 只练错题',feedbackPerfect:'太棒了！全对！继续练习，或者去拼豆工坊创作吧。',feedbackMistakes:'有 {n} 道题需要再想想。先试试只练错题，再查看解析。',feedbackUnfinished:'还有 {n} 道题没有完成，全部做完后再来检查吧。',feedbackEmpty:'先完成几道题，再点击检查。',
   eraserLabel:'橡皮擦',deleteConfirm:'确定删除这幅作品吗？',
@@ -444,6 +446,7 @@ const GAME_LABELS={
   unlocked:'已解锁',locked:'待解锁',starCost:'★ {n}',colorUnlocked:'颜色已解锁！',needMoreStars:'还差一些星星，解锁需要 {n} 颗。',designSaved:'作品已保存到“我的作品”。',designLoaded:'已载入作品，可以继续修改。',designDeleted:'作品已删除。',boardCleared:'画布已清空。',downloadStarted:'作品 PNG 已准备好。',rewardEarned:'🌟 本次获得 {n} 颗星星！',perfectBonus:'（全对加赠 3 颗）',rewardClaimed:'这组练习已领取过星星奖励。',needAnswer:'先完成至少一道题，再领取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'删除作品',loadDesign:'载入作品',emptyName:'我的拼豆作品'
  },
  'en':{
+  designLimitConfirm:'You have 20 artworks. Saving another will remove the oldest. Continue?',storageFull:'Device storage is full, so your changes cannot be saved. Export a backup or free up space.',
   dailyGoalTitle:'Today’s small goal',dailyGoalDesc:'Finish 3 sets of at least 10 questions',dailyGoalDone:'Today’s goal completed!',dailyGoalProgress:'Completed {done} / 3 sets',recentPracticeTitle:'Last 7 days',recentPracticeDesc:'Questions practiced and accuracy each day',recentPracticeEmpty:'Start today to build your own learning journey.',questionsUnit:'Q',
   templateStar:'⭐ Star',templateCat:'🐱 Cat',templateHouse:'🏡 House',templateRocket:'🚀 Rocket',gridSelect:'Canvas size',gridSizeHint:'Keeps the artwork centered when resized',gridResizeConfirm:'Smaller canvas will crop some beads. Continue?',retryWrong:'↻ Retry missed questions',feedbackPerfect:'Amazing work! All correct. Keep practicing or create bead art!',feedbackMistakes:'{n} questions need another try. Practice just those questions, then check the hints.',feedbackUnfinished:'You have {n} unanswered questions. Finish them before checking.',feedbackEmpty:'Answer a few questions first, then check your work.',
   eraserLabel:'Eraser',deleteConfirm:'Delete this artwork?',
@@ -504,7 +507,11 @@ function paintBeadCell(cell){
 }
 function finishBrush(){if(activeBrush===null)return;activeBrush=null;saveGame();updateUndoButtons()}
 
-function saveGame(){try{localStorage.setItem(GAME_KEY,JSON.stringify(game))}catch(e){}}
+let storageWarningShown=false;
+function saveGame(){
+  try{localStorage.setItem(GAME_KEY,JSON.stringify(game));storageWarningShown=false;return true}
+  catch(e){if(!storageWarningShown){storageWarningShown=true;gameToast(gt('storageFull'))}return false}
+}
 function gameToast(message){const node=document.getElementById('gameToast');if(!node)return;node.textContent=message;node.classList.add('show');clearTimeout(gameToast.timer);gameToast.timer=setTimeout(function(){node.classList.remove('show')},2300)}
 function applyGameLabels(){document.querySelectorAll('[data-game-text]').forEach(function(node){const key=node.getAttribute('data-game-text');if(GAME_LABELS[els.language.value]&&GAME_LABELS[els.language.value][key])node.textContent=GAME_LABELS[els.language.value][key]})}
 function currentStreak(){
@@ -565,8 +572,9 @@ function renderSavedDesigns(){
   if(!game.savedDesigns.length){root.innerHTML='<div class="empty-gallery">'+gameEscape(gt('galleryEmpty'))+'</div>';return}
   root.innerHTML=game.savedDesigns.slice().reverse().map(function(d){
     const size=Number(d.size)||12;
-    const preview=(d.board||[]).slice(0,size*size).map(function(v){const color=Number(v)>0&&BEAD_COLORS[Number(v)]?BEAD_COLORS[Number(v)].hex:'#ffffff';return '<i style="--cell-color:'+color+'"></i>'}).join('');
-    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+gameEscape(d.name)+'"><span class="saved-design-mini" style="--preview-grid:'+size+'">'+preview+'</span><strong>'+gameEscape(d.name||gt('defaultDesignName'))+'</strong><small>'+new Date(d.date||Date.now()).toLocaleDateString()+'</small></button><button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
+    const miniature=scaledTemplate(d.board||[],size,12);
+    const preview=miniature.map(function(v){const color=Number(v)>0&&BEAD_COLORS[Number(v)]?BEAD_COLORS[Number(v)].hex:'#ffffff';return '<i style="--cell-color:'+color+'"></i>'}).join('');
+    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+gameEscape(d.name)+'"><span class="saved-design-mini" style="--preview-grid:12">'+preview+'</span><strong>'+gameEscape(d.name||gt('defaultDesignName'))+'</strong><small>'+new Date(d.date||Date.now()).toLocaleDateString()+'</small></button><button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
   }).join('')
 }
 
@@ -674,6 +682,7 @@ function applyBeadTemplate(type){
 }
 function saveBeadDesign(){
   const name=(document.getElementById('designName').value||'').trim()||gt('emptyName');
+  if(game.savedDesigns.length>=20&&!window.confirm(gt('designLimitConfirm')))return;
   game.savedDesigns.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name,size:GRID_SIZE,board:game.board.slice(),date:new Date().toISOString()});
   game.savedDesigns=game.savedDesigns.slice(-20);saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designSaved'))
 }
