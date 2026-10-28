@@ -46,6 +46,36 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 @media(max-width:920px){.settings-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bead-layout{grid-template-columns:minmax(210px,.8fr) minmax(0,1.2fr)}.growth-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.achievement-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.app{width:calc(100% - 18px);margin:9px auto 34px}.topbar{gap:8px}.brand-mark{width:38px;height:38px;border-radius:12px}.brand-copy strong{font-size:14px}.brand-copy small{font-size:10px}.topbar-actions{gap:8px}.back-link{font-size:10px}.star-wallet{min-width:84px;padding:6px 9px;gap:6px}.wallet-star{width:27px;height:27px}.star-wallet strong{font-size:16px}.star-wallet small{font-size:9px}.hero{grid-template-columns:1fr;padding:22px 19px 17px;border-radius:22px}.hero-art{display:none}.hero h1{font-size:30px}.hero-copy>p{font-size:12px}.hero-stats{gap:7px}.hero-stat{display:block;padding:10px 9px;text-align:center}.hero-stat strong{font-size:18px}.hero-stat span{margin-top:4px;font-size:9px}.feature-tabs{margin-top:12px}.feature-tab{min-height:40px;padding:0 12px;font-size:11px}.panel,.worksheet,.bead-panel,.growth-panel{padding:16px 13px;border-radius:19px}.panel-intro{display:block;margin-bottom:16px}.panel-intro h2{font-size:18px}.settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field select,.field input{min-height:40px;padding:8px;font-size:11px}.checks{gap:10px 12px}.check{font-size:11px}.actions{gap:7px}.btn{min-height:38px;padding:0 10px;font-size:11px}.worksheet{padding:15px 10px;min-height:300px}.sheet-head{flex-direction:column;gap:8px}.sheet-title h2{font-size:19px}.student-info{gap:10px}.questions{grid-template-columns:1fr!important;gap:9px}.question{min-height:86px;padding:12px 10px}.equation{font-size:24px}.bead-intro{gap:8px}.bead-intro h2{font-size:21px}.bead-intro p{font-size:11px}.bead-wallet{padding:7px 9px;font-size:10px}.bead-wallet strong{font-size:15px}.bead-layout{grid-template-columns:1fr;gap:12px}.bead-tools{padding:14px}.bead-palette{grid-template-columns:repeat(4,minmax(0,1fr))}.palette-color{padding:7px 2px}.palette-swatch{width:23px;height:23px}.board-area{padding:12px 9px}.bead-board{gap:2px;padding:5px;border-radius:12px}.bead-cell{border-radius:3px}.saved-designs{grid-template-columns:repeat(2,minmax(0,1fr))}.growth-stats{gap:8px}.growth-stat{padding:13px}.growth-stat strong{font-size:23px}.achievement-list{grid-template-columns:1fr}.footer-tip{font-size:10px}}
 
+
+.board-sizing{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:-4px 0 12px}
+.board-sizing label{font-size:12px;font-weight:760;color:#354665}
+.board-sizing select{border:1px solid #dbe4f4;border-radius:10px;background:#fff;padding:7px 10px;color:#344765;font-size:12px;font-weight:760;cursor:pointer}
+.board-sizing span{margin-left:auto;font-size:10px;color:#8b94a5}
+.bead-board{grid-template-columns:repeat(var(--bead-grid,12),minmax(0,1fr));gap:var(--bead-gap,3px);padding:var(--bead-padding,8px)}
+.bead-cell{border-radius:var(--bead-radius,4px)}
+.saved-design-mini{grid-template-columns:repeat(var(--preview-grid,12),minmax(0,1fr));aspect-ratio:1}
+.template-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.template-btn{min-height:42px}
+.learning-feedback{margin:12px 0 0;padding:12px 15px;border:1px solid #e4eafa;border-radius:14px;color:#486182;font-size:12px;line-height:1.6;background:#f4f7ff}
+.learning-feedback.good{background:#ecfaf3;border-color:#c9f0dc;color:#23775b}
+.learning-feedback.needs-work{background:#fff8ee;border-color:#f5dfbe;color:#926438}
+.learning-feedback[hidden],#retryWrongBtn[hidden]{display:none!important}
+@media(max-width:620px){.board-sizing span{width:100%;margin-left:0}.template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bead-board{width:100%;max-width:520px}}
+
+
+.growth-journey{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,1.65fr);gap:13px;margin-top:15px}
+.journey-card{border:1px solid #e9edf5;border-radius:17px;background:linear-gradient(145deg,#fff,#f9fbff);padding:17px 19px;min-width:0}
+.journey-title h3{font-size:13px;margin:0 0 4px;color:#334462}.journey-title small{font-size:10px;color:#8894a6}
+.journey-progress{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0 10px}.journey-progress span{height:13px;border-radius:6px;background:#e7edf8}.journey-progress span.completed{background:linear-gradient(100deg,#50cdb1,#70a5fa)}
+.journey-progress-label{font-size:12px;color:#4676c6}
+.journey-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:end;gap:6px;margin-top:14px}
+.journey-day{display:grid;justify-items:center;gap:6px;min-width:0}
+.journey-questions,.journey-rate,.journey-week{font-size:9px;line-height:1;white-space:nowrap;color:#8994a6}
+.journey-questions{color:#3e68a6;font-weight:750}.journey-week{color:#53617b}
+.journey-bar-track{display:flex;align-items:flex-end;height:58px;width:100%;max-width:21px;padding:0 1px;border-radius:5px;background:#eaf0fa}
+.journey-bar-track i{display:block;width:100%;border-radius:5px 5px 3px 3px;opacity:var(--bar-opacity);background:linear-gradient(#82c1f2,#698dff)}
+@media(max-width:720px){.growth-journey{grid-template-columns:1fr}.journey-card{padding:15px 17px}.journey-bar-track{height:68px}}
+
 /* Math Garden V2 */
 .quick-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
 .preset-chip{display:grid;gap:5px;min-height:70px;padding:11px 13px;border:1px solid #e2e8f2;border-radius:15px;background:#f9fbff;text-align:left;color:#3d4b65;transition:.15s}
@@ -58,7 +88,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 @media(max-width:420px){.tool-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.tool-actions .btn:last-child{grid-column:1/-1}.backup-actions .btn{flex:1}}
 
 @page{size:A4;margin:9mm}
-@media print{body{background:#fff}.app{width:100%;margin:0}.topbar,.hero,.feature-tabs,.panel,.footer-tip,.result,.bead-panel,.growth-panel,.game-toast,.quick-presets{display:none!important}.feature-panel{display:none!important}.feature-panel[data-feature-panel="practice"]{display:block!important}.worksheet{display:block!important;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;min-height:auto}.sheet-page{margin:0!important;padding:0!important;border:0!important;break-after:page;page-break-after:always}.sheet-page:last-child{break-after:auto;page-break-after:auto}.sheet-head{margin-bottom:4mm;padding-bottom:2.5mm}.sheet-title h2{font-size:18px;margin-bottom:2px}.sheet-title p{font-size:9.5px}.student-info{gap:10px;font-size:10.5px}.time-box{padding-top:2px}.score-box{color:#c33;transform:rotate(-3deg)}.score-box .score-value{font-size:24px}.line{width:60px}.questions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1.4mm 5mm!important}.question{height:8.25mm;min-height:0;padding:0 1.5mm;border:0;border-bottom:1px dotted #999;border-radius:0;display:flex;align-items:center;page-break-inside:avoid}.q-index{position:static;width:12mm;flex:0 0 12mm;color:#444;font-size:7.5px}.equation{flex:1;justify-content:flex-start;gap:4px;margin:0;font-size:16px;letter-spacing:0;white-space:nowrap}.answer-input{width:38px;padding:0;color:#000;border-color:#000;font-size:16px}select.answer-input{display:none!important}.print-compare-line{display:inline-block;width:45px;height:22px;border-bottom:2px solid #000;flex:0 0 45px}.show-answers .print-compare-line{display:none!important}.answer-text{width:38px;min-width:38px;color:#000;border-color:#000;font-size:16px}.strategy,.strategy-placeholder,.mark{display:none!important}}
+@media print{body{background:#fff}.app{width:100%;margin:0}.topbar,.hero,.feature-tabs,.panel,.footer-tip,.result,.learning-feedback,.bead-panel,.growth-panel,.game-toast,.quick-presets{display:none!important}.feature-panel{display:none!important}.feature-panel[data-feature-panel="practice"]{display:block!important}.worksheet{display:block!important;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;min-height:auto}.sheet-page{margin:0!important;padding:0!important;border:0!important;break-after:page;page-break-after:always}.sheet-page:last-child{break-after:auto;page-break-after:auto}.sheet-head{margin-bottom:4mm;padding-bottom:2.5mm}.sheet-title h2{font-size:18px;margin-bottom:2px}.sheet-title p{font-size:9.5px}.student-info{gap:10px;font-size:10.5px}.time-box{padding-top:2px}.score-box{color:#c33;transform:rotate(-3deg)}.score-box .score-value{font-size:24px}.line{width:60px}.questions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1.4mm 5mm!important}.question{height:8.25mm;min-height:0;padding:0 1.5mm;border:0;border-bottom:1px dotted #999;border-radius:0;display:flex;align-items:center;page-break-inside:avoid}.q-index{position:static;width:12mm;flex:0 0 12mm;color:#444;font-size:7.5px}.equation{flex:1;justify-content:flex-start;gap:4px;margin:0;font-size:16px;letter-spacing:0;white-space:nowrap}.answer-input{width:38px;padding:0;color:#000;border-color:#000;font-size:16px}select.answer-input{display:none!important}.print-compare-line{display:inline-block;width:45px;height:22px;border-bottom:2px solid #000;flex:0 0 45px}.show-answers .print-compare-line{display:none!important}.answer-text{width:38px;min-width:38px;color:#000;border-color:#000;font-size:16px}.strategy,.strategy-placeholder,.mark{display:none!important}}
 
   </style>
 </head>
@@ -264,6 +294,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
         <button class="btn btn-primary" id="generateBtn" data-i18n="generate">🎲 隨機出題</button>
         <button class="btn btn-secondary" id="toggleAnswerBtn" data-i18n="showAnswers">👀 顯示答案</button>
         <button class="btn btn-green" id="checkBtn" data-i18n="check">✓ 檢查作答</button>
+        <button class="btn btn-secondary" id="retryWrongBtn" type="button" data-game-text="retryWrong" hidden>↻ 只练错题</button>
         <button class="btn btn-orange" id="printBlankBtn" data-i18n="printBlank">🖨️ 列印練習</button>
         <button class="btn btn-orange" id="printAnswerBtn" data-i18n="printAnswer">📄 列印含答案</button>
         <button class="btn btn-danger" id="clearBtn" data-i18n="clear">↺ 清空作答</button>
@@ -274,6 +305,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
     <section class="worksheet" id="worksheet">
       <div class="pages" id="pages"></div>
       <div class="result" id="result" role="status" aria-live="polite"></div>
+      <div class="learning-feedback" id="learningFeedback" role="status" aria-live="polite" hidden></div>
     </section>
 
     <p class="footer-tip" data-i18n="footer">
@@ -295,6 +327,10 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
               <button class="template-btn" data-template="flower" type="button" data-game-text="templateFlower">🌼 小花</button>
               <button class="template-btn" data-template="smile" type="button" data-game-text="templateSmile">😊 笑臉</button>
               <button class="template-btn" data-template="rainbow" type="button" data-game-text="templateRainbow">🌈 彩虹</button>
+              <button class="template-btn" data-template="star" type="button" data-game-text="templateStar">⭐ 星星</button>
+              <button class="template-btn" data-template="cat" type="button" data-game-text="templateCat">🐱 小猫</button>
+              <button class="template-btn" data-template="house" type="button" data-game-text="templateHouse">🏡 小房子</button>
+              <button class="template-btn" data-template="rocket" type="button" data-game-text="templateRocket">🚀 小火箭</button>
             </div></div>
             <div><div class="tool-title" data-game-text="paletteTitle">拼豆顏色 · 點選使用</div><div id="beadPalette" class="bead-palette"></div></div>
             <div class="tool-actions">
@@ -308,6 +344,14 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
           </aside>
           <div class="board-area">
             <div class="board-head"><strong data-game-text="boardTitle">我的像素畫</strong><span id="boardProgress">0 / 144</span></div>
+            <div class="board-sizing"><label for="boardSize" data-game-text="gridSelect">画布大小</label>
+              <select id="boardSize" aria-label="选择拼豆画布大小">
+                <option value="12">12 × 12</option>
+                <option value="16">16 × 16</option>
+                <option value="24">24 × 24</option>
+              </select>
+              <span data-game-text="gridSizeHint">切换画布时会保留中央图案</span>
+            </div>
             <div id="beadBoard" class="bead-board" role="grid" aria-label="拼豆畫布"></div>
             <div class="board-hint" data-game-text="boardHint">先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。</div>
           </div>
@@ -328,6 +372,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
       <section class="panel growth-panel">
         <div class="panel-intro"><div><h2 data-game-text="growthTitle">我的成長記錄</h2><p data-game-text="growthCopy">每一組練習都算數。看見自己的努力，再一步步解鎖新的創作。</p></div><div class="bead-wallet">★ <strong id="growthStarBalance">0</strong></div></div>
         <div id="growthStats" class="growth-stats"></div>
+        <div id="growthJourney" class="growth-journey"></div>
         <div class="achievement-wrap"><h3 data-game-text="achievementsTitle">成就徽章</h3><div id="achievementList" class="achievement-list"></div></div>
         <div class="growth-note" data-game-text="growthNote">小提醒：星星不是考試分數，而是完成練習、訂正與持續努力的紀錄。學會解釋思路，比只追求速度更重要。</div>
       </section>
@@ -347,7 +392,9 @@ const I18N={
 let currentQuestions=[],showingAnswers=false,exerciseStartedAt=Date.now(),submittedElapsedMs=null;
 
 const GAME_KEY='wind-math-bead-garden-v1';
-const GRID_SIZE=12;
+let GRID_SIZE=12;
+const GRID_OPTIONS=[12,16,24];
+const boardSizeValid=n=>GRID_OPTIONS.includes(Number(n));
 const BEAD_COLORS=[
   {name:'橡皮擦',hex:'#ffffff',cost:0},
   {name:'莓果粉',hex:'#f56c91',cost:0},
@@ -373,6 +420,9 @@ const BEAD_COLOR_NAMES={
 };
 const GAME_LABELS={
  'zh-Hant':{
+  designLimitConfirm:'作品已達到 20 件，繼續保存會刪除最早的作品。確定保存嗎？',storageFull:'本機儲存空間不足，無法儲存；請先匯出備份或清理瀏覽器空間。',
+  dailyGoalTitle:'今天的小目標',dailyGoalDesc:'完成 3 組至少 10 題的練習',dailyGoalDone:'今日目標已達成！',dailyGoalProgress:'已完成 {done} / 3 組',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天練習的題數和正確率',recentPracticeEmpty:'從今天開始，累積自己的學習軌跡吧。',questionsUnit:'題',
+  templateStar:'⭐ 星星',templateCat:'🐱 小貓',templateHouse:'🏡 小房子',templateRocket:'🚀 小火箭',gridSelect:'畫布大小',gridSizeHint:'切換畫布時會保留中央圖案',gridResizeConfirm:'縮小畫布會裁掉部分拼豆，確定繼續嗎？',retryWrong:'↻ 只練錯題',feedbackPerfect:'太棒了！全部答對！繼續練習，或者去拼豆工坊創作吧。',feedbackMistakes:'有 {n} 題需要再想一想。先試試只練錯題，再查看解析。',feedbackUnfinished:'還有 {n} 題未完成，全部做完後再來檢查吧。',feedbackEmpty:'先完成幾道題，再點擊檢查。',
   eraserLabel:'橡皮擦',deleteConfirm:'確定刪除這幅作品嗎？',
   undoBoard:'↶ 復原',redoBoard:'↷ 重做',backupTitle:'學習資料備份',backupDesc:'更換裝置時可匯出星星與作品，再從備份還原。',backupExport:'匯出備份',backupImport:'匯入備份',backupSuccess:'備份匯入成功，星星及作品已還原。',backupInvalid:'無法讀取備份，請選擇有效的 Wind 學堂 JSON 檔。',backupConfirm:'匯入將覆蓋目前的星星和作品，確定繼續嗎？',backupSaved:'備份已匯出。',answerShownNoReward:'已查看答案，本組不再發放星星；重新出題即可繼續挑戰。',completeBonus:'（完成整組加贈 2 顆）',presetGrade1:'一年級口算',presetGrade1Sub:'20以內 · 10題',presetTens:'兩位數計算',presetTensSub:'100以內 · 10題',presetCompare:'數字比大小',presetCompareSub:'兩位數 · 10題',presetMultiply:'乘法口訣',presetMultiplySub:'100以內 · 10題',
   stars:'星星餘額',eraserLabel:'橡皮擦',templateApplied:'圖案已放到畫布上，可以繼續修改。',heroEyebrow:'數學任務 · 邊學邊玩',heroPillOne:'✦ 答對一題，點亮一顆星',heroPillTwo:'▦ 用星星解鎖拼豆顏色',correctTotal:'累計答對',streak:'連續練習天',
@@ -383,6 +433,9 @@ const GAME_LABELS={
   unlocked:'已解鎖',locked:'待解鎖',starCost:'★ {n}',colorUnlocked:'顏色已解鎖！',needMoreStars:'還差一些星星，解鎖需要 {n} 顆。',designSaved:'作品已保存到「我的作品」。',designLoaded:'已載入作品，可以繼續修改。',designDeleted:'作品已刪除。',boardCleared:'畫布已清空。',downloadStarted:'作品 PNG 已準備好。',rewardEarned:'🌟 本次獲得 {n} 顆星星！',perfectBonus:'（全對加贈 3 顆）',rewardClaimed:'這組練習已領取過星星獎勵。',needAnswer:'先完成至少一道題，再領取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'刪除作品',loadDesign:'載入作品',emptyName:'我的拼豆作品'
  },
  'zh-Hans':{
+  designLimitConfirm:'作品已达到 20 件，继续保存会删除最早的作品。确定保存吗？',storageFull:'本机存储空间不足，无法保存；请先导出备份或清理浏览器空间。',
+  dailyGoalTitle:'今天的小目标',dailyGoalDesc:'完成 3 组至少 10 题的练习',dailyGoalDone:'今日目标已达成！',dailyGoalProgress:'已完成 {done} / 3 组',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天练习的题数和正确率',recentPracticeEmpty:'今天开始，积累自己的学习轨迹吧。',questionsUnit:'题',
+  templateStar:'⭐ 星星',templateCat:'🐱 小猫',templateHouse:'🏡 小房子',templateRocket:'🚀 小火箭',gridSelect:'画布大小',gridSizeHint:'切换画布时会保留中央图案',gridResizeConfirm:'缩小画布会裁掉部分拼豆，确定继续吗？',retryWrong:'↻ 只练错题',feedbackPerfect:'太棒了！全对！继续练习，或者去拼豆工坊创作吧。',feedbackMistakes:'有 {n} 道题需要再想想。先试试只练错题，再查看解析。',feedbackUnfinished:'还有 {n} 道题没有完成，全部做完后再来检查吧。',feedbackEmpty:'先完成几道题，再点击检查。',
   eraserLabel:'橡皮擦',deleteConfirm:'确定删除这幅作品吗？',
   undoBoard:'↶ 撤销',redoBoard:'↷ 重做',backupTitle:'学习数据备份',backupDesc:'更换设备时可导出星星和作品，再从备份恢复。',backupExport:'导出备份',backupImport:'导入备份',backupSuccess:'备份导入成功，星星和作品已恢复。',backupInvalid:'无法读取备份，请选择有效的 Wind 学堂 JSON 文件。',backupConfirm:'导入将覆盖目前的星星和作品，确定继续吗？',backupSaved:'备份已导出。',answerShownNoReward:'已查看答案，本组不再发放星星；重新出题即可继续挑战。',completeBonus:'（完成整组加赠 2 颗）',presetGrade1:'一年级口算',presetGrade1Sub:'20以内 · 10题',presetTens:'两位数计算',presetTensSub:'100以内 · 10题',presetCompare:'数字比大小',presetCompareSub:'两位数 · 10题',presetMultiply:'乘法口诀',presetMultiplySub:'100以内 · 10题',
   stars:'星星余额',eraserLabel:'橡皮擦',templateApplied:'图案已放到画布上，可以继续修改。',heroEyebrow:'数学任务 · 边学边玩',heroPillOne:'✦ 答对一题，点亮一颗星',heroPillTwo:'▦ 用星星解锁拼豆颜色',correctTotal:'累计答对',streak:'连续练习天',
@@ -393,6 +446,9 @@ const GAME_LABELS={
   unlocked:'已解锁',locked:'待解锁',starCost:'★ {n}',colorUnlocked:'颜色已解锁！',needMoreStars:'还差一些星星，解锁需要 {n} 颗。',designSaved:'作品已保存到“我的作品”。',designLoaded:'已载入作品，可以继续修改。',designDeleted:'作品已删除。',boardCleared:'画布已清空。',downloadStarted:'作品 PNG 已准备好。',rewardEarned:'🌟 本次获得 {n} 颗星星！',perfectBonus:'（全对加赠 3 颗）',rewardClaimed:'这组练习已领取过星星奖励。',needAnswer:'先完成至少一道题，再领取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'删除作品',loadDesign:'载入作品',emptyName:'我的拼豆作品'
  },
  'en':{
+  designLimitConfirm:'You have 20 artworks. Saving another will remove the oldest. Continue?',storageFull:'Device storage is full, so your changes cannot be saved. Export a backup or free up space.',
+  dailyGoalTitle:'Today’s small goal',dailyGoalDesc:'Finish 3 sets of at least 10 questions',dailyGoalDone:'Today’s goal completed!',dailyGoalProgress:'Completed {done} / 3 sets',recentPracticeTitle:'Last 7 days',recentPracticeDesc:'Questions practiced and accuracy each day',recentPracticeEmpty:'Start today to build your own learning journey.',questionsUnit:'Q',
+  templateStar:'⭐ Star',templateCat:'🐱 Cat',templateHouse:'🏡 House',templateRocket:'🚀 Rocket',gridSelect:'Canvas size',gridSizeHint:'Keeps the artwork centered when resized',gridResizeConfirm:'Smaller canvas will crop some beads. Continue?',retryWrong:'↻ Retry missed questions',feedbackPerfect:'Amazing work! All correct. Keep practicing or create bead art!',feedbackMistakes:'{n} questions need another try. Practice just those questions, then check the hints.',feedbackUnfinished:'You have {n} unanswered questions. Finish them before checking.',feedbackEmpty:'Answer a few questions first, then check your work.',
   eraserLabel:'Eraser',deleteConfirm:'Delete this artwork?',
   undoBoard:'↶ Undo',redoBoard:'↷ Redo',backupTitle:'Learning data backup',backupDesc:'Export your stars and artwork, then restore on another device.',backupExport:'Export backup',backupImport:'Import backup',backupSuccess:'Backup imported. Stars and artwork restored.',backupInvalid:'This is not a valid Wind Study JSON backup.',backupConfirm:'Importing will replace your current stars and artwork. Continue?',backupSaved:'Backup exported.',answerShownNoReward:'Stars are disabled after revealing answers. Generate new questions to try again.',completeBonus:' (+2 for completing the set)',presetGrade1:'Grade 1 mental math',presetGrade1Sub:'Up to 20 · 10 questions',presetTens:'Two-digit maths',presetTensSub:'Up to 100 · 10 questions',presetCompare:'Compare numbers',presetCompareSub:'Two digits · 10 questions',presetMultiply:'Times tables',presetMultiplySub:'Up to 100 · 10 questions',
   stars:'Star balance',eraserLabel:'Eraser',templateApplied:'Pattern added to the board. You can keep editing it.',heroEyebrow:'MATH QUEST · PLAY & LEARN',heroPillOne:'✦ Earn a star for each correct answer',heroPillTwo:'▦ Unlock bead colors with stars',correctTotal:'Correct answers',streak:'Practice streak',
@@ -408,7 +464,7 @@ function gameFill(s,v){return String(s||'').replace(/\{(\w+)\}/g,function(_,k){r
 function gameEscape(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
 function localDayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function loadGame(){
-  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],attempted:[],submittedSets:[],perfectRewarded:[],completedBonuses:[],scoreHistory:[],unlockedColors:[1,2,3,4,5],board:Array(GRID_SIZE*GRID_SIZE).fill(0),savedDesigns:[]};
+  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],attempted:[],submittedSets:[],perfectRewarded:[],completedBonuses:[],scoreHistory:[],unlockedColors:[1,2,3,4,5],boardSize:12,board:Array(GRID_SIZE*GRID_SIZE).fill(0),savedDesigns:[]};
   try{const saved=JSON.parse(localStorage.getItem(GAME_KEY)||'{}');Object.keys(base).forEach(function(k){if(saved[k]!==undefined)base[k]=saved[k]})}catch(e){}
   base.stars=Math.max(0,Math.floor(Number(base.stars)||0));
   base.totalAnswered=Math.max(0,Math.floor(Number(base.totalAnswered)||0));
@@ -423,8 +479,10 @@ function loadGame(){
   base.completedBonuses=Array.isArray(base.completedBonuses)?base.completedBonuses:[];
   base.scoreHistory=Array.isArray(base.scoreHistory)?base.scoreHistory.slice(-300):[];
   base.unlockedColors=Array.from(new Set([1,2,3,4,5].concat(Array.isArray(base.unlockedColors)?base.unlockedColors:[]).map(Number).filter(function(n){return n>=1&&n<BEAD_COLORS.length})));
-  base.board=Array.isArray(base.board)&&base.board.length===GRID_SIZE*GRID_SIZE?base.board.map(function(n){n=Number(n)||0;return n>=0&&n<BEAD_COLORS.length?n:0}):Array(GRID_SIZE*GRID_SIZE).fill(0);
-  base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){return x&&Array.isArray(x.board)}).slice(-20):[];
+  base.boardSize=boardSizeValid(base.boardSize)?Number(base.boardSize):12;
+  GRID_SIZE=base.boardSize;
+  base.board=Array.isArray(base.board)&&base.board.length===GRID_SIZE*GRID_SIZE?base.board.map(function(n){n=Number(n)||0;return Number.isInteger(n)&&n>=0&&n<BEAD_COLORS.length?n:0}):Array(GRID_SIZE*GRID_SIZE).fill(0);
+  base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){const n=Number(x&&x.size)||12;return x&&boardSizeValid(n)&&Array.isArray(x.board)&&x.board.length===n*n}).slice(-20).map(function(d){return Object.assign({},d,{size:Number(d.size)||12})}):[];
   return base;
 }
 let game=loadGame();
@@ -432,7 +490,7 @@ let selectedBeadColor=1;
 let undoStack=[],redoStack=[],activeBrush=null;
 let exerciseRevealed=false,exerciseGraded=false;
 function snapshotBoard(){
-  undoStack.push(game.board.slice());if(undoStack.length>35)undoStack.shift();redoStack=[];updateUndoButtons()
+  undoStack.push({size:GRID_SIZE,board:game.board.slice()});if(undoStack.length>35)undoStack.shift();redoStack=[];updateUndoButtons()
 }
 function updateUndoButtons(){
   const undo=document.getElementById('undoBoardBtn'),redo=document.getElementById('redoBoardBtn');
@@ -440,7 +498,7 @@ function updateUndoButtons(){
 }
 function navigateBoardHistory(direction){
   const from=direction==='undo'?undoStack:redoStack,to=direction==='undo'?redoStack:undoStack;
-  if(!from.length)return;to.push(game.board.slice());game.board=from.pop();saveGame();renderBeadBoard();updateUndoButtons()
+  if(!from.length)return;to.push({size:GRID_SIZE,board:game.board.slice()});const prev=from.pop();GRID_SIZE=prev.size;game.boardSize=GRID_SIZE;game.board=prev.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);saveGame();renderBeadBoard();updateUndoButtons()
 }
 function paintBeadCell(cell){
   if(!cell)return;const n=Number(cell.getAttribute('data-cell'));
@@ -449,7 +507,11 @@ function paintBeadCell(cell){
 }
 function finishBrush(){if(activeBrush===null)return;activeBrush=null;saveGame();updateUndoButtons()}
 
-function saveGame(){try{localStorage.setItem(GAME_KEY,JSON.stringify(game))}catch(e){}}
+let storageWarningShown=false;
+function saveGame(){
+  try{localStorage.setItem(GAME_KEY,JSON.stringify(game));storageWarningShown=false;return true}
+  catch(e){if(!storageWarningShown){storageWarningShown=true;gameToast(gt('storageFull'))}return false}
+}
 function gameToast(message){const node=document.getElementById('gameToast');if(!node)return;node.textContent=message;node.classList.add('show');clearTimeout(gameToast.timer);gameToast.timer=setTimeout(function(){node.classList.remove('show')},2300)}
 function applyGameLabels(){document.querySelectorAll('[data-game-text]').forEach(function(node){const key=node.getAttribute('data-game-text');if(GAME_LABELS[els.language.value]&&GAME_LABELS[els.language.value][key])node.textContent=GAME_LABELS[els.language.value][key]})}
 function currentStreak(){
@@ -458,6 +520,32 @@ function currentStreak(){
   let n=0;while(days.has(localDayKey(cursor))&&n<366){n++;cursor.setDate(cursor.getDate()-1)}return n
 }
 function markPracticeDay(){const key=localDayKey(new Date());if(game.days.indexOf(key)<0)game.days.push(key);game.days=game.days.slice(-365)}
+
+function cropWillLoseBeads(board,from,to){
+  if(to>=from)return false;
+  const shift=Math.floor((to-from)/2);
+  return board.some(function(color,i){if(!color)return false;const row=Math.floor(i/from)+shift,col=i%from+shift;return row<0||col<0||row>=to||col>=to})
+}
+function centeredResize(board,from,to){
+  if(from===to)return board.slice();
+  const out=Array(to*to).fill(0),shift=Math.floor((to-from)/2);
+  board.forEach(function(color,i){const row=Math.floor(i/from)+shift,col=i%from+shift;if(row>=0&&row<to&&col>=0&&col<to)out[row*to+col]=color});
+  return out
+}
+function resizeBoard(nextSize){
+  const next=Number(nextSize),sel=document.getElementById('boardSize');
+  if(!boardSizeValid(next)||next===GRID_SIZE){sel.value=String(GRID_SIZE);return}
+  if(cropWillLoseBeads(game.board,GRID_SIZE,next)&&!window.confirm(gt('gridResizeConfirm'))){sel.value=String(GRID_SIZE);return}
+  snapshotBoard();game.board=centeredResize(game.board,GRID_SIZE,next);
+  GRID_SIZE=next;game.boardSize=GRID_SIZE;saveGame();renderBeadBoard()
+}
+function scaledTemplate(template,from,to){
+  if(from===to)return template.slice();
+  const out=Array(to*to).fill(0);
+  for(let r=0;r<to;r++)for(let c=0;c<to;c++){const rr=Math.min(from-1,Math.floor((r+.5)*from/to)),cc=Math.min(from-1,Math.floor((c+.5)*from/to));out[r*to+c]=template[rr*from+cc]}
+  return out
+}
+
 function renderBeadPalette(){
   const root=document.getElementById('beadPalette');if(!root)return;
   root.innerHTML=BEAD_COLORS.map(function(c,i){
@@ -471,6 +559,11 @@ function renderBeadPalette(){
 function updateBoardProgress(){const n=game.board.filter(function(v){return v>0}).length;const node=document.getElementById('boardProgress');if(node)node.textContent=n+' / '+(GRID_SIZE*GRID_SIZE)}
 function renderBeadBoard(){
   const root=document.getElementById('beadBoard');if(!root)return;
+  root.style.setProperty('--bead-grid',GRID_SIZE);
+  root.style.setProperty('--bead-gap',GRID_SIZE===24?'1px':GRID_SIZE===16?'2px':'3px');
+  root.style.setProperty('--bead-padding',GRID_SIZE===24?'5px':'8px');
+  root.style.setProperty('--bead-radius',GRID_SIZE===24?'2px':'4px');
+  document.getElementById('boardSize').value=String(GRID_SIZE);
   root.innerHTML=game.board.map(function(color,i){const hex=color>0?BEAD_COLORS[color].hex:'#ffffff';return '<button class="bead-cell" type="button" role="gridcell" data-cell="'+i+'" style="--cell-color:'+hex+'" aria-label="第 '+(i+1)+' 格"></button>'}).join('');
   updateBoardProgress()
 }
@@ -478,10 +571,47 @@ function renderSavedDesigns(){
   const root=document.getElementById('savedDesigns');if(!root)return;
   if(!game.savedDesigns.length){root.innerHTML='<div class="empty-gallery">'+gameEscape(gt('galleryEmpty'))+'</div>';return}
   root.innerHTML=game.savedDesigns.slice().reverse().map(function(d){
-    const preview=(d.board||[]).slice(0,GRID_SIZE*GRID_SIZE).map(function(v){const color=Number(v)>0&&BEAD_COLORS[Number(v)]?BEAD_COLORS[Number(v)].hex:'#ffffff';return '<i style="--cell-color:'+color+'"></i>'}).join('');
-    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+gameEscape(d.name)+'"><span class="saved-design-mini">'+preview+'</span><strong>'+gameEscape(d.name||gt('defaultDesignName'))+'</strong><small>'+new Date(d.date||Date.now()).toLocaleDateString()+'</small></button><button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
+    const size=Number(d.size)||12;
+    const miniature=scaledTemplate(d.board||[],size,12);
+    const preview=miniature.map(function(v){const color=Number(v)>0&&BEAD_COLORS[Number(v)]?BEAD_COLORS[Number(v)].hex:'#ffffff';return '<i style="--cell-color:'+color+'"></i>'}).join('');
+    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+gameEscape(d.name)+'"><span class="saved-design-mini" style="--preview-grid:12">'+preview+'</span><strong>'+gameEscape(d.name||gt('defaultDesignName'))+'</strong><small>'+new Date(d.date||Date.now()).toLocaleDateString()+'</small></button><button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
   }).join('')
 }
+
+function renderGrowthJourney(history){
+  const root=document.getElementById('growthJourney');if(!root)return;
+  const today=localDayKey(new Date()),dates=[];
+  for(let offset=6;offset>=0;offset--){
+    const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-offset);
+    dates.push({key:localDayKey(d),day:String(d.getDate()),week:d.toLocaleDateString(els.language.value==='zh-Hant'?'zh-HK':els.language.value==='en'?'en-US':'zh-CN',{weekday:'short'}),total:0,correct:0,completed:0})
+  }
+  (history||[]).forEach(function(item){
+    const dt=new Date(item.date);if(!Number.isFinite(dt.getTime()))return;
+    const key=localDayKey(dt),entry=dates.find(function(d){return d.key===key});
+    if(!entry)return;
+    entry.total+=Math.max(0,Number(item.total)||0);
+    entry.correct+=Math.max(0,Number(item.correct)||0);
+    if(Number(item.total)>=10&&Number(item.blank)===0)entry.completed++
+  });
+  const todayEntry=dates[dates.length-1],done=Math.min(3,todayEntry.completed);
+  const maxQuestions=Math.max(10,...dates.map(function(d){return d.total}));
+  const goalText=done===3?gt('dailyGoalDone'):gameFill(gt('dailyGoalProgress'),{done:done});
+  const lines=dates.map(function(d){
+    const height=d.total?Math.max(10,Math.round(100*d.total/maxQuestions)):4;
+    const rate=d.total?Math.round(d.correct/d.total*100):0;
+    return '<div class="journey-day" title="'+gameEscape(d.total+' '+gt('questionsUnit')+' · '+rate+'%')+'">'+
+      '<span class="journey-questions">'+(d.total?d.total:'·')+'</span>'+
+      '<div class="journey-bar-track"><i style="height:'+height+'%;--bar-opacity:'+(d.total?'1':'.2')+'"></i></div>'+
+      '<span class="journey-week">'+gameEscape(d.week)+'</span>'+
+      '<span class="journey-rate">'+(d.total?rate+'%':'—')+'</span></div>'
+  }).join('');
+  root.innerHTML='<section class="journey-card journey-goal"><div class="journey-title"><h3>✦ '+gameEscape(gt('dailyGoalTitle'))+'</h3><small>'+gameEscape(gt('dailyGoalDesc'))+'</small></div>'+
+    '<div class="journey-progress">'+[0,1,2].map(function(i){return '<span class="'+(i<done?'completed':'')+'"></span>'}).join('')+'</div>'+
+    '<strong class="journey-progress-label">'+gameEscape(goalText)+'</strong></section>'+
+    '<section class="journey-card journey-weekly"><div class="journey-title"><h3>▥ '+gameEscape(gt('recentPracticeTitle'))+'</h3><small>'+gameEscape(gt('recentPracticeDesc'))+'</small></div>'+
+    '<div class="journey-days">'+lines+'</div></section>'
+}
+
 function renderGrowth(){
   const stats=document.getElementById('growthStats'),badges=document.getElementById('achievementList');if(!stats||!badges)return;
   const graded=game.scoreHistory||[];
@@ -493,6 +623,7 @@ function renderGrowth(){
     [gt('statRounds'),game.rounds],[gt('statPerfect'),game.perfectRounds],[gt('statDesigns'),game.savedDesigns.length],[gt('stars'),game.stars]
   ];
   stats.innerHTML=items.map(function(x){return '<div class="growth-stat"><span>'+gameEscape(x[0])+'</span><strong>'+gameEscape(x[1])+'</strong></div>'}).join('');
+  renderGrowthJourney(graded);
   const achievements=[
     ['✦','achFirst','achFirstDesc',game.rounds>=1],['★','achTen','achTenDesc',game.totalCorrect>=10],['✧','achPerfect','achPerfectDesc',game.perfectRounds>=1],
     ['♧','achStreak','achStreakDesc',currentStreak()>=3],['▦','achArtist','achArtistDesc',game.savedDesigns.length>=1],['✹','achHundred','achHundredDesc',game.totalCorrect>=100]
@@ -507,7 +638,7 @@ function updateGameUI(){
   renderBeadPalette();renderBeadBoard();renderSavedDesigns();renderGrowth()
 }
 function applyBeadTemplate(type){
-  const board=Array(GRID_SIZE*GRID_SIZE).fill(0),put=function(r,c,color){if(r>=0&&r<GRID_SIZE&&c>=0&&c<GRID_SIZE)board[r*GRID_SIZE+c]=color};
+  const board=Array(144).fill(0),put=function(r,c,color){if(r>=0&&r<12&&c>=0&&c<12)board[r*12+c]=color};
   if(type==='heart'){
     ['000110011000','001111111100','011111111110','011111111110','001111111100','000111111000','000011110000','000001100000','000000000000','000000000000','000000000000','000000000000'].forEach(function(row,r){row.split('').forEach(function(v,c){if(v==='1')put(r,c,1)})})
   }else if(type==='flower'){
@@ -518,16 +649,41 @@ function applyBeadTemplate(type){
     [[3,4],[3,7],[4,4],[4,7],[7,3],[8,4],[8,5],[8,6],[8,7],[7,8]].forEach(function(p){put(p[0],p[1],4)})
   }else if(type==='rainbow'){
     const bands=[1,5,4,3,2];
-    for(let r=1;r<=8;r++)for(let c=0;c<GRID_SIZE;c++){
+    for(let r=1;r<=8;r++)for(let c=0;c<12;c++){
       const dist=Math.sqrt(Math.pow(c-5.5,2)+Math.pow(r-11,2));
       if(dist>=3.8&&dist<=10.6){const band=Math.max(0,Math.min(bands.length-1,Math.floor((10.6-dist)/1.35)));put(r,c,bands[band])}
     }
+  }else if(['star','cat','house','rocket'].includes(type)){
+    const patterns={
+      star:[
+        '000002000000','000022200000','000022200000','222222222220',
+        '022222222200','002222222000','000222220000','000222220000',
+        '002220222000','022200022200','022000002200','000000000000'
+      ],
+      cat:[
+        '110000000011','111000000111','111100001111','111111111111',
+        '111111111111','110411114011','111111111111','111112111111',
+        '111122211111','111111111111','011111111110','001111111100'
+      ],
+      house:[
+        '000005500000','000055550000','000555555000','005555555500',
+        '055555555550','555555555555','033333333330','033333333330',
+        '033334433330','033334433330','033334433330','033334433330'
+      ],
+      rocket:[
+        '000002200000','000022220000','000025520000','000255552000',
+        '000255552000','000255552000','000225522000','000225522000',
+        '000425524000','004422224400','000022220000','000011110000'
+      ]
+    };
+    patterns[type].forEach(function(line,r){line.split('').forEach(function(v,c){if(v!=='0')put(r,c,Number(v))})});
   }
-  snapshotBoard();game.board=board;saveGame();renderBeadBoard();gameToast(gt('templateApplied')||'圖案已放到畫布上，可以繼續修改。')
+  snapshotBoard();game.board=scaledTemplate(board,12,GRID_SIZE);saveGame();renderBeadBoard();gameToast(gt('templateApplied')||'圖案已放到畫布上，可以繼續修改。')
 }
 function saveBeadDesign(){
   const name=(document.getElementById('designName').value||'').trim()||gt('emptyName');
-  game.savedDesigns.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name,board:game.board.slice(),date:new Date().toISOString()});
+  if(game.savedDesigns.length>=20&&!window.confirm(gt('designLimitConfirm')))return;
+  game.savedDesigns.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name,size:GRID_SIZE,board:game.board.slice(),date:new Date().toISOString()});
   game.savedDesigns=game.savedDesigns.slice(-20);saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designSaved'))
 }
 function downloadBeadDesign(){
@@ -553,10 +709,10 @@ function awardStars(result){
     if(correct&&game.rewarded.indexOf(key)<0){game.rewarded.push(key);newlyCorrect++}
   });
   let perfectBonus=0,completeBonus=0;
-  if(first&&perfect&&game.perfectRewarded.indexOf(signature)<0){
+  if(first&&perfect&&result.total>=10&&game.perfectRewarded.indexOf(signature)<0){
     perfectBonus=3;game.perfectRewarded.push(signature);game.perfectRounds++
   }
-  if(first){
+  if(first&&result.blank===0&&result.total>0){
     exerciseGraded=true;game.rounds++;
     game.scoreHistory.push({date:new Date().toISOString(),total:result.total,correct:result.correct,wrong:result.wrong,blank:result.blank});
     game.scoreHistory=game.scoreHistory.slice(-300);
@@ -602,17 +758,19 @@ function exportGameBackup(){
 function validateGameBackup(raw){
   if(!raw||raw.format!=='wind-study-math-bead-backup'||raw.version!==2||!raw.game||typeof raw.game!=='object')throw Error('format');
   const data=raw.game;
-  if(!Number.isSafeInteger(data.stars)||data.stars<0||!Array.isArray(data.board)||data.board.length!==144||!Array.isArray(data.savedDesigns)||data.savedDesigns.length>200)throw Error('shape');
+  const size=Number(data.boardSize)||12;
+  if(!boardSizeValid(size)||!Number.isSafeInteger(data.stars)||data.stars<0||!Array.isArray(data.board)||data.board.length!==size*size||!Array.isArray(data.savedDesigns)||data.savedDesigns.length>200)throw Error('shape');
   const colorValid=function(n){return Number.isInteger(n)&&n>=0&&n<BEAD_COLORS.length};
   if(data.board.some(function(n){return !colorValid(n)}))throw Error('colors');
-  if(data.savedDesigns.some(function(d){return !d||typeof d.name!=='string'||d.name.length>100||!Array.isArray(d.board)||d.board.length!==144||d.board.some(function(n){return !colorValid(n)})}))throw Error('artworks');
+  if(data.savedDesigns.some(function(d){const dim=Number(d&&d.size)||12;return !d||!boardSizeValid(dim)||typeof d.name!=='string'||d.name.length>100||!Array.isArray(d.board)||d.board.length!==dim*dim||d.board.some(function(n){return !colorValid(n)})}))throw Error('artworks');
   const safe={};
   ['stars','totalAnswered','totalCorrect','rounds','perfectRounds'].forEach(function(k){safe[k]=Number.isSafeInteger(data[k])&&data[k]>=0?data[k]:0});
   ['days','rewarded','attempted','submittedSets','perfectRewarded','completedBonuses'].forEach(function(k){safe[k]=Array.isArray(data[k])?data[k].filter(function(v){return typeof v==='string'&&v.length<1000}).slice(-10000):[]});
   safe.scoreHistory=Array.isArray(data.scoreHistory)?data.scoreHistory.filter(function(x){return x&&typeof x==='object'}).slice(-300):[];
   safe.unlockedColors=Array.isArray(data.unlockedColors)?data.unlockedColors.filter(function(n){return Number.isInteger(n)&&n>=1&&n<BEAD_COLORS.length}):[1,2,3,4,5];
+  safe.boardSize=size;
   safe.board=data.board.slice();
-  safe.savedDesigns=data.savedDesigns.slice(-20).map(function(d,i){return{id:String(d.id||i).slice(0,80),name:d.name.slice(0,24),board:d.board.slice(),date:typeof d.date==='string'?d.date.slice(0,40):''}});
+  safe.savedDesigns=data.savedDesigns.slice(-20).map(function(d,i){return{id:String(d.id||i).slice(0,80), name:d.name.slice(0,24),size:Number(d.size)||12,board:d.board.slice(),date:typeof d.date==='string'?d.date.slice(0,40):''}});
   return safe
 }
 function importGameBackup(file){
@@ -623,7 +781,7 @@ function importGameBackup(file){
     try{
       const candidate=validateGameBackup(JSON.parse(reader.result));
       if(!window.confirm(gt('backupConfirm')))return;
-      game=candidate;undoStack=[];redoStack=[];selectedBeadColor=1;saveGame();updateGameUI();updateUndoButtons();gameToast(gt('backupSuccess'))
+      game=candidate;GRID_SIZE=game.boardSize;undoStack=[];redoStack=[];selectedBeadColor=1;saveGame();updateGameUI();updateUndoButtons();gameToast(gt('backupSuccess'))
     }catch(err){gameToast(gt('backupInvalid'))}
   };
   reader.readAsText(file,'utf-8')
@@ -645,6 +803,7 @@ function initGameUI(){
   board.addEventListener('pointerup',finishBrush);board.addEventListener('pointercancel',finishBrush);
   board.addEventListener('lostpointercapture',finishBrush);
   board.addEventListener('click',function(e){if(e.detail!==0)return;const cell=e.target.closest('[data-cell]');if(!cell)return;snapshotBoard();paintBeadCell(cell);saveGame()});
+  document.getElementById('boardSize').addEventListener('change',function(e){resizeBoard(e.target.value)});
   document.getElementById('undoBoardBtn').addEventListener('click',function(){navigateBoardHistory('undo')});
   document.getElementById('redoBoardBtn').addEventListener('click',function(){navigateBoardHistory('redo')});
   document.addEventListener('keydown',function(e){
@@ -665,7 +824,7 @@ function initGameUI(){
     if(e.target.closest('#clearBoardBtn')){snapshotBoard();game.board=Array(GRID_SIZE*GRID_SIZE).fill(0);saveGame();renderBeadBoard();gameToast(gt('boardCleared'));return}
     if(e.target.closest('#saveDesignBtn')){saveBeadDesign();return}
     if(e.target.closest('#exportDesignBtn')){downloadBeadDesign();return}
-    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();game.board=d.board.slice();document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();gameToast(gt('designLoaded'))}return}
+    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();GRID_SIZE=Number(d.size)||12;game.boardSize=GRID_SIZE;game.board=d.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();gameToast(gt('designLoaded'))}return}
     const del=e.target.closest('[data-delete-design]');if(del){if(!window.confirm(gt('deleteConfirm')))return;game.savedDesigns=game.savedDesigns.filter(function(x){return String(x.id)!==del.getAttribute('data-delete-design')});saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designDeleted'))}
   });
   document.getElementById('backupExportBtn').addEventListener('click',exportGameBackup);
@@ -760,7 +919,7 @@ function comparisonPool(s){
   return {greater:shuffle(greater),less:shuffle(less),equal:shuffle(equal)};
 }
 function generateQuestions(){
-  hideNotice();els.result.classList.remove('show');
+  hideNotice();els.result.classList.remove('show');resetLearningFeedback();
   const per=+els.count.value,pages=+els.totalPages.value,total=per*pages,s=config();
   if(s.operation==='compare'&&s.limit<11){showNotice(t('noticeCompareRange'));return;}
   if(['tensMixed','tensAdd','tensSub'].includes(s.operation)&&s.limit<(s.operation==='tensSub'?11:20)){showNotice(t('noticeTensRange'));return;}
@@ -828,12 +987,55 @@ function render(preserve=true){let v=preserve?saved():{},per=+els.count.value,pa
 function updateHeader(){let p=+els.totalPages.value,total=+els.count.value*p,sub=`${getLimit()} ${t("within")} · ${t(els.operation.value)} · ${t(els.level.value)} · ${strategyLabel(els.strategyMode.value)} · ${fill(t("totalQuestionCount"),{count:total})}`;els.pages.querySelectorAll('.page-title').forEach(x=>x.textContent=t('title'));els.pages.querySelectorAll('.page-subtitle').forEach(x=>x.textContent=sub);els.pages.querySelectorAll('.page-indicator').forEach((x,i)=>x.textContent=fill(t('pageOf'),{page:i+1,total:p}))}function setPageScores(v=''){els.pages.querySelectorAll('.score-box').forEach(box=>{let value=box.querySelector('.score-value');value.textContent=v;box.classList.toggle('visible',v!=='')})}
 function setPageTimes(v=''){els.pages.querySelectorAll('.time-box').forEach(box=>{let value=box.querySelector('.time-value');value.textContent=v;box.classList.toggle('visible',v!=='')})}
 function formatElapsed(ms){let total=Math.max(0,Math.floor(ms/1000)),h=Math.floor(total/3600),m=Math.floor(total%3600/60),s=total%60;if(els.language.value==='en')return h?`${h}h ${m}m ${s}s`:m?`${m}m ${s}s`:`${s}s`;return h?`${h}时${m}分${s}秒`:m?`${m}分${s}秒`:`${s}秒`}
-function checkAnswers(scoreBlank=false,recordSubmission=true){let correct=0,wrong=0,blank=0;els.pages.querySelectorAll('.answer-input').forEach(x=>{let q=currentQuestions[+x.dataset.index],v=x.value.trim(),m=x.closest('.equation').querySelector('.mark');x.classList.remove('correct','wrong');m.textContent='';m.className='mark';if(v===''){blank++;if(scoreBlank){m.textContent='×';m.classList.add('wrong')}return}if((q.kind==='compare'&&v===q.answer)||(q.kind!=='compare'&&v!==''&&Number(v)===q.answer)){correct++;x.classList.add('correct');m.textContent='✓';m.classList.add('correct')}else{wrong++;x.classList.add('wrong');m.textContent='×';m.classList.add('wrong')}});let total=currentQuestions.length,score=Math.round(correct/Math.max(1,total)*100),extra=correct===total?t('perfect'):blank&&!scoreBlank?t('unfinished'):t('retry');if(recordSubmission||submittedElapsedMs===null)submittedElapsedMs=Date.now()-exerciseStartedAt;const reward=recordSubmission?awardStars({correct:correct,wrong:wrong,blank:blank,total:total}):null;let rewardText='';if(reward&&reward.earned>0)rewardText=' '+gameFill(gt('rewardEarned'),{n:reward.earned})+(reward.perfect?' '+gt('perfectBonus'):'')+(reward.completeBonus?' '+gt('completeBonus'):'');else if(reward&&reward.revealed)rewardText=' '+gt('answerShownNoReward');else if(reward&&reward.already)rewardText=' '+gt('rewardClaimed');els.result.textContent=fill(t('result'),{total,correct,wrong,blank,score})+' '+extra+rewardText;els.result.classList.add('show');setPageScores(String(score));setPageTimes(formatElapsed(submittedElapsedMs));return{correct,wrong,blank,score}}
+
+function questionAnsweredCorrect(q,v){
+  return (q.kind==='compare'&&v===q.answer)||(q.kind!=='compare'&&v!==''&&Number(v)===q.answer)
+}
+function missedQuestionIndices(){
+  const indices=[];
+  els.pages.querySelectorAll('.answer-input').forEach(function(input){
+    const i=Number(input.dataset.index),q=currentQuestions[i],value=input.value.trim();
+    if(q&&!questionAnsweredCorrect(q,value))indices.push(i)
+  });
+  return indices
+}
+function resetLearningFeedback(){
+  const feedback=document.getElementById('learningFeedback'),btn=document.getElementById('retryWrongBtn');
+  feedback.hidden=true;feedback.textContent='';feedback.className='learning-feedback';btn.hidden=true;
+}
+function updateLearningFeedback(result){
+  const feedback=document.getElementById('learningFeedback'),btn=document.getElementById('retryWrongBtn'),attempted=result.correct+result.wrong;
+  feedback.hidden=false;feedback.className='learning-feedback';
+  if(!attempted){feedback.textContent=gt('feedbackEmpty');btn.hidden=true;return}
+  if(result.correct===result.total&&result.total>0){feedback.textContent=gt('feedbackPerfect');feedback.classList.add('good');btn.hidden=true;return}
+  if(result.blank>0&&result.wrong===0){
+    feedback.textContent=gameFill(gt('feedbackUnfinished'),{n:result.blank});btn.hidden=true;return
+  }
+  feedback.textContent=gameFill(gt('feedbackMistakes'),{n:result.wrong+result.blank});feedback.classList.add('needs-work');btn.hidden=false
+}
+function retryMissedQuestions(){
+  const missed=missedQuestionIndices();
+  if(!missed.length)return;
+  const previousRevealed=exerciseRevealed;
+  currentQuestions=missed.map(function(i){return currentQuestions[i]});
+  const count=currentQuestions.length;
+  const per=count<=50?([10,20,30,40,50].find(function(n){return n>=count})||50):50;
+  els.count.value=String(per);
+  els.totalPages.value=String(Math.min(10,Math.ceil(count/per)));
+  exerciseRevealed=previousRevealed;exerciseGraded=false;
+  showingAnswers=false;els.worksheet.classList.remove('show-answers');
+  els.toggleAnswerBtn.textContent=t('showAnswers');
+  els.result.classList.remove('show');resetLearningFeedback();
+  render(false);updateHeader();exerciseStartedAt=Date.now();submittedElapsedMs=null;setPageScores('');setPageTimes('');
+  els.worksheet.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function checkAnswers(scoreBlank=false,recordSubmission=true){let correct=0,wrong=0,blank=0;els.pages.querySelectorAll('.answer-input').forEach(x=>{let q=currentQuestions[+x.dataset.index],v=x.value.trim(),m=x.closest('.equation').querySelector('.mark');x.classList.remove('correct','wrong');m.textContent='';m.className='mark';if(v===''){blank++;if(scoreBlank){m.textContent='×';m.classList.add('wrong')}return}if((q.kind==='compare'&&v===q.answer)||(q.kind!=='compare'&&v!==''&&Number(v)===q.answer)){correct++;x.classList.add('correct');m.textContent='✓';m.classList.add('correct')}else{wrong++;x.classList.add('wrong');m.textContent='×';m.classList.add('wrong')}});let total=currentQuestions.length,score=Math.round(correct/Math.max(1,total)*100),extra=correct===total?t('perfect'):blank&&!scoreBlank?t('unfinished'):t('retry');if(recordSubmission||submittedElapsedMs===null)submittedElapsedMs=Date.now()-exerciseStartedAt;const reward=recordSubmission?awardStars({correct:correct,wrong:wrong,blank:blank,total:total}):null;let rewardText='';if(reward&&reward.earned>0)rewardText=' '+gameFill(gt('rewardEarned'),{n:reward.earned})+(reward.perfect?' '+gt('perfectBonus'):'')+(reward.completeBonus?' '+gt('completeBonus'):'');else if(reward&&reward.revealed)rewardText=' '+gt('answerShownNoReward');else if(reward&&reward.already)rewardText=' '+gt('rewardClaimed');els.result.textContent=fill(t('result'),{total,correct,wrong,blank,score})+' '+extra+rewardText;els.result.classList.add('show');setPageScores(String(score));setPageTimes(formatElapsed(submittedElapsedMs));updateLearningFeedback({correct,wrong,blank,total});return{correct,wrong,blank,score}}
 function toggleAnswers(force){let next=typeof force==='boolean'?force:!showingAnswers;if(next&&!showingAnswers){exerciseRevealed=true;checkAnswers(true,false)}showingAnswers=next;els.worksheet.classList.toggle('show-answers',next);els.toggleAnswerBtn.textContent=next?t('hideAnswers'):t('showAnswers')}
-function clearAnswers(){els.pages.querySelectorAll('.answer-input').forEach(x=>{x.value='';x.classList.remove('correct','wrong')});els.pages.querySelectorAll('.mark').forEach(x=>{x.textContent='';x.className='mark'});els.result.classList.remove('show');showingAnswers=false;els.worksheet.classList.remove('show-answers');els.toggleAnswerBtn.textContent=t('showAnswers');exerciseStartedAt=Date.now();submittedElapsedMs=null;setPageScores('');setPageTimes('')}
+function clearAnswers(){resetLearningFeedback();els.pages.querySelectorAll('.answer-input').forEach(x=>{x.value='';x.classList.remove('correct','wrong')});els.pages.querySelectorAll('.mark').forEach(x=>{x.textContent='';x.className='mark'});els.result.classList.remove('show');showingAnswers=false;els.worksheet.classList.remove('show-answers');els.toggleAnswerBtn.textContent=t('showAnswers');exerciseStartedAt=Date.now();submittedElapsedMs=null;setPageScores('');setPageTimes('')}
 function printSheet(withAnswers){if(!currentQuestions.length)generateQuestions();let prev=showingAnswers;if(withAnswers)exerciseRevealed=true;showingAnswers=withAnswers;els.worksheet.classList.toggle('show-answers',withAnswers);setTimeout(()=>{window.print();setTimeout(()=>toggleAnswers(prev),200)},80)}
 function setLanguage(){let v=saved();document.documentElement.lang=els.language.value;applyGameLabels();document.title=t('title');updateGameUI();document.querySelectorAll('[data-i18n]').forEach(x=>x.textContent=t(x.dataset.i18n));render(false);restore(v);els.toggleAnswerBtn.textContent=showingAnswers?t('hideAnswers'):t('showAnswers');updateHeader();if(els.result.classList.contains('show'))checkAnswers(showingAnswers,false)}
-els.language.addEventListener('change',setLanguage);els.limit.addEventListener('change',()=>{els.customLimitWrap.classList.toggle('show',els.limit.value==='custom');updateHeader()});els.customLimit.addEventListener('input',updateHeader);els.operation.addEventListener('change',updateHeader);els.operandCount.addEventListener('change',updateHeader);els.strategyMode.addEventListener('change',updateHeader);els.level.addEventListener('change',updateHeader);els.difficulty.addEventListener('change',updateHeader);els.count.addEventListener('change',generateQuestions);els.totalPages.addEventListener('change',generateQuestions);els.columns.addEventListener('change',()=>els.pages.style.setProperty('--cols',els.columns.value));els.showHints.addEventListener('change',()=>render(true));els.generateBtn.addEventListener('click',generateQuestions);els.toggleAnswerBtn.addEventListener('click',()=>toggleAnswers());els.checkBtn.addEventListener('click',()=>checkAnswers(false));els.printBlankBtn.addEventListener('click',()=>printSheet(false));els.printAnswerBtn.addEventListener('click',()=>printSheet(true));els.clearBtn.addEventListener('click',clearAnswers);
+els.language.addEventListener('change',setLanguage);els.limit.addEventListener('change',()=>{els.customLimitWrap.classList.toggle('show',els.limit.value==='custom');updateHeader()});els.customLimit.addEventListener('input',updateHeader);els.operation.addEventListener('change',updateHeader);els.operandCount.addEventListener('change',updateHeader);els.strategyMode.addEventListener('change',updateHeader);els.level.addEventListener('change',updateHeader);els.difficulty.addEventListener('change',updateHeader);els.count.addEventListener('change',generateQuestions);els.totalPages.addEventListener('change',generateQuestions);els.columns.addEventListener('change',()=>els.pages.style.setProperty('--cols',els.columns.value));els.showHints.addEventListener('change',()=>render(true));els.generateBtn.addEventListener('click',generateQuestions);els.toggleAnswerBtn.addEventListener('click',()=>toggleAnswers());els.checkBtn.addEventListener('click',()=>checkAnswers(false));document.getElementById('retryWrongBtn').addEventListener('click',retryMissedQuestions);els.printBlankBtn.addEventListener('click',()=>printSheet(false));els.printAnswerBtn.addEventListener('click',()=>printSheet(true));els.clearBtn.addEventListener('click',clearAnswers);
 ['limit','operation','operandCount','strategyMode','level','difficulty','count','totalPages'].forEach(function(id){
   els[id].addEventListener('change',function(){document.querySelectorAll('[data-preset]').forEach(function(b){b.classList.remove('active')})})
 });
