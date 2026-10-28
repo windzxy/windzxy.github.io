@@ -563,7 +563,7 @@ function gameFill(s,v){return String(s||'').replace(/\{(\w+)\}/g,function(_,k){r
 function gameEscape(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
 function localDayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function loadGame(){
-  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],attempted:[],submittedSets:[],perfectRewarded:[],completedBonuses:[],scoreHistory:[],unlockedColors:[1,2,3,4,5],boardSize:12,board:Array(GRID_SIZE*GRID_SIZE).fill(0),savedDesigns:[]};
+  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],attempted:[],submittedSets:[],perfectRewarded:[],completedBonuses:[],scoreHistory:[],unlockedColors:[1,2,3,4,5],boardSize:12,board:Array(GRID_SIZE*GRID_SIZE).fill(0),layers:null,savedDesigns:[]};
   try{const saved=JSON.parse(localStorage.getItem(GAME_KEY)||'{}');Object.keys(base).forEach(function(k){if(saved[k]!==undefined)base[k]=saved[k]})}catch(e){}
   base.stars=Math.max(0,Math.floor(Number(base.stars)||0));
   base.totalAnswered=Math.max(0,Math.floor(Number(base.totalAnswered)||0));
@@ -581,15 +581,112 @@ function loadGame(){
   base.boardSize=boardSizeValid(base.boardSize)?Number(base.boardSize):12;
   GRID_SIZE=base.boardSize;
   base.board=Array.isArray(base.board)&&base.board.length===GRID_SIZE*GRID_SIZE?base.board.map(function(n){n=Number(n)||0;return Number.isInteger(n)&&n>=0&&n<BEAD_COLORS.length?n:0}):Array(GRID_SIZE*GRID_SIZE).fill(0);
+  base.layers=normalizedArtLayers(base,GRID_SIZE);
+  base.board=composeArtLayers(base.layers);
   base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){const n=Number(x&&x.size)||12;return x&&boardSizeValid(n)&&Array.isArray(x.board)&&x.board.length===n*n}).slice(-20).map(function(d){return Object.assign({},d,{size:Number(d.size)||12})}):[];
   return base;
 }
 let game=loadGame();
 let selectedBeadColor=1;
-let undoStack=[],redoStack=[],activeBrush=null,activePan=null,boardMode='paint',hdCursor=0,boardZoom='fit';
+let undoStack=[],redoStack=[],activeBrush=null,activePan=null,boardMode='paint',hdCursor=0,boardZoom='fit',activeArtLayer='base',mirrorPainting=false;
 let exerciseRevealed=false,exerciseGraded=false;
+
+function validArtLayer(v,size){
+  return Array.isArray(v)&&v.length===size*size&&v.every(function(n){return Number.isInteger(n)&&n>=0&&n<BEAD_COLORS.length})
+}
+function normalizedArtLayers(entry,size){
+  const data=entry&&entry.layers;
+  if(data&&validArtLayer(data.base,size)&&validArtLayer(data.detail,size)){
+    return {base:data.base.slice(),detail:data.detail.slice()}
+  }
+  const legacy=entry&&validArtLayer(entry.board,size)?entry.board:Array(size*size).fill(0);
+  return {base:legacy.slice(),detail:Array(size*size).fill(0)}
+}
+function cloneArtLayers(layers){
+  return {base:layers.base.slice(),detail:layers.detail.slice()}
+}
+function composeArtLayers(layers){
+  return layers.base.map(function(color,i){return layers.detail[i]||color})
+}
+function syncArtLayers(){game.board=composeArtLayers(game.layers)}
+function setActiveArtLayer(name){
+  if(name!=='base'&&name!=='detail')return;
+  activeArtLayer=name;
+  [['base','layerBaseBtn'],['detail','layerDetailBtn']].forEach(function(entry){
+    const node=document.getElementById(entry[1]);if(!node)return;
+    node.classList.toggle('active',entry[0]===name);
+    node.setAttribute('aria-pressed',String(entry[0]===name))
+  })
+}
+function clearArtLayer(){
+  if(!window.confirm(gt('clearLayerAsk')))return;
+  snapshotBoard();game.layers[activeArtLayer]=Array(GRID_SIZE*GRID_SIZE).fill(0);
+  syncArtLayers();saveGame();renderBeadBoard()
+}
+function paintIndex(index,color){
+  if(!Number.isInteger(index)||index<0||index>=game.board.length)return false;
+  if(!Number.isInteger(color)||color<0||color>=BEAD_COLORS.length)return false;
+  const layer=game.layers[activeArtLayer];
+  const group=[index];
+  if(mirrorPainting){
+    const row=Math.floor(index/GRID_SIZE),col=index%GRID_SIZE,other=row*GRID_SIZE+(GRID_SIZE-1-col);
+    if(other!==index)group.push(other)
+  }
+  let touched=false;
+  for(const at of group){
+    if(layer[at]===color)continue;
+    layer[at]=color;
+    game.board[at]=game.layers.detail[at]||game.layers.base[at];
+    touched=true;
+    if(GRID_SIZE>=32)drawHDCell(at);
+    else{
+      const cell=document.querySelector('#beadBoard [data-cell="'+at+'"]');
+      if(cell)cell.style.setProperty('--cell-color',game.board[at]?BEAD_COLORS[game.board[at]].hex:'#ffffff')
+    }
+  }
+  if(touched)updateBoardProgress();
+  return touched
+}
+function fillArtAt(start){
+  const len=game.board.length;
+  if(start<0||start>=len)return false;
+  const source=game.board.slice(),sourceColor=source[start];
+  if(sourceColor===selectedBeadColor)return false;
+  const visited=new Uint8Array(len),queue=[start],layer=game.layers[activeArtLayer];
+  let changed=0;
+  for(let head=0;head<queue.length;head++){
+    const index=queue[head];if(visited[index]||source[index]!==sourceColor)continue;
+    visited[index]=1;layer[index]=selectedBeadColor;changed++;
+    const r=Math.floor(index/GRID_SIZE),c=index%GRID_SIZE;
+    if(r>0)queue.push(index-GRID_SIZE);
+    if(r<GRID_SIZE-1)queue.push(index+GRID_SIZE);
+    if(c>0)queue.push(index-1);
+    if(c<GRID_SIZE-1)queue.push(index+1)
+  }
+  if(!changed)return false;
+  syncArtLayers();renderBeadBoard();return true
+}
+function applyArtTool(index){
+  if(index<0||index>=game.board.length)return;
+  if(boardMode==='pick'){
+    const picked=game.board[index],swatch=document.querySelector('#beadPalette [data-bead-color="'+picked+'"]');
+    if(picked===0||BEAD_COLORS[picked].cost===0||game.unlockedColors.includes(picked)){
+      selectedBeadColor=picked;renderBeadPalette();switchBoardMode('paint')
+    }else{gameToast(gt('pickLocked'))}
+    return
+  }
+  if(boardMode==='fill'){
+    if(game.board[index]===selectedBeadColor)return;
+    snapshotBoard();
+    if(fillArtAt(index))saveGame();
+    else{undoStack.pop();updateUndoButtons()}
+    return
+  }
+  paintIndex(index,selectedBeadColor)
+}
+
 function snapshotBoard(){
-  undoStack.push({size:GRID_SIZE,board:game.board.slice()});if(undoStack.length>35)undoStack.shift();redoStack=[];updateUndoButtons()
+  undoStack.push({size:GRID_SIZE,board:game.board.slice(),layers:cloneArtLayers(game.layers)});if(undoStack.length>35)undoStack.shift();redoStack=[];updateUndoButtons()
 }
 function updateUndoButtons(){
   const undo=document.getElementById('undoBoardBtn'),redo=document.getElementById('redoBoardBtn');
@@ -597,7 +694,12 @@ function updateUndoButtons(){
 }
 function navigateBoardHistory(direction){
   const from=direction==='undo'?undoStack:redoStack,to=direction==='undo'?redoStack:undoStack;
-  if(!from.length)return;to.push({size:GRID_SIZE,board:game.board.slice()});const prev=from.pop();GRID_SIZE=prev.size;game.boardSize=GRID_SIZE;game.board=prev.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);saveGame();renderBeadBoard();updateUndoButtons()
+  if(!from.length)return;
+  to.push({size:GRID_SIZE,board:game.board.slice(),layers:cloneArtLayers(game.layers)});
+  const prev=from.pop();GRID_SIZE=prev.size;game.boardSize=GRID_SIZE;
+  game.layers=normalizedArtLayers(prev,GRID_SIZE);syncArtLayers();
+  document.getElementById('boardSize').value=String(GRID_SIZE);
+  saveGame();renderBeadBoard();updateUndoButtons()
 }
 
 
