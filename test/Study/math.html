@@ -591,19 +591,23 @@ function switchBoardMode(next){
   });
   document.getElementById('beadBoard').classList.toggle('pan-active',boardMode==='pan');
 }
-function drawHDCell(index){
+function drawHDCell(index,context){
   const canvas=document.getElementById('hdBeadCanvas');if(!canvas)return;
-  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return;
+  const ctx=context||canvas.getContext('2d',{alpha:false});if(!ctx)return;
   const cell=16,x=(index%GRID_SIZE)*cell,y=Math.floor(index/GRID_SIZE)*cell;
   const color=game.board[index],hex=BEAD_COLORS[color]&&BEAD_COLORS[color].hex||'#fff';
   ctx.fillStyle='#e6edf6';ctx.fillRect(x,y,cell,cell);
   ctx.fillStyle=hex;ctx.fillRect(x+1,y+1,cell-2,cell-2);
   if(color>0){
     ctx.fillStyle='rgba(255,255,255,.28)';ctx.fillRect(x+2,y+2,cell-4,2);
-    ctx.fillStyle='rgba(20,30,55,.12)';ctx.fillRect(x+2,y+cell-3,cell-4,1);
+    ctx.fillStyle='rgba(20,30,55,.12)';ctx.fillRect(x+2,y+cell-3,cell-4,1)
   }
 }
-function renderHDCanvas(){for(let i=0;i<game.board.length;i++)drawHDCell(i)}
+function renderHDCanvas(){
+  const canvas=document.getElementById('hdBeadCanvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return;
+  for(let i=0;i<game.board.length;i++)drawHDCell(i,ctx)
+}
 function paintHDPointer(e){
   const canvas=document.getElementById('hdBeadCanvas');if(!canvas)return;
   const rect=canvas.getBoundingClientRect();
