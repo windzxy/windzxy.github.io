@@ -194,6 +194,20 @@
   function setView(view) { state.view = view; saveState(); history.replaceState(null,'','#' + view); closeModal(); updateNavigation(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
   function viewHead(title, subtitle, action) { return '<div class="view-head"><div><h1>' + esc(title) + '</h1><p>' + esc(subtitle) + '</p></div>' + (action ? '<div class="view-actions">' + action + '</div>' : '') + '</div>'; }
 
+
+  function mathGardenCard(){
+    var stars=0,designs=0;
+    try{
+      var data=JSON.parse(localStorage.getItem('wind-math-bead-garden-v1')||'{}');
+      stars=Math.max(0,Math.floor(Number(data.stars)||0));
+      designs=Array.isArray(data.savedDesigns)?data.savedDesigns.length:0;
+    }catch(err){}
+    return '<a class="ios-card garden-spotlight" href="math.html" aria-label="进入数学成长乐园和拼豆工坊">'+
+      '<div class="garden-visual" aria-hidden="true"><i>★</i><i>✦</i><i>✧</i><i>✦</i><i>★</i><i>✧</i><i>✦</i><i>★</i><i>✧</i></div>'+
+      '<div class="garden-copy"><small>数学成长乐园 · 每天十分钟</small><h3>练习数学，拼出你的星星世界</h3><p>10 题快速练习 · 星星解锁拼豆 · 自由创作与收藏</p></div>'+
+      '<div class="garden-tail"><span><b>★ '+stars+'</b> 颗星星</span><span>'+designs+' 件作品</span><strong>开始探索 ›</strong></div></a>';
+  }
+
   function renderHome() {
     var topics = currentTopics(), stats = progressStats(topics), picks = pickLearningTopics();
     var pct = stats.total ? Math.round(stats.mastered / stats.total * 100) : 0;
@@ -207,6 +221,7 @@
     return '<section class="view home-view">' +
       '<div class="hero-grid"><article class="ios-card hero-card"><p class="eyebrow">' + greeting + '，' + esc(state.child) + '</p><h1>今天，学懂一个<br>真正重要的知识点</h1><p class="hero-copy">先理解，再练习，最后用一道拓展题把知识连起来。</p><div class="hero-actions"><button class="primary-btn" data-action="start-smart" type="button">开始今日学习</button><button class="secondary-btn" data-action="show-topic" data-topic="' + esc(picks.main && picks.main.id) + '" type="button">查看知识点</button><a class="secondary-btn" href="math.html">数学练习＋拼豆工坊</a></div><div class="hero-progress"><div class="hero-progress-bar"><i style="width:' + pct + '%"></i></div><span>' + pct + '% 年级进度</span></div></article>' +
       '<aside class="ios-card quick-stats"><div class="stat-tile"><div class="stat-icon" style="--tile:#f09b2d;--tile-soft:#fff3df">' + icon('flame') + '</div><strong>' + uniqueStudyDays() + '</strong><span>学习天数</span></div><div class="stat-tile"><div class="stat-icon" style="--tile:#3478f6;--tile-soft:#eaf2ff">' + icon('target') + '</div><strong>' + recentAccuracy(7) + '%</strong><span>近七天正确率</span></div><div class="stat-tile"><div class="stat-icon" style="--tile:#20a77b;--tile-soft:#e7f8f1">' + icon('check') + '</div><strong>' + stats.mastered + '</strong><span>已掌握知识点</span></div><div class="stat-tile"><div class="stat-icon" style="--tile:#7868e8;--tile-soft:#efedff">' + icon('clock') + '</div><strong>' + Math.max(8,stats.answered * 2) + '</strong><span>累计学习分钟</span></div></aside></div>' +
+      mathGardenCard() +
       '<div class="section-row"><div><h2>今日三步</h2><p>学习 · 巩固 · 迁移</p></div><button class="text-btn" data-view="practice" type="button">全部练习 →</button></div>' +
       '<div class="plan-grid">' + plans.map(function (x) { return '<button class="ios-card plan-card" style="--plan-color:' + x.color + ';--plan-soft:' + x.soft + '" data-action="plan" data-topic="' + esc(x.topic && x.topic.id) + '" data-plan="' + x.label + '" type="button"><div class="plan-index"><b>' + x.n + '</b><small>' + x.label + '</small></div><h3>' + esc(x.topic ? x.topic.name : '选择一个知识点') + '</h3><p>' + esc(x.copy) + '</p><span class="plan-go">›</span></button>'; }).join('') + '</div>' +
       '<div class="section-row"><div><h2>本周学习</h2><p>稳定的小进步，比一次做很多更重要</p></div></div>' +
@@ -252,6 +267,7 @@
       {id:'challenge',icon:'spark',title:'延伸挑战',copy:'变化题与下一阶段的连接题',color:'#7868e8',soft:'#efedff',foot:'拓展'}
     ];
     return '<section class="view practice-view">' + viewHead('练习中心','少量、及时、针对性练习，比机械刷题更有效','<a class="secondary-btn" href="math.html">数学拼豆工坊 ↗</a>') +
+      mathGardenCard() +
       '<article class="ios-card practice-hero"><div><h2>准备好了吗？</h2><p>每次只做一小组，做完马上看解析和薄弱点。</p></div><div class="count-stepper" aria-label="题量">' + [5,10,15].map(function(n){return '<button class="' + (state.practiceCount===n?'active':'') + '" data-count="' + n + '" type="button">' + n + '题</button>';}).join('') + '</div></article>' +
       '<div class="section-row"><div><h2>选择练习方式</h2></div></div><div class="mode-grid">' + modes.map(function(m){return '<button class="mode-card" style="--mode-color:' + m.color + ';--mode-soft:' + m.soft + '" data-action="start-mode" data-mode="' + m.id + '" type="button"><span class="mode-icon">' + icon(m.icon) + '</span><h3>' + m.title + '</h3><p>' + m.copy + '</p><div class="mode-foot"><span>' + m.foot + '</span><span>开始 ›</span></div></button>';}).join('') + '</div>' +
       '<div class="section-row"><div><h2>需要再看一眼</h2><p>最近薄弱知识点</p></div></div><div class="wrong-list">' + (wrongTopics.length ? wrongTopics.map(function(t){return '<button class="wrong-item" data-action="show-topic" data-topic="' + esc(t.id) + '" type="button"><i class="wrong-dot"></i><span><strong>' + esc(t.name) + '</strong><span>' + esc(t.domain) + ' · ' + statusLabel(statusOf(t.id)) + '</span></span></button>';}).join('') : '<div class="ios-card empty-card" style="grid-column:1/-1">完成练习后，这里会整理需要再巩固的知识点。</div>') + '</div></section>';
