@@ -108,6 +108,22 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 @media(max-width:720px){.template-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:380px){.template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.template-btn{min-height:146px}}
 @media print{.template-section{display:none!important}}
+
+/* Crisp large-grid editing: a single canvas avoids thousands of DOM buttons. */
+.board-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.board-toolbar[hidden]{display:none!important}
+.board-mode-picker{display:inline-flex;gap:3px;padding:3px;border:1px solid #e0e8f5;border-radius:11px;background:#f4f7fd}
+.mode-switch{padding:7px 11px;border-radius:8px;background:transparent;color:#64738b;font-size:11px;font-weight:800;white-space:nowrap}
+.mode-switch.active{background:#fff;color:#2569d8;box-shadow:0 2px 7px rgba(33,65,125,.10)}
+.board-mode-tip{color:#8895aa;font-size:10px}
+.board-viewport{width:100%;max-width:100%;border-radius:13px}
+.board-viewport.hd-active{height:min(66vh,620px);min-height:285px;overflow:auto;overscroll-behavior:contain;background:#e6edf8;border:1px solid #e4eaf5;scrollbar-width:thin}
+.bead-board.hd-grid{display:block;aspect-ratio:auto;width:var(--canvas-display,768px);height:var(--canvas-display,768px);max-width:none;padding:0;border:0;border-radius:0;box-shadow:none;margin:0}
+.bead-draw-canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none;user-select:none;cursor:crosshair}
+.bead-board.hd-grid.pan-active .bead-draw-canvas{cursor:grab}
+.bead-board.hd-grid.pan-active:active .bead-draw-canvas{cursor:grabbing}
+.board-viewport:not(.hd-active){overflow:visible}
+@media(max-width:520px){.board-mode-tip{width:100%}.board-viewport.hd-active{height:min(62vh,490px);min-height:290px}}
 </style>
 </head>
 <body>
@@ -369,7 +385,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
               </select>
               <span data-game-text="gridSizeHint">切换画布时会保留中央图案</span>
             </div>
-            <div class="board-toolbar" id="boardToolbar">
+            <div class="board-toolbar" id="boardToolbar" hidden>
               <div class="board-mode-picker" role="group" aria-label="画布工具">
                 <button id="boardPaintMode" class="mode-switch active" type="button" aria-pressed="true" data-game-text="paintMode">✎ 画笔</button>
                 <button id="boardPanMode" class="mode-switch" type="button" aria-pressed="false" data-game-text="panMode">✥ 移动画布</button>
@@ -534,7 +550,7 @@ function loadGame(){
 }
 let game=loadGame();
 let selectedBeadColor=1;
-let undoStack=[],redoStack=[],activeBrush=null;
+let undoStack=[],redoStack=[],activeBrush=null,activePan=null,boardMode='paint',hdCursor=0;
 let exerciseRevealed=false,exerciseGraded=false;
 function snapshotBoard(){
   undoStack.push({size:GRID_SIZE,board:game.board.slice()});if(undoStack.length>35)undoStack.shift();redoStack=[];updateUndoButtons()
@@ -547,6 +563,40 @@ function navigateBoardHistory(direction){
   const from=direction==='undo'?undoStack:redoStack,to=direction==='undo'?redoStack:undoStack;
   if(!from.length)return;to.push({size:GRID_SIZE,board:game.board.slice()});const prev=from.pop();GRID_SIZE=prev.size;game.boardSize=GRID_SIZE;game.board=prev.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);saveGame();renderBeadBoard();updateUndoButtons()
 }
+
+function switchBoardMode(next){
+  boardMode=next;
+  document.getElementById('boardToolbar').hidden=GRID_SIZE<32;
+  ['paint','pan'].forEach(function(mode){
+    const node=document.getElementById(mode==='paint'?'boardPaintMode':'boardPanMode');
+    node.classList.toggle('active',boardMode===mode);
+    node.setAttribute('aria-pressed',String(boardMode===mode))
+  });
+  document.getElementById('beadBoard').classList.toggle('pan-active',boardMode==='pan');
+}
+function drawHDCell(index){
+  const canvas=document.getElementById('hdBeadCanvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return;
+  const cell=16,x=(index%GRID_SIZE)*cell,y=Math.floor(index/GRID_SIZE)*cell;
+  const color=game.board[index],hex=BEAD_COLORS[color]&&BEAD_COLORS[color].hex||'#fff';
+  ctx.fillStyle='#e6edf6';ctx.fillRect(x,y,cell,cell);
+  ctx.fillStyle=hex;ctx.fillRect(x+1,y+1,cell-2,cell-2);
+  if(color>0){
+    ctx.fillStyle='rgba(255,255,255,.28)';ctx.fillRect(x+2,y+2,cell-4,2);
+    ctx.fillStyle='rgba(20,30,55,.12)';ctx.fillRect(x+2,y+cell-3,cell-4,1);
+  }
+}
+function renderHDCanvas(){for(let i=0;i<game.board.length;i++)drawHDCell(i)}
+function paintHDPointer(e){
+  const canvas=document.getElementById('hdBeadCanvas');if(!canvas)return;
+  const rect=canvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;
+  if(x<0||x>=1||y<0||y>=1)return;
+  const index=Math.floor(y*GRID_SIZE)*GRID_SIZE+Math.floor(x*GRID_SIZE);
+  if(game.board[index]===selectedBeadColor)return;
+  game.board[index]=selectedBeadColor;drawHDCell(index);updateBoardProgress()
+}
+
 function paintBeadCell(cell){
   if(!cell)return;const n=Number(cell.getAttribute('data-cell'));
   if(!Number.isInteger(n)||n<0||n>=game.board.length||game.board[n]===selectedBeadColor)return;
@@ -642,14 +692,26 @@ function renderBeadPalette(){
 }
 function updateBoardProgress(){const n=game.board.filter(function(v){return v>0}).length;const node=document.getElementById('boardProgress');if(node)node.textContent=n+' / '+(GRID_SIZE*GRID_SIZE)}
 function renderBeadBoard(){
-  const root=document.getElementById('beadBoard');if(!root)return;
+  const root=document.getElementById('beadBoard'),viewport=document.getElementById('boardViewport');if(!root)return;
+  const oldLeft=viewport.scrollLeft,oldTop=viewport.scrollTop,hd=GRID_SIZE>=32;
+  root.classList.toggle('hd-grid',hd);viewport.classList.toggle('hd-active',hd);
   root.style.setProperty('--bead-grid',GRID_SIZE);
   root.style.setProperty('--bead-gap',GRID_SIZE===24?'1px':GRID_SIZE===16?'2px':'3px');
   root.style.setProperty('--bead-padding',GRID_SIZE===24?'5px':'8px');
   root.style.setProperty('--bead-radius',GRID_SIZE===24?'2px':'4px');
   document.getElementById('boardSize').value=String(GRID_SIZE);
-  root.innerHTML=game.board.map(function(color,i){const hex=color>0?BEAD_COLORS[color].hex:'#ffffff';return '<button class="bead-cell" type="button" role="gridcell" data-cell="'+i+'" style="--cell-color:'+hex+'" aria-label="第 '+(i+1)+' 格"></button>'}).join('');
-  updateBoardProgress()
+  if(hd){
+    root.style.setProperty('--canvas-display',GRID_SIZE*16+'px');
+    root.innerHTML='<canvas id="hdBeadCanvas" width="'+GRID_SIZE*16+'" height="'+GRID_SIZE*16+'" class="bead-draw-canvas" tabindex="0" role="img" aria-label="Editable '+GRID_SIZE+' by '+GRID_SIZE+' pixel art"></canvas>';
+    renderHDCanvas();
+    viewport.scrollLeft=oldLeft;viewport.scrollTop=oldTop;
+  }else{
+    root.innerHTML=game.board.map(function(color,i){
+      const hex=color>0&&BEAD_COLORS[color]?BEAD_COLORS[color].hex:'#ffffff';
+      return '<button class="bead-cell" type="button" role="gridcell" data-cell="'+i+'" style="--cell-color:'+hex+'" aria-label="第 '+(i+1)+' 格"></button>'
+    }).join('')
+  }
+  switchBoardMode(boardMode);updateBoardProgress()
 }
 function renderSavedDesigns(){
   const root=document.getElementById('savedDesigns');if(!root)return;
