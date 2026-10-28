@@ -377,7 +377,9 @@ const I18N={
 let currentQuestions=[],showingAnswers=false,exerciseStartedAt=Date.now(),submittedElapsedMs=null;
 
 const GAME_KEY='wind-math-bead-garden-v1';
-const GRID_SIZE=12;
+let GRID_SIZE=12;
+const GRID_OPTIONS=[12,16,24];
+const boardSizeValid=n=>GRID_OPTIONS.includes(Number(n));
 const BEAD_COLORS=[
   {name:'橡皮擦',hex:'#ffffff',cost:0},
   {name:'莓果粉',hex:'#f56c91',cost:0},
@@ -441,7 +443,7 @@ function gameFill(s,v){return String(s||'').replace(/\{(\w+)\}/g,function(_,k){r
 function gameEscape(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
 function localDayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function loadGame(){
-  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],attempted:[],submittedSets:[],perfectRewarded:[],completedBonuses:[],scoreHistory:[],unlockedColors:[1,2,3,4,5],board:Array(GRID_SIZE*GRID_SIZE).fill(0),savedDesigns:[]};
+  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],attempted:[],submittedSets:[],perfectRewarded:[],completedBonuses:[],scoreHistory:[],unlockedColors:[1,2,3,4,5],boardSize:12,board:Array(GRID_SIZE*GRID_SIZE).fill(0),savedDesigns:[]};
   try{const saved=JSON.parse(localStorage.getItem(GAME_KEY)||'{}');Object.keys(base).forEach(function(k){if(saved[k]!==undefined)base[k]=saved[k]})}catch(e){}
   base.stars=Math.max(0,Math.floor(Number(base.stars)||0));
   base.totalAnswered=Math.max(0,Math.floor(Number(base.totalAnswered)||0));
@@ -456,8 +458,10 @@ function loadGame(){
   base.completedBonuses=Array.isArray(base.completedBonuses)?base.completedBonuses:[];
   base.scoreHistory=Array.isArray(base.scoreHistory)?base.scoreHistory.slice(-300):[];
   base.unlockedColors=Array.from(new Set([1,2,3,4,5].concat(Array.isArray(base.unlockedColors)?base.unlockedColors:[]).map(Number).filter(function(n){return n>=1&&n<BEAD_COLORS.length})));
-  base.board=Array.isArray(base.board)&&base.board.length===GRID_SIZE*GRID_SIZE?base.board.map(function(n){n=Number(n)||0;return n>=0&&n<BEAD_COLORS.length?n:0}):Array(GRID_SIZE*GRID_SIZE).fill(0);
-  base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){return x&&Array.isArray(x.board)}).slice(-20):[];
+  base.boardSize=boardSizeValid(base.boardSize)?Number(base.boardSize):12;
+  GRID_SIZE=base.boardSize;
+  base.board=Array.isArray(base.board)&&base.board.length===GRID_SIZE*GRID_SIZE?base.board.map(function(n){n=Number(n)||0;return Number.isInteger(n)&&n>=0&&n<BEAD_COLORS.length?n:0}):Array(GRID_SIZE*GRID_SIZE).fill(0);
+  base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){const n=Number(x&&x.size)||12;return x&&boardSizeValid(n)&&Array.isArray(x.board)&&x.board.length===n*n}).slice(-20).map(function(d){return Object.assign({},d,{size:Number(d.size)||12})}):[];
   return base;
 }
 let game=loadGame();
@@ -465,7 +469,7 @@ let selectedBeadColor=1;
 let undoStack=[],redoStack=[],activeBrush=null;
 let exerciseRevealed=false,exerciseGraded=false;
 function snapshotBoard(){
-  undoStack.push(game.board.slice());if(undoStack.length>35)undoStack.shift();redoStack=[];updateUndoButtons()
+  undoStack.push({size:GRID_SIZE,board:game.board.slice()});if(undoStack.length>35)undoStack.shift();redoStack=[];updateUndoButtons()
 }
 function updateUndoButtons(){
   const undo=document.getElementById('undoBoardBtn'),redo=document.getElementById('redoBoardBtn');
@@ -473,7 +477,7 @@ function updateUndoButtons(){
 }
 function navigateBoardHistory(direction){
   const from=direction==='undo'?undoStack:redoStack,to=direction==='undo'?redoStack:undoStack;
-  if(!from.length)return;to.push(game.board.slice());game.board=from.pop();saveGame();renderBeadBoard();updateUndoButtons()
+  if(!from.length)return;to.push({size:GRID_SIZE,board:game.board.slice()});const prev=from.pop();GRID_SIZE=prev.size;game.boardSize=GRID_SIZE;game.board=prev.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);saveGame();renderBeadBoard();updateUndoButtons()
 }
 function paintBeadCell(cell){
   if(!cell)return;const n=Number(cell.getAttribute('data-cell'));
@@ -491,6 +495,32 @@ function currentStreak(){
   let n=0;while(days.has(localDayKey(cursor))&&n<366){n++;cursor.setDate(cursor.getDate()-1)}return n
 }
 function markPracticeDay(){const key=localDayKey(new Date());if(game.days.indexOf(key)<0)game.days.push(key);game.days=game.days.slice(-365)}
+
+function cropWillLoseBeads(board,from,to){
+  if(to>=from)return false;
+  const shift=Math.floor((to-from)/2);
+  return board.some(function(color,i){if(!color)return false;const row=Math.floor(i/from)+shift,col=i%from+shift;return row<0||col<0||row>=to||col>=to})
+}
+function centeredResize(board,from,to){
+  if(from===to)return board.slice();
+  const out=Array(to*to).fill(0),shift=Math.floor((to-from)/2);
+  board.forEach(function(color,i){const row=Math.floor(i/from)+shift,col=i%from+shift;if(row>=0&&row<to&&col>=0&&col<to)out[row*to+col]=color});
+  return out
+}
+function resizeBoard(nextSize){
+  const next=Number(nextSize),sel=document.getElementById('boardSize');
+  if(!boardSizeValid(next)||next===GRID_SIZE){sel.value=String(GRID_SIZE);return}
+  if(cropWillLoseBeads(game.board,GRID_SIZE,next)&&!window.confirm(gt('gridResizeConfirm'))){sel.value=String(GRID_SIZE);return}
+  snapshotBoard();game.board=centeredResize(game.board,GRID_SIZE,next);
+  GRID_SIZE=next;game.boardSize=GRID_SIZE;saveGame();renderBeadBoard()
+}
+function scaledTemplate(template,from,to){
+  if(from===to)return template.slice();
+  const out=Array(to*to).fill(0);
+  for(let r=0;r<to;r++)for(let c=0;c<to;c++){const rr=Math.min(from-1,Math.floor((r+.5)*from/to)),cc=Math.min(from-1,Math.floor((c+.5)*from/to));out[r*to+c]=template[rr*from+cc]}
+  return out
+}
+
 function renderBeadPalette(){
   const root=document.getElementById('beadPalette');if(!root)return;
   root.innerHTML=BEAD_COLORS.map(function(c,i){
@@ -504,6 +534,11 @@ function renderBeadPalette(){
 function updateBoardProgress(){const n=game.board.filter(function(v){return v>0}).length;const node=document.getElementById('boardProgress');if(node)node.textContent=n+' / '+(GRID_SIZE*GRID_SIZE)}
 function renderBeadBoard(){
   const root=document.getElementById('beadBoard');if(!root)return;
+  root.style.setProperty('--bead-grid',GRID_SIZE);
+  root.style.setProperty('--bead-gap',GRID_SIZE===24?'1px':GRID_SIZE===16?'2px':'3px');
+  root.style.setProperty('--bead-padding',GRID_SIZE===24?'5px':'8px');
+  root.style.setProperty('--bead-radius',GRID_SIZE===24?'2px':'4px');
+  document.getElementById('boardSize').value=String(GRID_SIZE);
   root.innerHTML=game.board.map(function(color,i){const hex=color>0?BEAD_COLORS[color].hex:'#ffffff';return '<button class="bead-cell" type="button" role="gridcell" data-cell="'+i+'" style="--cell-color:'+hex+'" aria-label="第 '+(i+1)+' 格"></button>'}).join('');
   updateBoardProgress()
 }
@@ -511,8 +546,9 @@ function renderSavedDesigns(){
   const root=document.getElementById('savedDesigns');if(!root)return;
   if(!game.savedDesigns.length){root.innerHTML='<div class="empty-gallery">'+gameEscape(gt('galleryEmpty'))+'</div>';return}
   root.innerHTML=game.savedDesigns.slice().reverse().map(function(d){
-    const preview=(d.board||[]).slice(0,GRID_SIZE*GRID_SIZE).map(function(v){const color=Number(v)>0&&BEAD_COLORS[Number(v)]?BEAD_COLORS[Number(v)].hex:'#ffffff';return '<i style="--cell-color:'+color+'"></i>'}).join('');
-    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+gameEscape(d.name)+'"><span class="saved-design-mini">'+preview+'</span><strong>'+gameEscape(d.name||gt('defaultDesignName'))+'</strong><small>'+new Date(d.date||Date.now()).toLocaleDateString()+'</small></button><button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
+    const size=Number(d.size)||12;
+    const preview=(d.board||[]).slice(0,size*size).map(function(v){const color=Number(v)>0&&BEAD_COLORS[Number(v)]?BEAD_COLORS[Number(v)].hex:'#ffffff';return '<i style="--cell-color:'+color+'"></i>'}).join('');
+    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+gameEscape(d.name)+'"><span class="saved-design-mini" style="--preview-grid:'+size+'">'+preview+'</span><strong>'+gameEscape(d.name||gt('defaultDesignName'))+'</strong><small>'+new Date(d.date||Date.now()).toLocaleDateString()+'</small></button><button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
   }).join('')
 }
 function renderGrowth(){
@@ -560,7 +596,7 @@ function applyBeadTemplate(type){
 }
 function saveBeadDesign(){
   const name=(document.getElementById('designName').value||'').trim()||gt('emptyName');
-  game.savedDesigns.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name,board:game.board.slice(),date:new Date().toISOString()});
+  game.savedDesigns.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name,size:GRID_SIZE,board:game.board.slice(),date:new Date().toISOString()});
   game.savedDesigns=game.savedDesigns.slice(-20);saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designSaved'))
 }
 function downloadBeadDesign(){
@@ -678,6 +714,7 @@ function initGameUI(){
   board.addEventListener('pointerup',finishBrush);board.addEventListener('pointercancel',finishBrush);
   board.addEventListener('lostpointercapture',finishBrush);
   board.addEventListener('click',function(e){if(e.detail!==0)return;const cell=e.target.closest('[data-cell]');if(!cell)return;snapshotBoard();paintBeadCell(cell);saveGame()});
+  document.getElementById('boardSize').addEventListener('change',function(e){resizeBoard(e.target.value)});
   document.getElementById('undoBoardBtn').addEventListener('click',function(){navigateBoardHistory('undo')});
   document.getElementById('redoBoardBtn').addEventListener('click',function(){navigateBoardHistory('redo')});
   document.addEventListener('keydown',function(e){
@@ -698,7 +735,7 @@ function initGameUI(){
     if(e.target.closest('#clearBoardBtn')){snapshotBoard();game.board=Array(GRID_SIZE*GRID_SIZE).fill(0);saveGame();renderBeadBoard();gameToast(gt('boardCleared'));return}
     if(e.target.closest('#saveDesignBtn')){saveBeadDesign();return}
     if(e.target.closest('#exportDesignBtn')){downloadBeadDesign();return}
-    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();game.board=d.board.slice();document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();gameToast(gt('designLoaded'))}return}
+    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();GRID_SIZE=Number(d.size)||12;game.boardSize=GRID_SIZE;game.board=d.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();gameToast(gt('designLoaded'))}return}
     const del=e.target.closest('[data-delete-design]');if(del){if(!window.confirm(gt('deleteConfirm')))return;game.savedDesigns=game.savedDesigns.filter(function(x){return String(x.id)!==del.getAttribute('data-delete-design')});saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designDeleted'))}
   });
   document.getElementById('backupExportBtn').addEventListener('click',exportGameBackup);
