@@ -366,8 +366,14 @@ const BEAD_COLORS=[
   {name:'紫水晶',hex:'#c3a6ff',cost:15},
   {name:'石墨黑',hex:'#263247',cost:15}
 ];
+const BEAD_COLOR_NAMES={
+  'zh-Hant':['橡皮擦','莓果粉','陽光黃','薄荷綠','天空藍','薰衣草','橙子橘','草木綠','巧克力','海軍藍','淺粉色','奶油白','青檸綠','冰川藍','紫水晶','石墨黑'],
+  'zh-Hans':['橡皮擦','莓果粉','阳光黄','薄荷绿','天空蓝','薰衣草','橙子橘','草木绿','巧克力','海军蓝','浅粉色','奶油白','青柠绿','冰川蓝','紫水晶','石墨黑'],
+  en:['Eraser','Berry pink','Sunshine','Mint','Sky blue','Lavender','Orange','Leaf green','Chocolate','Navy','Blush','Cream','Lime','Ice blue','Amethyst','Charcoal']
+};
 const GAME_LABELS={
  'zh-Hant':{
+  eraserLabel:'橡皮擦',deleteConfirm:'確定刪除這幅作品嗎？',
   undoBoard:'↶ 復原',redoBoard:'↷ 重做',backupTitle:'學習資料備份',backupDesc:'更換裝置時可匯出星星與作品，再從備份還原。',backupExport:'匯出備份',backupImport:'匯入備份',backupSuccess:'備份匯入成功，星星及作品已還原。',backupInvalid:'無法讀取備份，請選擇有效的 Wind 學堂 JSON 檔。',backupConfirm:'匯入將覆蓋目前的星星和作品，確定繼續嗎？',backupSaved:'備份已匯出。',answerShownNoReward:'已查看答案，本組不再發放星星；重新出題即可繼續挑戰。',completeBonus:'（完成整組加贈 2 顆）',presetGrade1:'一年級口算',presetGrade1Sub:'20以內 · 10題',presetTens:'兩位數計算',presetTensSub:'100以內 · 10題',presetCompare:'數字比大小',presetCompareSub:'兩位數 · 10題',presetMultiply:'乘法口訣',presetMultiplySub:'100以內 · 10題',
   stars:'星星餘額',eraserLabel:'橡皮擦',templateApplied:'圖案已放到畫布上，可以繼續修改。',heroEyebrow:'數學任務 · 邊學邊玩',heroPillOne:'✦ 答對一題，點亮一顆星',heroPillTwo:'▦ 用星星解鎖拼豆顏色',correctTotal:'累計答對',streak:'連續練習天',
   practiceTab:'數學練習',beadTab:'拼豆工坊',growthTab:'成長記錄',panelTitle:'設定今日練習',panelCopy:'依照孩子目前的能力選擇題型與難度；完成作答後即可領取星星。',
@@ -377,6 +383,7 @@ const GAME_LABELS={
   unlocked:'已解鎖',locked:'待解鎖',starCost:'★ {n}',colorUnlocked:'顏色已解鎖！',needMoreStars:'還差一些星星，解鎖需要 {n} 顆。',designSaved:'作品已保存到「我的作品」。',designLoaded:'已載入作品，可以繼續修改。',designDeleted:'作品已刪除。',boardCleared:'畫布已清空。',downloadStarted:'作品 PNG 已準備好。',rewardEarned:'🌟 本次獲得 {n} 顆星星！',perfectBonus:'（全對加贈 3 顆）',rewardClaimed:'這組練習已領取過星星獎勵。',needAnswer:'先完成至少一道題，再領取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'刪除作品',loadDesign:'載入作品',emptyName:'我的拼豆作品'
  },
  'zh-Hans':{
+  eraserLabel:'橡皮擦',deleteConfirm:'确定删除这幅作品吗？',
   undoBoard:'↶ 撤销',redoBoard:'↷ 重做',backupTitle:'学习数据备份',backupDesc:'更换设备时可导出星星和作品，再从备份恢复。',backupExport:'导出备份',backupImport:'导入备份',backupSuccess:'备份导入成功，星星和作品已恢复。',backupInvalid:'无法读取备份，请选择有效的 Wind 学堂 JSON 文件。',backupConfirm:'导入将覆盖目前的星星和作品，确定继续吗？',backupSaved:'备份已导出。',answerShownNoReward:'已查看答案，本组不再发放星星；重新出题即可继续挑战。',completeBonus:'（完成整组加赠 2 颗）',presetGrade1:'一年级口算',presetGrade1Sub:'20以内 · 10题',presetTens:'两位数计算',presetTensSub:'100以内 · 10题',presetCompare:'数字比大小',presetCompareSub:'两位数 · 10题',presetMultiply:'乘法口诀',presetMultiplySub:'100以内 · 10题',
   stars:'星星余额',eraserLabel:'橡皮擦',templateApplied:'图案已放到画布上，可以继续修改。',heroEyebrow:'数学任务 · 边学边玩',heroPillOne:'✦ 答对一题，点亮一颗星',heroPillTwo:'▦ 用星星解锁拼豆颜色',correctTotal:'累计答对',streak:'连续练习天',
   practiceTab:'数学练习',beadTab:'拼豆工坊',growthTab:'成长记录',panelTitle:'设置今日练习',panelCopy:'根据孩子目前的能力选择题型与难度；完成作答后即可领取星星。',
@@ -386,6 +393,7 @@ const GAME_LABELS={
   unlocked:'已解锁',locked:'待解锁',starCost:'★ {n}',colorUnlocked:'颜色已解锁！',needMoreStars:'还差一些星星，解锁需要 {n} 颗。',designSaved:'作品已保存到“我的作品”。',designLoaded:'已载入作品，可以继续修改。',designDeleted:'作品已删除。',boardCleared:'画布已清空。',downloadStarted:'作品 PNG 已准备好。',rewardEarned:'🌟 本次获得 {n} 颗星星！',perfectBonus:'（全对加赠 3 颗）',rewardClaimed:'这组练习已领取过星星奖励。',needAnswer:'先完成至少一道题，再领取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'删除作品',loadDesign:'载入作品',emptyName:'我的拼豆作品'
  },
  'en':{
+  eraserLabel:'Eraser',deleteConfirm:'Delete this artwork?',
   undoBoard:'↶ Undo',redoBoard:'↷ Redo',backupTitle:'Learning data backup',backupDesc:'Export your stars and artwork, then restore on another device.',backupExport:'Export backup',backupImport:'Import backup',backupSuccess:'Backup imported. Stars and artwork restored.',backupInvalid:'This is not a valid Wind Study JSON backup.',backupConfirm:'Importing will replace your current stars and artwork. Continue?',backupSaved:'Backup exported.',answerShownNoReward:'Stars are disabled after revealing answers. Generate new questions to try again.',completeBonus:' (+2 for completing the set)',presetGrade1:'Grade 1 mental math',presetGrade1Sub:'Up to 20 · 10 questions',presetTens:'Two-digit maths',presetTensSub:'Up to 100 · 10 questions',presetCompare:'Compare numbers',presetCompareSub:'Two digits · 10 questions',presetMultiply:'Times tables',presetMultiplySub:'Up to 100 · 10 questions',
   stars:'Star balance',eraserLabel:'Eraser',templateApplied:'Pattern added to the board. You can keep editing it.',heroEyebrow:'MATH QUEST · PLAY & LEARN',heroPillOne:'✦ Earn a star for each correct answer',heroPillTwo:'▦ Unlock bead colors with stars',correctTotal:'Correct answers',streak:'Practice streak',
   practiceTab:'Math practice',beadTab:'Bead studio',growthTab:'My progress',panelTitle:'Set up today’s practice',panelCopy:'Choose operations and difficulty that fit the learner. Complete a set to collect stars.',
@@ -455,7 +463,7 @@ function renderBeadPalette(){
   root.innerHTML=BEAD_COLORS.map(function(c,i){
     const unlocked=i===0||c.cost===0||game.unlockedColors.indexOf(i)>=0;
     const active=selectedBeadColor===i;
-    const label=i===0?gt('eraserLabel')||'橡皮擦':c.name;
+    const label=(BEAD_COLOR_NAMES[els.language.value]||BEAD_COLOR_NAMES['zh-Hans'])[i]||c.name;
     const meta=unlocked?(active?'✓':gt('unlocked')):gameFill(gt('starCost'),{n:c.cost});
     return '<button class="palette-color '+(active?'selected ':'')+(!unlocked?'locked':'')+'" type="button" data-bead-color="'+i+'" aria-pressed="'+active+'" title="'+gameEscape(label)+'"><span class="palette-swatch" style="--swatch:'+c.hex+'"></span><span class="palette-name">'+gameEscape(label)+'</span><small>'+gameEscape(meta)+'</small></button>'
   }).join('')
@@ -658,7 +666,7 @@ function initGameUI(){
     if(e.target.closest('#saveDesignBtn')){saveBeadDesign();return}
     if(e.target.closest('#exportDesignBtn')){downloadBeadDesign();return}
     const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();game.board=d.board.slice();document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();gameToast(gt('designLoaded'))}return}
-    const del=e.target.closest('[data-delete-design]');if(del){game.savedDesigns=game.savedDesigns.filter(function(x){return String(x.id)!==del.getAttribute('data-delete-design')});saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designDeleted'))}
+    const del=e.target.closest('[data-delete-design]');if(del){if(!window.confirm(gt('deleteConfirm')))return;game.savedDesigns=game.savedDesigns.filter(function(x){return String(x.id)!==del.getAttribute('data-delete-design')});saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designDeleted'))}
   });
   document.getElementById('backupExportBtn').addEventListener('click',exportGameBackup);
   document.getElementById('backupImportBtn').addEventListener('click',function(){document.getElementById('backupFileInput').click()});
@@ -752,13 +760,13 @@ function comparisonPool(s){
   return {greater:shuffle(greater),less:shuffle(less),equal:shuffle(equal)};
 }
 function generateQuestions(){
-  exerciseRevealed=false;exerciseGraded=false;
   hideNotice();els.result.classList.remove('show');
   const per=+els.count.value,pages=+els.totalPages.value,total=per*pages,s=config();
   if(s.operation==='compare'&&s.limit<11){showNotice(t('noticeCompareRange'));return;}
   if(['tensMixed','tensAdd','tensSub'].includes(s.operation)&&s.limit<(s.operation==='tensSub'?11:20)){showNotice(t('noticeTensRange'));return;}
   if(s.level==='olympiad'||isOlympiad(s.mode))showNotice(t('noticeOlympiad'));
   else if(['make10','break10','level10','multiplication','division','distribute'].includes(s.mode))showNotice(t('noticeOverride'));
+  exerciseRevealed=false;exerciseGraded=false;
   currentQuestions=[];
   const globalUsed=new Set(),globalCounts=new Map();
   const pool=s.operation==='compare'?comparisonPool(s):null;
@@ -824,8 +832,12 @@ function checkAnswers(scoreBlank=false,recordSubmission=true){let correct=0,wron
 function toggleAnswers(force){let next=typeof force==='boolean'?force:!showingAnswers;if(next&&!showingAnswers){exerciseRevealed=true;checkAnswers(true,false)}showingAnswers=next;els.worksheet.classList.toggle('show-answers',next);els.toggleAnswerBtn.textContent=next?t('hideAnswers'):t('showAnswers')}
 function clearAnswers(){els.pages.querySelectorAll('.answer-input').forEach(x=>{x.value='';x.classList.remove('correct','wrong')});els.pages.querySelectorAll('.mark').forEach(x=>{x.textContent='';x.className='mark'});els.result.classList.remove('show');showingAnswers=false;els.worksheet.classList.remove('show-answers');els.toggleAnswerBtn.textContent=t('showAnswers');exerciseStartedAt=Date.now();submittedElapsedMs=null;setPageScores('');setPageTimes('')}
 function printSheet(withAnswers){if(!currentQuestions.length)generateQuestions();let prev=showingAnswers;if(withAnswers)exerciseRevealed=true;showingAnswers=withAnswers;els.worksheet.classList.toggle('show-answers',withAnswers);setTimeout(()=>{window.print();setTimeout(()=>toggleAnswers(prev),200)},80)}
-function setLanguage(){let v=saved();document.documentElement.lang=els.language.value;applyGameLabels();document.title=t('title');document.querySelectorAll('[data-i18n]').forEach(x=>x.textContent=t(x.dataset.i18n));render(false);restore(v);els.toggleAnswerBtn.textContent=showingAnswers?t('hideAnswers'):t('showAnswers');updateHeader();if(els.result.classList.contains('show'))checkAnswers(showingAnswers,false)}
-els.language.addEventListener('change',setLanguage);els.limit.addEventListener('change',()=>{els.customLimitWrap.classList.toggle('show',els.limit.value==='custom');updateHeader()});els.customLimit.addEventListener('input',updateHeader);els.operation.addEventListener('change',updateHeader);els.operandCount.addEventListener('change',updateHeader);els.strategyMode.addEventListener('change',updateHeader);els.level.addEventListener('change',updateHeader);els.difficulty.addEventListener('change',updateHeader);els.count.addEventListener('change',generateQuestions);els.totalPages.addEventListener('change',generateQuestions);els.columns.addEventListener('change',()=>els.pages.style.setProperty('--cols',els.columns.value));els.showHints.addEventListener('change',()=>render(true));els.generateBtn.addEventListener('click',generateQuestions);els.toggleAnswerBtn.addEventListener('click',()=>toggleAnswers());els.checkBtn.addEventListener('click',()=>checkAnswers(false));els.printBlankBtn.addEventListener('click',()=>printSheet(false));els.printAnswerBtn.addEventListener('click',()=>printSheet(true));els.clearBtn.addEventListener('click',clearAnswers);initGameUI();setLanguage();generateQuestions();
+function setLanguage(){let v=saved();document.documentElement.lang=els.language.value;applyGameLabels();document.title=t('title');updateGameUI();document.querySelectorAll('[data-i18n]').forEach(x=>x.textContent=t(x.dataset.i18n));render(false);restore(v);els.toggleAnswerBtn.textContent=showingAnswers?t('hideAnswers'):t('showAnswers');updateHeader();if(els.result.classList.contains('show'))checkAnswers(showingAnswers,false)}
+els.language.addEventListener('change',setLanguage);els.limit.addEventListener('change',()=>{els.customLimitWrap.classList.toggle('show',els.limit.value==='custom');updateHeader()});els.customLimit.addEventListener('input',updateHeader);els.operation.addEventListener('change',updateHeader);els.operandCount.addEventListener('change',updateHeader);els.strategyMode.addEventListener('change',updateHeader);els.level.addEventListener('change',updateHeader);els.difficulty.addEventListener('change',updateHeader);els.count.addEventListener('change',generateQuestions);els.totalPages.addEventListener('change',generateQuestions);els.columns.addEventListener('change',()=>els.pages.style.setProperty('--cols',els.columns.value));els.showHints.addEventListener('change',()=>render(true));els.generateBtn.addEventListener('click',generateQuestions);els.toggleAnswerBtn.addEventListener('click',()=>toggleAnswers());els.checkBtn.addEventListener('click',()=>checkAnswers(false));els.printBlankBtn.addEventListener('click',()=>printSheet(false));els.printAnswerBtn.addEventListener('click',()=>printSheet(true));els.clearBtn.addEventListener('click',clearAnswers);
+['limit','operation','operandCount','strategyMode','level','difficulty','count','totalPages'].forEach(function(id){
+  els[id].addEventListener('change',function(){document.querySelectorAll('[data-preset]').forEach(function(b){b.classList.remove('active')})})
+});
+initGameUI();setLanguage();generateQuestions();
 </script>
 </body>
 </html>
