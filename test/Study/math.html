@@ -911,19 +911,61 @@ function initGameUI(){
     renderBeadTemplatePicker();
   });
   renderBeadTemplatePicker();
+  document.getElementById('boardPaintMode').addEventListener('click',function(){switchBoardMode('paint')});
+  document.getElementById('boardPanMode').addEventListener('click',function(){switchBoardMode('pan')});
+  const viewport=document.getElementById('boardViewport');
   board.addEventListener('pointerdown',function(e){
-    if(e.pointerType==='mouse'&&e.button!==0)return;const cell=e.target.closest('[data-cell]');if(!cell)return;
-    e.preventDefault();snapshotBoard();activeBrush=e.pointerId;paintBeadCell(cell);
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    const hd=GRID_SIZE>=32;
+    if(hd&&boardMode==='pan'){
+      e.preventDefault();
+      activePan={id:e.pointerId,x:e.clientX,y:e.clientY,left:viewport.scrollLeft,top:viewport.scrollTop};
+      try{board.setPointerCapture(e.pointerId)}catch(err){}
+      return
+    }
+    const cell=hd?e.target.closest('canvas'):e.target.closest('[data-cell]');
+    if(!cell)return;
+    e.preventDefault();snapshotBoard();activeBrush=e.pointerId;
+    if(hd)paintHDPointer(e);else paintBeadCell(cell);
     try{board.setPointerCapture(e.pointerId)}catch(err){}
   });
   board.addEventListener('pointermove',function(e){
+    if(activePan&&activePan.id===e.pointerId){
+      viewport.scrollLeft=activePan.left-(e.clientX-activePan.x);
+      viewport.scrollTop=activePan.top-(e.clientY-activePan.y);return
+    }
     if(activeBrush!==e.pointerId)return;
+    if(GRID_SIZE>=32){paintHDPointer(e);return}
     const hit=document.elementFromPoint(e.clientX,e.clientY);
-    if(hit&&board.contains(hit))paintBeadCell(hit.closest('[data-cell]'));
+    if(hit&&board.contains(hit))paintBeadCell(hit.closest('[data-cell]'))
   });
-  board.addEventListener('pointerup',finishBrush);board.addEventListener('pointercancel',finishBrush);
-  board.addEventListener('lostpointercapture',finishBrush);
-  board.addEventListener('click',function(e){if(e.detail!==0)return;const cell=e.target.closest('[data-cell]');if(!cell)return;snapshotBoard();paintBeadCell(cell);saveGame()});
+  function endPointer(){activePan=null;finishBrush()}
+  board.addEventListener('pointerup',endPointer);
+  board.addEventListener('pointercancel',endPointer);
+  board.addEventListener('lostpointercapture',endPointer);
+  board.addEventListener('click',function(e){
+    if(e.detail!==0)return;
+    const cell=e.target.closest('[data-cell]');if(!cell)return;
+    snapshotBoard();paintBeadCell(cell);saveGame()
+  });
+  board.addEventListener('keydown',function(e){
+    if(GRID_SIZE<32||!e.target.matches('#hdBeadCanvas'))return;
+    const old=hdCursor;let next=old;
+    if(e.key==='ArrowLeft')next=Math.max(0,old-1);
+    else if(e.key==='ArrowRight')next=Math.min(GRID_SIZE*GRID_SIZE-1,old+1);
+    else if(e.key==='ArrowUp')next=Math.max(0,old-GRID_SIZE);
+    else if(e.key==='ArrowDown')next=Math.min(GRID_SIZE*GRID_SIZE-1,old+GRID_SIZE);
+    else if(e.key===' '||e.key==='Enter'){
+      e.preventDefault();snapshotBoard();game.board[hdCursor]=selectedBeadColor;drawHDCell(hdCursor);saveGame();updateBoardProgress();return
+    }else return;
+    e.preventDefault();drawHDCell(old);hdCursor=next;
+    const canvas=document.getElementById('hdBeadCanvas'),ctx=canvas.getContext('2d');
+    const x=next%GRID_SIZE*16,y=Math.floor(next/GRID_SIZE)*16;
+    ctx.lineWidth=2;ctx.strokeStyle='#1d70e6';ctx.strokeRect(x+2,y+2,12,12);
+    const viewport=document.getElementById('boardViewport'),cellBox=16;
+    viewport.scrollLeft=Math.max(0,Math.min(viewport.scrollLeft,x-viewport.clientWidth/2));
+    viewport.scrollTop=Math.max(0,Math.min(viewport.scrollTop,y-viewport.clientHeight/2))
+  });
   document.getElementById('boardSize').addEventListener('change',function(e){resizeBoard(e.target.value)});
   document.getElementById('undoBoardBtn').addEventListener('click',function(){navigateBoardHistory('undo')});
   document.getElementById('redoBoardBtn').addEventListener('click',function(){navigateBoardHistory('redo')});
