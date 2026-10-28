@@ -669,7 +669,7 @@ function fillArtAt(start){
 function applyArtTool(index){
   if(index<0||index>=game.board.length)return;
   if(boardMode==='pick'){
-    const picked=game.board[index],swatch=document.querySelector('#beadPalette [data-bead-color="'+picked+'"]');
+    const picked=game.board[index];
     if(picked===0||BEAD_COLORS[picked].cost===0||game.unlockedColors.includes(picked)){
       selectedBeadColor=picked;renderBeadPalette();switchBoardMode('paint')
     }else{gameToast(gt('pickLocked'))}
@@ -785,7 +785,7 @@ function centeredResize(board,from,to){
 function resizeBoard(nextSize){
   const next=Number(nextSize),sel=document.getElementById('boardSize');
   if(!boardSizeValid(next)||next===GRID_SIZE){sel.value=String(GRID_SIZE);return}
-  if(cropWillLoseBeads(game.board,GRID_SIZE,next)&&!window.confirm(gt('gridResizeConfirm'))){sel.value=String(GRID_SIZE);return}
+  if((cropWillLoseBeads(game.layers.base,GRID_SIZE,next)||cropWillLoseBeads(game.layers.detail,GRID_SIZE,next))&&!window.confirm(gt('gridResizeConfirm'))){sel.value=String(GRID_SIZE);return}
   snapshotBoard();
   game.layers={
     base:centeredResize(game.layers.base,GRID_SIZE,next),
@@ -858,6 +858,7 @@ function renderBeadBoard(){
   root.style.setProperty('--bead-padding',GRID_SIZE===24?'5px':'8px');
   root.style.setProperty('--bead-radius',GRID_SIZE===24?'2px':'4px');
   document.getElementById('boardSize').value=String(GRID_SIZE);
+  hdCursor=Math.min(hdCursor,game.board.length-1);
   if(hd){
     applyBoardZoom(false);
     root.innerHTML='<canvas id="hdBeadCanvas" width="'+GRID_SIZE*16+'" height="'+GRID_SIZE*16+'" class="bead-draw-canvas" tabindex="0" role="img" aria-label="Editable '+GRID_SIZE+' by '+GRID_SIZE+' pixel art"></canvas>';
