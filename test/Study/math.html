@@ -400,7 +400,7 @@ function gameFill(s,v){return String(s||'').replace(/\{(\w+)\}/g,function(_,k){r
 function gameEscape(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
 function localDayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function loadGame(){
-  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],attempted:[],submittedSets:[],perfectRewarded:[],unlockedColors:[1,2,3,4,5],board:Array(GRID_SIZE*GRID_SIZE).fill(0),savedDesigns:[]};
+  const base={stars:0,totalAnswered:0,totalCorrect:0,rounds:0,perfectRounds:0,days:[],rewarded:[],attempted:[],submittedSets:[],perfectRewarded:[],completedBonuses:[],scoreHistory:[],unlockedColors:[1,2,3,4,5],board:Array(GRID_SIZE*GRID_SIZE).fill(0),savedDesigns:[]};
   try{const saved=JSON.parse(localStorage.getItem(GAME_KEY)||'{}');Object.keys(base).forEach(function(k){if(saved[k]!==undefined)base[k]=saved[k]})}catch(e){}
   base.stars=Math.max(0,Math.floor(Number(base.stars)||0));
   base.totalAnswered=Math.max(0,Math.floor(Number(base.totalAnswered)||0));
@@ -412,6 +412,8 @@ function loadGame(){
   base.attempted=Array.isArray(base.attempted)?base.attempted:[];
   base.submittedSets=Array.isArray(base.submittedSets)?base.submittedSets:[];
   base.perfectRewarded=Array.isArray(base.perfectRewarded)?base.perfectRewarded:[];
+  base.completedBonuses=Array.isArray(base.completedBonuses)?base.completedBonuses:[];
+  base.scoreHistory=Array.isArray(base.scoreHistory)?base.scoreHistory.slice(-300):[];
   base.unlockedColors=Array.from(new Set([1,2,3,4,5].concat(Array.isArray(base.unlockedColors)?base.unlockedColors:[]).map(Number).filter(function(n){return n>=1&&n<BEAD_COLORS.length})));
   base.board=Array.isArray(base.board)&&base.board.length===GRID_SIZE*GRID_SIZE?base.board.map(function(n){n=Number(n)||0;return n>=0&&n<BEAD_COLORS.length?n:0}):Array(GRID_SIZE*GRID_SIZE).fill(0);
   base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){return x&&Array.isArray(x.board)}).slice(-20):[];
@@ -474,7 +476,10 @@ function renderSavedDesigns(){
 }
 function renderGrowth(){
   const stats=document.getElementById('growthStats'),badges=document.getElementById('achievementList');if(!stats||!badges)return;
-  const accuracy=game.totalAnswered?Math.round(game.totalCorrect/game.totalAnswered*100):0;
+  const graded=game.scoreHistory||[];
+  const gradedTotal=graded.reduce(function(n,r){return n+(Number(r.correct)||0)+(Number(r.wrong)||0)},0);
+  const gradedCorrect=graded.reduce(function(n,r){return n+(Number(r.correct)||0)},0);
+  const accuracy=gradedTotal?Math.round(gradedCorrect/gradedTotal*100):(game.totalAnswered?Math.round(game.totalCorrect/game.totalAnswered*100):0);
   const items=[
     [gt('statCorrect'),game.totalCorrect],[gt('statAnswered'),game.totalAnswered],[gt('statStreak'),currentStreak()],[gt('statAccuracy'),accuracy+'%'],
     [gt('statRounds'),game.rounds],[gt('statPerfect'),game.perfectRounds],[gt('statDesigns'),game.savedDesigns.length],[gt('stars'),game.stars]
@@ -526,22 +531,40 @@ function downloadBeadDesign(){
 }
 function rewardQuestionKey(q){if(q.kind==='compare')return 'C:'+q.left+':'+q.right;return qKey(q)}
 function awardStars(result){
-  const attemptedCount=result.correct+result.wrong;if(!attemptedCount||!currentQuestions.length)return null;
-  const signature=currentQuestions.map(rewardQuestionKey).sort().join('||');let newlyCorrect=0;
+  const attemptedCount=result.correct+result.wrong;
+  if(!attemptedCount||!currentQuestions.length)return null;
+  if(exerciseRevealed)return{earned:0,revealed:true};
+  const signature=currentQuestions.map(rewardQuestionKey).sort().join('||');
+  const first=!exerciseGraded,perfect=result.correct===result.total&&result.blank===0&&result.total>0;
+  let newlyCorrect=0;
   currentQuestions.forEach(function(q,i){
     const input=els.pages.querySelector('.answer-input[data-index="'+i+'"]'),value=input?input.value.trim():'';
-    if(value==='')return;
-    const key=rewardQuestionKey(q);if(game.attempted.indexOf(key)<0)game.attempted.push(key);
+    if(!value)return;const key=rewardQuestionKey(q);
+    if(game.attempted.indexOf(key)<0)game.attempted.push(key);
     const correct=(q.kind==='compare'&&value===q.answer)||(q.kind!=='compare'&&Number(value)===q.answer);
     if(correct&&game.rewarded.indexOf(key)<0){game.rewarded.push(key);newlyCorrect++}
   });
-  const perfect=result.correct===result.total&&result.blank===0&&result.total>0;
-  let bonus=0;if(perfect&&game.perfectRewarded.indexOf(signature)<0){bonus=3;game.perfectRewarded.push(signature);game.perfectRounds++}
-  if(game.submittedSets.indexOf(signature)<0){game.submittedSets.push(signature);game.rounds++;markPracticeDay()}
+  let perfectBonus=0,completeBonus=0;
+  if(first&&perfect&&game.perfectRewarded.indexOf(signature)<0){
+    perfectBonus=3;game.perfectRewarded.push(signature);game.perfectRounds++
+  }
+  if(first){
+    exerciseGraded=true;game.rounds++;
+    game.scoreHistory.push({date:new Date().toISOString(),total:result.total,correct:result.correct,wrong:result.wrong,blank:result.blank});
+    game.scoreHistory=game.scoreHistory.slice(-300);
+    markPracticeDay();
+    if(result.blank===0&&result.total>=10){
+      const day=localDayKey(new Date()),key=day+':'+signature;
+      const awardedToday=game.completedBonuses.filter(function(x){return x.startsWith(day+':')}).length;
+      if(awardedToday<5&&game.completedBonuses.indexOf(key)<0){
+        completeBonus=2;game.completedBonuses.push(key);game.completedBonuses=game.completedBonuses.slice(-100)
+      }
+    }
+  }
   game.totalAnswered=game.attempted.length;game.totalCorrect=game.rewarded.length;
-  const earned=newlyCorrect+bonus;game.stars+=earned;saveGame();updateGameUI();
-  const allKnownCorrect=currentQuestions.every(function(q){return game.rewarded.indexOf(rewardQuestionKey(q))>=0});
-  return{earned:earned,perfect:perfect,already:earned===0&&allKnownCorrect}
+  const earned=newlyCorrect+perfectBonus+completeBonus;
+  game.stars+=earned;saveGame();updateGameUI();
+  return{earned:earned,perfect:perfectBonus>0,completeBonus:completeBonus,already:earned===0}
 }
 function setFeatureTab(name){
   document.querySelectorAll('[data-feature-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-feature-tab')===name)});
@@ -729,6 +752,7 @@ function comparisonPool(s){
   return {greater:shuffle(greater),less:shuffle(less),equal:shuffle(equal)};
 }
 function generateQuestions(){
+  exerciseRevealed=false;exerciseGraded=false;
   hideNotice();els.result.classList.remove('show');
   const per=+els.count.value,pages=+els.totalPages.value,total=per*pages,s=config();
   if(s.operation==='compare'&&s.limit<11){showNotice(t('noticeCompareRange'));return;}
@@ -796,10 +820,10 @@ function render(preserve=true){let v=preserve?saved():{},per=+els.count.value,pa
 function updateHeader(){let p=+els.totalPages.value,total=+els.count.value*p,sub=`${getLimit()} ${t("within")} · ${t(els.operation.value)} · ${t(els.level.value)} · ${strategyLabel(els.strategyMode.value)} · ${fill(t("totalQuestionCount"),{count:total})}`;els.pages.querySelectorAll('.page-title').forEach(x=>x.textContent=t('title'));els.pages.querySelectorAll('.page-subtitle').forEach(x=>x.textContent=sub);els.pages.querySelectorAll('.page-indicator').forEach((x,i)=>x.textContent=fill(t('pageOf'),{page:i+1,total:p}))}function setPageScores(v=''){els.pages.querySelectorAll('.score-box').forEach(box=>{let value=box.querySelector('.score-value');value.textContent=v;box.classList.toggle('visible',v!=='')})}
 function setPageTimes(v=''){els.pages.querySelectorAll('.time-box').forEach(box=>{let value=box.querySelector('.time-value');value.textContent=v;box.classList.toggle('visible',v!=='')})}
 function formatElapsed(ms){let total=Math.max(0,Math.floor(ms/1000)),h=Math.floor(total/3600),m=Math.floor(total%3600/60),s=total%60;if(els.language.value==='en')return h?`${h}h ${m}m ${s}s`:m?`${m}m ${s}s`:`${s}s`;return h?`${h}时${m}分${s}秒`:m?`${m}分${s}秒`:`${s}秒`}
-function checkAnswers(scoreBlank=false,recordSubmission=true){let correct=0,wrong=0,blank=0;els.pages.querySelectorAll('.answer-input').forEach(x=>{let q=currentQuestions[+x.dataset.index],v=x.value.trim(),m=x.closest('.equation').querySelector('.mark');x.classList.remove('correct','wrong');m.textContent='';m.className='mark';if(v===''){blank++;if(scoreBlank){m.textContent='×';m.classList.add('wrong')}return}if((q.kind==='compare'&&v===q.answer)||(q.kind!=='compare'&&v!==''&&Number(v)===q.answer)){correct++;x.classList.add('correct');m.textContent='✓';m.classList.add('correct')}else{wrong++;x.classList.add('wrong');m.textContent='×';m.classList.add('wrong')}});let total=currentQuestions.length,score=Math.round(correct/Math.max(1,total)*100),extra=correct===total?t('perfect'):blank&&!scoreBlank?t('unfinished'):t('retry');if(recordSubmission||submittedElapsedMs===null)submittedElapsedMs=Date.now()-exerciseStartedAt;const reward=recordSubmission?awardStars({correct:correct,wrong:wrong,blank:blank,total:total}):null;let rewardText='';if(reward&&reward.earned>0)rewardText=' '+gameFill(gt('rewardEarned'),{n:reward.earned})+(reward.perfect?' '+gt('perfectBonus'):'');else if(reward&&reward.already)rewardText=' '+gt('rewardClaimed');els.result.textContent=fill(t('result'),{total,correct,wrong,blank,score})+' '+extra+rewardText;els.result.classList.add('show');setPageScores(String(score));setPageTimes(formatElapsed(submittedElapsedMs));return{correct,wrong,blank,score}}
-function toggleAnswers(force){let next=typeof force==='boolean'?force:!showingAnswers;if(next&&!showingAnswers)checkAnswers(true,false);showingAnswers=next;els.worksheet.classList.toggle('show-answers',next);els.toggleAnswerBtn.textContent=next?t('hideAnswers'):t('showAnswers')}
+function checkAnswers(scoreBlank=false,recordSubmission=true){let correct=0,wrong=0,blank=0;els.pages.querySelectorAll('.answer-input').forEach(x=>{let q=currentQuestions[+x.dataset.index],v=x.value.trim(),m=x.closest('.equation').querySelector('.mark');x.classList.remove('correct','wrong');m.textContent='';m.className='mark';if(v===''){blank++;if(scoreBlank){m.textContent='×';m.classList.add('wrong')}return}if((q.kind==='compare'&&v===q.answer)||(q.kind!=='compare'&&v!==''&&Number(v)===q.answer)){correct++;x.classList.add('correct');m.textContent='✓';m.classList.add('correct')}else{wrong++;x.classList.add('wrong');m.textContent='×';m.classList.add('wrong')}});let total=currentQuestions.length,score=Math.round(correct/Math.max(1,total)*100),extra=correct===total?t('perfect'):blank&&!scoreBlank?t('unfinished'):t('retry');if(recordSubmission||submittedElapsedMs===null)submittedElapsedMs=Date.now()-exerciseStartedAt;const reward=recordSubmission?awardStars({correct:correct,wrong:wrong,blank:blank,total:total}):null;let rewardText='';if(reward&&reward.earned>0)rewardText=' '+gameFill(gt('rewardEarned'),{n:reward.earned})+(reward.perfect?' '+gt('perfectBonus'):'')+(reward.completeBonus?' '+gt('completeBonus'):'');else if(reward&&reward.revealed)rewardText=' '+gt('answerShownNoReward');else if(reward&&reward.already)rewardText=' '+gt('rewardClaimed');els.result.textContent=fill(t('result'),{total,correct,wrong,blank,score})+' '+extra+rewardText;els.result.classList.add('show');setPageScores(String(score));setPageTimes(formatElapsed(submittedElapsedMs));return{correct,wrong,blank,score}}
+function toggleAnswers(force){let next=typeof force==='boolean'?force:!showingAnswers;if(next&&!showingAnswers){exerciseRevealed=true;checkAnswers(true,false)}showingAnswers=next;els.worksheet.classList.toggle('show-answers',next);els.toggleAnswerBtn.textContent=next?t('hideAnswers'):t('showAnswers')}
 function clearAnswers(){els.pages.querySelectorAll('.answer-input').forEach(x=>{x.value='';x.classList.remove('correct','wrong')});els.pages.querySelectorAll('.mark').forEach(x=>{x.textContent='';x.className='mark'});els.result.classList.remove('show');showingAnswers=false;els.worksheet.classList.remove('show-answers');els.toggleAnswerBtn.textContent=t('showAnswers');exerciseStartedAt=Date.now();submittedElapsedMs=null;setPageScores('');setPageTimes('')}
-function printSheet(withAnswers){if(!currentQuestions.length)generateQuestions();let prev=showingAnswers;showingAnswers=withAnswers;els.worksheet.classList.toggle('show-answers',withAnswers);setTimeout(()=>{window.print();setTimeout(()=>toggleAnswers(prev),200)},80)}
+function printSheet(withAnswers){if(!currentQuestions.length)generateQuestions();let prev=showingAnswers;if(withAnswers)exerciseRevealed=true;showingAnswers=withAnswers;els.worksheet.classList.toggle('show-answers',withAnswers);setTimeout(()=>{window.print();setTimeout(()=>toggleAnswers(prev),200)},80)}
 function setLanguage(){let v=saved();document.documentElement.lang=els.language.value;applyGameLabels();document.title=t('title');document.querySelectorAll('[data-i18n]').forEach(x=>x.textContent=t(x.dataset.i18n));render(false);restore(v);els.toggleAnswerBtn.textContent=showingAnswers?t('hideAnswers'):t('showAnswers');updateHeader();if(els.result.classList.contains('show'))checkAnswers(showingAnswers,false)}
 els.language.addEventListener('change',setLanguage);els.limit.addEventListener('change',()=>{els.customLimitWrap.classList.toggle('show',els.limit.value==='custom');updateHeader()});els.customLimit.addEventListener('input',updateHeader);els.operation.addEventListener('change',updateHeader);els.operandCount.addEventListener('change',updateHeader);els.strategyMode.addEventListener('change',updateHeader);els.level.addEventListener('change',updateHeader);els.difficulty.addEventListener('change',updateHeader);els.count.addEventListener('change',generateQuestions);els.totalPages.addEventListener('change',generateQuestions);els.columns.addEventListener('change',()=>els.pages.style.setProperty('--cols',els.columns.value));els.showHints.addEventListener('change',()=>render(true));els.generateBtn.addEventListener('click',generateQuestions);els.toggleAnswerBtn.addEventListener('click',()=>toggleAnswers());els.checkBtn.addEventListener('click',()=>checkAnswers(false));els.printBlankBtn.addEventListener('click',()=>printSheet(false));els.printAnswerBtn.addEventListener('click',()=>printSheet(true));els.clearBtn.addEventListener('click',clearAnswers);initGameUI();setLanguage();generateQuestions();
 </script>
