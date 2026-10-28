@@ -576,7 +576,7 @@ function updateGameUI(){
   renderBeadPalette();renderBeadBoard();renderSavedDesigns();renderGrowth()
 }
 function applyBeadTemplate(type){
-  const board=Array(GRID_SIZE*GRID_SIZE).fill(0),put=function(r,c,color){if(r>=0&&r<GRID_SIZE&&c>=0&&c<GRID_SIZE)board[r*GRID_SIZE+c]=color};
+  const board=Array(144).fill(0),put=function(r,c,color){if(r>=0&&r<12&&c>=0&&c<12)board[r*12+c]=color};
   if(type==='heart'){
     ['000110011000','001111111100','011111111110','011111111110','001111111100','000111111000','000011110000','000001100000','000000000000','000000000000','000000000000','000000000000'].forEach(function(row,r){row.split('').forEach(function(v,c){if(v==='1')put(r,c,1)})})
   }else if(type==='flower'){
@@ -587,12 +587,36 @@ function applyBeadTemplate(type){
     [[3,4],[3,7],[4,4],[4,7],[7,3],[8,4],[8,5],[8,6],[8,7],[7,8]].forEach(function(p){put(p[0],p[1],4)})
   }else if(type==='rainbow'){
     const bands=[1,5,4,3,2];
-    for(let r=1;r<=8;r++)for(let c=0;c<GRID_SIZE;c++){
+    for(let r=1;r<=8;r++)for(let c=0;c<12;c++){
       const dist=Math.sqrt(Math.pow(c-5.5,2)+Math.pow(r-11,2));
       if(dist>=3.8&&dist<=10.6){const band=Math.max(0,Math.min(bands.length-1,Math.floor((10.6-dist)/1.35)));put(r,c,bands[band])}
     }
+  }else if(['star','cat','house','rocket'].includes(type)){
+    const patterns={
+      star:[
+        '000002000000','000022200000','000022200000','222222222220',
+        '022222222200','002222222000','000222220000','000222220000',
+        '002220222000','022200022200','022000002200','000000000000'
+      ],
+      cat:[
+        '110000000011','111000000111','111100001111','111111111111',
+        '111111111111','110411114011','111111111111','111112111111',
+        '111122211111','111111111111','011111111110','001111111100'
+      ],
+      house:[
+        '000005500000','000055550000','000555555000','005555555500',
+        '055555555550','555555555555','033333333330','033333333330',
+        '033334433330','033334433330','033334433330','033334433330'
+      ],
+      rocket:[
+        '000002200000','000022220000','000025520000','000255552000',
+        '000255552000','000255552000','000225522000','000225522000',
+        '000425524000','004422224400','000022220000','000011110000'
+      ]
+    };
+    patterns[type].forEach(function(line,r){line.split('').forEach(function(v,c){if(v!=='0')put(r,c,Number(v))})});
   }
-  snapshotBoard();game.board=board;saveGame();renderBeadBoard();gameToast(gt('templateApplied')||'圖案已放到畫布上，可以繼續修改。')
+  snapshotBoard();game.board=scaledTemplate(board,12,GRID_SIZE);saveGame();renderBeadBoard();gameToast(gt('templateApplied')||'圖案已放到畫布上，可以繼續修改。')
 }
 function saveBeadDesign(){
   const name=(document.getElementById('designName').value||'').trim()||gt('emptyName');
@@ -671,17 +695,19 @@ function exportGameBackup(){
 function validateGameBackup(raw){
   if(!raw||raw.format!=='wind-study-math-bead-backup'||raw.version!==2||!raw.game||typeof raw.game!=='object')throw Error('format');
   const data=raw.game;
-  if(!Number.isSafeInteger(data.stars)||data.stars<0||!Array.isArray(data.board)||data.board.length!==144||!Array.isArray(data.savedDesigns)||data.savedDesigns.length>200)throw Error('shape');
+  const size=Number(data.boardSize)||12;
+  if(!boardSizeValid(size)||!Number.isSafeInteger(data.stars)||data.stars<0||!Array.isArray(data.board)||data.board.length!==size*size||!Array.isArray(data.savedDesigns)||data.savedDesigns.length>200)throw Error('shape');
   const colorValid=function(n){return Number.isInteger(n)&&n>=0&&n<BEAD_COLORS.length};
   if(data.board.some(function(n){return !colorValid(n)}))throw Error('colors');
-  if(data.savedDesigns.some(function(d){return !d||typeof d.name!=='string'||d.name.length>100||!Array.isArray(d.board)||d.board.length!==144||d.board.some(function(n){return !colorValid(n)})}))throw Error('artworks');
+  if(data.savedDesigns.some(function(d){const dim=Number(d&&d.size)||12;return !d||!boardSizeValid(dim)||typeof d.name!=='string'||d.name.length>100||!Array.isArray(d.board)||d.board.length!==dim*dim||d.board.some(function(n){return !colorValid(n)})}))throw Error('artworks');
   const safe={};
   ['stars','totalAnswered','totalCorrect','rounds','perfectRounds'].forEach(function(k){safe[k]=Number.isSafeInteger(data[k])&&data[k]>=0?data[k]:0});
   ['days','rewarded','attempted','submittedSets','perfectRewarded','completedBonuses'].forEach(function(k){safe[k]=Array.isArray(data[k])?data[k].filter(function(v){return typeof v==='string'&&v.length<1000}).slice(-10000):[]});
   safe.scoreHistory=Array.isArray(data.scoreHistory)?data.scoreHistory.filter(function(x){return x&&typeof x==='object'}).slice(-300):[];
   safe.unlockedColors=Array.isArray(data.unlockedColors)?data.unlockedColors.filter(function(n){return Number.isInteger(n)&&n>=1&&n<BEAD_COLORS.length}):[1,2,3,4,5];
+  safe.boardSize=size;
   safe.board=data.board.slice();
-  safe.savedDesigns=data.savedDesigns.slice(-20).map(function(d,i){return{id:String(d.id||i).slice(0,80),name:d.name.slice(0,24),board:d.board.slice(),date:typeof d.date==='string'?d.date.slice(0,40):''}});
+  safe.savedDesigns=data.savedDesigns.slice(-20).map(function(d,i){return{id:String(d.id||i).slice(0,80), name:d.name.slice(0,24),size:Number(d.size)||12,board:d.board.slice(),date:typeof d.date==='string'?d.date.slice(0,40):''}});
   return safe
 }
 function importGameBackup(file){
@@ -692,7 +718,7 @@ function importGameBackup(file){
     try{
       const candidate=validateGameBackup(JSON.parse(reader.result));
       if(!window.confirm(gt('backupConfirm')))return;
-      game=candidate;undoStack=[];redoStack=[];selectedBeadColor=1;saveGame();updateGameUI();updateUndoButtons();gameToast(gt('backupSuccess'))
+      game=candidate;GRID_SIZE=game.boardSize;undoStack=[];redoStack=[];selectedBeadColor=1;saveGame();updateGameUI();updateUndoButtons();gameToast(gt('backupSuccess'))
     }catch(err){gameToast(gt('backupInvalid'))}
   };
   reader.readAsText(file,'utf-8')
