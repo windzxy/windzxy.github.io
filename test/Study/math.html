@@ -118,8 +118,8 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 .board-mode-tip{color:#8895aa;font-size:10px}
 .board-viewport{width:100%;max-width:100%;border-radius:13px}
 .board-viewport.hd-active{height:auto;max-height:min(66vh,620px);overflow:auto;overscroll-behavior:contain;background:#e6edf8;border:1px solid #e4eaf5;scrollbar-width:thin}
-.bead-board.hd-grid{display:block;aspect-ratio:auto;width:var(--canvas-display,768px);height:var(--canvas-display,768px);max-width:none;padding:0;border:0;border-radius:0;box-shadow:none;margin:0}
-.bead-draw-canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none;user-select:none;cursor:crosshair}
+.bead-board.hd-grid{display:block;aspect-ratio:auto;width:var(--canvas-display,768px);height:auto;max-width:none;padding:0;border:0;border-radius:0;box-shadow:none;margin:0}
+.bead-draw-canvas{display:block;width:100%;height:auto;aspect-ratio:1;image-rendering:pixelated;touch-action:none;user-select:none;cursor:crosshair}
 .bead-board.hd-grid.pan-active .bead-draw-canvas{cursor:grab}
 .bead-board.hd-grid.pan-active:active .bead-draw-canvas{cursor:grabbing}
 .board-viewport:not(.hd-active){overflow:visible}.board-zoom-label{font-size:12px;font-weight:800}.board-sizing select#boardZoom{min-width:88px}
@@ -651,7 +651,7 @@ function resizeBoard(nextSize){
   if(!boardSizeValid(next)||next===GRID_SIZE){sel.value=String(GRID_SIZE);return}
   if(cropWillLoseBeads(game.board,GRID_SIZE,next)&&!window.confirm(gt('gridResizeConfirm'))){sel.value=String(GRID_SIZE);return}
   snapshotBoard();game.board=centeredResize(game.board,GRID_SIZE,next);
-  GRID_SIZE=next;game.boardSize=GRID_SIZE;saveGame();renderBeadBoard()
+  GRID_SIZE=next;game.boardSize=GRID_SIZE;saveGame();renderBeadBoard();applyBoardZoom(true)
 }
 function scaledTemplate(template,from,to){
   if(from===to)return template.slice();
@@ -821,7 +821,7 @@ function applyBeadTemplate(type){
   const lang=els.language.value,names=BEAD_ART_NAMES[lang]||BEAD_ART_NAMES['zh-Hans'];
   document.getElementById('designName').value=names[type]||type;
   document.getElementById('boardSize').value=String(GRID_SIZE);
-  saveGame();renderBeadBoard();gameToast(gt('templateApplied'))
+  saveGame();renderBeadBoard();applyBoardZoom(true);gameToast(gt('templateApplied'))
 }
 function saveBeadDesign(){
   const name=(document.getElementById('designName').value||'').trim()||gt('emptyName');
@@ -1037,7 +1037,7 @@ function initGameUI(){
     if(e.target.closest('#saveDesignBtn')){saveBeadDesign();return}
     if(e.target.closest('#exportDesignBtn')){downloadBeadDesign();return}
     if(e.target.closest('#exportPixelBtn')){downloadCleanPixelPNG();return}
-    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();GRID_SIZE=Number(d.size)||12;game.boardSize=GRID_SIZE;game.board=d.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();gameToast(gt('designLoaded'))}return}
+    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();GRID_SIZE=Number(d.size)||12;game.boardSize=GRID_SIZE;game.board=d.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();applyBoardZoom(true);gameToast(gt('designLoaded'))}return}
     const del=e.target.closest('[data-delete-design]');if(del){if(!window.confirm(gt('deleteConfirm')))return;game.savedDesigns=game.savedDesigns.filter(function(x){return String(x.id)!==del.getAttribute('data-delete-design')});saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designDeleted'))}
   });
   document.getElementById('backupExportBtn').addEventListener('click',exportGameBackup);
