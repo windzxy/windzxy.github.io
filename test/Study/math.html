@@ -124,6 +124,8 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 .bead-board.hd-grid.pan-active:active .bead-draw-canvas{cursor:grabbing}
 .board-viewport:not(.hd-active){overflow:visible}.board-zoom-label{font-size:12px;font-weight:800}.board-sizing select#boardZoom{min-width:88px}
 @media(max-width:520px){.board-mode-tip{width:100%}.board-viewport.hd-active{max-height:min(62vh,490px)}}
+
+.saved-design-canvas{display:block;width:100%;aspect-ratio:1;height:auto;max-height:180px;object-fit:contain;margin-bottom:9px;border:1px solid #edf0f6;border-radius:10px;background:#fff;image-rendering:pixelated;image-rendering:crisp-edges}
 </style>
 </head>
 <body>
@@ -733,10 +735,22 @@ function renderSavedDesigns(){
   if(!game.savedDesigns.length){root.innerHTML='<div class="empty-gallery">'+gameEscape(gt('galleryEmpty'))+'</div>';return}
   root.innerHTML=game.savedDesigns.slice().reverse().map(function(d){
     const size=Number(d.size)||12;
-    const miniature=scaledTemplate(d.board||[],size,12);
-    const preview=miniature.map(function(v){const color=Number(v)>0&&BEAD_COLORS[Number(v)]?BEAD_COLORS[Number(v)].hex:'#ffffff';return '<i style="--cell-color:'+color+'"></i>'}).join('');
-    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+gameEscape(d.name)+'"><span class="saved-design-mini" style="--preview-grid:12">'+preview+'</span><strong>'+gameEscape(d.name||gt('defaultDesignName'))+'</strong><small>'+new Date(d.date||Date.now()).toLocaleDateString()+'</small></button><button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
-  }).join('')
+    const name=gameEscape(d.name||gt('defaultDesignName'));
+    const when=new Date(d.date||Date.now()),date=Number.isFinite(when.getTime())?when.toLocaleDateString():'';
+    return '<article class="saved-design"><button class="saved-design-open" type="button" data-load-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('loadDesign'))+' '+name+'">'+
+      '<canvas class="saved-design-canvas" data-design-preview="'+gameEscape(d.id)+'" width="'+size+'" height="'+size+'" aria-hidden="true"></canvas>'+
+      '<strong>'+name+'</strong><small>'+gameEscape(date)+'</small></button>'+
+      '<button class="saved-design-delete" type="button" data-delete-design="'+gameEscape(d.id)+'" aria-label="'+gameEscape(gt('deleteDesign'))+'">×</button></article>'
+  }).join('');
+  root.querySelectorAll('canvas[data-design-preview]').forEach(function(canvas){
+    const design=game.savedDesigns.find(function(item){return String(item.id)===canvas.getAttribute('data-design-preview')});
+    if(!design)return;
+    const size=Number(design.size)||12,ctx=canvas.getContext('2d');if(!ctx)return;
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);
+    design.board.forEach(function(color,i){
+      if(color>0&&BEAD_COLORS[color]){ctx.fillStyle=BEAD_COLORS[color].hex;ctx.fillRect(i%size,Math.floor(i/size),1,1)}
+    })
+  })
 }
 
 function renderGrowthJourney(history){
@@ -822,6 +836,23 @@ function downloadBeadDesign(){
   game.board.forEach(function(v,i){const r=Math.floor(i/GRID_SIZE),c=i%GRID_SIZE;ctx.fillStyle=v>0?BEAD_COLORS[v].hex:'#ffffff';ctx.fillRect(c*size+gap,r*size+gap,size-gap*2,size-gap*2);ctx.strokeStyle='rgba(30,45,70,.13)';ctx.strokeRect(c*size+gap+.5,r*size+gap+.5,size-gap*2-1,size-gap*2-1)});
   const a=document.createElement('a'),raw=(document.getElementById('designName').value||gt('defaultDesignName')).trim();a.download=(raw||'bead-art').replace(/[\\/:*?"<>|]/g,'_')+'.png';a.href=canvas.toDataURL('image/png');a.click();gameToast(gt('downloadStarted'))
 }
+
+function downloadCleanPixelPNG(){
+  const factor=32,size=GRID_SIZE,canvas=document.createElement('canvas');
+  canvas.width=size*factor;canvas.height=size*factor;
+  const ctx=canvas.getContext('2d');if(!ctx){gameToast('PNG export not supported');return}
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  game.board.forEach(function(color,i){
+    if(!color||!BEAD_COLORS[color])return;
+    ctx.fillStyle=BEAD_COLORS[color].hex;
+    ctx.fillRect((i%size)*factor,Math.floor(i/size)*factor,factor,factor)
+  });
+  const filename=(document.getElementById('designName').value||'pixel-art').trim().replace(/[\\/:*?"<>|]/g,'_').slice(0,50)||'pixel-art';
+  const link=document.createElement('a');link.href=canvas.toDataURL('image/png');
+  link.download=filename+'-'+size+'x'+size+'-HD.png';link.click();
+  gameToast(gt('downloadStarted'))
+}
+
 function rewardQuestionKey(q){if(q.kind==='compare')return 'C:'+q.left+':'+q.right;return qKey(q)}
 function awardStars(result){
   const attemptedCount=result.correct+result.wrong;
@@ -1005,6 +1036,7 @@ function initGameUI(){
     if(e.target.closest('#clearBoardBtn')){snapshotBoard();game.board=Array(GRID_SIZE*GRID_SIZE).fill(0);saveGame();renderBeadBoard();gameToast(gt('boardCleared'));return}
     if(e.target.closest('#saveDesignBtn')){saveBeadDesign();return}
     if(e.target.closest('#exportDesignBtn')){downloadBeadDesign();return}
+    if(e.target.closest('#exportPixelBtn')){downloadCleanPixelPNG();return}
     const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();GRID_SIZE=Number(d.size)||12;game.boardSize=GRID_SIZE;game.board=d.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();gameToast(gt('designLoaded'))}return}
     const del=e.target.closest('[data-delete-design]');if(del){if(!window.confirm(gt('deleteConfirm')))return;game.savedDesigns=game.savedDesigns.filter(function(x){return String(x.id)!==del.getAttribute('data-delete-design')});saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designDeleted'))}
   });
