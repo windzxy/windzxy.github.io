@@ -90,7 +90,25 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 @page{size:A4;margin:9mm}
 @media print{body{background:#fff}.app{width:100%;margin:0}.topbar,.hero,.feature-tabs,.panel,.footer-tip,.result,.learning-feedback,.bead-panel,.growth-panel,.game-toast,.quick-presets{display:none!important}.feature-panel{display:none!important}.feature-panel[data-feature-panel="practice"]{display:block!important}.worksheet{display:block!important;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;min-height:auto}.sheet-page{margin:0!important;padding:0!important;border:0!important;break-after:page;page-break-after:always}.sheet-page:last-child{break-after:auto;page-break-after:auto}.sheet-head{margin-bottom:4mm;padding-bottom:2.5mm}.sheet-title h2{font-size:18px;margin-bottom:2px}.sheet-title p{font-size:9.5px}.student-info{gap:10px;font-size:10.5px}.time-box{padding-top:2px}.score-box{color:#c33;transform:rotate(-3deg)}.score-box .score-value{font-size:24px}.line{width:60px}.questions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1.4mm 5mm!important}.question{height:8.25mm;min-height:0;padding:0 1.5mm;border:0;border-bottom:1px dotted #999;border-radius:0;display:flex;align-items:center;page-break-inside:avoid}.q-index{position:static;width:12mm;flex:0 0 12mm;color:#444;font-size:7.5px}.equation{flex:1;justify-content:flex-start;gap:4px;margin:0;font-size:16px;letter-spacing:0;white-space:nowrap}.answer-input{width:38px;padding:0;color:#000;border-color:#000;font-size:16px}select.answer-input{display:none!important}.print-compare-line{display:inline-block;width:45px;height:22px;border-bottom:2px solid #000;flex:0 0 45px}.show-answers .print-compare-line{display:none!important}.answer-text{width:38px;min-width:38px;color:#000;border-color:#000;font-size:16px}.strategy,.strategy-placeholder,.mark{display:none!important}}
 
-  </style>
+  
+/* Math Garden Pixel Art Collection — original editable 24×24 templates */
+.template-section{min-width:0}.template-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.template-total{color:#697b9a;background:#eaf0fb;border-radius:999px;padding:3px 9px;font-size:10px;font-weight:800}
+.template-help{color:#8590a4;font-size:10px;line-height:1.6;margin:2px 0 11px}
+.template-filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0 9px;scrollbar-width:thin}
+.template-filter{flex:0 0 auto;border:1px solid #e1e7f1;background:#fff;color:#687891;border-radius:999px;font-size:10px;font-weight:750;min-height:30px;padding:6px 10px;transition:.15s}
+.template-filter.active{border-color:#a9c5fa;background:#eaf2ff;color:#286ad8}
+.template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.template-btn{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;min-height:142px;min-width:0;padding:9px 5px 10px;border-radius:14px;border:1px solid #e3e9f3;background:#fff;color:#42546d;transition:border-color .15s,box-shadow .15s,transform .15s}
+.template-btn:hover,.template-btn:focus-visible{border-color:#9dbafa;background:#f8fbff;box-shadow:0 4px 14px rgba(43,76,141,.08);transform:translateY(-1px);outline:none}
+.template-art-frame{display:grid;place-items:center;width:100%;max-width:100px;aspect-ratio:1;background:linear-gradient(150deg,#f9f9ff,#f2f4fd);border:1px solid #f0f0f8;border-radius:11px;overflow:hidden;padding:6px}
+.template-thumbnail{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges}
+.template-name{font-size:11px;line-height:1.3;font-weight:800;text-align:center;overflow-wrap:anywhere}
+.template-size{color:#8b98ad;font-size:9px;letter-spacing:.03em;font-weight:650}
+@media(max-width:720px){.template-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:380px){.template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.template-btn{min-height:146px}}
+@media print{.template-section{display:none!important}}
+</style>
 </head>
 <body>
   <main class="app">
@@ -322,16 +340,12 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
         <div class="bead-layout">
           <aside class="bead-tools">
             <label class="design-name-field"><span data-game-text="designName">作品名稱</span><input id="designName" maxlength="24" value="我的第一幅拼豆" placeholder="給作品取個名字"></label>
-            <div><div class="tool-title" data-game-text="templateTitle">快速圖案</div><div class="template-grid">
-              <button class="template-btn" data-template="heart" type="button" data-game-text="templateHeart">💗 愛心</button>
-              <button class="template-btn" data-template="flower" type="button" data-game-text="templateFlower">🌼 小花</button>
-              <button class="template-btn" data-template="smile" type="button" data-game-text="templateSmile">😊 笑臉</button>
-              <button class="template-btn" data-template="rainbow" type="button" data-game-text="templateRainbow">🌈 彩虹</button>
-              <button class="template-btn" data-template="star" type="button" data-game-text="templateStar">⭐ 星星</button>
-              <button class="template-btn" data-template="cat" type="button" data-game-text="templateCat">🐱 小猫</button>
-              <button class="template-btn" data-template="house" type="button" data-game-text="templateHouse">🏡 小房子</button>
-              <button class="template-btn" data-template="rocket" type="button" data-game-text="templateRocket">🚀 小火箭</button>
-            </div></div>
+            <div class="template-section">
+              <div class="template-heading"><div class="tool-title" data-game-text="templateTitle">像素图案馆</div><span class="template-total" id="templateTotal">17</span></div>
+              <p class="template-help" data-game-text="templateHelp">精细 24×24 图案，点击后自动放入画布，可自由修改。</p>
+              <div id="templateFilters" class="template-filters" role="group" aria-label="图案分类"></div>
+              <div id="templateGallery" class="template-grid"></div>
+            </div>
             <div><div class="tool-title" data-game-text="paletteTitle">拼豆顏色 · 點選使用</div><div id="beadPalette" class="bead-palette"></div></div>
             <div class="tool-actions">
               <button id="undoBoardBtn" class="btn btn-secondary" type="button" data-game-text="undoBoard" disabled>↶ 撤销</button>
@@ -380,6 +394,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
   </main>
   <div id="gameToast" class="game-toast" role="status" aria-live="polite"></div>
 
+  <script src="assets/bead-art-v1.js?v=20261028-1"></script>
   <script>
 const $=id=>document.getElementById(id);
 const els={language:$("language"),limit:$("limit"),customLimitWrap:$("customLimitWrap"),customLimit:$("customLimit"),operation:$("operation"),operandCount:$("operandCount"),strategyMode:$("strategyMode"),level:$("level"),difficulty:$("difficulty"),count:$("count"),totalPages:$("totalPages"),columns:$("columns"),nonNegative:$("nonNegative"),showHints:$("showHints"),includeZero:$("includeZero"),avoidDuplicate:$("avoidDuplicate"),generateBtn:$("generateBtn"),toggleAnswerBtn:$("toggleAnswerBtn"),checkBtn:$("checkBtn"),printBlankBtn:$("printBlankBtn"),printAnswerBtn:$("printAnswerBtn"),clearBtn:$("clearBtn"),notice:$("notice"),worksheet:$("worksheet"),pages:$("pages"),result:$("result")};
@@ -420,6 +435,7 @@ const BEAD_COLOR_NAMES={
 };
 const GAME_LABELS={
  'zh-Hant':{
+  templateHelp:"精細 24×24 拼豆圖案，點選後自動填入畫布，也可自行修改。",
   designLimitConfirm:'作品已達到 20 件，繼續保存會刪除最早的作品。確定保存嗎？',storageFull:'本機儲存空間不足，無法儲存；請先匯出備份或清理瀏覽器空間。',
   dailyGoalTitle:'今天的小目標',dailyGoalDesc:'完成 3 組至少 10 題的練習',dailyGoalDone:'今日目標已達成！',dailyGoalProgress:'已完成 {done} / 3 組',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天練習的題數和正確率',recentPracticeEmpty:'從今天開始，累積自己的學習軌跡吧。',questionsUnit:'題',
   templateStar:'⭐ 星星',templateCat:'🐱 小貓',templateHouse:'🏡 小房子',templateRocket:'🚀 小火箭',gridSelect:'畫布大小',gridSizeHint:'切換畫布時會保留中央圖案',gridResizeConfirm:'縮小畫布會裁掉部分拼豆，確定繼續嗎？',retryWrong:'↻ 只練錯題',feedbackPerfect:'太棒了！全部答對！繼續練習，或者去拼豆工坊創作吧。',feedbackMistakes:'有 {n} 題需要再想一想。先試試只練錯題，再查看解析。',feedbackUnfinished:'還有 {n} 題未完成，全部做完後再來檢查吧。',feedbackEmpty:'先完成幾道題，再點擊檢查。',
@@ -427,12 +443,13 @@ const GAME_LABELS={
   undoBoard:'↶ 復原',redoBoard:'↷ 重做',backupTitle:'學習資料備份',backupDesc:'更換裝置時可匯出星星與作品，再從備份還原。',backupExport:'匯出備份',backupImport:'匯入備份',backupSuccess:'備份匯入成功，星星及作品已還原。',backupInvalid:'無法讀取備份，請選擇有效的 Wind 學堂 JSON 檔。',backupConfirm:'匯入將覆蓋目前的星星和作品，確定繼續嗎？',backupSaved:'備份已匯出。',answerShownNoReward:'已查看答案，本組不再發放星星；重新出題即可繼續挑戰。',completeBonus:'（完成整組加贈 2 顆）',presetGrade1:'一年級口算',presetGrade1Sub:'20以內 · 10題',presetTens:'兩位數計算',presetTensSub:'100以內 · 10題',presetCompare:'數字比大小',presetCompareSub:'兩位數 · 10題',presetMultiply:'乘法口訣',presetMultiplySub:'100以內 · 10題',
   stars:'星星餘額',eraserLabel:'橡皮擦',templateApplied:'圖案已放到畫布上，可以繼續修改。',heroEyebrow:'數學任務 · 邊學邊玩',heroPillOne:'✦ 答對一題，點亮一顆星',heroPillTwo:'▦ 用星星解鎖拼豆顏色',correctTotal:'累計答對',streak:'連續練習天',
   practiceTab:'數學練習',beadTab:'拼豆工坊',growthTab:'成長記錄',panelTitle:'設定今日練習',panelCopy:'依照孩子目前的能力選擇題型與難度；完成作答後即可領取星星。',
-  beadTitle:'拼豆工坊',beadCopy:'用練習獲得的星星解鎖更多顏色，在 12 × 12 畫布上創作自己的像素作品。',designName:'作品名稱',templateTitle:'快速圖案',templateHeart:'💗 愛心',templateFlower:'🌼 小花',templateSmile:'😊 笑臉',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆顏色 · 點選使用',clearBoard:'清空畫布',saveDesign:'保存作品',exportDesign:'下載 PNG',beadTip:'基礎顏色免費使用。更多顏色需要消耗星星解鎖；保存後的作品會留在這台裝置。',boardTitle:'我的像素畫',boardHint:'先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品後，就可以保存到這裡。',growthTitle:'我的成長記錄',growthCopy:'每一組練習都算數。看見自己的努力，再一步步解鎖新的創作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考試分數，而是完成練習、訂正與持續努力的紀錄。學會解釋思路，比只追求速度更重要。',
+  beadTitle:'拼豆工坊',beadCopy:'用練習獲得的星星解鎖更多顏色，在 12 × 12 畫布上創作自己的像素作品。',designName:'作品名稱',templateTitle:'快速圖案',templateHeart:'💗 愛心',templateFlower:'🌼 小花',templateSmile:'😊 笑臉',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆顏色 · 點選使用',clearBoard:'清空畫布',saveDesign:'保存作品',exportDesign:'下載 PNG',beadTip:"快速圖案可免費使用完整配色；自由繪製的更多顏色可用星星解鎖。作品存於此裝置，請定期備份。",boardTitle:'我的像素畫',boardHint:'先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品後，就可以保存到這裡。',growthTitle:'我的成長記錄',growthCopy:'每一組練習都算數。看見自己的努力，再一步步解鎖新的創作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考試分數，而是完成練習、訂正與持續努力的紀錄。學會解釋思路，比只追求速度更重要。',
   statCorrect:'累計答對',statAnswered:'已作答題數',statStreak:'連續練習天數',statAccuracy:'整體正確率',statRounds:'完成練習組',statPerfect:'全對練習組',statDesigns:'收藏作品',
   achFirst:'初次啟程',achFirstDesc:'完成第一組練習',achTen:'計算新星',achTenDesc:'累計答對 10 題',achPerfect:'完美一組',achPerfectDesc:'一整組全部答對',achStreak:'堅持不懈',achStreakDesc:'連續學習 3 天',achArtist:'像素創作者',achArtistDesc:'保存第一幅作品',achHundred:'百題達人',achHundredDesc:'累計答對 100 題',
   unlocked:'已解鎖',locked:'待解鎖',starCost:'★ {n}',colorUnlocked:'顏色已解鎖！',needMoreStars:'還差一些星星，解鎖需要 {n} 顆。',designSaved:'作品已保存到「我的作品」。',designLoaded:'已載入作品，可以繼續修改。',designDeleted:'作品已刪除。',boardCleared:'畫布已清空。',downloadStarted:'作品 PNG 已準備好。',rewardEarned:'🌟 本次獲得 {n} 顆星星！',perfectBonus:'（全對加贈 3 顆）',rewardClaimed:'這組練習已領取過星星獎勵。',needAnswer:'先完成至少一道題，再領取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'刪除作品',loadDesign:'載入作品',emptyName:'我的拼豆作品'
  },
  'zh-Hans':{
+  templateHelp:"精细 24×24 拼豆图案，点选后自动填入画布，还可以自行修改。",
   designLimitConfirm:'作品已达到 20 件，继续保存会删除最早的作品。确定保存吗？',storageFull:'本机存储空间不足，无法保存；请先导出备份或清理浏览器空间。',
   dailyGoalTitle:'今天的小目标',dailyGoalDesc:'完成 3 组至少 10 题的练习',dailyGoalDone:'今日目标已达成！',dailyGoalProgress:'已完成 {done} / 3 组',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天练习的题数和正确率',recentPracticeEmpty:'今天开始，积累自己的学习轨迹吧。',questionsUnit:'题',
   templateStar:'⭐ 星星',templateCat:'🐱 小猫',templateHouse:'🏡 小房子',templateRocket:'🚀 小火箭',gridSelect:'画布大小',gridSizeHint:'切换画布时会保留中央图案',gridResizeConfirm:'缩小画布会裁掉部分拼豆，确定继续吗？',retryWrong:'↻ 只练错题',feedbackPerfect:'太棒了！全对！继续练习，或者去拼豆工坊创作吧。',feedbackMistakes:'有 {n} 道题需要再想想。先试试只练错题，再查看解析。',feedbackUnfinished:'还有 {n} 道题没有完成，全部做完后再来检查吧。',feedbackEmpty:'先完成几道题，再点击检查。',
@@ -440,12 +457,13 @@ const GAME_LABELS={
   undoBoard:'↶ 撤销',redoBoard:'↷ 重做',backupTitle:'学习数据备份',backupDesc:'更换设备时可导出星星和作品，再从备份恢复。',backupExport:'导出备份',backupImport:'导入备份',backupSuccess:'备份导入成功，星星和作品已恢复。',backupInvalid:'无法读取备份，请选择有效的 Wind 学堂 JSON 文件。',backupConfirm:'导入将覆盖目前的星星和作品，确定继续吗？',backupSaved:'备份已导出。',answerShownNoReward:'已查看答案，本组不再发放星星；重新出题即可继续挑战。',completeBonus:'（完成整组加赠 2 颗）',presetGrade1:'一年级口算',presetGrade1Sub:'20以内 · 10题',presetTens:'两位数计算',presetTensSub:'100以内 · 10题',presetCompare:'数字比大小',presetCompareSub:'两位数 · 10题',presetMultiply:'乘法口诀',presetMultiplySub:'100以内 · 10题',
   stars:'星星余额',eraserLabel:'橡皮擦',templateApplied:'图案已放到画布上，可以继续修改。',heroEyebrow:'数学任务 · 边学边玩',heroPillOne:'✦ 答对一题，点亮一颗星',heroPillTwo:'▦ 用星星解锁拼豆颜色',correctTotal:'累计答对',streak:'连续练习天',
   practiceTab:'数学练习',beadTab:'拼豆工坊',growthTab:'成长记录',panelTitle:'设置今日练习',panelCopy:'根据孩子目前的能力选择题型与难度；完成作答后即可领取星星。',
-  beadTitle:'拼豆工坊',beadCopy:'用练习获得的星星解锁更多颜色，在 12 × 12 画布上创作自己的像素作品。',designName:'作品名称',templateTitle:'快速图案',templateHeart:'💗 爱心',templateFlower:'🌼 小花',templateSmile:'😊 笑脸',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆颜色 · 点击使用',clearBoard:'清空画布',saveDesign:'保存作品',exportDesign:'下载 PNG',beadTip:'基础颜色免费使用。更多颜色需要消耗星星解锁；保存后的作品会留在这台设备。',boardTitle:'我的像素画',boardHint:'先选一种颜色，再点格子放入拼豆；点橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品后，就可以保存到这里。',growthTitle:'我的成长记录',growthCopy:'每一组练习都算数。看见自己的努力，再一步步解锁新的创作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考试分数，而是完成练习、订正与持续努力的记录。学会解释思路，比只追求速度更重要。',
+  beadTitle:'拼豆工坊',beadCopy:'用练习获得的星星解锁更多颜色，在 12 × 12 画布上创作自己的像素作品。',designName:'作品名称',templateTitle:'快速图案',templateHeart:'💗 爱心',templateFlower:'🌼 小花',templateSmile:'😊 笑脸',templateRainbow:'🌈 彩虹',paletteTitle:'拼豆颜色 · 点击使用',clearBoard:'清空画布',saveDesign:'保存作品',exportDesign:'下载 PNG',beadTip:"快速图案可免费使用完整配色；自由绘制的更多颜色可用星星解锁。作品保存在此设备，请定期备份。",boardTitle:'我的像素画',boardHint:'先选一种颜色，再点格子放入拼豆；点橡皮擦可清除。',galleryTitle:'我的作品',galleryEmpty:'完成第一幅拼豆作品后，就可以保存到这里。',growthTitle:'我的成长记录',growthCopy:'每一组练习都算数。看见自己的努力，再一步步解锁新的创作。',achievementsTitle:'成就徽章',growthNote:'小提醒：星星不是考试分数，而是完成练习、订正与持续努力的记录。学会解释思路，比只追求速度更重要。',
   statCorrect:'累计答对',statAnswered:'已作答题数',statStreak:'连续练习天数',statAccuracy:'整体正确率',statRounds:'完成练习组',statPerfect:'全对练习组',statDesigns:'收藏作品',
   achFirst:'初次启程',achFirstDesc:'完成第一组练习',achTen:'计算新星',achTenDesc:'累计答对 10 题',achPerfect:'完美一组',achPerfectDesc:'一整组全部答对',achStreak:'坚持不懈',achStreakDesc:'连续学习 3 天',achArtist:'像素创作者',achArtistDesc:'保存第一幅作品',achHundred:'百题达人',achHundredDesc:'累计答对 100 题',
   unlocked:'已解锁',locked:'待解锁',starCost:'★ {n}',colorUnlocked:'颜色已解锁！',needMoreStars:'还差一些星星，解锁需要 {n} 颗。',designSaved:'作品已保存到“我的作品”。',designLoaded:'已载入作品，可以继续修改。',designDeleted:'作品已删除。',boardCleared:'画布已清空。',downloadStarted:'作品 PNG 已准备好。',rewardEarned:'🌟 本次获得 {n} 颗星星！',perfectBonus:'（全对加赠 3 颗）',rewardClaimed:'这组练习已领取过星星奖励。',needAnswer:'先完成至少一道题，再领取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'删除作品',loadDesign:'载入作品',emptyName:'我的拼豆作品'
  },
  'en':{
+  templateHelp:"Detailed 24×24 bead art. Choose a pattern, then customize it on your canvas.",
   designLimitConfirm:'You have 20 artworks. Saving another will remove the oldest. Continue?',storageFull:'Device storage is full, so your changes cannot be saved. Export a backup or free up space.',
   dailyGoalTitle:'Today’s small goal',dailyGoalDesc:'Finish 3 sets of at least 10 questions',dailyGoalDone:'Today’s goal completed!',dailyGoalProgress:'Completed {done} / 3 sets',recentPracticeTitle:'Last 7 days',recentPracticeDesc:'Questions practiced and accuracy each day',recentPracticeEmpty:'Start today to build your own learning journey.',questionsUnit:'Q',
   templateStar:'⭐ Star',templateCat:'🐱 Cat',templateHouse:'🏡 House',templateRocket:'🚀 Rocket',gridSelect:'Canvas size',gridSizeHint:'Keeps the artwork centered when resized',gridResizeConfirm:'Smaller canvas will crop some beads. Continue?',retryWrong:'↻ Retry missed questions',feedbackPerfect:'Amazing work! All correct. Keep practicing or create bead art!',feedbackMistakes:'{n} questions need another try. Practice just those questions, then check the hints.',feedbackUnfinished:'You have {n} unanswered questions. Finish them before checking.',feedbackEmpty:'Answer a few questions first, then check your work.',
@@ -453,7 +471,7 @@ const GAME_LABELS={
   undoBoard:'↶ Undo',redoBoard:'↷ Redo',backupTitle:'Learning data backup',backupDesc:'Export your stars and artwork, then restore on another device.',backupExport:'Export backup',backupImport:'Import backup',backupSuccess:'Backup imported. Stars and artwork restored.',backupInvalid:'This is not a valid Wind Study JSON backup.',backupConfirm:'Importing will replace your current stars and artwork. Continue?',backupSaved:'Backup exported.',answerShownNoReward:'Stars are disabled after revealing answers. Generate new questions to try again.',completeBonus:' (+2 for completing the set)',presetGrade1:'Grade 1 mental math',presetGrade1Sub:'Up to 20 · 10 questions',presetTens:'Two-digit maths',presetTensSub:'Up to 100 · 10 questions',presetCompare:'Compare numbers',presetCompareSub:'Two digits · 10 questions',presetMultiply:'Times tables',presetMultiplySub:'Up to 100 · 10 questions',
   stars:'Star balance',eraserLabel:'Eraser',templateApplied:'Pattern added to the board. You can keep editing it.',heroEyebrow:'MATH QUEST · PLAY & LEARN',heroPillOne:'✦ Earn a star for each correct answer',heroPillTwo:'▦ Unlock bead colors with stars',correctTotal:'Correct answers',streak:'Practice streak',
   practiceTab:'Math practice',beadTab:'Bead studio',growthTab:'My progress',panelTitle:'Set up today’s practice',panelCopy:'Choose operations and difficulty that fit the learner. Complete a set to collect stars.',
-  beadTitle:'Bead studio',beadCopy:'Spend earned stars to unlock colors and create your own pixel art on a 12 × 12 board.',designName:'Artwork name',templateTitle:'Quick patterns',templateHeart:'💗 Heart',templateFlower:'🌼 Flower',templateSmile:'😊 Smile',templateRainbow:'🌈 Rainbow',paletteTitle:'Bead colors · Select one',clearBoard:'Clear board',saveDesign:'Save artwork',exportDesign:'Download PNG',beadTip:'Basic colors are free. Unlock extra colors with stars. Saved artwork stays on this device.',boardTitle:'My pixel art',boardHint:'Choose a color, then tap cells to place beads. Select the eraser to remove beads.',galleryTitle:'My artwork',galleryEmpty:'Your saved bead artwork will appear here.',growthTitle:'My progress',growthCopy:'Every practice set counts. Celebrate your effort and unlock new creative choices.',achievementsTitle:'Achievements',growthNote:'Stars track practice, corrections, and effort — not exam grades. Explaining your thinking matters more than speed.',
+  beadTitle:'Bead studio',beadCopy:'Spend earned stars to unlock colors and create your own pixel art on a 12 × 12 board.',designName:'Artwork name',templateTitle:'Quick patterns',templateHeart:'💗 Heart',templateFlower:'🌼 Flower',templateSmile:'😊 Smile',templateRainbow:'🌈 Rainbow',paletteTitle:'Bead colors · Select one',clearBoard:'Clear board',saveDesign:'Save artwork',exportDesign:'Download PNG',beadTip:"Template colors are free to use. Unlock more colors for painting with stars. Designs stay on this device; back up often.",boardTitle:'My pixel art',boardHint:'Choose a color, then tap cells to place beads. Select the eraser to remove beads.',galleryTitle:'My artwork',galleryEmpty:'Your saved bead artwork will appear here.',growthTitle:'My progress',growthCopy:'Every practice set counts. Celebrate your effort and unlock new creative choices.',achievementsTitle:'Achievements',growthNote:'Stars track practice, corrections, and effort — not exam grades. Explaining your thinking matters more than speed.',
   statCorrect:'Correct answers',statAnswered:'Questions attempted',statStreak:'Practice streak',statAccuracy:'Overall accuracy',statRounds:'Practice sets',statPerfect:'Perfect sets',statDesigns:'Saved artworks',
   achFirst:'First steps',achFirstDesc:'Complete your first set',achTen:'Math star',achTenDesc:'Answer 10 questions correctly',achPerfect:'Perfect set',achPerfectDesc:'Get every question right in a set',achStreak:'Keep going',achStreakDesc:'Practice for 3 consecutive days',achArtist:'Pixel artist',achArtistDesc:'Save your first artwork',achHundred:'Century club',achHundredDesc:'Answer 100 questions correctly',
   unlocked:'Unlocked',locked:'Locked',starCost:'★ {n}',colorUnlocked:'Color unlocked!',needMoreStars:'You need {n} stars to unlock this color.',designSaved:'Artwork saved to My artwork.',designLoaded:'Artwork loaded. Keep creating!',designDeleted:'Artwork deleted.',boardCleared:'Board cleared.',downloadStarted:'Your PNG is ready.',rewardEarned:'🌟 You earned {n} stars!',perfectBonus:' (+3 perfect-set bonus)',rewardClaimed:'Stars for this set have already been collected.',needAnswer:'Answer at least one question before collecting stars.',defaultDesignName:'My bead artwork',deleteDesign:'Delete artwork',loadDesign:'Load artwork',emptyName:'My bead artwork'
@@ -544,6 +562,43 @@ function scaledTemplate(template,from,to){
   const out=Array(to*to).fill(0);
   for(let r=0;r<to;r++)for(let c=0;c<to;c++){const rr=Math.min(from-1,Math.floor((r+.5)*from/to)),cc=Math.min(from-1,Math.floor((c+.5)*from/to));out[r*to+c]=template[rr*from+cc]}
   return out
+}
+
+
+const BEAD_ART_NAMES={"zh-Hans":{"heart":"甜心糖","flower":"微笑花盆","smile":"元气太阳","rainbow":"彩虹云朵","star":"许愿星","cat":"奶油小猫","house":"童话小屋","rocket":"星际火箭","strawberry":"草莓宝宝","moon":"晚安月亮","whale":"泡泡鲸鱼","cupcake":"樱桃杯糕","mushroom":"点点蘑菇","fox":"软萌小狐","frog":"大眼青蛙","cactus":"开心仙人掌","butterfly":"糖果蝴蝶"},"zh-Hant":{"heart":"甜心糖","flower":"微笑花盆","smile":"元氣太陽","rainbow":"彩虹雲朵","star":"許願星","cat":"奶油小貓","house":"童話小屋","rocket":"星際火箭","strawberry":"草莓寶寶","moon":"晚安月亮","whale":"泡泡鯨魚","cupcake":"櫻桃杯糕","mushroom":"點點蘑菇","fox":"軟萌小狐","frog":"大眼青蛙","cactus":"開心仙人掌","butterfly":"糖果蝴蝶"},"en":{"heart":"Candy Heart","flower":"Happy Bloom","smile":"Sunny Smile","rainbow":"Cloud Rainbow","star":"Wish Star","cat":"Creamy Cat","house":"Cozy Cottage","rocket":"Space Rocket","strawberry":"Berry Buddy","moon":"Sleepy Moon","whale":"Bubble Whale","cupcake":"Cherry Cupcake","mushroom":"Dotty Mushroom","fox":"Friendly Fox","frog":"Happy Frog","cactus":"Cute Cactus","butterfly":"Candy Butterfly"}};
+const BEAD_ART_CATEGORIES={"zh-Hans":{"all":"全部","animal":"萌宠","nature":"自然","food":"甜点","sky":"星空","love":"心意"},"zh-Hant":{"all":"全部","animal":"萌寵","nature":"自然","food":"甜點","sky":"星空","love":"心意"},"en":{"all":"All","animal":"Animals","nature":"Nature","food":"Treats","sky":"Space","love":"Love"}};
+let currentTemplateFilter='all';
+function renderBeadTemplatePicker(){
+  const root=document.getElementById('templateGallery'),filters=document.getElementById('templateFilters');
+  if(!root||!filters)return;
+  const library=window.BEAD_ART_LIBRARY||[],getPixels=window.getBeadArtPixels;
+  const lang=els.language.value,labels=BEAD_ART_NAMES[lang]||BEAD_ART_NAMES['zh-Hans'];
+  const categories=BEAD_ART_CATEGORIES[lang]||BEAD_ART_CATEGORIES['zh-Hans'];
+  const groupList=['all','animal','nature','food','sky','love'];
+  filters.innerHTML=groupList.map(function(group){
+    const active=currentTemplateFilter===group;
+    return '<button class="template-filter '+(active?'active':'')+'" type="button" data-template-filter="'+group+'" aria-pressed="'+active+'">'+gameEscape(categories[group])+'</button>'
+  }).join('');
+  const visible=library.filter(function(item){return currentTemplateFilter==='all'||item.group===currentTemplateFilter});
+  document.getElementById('templateTotal').textContent=String(visible.length)+' / '+String(library.length);
+  root.innerHTML=visible.map(function(item){
+    const label=labels[item.id]||item.id;
+    return '<button class="template-btn" type="button" data-template="'+item.id+'" aria-label="'+gameEscape(label)+' 24×24">'+
+      '<span class="template-art-frame"><canvas class="template-thumbnail" width="24" height="24" data-art-id="'+item.id+'" aria-hidden="true"></canvas></span>'+
+      '<strong class="template-name">'+gameEscape(label)+'</strong><span class="template-size">24 × 24</span></button>'
+  }).join('');
+  root.querySelectorAll('.template-thumbnail').forEach(function(canvas){
+    if(typeof getPixels!=='function')return;
+    const pixels=getPixels(canvas.dataset.artId),ctx=canvas.getContext('2d');
+    if(!pixels||!ctx)return;
+    ctx.clearRect(0,0,24,24);
+    for(let i=0;i<pixels.length;i++){
+      if(pixels[i]>0&&BEAD_COLORS[pixels[i]]){
+        ctx.fillStyle=BEAD_COLORS[pixels[i]].hex;
+        ctx.fillRect(i%24,Math.floor(i/24),1,1)
+      }
+    }
+  });
 }
 
 function renderBeadPalette(){
@@ -638,47 +693,15 @@ function updateGameUI(){
   renderBeadPalette();renderBeadBoard();renderSavedDesigns();renderGrowth()
 }
 function applyBeadTemplate(type){
-  const board=Array(144).fill(0),put=function(r,c,color){if(r>=0&&r<12&&c>=0&&c<12)board[r*12+c]=color};
-  if(type==='heart'){
-    ['000110011000','001111111100','011111111110','011111111110','001111111100','000111111000','000011110000','000001100000','000000000000','000000000000','000000000000','000000000000'].forEach(function(row,r){row.split('').forEach(function(v,c){if(v==='1')put(r,c,1)})})
-  }else if(type==='flower'){
-    [[4,5],[5,4],[5,6],[6,5]].forEach(function(p){for(let r=p[0]-1;r<=p[0]+1;r++)for(let c=p[1]-1;c<=p[1]+1;c++)if(Math.abs(r-p[0])+Math.abs(c-p[1])<=1)put(r,c,1)});
-    put(5,5,2);put(7,5,3);put(8,5,3);put(9,5,3);put(8,4,3);put(7,6,3)
-  }else if(type==='smile'){
-    for(let r=1;r<11;r++)for(let c=1;c<11;c++)if(Math.pow(r-5.5,2)+Math.pow(c-5.5,2)<=24)put(r,c,2);
-    [[3,4],[3,7],[4,4],[4,7],[7,3],[8,4],[8,5],[8,6],[8,7],[7,8]].forEach(function(p){put(p[0],p[1],4)})
-  }else if(type==='rainbow'){
-    const bands=[1,5,4,3,2];
-    for(let r=1;r<=8;r++)for(let c=0;c<12;c++){
-      const dist=Math.sqrt(Math.pow(c-5.5,2)+Math.pow(r-11,2));
-      if(dist>=3.8&&dist<=10.6){const band=Math.max(0,Math.min(bands.length-1,Math.floor((10.6-dist)/1.35)));put(r,c,bands[band])}
-    }
-  }else if(['star','cat','house','rocket'].includes(type)){
-    const patterns={
-      star:[
-        '000002000000','000022200000','000022200000','222222222220',
-        '022222222200','002222222000','000222220000','000222220000',
-        '002220222000','022200022200','022000002200','000000000000'
-      ],
-      cat:[
-        '110000000011','111000000111','111100001111','111111111111',
-        '111111111111','110411114011','111111111111','111112111111',
-        '111122211111','111111111111','011111111110','001111111100'
-      ],
-      house:[
-        '000005500000','000055550000','000555555000','005555555500',
-        '055555555550','555555555555','033333333330','033333333330',
-        '033334433330','033334433330','033334433330','033334433330'
-      ],
-      rocket:[
-        '000002200000','000022220000','000025520000','000255552000',
-        '000255552000','000255552000','000225522000','000225522000',
-        '000425524000','004422224400','000022220000','000011110000'
-      ]
-    };
-    patterns[type].forEach(function(line,r){line.split('').forEach(function(v,c){if(v!=='0')put(r,c,Number(v))})});
-  }
-  snapshotBoard();game.board=scaledTemplate(board,12,GRID_SIZE);saveGame();renderBeadBoard();gameToast(gt('templateApplied')||'圖案已放到畫布上，可以繼續修改。')
+  const template=(window.BEAD_ART_LIBRARY||[]).find(function(item){return item.id===type});
+  const pixels=window.getBeadArtPixels&&window.getBeadArtPixels(type);
+  if(!template||!pixels||pixels.length!==template.size*template.size)return;
+  snapshotBoard();
+  GRID_SIZE=template.size;game.boardSize=GRID_SIZE;game.board=pixels.slice();
+  const lang=els.language.value,names=BEAD_ART_NAMES[lang]||BEAD_ART_NAMES['zh-Hans'];
+  document.getElementById('designName').value=names[type]||type;
+  document.getElementById('boardSize').value=String(GRID_SIZE);
+  saveGame();renderBeadBoard();gameToast(gt('templateApplied'))
 }
 function saveBeadDesign(){
   const name=(document.getElementById('designName').value||'').trim()||gt('emptyName');
@@ -790,6 +813,13 @@ function importGameBackup(file){
 function initGameUI(){
   document.querySelectorAll('[data-feature-tab]').forEach(function(b){b.addEventListener('click',function(){setFeatureTab(b.getAttribute('data-feature-tab'))})});
   const board=document.getElementById('beadBoard');
+  document.getElementById('templateFilters').addEventListener('click',function(e){
+    const btn=e.target.closest('[data-template-filter]');
+    if(!btn)return;
+    currentTemplateFilter=btn.getAttribute('data-template-filter');
+    renderBeadTemplatePicker();
+  });
+  renderBeadTemplatePicker();
   board.addEventListener('pointerdown',function(e){
     if(e.pointerType==='mouse'&&e.button!==0)return;const cell=e.target.closest('[data-cell]');if(!cell)return;
     e.preventDefault();snapshotBoard();activeBrush=e.pointerId;paintBeadCell(cell);
@@ -1034,7 +1064,7 @@ function checkAnswers(scoreBlank=false,recordSubmission=true){let correct=0,wron
 function toggleAnswers(force){let next=typeof force==='boolean'?force:!showingAnswers;if(next&&!showingAnswers){exerciseRevealed=true;checkAnswers(true,false)}showingAnswers=next;els.worksheet.classList.toggle('show-answers',next);els.toggleAnswerBtn.textContent=next?t('hideAnswers'):t('showAnswers')}
 function clearAnswers(){resetLearningFeedback();els.pages.querySelectorAll('.answer-input').forEach(x=>{x.value='';x.classList.remove('correct','wrong')});els.pages.querySelectorAll('.mark').forEach(x=>{x.textContent='';x.className='mark'});els.result.classList.remove('show');showingAnswers=false;els.worksheet.classList.remove('show-answers');els.toggleAnswerBtn.textContent=t('showAnswers');exerciseStartedAt=Date.now();submittedElapsedMs=null;setPageScores('');setPageTimes('')}
 function printSheet(withAnswers){if(!currentQuestions.length)generateQuestions();let prev=showingAnswers;if(withAnswers)exerciseRevealed=true;showingAnswers=withAnswers;els.worksheet.classList.toggle('show-answers',withAnswers);setTimeout(()=>{window.print();setTimeout(()=>toggleAnswers(prev),200)},80)}
-function setLanguage(){let v=saved();document.documentElement.lang=els.language.value;applyGameLabels();document.title=t('title');updateGameUI();document.querySelectorAll('[data-i18n]').forEach(x=>x.textContent=t(x.dataset.i18n));render(false);restore(v);els.toggleAnswerBtn.textContent=showingAnswers?t('hideAnswers'):t('showAnswers');updateHeader();if(els.result.classList.contains('show'))checkAnswers(showingAnswers,false)}
+function setLanguage(){let v=saved();document.documentElement.lang=els.language.value;applyGameLabels();document.title=t('title');updateGameUI();renderBeadTemplatePicker();document.querySelectorAll('[data-i18n]').forEach(x=>x.textContent=t(x.dataset.i18n));render(false);restore(v);els.toggleAnswerBtn.textContent=showingAnswers?t('hideAnswers'):t('showAnswers');updateHeader();if(els.result.classList.contains('show'))checkAnswers(showingAnswers,false)}
 els.language.addEventListener('change',setLanguage);els.limit.addEventListener('change',()=>{els.customLimitWrap.classList.toggle('show',els.limit.value==='custom');updateHeader()});els.customLimit.addEventListener('input',updateHeader);els.operation.addEventListener('change',updateHeader);els.operandCount.addEventListener('change',updateHeader);els.strategyMode.addEventListener('change',updateHeader);els.level.addEventListener('change',updateHeader);els.difficulty.addEventListener('change',updateHeader);els.count.addEventListener('change',generateQuestions);els.totalPages.addEventListener('change',generateQuestions);els.columns.addEventListener('change',()=>els.pages.style.setProperty('--cols',els.columns.value));els.showHints.addEventListener('change',()=>render(true));els.generateBtn.addEventListener('click',generateQuestions);els.toggleAnswerBtn.addEventListener('click',()=>toggleAnswers());els.checkBtn.addEventListener('click',()=>checkAnswers(false));document.getElementById('retryWrongBtn').addEventListener('click',retryMissedQuestions);els.printBlankBtn.addEventListener('click',()=>printSheet(false));els.printAnswerBtn.addEventListener('click',()=>printSheet(true));els.clearBtn.addEventListener('click',clearAnswers);
 ['limit','operation','operandCount','strategyMode','level','difficulty','count','totalPages'].forEach(function(id){
   els[id].addEventListener('change',function(){document.querySelectorAll('[data-preset]').forEach(function(b){b.classList.remove('active')})})
