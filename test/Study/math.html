@@ -117,13 +117,13 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 .mode-switch.active{background:#fff;color:#2569d8;box-shadow:0 2px 7px rgba(33,65,125,.10)}
 .board-mode-tip{color:#8895aa;font-size:10px}
 .board-viewport{width:100%;max-width:100%;border-radius:13px}
-.board-viewport.hd-active{height:min(66vh,620px);min-height:285px;overflow:auto;overscroll-behavior:contain;background:#e6edf8;border:1px solid #e4eaf5;scrollbar-width:thin}
+.board-viewport.hd-active{height:auto;max-height:min(66vh,620px);overflow:auto;overscroll-behavior:contain;background:#e6edf8;border:1px solid #e4eaf5;scrollbar-width:thin}
 .bead-board.hd-grid{display:block;aspect-ratio:auto;width:var(--canvas-display,768px);height:var(--canvas-display,768px);max-width:none;padding:0;border:0;border-radius:0;box-shadow:none;margin:0}
 .bead-draw-canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none;user-select:none;cursor:crosshair}
 .bead-board.hd-grid.pan-active .bead-draw-canvas{cursor:grab}
 .bead-board.hd-grid.pan-active:active .bead-draw-canvas{cursor:grabbing}
-.board-viewport:not(.hd-active){overflow:visible}
-@media(max-width:520px){.board-mode-tip{width:100%}.board-viewport.hd-active{height:min(62vh,490px);min-height:290px}}
+.board-viewport:not(.hd-active){overflow:visible}.board-zoom-label{font-size:12px;font-weight:800}.board-sizing select#boardZoom{min-width:88px}
+@media(max-width:520px){.board-mode-tip{width:100%}.board-viewport.hd-active{max-height:min(62vh,490px)}}
 </style>
 </head>
 <body>
@@ -384,6 +384,12 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
                 <option value="48">48 × 48</option>
               </select>
               <span data-game-text="gridSizeHint">切换画布时会保留中央图案</span>
+              <label for="boardZoom" class="board-zoom-label" data-game-text="zoomSelect">缩放</label>
+              <select id="boardZoom" aria-label="画布缩放">
+                <option value="fit" data-game-text="zoomFit">适应屏幕</option>
+                <option value="2" data-game-text="zoomNear">放大 2 倍</option>
+                <option value="3" data-game-text="zoomFar">放大 3 倍</option>
+              </select>
             </div>
             <div class="board-toolbar" id="boardToolbar" hidden>
               <div class="board-mode-picker" role="group" aria-label="画布工具">
@@ -479,7 +485,7 @@ const BEAD_COLOR_NAMES={
   en:['Eraser','Berry pink','Sunshine','Mint','Sky blue','Lavender','Orange','Leaf green','Chocolate','Navy','Blush','Cream','Lime','Ice blue','Amethyst','Charcoal','Ivory','Peach','Coral','Caramel','Cocoa','Mist blue','Lagoon','Forest','Honey gold','Cloud lilac','Berry violet','Outline','Pomegranate','Milk','Blush','Silver']
 };
 const GAME_LABELS={
- 'zh-Hant':{paintMode:"✎ 畫筆",panMode:"✥ 移動畫布",zoomHint:"高清畫布可用拖動模式移動後再上色",exportPixel:"高清像素 PNG",
+ 'zh-Hant':{zoomSelect:"縮放",zoomFit:"適應畫布",zoomNear:"放大 2 倍",zoomFar:"放大 3 倍",paintMode:"✎ 畫筆",panMode:"✥ 移動畫布",zoomHint:"高清畫布可用拖動模式移動後再上色",exportPixel:"高清像素 PNG",
   templateHelp:"17 款精細 24×24 及 8 款原生 48×48 圖案，點選後可修改。",
   designLimitConfirm:'作品已達到 20 件，繼續保存會刪除最早的作品。確定保存嗎？',storageFull:'本機儲存空間不足，無法儲存；請先匯出備份或清理瀏覽器空間。',
   dailyGoalTitle:'今天的小目標',dailyGoalDesc:'完成 3 組至少 10 題的練習',dailyGoalDone:'今日目標已達成！',dailyGoalProgress:'已完成 {done} / 3 組',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天練習的題數和正確率',recentPracticeEmpty:'從今天開始，累積自己的學習軌跡吧。',questionsUnit:'題',
@@ -493,7 +499,7 @@ const GAME_LABELS={
   achFirst:'初次啟程',achFirstDesc:'完成第一組練習',achTen:'計算新星',achTenDesc:'累計答對 10 題',achPerfect:'完美一組',achPerfectDesc:'一整組全部答對',achStreak:'堅持不懈',achStreakDesc:'連續學習 3 天',achArtist:'像素創作者',achArtistDesc:'保存第一幅作品',achHundred:'百題達人',achHundredDesc:'累計答對 100 題',
   unlocked:'已解鎖',locked:'待解鎖',starCost:'★ {n}',colorUnlocked:'顏色已解鎖！',needMoreStars:'還差一些星星，解鎖需要 {n} 顆。',designSaved:'作品已保存到「我的作品」。',designLoaded:'已載入作品，可以繼續修改。',designDeleted:'作品已刪除。',boardCleared:'畫布已清空。',downloadStarted:'作品 PNG 已準備好。',rewardEarned:'🌟 本次獲得 {n} 顆星星！',perfectBonus:'（全對加贈 3 顆）',rewardClaimed:'這組練習已領取過星星獎勵。',needAnswer:'先完成至少一道題，再領取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'刪除作品',loadDesign:'載入作品',emptyName:'我的拼豆作品'
  },
- 'zh-Hans':{paintMode:"✎ 画笔",panMode:"✥ 移动画布",zoomHint:"高清画布可用拖动模式移动后再上色",exportPixel:"高清像素 PNG",
+ 'zh-Hans':{zoomSelect:"缩放",zoomFit:"适应画布",zoomNear:"放大 2 倍",zoomFar:"放大 3 倍",paintMode:"✎ 画笔",panMode:"✥ 移动画布",zoomHint:"高清画布可用拖动模式移动后再上色",exportPixel:"高清像素 PNG",
   templateHelp:"17 款精细 24×24 与 8 款原生 48×48 图案，点选后可修改。",
   designLimitConfirm:'作品已达到 20 件，继续保存会删除最早的作品。确定保存吗？',storageFull:'本机存储空间不足，无法保存；请先导出备份或清理浏览器空间。',
   dailyGoalTitle:'今天的小目标',dailyGoalDesc:'完成 3 组至少 10 题的练习',dailyGoalDone:'今日目标已达成！',dailyGoalProgress:'已完成 {done} / 3 组',recentPracticeTitle:'最近 7 天',recentPracticeDesc:'每天练习的题数和正确率',recentPracticeEmpty:'今天开始，积累自己的学习轨迹吧。',questionsUnit:'题',
@@ -507,7 +513,7 @@ const GAME_LABELS={
   achFirst:'初次启程',achFirstDesc:'完成第一组练习',achTen:'计算新星',achTenDesc:'累计答对 10 题',achPerfect:'完美一组',achPerfectDesc:'一整组全部答对',achStreak:'坚持不懈',achStreakDesc:'连续学习 3 天',achArtist:'像素创作者',achArtistDesc:'保存第一幅作品',achHundred:'百题达人',achHundredDesc:'累计答对 100 题',
   unlocked:'已解锁',locked:'待解锁',starCost:'★ {n}',colorUnlocked:'颜色已解锁！',needMoreStars:'还差一些星星，解锁需要 {n} 颗。',designSaved:'作品已保存到“我的作品”。',designLoaded:'已载入作品，可以继续修改。',designDeleted:'作品已删除。',boardCleared:'画布已清空。',downloadStarted:'作品 PNG 已准备好。',rewardEarned:'🌟 本次获得 {n} 颗星星！',perfectBonus:'（全对加赠 3 颗）',rewardClaimed:'这组练习已领取过星星奖励。',needAnswer:'先完成至少一道题，再领取星星。',defaultDesignName:'我的拼豆作品',deleteDesign:'删除作品',loadDesign:'载入作品',emptyName:'我的拼豆作品'
  },
- 'en':{paintMode:"✎ Draw",panMode:"✥ Pan",zoomHint:"Use Pan to move the HD canvas, then Draw to color",exportPixel:"HD pixel PNG",
+ 'en':{zoomSelect:"Zoom",zoomFit:"Fit screen",zoomNear:"Zoom ×2",zoomFar:"Zoom ×3",paintMode:"✎ Draw",panMode:"✥ Pan",zoomHint:"Use Pan to move the HD canvas, then Draw to color",exportPixel:"HD pixel PNG",
   templateHelp:"17 detailed 24×24 and 8 original native 48×48 bead artworks, ready to customize.",
   designLimitConfirm:'You have 20 artworks. Saving another will remove the oldest. Continue?',storageFull:'Device storage is full, so your changes cannot be saved. Export a backup or free up space.',
   dailyGoalTitle:'Today’s small goal',dailyGoalDesc:'Finish 3 sets of at least 10 questions',dailyGoalDone:'Today’s goal completed!',dailyGoalProgress:'Completed {done} / 3 sets',recentPracticeTitle:'Last 7 days',recentPracticeDesc:'Questions practiced and accuracy each day',recentPracticeEmpty:'Start today to build your own learning journey.',questionsUnit:'Q',
@@ -550,7 +556,7 @@ function loadGame(){
 }
 let game=loadGame();
 let selectedBeadColor=1;
-let undoStack=[],redoStack=[],activeBrush=null,activePan=null,boardMode='paint',hdCursor=0;
+let undoStack=[],redoStack=[],activeBrush=null,activePan=null,boardMode='paint',hdCursor=0,boardZoom='fit';
 let exerciseRevealed=false,exerciseGraded=false;
 function snapshotBoard(){
   undoStack.push({size:GRID_SIZE,board:game.board.slice()});if(undoStack.length>35)undoStack.shift();redoStack=[];updateUndoButtons()
@@ -562,6 +568,15 @@ function updateUndoButtons(){
 function navigateBoardHistory(direction){
   const from=direction==='undo'?undoStack:redoStack,to=direction==='undo'?redoStack:undoStack;
   if(!from.length)return;to.push({size:GRID_SIZE,board:game.board.slice()});const prev=from.pop();GRID_SIZE=prev.size;game.boardSize=GRID_SIZE;game.board=prev.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);saveGame();renderBeadBoard();updateUndoButtons()
+}
+
+
+function applyBoardZoom(center){
+  const root=document.getElementById('beadBoard'),vp=document.getElementById('boardViewport');
+  if(GRID_SIZE<32)return;
+  const dimension=boardZoom==='fit'?'min(100%,620px)':(GRID_SIZE*8*Number(boardZoom))+'px';
+  root.style.setProperty('--canvas-display',dimension);
+  if(center){vp.scrollLeft=Math.max(0,(vp.scrollWidth-vp.clientWidth)/2);vp.scrollTop=Math.max(0,(vp.scrollHeight-vp.clientHeight)/2)}
 }
 
 function switchBoardMode(next){
@@ -701,7 +716,7 @@ function renderBeadBoard(){
   root.style.setProperty('--bead-radius',GRID_SIZE===24?'2px':'4px');
   document.getElementById('boardSize').value=String(GRID_SIZE);
   if(hd){
-    root.style.setProperty('--canvas-display',GRID_SIZE*16+'px');
+    applyBoardZoom(false);
     root.innerHTML='<canvas id="hdBeadCanvas" width="'+GRID_SIZE*16+'" height="'+GRID_SIZE*16+'" class="bead-draw-canvas" tabindex="0" role="img" aria-label="Editable '+GRID_SIZE+' by '+GRID_SIZE+' pixel art"></canvas>';
     renderHDCanvas();
     viewport.scrollLeft=oldLeft;viewport.scrollTop=oldTop;
@@ -911,6 +926,9 @@ function initGameUI(){
     renderBeadTemplatePicker();
   });
   renderBeadTemplatePicker();
+  document.getElementById('boardZoom').addEventListener('change',function(e){
+    boardZoom=e.target.value;applyBoardZoom(true)
+  });
   document.getElementById('boardPaintMode').addEventListener('click',function(){switchBoardMode('paint')});
   document.getElementById('boardPanMode').addEventListener('click',function(){switchBoardMode('pan')});
   const viewport=document.getElementById('boardViewport');
