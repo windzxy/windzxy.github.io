@@ -583,7 +583,7 @@ function loadGame(){
   base.board=Array.isArray(base.board)&&base.board.length===GRID_SIZE*GRID_SIZE?base.board.map(function(n){n=Number(n)||0;return Number.isInteger(n)&&n>=0&&n<BEAD_COLORS.length?n:0}):Array(GRID_SIZE*GRID_SIZE).fill(0);
   base.layers=normalizedArtLayers(base,GRID_SIZE);
   base.board=composeArtLayers(base.layers);
-  base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){const n=Number(x&&x.size)||12;return x&&boardSizeValid(n)&&Array.isArray(x.board)&&x.board.length===n*n}).slice(-20).map(function(d){return Object.assign({},d,{size:Number(d.size)||12})}):[];
+  base.savedDesigns=Array.isArray(base.savedDesigns)?base.savedDesigns.filter(function(x){const n=Number(x&&x.size)||12;return x&&boardSizeValid(n)&&Array.isArray(x.board)&&x.board.length===n*n}).slice(-20).map(function(d){const size=Number(d.size)||12;return Object.assign({},d,{size,layers:normalizedArtLayers(d,size)})}):[];
   return base;
 }
 let game=loadGame();
@@ -744,14 +744,13 @@ function paintHDPointer(e){
   const x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;
   if(x<0||x>=1||y<0||y>=1)return;
   const index=Math.floor(y*GRID_SIZE)*GRID_SIZE+Math.floor(x*GRID_SIZE);
-  if(game.board[index]===selectedBeadColor)return;
-  game.board[index]=selectedBeadColor;drawHDCell(index);updateBoardProgress()
+  applyArtTool(index)
 }
 
 function paintBeadCell(cell){
-  if(!cell)return;const n=Number(cell.getAttribute('data-cell'));
-  if(!Number.isInteger(n)||n<0||n>=game.board.length||game.board[n]===selectedBeadColor)return;
-  game.board[n]=selectedBeadColor;cell.style.setProperty('--cell-color',selectedBeadColor===0?'#ffffff':BEAD_COLORS[selectedBeadColor].hex);updateBoardProgress()
+  if(!cell)return;
+  const index=Number(cell.getAttribute('data-cell'));
+  applyArtTool(index)
 }
 function finishBrush(){if(activeBrush===null)return;activeBrush=null;saveGame();updateUndoButtons()}
 
@@ -784,8 +783,13 @@ function resizeBoard(nextSize){
   const next=Number(nextSize),sel=document.getElementById('boardSize');
   if(!boardSizeValid(next)||next===GRID_SIZE){sel.value=String(GRID_SIZE);return}
   if(cropWillLoseBeads(game.board,GRID_SIZE,next)&&!window.confirm(gt('gridResizeConfirm'))){sel.value=String(GRID_SIZE);return}
-  snapshotBoard();game.board=centeredResize(game.board,GRID_SIZE,next);
-  GRID_SIZE=next;game.boardSize=GRID_SIZE;saveGame();renderBeadBoard();applyBoardZoom(true)
+  snapshotBoard();
+  game.layers={
+    base:centeredResize(game.layers.base,GRID_SIZE,next),
+    detail:centeredResize(game.layers.detail,GRID_SIZE,next)
+  };
+  GRID_SIZE=next;game.boardSize=GRID_SIZE;syncArtLayers();
+  saveGame();renderBeadBoard();applyBoardZoom(true)
 }
 function scaledTemplate(template,from,to){
   if(from===to)return template.slice();
@@ -951,7 +955,9 @@ function applyBeadTemplate(type){
   const pixels=window.getBeadArtPixels&&window.getBeadArtPixels(type);
   if(!template||!pixels||pixels.length!==template.size*template.size)return;
   snapshotBoard();
-  GRID_SIZE=template.size;game.boardSize=GRID_SIZE;game.board=pixels.slice();
+  GRID_SIZE=template.size;game.boardSize=GRID_SIZE;
+  game.layers={base:pixels.slice(),detail:Array(GRID_SIZE*GRID_SIZE).fill(0)};
+  setActiveArtLayer('detail');syncArtLayers();
   const lang=els.language.value,names=BEAD_ART_NAMES[lang]||BEAD_ART_NAMES['zh-Hans'];
   document.getElementById('designName').value=names[type]||type;
   document.getElementById('boardSize').value=String(GRID_SIZE);
@@ -960,7 +966,7 @@ function applyBeadTemplate(type){
 function saveBeadDesign(){
   const name=(document.getElementById('designName').value||'').trim()||gt('emptyName');
   if(game.savedDesigns.length>=20&&!window.confirm(gt('designLimitConfirm')))return;
-  game.savedDesigns.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name,size:GRID_SIZE,board:game.board.slice(),date:new Date().toISOString()});
+  game.savedDesigns.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name,size:GRID_SIZE,board:game.board.slice(),layers:cloneArtLayers(game.layers),date:new Date().toISOString()});
   game.savedDesigns=game.savedDesigns.slice(-20);saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designSaved'))
 }
 function downloadBeadDesign(){
@@ -1056,7 +1062,8 @@ function validateGameBackup(raw){
   if(!boardSizeValid(size)||!Number.isSafeInteger(data.stars)||data.stars<0||!Array.isArray(data.board)||data.board.length!==size*size||!Array.isArray(data.savedDesigns)||data.savedDesigns.length>200)throw Error('shape');
   const colorValid=function(n){return Number.isInteger(n)&&n>=0&&n<BEAD_COLORS.length};
   if(data.board.some(function(n){return !colorValid(n)}))throw Error('colors');
-  if(data.savedDesigns.some(function(d){const dim=Number(d&&d.size)||12;return !d||!boardSizeValid(dim)||typeof d.name!=='string'||d.name.length>100||!Array.isArray(d.board)||d.board.length!==dim*dim||d.board.some(function(n){return !colorValid(n)})}))throw Error('artworks');
+  if(data.layers&&(!validArtLayer(data.layers.base,size)||!validArtLayer(data.layers.detail,size)))throw Error('layers');
+  if(data.savedDesigns.some(function(d){const dim=Number(d&&d.size)||12;return !d||!boardSizeValid(dim)||(d.layers&&(!validArtLayer(d.layers.base,dim)||!validArtLayer(d.layers.detail,dim)))||typeof d.name!=='string'||d.name.length>100||!Array.isArray(d.board)||d.board.length!==dim*dim||d.board.some(function(n){return !colorValid(n)})}))throw Error('artworks');
   const safe={};
   ['stars','totalAnswered','totalCorrect','rounds','perfectRounds'].forEach(function(k){safe[k]=Number.isSafeInteger(data[k])&&data[k]>=0?data[k]:0});
   ['days','rewarded','attempted','submittedSets','perfectRewarded','completedBonuses'].forEach(function(k){safe[k]=Array.isArray(data[k])?data[k].filter(function(v){return typeof v==='string'&&v.length<1000}).slice(-10000):[]});
@@ -1064,7 +1071,8 @@ function validateGameBackup(raw){
   safe.unlockedColors=Array.isArray(data.unlockedColors)?data.unlockedColors.filter(function(n){return Number.isInteger(n)&&n>=1&&n<BEAD_COLORS.length}):[1,2,3,4,5];
   safe.boardSize=size;
   safe.board=data.board.slice();
-  safe.savedDesigns=data.savedDesigns.slice(-20).map(function(d,i){return{id:String(d.id||i).slice(0,80), name:d.name.slice(0,24),size:Number(d.size)||12,board:d.board.slice(),date:typeof d.date==='string'?d.date.slice(0,40):''}});
+  safe.layers=normalizedArtLayers(data,size);
+  safe.savedDesigns=data.savedDesigns.slice(-20).map(function(d,i){return{id:String(d.id||i).slice(0,80), name:d.name.slice(0,24),size:Number(d.size)||12,board:d.board.slice(),layers:normalizedArtLayers(d,Number(d.size)||12),date:typeof d.date==='string'?d.date.slice(0,40):''}});
   return safe
 }
 function importGameBackup(file){
@@ -1075,7 +1083,7 @@ function importGameBackup(file){
     try{
       const candidate=validateGameBackup(JSON.parse(reader.result));
       if(!window.confirm(gt('backupConfirm')))return;
-      game=candidate;GRID_SIZE=game.boardSize;undoStack=[];redoStack=[];selectedBeadColor=1;saveGame();updateGameUI();updateUndoButtons();gameToast(gt('backupSuccess'))
+      game=candidate;GRID_SIZE=game.boardSize;game.layers=normalizedArtLayers(game,GRID_SIZE);syncArtLayers();undoStack=[];redoStack=[];selectedBeadColor=1;setActiveArtLayer('base');saveGame();updateGameUI();updateUndoButtons();gameToast(gt('backupSuccess'))
     }catch(err){gameToast(gt('backupInvalid'))}
   };
   reader.readAsText(file,'utf-8')
@@ -1139,7 +1147,10 @@ function initGameUI(){
     else if(e.key==='ArrowUp')next=Math.max(0,old-GRID_SIZE);
     else if(e.key==='ArrowDown')next=Math.min(GRID_SIZE*GRID_SIZE-1,old+GRID_SIZE);
     else if(e.key===' '||e.key==='Enter'){
-      e.preventDefault();snapshotBoard();game.board[hdCursor]=selectedBeadColor;drawHDCell(hdCursor);saveGame();updateBoardProgress();return
+      e.preventDefault();
+      if(boardMode==='fill'||boardMode==='pick')applyArtTool(hdCursor);
+      else {snapshotBoard();paintIndex(hdCursor,selectedBeadColor);saveGame()}
+      return
     }else return;
     e.preventDefault();drawHDCell(old);hdCursor=next;
     const canvas=document.getElementById('hdBeadCanvas'),ctx=canvas.getContext('2d');
@@ -1167,11 +1178,14 @@ function initGameUI(){
   });
   document.addEventListener('click',function(e){
     const template=e.target.closest('[data-template]');if(template){applyBeadTemplate(template.getAttribute('data-template'));return}
-    if(e.target.closest('#clearBoardBtn')){snapshotBoard();game.board=Array(GRID_SIZE*GRID_SIZE).fill(0);saveGame();renderBeadBoard();gameToast(gt('boardCleared'));return}
+    if(e.target.closest('#clearBoardBtn')){
+      snapshotBoard();game.layers={base:Array(GRID_SIZE*GRID_SIZE).fill(0),detail:Array(GRID_SIZE*GRID_SIZE).fill(0)};
+      syncArtLayers();saveGame();renderBeadBoard();gameToast(gt('boardCleared'));return
+    }
     if(e.target.closest('#saveDesignBtn')){saveBeadDesign();return}
     if(e.target.closest('#exportDesignBtn')){downloadBeadDesign();return}
     if(e.target.closest('#exportPixelBtn')){downloadCleanPixelPNG();return}
-    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();GRID_SIZE=Number(d.size)||12;game.boardSize=GRID_SIZE;game.board=d.board.slice();document.getElementById('boardSize').value=String(GRID_SIZE);document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();applyBoardZoom(true);gameToast(gt('designLoaded'))}return}
+    const load=e.target.closest('[data-load-design]');if(load){const d=game.savedDesigns.find(function(x){return String(x.id)===load.getAttribute('data-load-design')});if(d){snapshotBoard();GRID_SIZE=Number(d.size)||12;game.boardSize=GRID_SIZE;game.layers=normalizedArtLayers(d,GRID_SIZE);syncArtLayers();setActiveArtLayer('detail');document.getElementById('boardSize').value=String(GRID_SIZE);document.getElementById('designName').value=d.name||gt('defaultDesignName');saveGame();renderBeadBoard();applyBoardZoom(true);gameToast(gt('designLoaded'))}return}
     const del=e.target.closest('[data-delete-design]');if(del){if(!window.confirm(gt('deleteConfirm')))return;game.savedDesigns=game.savedDesigns.filter(function(x){return String(x.id)!==del.getAttribute('data-delete-design')});saveGame();renderSavedDesigns();renderGrowth();gameToast(gt('designDeleted'))}
   });
   document.getElementById('backupExportBtn').addEventListener('click',exportGameBackup);
