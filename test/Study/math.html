@@ -45,8 +45,20 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 .game-toast{position:fixed;z-index:99;left:50%;bottom:26px;max-width:calc(100% - 32px);padding:12px 18px;border:1px solid rgba(255,255,255,.8);border-radius:14px;background:rgba(23,32,52,.92);box-shadow:0 14px 40px rgba(23,32,52,.22);color:#fff;font-size:12px;font-weight:750;opacity:0;pointer-events:none;transform:translate(-50%,10px);transition:.2s}.game-toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:920px){.settings-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bead-layout{grid-template-columns:minmax(210px,.8fr) minmax(0,1.2fr)}.growth-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.achievement-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.app{width:calc(100% - 18px);margin:9px auto 34px}.topbar{gap:8px}.brand-mark{width:38px;height:38px;border-radius:12px}.brand-copy strong{font-size:14px}.brand-copy small{font-size:10px}.topbar-actions{gap:8px}.back-link{font-size:10px}.star-wallet{min-width:84px;padding:6px 9px;gap:6px}.wallet-star{width:27px;height:27px}.star-wallet strong{font-size:16px}.star-wallet small{font-size:9px}.hero{grid-template-columns:1fr;padding:22px 19px 17px;border-radius:22px}.hero-art{display:none}.hero h1{font-size:30px}.hero-copy>p{font-size:12px}.hero-stats{gap:7px}.hero-stat{display:block;padding:10px 9px;text-align:center}.hero-stat strong{font-size:18px}.hero-stat span{margin-top:4px;font-size:9px}.feature-tabs{margin-top:12px}.feature-tab{min-height:40px;padding:0 12px;font-size:11px}.panel,.worksheet,.bead-panel,.growth-panel{padding:16px 13px;border-radius:19px}.panel-intro{display:block;margin-bottom:16px}.panel-intro h2{font-size:18px}.settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field select,.field input{min-height:40px;padding:8px;font-size:11px}.checks{gap:10px 12px}.check{font-size:11px}.actions{gap:7px}.btn{min-height:38px;padding:0 10px;font-size:11px}.worksheet{padding:15px 10px;min-height:300px}.sheet-head{flex-direction:column;gap:8px}.sheet-title h2{font-size:19px}.student-info{gap:10px}.questions{grid-template-columns:1fr!important;gap:9px}.question{min-height:86px;padding:12px 10px}.equation{font-size:24px}.bead-intro{gap:8px}.bead-intro h2{font-size:21px}.bead-intro p{font-size:11px}.bead-wallet{padding:7px 9px;font-size:10px}.bead-wallet strong{font-size:15px}.bead-layout{grid-template-columns:1fr;gap:12px}.bead-tools{padding:14px}.bead-palette{grid-template-columns:repeat(4,minmax(0,1fr))}.palette-color{padding:7px 2px}.palette-swatch{width:23px;height:23px}.board-area{padding:12px 9px}.bead-board{gap:2px;padding:5px;border-radius:12px}.bead-cell{border-radius:3px}.saved-designs{grid-template-columns:repeat(2,minmax(0,1fr))}.growth-stats{gap:8px}.growth-stat{padding:13px}.growth-stat strong{font-size:23px}.achievement-list{grid-template-columns:1fr}.footer-tip{font-size:10px}}
+
+/* Math Garden V2 */
+.quick-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.preset-chip{display:grid;gap:5px;min-height:70px;padding:11px 13px;border:1px solid #e2e8f2;border-radius:15px;background:#f9fbff;text-align:left;color:#3d4b65;transition:.15s}
+.preset-chip strong{font-size:12px;line-height:1.3}.preset-chip small{font-size:10px;color:#8390a3}
+.preset-chip:hover,.preset-chip:focus-visible{border-color:#8caef9;outline:none}.preset-chip.active{border-color:#b7cdff;background:#edf4ff;box-shadow:inset 0 0 0 1px #c8d8ff;color:#245cdb}.preset-chip.active small{color:#5477b3}
+.bead-board,.bead-cell{touch-action:none;user-select:none;-webkit-user-select:none;overscroll-behavior:contain}.bead-cell:focus-visible{outline:2px solid #225fe3;outline-offset:-2px;z-index:1}
+.tool-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.tool-actions .btn:last-child{grid-column:auto}.tool-actions button:disabled{opacity:.38;cursor:not-allowed;transform:none}
+.backup-tools{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:20px;padding:17px 18px;border:1px solid #e7ebf4;border-radius:17px;background:#f9fbfe}.backup-tools strong{display:block;font-size:13px}.backup-tools p{margin:3px 0 0;color:#8791a3;font-size:11px}.backup-actions{display:flex;flex-wrap:wrap;gap:7px}
+@media(max-width:750px){.quick-presets{grid-template-columns:repeat(2,minmax(0,1fr))}.preset-chip{min-height:63px}.backup-tools{align-items:flex-start}}
+@media(max-width:420px){.tool-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.tool-actions .btn:last-child{grid-column:1/-1}.backup-actions .btn{flex:1}}
+
 @page{size:A4;margin:9mm}
-@media print{body{background:#fff}.app{width:100%;margin:0}.topbar,.hero,.feature-tabs,.panel,.footer-tip,.result,.bead-panel,.growth-panel,.game-toast{display:none!important}.feature-panel{display:none!important}.feature-panel[data-feature-panel="practice"]{display:block!important}.worksheet{display:block!important;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;min-height:auto}.sheet-page{margin:0!important;padding:0!important;border:0!important;break-after:page;page-break-after:always}.sheet-page:last-child{break-after:auto;page-break-after:auto}.sheet-head{margin-bottom:4mm;padding-bottom:2.5mm}.sheet-title h2{font-size:18px;margin-bottom:2px}.sheet-title p{font-size:9.5px}.student-info{gap:10px;font-size:10.5px}.time-box{padding-top:2px}.score-box{color:#c33;transform:rotate(-3deg)}.score-box .score-value{font-size:24px}.line{width:60px}.questions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1.4mm 5mm!important}.question{height:8.25mm;min-height:0;padding:0 1.5mm;border:0;border-bottom:1px dotted #999;border-radius:0;display:flex;align-items:center;page-break-inside:avoid}.q-index{position:static;width:12mm;flex:0 0 12mm;color:#444;font-size:7.5px}.equation{flex:1;justify-content:flex-start;gap:4px;margin:0;font-size:16px;letter-spacing:0;white-space:nowrap}.answer-input{width:38px;padding:0;color:#000;border-color:#000;font-size:16px}select.answer-input{display:none!important}.print-compare-line{display:inline-block;width:45px;height:22px;border-bottom:2px solid #000;flex:0 0 45px}.show-answers .print-compare-line{display:none!important}.answer-text{width:38px;min-width:38px;color:#000;border-color:#000;font-size:16px}.strategy,.strategy-placeholder,.mark{display:none!important}}
+@media print{body{background:#fff}.app{width:100%;margin:0}.topbar,.hero,.feature-tabs,.panel,.footer-tip,.result,.bead-panel,.growth-panel,.game-toast,.quick-presets{display:none!important}.feature-panel{display:none!important}.feature-panel[data-feature-panel="practice"]{display:block!important}.worksheet{display:block!important;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;min-height:auto}.sheet-page{margin:0!important;padding:0!important;border:0!important;break-after:page;page-break-after:always}.sheet-page:last-child{break-after:auto;page-break-after:auto}.sheet-head{margin-bottom:4mm;padding-bottom:2.5mm}.sheet-title h2{font-size:18px;margin-bottom:2px}.sheet-title p{font-size:9.5px}.student-info{gap:10px;font-size:10.5px}.time-box{padding-top:2px}.score-box{color:#c33;transform:rotate(-3deg)}.score-box .score-value{font-size:24px}.line{width:60px}.questions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1.4mm 5mm!important}.question{height:8.25mm;min-height:0;padding:0 1.5mm;border:0;border-bottom:1px dotted #999;border-radius:0;display:flex;align-items:center;page-break-inside:avoid}.q-index{position:static;width:12mm;flex:0 0 12mm;color:#444;font-size:7.5px}.equation{flex:1;justify-content:flex-start;gap:4px;margin:0;font-size:16px;letter-spacing:0;white-space:nowrap}.answer-input{width:38px;padding:0;color:#000;border-color:#000;font-size:16px}select.answer-input{display:none!important}.print-compare-line{display:inline-block;width:45px;height:22px;border-bottom:2px solid #000;flex:0 0 45px}.show-answers .print-compare-line{display:none!important}.answer-text{width:38px;min-width:38px;color:#000;border-color:#000;font-size:16px}.strategy,.strategy-placeholder,.mark{display:none!important}}
 
   </style>
 </head>
@@ -90,7 +102,13 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
     <section class="feature-panel active" data-feature-panel="practice">
     <section class="panel">
       <div class="panel-intro"><div><h2 data-game-text="panelTitle">設定今日練習</h2><p data-game-text="panelCopy">依照孩子目前的能力選擇題型與難度；完成作答後即可領取星星。</p></div></div>
-      <div class="settings-grid">
+      <div class="quick-presets" role="group" aria-label="数学快捷练习">
+          <button class="preset-chip active" data-preset="grade1" type="button"><strong data-game-text="presetGrade1">一年级口算</strong><small data-game-text="presetGrade1Sub">20以内 · 10题</small></button>
+          <button class="preset-chip" data-preset="tens" type="button"><strong data-game-text="presetTens">两位数计算</strong><small data-game-text="presetTensSub">100以内 · 10题</small></button>
+          <button class="preset-chip" data-preset="compare" type="button"><strong data-game-text="presetCompare">数字比大小</strong><small data-game-text="presetCompareSub">两位数 · 10题</small></button>
+          <button class="preset-chip" data-preset="multiply" type="button"><strong data-game-text="presetMultiply">乘法口诀</strong><small data-game-text="presetMultiplySub">100以内 · 10题</small></button>
+        </div>
+        <div class="settings-grid">
         <div class="field">
           <label for="language" data-i18n="language">語言</label>
           <select id="language">
@@ -139,8 +157,8 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
         <div class="field">
           <label for="operandCount" data-i18n="operandCount">每題數字個數</label>
           <select id="operandCount">
-            <option value="2" data-i18n="twoNumbers">2 個</option>
-            <option value="3" data-i18n="threeNumbers" selected>3 個</option>
+            <option value="2" data-i18n="twoNumbers" selected>2 個</option>
+            <option value="3" data-i18n="threeNumbers">3 個</option>
             <option value="4" data-i18n="fourNumbers">4 個</option>
             <option value="mixed" data-i18n="mixedCount">2～4 個混合</option>
           </select>
@@ -169,8 +187,8 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
         <div class="field">
           <label for="level" data-i18n="level">難易度</label>
           <select id="level">
-            <option value="easy" data-i18n="easy">容易</option>
-            <option value="medium" data-i18n="medium" selected>中等</option>
+            <option value="easy" data-i18n="easy" selected>容易</option>
+            <option value="medium" data-i18n="medium">中等</option>
             <option value="hard" data-i18n="hard">困難</option>
             <option value="challenge" data-i18n="challenge">挑戰</option>
             <option value="olympiad" data-i18n="olympiad">奧數</option>
@@ -189,11 +207,11 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
         <div class="field">
           <label for="count" data-i18n="perPage">每頁題目數量</label>
           <select id="count">
-            <option value="10">10</option>
+            <option value="10" selected>10</option>
             <option value="20">20</option>
             <option value="30">30</option>
             <option value="40">40</option>
-            <option value="50" selected>50</option>
+            <option value="50">50</option>
           </select>
         </div>
 
@@ -255,7 +273,7 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
 
     <section class="worksheet" id="worksheet">
       <div class="pages" id="pages"></div>
-      <div class="result" id="result"></div>
+      <div class="result" id="result" role="status" aria-live="polite"></div>
     </section>
 
     <p class="footer-tip" data-i18n="footer">
@@ -280,6 +298,8 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
             </div></div>
             <div><div class="tool-title" data-game-text="paletteTitle">拼豆顏色 · 點選使用</div><div id="beadPalette" class="bead-palette"></div></div>
             <div class="tool-actions">
+              <button id="undoBoardBtn" class="btn btn-secondary" type="button" data-game-text="undoBoard" disabled>↶ 撤销</button>
+              <button id="redoBoardBtn" class="btn btn-secondary" type="button" data-game-text="redoBoard" disabled>↷ 重做</button>
               <button id="clearBoardBtn" class="btn btn-secondary" type="button" data-game-text="clearBoard">清空畫布</button>
               <button id="saveDesignBtn" class="btn btn-green" type="button" data-game-text="saveDesign">保存作品</button>
               <button id="exportDesignBtn" class="btn btn-primary" type="button" data-game-text="exportDesign">下載 PNG</button>
@@ -290,6 +310,14 @@ button,input,select{font:inherit;color:inherit}button,a{-webkit-tap-highlight-co
             <div class="board-head"><strong data-game-text="boardTitle">我的像素畫</strong><span id="boardProgress">0 / 144</span></div>
             <div id="beadBoard" class="bead-board" role="grid" aria-label="拼豆畫布"></div>
             <div class="board-hint" data-game-text="boardHint">先選一種顏色，再點格子放入拼豆；點橡皮擦可清除。</div>
+          </div>
+        </div>
+        <div class="backup-tools">
+          <div><strong data-game-text="backupTitle">学习数据备份</strong><p data-game-text="backupDesc">更换设备时可导出星星和作品，再从备份恢复。</p></div>
+          <div class="backup-actions">
+            <button class="btn btn-secondary" id="backupExportBtn" type="button" data-game-text="backupExport">导出备份</button>
+            <button class="btn btn-secondary" id="backupImportBtn" type="button" data-game-text="backupImport">导入备份</button>
+            <input id="backupFileInput" type="file" accept="application/json,.json" hidden>
           </div>
         </div>
         <div class="gallery-section"><h3 data-game-text="galleryTitle">我的作品</h3><div id="savedDesigns" class="saved-designs"></div></div>
