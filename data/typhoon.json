@@ -8,7 +8,7 @@
       "id": "2648",
       "name": "IN-FA",
       "sourceUrl": "https://www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2648.xml",
-      "bulletinTime": "2026-11-03T04:00:57+08:00",
+      "bulletinTime": "2026-11-03T10:00:55+08:00",
       "points": [
         {
           "lat": 19.7,
@@ -120,60 +120,38 @@
           "time": "2026-11-02T18:00:00+00:00",
           "wind": "110km/h",
           "intensity": "Severe Tropical Storm",
+          "kind": "past"
+        },
+        {
+          "lat": 23.2,
+          "lon": 139.4,
+          "time": "2026-11-03T00:00:00+00:00",
+          "wind": "110km/h",
+          "intensity": "Severe Tropical Storm",
           "kind": "analysis"
         },
         {
-          "lat": 23.1,
-          "lon": 139.84,
+          "lat": 23.21,
+          "lon": 139.37,
           "kind": "forecast"
         },
         {
-          "lat": 23.09,
-          "lon": 139.76,
+          "lat": 23.22,
+          "lon": 139.32,
           "kind": "forecast"
         },
         {
-          "lat": 23.09,
-          "lon": 139.67,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.09,
-          "lon": 139.57,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.09,
-          "lon": 139.48,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.1,
-          "lon": 139.4,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.12,
-          "lon": 139.34,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.15,
-          "lon": 139.29,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.19,
-          "lon": 139.24,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.23,
-          "lon": 139.19,
+          "lat": 23.24,
+          "lon": 139.27,
           "kind": "forecast"
         },
         {
           "lat": 23.26,
+          "lon": 139.21,
+          "kind": "forecast"
+        },
+        {
+          "lat": 23.28,
           "lon": 139.15,
           "kind": "forecast"
         },
@@ -188,22 +166,22 @@
           "kind": "forecast"
         },
         {
-          "lat": 23.36,
+          "lat": 23.35,
           "lon": 139.0,
           "kind": "forecast"
         },
         {
-          "lat": 23.39,
+          "lat": 23.38,
           "lon": 138.94,
           "kind": "forecast"
         },
         {
-          "lat": 23.42,
+          "lat": 23.41,
           "lon": 138.89,
           "kind": "forecast"
         },
         {
-          "lat": 23.46,
+          "lat": 23.45,
           "lon": 138.84,
           "kind": "forecast"
         },
@@ -240,9 +218,6 @@
         {
           "lat": 23.9,
           "lon": 138.6,
-          "time": "2026-11-03T18:00:00+00:00",
-          "wind": "110km/h",
-          "intensity": "Severe Tropical Storm",
           "kind": "forecast"
         },
         {
@@ -273,6 +248,9 @@
         {
           "lat": 24.5,
           "lon": 138.4,
+          "time": "2026-11-04T00:00:00+00:00",
+          "wind": "110km/h",
+          "intensity": "Severe Tropical Storm",
           "kind": "forecast"
         },
         {
@@ -363,9 +341,6 @@
         {
           "lat": 26.8,
           "lon": 138.7,
-          "time": "2026-11-04T18:00:00+00:00",
-          "wind": "110km/h",
-          "intensity": "Severe Tropical Storm",
           "kind": "forecast"
         },
         {
@@ -396,6 +371,9 @@
         {
           "lat": 28.0,
           "lon": 139.5,
+          "time": "2026-11-05T00:00:00+00:00",
+          "wind": "110km/h",
+          "intensity": "Severe Tropical Storm",
           "kind": "forecast"
         },
         {
@@ -486,9 +464,6 @@
         {
           "lat": 34.2,
           "lon": 146.3,
-          "time": "2026-11-05T18:00:00+00:00",
-          "wind": "90km/h",
-          "intensity": "Severe Tropical Storm",
           "kind": "forecast"
         },
         {
@@ -519,6 +494,9 @@
         {
           "lat": 37.5,
           "lon": 150.7,
+          "time": "2026-11-06T00:00:00+00:00",
+          "wind": "90km/h",
+          "intensity": "Severe Tropical Storm",
           "kind": "forecast"
         },
         {
@@ -582,34 +560,64 @@
           "kind": "forecast"
         },
         {
-          "lat": 45.04,
-          "lon": 159.69,
+          "lat": 45.01,
+          "lon": 159.65,
           "kind": "forecast"
         },
         {
-          "lat": 45.46,
-          "lon": 160.29,
+          "lat": 45.38,
+          "lon": 160.18,
           "kind": "forecast"
         },
         {
-          "lat": 45.85,
-          "lon": 160.88,
+          "lat": 45.72,
+          "lon": 160.69,
           "kind": "forecast"
         },
         {
-          "lat": 46.2,
-          "lon": 161.42,
+          "lat": 46.04,
+          "lon": 161.19,
           "kind": "forecast"
         },
         {
-          "lat": 46.48,
-          "lon": 161.87,
+          "lat": 46.36,
+          "lon": 161.69,
           "kind": "forecast"
         },
         {
           "lat": 46.7,
           "lon": 162.2,
-          "time": "2026-11-06T18:00:00+00:00",
+          "kind": "forecast"
+        },
+        {
+          "lat": 47.07,
+          "lon": 162.75,
+          "kind": "forecast"
+        },
+        {
+          "lat": 47.48,
+          "lon": 163.35,
+          "kind": "forecast"
+        },
+        {
+          "lat": 47.88,
+          "lon": 163.94,
+          "kind": "forecast"
+        },
+        {
+          "lat": 48.26,
+          "lon": 164.5,
+          "kind": "forecast"
+        },
+        {
+          "lat": 48.57,
+          "lon": 164.96,
+          "kind": "forecast"
+        },
+        {
+          "lat": 48.8,
+          "lon": 165.3,
+          "time": "2026-11-07T00:00:00+00:00",
           "wind": "--",
           "intensity": "Extratropical Low",
           "kind": "forecast"
@@ -619,6 +627,6 @@
   ],
   "errors": [],
   "ok": true,
-  "sourceUpdatedAt": "2026-11-03T04:00:57+08:00",
-  "updatedAt": "2026-11-02T20:12:15.684994+00:00"
+  "sourceUpdatedAt": "2026-11-03T10:00:55+08:00",
+  "updatedAt": "2026-11-03T02:15:58.815692+00:00"
 }
