@@ -8,7 +8,7 @@
       "id": "2649",
       "name": "CEMPAKA",
       "sourceUrl": "https://www.weather.gov.hk/wxinfo/currwx/hko_tctrack_2649.xml",
-      "bulletinTime": "2026-11-08T22:00:59+08:00",
+      "bulletinTime": "2026-11-09T04:00:58+08:00",
       "points": [
         {
           "lat": 18.4,
@@ -72,621 +72,629 @@
           "time": "2026-11-08T12:00:00+00:00",
           "wind": "110km/h",
           "intensity": "Severe Tropical Storm",
+          "kind": "past"
+        },
+        {
+          "lat": 23.2,
+          "lon": 135.7,
+          "time": "2026-11-08T18:00:00+00:00",
+          "wind": "110km/h",
+          "intensity": "Severe Tropical Storm",
           "kind": "analysis"
         },
         {
-          "lat": 22.63,
-          "lon": 136.75,
+          "lat": 23.22,
+          "lon": 135.6,
           "kind": "forecast"
         },
         {
-          "lat": 22.66,
-          "lon": 136.67,
+          "lat": 23.24,
+          "lon": 135.47,
           "kind": "forecast"
         },
         {
-          "lat": 22.69,
-          "lon": 136.58,
+          "lat": 23.27,
+          "lon": 135.31,
           "kind": "forecast"
         },
         {
-          "lat": 22.73,
-          "lon": 136.48,
-          "kind": "forecast"
-        },
-        {
-          "lat": 22.77,
-          "lon": 136.37,
-          "kind": "forecast"
-        },
-        {
-          "lat": 22.81,
-          "lon": 136.24,
-          "kind": "forecast"
-        },
-        {
-          "lat": 22.86,
-          "lon": 136.11,
-          "kind": "forecast"
-        },
-        {
-          "lat": 22.91,
-          "lon": 135.97,
-          "kind": "forecast"
-        },
-        {
-          "lat": 22.96,
-          "lon": 135.82,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.01,
-          "lon": 135.68,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.06,
-          "lon": 135.53,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.12,
-          "lon": 135.39,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.18,
-          "lon": 135.26,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.23,
-          "lon": 135.13,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.29,
-          "lon": 135.01,
+          "lat": 23.31,
+          "lon": 135.14,
           "kind": "forecast"
         },
         {
           "lat": 23.35,
-          "lon": 134.9,
+          "lon": 135.0,
           "kind": "forecast"
         },
         {
-          "lat": 23.41,
-          "lon": 134.81,
+          "lat": 23.4,
+          "lon": 134.9,
           "kind": "forecast"
         },
         {
           "lat": 23.46,
-          "lon": 134.73,
+          "lon": 134.84,
           "kind": "forecast"
         },
         {
           "lat": 23.52,
-          "lon": 134.66,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.58,
-          "lon": 134.62,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.64,
-          "lon": 134.6,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.69,
-          "lon": 134.61,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.75,
-          "lon": 134.64,
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.8,
-          "lon": 134.7,
-          "time": "2026-11-09T12:00:00+00:00",
-          "wind": "155km/h",
-          "intensity": "Severe Typhoon",
-          "kind": "forecast"
-        },
-        {
-          "lat": 23.85,
           "lon": 134.79,
           "kind": "forecast"
         },
         {
-          "lat": 23.9,
-          "lon": 134.9,
+          "lat": 23.59,
+          "lon": 134.77,
+          "kind": "forecast"
+        },
+        {
+          "lat": 23.67,
+          "lon": 134.76,
+          "kind": "forecast"
+        },
+        {
+          "lat": 23.74,
+          "lon": 134.77,
+          "kind": "forecast"
+        },
+        {
+          "lat": 23.8,
+          "lon": 134.8,
+          "kind": "forecast"
+        },
+        {
+          "lat": 23.86,
+          "lon": 134.84,
+          "kind": "forecast"
+        },
+        {
+          "lat": 23.91,
+          "lon": 134.91,
           "kind": "forecast"
         },
         {
           "lat": 23.96,
-          "lon": 135.03,
+          "lon": 134.99,
           "kind": "forecast"
         },
         {
-          "lat": 24.01,
-          "lon": 135.18,
+          "lat": 24.0,
+          "lon": 135.08,
           "kind": "forecast"
         },
         {
-          "lat": 24.06,
-          "lon": 135.35,
+          "lat": 24.05,
+          "lon": 135.19,
           "kind": "forecast"
         },
         {
-          "lat": 24.12,
-          "lon": 135.54,
+          "lat": 24.1,
+          "lon": 135.3,
           "kind": "forecast"
         },
         {
-          "lat": 24.17,
-          "lon": 135.75,
+          "lat": 24.15,
+          "lon": 135.42,
           "kind": "forecast"
         },
         {
-          "lat": 24.23,
-          "lon": 135.97,
+          "lat": 24.2,
+          "lon": 135.55,
           "kind": "forecast"
         },
         {
-          "lat": 24.28,
+          "lat": 24.26,
+          "lon": 135.69,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.31,
+          "lon": 135.85,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.36,
+          "lon": 136.02,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.4,
           "lon": 136.2,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.33,
-          "lon": 136.45,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.39,
-          "lon": 136.7,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.44,
-          "lon": 136.97,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.5,
-          "lon": 137.24,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.55,
-          "lon": 137.52,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.61,
-          "lon": 137.81,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.66,
-          "lon": 138.1,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.72,
-          "lon": 138.39,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.77,
-          "lon": 138.69,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.83,
-          "lon": 138.98,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.88,
-          "lon": 139.27,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.94,
-          "lon": 139.56,
-          "kind": "forecast"
-        },
-        {
-          "lat": 24.99,
-          "lon": 139.85,
-          "kind": "forecast"
-        },
-        {
-          "lat": 25.05,
-          "lon": 140.13,
-          "kind": "forecast"
-        },
-        {
-          "lat": 25.1,
-          "lon": 140.4,
-          "time": "2026-11-10T12:00:00+00:00",
+          "time": "2026-11-09T18:00:00+00:00",
           "wind": "145km/h",
           "intensity": "Typhoon",
           "kind": "forecast"
         },
         {
+          "lat": 24.44,
+          "lon": 136.4,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.47,
+          "lon": 136.62,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.5,
+          "lon": 136.85,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.53,
+          "lon": 137.09,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.56,
+          "lon": 137.34,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.6,
+          "lon": 137.6,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.64,
+          "lon": 137.86,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.69,
+          "lon": 138.14,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.74,
+          "lon": 138.43,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.79,
+          "lon": 138.71,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.84,
+          "lon": 139.01,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.9,
+          "lon": 139.3,
+          "kind": "forecast"
+        },
+        {
+          "lat": 24.96,
+          "lon": 139.59,
+          "kind": "forecast"
+        },
+        {
+          "lat": 25.02,
+          "lon": 139.89,
+          "kind": "forecast"
+        },
+        {
+          "lat": 25.08,
+          "lon": 140.19,
+          "kind": "forecast"
+        },
+        {
           "lat": 25.15,
-          "lon": 140.67,
+          "lon": 140.5,
           "kind": "forecast"
         },
         {
-          "lat": 25.21,
-          "lon": 140.95,
+          "lat": 25.22,
+          "lon": 140.8,
           "kind": "forecast"
         },
         {
-          "lat": 25.27,
-          "lon": 141.23,
+          "lat": 25.3,
+          "lon": 141.1,
           "kind": "forecast"
         },
         {
-          "lat": 25.32,
-          "lon": 141.51,
-          "kind": "forecast"
-        },
-        {
-          "lat": 25.38,
-          "lon": 141.8,
-          "kind": "forecast"
-        },
-        {
-          "lat": 25.44,
-          "lon": 142.1,
+          "lat": 25.39,
+          "lon": 141.4,
           "kind": "forecast"
         },
         {
           "lat": 25.49,
-          "lon": 142.39,
+          "lon": 141.7,
           "kind": "forecast"
         },
         {
-          "lat": 25.55,
-          "lon": 142.69,
+          "lat": 25.59,
+          "lon": 141.99,
           "kind": "forecast"
         },
         {
-          "lat": 25.61,
-          "lon": 142.99,
+          "lat": 25.7,
+          "lon": 142.29,
           "kind": "forecast"
         },
         {
-          "lat": 25.67,
-          "lon": 143.3,
+          "lat": 25.8,
+          "lon": 142.59,
           "kind": "forecast"
         },
         {
-          "lat": 25.72,
-          "lon": 143.6,
+          "lat": 25.9,
+          "lon": 142.9,
+          "time": "2026-11-10T18:00:00+00:00",
+          "wind": "130km/h",
+          "intensity": "Typhoon",
           "kind": "forecast"
         },
         {
-          "lat": 25.78,
-          "lon": 143.91,
+          "lat": 25.99,
+          "lon": 143.21,
           "kind": "forecast"
         },
         {
-          "lat": 25.84,
-          "lon": 144.22,
-          "kind": "forecast"
-        },
-        {
-          "lat": 25.89,
-          "lon": 144.53,
-          "kind": "forecast"
-        },
-        {
-          "lat": 25.95,
-          "lon": 144.84,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.0,
-          "lon": 145.15,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.06,
-          "lon": 145.46,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.11,
-          "lon": 145.77,
+          "lat": 26.08,
+          "lon": 143.52,
           "kind": "forecast"
         },
         {
           "lat": 26.16,
-          "lon": 146.08,
+          "lon": 143.84,
           "kind": "forecast"
         },
         {
-          "lat": 26.21,
-          "lon": 146.39,
+          "lat": 26.24,
+          "lon": 144.16,
           "kind": "forecast"
         },
         {
-          "lat": 26.26,
-          "lon": 146.69,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.31,
-          "lon": 147.0,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.36,
-          "lon": 147.3,
+          "lat": 26.32,
+          "lon": 144.48,
           "kind": "forecast"
         },
         {
           "lat": 26.4,
-          "lon": 147.6,
-          "time": "2026-11-11T12:00:00+00:00",
-          "wind": "110km/h",
-          "intensity": "Severe Tropical Storm",
+          "lon": 144.8,
           "kind": "forecast"
         },
         {
-          "lat": 26.44,
-          "lon": 147.9,
+          "lat": 26.47,
+          "lon": 145.13,
           "kind": "forecast"
         },
         {
-          "lat": 26.49,
-          "lon": 148.21,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.53,
-          "lon": 148.52,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.57,
-          "lon": 148.84,
+          "lat": 26.54,
+          "lon": 145.46,
           "kind": "forecast"
         },
         {
           "lat": 26.61,
-          "lon": 149.16,
+          "lon": 145.79,
           "kind": "forecast"
         },
         {
-          "lat": 26.65,
-          "lon": 149.48,
+          "lat": 26.68,
+          "lon": 146.12,
           "kind": "forecast"
         },
         {
-          "lat": 26.69,
-          "lon": 149.8,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.73,
-          "lon": 150.13,
-          "kind": "forecast"
-        },
-        {
-          "lat": 26.76,
-          "lon": 150.45,
+          "lat": 26.74,
+          "lon": 146.46,
           "kind": "forecast"
         },
         {
           "lat": 26.8,
-          "lon": 150.78,
+          "lon": 146.8,
           "kind": "forecast"
         },
         {
-          "lat": 26.83,
-          "lon": 151.1,
+          "lat": 26.86,
+          "lon": 147.15,
           "kind": "forecast"
         },
         {
-          "lat": 26.87,
-          "lon": 151.42,
+          "lat": 26.91,
+          "lon": 147.5,
           "kind": "forecast"
         },
         {
-          "lat": 26.9,
-          "lon": 151.73,
+          "lat": 26.96,
+          "lon": 147.85,
           "kind": "forecast"
         },
         {
-          "lat": 26.93,
-          "lon": 152.04,
+          "lat": 27.01,
+          "lon": 148.2,
           "kind": "forecast"
         },
         {
-          "lat": 26.97,
-          "lon": 152.35,
+          "lat": 27.06,
+          "lon": 148.55,
           "kind": "forecast"
         },
         {
-          "lat": 27.0,
-          "lon": 152.65,
+          "lat": 27.1,
+          "lon": 148.9,
           "kind": "forecast"
         },
         {
-          "lat": 27.03,
-          "lon": 152.94,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.05,
-          "lon": 153.22,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.08,
-          "lon": 153.5,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.11,
-          "lon": 153.76,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.13,
-          "lon": 154.01,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.16,
-          "lon": 154.26,
+          "lat": 27.14,
+          "lon": 149.24,
           "kind": "forecast"
         },
         {
           "lat": 27.18,
-          "lon": 154.48,
+          "lon": 149.57,
           "kind": "forecast"
         },
         {
-          "lat": 27.2,
-          "lon": 154.7,
-          "time": "2026-11-12T12:00:00+00:00",
+          "lat": 27.21,
+          "lon": 149.91,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.24,
+          "lon": 150.24,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.27,
+          "lon": 150.57,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.3,
+          "lon": 150.9,
+          "time": "2026-11-11T18:00:00+00:00",
           "wind": "90km/h",
           "intensity": "Severe Tropical Storm",
           "kind": "forecast"
         },
         {
-          "lat": 27.22,
+          "lat": 27.32,
+          "lon": 151.23,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.34,
+          "lon": 151.57,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.36,
+          "lon": 151.9,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.37,
+          "lon": 152.23,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.38,
+          "lon": 152.57,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.4,
+          "lon": 152.9,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.42,
+          "lon": 153.24,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.43,
+          "lon": 153.58,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.44,
+          "lon": 153.92,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.46,
+          "lon": 154.26,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.48,
+          "lon": 154.58,
+          "kind": "forecast"
+        },
+        {
+          "lat": 27.5,
           "lon": 154.9,
           "kind": "forecast"
         },
         {
-          "lat": 27.24,
-          "lon": 155.1,
+          "lat": 27.52,
+          "lon": 155.2,
           "kind": "forecast"
         },
         {
-          "lat": 27.26,
-          "lon": 155.28,
+          "lat": 27.55,
+          "lon": 155.47,
           "kind": "forecast"
         },
         {
-          "lat": 27.27,
-          "lon": 155.46,
+          "lat": 27.57,
+          "lon": 155.74,
           "kind": "forecast"
         },
         {
-          "lat": 27.28,
-          "lon": 155.63,
+          "lat": 27.61,
+          "lon": 156.01,
           "kind": "forecast"
         },
         {
-          "lat": 27.3,
-          "lon": 155.79,
+          "lat": 27.65,
+          "lon": 156.3,
           "kind": "forecast"
         },
         {
-          "lat": 27.31,
-          "lon": 155.94,
+          "lat": 27.7,
+          "lon": 156.6,
           "kind": "forecast"
         },
         {
-          "lat": 27.32,
-          "lon": 156.09,
+          "lat": 27.77,
+          "lon": 156.94,
           "kind": "forecast"
         },
         {
-          "lat": 27.33,
-          "lon": 156.22,
+          "lat": 27.85,
+          "lon": 157.31,
           "kind": "forecast"
         },
         {
-          "lat": 27.34,
-          "lon": 156.35,
+          "lat": 27.94,
+          "lon": 157.7,
           "kind": "forecast"
         },
         {
-          "lat": 27.34,
-          "lon": 156.48,
+          "lat": 28.04,
+          "lon": 158.07,
           "kind": "forecast"
         },
         {
-          "lat": 27.35,
-          "lon": 156.59,
+          "lat": 28.12,
+          "lon": 158.41,
           "kind": "forecast"
         },
         {
-          "lat": 27.36,
-          "lon": 156.7,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.36,
-          "lon": 156.81,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.37,
-          "lon": 156.91,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.37,
-          "lon": 157.0,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.37,
-          "lon": 157.09,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.38,
-          "lon": 157.18,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.38,
-          "lon": 157.26,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.39,
-          "lon": 157.33,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.39,
-          "lon": 157.4,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.39,
-          "lon": 157.47,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.4,
-          "lon": 157.54,
-          "kind": "forecast"
-        },
-        {
-          "lat": 27.4,
-          "lon": 157.6,
-          "time": "2026-11-13T12:00:00+00:00",
+          "lat": 28.2,
+          "lon": 158.7,
+          "time": "2026-11-12T18:00:00+00:00",
           "wind": "65km/h",
           "intensity": "Tropical Storm",
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.26,
+          "lon": 158.92,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.31,
+          "lon": 159.09,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.36,
+          "lon": 159.23,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.41,
+          "lon": 159.35,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.45,
+          "lon": 159.47,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.5,
+          "lon": 159.6,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.55,
+          "lon": 159.74,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.6,
+          "lon": 159.89,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.66,
+          "lon": 160.03,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.71,
+          "lon": 160.16,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.76,
+          "lon": 160.29,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.8,
+          "lon": 160.4,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.84,
+          "lon": 160.5,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.87,
+          "lon": 160.59,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.9,
+          "lon": 160.67,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.93,
+          "lon": 160.74,
+          "kind": "forecast"
+        },
+        {
+          "lat": 28.96,
+          "lon": 160.82,
+          "kind": "forecast"
+        },
+        {
+          "lat": 29.0,
+          "lon": 160.9,
+          "kind": "forecast"
+        },
+        {
+          "lat": 29.05,
+          "lon": 160.99,
+          "kind": "forecast"
+        },
+        {
+          "lat": 29.1,
+          "lon": 161.09,
+          "kind": "forecast"
+        },
+        {
+          "lat": 29.16,
+          "lon": 161.18,
+          "kind": "forecast"
+        },
+        {
+          "lat": 29.22,
+          "lon": 161.27,
+          "kind": "forecast"
+        },
+        {
+          "lat": 29.27,
+          "lon": 161.35,
+          "kind": "forecast"
+        },
+        {
+          "lat": 29.3,
+          "lon": 161.4,
+          "time": "2026-11-13T18:00:00+00:00",
+          "wind": "40km/h",
+          "intensity": "Low Pressure Area",
           "kind": "forecast"
         }
       ]
@@ -694,6 +702,6 @@
   ],
   "errors": [],
   "ok": true,
-  "sourceUpdatedAt": "2026-11-08T22:00:59+08:00",
-  "updatedAt": "2026-11-08T14:39:00.502544+00:00"
+  "sourceUpdatedAt": "2026-11-09T04:00:58+08:00",
+  "updatedAt": "2026-11-08T22:48:32.305943+00:00"
 }
