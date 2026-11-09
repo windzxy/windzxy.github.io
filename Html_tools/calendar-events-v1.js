@@ -103,7 +103,7 @@ function exportICS(){
  events.forEach(function(e){
   const d=e.date.replace(/-/g,''),tm=(e.start||'09:00').replace(':','')+'00';
   lines.push('BEGIN:VEVENT','UID:'+escapeICS(e.id)+'@webdesk','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z'),(e.allDay?'DTSTART;VALUE=DATE:':'DTSTART:')+(e.allDay?d:d+'T'+tm));
-  if(e.end)lines.push((e.allDay?'DTEND;VALUE=DATE:':'DTEND:')+(e.allDay?d:d+'T'+e.end.replace(':','')+'00'));
+  if(e.allDay){const next=parseKey(e.date);next.setDate(next.getDate()+1);lines.push('DTEND;VALUE=DATE:'+dateKey(next));}else if(e.end)lines.push('DTEND:'+d+'T'+e.end.replace(':','')+'00');
   lines.push('SUMMARY:'+escapeICS(e.title));if(e.note)lines.push('DESCRIPTION:'+escapeICS(e.note));
   if(e.repeat!=='none')lines.push('RRULE:FREQ='+({daily:'DAILY',weekly:'WEEKLY',monthly:'MONTHLY',yearly:'YEARLY'}[e.repeat]));
   if(e.reminder)lines.push('BEGIN:VALARM','ACTION:DISPLAY','TRIGGER:-PT'+e.reminder+'M','DESCRIPTION:'+escapeICS(e.title),'END:VALARM');
@@ -332,6 +332,13 @@ function styles(){
 .cal11-event-dialog footer button.primary{background:rgba(114,239,255,.20);border-color:rgba(114,239,255,.4)}.cal11-event-dialog footer button.danger{color:#ff9eaa;border-color:rgba(255,110,130,.3)}
 @media(max-width:620px){.cal11-view-tools{align-items:stretch}.cal11-switch{flex-basis:100%}.cal11-event-tools{margin-left:0;justify-content:flex-end;width:100%}.cal11-event-tools button:not(:first-child){display:none}.cal11-weekview{grid-template-columns:repeat(7,minmax(78px,1fr))}.cal11-event-dialog{padding:12px}}
 @media(max-height:440px){.cal11-event-dialog{padding:10px}.cal11-event-dialog form{gap:6px}}
+.calendar-v11.cal11-compact .cal11-controls{grid-template-columns:1fr!important}
+.calendar-v11.cal11-compact .cal11-switch{display:grid!important;flex-basis:100%}
+.calendar-v11.cal11-compact .cal11-view-tools{display:flex!important;flex-wrap:wrap}
+.calendar-v11.cal11-compact .cal11-event-tools button:not(:first-child){display:none}
+.calendar-v11 .cal11-side{grid-template-rows:auto minmax(0,1fr) auto}
+.calendar-v11 .cal11-mini.eventful{border-color:rgba(114,239,255,.45)}
+.calendar-v11 .cal11-mini.eventful>b:after{content:' ·';color:#72efff}
 `;
  document.head.appendChild(st);
 }
@@ -366,5 +373,4 @@ function bind(){
 function init(){styles();bind();hydrate();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 window.WebDeskCalendarEvents={version:VER,get all(){return events.slice();},forDate:forDate,badgeMarkup:badgeMarkup,listMarkup:listMarkup,sideMarkup:sideMarkup,toolbarMarkup:toolbarMarkup,modalMarkup:modalMarkup,hasEventsInMonth:function(y,m){return events.some(function(e){const d=parseKey(e.date);return d.getFullYear()===y&&d.getMonth()===m;});}};
-hydrate();
 })();

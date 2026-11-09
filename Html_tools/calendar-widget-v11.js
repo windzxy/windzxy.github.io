@@ -81,15 +81,16 @@
 
   function render(d,view){const saved=readCalendarState();d=d?parse(iso(d)):saved.date;view=view||saved.view;return '<div class="calendar-v11" data-cal11-date="'+iso(d)+'" data-cal11-view="'+view+'" data-cal11-ver="'+VER+'">'+renderInner(d,view)+'</div>';}
   function startOfWeek(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
-  function eventList(d){return window.WebDeskCalendarEvents?.listMarkup?.(d)||'<div class="cal11-empty-events">'+t('No personal events','尚未安排日程','尚未安排日程')+'</div>';}
+  function eventList(d,showEmpty){const api=window.WebDeskCalendarEvents,list=api?.forDate?.(d)||[];return list.length?(api.listMarkup?.(d)||''):(showEmpty?'<div class="cal11-empty-events">'+t('No personal events','尚未安排日程','尚未安排日程')+'</div>':'');}
   function renderWeek(d){
     const start=startOfWeek(d),today=iso(new Date());
-    return '<div class="cal11-weekview">'+Array.from({length:7},(_,i)=>{const x=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),key=iso(x),h=holidayFor(key);return '<section class="cal11-week-column '+(key===today?'today':'')+'"><header><small>'+esc(wShort((x.getDay()+6)%7))+'</small><button type="button" data-cal11-cell="'+key+'">'+x.getDate()+'</button>'+(h?'<small>'+esc(h.name)+'</small>':'')+'</header>'+eventList(x)+'</section>';}).join('')+'</div>';
+    return '<div class="cal11-weekview">'+Array.from({length:7},(_,i)=>{const x=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),key=iso(x),h=holidayFor(key);return '<section class="cal11-week-column '+(key===today?'today':'')+'"><header><small>'+esc(wShort((x.getDay()+6)%7))+'</small><button type="button" data-cal11-cell="'+key+'">'+x.getDate()+'</button>'+(h?'<small>'+esc(h.name)+'</small>':'')+'</header>'+eventList(x,false)+'</section>';}).join('')+'</div>';
   }
-  function renderDay(d){const h=holidayFor(iso(d)),term=solarTerm(d),festival=lunarFestival(d);return '<div class="cal11-dayview"><header><strong>'+d.getDate()+' · '+esc(wLong(d.getDay()))+'</strong><span>'+esc(lunarFull(d))+(term?' · '+esc(term):'')+(festival?' · '+esc(festival):'')+(h?' · '+esc(h.name):'')+'</span></header>'+eventList(d)+'</div>';}
+  function renderDay(d){const h=holidayFor(iso(d)),term=solarTerm(d),festival=lunarFestival(d);return '<div class="cal11-dayview"><header><strong>'+d.getDate()+' · '+esc(wLong(d.getDay()))+'</strong><span>'+esc(lunarFull(d))+(term?' · '+esc(term):'')+(festival?' · '+esc(festival):'')+(h?' · '+esc(h.name):'')+'</span></header>'+eventList(d,true)+'</div>';}
   function renderAgenda(d){
-    const start=new Date(d.getFullYear(),d.getMonth(),d.getDate());
-    return '<div class="cal11-agendaview">'+Array.from({length:14},(_,i)=>{const x=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),key=iso(x),h=holidayFor(key);return '<section class="cal11-agenda-day"><button type="button" class="cal11-agenda-date" data-cal11-cell="'+key+'"><b>'+x.getDate()+'</b><small>'+esc(wLong(x.getDay()))+'</small></button><div>'+(h?'<small class="cal11-agenda-holiday">'+esc(h.name)+'</small>':'')+eventList(x)+'</div></section>';}).join('')+'</div>';
+    const start=new Date(d.getFullYear(),d.getMonth(),d.getDate()),days=Array.from({length:14},(_,i)=>new Date(start.getFullYear(),start.getMonth(),start.getDate()+i)).filter(x=>holidayFor(iso(x))||(window.WebDeskCalendarEvents?.forDate?.(x)||[]).length);
+    if(!days.length)return '<div class="cal11-agendaview"><div class="cal11-empty-events">'+t('No upcoming personal events or official holidays','未來14天沒有個人日程或官方假期','未来14天没有个人日程或官方假期')+'</div></div>';
+    return '<div class="cal11-agendaview">'+days.map(x=>{const key=iso(x),h=holidayFor(key);return '<section class="cal11-agenda-day"><button type="button" class="cal11-agenda-date" data-cal11-cell="'+key+'"><b>'+x.getDate()+'</b><small>'+esc(wLong(x.getDay()))+'</small></button><div>'+(h?'<small class="cal11-agenda-holiday">'+esc(h.name)+'</small>':'')+eventList(x,false)+'</div></section>';}).join('')+'</div>';
   }
   function renderView(d,view){return view==='year'?renderYear(d):view==='week'?renderWeek(d):view==='day'?renderDay(d):view==='agenda'?renderAgenda(d):renderMonth(d);}
   function renderInner(d,view){
