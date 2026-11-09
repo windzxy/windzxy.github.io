@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20261109-calendar-events-v1';
+const VER='20261109-calendar-events-v1.1';
 if(window.__windzxyCalendarEvents===VER)return;
 window.__windzxyCalendarEvents=VER;
 const STORE='windzxy_calendar_events_v1',DB='windzxy-calendar-local',TABLE='events';
