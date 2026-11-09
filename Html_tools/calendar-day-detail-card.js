@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VER='20260828-calendar-day-detail-card1-lunar-holiday-solar';
+  const VER='20261109-calendar-day-detail-card2-i18n-2027';
   if(window.__windzxyCalendarDayDetailCard===VER)return;
   window.__windzxyCalendarDayDetailCard=VER;
 
@@ -18,6 +18,8 @@
     '2026-12-25':{name:'聖誕節',short:'聖誕',type:'holiday'},'2026-12-26':{name:'聖誕節翌日',short:'聖誕',type:'holiday'}
   };
   const TERM_NAMES=['小寒','大寒','立春','雨水','驚蟄','春分','清明','穀雨','立夏','小滿','芒種','夏至','小暑','大暑','立秋','處暑','白露','秋分','寒露','霜降','立冬','小雪','大雪','冬至'];
+  const TERM_SC=['小寒','大寒','立春','雨水','惊蛰','春分','清明','谷雨','立夏','小满','芒种','夏至','小暑','大暑','立秋','处暑','白露','秋分','寒露','霜降','立冬','小雪','大雪','冬至'];
+  const TERM_EN=['Minor Cold','Major Cold','Start of Spring','Rain Water','Awakening of Insects','Spring Equinox','Clear and Bright','Grain Rain','Start of Summer','Grain Buds','Grain in Ear','Summer Solstice','Minor Heat','Major Heat','Start of Autumn','End of Heat','White Dew','Autumn Equinox','Cold Dew','Frost Descent','Start of Winter','Minor Snow','Major Snow','Winter Solstice'];
   const TERM_INFO=[0,21208,42467,63836,85337,107014,128867,150921,173149,195551,218072,240693,263343,285989,308563,331033,353350,375494,397447,419210,440795,462224,483532,504758];
   const D_ZH=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
   const D_EN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -25,21 +27,23 @@
   const CN=['零','一','二','三','四','五','六','七','八','九','十'];
 
   function lang(){const v=document.querySelector('.lang-select')?.value||localStorage.getItem('windzxy-lang')||localStorage.getItem('webdesk-lang')||document.documentElement.lang||navigator.language||'zh-HK';if(/^en/i.test(v))return 'en';return /^zh-CN/i.test(v)||/Hans/i.test(v)?'zh-CN':'zh-HK';}
+  function isSC(){return lang()==='zh-CN';}
   function zh(){return lang()!=='en';}
-  function t(en,tc){return zh()?tc:en;}
+  const SC_LABELS={'農曆':'农历','日期詳情':'日期详情','關閉':'关闭','節假日':'节假日','節氣':'节气','無':'无','無官方假期記錄':'无官方假期记录','調休補班':'调休补班'};
+  function t(en,tc){if(lang()==='en')return en;if(isSC())return SC_LABELS[tc]||tc;return tc;}
   function pad(n){return String(n).padStart(2,'0');}
   function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function iso(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
   function parseIso(v){const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?new Date(+m[1],+m[2]-1,+m[3]):new Date();}
   function lunarDay(n){n=Number(n)||1;if(n<=10)return ['','初一','初二','初三','初四','初五','初六','初七','初八','初九','初十'][n];if(n<20)return '十'+CN[n-10];if(n===20)return '二十';if(n<30)return '廿'+CN[n-20];return '三十';}
-  function lunarInfo(d){try{const parts=new Intl.DateTimeFormat('zh-Hant-u-ca-chinese',{month:'long',day:'numeric'}).formatToParts(d);let m=parts.find(p=>p.type==='month')?.value||'';let day=parts.find(p=>p.type==='day')?.value||'';const hit=String(day).match(/\d+/);if(hit)day=lunarDay(hit[0]);day=String(day).replace(/日$/,'');if(/^\d+$/.test(day))day=lunarDay(day);if(m&&!/月$/.test(m))m+='月';return `${m}${day}`||'—';}catch(e){return '—';}}
+  function lunarInfo(d){try{const parts=new Intl.DateTimeFormat(isSC()?'zh-Hans-u-ca-chinese':'zh-Hant-u-ca-chinese',{month:'long',day:'numeric'}).formatToParts(d);let m=parts.find(p=>p.type==='month')?.value||'';let day=parts.find(p=>p.type==='day')?.value||'';const hit=String(day).match(/\d+/);if(hit)day=lunarDay(hit[0]);day=String(day).replace(/日$/,'');if(/^\d+$/.test(day))day=lunarDay(day);if(m&&!/月$/.test(m))m+='月';return `${m}${day}`||'—';}catch(e){return '—';}}
   function solarTerm(d){
     const y=d.getFullYear();
     if(y<1901||y>2100)return '';
     const base=Date.UTC(1900,0,6,2,5);
     for(let n=0;n<24;n++){
       const day=new Date(base+31556925974.7*(y-1900)+TERM_INFO[n]*60000).getUTCDate();
-      if(Math.floor(n/2)===d.getMonth()&&day===d.getDate())return TERM_NAMES[n];
+      if(Math.floor(n/2)===d.getMonth()&&day===d.getDate())return lang()==='en'?TERM_EN[n]:isSC()?TERM_SC[n]:TERM_NAMES[n];
     }
     return '';
   }
