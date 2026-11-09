@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VER='20261109-calendar-day-detail-card2-i18n-2027';
+  const VER='20261109-calendar-day-detail-card3-central-holidays';
   if(window.__windzxyCalendarDayDetailCard===VER)return;
   window.__windzxyCalendarDayDetailCard=VER;
 
@@ -64,9 +64,9 @@
   function rootOf(el){return el?.closest?.('.calendar-v11,.calendar-v10,.calendar-v9,.calendar-v8,.calendar-v7,.calendar-v6,[data-cal11-ver],[data-cal10-ver],[data-cal9-ver]');}
   function closeAll(root){(root||document).querySelectorAll('.cal-day-detail-pop').forEach(x=>x.remove());}
   function cardHtml(d){
-    const key=iso(d), h=HOLIDAYS[key], term=solarTerm(d), lunar=lunarInfo(d);
-    const holidayText=h?`${h.name}${h.type==='work'?` · ${t('Adjusted workday','調休補班')}`:''}`:t('No official holiday record','無官方假期記錄');
-    const holidayClass=h?(h.type==='work'?'work':'holiday'):'';
+    const key=iso(d), h=window.WebDeskCalendarHolidayAuthority?.getForDate?.(key)||HOLIDAYS[key], term=solarTerm(d), lunar=lunarInfo(d);
+    const holidayText=h?(h.type==='choice'?t('Statutory holiday option (employer selects one)','法定假日選項（由僱主二選一）'):h.name)+(h.type==='work'?` · ${t('Adjusted workday','調休補班')}`:''):t('No official holiday record','無官方假期記錄');
+    const holidayClass=h?(h.type==='work'?'work':h.type==='choice'?'choice':'holiday'):'';
     return `<div class="cal-day-detail-card" role="dialog" aria-label="${esc(t('Date details','日期詳情'))}">
       <button class="cal-day-detail-close" data-cal-detail-close type="button" aria-label="${esc(t('Close','關閉'))}">×</button>
       <div class="cal-detail-top"><span>${esc(t('Date details','日期詳情'))}</span><h3>${d.getDate()}</h3><p>${esc(dateLabel(d))} · ${esc(weekday(d))}</p></div>
@@ -100,7 +100,7 @@
     st.id='windzxyCalendarDayDetailStyle';
     st.textContent=`
 .calendar-v11 [data-cal11-cell],.calendar-v10 [data-cal10-cell],.calendar-v9 [data-cal9-cell],.calendar-v8 [data-cal8-cell],.calendar-v7 [data-cal7-cell],.calendar-v6 [data-cal6-cell]{cursor:pointer!important;position:relative}.calendar-v11 [data-cal11-cell]:hover,.calendar-v10 [data-cal10-cell]:hover,.calendar-v9 [data-cal9-cell]:hover{transform:translateY(-1px);filter:brightness(1.08)}
-.cal-day-detail-pop{position:absolute;z-index:9999;width:min(268px,calc(100% - 16px));pointer-events:auto;animation:calDetailIn .16s ease-out}.cal-day-detail-card{position:relative;border:1px solid rgba(255,255,255,.16);border-radius:20px;background:linear-gradient(145deg,rgba(35,40,51,.96),rgba(25,29,38,.94));box-shadow:0 22px 60px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(18px);color:#f7f9ff;padding:14px}.cal-day-detail-close{position:absolute;right:10px;top:10px;width:28px;height:28px;border:0;border-radius:50%;background:rgba(255,255,255,.10);color:#fff;font-size:18px;font-weight:900;cursor:pointer}.cal-detail-top span{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.58}.cal-detail-top h3{margin:4px 0 0;font-size:44px;line-height:.95;font-weight:950;letter-spacing:-.06em}.cal-detail-top p{margin:6px 34px 10px 0;font-size:13px;line-height:1.35;opacity:.75}.cal-detail-rows{display:grid;gap:7px}.cal-detail-rows div{display:grid;grid-template-columns:58px minmax(0,1fr);gap:8px;align-items:start;border-radius:12px;background:rgba(255,255,255,.06);padding:8px 10px}.cal-detail-rows b{font-size:12px;opacity:.62}.cal-detail-rows span{font-size:13px;font-weight:820;line-height:1.35}.cal-detail-rows .holiday{color:#ffca7a}.cal-detail-rows .work{color:#80b7ff}@keyframes calDetailIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+.cal-day-detail-pop{position:absolute;z-index:9999;width:min(268px,calc(100% - 16px));pointer-events:auto;animation:calDetailIn .16s ease-out}.cal-day-detail-card{position:relative;border:1px solid rgba(255,255,255,.16);border-radius:20px;background:linear-gradient(145deg,rgba(35,40,51,.96),rgba(25,29,38,.94));box-shadow:0 22px 60px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(18px);color:#f7f9ff;padding:14px}.cal-day-detail-close{position:absolute;right:10px;top:10px;width:28px;height:28px;border:0;border-radius:50%;background:rgba(255,255,255,.10);color:#fff;font-size:18px;font-weight:900;cursor:pointer}.cal-detail-top span{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.58}.cal-detail-top h3{margin:4px 0 0;font-size:44px;line-height:.95;font-weight:950;letter-spacing:-.06em}.cal-detail-top p{margin:6px 34px 10px 0;font-size:13px;line-height:1.35;opacity:.75}.cal-detail-rows{display:grid;gap:7px}.cal-detail-rows div{display:grid;grid-template-columns:58px minmax(0,1fr);gap:8px;align-items:start;border-radius:12px;background:rgba(255,255,255,.06);padding:8px 10px}.cal-detail-rows b{font-size:12px;opacity:.62}.cal-detail-rows span{font-size:13px;font-weight:820;line-height:1.35}.cal-detail-rows .holiday{color:#ffca7a}.cal-detail-rows .work{color:#80b7ff}.cal-detail-rows .choice{color:#d0b5ff}@keyframes calDetailIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 @media(max-width:520px){.cal-day-detail-card{padding:12px}.cal-detail-top h3{font-size:38px}.cal-detail-rows div{grid-template-columns:52px minmax(0,1fr);padding:7px 9px}.cal-detail-rows span{font-size:12px}}
 `;
     document.head.appendChild(st);
@@ -110,6 +110,7 @@
     document.addEventListener('click',function(e){
       const close=e.target.closest?.('[data-cal-detail-close]');
       if(close){e.preventDefault();e.stopPropagation();closeAll(close.closest('.calendar-v11,.calendar-v10,.calendar-v9,.calendar-v8,.calendar-v7,.calendar-v6')||document);return;}
+      if(e.target.closest?.('[data-cal11-event-id]'))return;
       const hit=findCell(e.target);
       if(hit){
         const root=rootOf(hit.el);

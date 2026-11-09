@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20261109-calendar-holiday-dot-sync-v3-hk-statutory';
+const VER='20261109-calendar-holiday-dot-sync-v4-choice-mark';
 if(window.__windzxyCalendarHolidayDotSync===VER)return;
 window.__windzxyCalendarHolidayDotSync=VER;
 function installStyle(){if(document.getElementById('calendarHolidayDotSyncV3Style'))return;const st=document.createElement('style');st.id='calendarHolidayDotSyncV3Style';st.textContent=`
@@ -10,17 +10,20 @@ function installStyle(){if(document.getElementById('calendarHolidayDotSyncV3Styl
 .calendar-v11 .cal11-day .cal-auth-dots i.cn-work{background:#76a9ff!important}
 .calendar-v11 .cal11-day .cal-auth-dots i.hk-holiday{background:#86e2aa!important}
 .calendar-v11 .cal11-day .cal-auth-dots i.hk-statutory{background:#c4a5ff!important}
+.calendar-v11 .cal11-day .cal-auth-dots i.hk-statutory-choice{background:transparent!important;border:1px solid #d8c2ff;box-sizing:border-box}
 .calendar-v11.cal11-compact .cal11-day .cal-auth-dots,.calendar-v11.cal11-tiny .cal11-day .cal-auth-dots{right:6px;top:6px;gap:3px}
 .calendar-v11.cal11-compact .cal11-day .cal-auth-dots i,.calendar-v11.cal11-tiny .cal11-day .cal-auth-dots i{width:5px!important;height:5px!important}
 `;document.head.appendChild(st)}
-function patchCell(cell){const title=cell.title||'';const isWork=cell.dataset.calAuthWork==='1';const hasHK=cell.dataset.calAuthHk==='1'||title.includes('香港：')||title.includes('香港:')||title.includes('Hong Kong general holiday:');const hasHKStatutory=cell.dataset.calAuthHkStatutory==='1'||title.includes('香港法定假日：')||title.includes('香港法定假日:')||title.includes('Hong Kong statutory holiday:');const hasCNHoliday=!isWork&&(cell.dataset.calAuthCnHoliday==='1'||title.includes('中國內地：')||title.includes('中国内地:')||title.includes('Mainland China:'));
+function patchCell(cell){const title=cell.title||'';const isWork=cell.dataset.calAuthWork==='1';const hasHK=cell.dataset.calAuthHk==='1'||title.includes('香港：')||title.includes('香港:')||title.includes('Hong Kong general holiday:');const hasHKStatutory=cell.dataset.calAuthHkStatutory==='1'||title.includes('香港法定假日：')||title.includes('香港法定假日:')||title.includes('Hong Kong statutory holiday:');
+const hasHKStatutoryChoice=cell.dataset.calAuthHkStatutoryChoice==='1';const hasCNHoliday=!isWork&&(cell.dataset.calAuthCnHoliday==='1'||title.includes('中國內地：')||title.includes('中国内地:')||title.includes('Mainland China:'));
 cell.querySelectorAll(':scope > i, :scope > .cal-auth-dots').forEach(el=>el.remove());
-if(!(isWork||hasCNHoliday||hasHK||hasHKStatutory))return;
+if(!(isWork||hasCNHoliday||hasHK||hasHKStatutory||hasHKStatutoryChoice))return;
 const wrap=document.createElement('span');wrap.className='cal-auth-dots';wrap.setAttribute('aria-hidden','true');
 if(isWork){const i=document.createElement('i');i.className='cn-work';wrap.appendChild(i)}
 if(hasCNHoliday){const i=document.createElement('i');i.className='cn-holiday';wrap.appendChild(i)}
 if(hasHK){const i=document.createElement('i');i.className='hk-holiday';wrap.appendChild(i)}
 if(hasHKStatutory){const i=document.createElement('i');i.className='hk-statutory';wrap.appendChild(i)}
+if(hasHKStatutoryChoice){const i=document.createElement('i');i.className='hk-statutory-choice';wrap.appendChild(i)}
 cell.appendChild(wrap)}
 let queued=false;function run(){queued=false;installStyle();document.querySelectorAll('.calendar-v11 [data-cal11-cell]').forEach(patchCell)}function schedule(){if(queued)return;queued=true;requestAnimationFrame(run)}
 new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','title','data-cal-auth-work','data-cal-auth-hk','data-cal-auth-hk-statutory','data-cal-auth-cn-holiday']});
