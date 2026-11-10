@@ -1,9 +1,9 @@
 (function(){
 'use strict';
-const VER='20261110-calendar-events-v1.2';
+const VER='20261110-calendar-events-v1.3-local-backup-trash';
 if(window.__windzxyCalendarEvents===VER)return;
 window.__windzxyCalendarEvents=VER;
-const STORE='windzxy_calendar_events_v1',DB='windzxy-calendar-local',TABLE='events';
+const STORE='windzxy_calendar_events_v1',DB='windzxy-calendar-local',TABLE='events',BACKUPS=STORE+'_auto_backups',BACKUP_LIMIT=3;
 const CATS=['personal','work','family','birthday','travel','reminder'];
 const NAMES={personal:['Personal','個人','个人'],work:['Work','工作','工作'],family:['Family','家庭','家庭'],birthday:['Birthday','生日','生日'],travel:['Travel','旅行','旅行'],reminder:['Reminder','提醒','提醒']};
 let events=loadLocal(),dbPromise=null;
@@ -17,7 +17,7 @@ function clean(x){
  if(!x||typeof x!=='object')return null;
  const title=String(x.title||'').trim().slice(0,120),date=String(x.date||'');
  if(!title||!/^\d{4}-\d{2}-\d{2}$/.test(date))return null;
- return {id:String(x.id||makeId()),title,date,start:x.allDay?'':String(x.start||'09:00').slice(0,5),end:x.allDay?'':String(x.end||'10:00').slice(0,5),allDay:!!x.allDay,category:CATS.includes(x.category)?x.category:'personal',repeat:['none','daily','weekly','monthly','yearly'].includes(x.repeat)?x.repeat:'none',reminder:[0,5,10,15,30,60].includes(+x.reminder)?+x.reminder:0,note:String(x.note||'').slice(0,1000),updatedAt:+x.updatedAt||Date.now()};
+ return {id:String(x.id||makeId()),title,date,start:x.allDay?'':String(x.start||'09:00').slice(0,5),end:x.allDay?'':String(x.end||'10:00').slice(0,5),allDay:!!x.allDay,category:CATS.includes(x.category)?x.category:'personal',repeat:['none','daily','weekly','monthly','yearly'].includes(x.repeat)?x.repeat:'none',reminder:[0,5,10,15,30,60].includes(+x.reminder)?+x.reminder:0,note:String(x.note||'').slice(0,1000),updatedAt:+x.updatedAt||Date.now(),deletedAt:+x.deletedAt||0};
 }
 function loadLocal(){try{const a=JSON.parse(localStorage.getItem(STORE)||'[]');return Array.isArray(a)?a.map(clean).filter(Boolean):[];}catch(e){return[];}}
 function openDB(){
@@ -30,6 +30,9 @@ function openDB(){
  });
  return dbPromise;
 }
+function createAutoBackup(){try{if(!events.length)return;const payload=JSON.stringify(events);if(payload.length>350000)return;const list=JSON.parse(localStorage.getItem(BACKUPS)||'[]');if(list[0]&&list[0].payload===payload)return;list.unshift({id:makeId(),createdAt:Date.now(),count:events.length,payload});localStorage.setItem(BACKUPS,JSON.stringify(list.slice(0,BACKUP_LIMIT)));}catch(e){}}
+function readAutoBackups(){try{const x=JSON.parse(localStorage.getItem(BACKUPS)||'[]');return Array.isArray(x)?x:[];}catch(e){return[];}}
+function backupBeforeChange(){createAutoBackup();}
 function persist(){
  try{localStorage.setItem(STORE,JSON.stringify(events));}catch(e){}
  openDB().then(function(db){if(!db)return;try{const tx=db.transaction(TABLE,'readwrite'),store=tx.objectStore(TABLE);store.clear();events.forEach(function(e){store.put(e);});}catch(err){}});
@@ -55,7 +58,7 @@ function occurs(e,d){
  if(e.repeat==='yearly')return b.getMonth()===a.getMonth()&&b.getDate()===a.getDate();
  return n===0;
 }
-function forDate(d){return events.filter(function(e){return occurs(e,d);}).sort(function(a,b){return (a.allDay?'00:00':a.start||'99:99').localeCompare(b.allDay?'00:00':b.start||'99:99');});}
+function forDate(d){return events.filter(function(e){return !e.deletedAt&&occurs(e,d);}).sort(function(a,b){return (a.allDay?'00:00':a.start||'99:99').localeCompare(b.allDay?'00:00':b.start||'99:99');});}
 function category(c){return t.apply(null,NAMES[c]||NAMES.personal);}
 function eventTime(e){return e.allDay?t('All day','全天','全天'):(e.start||'09:00')+(e.end?'–'+e.end:'');}
 function badgeMarkup(d,limit){
@@ -69,10 +72,11 @@ function sideMarkup(d){
  return '<section class="cal11-user-events"><header><h3>'+t('My events','我的日程','我的日程')+'</h3><button type="button" data-cal11-action="add-event">＋</button></header>'+(a.length?a.map(function(e){return '<button type="button" class="cal11-user-event cat-'+e.category+'" data-cal11-event-id="'+esc(e.id)+'"><b>'+esc(e.allDay?t('All day','全天','全天'):e.start)+'</b><span>'+esc(e.title)+'</span></button>';}).join(''):'<p>'+t('No events for this date','當日沒有日程','当天没有日程')+'</p>')+'</section>';
 }
 function toolbarMarkup(){
- return '<div class="cal11-event-tools"><button type="button" data-cal11-action="add-event" title="'+t('Add event','新增日程','新增日程')+'">＋ <span>'+t('Add','新增','新增')+'</span></button><button type="button" data-cal11-action="enable-notifications" title="'+t('Enable reminders','開啟提醒','开启提醒')+'">♧</button><button type="button" data-cal11-action="export-json" title="'+t('Back up','備份','备份')+'">↓</button><button type="button" data-cal11-action="export-ics" title="'+t('Export ICS','匯出 ICS','导出 ICS')+'">▤</button><button type="button" data-cal11-action="import-file" title="'+t('Import','匯入','导入')+'">↑</button><input type="file" accept=".json,.ics,application/json,text/calendar" data-cal11-import-file hidden></div>';
+ return '<div class="cal11-event-tools"><button type="button" data-cal11-action="add-event" title="'+t('Add event','新增日程','新增日程')+'">＋ <span>'+t('Add','新增','新增')+'</span></button><button type="button" data-cal11-action="open-backups" title="'+t('Local backups','本機備份','本地备份')+'">▣</button><button type="button" data-cal11-action="open-trash" title="'+t('Recycle bin','回收站','回收站')+'">♲</button><button type="button" data-cal11-action="enable-notifications" title="'+t('Enable reminders','開啟提醒','开启提醒')+'">♧</button><button type="button" data-cal11-action="export-json" title="'+t('Export backup','匯出備份','导出备份')+'">↓</button><button type="button" data-cal11-action="export-ics" title="'+t('Export ICS','匯出 ICS','导出 ICS')+'">▤</button><button type="button" data-cal11-action="import-file" title="'+t('Import','匯入','导入')+'">↑</button><input type="file" accept=".json,.ics,application/json,text/calendar" data-cal11-import-file hidden></div>';
 }
+function utilityModals(){return '<div class="cal11-event-modal" data-cal11-backup-modal hidden><div class="cal11-event-backdrop" data-cal11-action="close-utility"></div><section class="cal11-event-dialog"><header><div><small>WEBDESK · LOCAL ONLY</small><h3>'+t('Automatic local backups','自動本機備份','自动本地备份')+'</h3></div><button type="button" data-cal11-action="close-utility">×</button></header><p class="cal11-utility-note">'+t('Up to three recent snapshots are kept in this browser. They are not uploaded. Export JSON to move to another computer.','本瀏覽器最多保留最近三份快照，不會上傳。跨電腦請匯出 JSON 檔案。','本浏览器最多保留最近三份快照，不会上传。跨电脑请导出 JSON 文件。')+'</p><div class="cal11-backup-list" data-cal11-backup-list></div><footer><button type="button" data-cal11-action="export-json">'+t('Export JSON','匯出 JSON','导出 JSON')+'</button><button type="button" data-cal11-action="close-utility">'+t('Close','關閉','关闭')+'</button></footer></section></div><div class="cal11-event-modal" data-cal11-trash-modal hidden><div class="cal11-event-backdrop" data-cal11-action="close-utility"></div><section class="cal11-event-dialog"><header><div><small>WEBDESK · LOCAL ONLY</small><h3>'+t('Recycle bin','回收站','回收站')+'</h3></div><button type="button" data-cal11-action="close-utility">×</button></header><p class="cal11-utility-note">'+t('Deleted events stay on this device until permanently removed.','已刪除日程會暫存在本機，直至永久刪除。','已删除日程会暂存在本地，直至永久删除。')+'</p><div class="cal11-trash-list" data-cal11-trash-list></div><footer><button type="button" data-cal11-action="close-utility">'+t('Close','關閉','关闭')+'</button></footer></section></div>';}
 function modalMarkup(){
- return '<div class="cal11-event-modal" data-cal11-event-modal hidden><div class="cal11-event-backdrop" data-cal11-action="close-modal"></div><section class="cal11-event-dialog" role="dialog" aria-modal="true"><header><div><small>'+t('PERSONAL CALENDAR','個人日曆','个人日历')+'</small><h3 data-cal11-modal-title>'+t('New event','新增日程','新增日程')+'</h3></div><button type="button" data-cal11-action="close-modal">×</button></header><form data-cal11-event-form><input type="hidden" name="id"><label>'+t('Title','標題','标题')+'<input name="title" maxlength="120" required></label><div class="cal11-form-grid"><label>'+t('Date','日期','日期')+'<input type="date" name="date" required></label><label class="cal11-all-day"><input type="checkbox" name="allDay"><span>'+t('All day','全天','全天')+'</span></label></div><div class="cal11-form-grid cal11-time-fields"><label>'+t('Start','開始','开始')+'<input type="time" name="start" value="09:00"></label><label>'+t('End','結束','结束')+'<input type="time" name="end" value="10:00"></label></div><div class="cal11-form-grid"><label>'+t('Category','類別','类别')+'<select name="category">'+CATS.map(function(c){return '<option value="'+c+'">'+category(c)+'</option>';}).join('')+'</select></label><label>'+t('Repeat','重複','重复')+'<select name="repeat"><option value="none">'+t('Never','不重複','不重复')+'</option><option value="daily">'+t('Daily','每天','每天')+'</option><option value="weekly">'+t('Weekly','每週','每周')+'</option><option value="monthly">'+t('Monthly','每月','每月')+'</option><option value="yearly">'+t('Yearly','每年','每年')+'</option></select></label></div><div class="cal11-form-grid"><label>'+t('Reminder','提醒','提醒')+'<select name="reminder"><option value="0">'+t('None','不提醒','不提醒')+'</option><option value="5">5 '+t('minutes before','分鐘前','分钟前')+'</option><option value="10">10 '+t('minutes before','分鐘前','分钟前')+'</option><option value="15">15 '+t('minutes before','分鐘前','分钟前')+'</option><option value="30">30 '+t('minutes before','分鐘前','分钟前')+'</option><option value="60">1 '+t('hour before','小時前','小时前')+'</option></select></label><label>'+t('Notes','備註','备注')+'<textarea name="note" rows="2" maxlength="1000"></textarea></label></div><footer><button type="button" class="danger" data-cal11-action="delete-event" hidden>'+t('Delete','刪除','删除')+'</button><span></span><button type="button" data-cal11-action="close-modal">'+t('Cancel','取消','取消')+'</button><button type="button" class="primary" data-cal11-action="save-event">'+t('Save','保存','保存')+'</button></footer></form></section></div>';
+ return '<div class="cal11-event-modal" data-cal11-event-modal hidden><div class="cal11-event-backdrop" data-cal11-action="close-modal"></div><section class="cal11-event-dialog" role="dialog" aria-modal="true"><header><div><small>'+t('PERSONAL CALENDAR','個人日曆','个人日历')+'</small><h3 data-cal11-modal-title>'+t('New event','新增日程','新增日程')+'</h3></div><button type="button" data-cal11-action="close-modal">×</button></header><form data-cal11-event-form><input type="hidden" name="id"><label>'+t('Title','標題','标题')+'<input name="title" maxlength="120" required></label><div class="cal11-form-grid"><label>'+t('Date','日期','日期')+'<input type="date" name="date" required></label><label class="cal11-all-day"><input type="checkbox" name="allDay"><span>'+t('All day','全天','全天')+'</span></label></div><div class="cal11-form-grid cal11-time-fields"><label>'+t('Start','開始','开始')+'<input type="time" name="start" value="09:00"></label><label>'+t('End','結束','结束')+'<input type="time" name="end" value="10:00"></label></div><div class="cal11-form-grid"><label>'+t('Category','類別','类别')+'<select name="category">'+CATS.map(function(c){return '<option value="'+c+'">'+category(c)+'</option>';}).join('')+'</select></label><label>'+t('Repeat','重複','重复')+'<select name="repeat"><option value="none">'+t('Never','不重複','不重复')+'</option><option value="daily">'+t('Daily','每天','每天')+'</option><option value="weekly">'+t('Weekly','每週','每周')+'</option><option value="monthly">'+t('Monthly','每月','每月')+'</option><option value="yearly">'+t('Yearly','每年','每年')+'</option></select></label></div><div class="cal11-form-grid"><label>'+t('Reminder','提醒','提醒')+'<select name="reminder"><option value="0">'+t('None','不提醒','不提醒')+'</option><option value="5">5 '+t('minutes before','分鐘前','分钟前')+'</option><option value="10">10 '+t('minutes before','分鐘前','分钟前')+'</option><option value="15">15 '+t('minutes before','分鐘前','分钟前')+'</option><option value="30">30 '+t('minutes before','分鐘前','分钟前')+'</option><option value="60">1 '+t('hour before','小時前','小时前')+'</option></select></label><label>'+t('Notes','備註','备注')+'<textarea name="note" rows="2" maxlength="1000"></textarea></label></div><footer><button type="button" class="danger" data-cal11-action="delete-event" hidden>'+t('Delete','刪除','删除')+'</button><span></span><button type="button" data-cal11-action="close-modal">'+t('Cancel','取消','取消')+'</button><button type="button" class="primary" data-cal11-action="save-event">'+t('Save','保存','保存')+'</button></footer></form></section></div>'+utilityModals();
 }
 function rootOf(el){
  if(!el)return null;
@@ -102,20 +106,25 @@ function saveEditor(root){
  if(!all&&start&&end&&end<=start){if(endEl){endEl.setCustomValidity(t('End must be later than start','結束時間必須晚於開始時間','结束时间必须晚于开始时间'));endEl.reportValidity();endEl.setCustomValidity('');}return;}
  const e=clean({id:fieldValue(form,'id','')||makeId(),title:fieldValue(form,'title',''),date:fieldValue(form,'date',''),start,end,allDay:all,category:fieldValue(form,'category','personal'),repeat:fieldValue(form,'repeat','none'),reminder:+fieldValue(form,'reminder','0'),note:fieldValue(form,'note',''),updatedAt:Date.now()});
  if(!e){alert(t('Please enter a title and valid date.','請輸入標題及有效日期。','请输入标题及有效日期。'));return;}
- const i=events.findIndex(function(x){return x.id===e.id;});if(i<0)events.push(e);else events[i]=e;
+ backupBeforeChange();const i=events.findIndex(function(x){return x.id===e.id;});if(i<0)events.push(e);else events[i]=e;
  closeEditor(root);persist();
 }
 function deleteEditor(root){
  const form=root&&root.querySelector('[data-cal11-event-form]'),id=fieldValue(form,'id','');if(!id)return;
  if(!confirm(t('Delete this event and its repeating series?','確定刪除此日程及其重複系列？','确定删除此日程及其重复系列？')))return;
- events=events.filter(function(e){return e.id!==id;});closeEditor(root);persist();
+ backupBeforeChange();events=events.map(function(e){return e.id===id?Object.assign({},e,{deletedAt:Date.now(),updatedAt:Date.now()}):e;});closeEditor(root);persist();
 }
+function openBackups(root){const modal=root.querySelector('[data-cal11-backup-modal]'),list=modal&&modal.querySelector('[data-cal11-backup-list]');if(!modal||!list)return;const rows=readAutoBackups();list.innerHTML=rows.length?rows.map((b,i)=>'<div class="cal11-utility-row"><span><b>'+new Date(b.createdAt).toLocaleString()+'</b><small>'+b.count+' '+t('events','項日程','项日程')+'</small></span><button type="button" data-cal11-backup-restore="'+i+'">'+t('Restore','恢復','恢复')+'</button></div>').join(''):'<p>'+t('No automatic snapshots yet.','尚無自動備份。','暂无自动备份。')+'</p>';modal.hidden=false;}
+function openTrash(root){const modal=root.querySelector('[data-cal11-trash-modal]'),list=modal&&modal.querySelector('[data-cal11-trash-list]');if(!modal||!list)return;const rows=events.filter(e=>e.deletedAt);list.innerHTML=rows.length?rows.map(e=>'<div class="cal11-utility-row"><span><b>'+esc(e.title)+'</b><small>'+esc(e.date)+' · '+new Date(e.deletedAt).toLocaleString()+'</small></span><span class="cal11-utility-actions"><button type="button" data-cal11-trash-restore="'+esc(e.id)+'">'+t('Restore','還原','还原')+'</button><button type="button" class="danger" data-cal11-trash-purge="'+esc(e.id)+'">'+t('Delete forever','永久刪除','永久删除')+'</button></span></div>').join(''):'<p>'+t('Recycle bin is empty.','回收站是空的。','回收站是空的。')+'</p>';modal.hidden=false;}
+function restoreBackup(index,root){const b=readAutoBackups()[index];if(!b)return;if(!confirm(t('Restore this snapshot? Current events will be replaced.','確定恢復此快照？目前日程將被替換。','确定恢复此快照？当前日程将被替换。')))return;backupBeforeChange();try{events=JSON.parse(b.payload).map(clean).filter(Boolean);persist();const m=root.querySelector('[data-cal11-backup-modal]');if(m)m.hidden=true;}catch(e){alert(t('Backup could not be restored.','無法恢復此備份。','无法恢复此备份。'));}}
+function restoreTrash(id,root){const item=events.find(e=>e.id===id&&e.deletedAt);if(!item)return;backupBeforeChange();item.deletedAt=0;item.updatedAt=Date.now();persist();openTrash(root);}
+function purgeTrash(id,root){if(!confirm(t('Permanently delete this event? This cannot be undone.','確定永久刪除此日程？此操作無法復原。','确定永久删除此日程？此操作无法恢复。')))return;backupBeforeChange();events=events.filter(e=>e.id!==id);persist();openTrash(root);}
 function download(name,type,body){const url=URL.createObjectURL(new Blob([body],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);}
-function exportJSON(){download('webdesk-calendar-events.json','application/json;charset=utf-8',JSON.stringify({version:1,events:events},null,2));}
+function exportJSON(){let calendarState=null;try{calendarState=JSON.parse(localStorage.getItem('windzxy_calendar_state_v1')||'null');}catch(e){}download('webdesk-calendar-backup-'+dateKey(new Date())+'.json','application/json;charset=utf-8',JSON.stringify({app:'WebDesk Calendar',schemaVersion:2,exportedAt:new Date().toISOString(),calendarState,events:events},null,2));}
 function escapeICS(v){return String(v||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');}
 function exportICS(){
  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//WebDesk//Calendar//EN','CALSCALE:GREGORIAN'];
- events.forEach(function(e){
+ events.filter(e=>!e.deletedAt).forEach(function(e){
   const d=e.date.replace(/-/g,''),tm=(e.start||'09:00').replace(':','')+'00';
   lines.push('BEGIN:VEVENT','UID:'+escapeICS(e.id)+'@webdesk','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z'),(e.allDay?'DTSTART;VALUE=DATE:':'DTSTART:')+(e.allDay?d:d+'T'+tm));
   if(e.allDay){const next=parseKey(e.date);next.setDate(next.getDate()+1);lines.push('DTEND;VALUE=DATE:'+dateKey(next));}else if(e.end)lines.push('DTEND:'+d+'T'+e.end.replace(':','')+'00');
@@ -141,8 +150,8 @@ function parseICS(txt){
 async function importFile(file){
  if(!file)return;const txt=await file.text();let incoming;
  if(/BEGIN:VCALENDAR/i.test(txt))incoming=parseICS(txt);
- else{const j=JSON.parse(txt),list=Array.isArray(j)?j:j.events||[];incoming=list.map(clean).filter(Boolean);}
- const map=new Map(events.map(function(e){return [e.id,e];}));incoming.forEach(function(e){map.set(e.id,e);});events=Array.from(map.values());persist();
+ else{const j=JSON.parse(txt),list=Array.isArray(j)?j:j.events||[];incoming=list.map(clean).filter(Boolean);if(j.calendarState){try{localStorage.setItem('windzxy_calendar_state_v1',JSON.stringify(j.calendarState));}catch(e){}}}
+ backupBeforeChange();const map=new Map(events.map(function(e){return [e.id,e];}));incoming.forEach(function(e){const old=map.get(e.id);if(!old||e.updatedAt>=old.updatedAt)map.set(e.id,e);});events=Array.from(map.values());persist();
 }
 async function enableNotifications(){
  if(!('Notification'in window)){alert(t('Notifications are not supported.','此瀏覽器不支援通知。','此浏览器不支持通知。'));return;}
@@ -152,7 +161,7 @@ function reminderCheck(){
  if(!('Notification'in window)||Notification.permission!=='granted')return;
  const now=new Date();
  events.forEach(function(e){
-  if(!e.reminder)return;
+  if(!e.reminder||e.deletedAt)return;
   const base=parseKey(e.date),from=new Date(now.getFullYear(),now.getMonth(),now.getDate()-1),to=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
   for(let d=new Date(Math.max(base.getTime(),from.getTime()));d<=to;d.setDate(d.getDate()+1)){
    if(!occurs(e,d))continue;
@@ -345,6 +354,7 @@ function styles(){
 .cal11-event-dialog footer{display:flex;align-items:center;gap:8px;margin-top:4px}.cal11-event-dialog footer span{flex:1}
 .cal11-event-dialog footer button{border:1px solid rgba(255,255,255,.13);border-radius:10px;padding:8px 12px;background:rgba(255,255,255,.07);color:#fff;cursor:pointer;font-weight:800}
 .cal11-event-dialog footer button.primary{background:rgba(114,239,255,.20);border-color:rgba(114,239,255,.4)}.cal11-event-dialog footer button.danger{color:#ff9eaa;border-color:rgba(255,110,130,.3)}
+.cal11-utility-note{font-size:12px;line-height:1.5;opacity:.68}.cal11-utility-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.09)}.cal11-utility-row>span:first-child{display:grid;gap:4px;min-width:0}.cal11-utility-row small{font-size:10px;opacity:.58}.cal11-utility-row button{border:1px solid rgba(114,239,255,.3);border-radius:9px;padding:7px 10px;background:rgba(114,239,255,.12);color:#fff;cursor:pointer;white-space:nowrap}.cal11-utility-row button.danger{border-color:rgba(255,110,130,.3);color:#ff9eaa;background:rgba(255,110,130,.08)}.cal11-utility-actions{display:flex;gap:6px}.cal11-backup-list,.cal11-trash-list{max-height:42vh;overflow:auto}
 @media(max-width:620px){.cal11-view-tools{align-items:stretch}.cal11-switch{flex-basis:100%}.cal11-event-tools{margin-left:0;justify-content:flex-end;width:100%}.cal11-event-tools button:not(:first-child){display:none}.cal11-weekview{grid-template-columns:repeat(7,minmax(78px,1fr))}.cal11-event-dialog{padding:12px}}
 @media(max-height:440px){.cal11-event-dialog{padding:10px}.cal11-event-dialog form{gap:6px}}
 .calendar-v11.cal11-compact .cal11-controls{grid-template-columns:1fr!important}
@@ -369,11 +379,17 @@ function bind(){
    if(k==='close-modal'){e.preventDefault();closeEditor(root);return;}
    if(k==='save-event'){e.preventDefault();saveEditor(root);return;}
    if(k==='delete-event'){e.preventDefault();deleteEditor(root);return;}
+   if(k==='open-backups'){e.preventDefault();openBackups(root);return;}
+   if(k==='open-trash'){e.preventDefault();openTrash(root);return;}
+   if(k==='close-utility'){e.preventDefault();root.querySelectorAll('[data-cal11-backup-modal],[data-cal11-trash-modal]').forEach(x=>x.hidden=true);return;}
    if(k==='enable-notifications'){e.preventDefault();enableNotifications();return;}
    if(k==='export-json'){e.preventDefault();exportJSON();return;}
    if(k==='export-ics'){e.preventDefault();exportICS();return;}
    if(k==='import-file'){e.preventDefault();root.querySelector('[data-cal11-import-file]')?.click();return;}
   }
+  const br=e.target.closest('[data-cal11-backup-restore]');if(br){e.preventDefault();restoreBackup(+br.dataset.cal11BackupRestore,root);return;}
+  const tr=e.target.closest('[data-cal11-trash-restore]');if(tr){e.preventDefault();restoreTrash(tr.dataset.cal11TrashRestore,root);return;}
+  const pg=e.target.closest('[data-cal11-trash-purge]');if(pg){e.preventDefault();purgeTrash(pg.dataset.cal11TrashPurge,root);return;}
   const hit=e.target.closest('[data-cal11-event-id]');
   if(hit){const item=events.find(function(x){return x.id===hit.dataset.cal11EventId;});if(item){e.preventDefault();e.stopPropagation();openEditor(root,item);}}
  },true);
@@ -385,7 +401,7 @@ function bind(){
  document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.cal11-event-modal:not([hidden])').forEach(function(x){x.hidden=true;});});
  setInterval(reminderCheck,30000);
 }
-function init(){styles();bind();hydrate();}
+function init(){styles();bind();createAutoBackup();hydrate();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-window.WebDeskCalendarEvents={version:VER,get all(){return events.slice();},forDate:forDate,badgeMarkup:badgeMarkup,listMarkup:listMarkup,sideMarkup:sideMarkup,toolbarMarkup:toolbarMarkup,modalMarkup:modalMarkup,hasEventsInMonth:function(y,m){return events.some(function(e){const d=parseKey(e.date);return d.getFullYear()===y&&d.getMonth()===m;});}};
+window.WebDeskCalendarEvents={version:VER,get all(){return events.filter(e=>!e.deletedAt);},get trash(){return events.filter(e=>!!e.deletedAt);},forDate:forDate,badgeMarkup:badgeMarkup,listMarkup:listMarkup,sideMarkup:sideMarkup,toolbarMarkup:toolbarMarkup,modalMarkup:modalMarkup,hasEventsInMonth:function(y,m){return events.some(function(e){if(e.deletedAt)return false;const d=parseKey(e.date);return d.getFullYear()===y&&d.getMonth()===m;});}};
 })();
