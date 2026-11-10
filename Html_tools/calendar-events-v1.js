@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20261110-calendar-events-v1.3-local-backup-trash';
+const VER='20261110-calendar-events-v1.4-add-event-fix';
 if(window.__windzxyCalendarEvents===VER)return;
 window.__windzxyCalendarEvents=VER;
 const STORE='windzxy_calendar_events_v1',DB='windzxy-calendar-local',TABLE='events',BACKUPS=STORE+'_auto_backups',BACKUP_LIMIT=3;
