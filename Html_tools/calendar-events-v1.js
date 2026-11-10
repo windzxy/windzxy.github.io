@@ -88,8 +88,15 @@ function rootOf(el){
 function field(form,name){return form?form.querySelector('[name="'+name+'"]'):null;}
 function fieldValue(form,name,fallback){const el=field(form,name);return el?el.value:fallback;}
 function openEditor(root,e,d){
- const modal=root&&root.querySelector('[data-cal11-event-modal]'),form=modal&&modal.querySelector('[data-cal11-event-form]');
- if(!modal||!form){console.error('[WebDesk Calendar] Event editor markup is missing.');return;}
+ if(!root)return;
+ let modal=root.querySelector('[data-cal11-event-modal]');
+ if(!modal){
+  const holder=document.createElement('div');holder.innerHTML=modalMarkup();
+  while(holder.firstElementChild)root.appendChild(holder.firstElementChild);
+  modal=root.querySelector('[data-cal11-event-modal]');
+ }
+ const form=modal&&modal.querySelector('[data-cal11-event-form]');
+ if(!modal||!form){console.error('[WebDesk Calendar] Event editor markup could not be created.');return;}
  const values={id:e?e.id:'',title:e?e.title:'',date:e?e.date:(d||root.dataset.cal11Date||dateKey(new Date())),allDay:!!(e&&e.allDay),start:e?e.start:'09:00',end:e?e.end:'10:00',category:e?e.category:'personal',repeat:e?e.repeat:'none',reminder:String(e?e.reminder:0),note:e?e.note:''};
  Object.keys(values).forEach(name=>{const el=field(form,name);if(!el)return;if(el.type==='checkbox')el.checked=values[name];else el.value=values[name];});
  const title=modal.querySelector('[data-cal11-modal-title]'),del=modal.querySelector('[data-cal11-action="delete-event"]'),times=modal.querySelector('.cal11-time-fields');
@@ -368,35 +375,45 @@ function styles(){
  document.head.appendChild(st);
 }
 function bind(){
- if(window.__windzxyCalendarEventsBound)return;
- window.__windzxyCalendarEventsBound=true;
- document.addEventListener('click',function(e){
-  const root=rootOf(e.target);if(!root)return;
-  const a=e.target.closest('[data-cal11-action]');
+ if(window.__windzxyCalendarEventsBound===VER)return;
+ window.__windzxyCalendarEventsBound=VER;
+ window.addEventListener('click',function(e){
+  const target=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;
+  if(!target||!target.closest)return;
+  const root=rootOf(target);if(!root)return;
+  const a=target.closest('[data-cal11-action]');
   if(a){
    const k=a.dataset.cal11Action;
-   if(k==='add-event'){e.preventDefault();openEditor(root,null,root.dataset.cal11Date);return;}
-   if(k==='close-modal'){e.preventDefault();closeEditor(root);return;}
-   if(k==='save-event'){e.preventDefault();saveEditor(root);return;}
-   if(k==='delete-event'){e.preventDefault();deleteEditor(root);return;}
-   if(k==='open-backups'){e.preventDefault();openBackups(root);return;}
-   if(k==='open-trash'){e.preventDefault();openTrash(root);return;}
-   if(k==='close-utility'){e.preventDefault();root.querySelectorAll('[data-cal11-backup-modal],[data-cal11-trash-modal]').forEach(x=>x.hidden=true);return;}
-   if(k==='enable-notifications'){e.preventDefault();enableNotifications();return;}
-   if(k==='export-json'){e.preventDefault();exportJSON();return;}
-   if(k==='export-ics'){e.preventDefault();exportICS();return;}
-   if(k==='import-file'){e.preventDefault();root.querySelector('[data-cal11-import-file]')?.click();return;}
+   e.preventDefault();e.stopPropagation();
+   if(k==='add-event'){openEditor(root,null,root.dataset.cal11Date);return;}
+   if(k==='close-modal'){closeEditor(root);return;}
+   if(k==='save-event'){saveEditor(root);return;}
+   if(k==='delete-event'){deleteEditor(root);return;}
+   if(k==='open-backups'){openBackups(root);return;}
+   if(k==='open-trash'){openTrash(root);return;}
+   if(k==='close-utility'){root.querySelectorAll('[data-cal11-backup-modal],[data-cal11-trash-modal]').forEach(x=>x.hidden=true);return;}
+   if(k==='enable-notifications'){enableNotifications();return;}
+   if(k==='export-json'){exportJSON();return;}
+   if(k==='export-ics'){exportICS();return;}
+   if(k==='import-file'){root.querySelector('[data-cal11-import-file]')?.click();return;}
+   return;
   }
-  const br=e.target.closest('[data-cal11-backup-restore]');if(br){e.preventDefault();restoreBackup(+br.dataset.cal11BackupRestore,root);return;}
-  const tr=e.target.closest('[data-cal11-trash-restore]');if(tr){e.preventDefault();restoreTrash(tr.dataset.cal11TrashRestore,root);return;}
-  const pg=e.target.closest('[data-cal11-trash-purge]');if(pg){e.preventDefault();purgeTrash(pg.dataset.cal11TrashPurge,root);return;}
-  const hit=e.target.closest('[data-cal11-event-id]');
+  const br=target.closest('[data-cal11-backup-restore]');if(br){e.preventDefault();e.stopPropagation();restoreBackup(+br.dataset.cal11BackupRestore,root);return;}
+  const tr=target.closest('[data-cal11-trash-restore]');if(tr){e.preventDefault();e.stopPropagation();restoreTrash(tr.dataset.cal11TrashRestore,root);return;}
+  const pg=target.closest('[data-cal11-trash-purge]');if(pg){e.preventDefault();e.stopPropagation();purgeTrash(pg.dataset.cal11TrashPurge,root);return;}
+  const hit=target.closest('[data-cal11-event-id]');
   if(hit){const item=events.find(function(x){return x.id===hit.dataset.cal11EventId;});if(item){e.preventDefault();e.stopPropagation();openEditor(root,item);}}
  },true);
- document.addEventListener('change',async function(e){
-  const root=rootOf(e.target);if(!root)return;
-  if(e.target.matches('[data-cal11-import-file]')){try{await importFile(e.target.files?.[0]);e.target.value='';}catch(err){alert(t('Import failed. Check the JSON or ICS file.','匯入失敗，請檢查 JSON 或 ICS 檔案。','导入失败，请检查 JSON 或 ICS 文件。'));}}
-  if(e.target.matches('[name="allDay"]')){const box=root.querySelector('.cal11-time-fields');if(box)box.hidden=e.target.checked;}
+ window.addEventListener('change',async function(e){
+  const target=e.target&&e.target.nodeType===1?e.target:e.target&&e.target.parentElement;
+  if(!target||!target.closest)return;
+  const root=rootOf(target);if(!root)return;
+  if(target.matches('[data-cal11-import-file]')){
+   e.stopPropagation();
+   try{await importFile(target.files?.[0]);target.value='';}
+   catch(err){alert(t('Import failed. Check the JSON or ICS file.','匯入失敗，請檢查 JSON 或 ICS 檔案。','导入失败，请检查 JSON 或 ICS 文件。'));}
+  }
+  if(target.matches('[name="allDay"]')){e.stopPropagation();const box=root.querySelector('.cal11-time-fields');if(box)box.hidden=target.checked;}
  },true);
  document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.cal11-event-modal:not([hidden])').forEach(function(x){x.hidden=true;});});
  setInterval(reminderCheck,30000);
