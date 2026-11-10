@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const VER='20261109-calendar-events-v1.1';
+const VER='20261110-calendar-events-v1.2';
 if(window.__windzxyCalendarEvents===VER)return;
 window.__windzxyCalendarEvents=VER;
 const STORE='windzxy_calendar_events_v1',DB='windzxy-calendar-local',TABLE='events';
@@ -74,24 +74,39 @@ function toolbarMarkup(){
 function modalMarkup(){
  return '<div class="cal11-event-modal" data-cal11-event-modal hidden><div class="cal11-event-backdrop" data-cal11-action="close-modal"></div><section class="cal11-event-dialog" role="dialog" aria-modal="true"><header><div><small>'+t('PERSONAL CALENDAR','個人日曆','个人日历')+'</small><h3 data-cal11-modal-title>'+t('New event','新增日程','新增日程')+'</h3></div><button type="button" data-cal11-action="close-modal">×</button></header><form data-cal11-event-form><input type="hidden" name="id"><label>'+t('Title','標題','标题')+'<input name="title" maxlength="120" required></label><div class="cal11-form-grid"><label>'+t('Date','日期','日期')+'<input type="date" name="date" required></label><label class="cal11-all-day"><input type="checkbox" name="allDay"><span>'+t('All day','全天','全天')+'</span></label></div><div class="cal11-form-grid cal11-time-fields"><label>'+t('Start','開始','开始')+'<input type="time" name="start" value="09:00"></label><label>'+t('End','結束','结束')+'<input type="time" name="end" value="10:00"></label></div><div class="cal11-form-grid"><label>'+t('Category','類別','类别')+'<select name="category">'+CATS.map(function(c){return '<option value="'+c+'">'+category(c)+'</option>';}).join('')+'</select></label><label>'+t('Repeat','重複','重复')+'<select name="repeat"><option value="none">'+t('Never','不重複','不重复')+'</option><option value="daily">'+t('Daily','每天','每天')+'</option><option value="weekly">'+t('Weekly','每週','每周')+'</option><option value="monthly">'+t('Monthly','每月','每月')+'</option><option value="yearly">'+t('Yearly','每年','每年')+'</option></select></label></div><div class="cal11-form-grid"><label>'+t('Reminder','提醒','提醒')+'<select name="reminder"><option value="0">'+t('None','不提醒','不提醒')+'</option><option value="5">5 '+t('minutes before','分鐘前','分钟前')+'</option><option value="10">10 '+t('minutes before','分鐘前','分钟前')+'</option><option value="15">15 '+t('minutes before','分鐘前','分钟前')+'</option><option value="30">30 '+t('minutes before','分鐘前','分钟前')+'</option><option value="60">1 '+t('hour before','小時前','小时前')+'</option></select></label><label>'+t('Notes','備註','备注')+'<textarea name="note" rows="2" maxlength="1000"></textarea></label></div><footer><button type="button" class="danger" data-cal11-action="delete-event" hidden>'+t('Delete','刪除','删除')+'</button><span></span><button type="button" data-cal11-action="close-modal">'+t('Cancel','取消','取消')+'</button><button type="button" class="primary" data-cal11-action="save-event">'+t('Save','保存','保存')+'</button></footer></form></section></div>';
 }
-function rootOf(el){return el&&el.closest?el.closest('.calendar-v11'):null;}
+function rootOf(el){
+ if(!el)return null;
+ const target=el.nodeType===1?el:el.parentElement;
+ if(target&&target.closest){const root=target.closest('.calendar-v11');if(root)return root;}
+ const path=typeof event!=='undefined'&&event.composedPath?event.composedPath():[];
+ return path.find(node=>node&&node.nodeType===1&&node.classList&&node.classList.contains('calendar-v11'))||null;
+}
+function field(form,name){return form?form.querySelector('[name="'+name+'"]'):null;}
+function fieldValue(form,name,fallback){const el=field(form,name);return el?el.value:fallback;}
 function openEditor(root,e,d){
- const modal=root&&root.querySelector('[data-cal11-event-modal]'),form=modal&&modal.querySelector('[data-cal11-event-form]');if(!modal||!form)return;
- const f=form.elements;f.id.value=e?e.id:'';f.title.value=e?e.title:'';f.date.value=e?e.date:(d||root.dataset.cal11Date);f.allDay.checked=!!(e&&e.allDay);
- f.start.value=e?e.start:'09:00';f.end.value=e?e.end:'10:00';f.category.value=e?e.category:'personal';f.repeat.value=e?e.repeat:'none';f.reminder.value=String(e?e.reminder:0);f.note.value=e?e.note:'';
- modal.querySelector('[data-cal11-modal-title]').textContent=e?t('Edit event','編輯日程','编辑日程'):t('New event','新增日程','新增日程');
- modal.querySelector('[data-cal11-action="delete-event"]').hidden=!e;modal.querySelector('.cal11-time-fields').hidden=!!(e&&e.allDay);modal.hidden=false;setTimeout(function(){f.title.focus();},30);
+ const modal=root&&root.querySelector('[data-cal11-event-modal]'),form=modal&&modal.querySelector('[data-cal11-event-form]');
+ if(!modal||!form){console.error('[WebDesk Calendar] Event editor markup is missing.');return;}
+ const values={id:e?e.id:'',title:e?e.title:'',date:e?e.date:(d||root.dataset.cal11Date||dateKey(new Date())),allDay:!!(e&&e.allDay),start:e?e.start:'09:00',end:e?e.end:'10:00',category:e?e.category:'personal',repeat:e?e.repeat:'none',reminder:String(e?e.reminder:0),note:e?e.note:''};
+ Object.keys(values).forEach(name=>{const el=field(form,name);if(!el)return;if(el.type==='checkbox')el.checked=values[name];else el.value=values[name];});
+ const title=modal.querySelector('[data-cal11-modal-title]'),del=modal.querySelector('[data-cal11-action="delete-event"]'),times=modal.querySelector('.cal11-time-fields');
+ if(title)title.textContent=e?t('Edit event','編輯日程','编辑日程'):t('New event','新增日程','新增日程');
+ if(del)del.hidden=!e;if(times)times.hidden=values.allDay;
+ modal.hidden=false;modal.setAttribute('aria-hidden','false');
+ setTimeout(function(){field(form,'title')?.focus();},30);
 }
 function closeEditor(root){const m=root&&root.querySelector('[data-cal11-event-modal]');if(m)m.hidden=true;}
 function saveEditor(root){
- const m=root.querySelector('[data-cal11-event-modal]'),form=m&&m.querySelector('form');if(!form||!form.reportValidity())return;
- const f=form.elements,all=f.allDay.checked;
- if(!all&&f.start.value&&f.end.value&&f.end.value<=f.start.value){f.end.setCustomValidity(t('End must be later than start','結束時間必須晚於開始時間','结束时间必须晚于开始时间'));f.end.reportValidity();f.end.setCustomValidity('');return;}
- const e=clean({id:f.id.value||makeId(),title:f.title.value,date:f.date.value,start:f.start.value,end:f.end.value,allDay:all,category:f.category.value,repeat:f.repeat.value,reminder:+f.reminder.value,note:f.note.value,updatedAt:Date.now()});if(!e)return;
- const i=events.findIndex(function(x){return x.id===e.id;});if(i<0)events.push(e);else events[i]=e;closeEditor(root);persist();
+ const m=root&&root.querySelector('[data-cal11-event-modal]'),form=m&&m.querySelector('[data-cal11-event-form]');if(!form)return;
+ if(typeof form.reportValidity==='function'&&!form.reportValidity())return;
+ const all=!!field(form,'allDay')?.checked,start=fieldValue(form,'start','09:00'),end=fieldValue(form,'end','10:00'),endEl=field(form,'end');
+ if(!all&&start&&end&&end<=start){if(endEl){endEl.setCustomValidity(t('End must be later than start','結束時間必須晚於開始時間','结束时间必须晚于开始时间'));endEl.reportValidity();endEl.setCustomValidity('');}return;}
+ const e=clean({id:fieldValue(form,'id','')||makeId(),title:fieldValue(form,'title',''),date:fieldValue(form,'date',''),start,end,allDay:all,category:fieldValue(form,'category','personal'),repeat:fieldValue(form,'repeat','none'),reminder:+fieldValue(form,'reminder','0'),note:fieldValue(form,'note',''),updatedAt:Date.now()});
+ if(!e){alert(t('Please enter a title and valid date.','請輸入標題及有效日期。','请输入标题及有效日期。'));return;}
+ const i=events.findIndex(function(x){return x.id===e.id;});if(i<0)events.push(e);else events[i]=e;
+ closeEditor(root);persist();
 }
 function deleteEditor(root){
- const f=root.querySelector('[data-cal11-event-form]')?.elements,id=f&&f.id.value;if(!id)return;
+ const form=root&&root.querySelector('[data-cal11-event-form]'),id=fieldValue(form,'id','');if(!id)return;
  if(!confirm(t('Delete this event and its repeating series?','確定刪除此日程及其重複系列？','确定删除此日程及其重复系列？')))return;
  events=events.filter(function(e){return e.id!==id;});closeEditor(root);persist();
 }
