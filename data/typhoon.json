@@ -4,10 +4,8 @@
   "source": "https://www.weather.gov.hk/wxinfo/currwx/tc_list.xml",
   "status": "no-active-system",
   "storms": [],
-  "errors": [
-    "Remote end closed connection without response"
-  ],
-  "ok": false,
+  "errors": [],
+  "ok": true,
   "sourceUpdatedAt": null,
-  "updatedAt": "2026-11-15T16:47:24.020741+00:00"
+  "updatedAt": "2026-11-15T21:20:41.469775+00:00"
 }
