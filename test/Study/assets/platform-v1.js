@@ -111,6 +111,7 @@
   function statusLabel(s) { return {new:'未开始',learning:'学习中',mastered:'已掌握',weak:'需巩固'}[s] || '未开始'; }
   function availableInRegion(t) {
     if(t.region) return t.region === state.region;
+    if(t.id==='cnm_p036') return state.region==='cn';
     if(t.universal) return true;
     if(state.region==='cn') return true;
     return subjectOf(t)==='math' || subjectOf(t)==='physics';

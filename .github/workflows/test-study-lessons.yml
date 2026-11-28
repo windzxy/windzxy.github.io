@@ -38,7 +38,8 @@ jobs:
             detailed-v12-base.js detailed-v12-chinese.js detailed-v12-math.js detailed-v12-languages.js \
             detailed-v12-sciences.js detailed-v12-humanities.js detailed-v12-applied.js \
             detailed-v13-humanities-learning.js detailed-v12-quality.js detailed-v12-ui.js \
-            audio-v7.js east-asian-audio-v8.js east-asian-lessons-v8.js more-courses-v8.js
+            audio-v7.js east-asian-audio-v8.js east-asian-lessons-v8.js more-courses-v8.js \
+            platform-v1.js primary-one.js
           do
             node --check "test/Study/assets/$file"
           done
@@ -160,10 +161,10 @@ jobs:
           test -n "$BROWSER"
           mkdir -p /tmp/study-v13
           render(){
-            page="$1"; output="$2"; expected="$3"
+            page="$1"; output="$2"; shift 2
             echo "Rendering: $page"
             timeout 90s "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=45000 --dump-dom "http://127.0.0.1:8765/test/Study/${page}" >"$output"
-            for marker in 'v12-course-map' '全部课程正文已接入' "$expected"; do
+            for marker in "$@"; do
               if ! grep -Fq "$marker" "$output"; then
                 echo "Missing marker '$marker' in $page"
                 grep -oE 'v12-course-map|全部课程正文已接入|课程地图|第 [0-9]+ 课|<h[1-4][^>]*>[^<]+' "$output" | tail -n 80 || true
@@ -176,22 +177,27 @@ jobs:
             fi
             echo "PASS: $page"
           }
-          render 'chinese.html?stage=primary' /tmp/study-v13/chinese.html '《春晓》：声音、花落与惜春'
-          render 'chinese.html?stage=advanced' /tmp/study-v13/chinese-advanced.html '原创短剧《一封迟到的信》'
-          render 'math.html?stage=primary' /tmp/study-v13/math.html '20 以内进位加法：凑十法'
-          render 'english.html?stage=primary' /tmp/study-v13/english.html 'Unit 6 At the Supermarket'
-          render 'cantonese.html?stage=primary' /tmp/study-v13/cantonese.html '茶餐厅点餐'
-          render 'japanese.html?stage=primary' /tmp/study-v13/japanese.html 'いくらですか'
-          render 'korean.html?stage=primary' /tmp/study-v13/korean.html '餐厅点餐'
-          render 'course.html?subject=science&stage=primary' /tmp/study-v13/science.html '控制变量：光照会影响种子发芽吗'
-          render 'course.html?subject=physics&stage=junior' /tmp/study-v13/physics.html '欧姆定律 U=IR'
-          render 'course.html?subject=chemistry&stage=junior' /tmp/study-v13/chemistry.html '酸、碱、盐与指示剂'
-          render 'course.html?subject=biology&stage=junior' /tmp/study-v13/biology.html '孟德尔遗传与概率'
-          render 'course.html?subject=history&stage=primary' /tmp/study-v13/history.html '秦统一与中央集权'
-          render 'course.html?subject=history&stage=advanced' /tmp/study-v13/history-advanced.html '历史短剧《长安西市的一天》'
-          render 'course.html?subject=geography&stage=primary' /tmp/study-v13/geography.html '地图上的方向、图例和比例尺'
-          render 'course.html?subject=geography&stage=advanced' /tmp/study-v13/geography-advanced.html '一滴水的旅程'
-          render 'course.html?subject=computing&stage=junior' /tmp/study-v13/computing.html 'Python 变量、输入和输出'
-          render 'course.html?subject=finance&stage=primary' /tmp/study-v13/finance.html '制作个人月度预算'
-          render 'course.html?subject=logic&stage=primary' /tmp/study-v13/logic.html '相关不等于因果'
-          render 'course.html?subject=logic&stage=advanced' /tmp/study-v13/logic-advanced.html '短剧《谁动了班费》'
+          course(){
+            render "$1" "$2" 'v12-course-map' '全部课程正文已接入' "$3"
+          }
+          render 'index.html#learn' /tmp/study-v13/platform.html 'data-topic="wind_p1_math_ten"' '知识图谱'
+          render 'math.html' /tmp/study-v13/math-practice.html 'id="beadBoard"' '拼豆工坊'
+          course 'chinese.html?stage=primary' /tmp/study-v13/chinese.html '《春晓》：声音、花落与惜春'
+          course 'chinese.html?stage=advanced' /tmp/study-v13/chinese-advanced.html '原创短剧《一封迟到的信》'
+          course 'course.html?subject=math&stage=primary' /tmp/study-v13/math.html '20 以内进位加法：凑十法'
+          course 'english.html?stage=primary' /tmp/study-v13/english.html 'Unit 6 At the Supermarket'
+          course 'cantonese.html?stage=primary' /tmp/study-v13/cantonese.html '茶餐厅点餐'
+          course 'japanese.html?stage=primary' /tmp/study-v13/japanese.html 'いくらですか'
+          course 'korean.html?stage=primary' /tmp/study-v13/korean.html '餐厅点餐'
+          course 'course.html?subject=science&stage=primary' /tmp/study-v13/science.html '控制变量：光照会影响种子发芽吗'
+          course 'course.html?subject=physics&stage=junior' /tmp/study-v13/physics.html '欧姆定律 U=IR'
+          course 'course.html?subject=chemistry&stage=junior' /tmp/study-v13/chemistry.html '酸、碱、盐与指示剂'
+          course 'course.html?subject=biology&stage=junior' /tmp/study-v13/biology.html '孟德尔遗传与概率'
+          course 'course.html?subject=history&stage=primary' /tmp/study-v13/history.html '秦统一与中央集权'
+          course 'course.html?subject=history&stage=advanced' /tmp/study-v13/history-advanced.html '历史短剧《长安西市的一天》'
+          course 'course.html?subject=geography&stage=primary' /tmp/study-v13/geography.html '地图上的方向、图例和比例尺'
+          course 'course.html?subject=geography&stage=advanced' /tmp/study-v13/geography-advanced.html '一滴水的旅程'
+          course 'course.html?subject=computing&stage=junior' /tmp/study-v13/computing.html 'Python 变量、输入和输出'
+          course 'course.html?subject=finance&stage=primary' /tmp/study-v13/finance.html '制作个人月度预算'
+          course 'course.html?subject=logic&stage=primary' /tmp/study-v13/logic.html '相关不等于因果'
+          course 'course.html?subject=logic&stage=advanced' /tmp/study-v13/logic-advanced.html '短剧《谁动了班费》'
